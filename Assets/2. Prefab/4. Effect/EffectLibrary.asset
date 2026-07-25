@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be66973dd06d84847b06fce3d09a0358, type: 3}
+  m_Name: EffectLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::EffectLibrary
+  effectEntries:
+  - effectID: 101
+    effectPrefab: {fileID: 5220447335354414950, guid: ed78f9e99ece3a148a74b17ad122da5a, type: 3}
+  - effectID: 201
+    effectPrefab: {fileID: 5220447335354414950, guid: f50548a5917290643a3c4160bc2354e4, type: 3}
+  - effectID: 301
+    effectPrefab: {fileID: 9157105887711914197, guid: c4f829cb7dd4b864caf8832ec5b1ee55, type: 3}
+  - effectID: 102
+    effectPrefab: {fileID: 5220447335354414950, guid: f50548a5917290643a3c4160bc2354e4, type: 3}
+  - effectID: 202
+    effectPrefab: {fileID: 1142942343058428718, guid: a72ebf8ba99b3734c92ea598a1e52810, type: 3}
+  - effectID: 302
+    effectPrefab: {fileID: 9157105887711914197, guid: c4f829cb7dd4b864caf8832ec5b1ee55, type: 3}
+  - effectID: 103
+    effectPrefab: {fileID: 9157105887711914197, guid: c4f829cb7dd4b864caf8832ec5b1ee55, type: 3}
+  - effectID: 203
+    effectPrefab: {fileID: 3471829553732252764, guid: 804b31f6846cbcd44b4546248df287e4, type: 3}
+  - effectID: 303
+    effectPrefab: {fileID: 9157105887711914197, guid: c4f829cb7dd4b864caf8832ec5b1ee55, type: 3}
+  - effectID: 104
+    effectPrefab: {fileID: 5220447335354414950, guid: 94f9559c477f31a44b008d8979be6291, type: 3}
+  - effectID: 204
+    effectPrefab: {fileID: 7796783604605037071, guid: 8e7630f1aeb261d49970f6ddd114a7e2, type: 3}
+  - effectID: 304
+    effectPrefab: {fileID: 1142942343058428718, guid: e9d7a9fb7b961954b8fdcf90dd923785, type: 3}
+  - effectID: 105
+    effectPrefab: {fileID: 5220447335354414950, guid: d751b656c9b33e3479228e9cde1ac965, type: 3}
+  - effectID: 205
+    effectPrefab: {fileID: 1142942343058428718, guid: 40b2d8df49d8de84281f033b6932cbce, type: 3}
+  - effectID: 305
+    effectPrefab: {fileID: 5220447335354414950, guid: d751b656c9b33e3479228e9cde1ac965, type: 3}
+  - effectID: 106
+    effectPrefab: {fileID: 5220447335354414950, guid: 8c6059e35c653c548852992e83fdc7db, type: 3}
+  - effectID: 206
+    effectPrefab: {fileID: 1142942343058428718, guid: 8edccbe1114e5cc42ae7b7e0df82e97b, type: 3}
+  - effectID: 306
+    effectPrefab: {fileID: 5220447335354414950, guid: e7cb083e12b436640876ec5826c07ea8, type: 3}
+  - effectID: 107
+    effectPrefab: {fileID: 5220447335354414950, guid: ca2edc165a998234396cf7b926a2563c, type: 3}
+  - effectID: 207
+    effectPrefab: {fileID: 1142942343058428718, guid: 31a19937c3c8b1441947cd7a1fbdaf82, type: 3}
+  - effectID: 307
+    effectPrefab: {fileID: 5220447335354414950, guid: f590c60275e546f42bb75a5a91fda032, type: 3}
+  - effectID: 108
+    effectPrefab: {fileID: 5220447335354414950, guid: 520a115fc42bf7748a8cb477dcd32609, type: 3}
+  - effectID: 208
+    effectPrefab: {fileID: 1142942343058428718, guid: 59b6a148bbdf8f842b44321ea98fe03a, type: 3}
+  - effectID: 308
+    effectPrefab: {fileID: 5220447335354414950, guid: e5aca07e1af2e434d9f6d76118489766, type: 3}
+  - effectID: 109
+    effectPrefab: {fileID: 5220447335354414950, guid: 440ddc97d929a1142a442dd23c76628e, type: 3}
+  - effectID: 209
+    effectPrefab: {fileID: 1142942343058428718, guid: da4fc7619d48d544690a0ec6f90927ae, type: 3}
+  - effectID: 309
+    effectPrefab: {fileID: 5220447335354414950, guid: deea12e758c57c043a6995c240e7b714, type: 3}

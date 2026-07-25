@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 311612ef5ad7ea849b5493e0c5488980, type: 3}
+  m_Name: D4303_Shiled(TR)_PJ
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
+  prefab: {fileID: 6552874700961141187, guid: 813c71c9d672c3c45943c7268483483a, type: 3}
+  projectileID: 4303
+  projectileName: Shield(TR)
+  speed: 1
+  splashradius: 3
+  hiteffectID: 303

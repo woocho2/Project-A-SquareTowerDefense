@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 640ecd023fdaa5c4286e74e9188d0b13, type: 3}
+  m_Name: D2409_Wind(B)
+  m_EditorClassIdentifier: Assembly-CSharp::TowerDataSO
+  towerPrefab: {fileID: 1412987674060233608, guid: 9bacead9903f15144aebaff8c0d14618, type: 3}
+  towerID: 2409
+  towerName: "(\uBC84\uD504) \uBC14\uB78C \uD0C0\uC6CC"
+  towerLevel: 1
+  damage: 0
+  range: 1
+  attackSpeed: 1
+  isCritical: 0
+  criticalRate: 0
+  criticalDamage: 0
+  duration: 1
+  abilityValue: 1.4
+  attackType: 3
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  buffTarget: 2
+  debuffTarget: 0
+  trapLifeTime: 60
+  pathLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  maxPlacementAttempts: 10

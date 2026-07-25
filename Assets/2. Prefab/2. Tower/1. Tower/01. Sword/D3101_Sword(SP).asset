@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 640ecd023fdaa5c4286e74e9188d0b13, type: 3}
+  m_Name: D3101_Sword(SP)
+  m_EditorClassIdentifier: Assembly-CSharp::TowerDataSO
+  towerPrefab: {fileID: 1412987674060233608, guid: e112914ab7728b149a33c0534b3707f5, type: 3}
+  towerID: 3101
+  towerName: "(\uAD11\uC5ED) \uAC80 \uD0C0\uC6CC"
+  towerLevel: 1
+  damage: 10.13
+  range: 2.1
+  attackSpeed: 1.06
+  isCritical: 0
+  criticalRate: 0.0672
+  criticalDamage: 0.15
+  duration: 1
+  abilityValue: 60
+  attackType: 0
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  buffTarget: 0
+  debuffTarget: 0
+  trapLifeTime: 60
+  pathLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  maxPlacementAttempts: 10

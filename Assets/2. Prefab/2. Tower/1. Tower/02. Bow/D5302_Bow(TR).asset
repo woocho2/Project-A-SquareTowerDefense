@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 640ecd023fdaa5c4286e74e9188d0b13, type: 3}
+  m_Name: D5302_Bow(TR)
+  m_EditorClassIdentifier: Assembly-CSharp::TowerDataSO
+  towerPrefab: {fileID: 1412987674060233608, guid: dc19b637f0fa7924d81ccb405d7b97cc, type: 3}
+  towerID: 5302
+  towerName: "(\uD568\uC815) \uD65C \uD0C0\uC6CC"
+  towerLevel: 1
+  damage: 600
+  range: 3.79
+  attackSpeed: 0.54
+  isCritical: 0
+  criticalRate: 0
+  criticalDamage: 0
+  duration: 30
+  abilityValue: 0
+  attackType: 2
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  buffTarget: 0
+  debuffTarget: 0
+  trapLifeTime: 60
+  pathLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  maxPlacementAttempts: 10

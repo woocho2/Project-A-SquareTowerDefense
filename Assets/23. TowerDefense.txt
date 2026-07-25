@@ -1,0 +1,41 @@
+- towerData : 원본 데이터
+- towerStats : towerData를 복사한 현재 값
+- globalStats : ID가 같은 타워들이 갖는 동일한 Stat
+- finalStats : 버프 계산만을 위해 towerStats의 값을 임의로 복사한 값
+
+BuildTower
+1. TowerManager에서 Start()로 GlobalStats 메서드 실행
+2. GlobalStats() : TowerData로 변수생성
+3. TowerManager의 BuildTower에서 Init() 메서드 실행
+4. TowerController에서 Init() : GlobalStats주입 후 GlobalProjectileManager에서 GetMatchingProjectile()실행
+5. GlobalProjectileManager에서 GetMatchingProjectile() : Tower key와 Projectile key가 동일한것 끼리 매칭하여 반환
+6. 다시 Init으로 돌아와서 switch로 맞는 AttackType 반환하고 해당 Action에 원본 TowerData와 ProjectileData 주입
+   (주입된 데이터는 이펙트, 사운드, 고유ID 등의 정보만을 반환하도록 설계했고, Damage나 AttackSpeed같은 변수들은
+    AttackAction 내부에서 변수값을 호출하여 처리)
+7. TowerController에서 Start()로 GlobalStats을 Get한 후 타워에 GlobalStats 주입 *방어 로직
+8. 타워가 버프를 받을 시 GetFinalStats() 호출 후 bonusStats를 곱한 후 이걸 finalStats에 주입
+   (finalStats을 만드는 이유 : 버프 주입 시 값 복사를 막기 위해)
+
+UpgradeTower
+1. 업그레이드 버튼을 누를 시, TowerManager의 UpgradeTower메서드 호출
+2. 해당 타워의 TowerStats를 복사한 후 여기에 GlobalStats주입
+   (현재 타워의 레벨을 바탕으로 최대레벨 업그레이드를 막기 위함과 동시에 해당 타워가 무슨 타입인지 계산하기 위하여)
+3. towerID를 key로 사용해서 TowerData에서 해당 타워의 원본 데이터를 불러옴
+4. UpgradeDamage = 원본 Data의 1.1, 1.2, 1.4, 1.8의 수치만큼 곱함
+   (2레벨 = 1.1배, 3레벨 = 1.2배, 4레벨 = 1.4배, 5레벨 = 1.8배)
+5. HandleTypeUpgrade로 업그레이드 이벤트 발생
+
+
+CombineTower
+1. UIManager의 Update()를 통해 CanCombine 리스너를 등록
+2. TowerManager의 CanCombine에서 TowerController를 가지고 있는 targetTower의
+   TowerID, TowerTier, TowerType, TowerVariant를 각각 계산
+3. Tier로 최고등급 타워는 합성할 수 없도록 함
+4. tower를 설치할 수 있는 Grid에 같은 Tier의 타워들을 모두 가져옴
+5. 해당 타워의 ID와 targetTower의 ID가 동일 = ExactMatch의 matchCount를 1 더함
+6. 해당 타워의 Type과 targetTower의 Type이 동일 = TypeMatch의 matchCount를 1 더함
+7. 해당 타워의 Variant와 targetTower의 Variant가 동일 = Variant의 matchCount를 1 더함
+8. 합성이 가능한 타입의 버튼의 불이 들어와서 버튼을 클릭하면 TowerManager의 ExecuteCombine() 메서드 호출
+9. GetMergeResultData()를 이용하여 합성 후보자들을 추려내고 후보자들을 합성결과에 담음
+10. CombineTower의 SpawnPosition = targetTower의 Position, 합성 타워와 재료타워를 Take()한 뒤 Destroy 하며 합성 진행
+11. 합성된 타워의 Data를 Init으로 Data를 주입

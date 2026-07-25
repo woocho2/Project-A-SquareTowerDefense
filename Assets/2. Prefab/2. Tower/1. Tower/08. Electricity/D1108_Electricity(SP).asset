@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 640ecd023fdaa5c4286e74e9188d0b13, type: 3}
+  m_Name: D1108_Electricity(SP)
+  m_EditorClassIdentifier: Assembly-CSharp::TowerDataSO
+  towerPrefab: {fileID: 1412987674060233608, guid: 6a8d8f8dff9bab74399d0512b62a3ea8, type: 3}
+  towerID: 1108
+  towerName: "(\uAD11\uC5ED) \uC804\uAE30 \uD0C0\uC6CC"
+  towerLevel: 1
+  damage: 0.71
+  range: 2.5
+  attackSpeed: 0.45
+  isCritical: 0
+  criticalRate: 0.005
+  criticalDamage: 4
+  duration: 0.5
+  abilityValue: 8.6957
+  attackType: 0
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  buffTarget: 0
+  debuffTarget: 5
+  trapLifeTime: 60
+  pathLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  maxPlacementAttempts: 10
