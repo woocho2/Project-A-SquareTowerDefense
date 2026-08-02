@@ -384,7 +384,7 @@ public class UIManager : MonoBehaviour
             TowerData data = m_selectedTower.GetTowerData();
 
             if (m_txtTowerInfoName != null) m_txtTowerInfoName.text = stats.towerName;
-            if (m_txtTowerInfoLV != null) m_txtTowerInfoLV.text = $"{stats.level:F1}";
+            if (m_txtTowerInfoLV != null) m_txtTowerInfoLV.text = $"{stats.level}";
             if (m_txtTowerInfoDamage != null)
             {
                 if (data != null && data.attackType == AttackType.Buff)
@@ -397,7 +397,7 @@ public class UIManager : MonoBehaviour
                     m_txtTowerInfoDamage.text = $"{stats.damage:F2}";
                 }
             }
-            if (m_txtTowerInfoRange != null) m_txtTowerInfoRange.text = $"{stats.range:F2}";
+            if (m_txtTowerInfoRange != null) m_txtTowerInfoRange.text = $"{stats.range*100}";
             if (m_txtTowerInfoSpeed != null) m_txtTowerInfoSpeed.text = $"{stats.attackSpeed:F2}";
             if (m_txtTowerInfoCriticalRate != null) m_txtTowerInfoCriticalRate.text = $"{(stats.criticalRate * 100):F2}%";
             if (m_txtTowerInfoCriticalDamage != null) m_txtTowerInfoCriticalDamage.text = $"{((2 + stats.criticalDamage) * 100):F0}%";

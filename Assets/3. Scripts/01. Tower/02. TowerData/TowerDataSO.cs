@@ -35,4 +35,10 @@ public class TowerData : ScriptableObject
     public float trapLifeTime = 60f;
     public LayerMask pathLayer;
     public int maxPlacementAttempts = 10;
+
+    [Header("투사체 능력치")]
+    public GameObject projectilePrefab;
+    public float projectileSpeed;
+    public float splashRadius;
+    public int hitEffectID;
 }

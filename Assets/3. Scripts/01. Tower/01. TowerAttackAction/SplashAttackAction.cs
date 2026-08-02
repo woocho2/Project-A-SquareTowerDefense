@@ -1,9 +1,8 @@
 using UnityEngine;
 
-
 public class SplashAttackAction : TowerAttackAction
 {
-    public SplashAttackAction(TowerData towerData, ProjectileData projectileData) : base(towerData, projectileData) { }
+    public SplashAttackAction(TowerData data) : base(data) { }
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats finalStats)
     {
@@ -17,18 +16,18 @@ public class SplashAttackAction : TowerAttackAction
 
     private void LaunchSplashProjectile(Transform firePoint, Vector3 targetPosition, TowerStats finalstats)
     {
-        if (m_projectileData == null || GlobalProjectileManager.Instance == null)
+        if (GlobalProjectileManager.Instance == null)
         {
-            Debug.LogError("[SplashAttackAction] 투사체 데이터 또는 글로벌 매니저가 누락되었습니다.");
+            Debug.LogError("[SplashAttackAction] 글로벌 매니저가 누락되었습니다.");
             return;
         }
 
         Vector3 direction = (targetPosition - firePoint.position).normalized;
 
         ProjectileHit2D projectile = GlobalProjectileManager.Instance.SpawnProjectile(
-            m_projectileData.projectileID,
+            m_data.towerID,
             firePoint.position,
-            m_projectileData.speed,
+            m_data.projectileSpeed,
             true
         );
 
@@ -45,18 +44,18 @@ public class SplashAttackAction : TowerAttackAction
 
             ProjectileStats finalStats = new ProjectileStats
             {
-                projectileID = m_projectileData.projectileID,
-                projectileName = m_projectileData.projectileName,
+                projectileID = m_data.towerID,
+                projectileName = m_data.towerName,
                 damage = finalDamage,
-                speed = m_projectileData.speed,
+                speed = m_data.projectileSpeed,
                 isCritical = isCrit,
                 criticalRate = finalstats.criticalRate,
                 criticalDamage = finalstats.criticalDamage,
-                SplashRadius = m_projectileData.splashradius,
+                SplashRadius = m_data.splashRadius,
                 duration = finalstats.duration,
                 abilityValue = finalstats.abilityValue,
                 debuffTarget = m_data.debuffTarget,
-                hitEffectID = m_projectileData.hiteffectID,
+                hitEffectID = m_data.hitEffectID,
                 dotDamage = finalstats.dotDamage,
                 dotDuration = finalstats.dotDuration,
                 chainDamage = finalstats.chainDamage,
@@ -66,7 +65,7 @@ public class SplashAttackAction : TowerAttackAction
             projectile.Init(finalStats);
             projectile.IsSplash = true;
             projectile.SetTargetPosition(targetPosition);
-            projectile.Launch(direction, m_projectileData.speed, true);
+            projectile.Launch(direction, m_data.projectileSpeed, true);
         }
     }
 }

@@ -132,6 +132,8 @@ public class TowerManager : MonoBehaviour
 
     private void Start()
     {
+        LoadTowerDataFromCSV();
+
         GlobalStats();
 
         m_synergies.Add(new KnightOfFireSynergy     (this, m_knightData, m_btnKnightOfFire, m_imgKnightOfFireSword, m_imgKnightOfFireShield, m_imgKnightOfFireFire));
@@ -153,6 +155,11 @@ public class TowerManager : MonoBehaviour
         m_allSynergyInfoButtons.Add(m_btnThor);
         m_allSynergyInfoButtons.Add(m_btnWeaponMaster);
         m_allSynergyInfoButtons.Add(m_btnGrandWizard);
+
+        if (GlobalProjectileManager.Instance != null)
+        {
+            GlobalProjectileManager.Instance.InitializeProjectileDatabase();
+        }
     }
 
     private void Update()
@@ -275,7 +282,7 @@ public class TowerManager : MonoBehaviour
 
         if (!m_towerTier.ContainsKey(1) || m_towerTier[1].Count == 0)
         {
-            Debug.LogError("생성 가능한 1단계 타워 데이터가 없습니다.");
+            Debug.LogError("생성 가능한 1단계 타워 데이터가 없습니다.");            
             return;
         }
 
@@ -1021,5 +1028,116 @@ public class TowerManager : MonoBehaviour
         {
             Debug.LogWarning("[치트] 맵에 타워를 소환할 빈 공간이 없습니다!");
         }
+    }
+
+    private void LoadTowerDataFromCSV()
+    {
+        // 1. Resources 폴더 최상단에 있는 CSV 파일을 텍스트 에셋으로 불러옵니다. (확장자 .csv는 생략)
+        TextAsset csvData = Resources.Load<TextAsset>("TowerDataCSV");
+
+        if (csvData == null)
+        {
+            Debug.LogError("Resources 폴더에서 TowerDataCSV 파일을 찾을 수 없습니다.");
+            return;
+        }
+
+        // 2. 줄바꿈 문자를 기준으로 전체 텍스트를 한 줄씩 쪼개어 배열로 만듭니다.
+        string[] lines = csvData.text.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+
+        List<TowerData> loadedTowers = new List<TowerData>();
+
+        // 3. 첫 줄(헤더)을 제외하고 인덱스 1부터 순회합니다.
+        for (int i = 1; i < lines.Length; i++)
+        {
+            string[] values = lines[i].Split(',');
+
+            // [수정] 투사체 데이터 3개(인덱스 15, 16, 17)가 추가되었으므로 최소 열 개수 조건을 18개로 늘립니다.
+            if (values.Length < 18) continue;
+
+            // 첫 번째 칸(towerID)이 비어있다면 의미 없는 잉여 줄로 간주하고 경고 없이 조용히 건너뜁니다.
+            if (string.IsNullOrWhiteSpace(values[0])) continue;
+
+            TowerData newData = ScriptableObject.CreateInstance<TowerData>();
+
+            // try-catch 블록을 추가하여 변환 실패 시 게임 중단을 막고 원인을 로그로 출력합니다.
+            try
+            {
+                // 타워 기본 스탯 파싱
+                newData.towerID = int.Parse(values[0].Trim());
+                newData.towerName = values[1].Replace("\"", "").Trim();
+                newData.towerLevel = int.Parse(values[2].Trim());
+                newData.damage = float.Parse(values[3].Trim());
+                newData.range = float.Parse(values[4].Trim());
+                newData.attackSpeed = float.Parse(values[5].Trim());
+                newData.isCritical = bool.Parse(values[6].Trim());
+                newData.criticalRate = float.Parse(values[7].Trim());
+                newData.criticalDamage = float.Parse(values[8].Trim());
+                newData.duration = float.Parse(values[9].Trim());
+                newData.abilityValue = float.Parse(values[10].Trim());
+
+                newData.attackType = ParseEnum<AttackType>(values[11]);
+
+                string layerName = values[12].Trim();
+                newData.targetLayer = !string.IsNullOrEmpty(layerName) ? LayerMask.GetMask(layerName) : 0;
+
+                newData.buffTarget = string.IsNullOrEmpty(values[13].Trim()) ? BuffTarget.None : ParseEnum<BuffTarget>(values[13]);
+                newData.debuffTarget = string.IsNullOrEmpty(values[14].Trim()) ? DebuffTarget.None : ParseEnum<DebuffTarget>(values[14]);
+
+                // [추가] 통합된 투사체 데이터 파싱 (엑셀의 16, 17, 18번째 열)
+                newData.projectileSpeed = float.Parse(values[15].Trim());
+                newData.splashRadius = float.Parse(values[16].Trim());
+                newData.hitEffectID = int.Parse(values[17].Trim());
+            }
+            catch (System.Exception)
+            {
+                // 엑셀의 몇 번째 줄에서 문제가 발생했는지 출력합니다.
+                Debug.LogWarning($"[CSV 데이터 오류] 엑셀의 {i + 1}번째 줄에 숫자로 변환할 수 없는 값(또는 빈 줄)이 있습니다. 이 줄을 건너뜁니다. 내용: {lines[i]}");
+                continue;
+            }
+
+            // 4. 타워 프리팹 로드 (타워 ID 자체를 이름으로 사용)
+            string prefabName = newData.towerID.ToString();
+            newData.towerPrefab = Resources.Load<GameObject>($"Towers/{prefabName}");
+
+            if (newData.towerPrefab == null)
+            {
+                Debug.LogWarning($"[로드 실패] ID {newData.towerID}의 타워 프리팹('{prefabName}.prefab')을 Resources/Towers 경로에서 찾을 수 없습니다.");
+                continue;
+            }
+
+            int sharedProjID = newData.towerID % 1000;
+
+            // 결과적으로 1101, 2101, 3101 모두 "101_Proj"라는 동일한 프리팹 이름을 찾게 됩니다.
+            string projPrefabName = sharedProjID.ToString();
+            newData.projectilePrefab = Resources.Load<GameObject>($"Projectiles/{projPrefabName}");
+
+            if (newData.projectilePrefab == null)
+            {
+                Debug.LogWarning($"[로드 실패] ID {newData.towerID}의 투사체 프리팹('{projPrefabName}.prefab')을 찾을 수 없습니다.");
+            }
+
+            // 6. 정상적으로 파싱된 데이터를 리스트에 추가합니다.
+            loadedTowers.Add(newData);
+        }
+
+        // 7. 완성된 동적 데이터를 타워 매니저의 메인 배열에 덮어씌웁니다.
+        m_towerData = loadedTowers.ToArray();
+        Debug.Log($"총 {m_towerData.Length}개의 타워 데이터를 CSV로부터 성공적으로 로드했습니다.");
+    }
+
+    // Enum 파싱용 헬퍼 함수
+    private T ParseEnum<T>(string value) where T : struct
+    {
+        string cleanValue = value.Trim();
+        if (Enum.TryParse(cleanValue, true, out T result))
+        {
+            return result;
+        }
+        return default;
+    }
+
+    public TowerData[] GetTowerDataArray()
+    {
+        return m_towerData;
     }
 }

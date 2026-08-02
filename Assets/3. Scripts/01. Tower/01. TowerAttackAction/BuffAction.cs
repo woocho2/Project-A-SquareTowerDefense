@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class BuffAction : TowerAttackAction
 {
-    public BuffAction(TowerData data, ProjectileData projectileData) : base(data, projectileData) { }
+    // base() 매개변수를 data 1개로 맞춥니다.
+    public BuffAction(TowerData data) : base(data) { }
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats currentStats)
     {

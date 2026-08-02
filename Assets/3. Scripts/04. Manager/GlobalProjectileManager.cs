@@ -1,16 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class GlobalProjectileManager : MonoBehaviour
 {
     public static GlobalProjectileManager Instance { get; private set; }
 
-    [Header("All Projectiles Setup")]
-    [Tooltip("게임 내에서 사용할 모든 투사체 데이터(ProjectileData SO)를 여기에 등록하세요.")]
-    [SerializeField] private List<ProjectileData> m_allProjectiles;
-
-    private Dictionary<int, ProjectileData> m_projectileDB = new Dictionary<int, ProjectileData>();
     private Dictionary<int, ProjectileObjectPool2D> m_poolDictionary = new Dictionary<int, ProjectileObjectPool2D>();
 
     [Header("Global Pool Settings")]
@@ -22,93 +16,67 @@ public class GlobalProjectileManager : MonoBehaviour
 
     private void Awake()
     {
-        if (m_allProjectiles == null || m_allProjectiles.Count == 0)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
+    }
 
+    private void Start()
+    {
+        // [핵심] TowerManager의 Start() (CSV 로드)가 끝난 직후에 풀을 생성해야 합니다.
+        // 스크립트 실행 순서(Script Execution Order)를 TowerManager보다 늦게 설정하거나 Start에서 호출하십시오.
         InitializeProjectileDatabase();
-
     }
 
-    private void OnDestroy()
+    public void InitializeProjectileDatabase()
     {
-        if (Instance == this)
+        // TowerManager에 로드된 모든 타워 데이터를 가져옵니다.
+        TowerData[] allTowers = TowerManager.Instance.GetTowerDataArray(); // TowerManager에 이 함수(배열 반환)를 하나 만들어주셔야 합니다.
+
+        if (allTowers == null || allTowers.Length == 0) return;
+
+        foreach (var tower in allTowers)
         {
-            Instance = null;
-        }
-    }
+            // 투사체가 없는 타워라면 건너뜁니다.
+            if (tower.projectilePrefab == null) continue;
 
-    private void InitializeProjectileDatabase()
-    {
-        if (m_allProjectiles == null || m_allProjectiles.Count == 0)
-        {
+            // 천의 자리를 자른 공유 ID 생성 (1101 -> 101)
+            int sharedKey = tower.towerID % 1000;
 
-            Debug.LogWarning("[GlobalProjectileManager] 등록된 투사체 에셋이 없습니다.");
-            return;
-        }
-
-        foreach (var proj in m_allProjectiles)
-        {
-            if (proj == null) continue;
-
-            int key = proj.projectileID;
-
-            if (!m_projectileDB.ContainsKey(key))
+            // 공유 ID로 이미 풀(Pool)이 만들어져 있다면 중복 생성하지 않고 넘어갑니다.
+            if (!m_poolDictionary.ContainsKey(sharedKey))
             {
-                m_projectileDB.Add(key, proj);
-            }
-            else
-            {
-                Debug.LogWarning($"[GlobalProjectileManager] 중복된 총알 키가 발견되었습니다: {key}");
-            }
-
-            if (!m_poolDictionary.ContainsKey(proj.projectileID))
-            {
-                GameObject poolObj = new GameObject($"Pool_{proj.projectileName}");
+                GameObject poolObj = new GameObject($"Pool_{sharedKey}_Proj");
                 poolObj.transform.SetParent(this.transform);
 
                 ProjectileObjectPool2D newPool = poolObj.AddComponent<ProjectileObjectPool2D>();
 
-                ProjectileHit2D hitPrefab = proj.prefab.GetComponent<ProjectileHit2D>();
+                ProjectileHit2D hitPrefab = tower.projectilePrefab.GetComponent<ProjectileHit2D>();
+
                 if (hitPrefab != null)
                 {
                     newPool.InitPool(hitPrefab, m_defaultInitialSize, m_defaultMaxSize, true, poolObj.transform);
-                    m_poolDictionary.Add(proj.projectileID, newPool);
-                }
-                else
-                {
-                    Debug.LogError($"[GlobalProjectileManager] {proj.projectileName}의 프리팹에 ProjectileHit2D 컴포넌트가 없습니다!");
+                    m_poolDictionary.Add(sharedKey, newPool);
                 }
             }
         }
-        Debug.Log($"[GlobalProjectileManager] 총 {m_projectileDB.Count}개의 투사체 데이터베이스 로드 완료.");
+        Debug.Log($"[GlobalProjectileManager] 총 {m_poolDictionary.Count}개의 투사체 오브젝트 풀 생성 완료.");
     }
 
-    public ProjectileData GetMatchingProjectile(int towerID)
+    public ProjectileHit2D SpawnProjectile(int towerID, Vector3 position, float speed, bool rotateProjectile)
     {
-        int searchKey = towerID;
+        // 발사 요청이 들어왔을 때도 천의 자리를 떼어내고 공유 풀에서 투사체를 꺼냅니다.
+        int sharedKey = towerID % 1000;
 
-        if (m_projectileDB.TryGetValue(searchKey, out ProjectileData matchedData))
-        {
-            return matchedData;
-        }
-
-        Debug.LogError($"[데이터 누락] {searchKey} 조합에 해당하는 총알 에셋이 매니저에 없습니다!");
-        return null;
-    }
-
-    public ProjectileHit2D SpawnProjectile(int projectileID, Vector3 position, float speed, bool rotateProjectile)
-    {
-        if (m_poolDictionary.TryGetValue(projectileID, out ProjectileObjectPool2D targetPool))
+        if (m_poolDictionary.TryGetValue(sharedKey, out ProjectileObjectPool2D targetPool))
         {
             return targetPool.Spawn(position, speed, rotateProjectile);
         }
 
-        Debug.LogError($"[GlobalProjectileManager] ID가 {projectileID}인 투사체 풀을 찾을 수 없습니다.");
+        Debug.LogError($"[GlobalProjectileManager] ID가 {sharedKey}인 투사체 풀을 찾을 수 없습니다.");
         return null;
     }
 }

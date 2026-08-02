@@ -1,14 +1,13 @@
 using System;
 using UnityEngine;
 
-
 [System.Serializable]
 public struct TowerStats
 {
     public int towerID;
     public string towerName;
     public int level;
-    public float damage;                        
+    public float damage;
     public float range;
     public float attackSpeed;
     public bool isCritical;
@@ -29,7 +28,8 @@ public class TowerController : MonoBehaviour
     [SerializeField] private GameObject m_range;
 
     private TowerAttackAction m_attackAction;
-    private ProjectileData m_projectileData;
+
+    //  [삭제] private ProjectileData m_projectileData; (더 이상 사용하지 않음)
 
     private float m_bonusDamage = 1f;
     private float m_bonusAttackSpeed = 1f;
@@ -49,8 +49,6 @@ public class TowerController : MonoBehaviour
     private Coroutine m_criticalDamageBuffRoutine;
     private Coroutine m_dotDamageBuffRoutine;
     private Coroutine m_chainBuffRoutine;
-
-
 
     private void Start()
     {
@@ -95,27 +93,25 @@ public class TowerController : MonoBehaviour
 
         GlobalStats();
 
-        if (GlobalProjectileManager.Instance != null)
-        {
-            m_projectileData = GlobalProjectileManager.Instance.GetMatchingProjectile(m_towerData.towerID);
-        }
+        //  [삭제] GlobalProjectileManager.Instance.GetMatchingProjectile(m_towerData.towerID); 호출부 제거
 
+        //  [수정] 이제 투사체 데이터가 별도로 없으므로, m_towerData 하나만 생성자에 넘겨줍니다.
         switch (m_towerData.attackType)
         {
             case AttackType.Target:
-                m_attackAction = new TargetAttackAction(m_towerData, m_projectileData);
+                m_attackAction = new TargetAttackAction(m_towerData);
                 break;
             case AttackType.Splash:
-                m_attackAction = new SplashAttackAction(m_towerData, m_projectileData);
+                m_attackAction = new SplashAttackAction(m_towerData);
                 break;
             case AttackType.Trap:
-                m_attackAction = new TrapAttackAction(m_towerData, m_projectileData);
+                m_attackAction = new TrapAttackAction(m_towerData);
                 break;
             case AttackType.Buff:
-                m_attackAction = new BuffAction(m_towerData, m_projectileData);
+                m_attackAction = new BuffAction(m_towerData);
                 break;
             case AttackType.Debuff:
-                m_attackAction = new DebuffAction(m_towerData, m_projectileData);
+                m_attackAction = new DebuffAction(m_towerData);
                 break;
         }
     }
@@ -135,7 +131,7 @@ public class TowerController : MonoBehaviour
         m_bonusRange = Mathf.Clamp(m_bonusRange, 1f, 10000f);
         m_bonusCriticalRate = Mathf.Clamp(m_bonusCriticalRate, 1f, 10000f);
         m_bonusCriticalDamage = Mathf.Clamp(m_bonusCriticalDamage, 1f, 10000f);
-        
+
         TowerStats finalStats = m_towerStats;
         finalStats.damage *= m_bonusDamage;
         finalStats.attackSpeed *= m_bonusAttackSpeed;
@@ -229,7 +225,7 @@ public class TowerController : MonoBehaviour
                 if (m_dotDamageBuffRoutine != null) StopCoroutine(m_dotDamageBuffRoutine);
                 m_dotDamage = abilityValue * 0.2f;
                 m_dotDuration = dotDuration;
-                m_dotDamageBuffRoutine = StartCoroutine(RemoveBuffRoutine(buffTarget,duration));
+                m_dotDamageBuffRoutine = StartCoroutine(RemoveBuffRoutine(buffTarget, duration));
                 break;
             case BuffTarget.Chain:
                 if (m_chainBuffRoutine != null) StopCoroutine(m_chainBuffRoutine);
@@ -244,7 +240,7 @@ public class TowerController : MonoBehaviour
     {
         yield return new WaitForSeconds(duration);
 
-        switch (buffTarget) 
+        switch (buffTarget)
         {
             case BuffTarget.Damage:
                 m_bonusDamage = 1f; m_damageBuffRoutine = null;
@@ -270,4 +266,3 @@ public class TowerController : MonoBehaviour
         }
     }
 }
-

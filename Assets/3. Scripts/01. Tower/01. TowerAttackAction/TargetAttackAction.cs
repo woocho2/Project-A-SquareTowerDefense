@@ -1,9 +1,8 @@
 using UnityEngine;
 
-
 public class TargetAttackAction : TowerAttackAction
 {
-    public TargetAttackAction(TowerData Data, ProjectileData projectileData) : base(Data, projectileData) { }
+    public TargetAttackAction(TowerData data) : base(data) { }
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats currentStats)
     {
@@ -16,14 +15,14 @@ public class TargetAttackAction : TowerAttackAction
     }
     private void LaunchProjectile(Transform firePoint, Transform targetTransform, TowerStats finalstats)
     {
-        if (m_projectileData == null || GlobalProjectileManager.Instance == null) return;
+        if (GlobalProjectileManager.Instance == null) return;
 
         Vector3 direction = (targetTransform.position - firePoint.position).normalized;
 
         ProjectileHit2D projectile = GlobalProjectileManager.Instance.SpawnProjectile(
-            m_projectileData.projectileID,
+            m_data.towerID,
             firePoint.position,
-            m_projectileData.speed,
+            m_data.projectileSpeed,
             true
             );
 
@@ -40,10 +39,10 @@ public class TargetAttackAction : TowerAttackAction
 
             ProjectileStats finalStats = new ProjectileStats
             {
-                projectileID = m_projectileData.projectileID,
-                projectileName = m_projectileData.projectileName,
+                projectileID = m_data.towerID,
+                projectileName = m_data.towerName,
                 damage = finalDamage,
-                speed = m_projectileData.speed,
+                speed = m_data.projectileSpeed,
                 isCritical = isCrit,
                 criticalRate = finalstats.criticalRate,
                 criticalDamage = finalstats.criticalDamage,
@@ -51,7 +50,7 @@ public class TargetAttackAction : TowerAttackAction
                 duration = finalstats.duration,
                 abilityValue = finalstats.abilityValue,
                 debuffTarget = m_data.debuffTarget,
-                hitEffectID = m_projectileData.hiteffectID,
+                hitEffectID = m_data.hitEffectID,
                 dotDamage = finalstats.dotDamage,
                 dotDuration = finalstats.dotDuration,
                 chainDamage = finalstats.chainDamage,
@@ -61,21 +60,19 @@ public class TargetAttackAction : TowerAttackAction
             projectile.Init(finalStats);
             projectile.IsSplash = false;
             projectile.SetTargetPosition(targetTransform.position);
-            projectile.Launch(direction, m_projectileData.speed, true, -1f, targetTransform);
+            projectile.Launch(direction, m_data.projectileSpeed, true, -1f, targetTransform);
 
             if (TowerManager.Instance != null && TowerManager.Instance.IsAttributionArrowActive)
             {
                 if (UnityEngine.Random.Range(0f, 100f) <= 30f)
                 {
-
                     Vector3 extraFirePoint = firePoint.position + (Vector3.up * 0.3f);
-
                     int attributionArrowID = 6108;
 
                     ProjectileHit2D extraProjectile = GlobalProjectileManager.Instance.SpawnProjectile(
                         attributionArrowID,
                         extraFirePoint,
-                        m_projectileData.speed,
+                        m_data.projectileSpeed,
                         true
                     );
 
@@ -91,7 +88,7 @@ public class TargetAttackAction : TowerAttackAction
                         extraProjectile.Init(attributionStats);
                         extraProjectile.IsSplash = false;
                         extraProjectile.SetTargetPosition(targetTransform.position);
-                        extraProjectile.Launch(direction, m_projectileData.speed, true, -1f, targetTransform);
+                        extraProjectile.Launch(direction, m_data.projectileSpeed, true, -1f, targetTransform);
                     }
                 }
             }
