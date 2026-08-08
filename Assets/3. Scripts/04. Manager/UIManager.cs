@@ -507,9 +507,16 @@ public class UIManager : MonoBehaviour
 
             Vector3 towerWorldPos = tower.transform.position;
 
-            m_btnCombineColor.transform.position = towerWorldPos + m_combineColorOffset;
-            m_btnCombineEmblem.transform.position = towerWorldPos + m_combineEmblemOffset;
-            m_btnCombineExact.transform.position = towerWorldPos + m_combineExactOffset;
+            Camera mainCam = Camera.main;
+
+            if (mainCam != null)
+            {
+                Vector3 screenPos = mainCam.WorldToScreenPoint(towerWorldPos);
+
+                m_btnCombineColor.transform.position = screenPos + m_combineColorOffset;
+                m_btnCombineEmblem.transform.position = screenPos + m_combineEmblemOffset;
+                m_btnCombineExact.transform.position = screenPos + m_combineExactOffset;
+            }
         }
     }
 
