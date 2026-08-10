@@ -4401,7 +4401,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 0
-      m_TileSpriteIndex: 2
+      m_TileSpriteIndex: 8
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -4531,7 +4531,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 0
-      m_TileSpriteIndex: 3
+      m_TileSpriteIndex: 5
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -4816,20 +4816,20 @@ Tilemap:
     m_Data: {fileID: 0}
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 1
-    m_Data: {fileID: 2185965317185843862, guid: e9e4cf523654b1a4a8573e09c44d19af, type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: 5238944057116862546, guid: f2dcb57ba79b02143a84dcab2201afb4, type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: -6767218292243770772, guid: e9fa99942adfcbc4aaa30e173ee0171b, type: 3}
   - m_RefCount: 0
     m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: -6767218292243770772, guid: e9fa99942adfcbc4aaa30e173ee0171b, type: 3}
+  - m_RefCount: 1
+    m_Data: {fileID: 5238944057116862546, guid: f2dcb57ba79b02143a84dcab2201afb4, type: 3}
   - m_RefCount: 13
     m_Data: {fileID: -8360685441736987214, guid: 119efbde52e90764fb4e0361acd957b4, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: -7285540193618711656, guid: f05c516232d4f9d438e6070f3cc4466f, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 2185965317185843862, guid: e9e4cf523654b1a4a8573e09c44d19af, type: 3}
   - m_RefCount: 26
     m_Data: {fileID: 4927120389033387141, guid: 19b4bf6159b76d64e9e1d6b9f8c616d8, type: 3}
   m_TileMatrixArray:
@@ -6836,7 +6836,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2519520974583011991, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2522829961726734214, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_RaycastTarget
