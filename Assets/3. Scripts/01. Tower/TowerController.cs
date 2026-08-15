@@ -4,21 +4,16 @@ using UnityEngine;
 [System.Serializable]
 public struct TowerStats
 {
-    public int towerID;
-    public string towerName;
-    public int level;
-    public float damage;
-    public float range;
-    public float attackSpeed;
-    public bool isCritical;
-    public float criticalRate;
-    public float criticalDamage;
-    public float duration;
-    public float abilityValue;
-    public float dotDamage;
-    public float dotDuration;
-    public float chainCount;
-    public float chainDamage;
+    public int ID;
+    public string Name;
+    public int Level;
+    public float AttackPower;
+    public float Range;
+    public float AttackSpeed;
+    public float CriticalRate;
+    public float CriticalDamage;
+    public float Duration;
+    public float AbilityValue;
 }
 
 public class TowerController : MonoBehaviour
@@ -28,23 +23,19 @@ public class TowerController : MonoBehaviour
     [SerializeField] private GameObject m_range;
 
     private TowerAttackAction m_attackAction;
-
-    //  [삭제] private ProjectileData m_projectileData; (더 이상 사용하지 않음)
-
-    private float m_bonusDamage = 1f;
-    private float m_bonusAttackSpeed = 1f;
-    private float m_bonusRange = 1f;
-    private float m_bonusCriticalRate = 1f;
-    private float m_bonusCriticalDamage = 1f;
-    private float m_dotDamage = 0f;
-    private float m_dotDuration = 0f;
-    private float m_chainCount = 0f;
-    private float m_chainDamage = 0f;
     private float m_attackCooldown;
 
-    private Coroutine m_damageBuffRoutine;
-    private Coroutine m_attackSpeedBuffRoutine;
+    private float m_bonusAttackPower = 1f;
+    private float m_bonusRange = 1f;
+    private float m_bonusAttackSpeed = 1f;
+    private float m_bonusCriticalRate = 1f;
+    private float m_bonusCriticalDamage = 1f;
+    private float m_bonusDuration = 0f;
+    private float m_bonusAbilityValue = 1f;
+
+    private Coroutine m_attackPowerBuffRoutine;
     private Coroutine m_rangeBuffRoutine;
+    private Coroutine m_attackSpeedBuffRoutine;
     private Coroutine m_criticalRateBuffRoutine;
     private Coroutine m_criticalDamageBuffRoutine;
     private Coroutine m_dotDamageBuffRoutine;
@@ -54,7 +45,7 @@ public class TowerController : MonoBehaviour
     {
         if (TowerManager.Instance != null)
         {
-            if (string.IsNullOrEmpty(m_towerStats.towerName) || m_towerStats.towerID == 0)
+            if (string.IsNullOrEmpty(m_towerStats.Name) || m_towerStats.ID == 0)
             {
                 GlobalStats();
             }
@@ -93,19 +84,14 @@ public class TowerController : MonoBehaviour
 
         GlobalStats();
 
-        //  [삭제] GlobalProjectileManager.Instance.GetMatchingProjectile(m_towerData.towerID); 호출부 제거
 
-        //  [수정] 이제 투사체 데이터가 별도로 없으므로, m_towerData 하나만 생성자에 넘겨줍니다.
         switch (m_towerData.attackType)
         {
-            case AttackType.Target:
-                m_attackAction = new TargetAttackAction(m_towerData);
-                break;
             case AttackType.Splash:
                 m_attackAction = new SplashAttackAction(m_towerData);
                 break;
-            case AttackType.Trap:
-                m_attackAction = new TrapAttackAction(m_towerData);
+            case AttackType.Target:
+                m_attackAction = new TargetAttackAction(m_towerData);
                 break;
             case AttackType.Buff:
                 m_attackAction = new BuffAction(m_towerData);
@@ -126,25 +112,23 @@ public class TowerController : MonoBehaviour
 
     public TowerStats GetFinalStats()
     {
-        m_bonusDamage = Mathf.Clamp(m_bonusDamage, 1f, 10000f);
+        m_bonusAttackPower = Mathf.Clamp(m_bonusAttackPower, 1f, 10000f);
         m_bonusAttackSpeed = Mathf.Clamp(m_bonusAttackSpeed, 1f, 10000f);
         m_bonusRange = Mathf.Clamp(m_bonusRange, 1f, 10000f);
         m_bonusCriticalRate = Mathf.Clamp(m_bonusCriticalRate, 1f, 10000f);
         m_bonusCriticalDamage = Mathf.Clamp(m_bonusCriticalDamage, 1f, 10000f);
 
         TowerStats finalStats = m_towerStats;
-        finalStats.damage *= m_bonusDamage;
-        finalStats.attackSpeed *= m_bonusAttackSpeed;
-        finalStats.range *= m_bonusRange;
-        finalStats.criticalRate *= m_bonusCriticalRate;
-        finalStats.criticalDamage *= m_bonusCriticalDamage;
-        finalStats.dotDamage = m_dotDamage;
-        finalStats.dotDuration = m_dotDuration;
-        finalStats.chainDamage = m_chainDamage;
-        finalStats.chainCount = m_chainCount;
+        finalStats.AttackPower *= m_bonusAttackPower;
+        finalStats.AttackSpeed *= m_bonusAttackSpeed;
+        finalStats.Range *= m_bonusRange;
+        finalStats.CriticalRate *= m_bonusCriticalRate;
+        finalStats.CriticalDamage *= m_bonusCriticalDamage;
+        finalStats.Duration += m_bonusDuration;
+        finalStats.AbilityValue *= m_bonusAbilityValue;
 
-        if (finalStats.range <= 1f) finalStats.range = 1f;
-        if (finalStats.criticalRate >= 1f) finalStats.criticalRate = 1f;
+        if (finalStats.Range <= 1f) finalStats.Range = 1f;
+        if (finalStats.CriticalRate >= 1f) finalStats.CriticalRate = 1f;
 
         return finalStats;
     }
@@ -166,7 +150,7 @@ public class TowerController : MonoBehaviour
 
             if (didAction)
             {
-                m_attackCooldown = FinalStats.attackSpeed > 0 ? 1f / FinalStats.attackSpeed : 1f;
+                m_attackCooldown = FinalStats.AttackSpeed > 0 ? 1f / FinalStats.AttackSpeed : 1f;
             }
         }
     }
@@ -184,7 +168,7 @@ public class TowerController : MonoBehaviour
 
             if (show)
             {
-                float currentRange = GetFinalStats().range;
+                float currentRange = GetFinalStats().Range;
 
                 float scaleValue = (currentRange * 2f) / transform.localScale.x;
                 m_range.transform.localScale = new Vector3(scaleValue, scaleValue, 1f);
@@ -196,10 +180,10 @@ public class TowerController : MonoBehaviour
     {
         switch (buffTarget)
         {
-            case BuffTarget.Damage:
-                if (m_damageBuffRoutine != null) StopCoroutine(m_damageBuffRoutine);
-                m_bonusDamage = abilityValue;
-                m_damageBuffRoutine = StartCoroutine(RemoveBuffRoutine(buffTarget, duration));
+            case BuffTarget.AttackPower:
+                if (m_attackPowerBuffRoutine != null) StopCoroutine(m_attackPowerBuffRoutine);
+                m_bonusAttackPower = abilityValue;
+                m_attackPowerBuffRoutine = StartCoroutine(RemoveBuffRoutine(buffTarget, duration));
                 break;
             case BuffTarget.AttackSpeed:
                 if (m_attackSpeedBuffRoutine != null) StopCoroutine(m_attackSpeedBuffRoutine);
@@ -221,18 +205,6 @@ public class TowerController : MonoBehaviour
                 m_bonusCriticalDamage = abilityValue;
                 m_criticalDamageBuffRoutine = StartCoroutine(RemoveBuffRoutine(buffTarget, duration));
                 break;
-            case BuffTarget.DotDamage:
-                if (m_dotDamageBuffRoutine != null) StopCoroutine(m_dotDamageBuffRoutine);
-                m_dotDamage = abilityValue * 0.2f;
-                m_dotDuration = dotDuration;
-                m_dotDamageBuffRoutine = StartCoroutine(RemoveBuffRoutine(buffTarget, duration));
-                break;
-            case BuffTarget.Chain:
-                if (m_chainBuffRoutine != null) StopCoroutine(m_chainBuffRoutine);
-                m_chainCount = damageValue;
-                m_chainDamage = abilityValue * 0.1f;
-                m_chainBuffRoutine = StartCoroutine(RemoveBuffRoutine(buffTarget, duration));
-                break;
         }
     }
 
@@ -242,8 +214,8 @@ public class TowerController : MonoBehaviour
 
         switch (buffTarget)
         {
-            case BuffTarget.Damage:
-                m_bonusDamage = 1f; m_damageBuffRoutine = null;
+            case BuffTarget.AttackPower:
+                m_bonusAttackPower = 1f; m_attackPowerBuffRoutine = null;
                 break;
             case BuffTarget.AttackSpeed:
                 m_bonusAttackSpeed = 1f; m_attackSpeedBuffRoutine = null;
@@ -256,12 +228,6 @@ public class TowerController : MonoBehaviour
                 break;
             case BuffTarget.CriticalDamage:
                 m_bonusCriticalDamage = 1f; m_criticalDamageBuffRoutine = null;
-                break;
-            case BuffTarget.DotDamage:
-                m_dotDamage = 1f; m_dotDuration = 0f; m_dotDamageBuffRoutine = null;
-                break;
-            case BuffTarget.Chain:
-                m_chainDamage = 0f; m_chainCount = 0f; m_chainBuffRoutine = null;
                 break;
         }
     }

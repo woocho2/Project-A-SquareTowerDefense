@@ -55,7 +55,7 @@ public class TowerCSVToSOImporter
 
                         // 문자열을 실수(float)로 변환하여 SO 변수에 대입합니다.
                         so.towerLevel = int.Parse(values[2].Trim());
-                        so.damage = float.Parse(values[3].Trim());
+                        so.attackPower = float.Parse(values[3].Trim());
                         so.range = float.Parse(values[4].Trim());
                         so.attackSpeed = float.Parse(values[5].Trim());
                         so.isCritical = bool.Parse(values[6].Trim());

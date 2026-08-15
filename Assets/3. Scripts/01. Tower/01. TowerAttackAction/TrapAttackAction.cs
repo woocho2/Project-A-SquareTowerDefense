@@ -53,7 +53,7 @@ public class TrapAttackAction : TowerAttackAction
                 projectileID = m_data.towerID,
                 projectileName = m_data.towerName,
                 speed = trapSpeed,
-                damage = m_data.damage,
+                damage = m_data.attackPower,
                 criticalRate = m_data.criticalRate,
                 criticalDamage = m_data.criticalDamage,
                 SplashRadius = m_data.splashRadius,

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
@@ -199,16 +198,15 @@ public class TowerManager : MonoBehaviour
         {
             TowerStats initStats = new TowerStats
             {
-                towerName      = data.towerName,
-                level          = 1,
-                range          = data.range,
-                attackSpeed    = data.attackSpeed,
-                damage         = data.damage,
-                isCritical     = data.isCritical,
-                criticalRate   = data.criticalRate,
-                criticalDamage = data.criticalDamage,
-                duration       = data.duration,
-                abilityValue   = data.abilityValue
+                Name      = data.towerName,
+                Level          = 1,
+                AttackPower = data.attackPower,
+                Range          = data.range,
+                AttackSpeed    = data.attackSpeed,
+                CriticalRate   = data.criticalRate,
+                CriticalDamage = data.criticalDamage,
+                Duration       = data.duration,
+                AbilityValue   = data.abilityValue
             };
 
             m_globalTowerStats[data.towerID] = initStats;
@@ -238,16 +236,15 @@ public class TowerManager : MonoBehaviour
             {
                 TowerStats synergyStats = new TowerStats
                 {
-                    towerName      = sData.towerName,
-                    level          = 1,
-                    range          = sData.range,
-                    attackSpeed    = sData.attackSpeed,
-                    damage         = sData.damage,
-                    isCritical     = sData.isCritical,
-                    criticalRate   = sData.criticalRate,
-                    criticalDamage = sData.criticalDamage,
-                    duration       = sData.duration,
-                    abilityValue   = sData.abilityValue
+                    Name      = sData.towerName,
+                    Level          = 1,
+                    AttackPower = sData.attackPower,
+                    Range = sData.range,
+                    AttackSpeed    = sData.attackSpeed,
+                    CriticalRate   = sData.criticalRate,
+                    CriticalDamage = sData.criticalDamage,
+                    Duration       = sData.duration,
+                    AbilityValue   = sData.abilityValue
                 };
 
                 m_globalTowerStats[sData.towerID] = synergyStats;
@@ -413,13 +410,13 @@ public class TowerManager : MonoBehaviour
 
         TowerStats currentStats = m_globalTowerStats[towerID];
 
-        if (currentStats.level >= 5)
+        if (currentStats.Level >= 5)
         {
-            Debug.Log($"최대레벨에 도달하였습니다. 현재 레벨수치 {currentStats.level}");
+            Debug.Log($"최대레벨에 도달하였습니다. 현재 레벨수치 {currentStats.Level}");
             return;
         }
 
-        float currentUpgradeGemCost = Mathf.Pow(2 , currentStats.level);
+        float currentUpgradeGemCost = Mathf.Pow(2 , currentStats.Level);
 
         if (!CurrencyManager.Instance.HasEnoughGem(currentUpgradeGemCost))
         {
@@ -438,15 +435,15 @@ public class TowerManager : MonoBehaviour
 
             TowerStats UpgradeStats = m_globalTowerStats[key];
 
-            UpgradeStats.level++;
+            UpgradeStats.Level++;
 
-            float multiplier = 1f + (Mathf.Pow(2f, UpgradeStats.level - 2) / 10f);
+            float multiplier = 1f + (Mathf.Pow(2f, UpgradeStats.Level - 2) / 10f);
 
-            if (UpgradeStats.level <= 5)
+            if (UpgradeStats.Level <= 5)
             {
-                UpgradeStats.damage      = towerData.damage * multiplier;
-                UpgradeStats.range       = towerData.range * multiplier;
-                UpgradeStats.attackSpeed = towerData.attackSpeed * multiplier;
+                UpgradeStats.AttackPower      = towerData.AttackPower * multiplier;
+                UpgradeStats.Range       = towerData.range * multiplier;
+                UpgradeStats.AttackSpeed = towerData.attackSpeed * multiplier;
 
                 m_globalTowerStats[key] = UpgradeStats;
                 OnTowerTypeUpgrade?.Invoke(key);
@@ -1066,7 +1063,7 @@ public class TowerManager : MonoBehaviour
                 newData.towerID = int.Parse(values[0].Trim());
                 newData.towerName = values[1].Replace("\"", "").Trim();
                 newData.towerLevel = int.Parse(values[2].Trim());
-                newData.damage = float.Parse(values[3].Trim());
+                newData.attackPower = float.Parse(values[3].Trim());
                 newData.range = float.Parse(values[4].Trim());
                 newData.attackSpeed = float.Parse(values[5].Trim());
                 newData.isCritical = bool.Parse(values[6].Trim());

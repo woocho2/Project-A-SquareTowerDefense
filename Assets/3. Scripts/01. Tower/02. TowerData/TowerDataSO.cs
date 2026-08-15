@@ -2,7 +2,7 @@ using UnityEngine;
 
 // 행동 부품 및 버프 관련 열거형
 public enum AttackType { Splash, Target, Trap, Buff, Debuff }
-public enum BuffTarget { None, Damage, AttackSpeed, Range, CriticalRate, CriticalDamage, DotDamage, Chain }
+public enum BuffTarget { None, AttackPower, AttackSpeed, Range, CriticalRate, CriticalDamage, DotDamage, Chain }
 public enum DebuffTarget { None, Slow, Defense, Stun, DotDamage, Weak, Push}
 
 
@@ -14,14 +14,14 @@ public class TowerData : ScriptableObject
     public int towerID;
     public string towerName;
     public int towerLevel;
-    public float damage;
+    public float attackPower;
     public float range;
     public float attackSpeed;
     public bool isCritical;
     public float criticalRate;
     public float criticalDamage;
-    public float duration;
     public float abilityValue;
+    public float duration;
 
     [Header("자동 조립 설정")]
     public AttackType attackType;
