@@ -7,7 +7,8 @@ public struct ProjectileStats
 {
     public int projectileID;
     public string projectileName;
-    public GameObject prefab;
+    public GameObject towerPrefab;
+    public GameObject projectilePrefab;
     public float damage;
     public float speed;
     public bool isCritical;

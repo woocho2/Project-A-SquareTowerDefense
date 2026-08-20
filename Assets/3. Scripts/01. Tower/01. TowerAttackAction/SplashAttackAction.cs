@@ -2,11 +2,12 @@ using UnityEngine;
 
 public class SplashAttackAction : TowerAttackAction
 {
+    // 기본 생성자: 상위 클래스(TowerAttackAction)에 TowerData 전달
     public SplashAttackAction(TowerData data) : base(data) { }
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats finalStats)
     {
-        if (TryFindClosestTarget(towerTransform.position, finalStats.range, m_data.targetLayer, out EnemyController targetEnemy))
+        if (TryFindTarget(towerTransform.position, finalStats.Range, m_data.targetLayer, out EnemyController targetEnemy))
         {
             LaunchSplashProjectile(towerTransform, targetEnemy.transform.position, finalStats);
             return true;
@@ -14,16 +15,19 @@ public class SplashAttackAction : TowerAttackAction
         return false;
     }
 
-    private void LaunchSplashProjectile(Transform firePoint, Vector3 targetPosition, TowerStats finalstats)
+    private void LaunchSplashProjectile(Transform firePoint, Vector3 targetPosition, TowerStats finalStats)
     {
+        // 전역 투사체 매니저 유효성 검사
         if (GlobalProjectileManager.Instance == null)
         {
             Debug.LogError("[SplashAttackAction] 글로벌 매니저가 누락되었습니다.");
             return;
         }
 
+        // 목표 지점을 향한 발사 방향 벡터 계산
         Vector3 direction = (targetPosition - firePoint.position).normalized;
 
+        // 투사체 풀에서 투사체 인스턴스 생성/소환
         ProjectileHit2D projectile = GlobalProjectileManager.Instance.SpawnProjectile(
             m_data.towerID,
             firePoint.position,
@@ -33,36 +37,36 @@ public class SplashAttackAction : TowerAttackAction
 
         if (projectile != null)
         {
-            bool isCrit = UnityEngine.Random.Range(0f, 100f) <= (finalstats.criticalRate * 100);
-            float finalDamage = finalstats.damage;
+            // 치명타 확률 계산 (TowerStats의 CriticalRate 필드 적용)
+            bool isCrit = UnityEngine.Random.Range(0f, 100f) <= (finalStats.CriticalRate * 100f);
+            float calculatedDamage = finalStats.AttackPower;
 
+            // 치명타 발생 시 데미지 증폭 (TowerStats의 CriticalDamage 필드 적용)
             if (isCrit)
             {
-                float critMultiplier = 2.0f + (finalstats.criticalDamage);
-                finalDamage = finalstats.damage * critMultiplier;
+                float critMultiplier = 2.0f + finalStats.CriticalDamage;
+                calculatedDamage = finalStats.AttackPower * critMultiplier;
             }
 
-            ProjectileStats finalStats = new ProjectileStats
+            // ProjectileStats 구조체 생성 및 네이밍 규칙에 맞춘 필드 할당
+            ProjectileStats projectileStats = new ProjectileStats
             {
                 projectileID = m_data.towerID,
                 projectileName = m_data.towerName,
-                damage = finalDamage,
+                damage = calculatedDamage,
                 speed = m_data.projectileSpeed,
                 isCritical = isCrit,
-                criticalRate = finalstats.criticalRate,
-                criticalDamage = finalstats.criticalDamage,
+                criticalRate = finalStats.CriticalRate,
+                criticalDamage = finalStats.CriticalDamage,
                 SplashRadius = m_data.splashRadius,
-                duration = finalstats.duration,
-                abilityValue = finalstats.abilityValue,
+                duration = finalStats.Duration,
+                abilityValue = finalStats.AbilityValue,
                 debuffTarget = m_data.debuffTarget,
-                hitEffectID = m_data.hitEffectID,
-                dotDamage = finalstats.dotDamage,
-                dotDuration = finalstats.dotDuration,
-                chainDamage = finalstats.chainDamage,
-                chainCount = finalstats.chainCount
+                hitEffectID = m_data.hitEffectID
             };
 
-            projectile.Init(finalStats);
+            // 투사체 초기화 및 발사 실행
+            projectile.Init(projectileStats);
             projectile.IsSplash = true;
             projectile.SetTargetPosition(targetPosition);
             projectile.Launch(direction, m_data.projectileSpeed, true);

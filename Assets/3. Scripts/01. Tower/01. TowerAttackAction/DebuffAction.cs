@@ -7,7 +7,7 @@ public class DebuffAction : TowerAttackAction
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats currentStats)
     {
-        Collider2D[] targets = Physics2D.OverlapCircleAll(towerTransform.position, currentStats.range, m_data.targetLayer);
+        Collider2D[] targets = Physics2D.OverlapCircleAll(towerTransform.position, currentStats.Range, m_data.targetLayer);
 
         if (targets.Length == 0) return false;
 
@@ -17,20 +17,17 @@ public class DebuffAction : TowerAttackAction
         switch (m_data.debuffTarget)
         {
             case DebuffTarget.Slow:
-                debuffValue = currentStats.abilityValue;
-                break;
-            case DebuffTarget.Defense:
-                debuffValue = currentStats.abilityValue;
-                break;
+                debuffValue = currentStats.AbilityValue;
+                break; 
             case DebuffTarget.Stun:
                 debuffValue = 0f;
                 break;
             case DebuffTarget.DotDamage:
-                debuffValue = currentStats.abilityValue * 0.05f;
+                debuffValue = currentStats.AbilityValue * 0.05f;
                 Debug.Log(debuffValue);
                 break;
             case DebuffTarget.Weak:
-                debuffValue = currentStats.abilityValue * 0.1f;
+                debuffValue = currentStats.AbilityValue * 0.1f;
                 Debug.Log(debuffValue);
                 break;
         }

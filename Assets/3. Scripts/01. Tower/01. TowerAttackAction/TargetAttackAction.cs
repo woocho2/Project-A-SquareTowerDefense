@@ -2,66 +2,73 @@ using UnityEngine;
 
 public class TargetAttackAction : TowerAttackAction
 {
+    // 기본 생성자: 상위 클래스(TowerAttackAction)에 TowerData 전달
     public TargetAttackAction(TowerData data) : base(data) { }
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats currentStats)
     {
-        if (TryFindClosestTarget(towerTransform.position, currentStats.range, m_data.targetLayer, out EnemyController targetEnemy))
+        // currentStats.Range 네이밍 규칙 적용
+        if (TryFindTarget(towerTransform.position, currentStats.Range, m_data.targetLayer, out EnemyController targetEnemy))
         {
             LaunchProjectile(towerTransform, targetEnemy.transform, currentStats);
             return true;
         }
         return false;
     }
-    private void LaunchProjectile(Transform firePoint, Transform targetTransform, TowerStats finalstats)
+
+    private void LaunchProjectile(Transform firePoint, Transform targetTransform, TowerStats finalStats)
     {
+        // 전역 투사체 매니저 유효성 검사
         if (GlobalProjectileManager.Instance == null) return;
 
+        // 목표 지점을 향한 발사 방향 벡터 계산
         Vector3 direction = (targetTransform.position - firePoint.position).normalized;
 
+        // 기본 투사체 인스턴스 생성
         ProjectileHit2D projectile = GlobalProjectileManager.Instance.SpawnProjectile(
             m_data.towerID,
             firePoint.position,
             m_data.projectileSpeed,
             true
-            );
+        );
 
         if (projectile != null)
         {
-            bool isCrit = UnityEngine.Random.Range(0f, 100f) <= (m_data.criticalRate * 100);
-            float finalDamage = finalstats.damage;
+            // 치명타 확률 계산 (TowerStats의 CriticalRate 필드 적용)
+            bool isCrit = UnityEngine.Random.Range(0f, 100f) <= (finalStats.CriticalRate * 100f);
+            float calculatedDamage = finalStats.AttackPower;
 
+            // 치명타 발생 시 데미지 증폭 (TowerStats의 CriticalDamage 필드 적용)
             if (isCrit)
             {
-                float critMultiplier = 2.0f + (m_data.criticalDamage);
-                finalDamage = finalstats.damage * critMultiplier;
+                float critMultiplier = 2.0f + finalStats.CriticalDamage;
+                calculatedDamage = finalStats.AttackPower * critMultiplier;
             }
 
-            ProjectileStats finalStats = new ProjectileStats
+            // ProjectileStats 구조체 생성 및 네이밍 규칙에 맞춘 필드 할당
+            ProjectileStats projectileStats = new ProjectileStats
             {
                 projectileID = m_data.towerID,
                 projectileName = m_data.towerName,
-                damage = finalDamage,
+                damage = calculatedDamage,
                 speed = m_data.projectileSpeed,
                 isCritical = isCrit,
-                criticalRate = finalstats.criticalRate,
-                criticalDamage = finalstats.criticalDamage,
+                criticalRate = finalStats.CriticalRate,
+                criticalDamage = finalStats.CriticalDamage,
                 SplashRadius = 0f,
-                duration = finalstats.duration,
-                abilityValue = finalstats.abilityValue,
+                duration = finalStats.Duration,
+                abilityValue = finalStats.AbilityValue,
                 debuffTarget = m_data.debuffTarget,
-                hitEffectID = m_data.hitEffectID,
-                dotDamage = finalstats.dotDamage,
-                dotDuration = finalstats.dotDuration,
-                chainDamage = finalstats.chainDamage,
-                chainCount = finalstats.chainCount
+                hitEffectID = m_data.hitEffectID
             };
 
-            projectile.Init(finalStats);
+            // 투사체 초기화 및 타겟 추적 발사
+            projectile.Init(projectileStats);
             projectile.IsSplash = false;
             projectile.SetTargetPosition(targetTransform.position);
             projectile.Launch(direction, m_data.projectileSpeed, true, -1f, targetTransform);
 
+            // 시너지 효과: 귀속 화살 발사 로직
             if (TowerManager.Instance != null && TowerManager.Instance.IsAttributionArrowActive)
             {
                 if (UnityEngine.Random.Range(0f, 100f) <= 30f)
@@ -78,7 +85,8 @@ public class TargetAttackAction : TowerAttackAction
 
                     if (extraProjectile != null)
                     {
-                        ProjectileStats attributionStats = finalStats;
+                        // 기존 투사체 스탯 복사 후 귀속 화살 전용 스탯 덮어쓰기
+                        ProjectileStats attributionStats = projectileStats;
 
                         attributionStats.projectileID = attributionArrowID;
                         attributionStats.damage = 200f;

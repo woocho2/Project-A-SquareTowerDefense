@@ -328,14 +328,14 @@ public class UIManager : MonoBehaviour
             {
                 TowerStats currentStats = TowerManager.Instance.GetGlobalStats(m_selectTowerID);
 
-                if (currentStats.level >= 5)
+                if (currentStats.Level >= 5)
                 {
                     m_txtColorUpgradeCostGem.text = "MAX";
                 }
 
                 else
                 {
-                    int currentColorUpgradeGem = (int)Mathf.Pow(2, currentStats.level);
+                    int currentColorUpgradeGem = (int)Mathf.Pow(2, currentStats.Level);
                     m_txtColorUpgradeCostGem.text = $"{currentColorUpgradeGem}";
                 }
             }
@@ -355,7 +355,7 @@ public class UIManager : MonoBehaviour
             {
                 TowerStats currentStats = TowerManager.Instance.GetGlobalStats(m_selectTowerID);
 
-                float currentTier = currentStats.towerID / 1000;
+                float currentTier = currentStats.ID / 1000;
 
                 if (currentTier >= 5)
                 {
@@ -364,7 +364,7 @@ public class UIManager : MonoBehaviour
 
                 else
                 {
-                    int currentTierUpgradeGem = (int)Mathf.Pow(4, currentStats.level);
+                    int currentTierUpgradeGem = (int)Mathf.Pow(4, currentStats.Level);
                     m_txtTierUpgradeCostGem.text = $"{currentTierUpgradeGem}";
                 }
             }
@@ -383,24 +383,24 @@ public class UIManager : MonoBehaviour
             TowerStats stats = m_selectedTower.GetFinalStats();
             TowerData data = m_selectedTower.GetTowerData();
 
-            if (m_txtTowerInfoName != null) m_txtTowerInfoName.text = stats.towerName;
-            if (m_txtTowerInfoLV != null) m_txtTowerInfoLV.text = $"{stats.level}";
+            if (m_txtTowerInfoName != null) m_txtTowerInfoName.text = stats.Name;
+            if (m_txtTowerInfoLV != null) m_txtTowerInfoLV.text = $"{stats.Level}";
             if (m_txtTowerInfoDamage != null)
             {
                 if (data != null && data.attackType == AttackType.Buff)
                 {
-                    float buffPower = stats.abilityValue;
+                    float buffPower = stats.AbilityValue;
                     m_txtTowerInfoDamage.text = $"+{buffPower * 100}%";
                 }
                 else
                 {
-                    m_txtTowerInfoDamage.text = $"{stats.damage:F2}";
+                    m_txtTowerInfoDamage.text = $"{stats.AttackPower:F2}";
                 }
             }
-            if (m_txtTowerInfoRange != null) m_txtTowerInfoRange.text = $"{stats.range*100}";
-            if (m_txtTowerInfoSpeed != null) m_txtTowerInfoSpeed.text = $"{stats.attackSpeed:F2}";
-            if (m_txtTowerInfoCriticalRate != null) m_txtTowerInfoCriticalRate.text = $"{(stats.criticalRate * 100):F2}%";
-            if (m_txtTowerInfoCriticalDamage != null) m_txtTowerInfoCriticalDamage.text = $"{((2 + stats.criticalDamage) * 100):F0}%";
+            if (m_txtTowerInfoRange != null) m_txtTowerInfoRange.text = $"{stats.Range*100}";
+            if (m_txtTowerInfoSpeed != null) m_txtTowerInfoSpeed.text = $"{stats.AttackSpeed:F2}";
+            if (m_txtTowerInfoCriticalRate != null) m_txtTowerInfoCriticalRate.text = $"{(stats.CriticalRate * 100):F2}%";
+            if (m_txtTowerInfoCriticalDamage != null) m_txtTowerInfoCriticalDamage.text = $"{((2 + stats.CriticalDamage) * 100):F0}%";
         }
     }
 

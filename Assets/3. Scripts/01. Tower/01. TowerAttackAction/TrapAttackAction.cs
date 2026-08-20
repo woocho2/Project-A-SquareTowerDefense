@@ -6,7 +6,7 @@ public class TrapAttackAction : TowerAttackAction
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats currentStats)
     {
-        Vector2 validSpawnPosition = GetValidTrapPosition(towerTransform.position, currentStats.range);
+        Vector2 validSpawnPosition = GetValidTrapPosition(towerTransform.position, currentStats.Range);
 
         if (float.IsInfinity(validSpawnPosition.x) || float.IsInfinity(validSpawnPosition.y))
         {

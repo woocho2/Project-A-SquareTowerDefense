@@ -14,6 +14,8 @@ public struct TowerStats
     public float CriticalDamage;
     public float Duration;
     public float AbilityValue;
+    public float ProjectileSpeed;
+    public float ProjectileRadius;
 }
 
 public class TowerController : MonoBehaviour

@@ -441,7 +441,7 @@ public class TowerManager : MonoBehaviour
 
             if (UpgradeStats.Level <= 5)
             {
-                UpgradeStats.AttackPower      = towerData.AttackPower * multiplier;
+                UpgradeStats.AttackPower      = towerData.attackPower * multiplier;
                 UpgradeStats.Range       = towerData.range * multiplier;
                 UpgradeStats.AttackSpeed = towerData.attackSpeed * multiplier;
 

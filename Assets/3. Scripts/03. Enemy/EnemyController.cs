@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 
 [System.Serializable]
@@ -11,6 +10,7 @@ public struct EnemyStats
     public float MaxHP;
     public float Defend;
     public float Speed;
+    public float Resistance;
 }
 
 public class EnemyController : MonoBehaviour
@@ -53,7 +53,6 @@ public class EnemyController : MonoBehaviour
     private Coroutine m_dotDamageDebuffRoutine;
     private Coroutine m_weakDebuffRoutine;
     private Coroutine m_heatwaveDebuffRoutine;
-
 
 
     protected virtual void Awake()
