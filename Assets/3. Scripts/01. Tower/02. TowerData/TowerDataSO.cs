@@ -2,9 +2,9 @@ using UnityEngine;
 
 // 행동 부품 및 버프 관련 열거형
 public enum AttackType { Splash, Target, Buff, Debuff }
-public enum BuffTarget { None, AttackPower, Range, DefensePenetration, CriticalRate, CriticalDamage, DotDamage, SplashRadius, Chain, AttackSpeed }
+public enum BuffTarget { None, AttackPower, Range, DefensePenetration, CriticalRate, CriticalDamage, DotDamage, ProjectileSpeed, Chain, AttackSpeed }
 public enum DebuffTarget { None, MaxHpDecay, PiercingShards, Stun, CriticalRate, CriticalDamage, DotDamage, Slow, Weak, Push }
-public enum TargetPriority { Closest, First, Last, Strongest, Weakest }
+public enum TargetPriority { Default, Closest, First, Last, Strongest, Weakest }
 
 
 [CreateAssetMenu(fileName = "NewTowerData", menuName = "Tower Defense/Tower Data")]
