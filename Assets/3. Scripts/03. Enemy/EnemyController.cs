@@ -1,6 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-
 
 [System.Serializable]
 public struct EnemyStats
@@ -31,10 +31,11 @@ public class EnemyController : MonoBehaviour
     private bool IsReturning = false;
 
     private protected EnemyStats m_enemyStats;
-
+    public float currentHP => m_enemyStats.currentHP;
+    public float MaxHP => m_enemyStats.MaxHP;
     public bool IsAlive => m_enemyStats.currentHP > 0;
-    private protected Coroutine DamageAfter3s;
 
+    private protected Coroutine DamageAfter3s;
     protected bool m_isBoss = false;
 
     private float m_debuffSpeed = 1f;
@@ -46,6 +47,9 @@ public class EnemyController : MonoBehaviour
     private float m_synergySlow = 1f;
     private float m_synergyWeak = 1f;
 
+    // 디버프 스택 관리를 위한 딕셔너리 추가
+    private Dictionary<DebuffType, int> m_debuffStacks = new Dictionary<DebuffType, int>();
+
     private Coroutine m_speedDebuffRoutine;
     private Coroutine m_defendDebuffRoutine;
     private Coroutine m_stunDebuffRoutine;
@@ -54,7 +58,6 @@ public class EnemyController : MonoBehaviour
     private Coroutine m_weakDebuffRoutine;
     private Coroutine m_heatwaveDebuffRoutine;
 
-
     protected virtual void Awake()
     {
         m_col = GetComponent<Collider2D>();
@@ -62,13 +65,9 @@ public class EnemyController : MonoBehaviour
         if (m_uiController == null)
         {
             if (TryGetComponent<EnemyUIController>(out EnemyUIController uIController))
-            {
                 m_uiController = uIController;
-            }
             else
-            {
                 Debug.LogWarning("EnemyUIController 컴포넌트를 찾을 수 없습니다.");
-            }
         }
     }
 
@@ -90,18 +89,14 @@ public class EnemyController : MonoBehaviour
         }
 
         target = WayPointController.points[0];
-
-        if (HPBar != null)
-        {
-            HPBar.SetActive(false);
-        }
+        if (HPBar != null) HPBar.SetActive(false);
     }
 
     protected virtual void Update()
     {
         if (target == null || IsReturning || m_isStunned || m_isPushed) return;
 
-        if (TowerManager.Instance != null) 
+        if (TowerManager.Instance != null)
         {
             if (TowerManager.Instance.IsHeatWaveActive && m_heatwaveDebuffRoutine == null)
             {
@@ -113,7 +108,8 @@ public class EnemyController : MonoBehaviour
                 m_heatwaveDebuffRoutine = null;
             }
         }
-            Vector3 dir = target.position - transform.position;
+
+        Vector3 dir = target.position - transform.position;
         dir.z = 0f;
         float distanceToTarget = dir.magnitude;
 
@@ -123,7 +119,6 @@ public class EnemyController : MonoBehaviour
         if (moveDistanceThisFrame >= distanceToTarget)
         {
             transform.position = target.position;
-
             GetNextWaypoint();
         }
         else
@@ -139,7 +134,6 @@ public class EnemyController : MonoBehaviour
             ReturnToPool();
             return;
         }
-
         wavePointIndex++;
         target = WayPointController.points[wavePointIndex];
     }
@@ -148,9 +142,7 @@ public class EnemyController : MonoBehaviour
     {
         transform.position = spawnPosition;
         transform.rotation = Quaternion.identity;
-
         IsReturning = false;
-
         ClearAllDebuff();
 
         if (m_col != null) m_col.enabled = true;
@@ -166,41 +158,34 @@ public class EnemyController : MonoBehaviour
 
         wavePointIndex = 0;
         if (WayPointController.points != null && WayPointController.points.Length > 0)
-        {
             target = WayPointController.points[0];
-        }
 
         if (HPBar != null) HPBar.SetActive(false);
-        if (m_uiController != null)
-        {
-            m_uiController.SetHPBar(m_enemyStats.currentHP, m_enemyStats.MaxHP);
-        }
+        if (m_uiController != null) m_uiController.SetHPBar(m_enemyStats.currentHP, m_enemyStats.MaxHP);
     }
 
     public EnemyStats GetFinalStats()
     {
         EnemyStats finalStats = m_enemyStats;
-
-        m_debuffSpeed  = Mathf.Clamp(m_debuffSpeed,  0.01f, 1f);
+        m_debuffSpeed = Mathf.Clamp(m_debuffSpeed, 0.01f, 1f);
         m_debuffDefend = Mathf.Clamp(m_debuffDefend, 0.01f, 1f);
-        m_synergySlow  = Mathf.Clamp(m_synergySlow,  0.01f, 1f);
+        m_synergySlow = Mathf.Clamp(m_synergySlow, 0.01f, 1f);
 
         float finalSlow = m_debuffSpeed * m_synergySlow;
-   
-        finalStats.Speed  *= finalSlow;
+        finalStats.Speed *= finalSlow;
         finalStats.Defend *= m_debuffDefend;
 
-        if (finalStats.Speed  <= 0.01f) finalStats.Speed  = 0.01f;
+        if (finalStats.Speed <= 0.01f) finalStats.Speed = 0.01f;
         if (finalStats.Defend <= 0.01f) finalStats.Defend = 0.1f;
 
         return finalStats;
     }
 
-
     public void SetPool(EnemyObjectPool2D pool)
     {
         enemyPool = pool;
     }
+
     protected void ReturnToPool()
     {
         if (IsReturning) return;
@@ -211,42 +196,30 @@ public class EnemyController : MonoBehaviour
             StopCoroutine(DamageAfter3s);
             DamageAfter3s = null;
         }
-
         if (HPBar != null) HPBar.SetActive(false);
 
         gameObject.SetActive(false);
-
-        if (enemyPool != null)
-            enemyPool.Release(this);
-        else
-            Destroy(gameObject);
+        if (enemyPool != null) enemyPool.Release(this);
+        else Destroy(gameObject);
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if (CommonUtil.ContainsLayer(m_endLayer, collision.gameObject.layer))
         {
-            if (UIManager.Instance != null)
-            {
-                UIManager.Instance.OnPlayerHit(m_isBoss);
-            }
+            if (UIManager.Instance != null) UIManager.Instance.OnPlayerHit(m_isBoss);
             ReturnToPool();
         }
     }
 
     public virtual void TakeDamage(float damage, bool isCritical = false)
     {
-        if (IsAlive == false)
-        {
-            return;
-        }
+        if (IsAlive == false) return;
 
         if (HPBar != null)
         {
             HPBar.SetActive(true);
-
             if (DamageAfter3s != null) StopCoroutine(DamageAfter3s);
-
             DamageAfter3s = StartCoroutine(DisableUIAfterDelayRoutine(3f));
         }
 
@@ -259,34 +232,20 @@ public class EnemyController : MonoBehaviour
         if (finalDamage > 0 && DamageTextPool.Instance != null)
         {
             Vector2 moveDir = Vector2.zero;
-            if (target != null)
-            {
-                moveDir = target.position - transform.position;
-            }
+            if (target != null) moveDir = target.position - transform.position;
 
             Vector3 spawnOffset;
-
-            if (Mathf.Abs(moveDir.x) > Mathf.Abs(moveDir.y))
-            {
-                spawnOffset = Vector3.up * 0.5f;
-            }
-            else
-            {
-                spawnOffset = Vector3.right * 0.5f;
-            }
+            if (Mathf.Abs(moveDir.x) > Mathf.Abs(moveDir.y)) spawnOffset = Vector3.up * 0.5f;
+            else spawnOffset = Vector3.right * 0.5f;
 
             spawnOffset.x += UnityEngine.Random.Range(-0.1f, 0.1f);
             spawnOffset.y += UnityEngine.Random.Range(-0.1f, 0.1f);
-
             Vector3 spawnPos = transform.position + spawnOffset;
 
             DamageTextPool.Instance.Spawn(spawnPos, finalDamage, isCritical);
         }
 
-        if (m_uiController != null)
-        {
-            m_uiController.SetHPBar(m_enemyStats.currentHP, m_enemyStats.MaxHP);
-        }
+        if (m_uiController != null) m_uiController.SetHPBar(m_enemyStats.currentHP, m_enemyStats.MaxHP);
 
         if (m_enemyStats.currentHP <= 0f)
         {
@@ -297,22 +256,62 @@ public class EnemyController : MonoBehaviour
 
     public void Die(bool IsBoss)
     {
-        if (IsBoss == false)
-        {
-            CurrencyManager.Instance.AddGold(10);
-        }
+        if (IsBoss == false) CurrencyManager.Instance.AddGold(10);
         else
         {
             CurrencyManager.Instance.AddGold(500);
             CurrencyManager.Instance.AddGem(5);
         }
-
-        if (HPBar != null)
-        {
-            HPBar.SetActive(false);
-        }
+        if (HPBar != null) HPBar.SetActive(false);
         WaveManager.Instance.OnEnemyDied(IsBoss);
         ReturnToPool();
+    }
+
+    public void ExecuteDeath()
+    {
+        m_enemyStats.currentHP = 0f;
+        Die(m_isBoss);
+    }
+
+    // 장판(DebuffAction)에서 호출되는 스택 및 상태 추가 시스템
+    public void ApplyStack(DebuffType type, int amount)
+    {
+        if (!m_debuffStacks.ContainsKey(type)) m_debuffStacks[type] = 0;
+
+        m_debuffStacks[type] += amount;
+
+        // 빙결(Ice) 변환 로직 예시 - 5스택 초과 시 1초 스턴(빙결) 후 리셋
+        if (type == DebuffType.Slow && m_debuffStacks[type] >= 5)
+        {
+            ApplyDebuff(DebuffTarget.Stun, 0f, 1f);
+            m_debuffStacks[type] = 0;
+        }
+    }
+
+    public void ApplyStatModifier(StatType type, float amount)
+    {
+        if (type == StatType.Armor) m_debuffDefend += (amount / 100f);
+    }
+
+    public void RemoveStatModifier(StatType type, float amount)
+    {
+        if (type == StatType.Armor) m_debuffDefend -= (amount / 100f);
+    }
+
+    public void PullToPosition(Vector3 targetPos, float duration)
+    {
+        StartCoroutine(PullRoutine(targetPos, duration));
+    }
+
+    private IEnumerator PullRoutine(Vector3 targetPos, float duration)
+    {
+        float timer = 0f;
+        while (timer < duration && IsAlive)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, Time.deltaTime * (m_enemyStats.Speed * 2f));
+            timer += Time.deltaTime;
+            yield return null;
+        }
     }
 
     public void ApplyDebuff(DebuffTarget target, float value, float duration)
@@ -343,12 +342,12 @@ public class EnemyController : MonoBehaviour
                 break;
             case DebuffTarget.Weak:
                 if (m_weakDebuffRoutine != null) StopCoroutine(m_weakDebuffRoutine);
-                m_debuffWeak = 1+(0.01f * value);
+                m_debuffWeak = 1 + (0.01f * value);
                 m_weakDebuffRoutine = StartCoroutine(RemoveDebuffRoutine(target, duration));
                 break;
             case DebuffTarget.Push:
                 if (m_pushDebuffRoutine != null) StopCoroutine(m_pushDebuffRoutine);
-                m_pushDebuffRoutine = StartCoroutine(PushDebuffRoutine(value, 0.1f));
+                m_pushDebuffRoutine = StartCoroutine(PushDebuffRoutine(value, duration)); // 고정값 대신 인자 전달
                 break;
         }
     }
@@ -359,67 +358,30 @@ public class EnemyController : MonoBehaviour
 
         switch (target)
         {
-            case DebuffTarget.Slow:
-                m_debuffSpeed = 1f;
-                m_speedDebuffRoutine = null;
-                break;
-            case DebuffTarget.Defense:
-                m_debuffDefend = 1f;
-                m_defendDebuffRoutine = null;
-                break;
-            case DebuffTarget.Stun:
-                m_isStunned = false;
-                m_stunDebuffRoutine = null;
-                break;
-            case DebuffTarget.DotDamage:
-                m_debuffDotDamage = 0f;
-                m_dotDamageDebuffRoutine = null;
-                break;
-            case DebuffTarget.Weak:
-                m_debuffWeak = 1f;
-                m_weakDebuffRoutine = null;
-                break;
+            case DebuffTarget.Slow: m_debuffSpeed = 1f; m_speedDebuffRoutine = null; break;
+            case DebuffTarget.Defense: m_debuffDefend = 1f; m_defendDebuffRoutine = null; break;
+            case DebuffTarget.Stun: m_isStunned = false; m_stunDebuffRoutine = null; break;
+            case DebuffTarget.DotDamage: m_debuffDotDamage = 0f; m_dotDamageDebuffRoutine = null; break;
+            case DebuffTarget.Weak: m_debuffWeak = 1f; m_weakDebuffRoutine = null; break;
         }
     }
 
     private void ClearAllDebuff()
     {
-        if (m_speedDebuffRoutine != null)
-        {
-            StopCoroutine(m_speedDebuffRoutine);
-            m_speedDebuffRoutine = null;
-        }
-        if (m_defendDebuffRoutine != null)
-        {
-            StopCoroutine(m_defendDebuffRoutine);
-            m_defendDebuffRoutine = null;
-        }
-        if (m_stunDebuffRoutine != null)
-        {
-            StopCoroutine(m_stunDebuffRoutine);
-            m_stunDebuffRoutine = null;
-        }
-        if (m_weakDebuffRoutine != null)
-        {
-            StopCoroutine(m_weakDebuffRoutine);
-            m_weakDebuffRoutine = null;
-        }
-        if (m_pushDebuffRoutine != null)
-        {
-            StopCoroutine(m_pushDebuffRoutine);
-            m_pushDebuffRoutine = null;
-        }
-        if (m_heatwaveDebuffRoutine != null)
-        {
-            StopCoroutine(m_heatwaveDebuffRoutine);
-            m_heatwaveDebuffRoutine = null;
-        }
+        if (m_speedDebuffRoutine != null) StopCoroutine(m_speedDebuffRoutine);
+        if (m_defendDebuffRoutine != null) StopCoroutine(m_defendDebuffRoutine);
+        if (m_stunDebuffRoutine != null) StopCoroutine(m_stunDebuffRoutine);
+        if (m_weakDebuffRoutine != null) StopCoroutine(m_weakDebuffRoutine);
+        if (m_pushDebuffRoutine != null) StopCoroutine(m_pushDebuffRoutine);
+        if (m_heatwaveDebuffRoutine != null) StopCoroutine(m_heatwaveDebuffRoutine);
 
-        m_debuffSpeed = 1f;
-        m_debuffDefend = 1f;
-        m_debuffWeak = 1f;
-        m_isStunned = false;
-        m_isPushed = false;
+        m_speedDebuffRoutine = null; m_defendDebuffRoutine = null; m_stunDebuffRoutine = null;
+        m_weakDebuffRoutine = null; m_pushDebuffRoutine = null; m_heatwaveDebuffRoutine = null;
+
+        m_debuffStacks.Clear(); // 스택 딕셔너리 초기화
+
+        m_debuffSpeed = 1f; m_debuffDefend = 1f; m_debuffWeak = 1f;
+        m_isStunned = false; m_isPushed = false;
     }
 
     private System.Collections.IEnumerator DotDamageDebuffRoutine(float value, float duration)
@@ -430,12 +392,9 @@ public class EnemyController : MonoBehaviour
         while (timer < duration)
         {
             yield return new WaitForSeconds(interval);
-
             TakeDamage(value);
-
             timer += interval;
         }
-
         m_debuffDotDamage = 0f;
         m_dotDamageDebuffRoutine = null;
     }
@@ -448,15 +407,8 @@ public class EnemyController : MonoBehaviour
         while (timer < fixedDuration)
         {
             Vector3 backwardTarget;
-
-            if (wavePointIndex > 0)
-            {
-                backwardTarget = WayPointController.points[wavePointIndex - 1].position;
-            }
-            else
-            {
-                backwardTarget = WayPointController.points[0].position;
-            }
+            if (wavePointIndex > 0) backwardTarget = WayPointController.points[wavePointIndex - 1].position;
+            else backwardTarget = WayPointController.points[0].position;
 
             float distanceToBackward = Vector3.Distance(transform.position, backwardTarget);
             float moveStep = 0.05f * EnemyData.Speed * pushSpeed * Time.deltaTime;
@@ -464,7 +416,6 @@ public class EnemyController : MonoBehaviour
             if (distanceToBackward <= moveStep)
             {
                 transform.position = backwardTarget;
-
                 if (wavePointIndex > 0)
                 {
                     wavePointIndex--;
@@ -480,7 +431,6 @@ public class EnemyController : MonoBehaviour
             timer += Time.deltaTime;
             yield return null;
         }
-
         m_isPushed = false;
         m_pushDebuffRoutine = null;
     }
@@ -493,33 +443,22 @@ public class EnemyController : MonoBehaviour
         while (TowerManager.Instance != null && TowerManager.Instance.IsHeatWaveActive)
         {
             TakeDamage(m_enemyStats.MaxHP * 0.01f);
-
             yield return new WaitForSeconds(1f);
         }
         m_synergySlow = 1f;
         m_synergyWeak = 1f;
-
         m_heatwaveDebuffRoutine = null;
     }
-
 
     private protected IEnumerator DisableUIAfterDelayRoutine(float delayTime)
     {
         yield return new WaitForSeconds(delayTime);
-
-        if (HPBar != null)
-        {
-            HPBar.SetActive(false);
-        }
+        if (HPBar != null) HPBar.SetActive(false);
     }
 
     public void HideHPBar()
     {
-        if (HPBar != null && HPBar.activeSelf)
-        {
-            HPBar.SetActive(false);
-        }
-
+        if (HPBar != null && HPBar.activeSelf) HPBar.SetActive(false);
         if (DamageAfter3s != null)
         {
             StopCoroutine(DamageAfter3s);

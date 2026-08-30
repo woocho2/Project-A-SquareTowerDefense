@@ -1,11 +1,11 @@
 using UnityEngine;
 
-// 행동 부품 및 버프 관련 열거형
 public enum AttackType { Splash, Target, Buff, Debuff }
-public enum BuffTarget { None, AttackPower, Range, DefensePenetration, CriticalRate, CriticalDamage, DotDamage, ProjectileSpeed, Chain, AttackSpeed }
-public enum DebuffTarget { None, MaxHpDecay, PiercingShards, Stun, CriticalRate, CriticalDamage, DotDamage, Slow, Weak, Push }
+public enum BuffTarget { None, AttackPower, Range, Barrier, CriticalRate, CriticalDamage, DefensePenetration, Overheat, SplashRadius, ExtraHit, AttackSpeed, TierUpgrade, Chain, Absorption }
+public enum DebuffTarget { None, MaxHpDecay, Bleeding, Block, Javelin, Vulnerable, DefenseReduction, DotDamage, Slow, ElectricShock, Push, Root, Disintegrate, Blackhole }
 public enum TargetPriority { Default, Closest, First, Last, Strongest, Weakest }
 
+public enum StatType { Armor }
 
 [CreateAssetMenu(fileName = "NewTowerData", menuName = "Tower Defense/Tower Data")]
 public class TowerData : ScriptableObject
@@ -36,6 +36,9 @@ public class TowerData : ScriptableObject
     public BuffTarget buffTarget;
     public DebuffTarget debuffTarget;
 
-    [Header("디버프타워 전용 설정)")]
+    [Header("디버프타워 전용 설정")]
     public LayerMask pathLayer;
+
+    // 장판(Zone) 프리팹을 할당받기 위한 변수 추가
+    public DebuffZone debuffZonePrefab;
 }

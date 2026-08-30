@@ -83,9 +83,7 @@ public class TowerController : MonoBehaviour
     public void Init(TowerData data)
     {
         m_towerData = data;
-
         GlobalStats();
-
 
         switch (m_towerData.attackType)
         {
@@ -99,7 +97,14 @@ public class TowerController : MonoBehaviour
                 m_attackAction = new BuffAction(m_towerData);
                 break;
             case AttackType.Debuff:
-                m_attackAction = new DebuffAction(m_towerData);
+                // DebuffAction 할당 및 장판 객체 스폰 로직 추가
+                DebuffAction debuffAction = new DebuffAction(m_towerData);
+                m_attackAction = debuffAction;
+
+                if (m_towerData.debuffZonePrefab != null)
+                {
+                    debuffAction.SpawnZone(m_towerData.debuffZonePrefab, transform.position, GetFinalStats());
+                }
                 break;
         }
     }
@@ -171,7 +176,6 @@ public class TowerController : MonoBehaviour
             if (show)
             {
                 float currentRange = GetFinalStats().Range;
-
                 float scaleValue = (currentRange * 2f) / transform.localScale.x;
                 m_range.transform.localScale = new Vector3(scaleValue, scaleValue, 1f);
             }
