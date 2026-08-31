@@ -1,11 +1,27 @@
 using UnityEngine;
 
 public enum AttackType { Splash, Target, Buff, Debuff }
-public enum BuffTarget { None, AttackPower, Range, Barrier, CriticalRate, CriticalDamage, DefensePenetration, Overheat, SplashRadius, ExtraHit, AttackSpeed, TierUpgrade, Chain, Absorption }
-public enum DebuffTarget { None, MaxHpDecay, Bleeding, Block, Javelin, Vulnerable, DefenseReduction, DotDamage, Slow, ElectricShock, Push, Root, Disintegrate, Blackhole }
+public enum BuffTarget { None, Sword, Bow, Shield, Spear, Axe, Hammer, Fire, Ice, Electricity, Wind, Earth, Light, Darkness }
+public enum DebuffTarget { None, Sword, Bow, Shield, Spear, Axe, Hammer, Fire, Ice, Electricity, Wind, Earth, Light, Darkness }
 public enum TargetPriority { Default, Closest, First, Last, Strongest, Weakest }
-
 public enum StatType { Armor }
+
+public static class TowerPattern
+{
+    public const int SWORD = 1;
+    public const int BOW = 2;
+    public const int SHIELD = 3;
+    public const int SPEAR = 4;
+    public const int AXE = 5;
+    public const int HAMMER = 6;
+    public const int FIRE = 7;
+    public const int ICE = 8;
+    public const int ELECTRICITY = 9;
+    public const int WIND = 10;
+    public const int EARTH = 11;
+    public const int LIGHT = 12;
+    public const int DARKNESS = 13;
+}
 
 [CreateAssetMenu(fileName = "NewTowerData", menuName = "Tower Defense/Tower Data")]
 public class TowerData : ScriptableObject
@@ -39,6 +55,27 @@ public class TowerData : ScriptableObject
     [Header("디버프타워 전용 설정")]
     public LayerMask pathLayer;
 
-    // 장판(Zone) 프리팹을 할당받기 위한 변수 추가
     public DebuffZone debuffZonePrefab;
+
+    /// <summary>
+    /// TowerData의 기본 스탯을 기반으로 런타임용 TowerStats 구조체를 생성하여 반환합니다.
+    /// </summary>
+    public TowerStats ToTowerStats()
+    {
+        return new TowerStats
+        {
+            ID = this.towerID,
+            Name = this.towerName,
+            Level = 1,
+            AttackPower = this.attackPower,
+            Range = this.range,
+            AttackSpeed = this.attackSpeed,
+            CriticalRate = this.criticalRate,
+            CriticalDamage = this.criticalDamage,
+            Duration = this.duration,
+            AbilityValue = this.abilityValue,
+            ProjectileSpeed = this.projectileSpeed,
+            ProjectileRadius = this.splashRadius
+        };
+    }
 }

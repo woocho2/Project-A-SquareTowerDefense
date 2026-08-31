@@ -1,57 +1,252 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(Collider2D))]
 public class DebuffZone : MonoBehaviour
 {
-    // 장판 내부의 적을 추적하는 리스트 (외부에서 읽기 가능)
-    public List<EnemyController> EnemiesInZone { get; private set; } = new List<EnemyController>();
+    [Header("Camera")]
+    [SerializeField] private Camera m_camera;
 
-    // 적의 진입/이탈 시 DebuffAction으로 신호를 보내기 위한 이벤트
-    public Action<EnemyController> OnEnemyEnterEvent;
-    public Action<EnemyController> OnEnemyExitEvent;
+    [Header("Shield Tower Obstacle")]
+    [SerializeField] private GameObject m_obstacleCollider;
 
-    [Header("Shield Tower (길막용)")]
-    public GameObject obstacleCollider; // 물리적으로 길을 막는 콜라이더
+    [Header("Interaction Settings")]
+    [Tooltip("이 거리 이상 마우스가 이동해야 드래그로 판정합니다.")]
+    [SerializeField] private float m_dragThreshold = 0.1f;
+
+    public readonly List<EnemyHealthController> EnemiesInZone = new List<EnemyHealthController>();
+
+    public event Action<EnemyHealthController> OnEnemyEnterEvent;
+    public event Action<EnemyHealthController> OnEnemyExitEvent;
+
+    private Collider2D m_collider2D;
+    private Tilemap m_pathTilemap;
+
+    private Vector3 m_towerOriginPos;
+    private float m_maxRange = 1f;
+
+    private bool m_isTracking;
+    private bool m_isDragging;
+
+    private Vector3 m_startMousePosition;
+    private Vector3 m_offset;
+    private float m_objectZ;
+    private float m_cameraZDistance;
+
+    private void Awake()
+    {
+        m_collider2D = GetComponent<Collider2D>();
+        if (m_collider2D != null)
+        {
+            m_collider2D.isTrigger = true;
+        }
+
+        if (m_obstacleCollider != null)
+        {
+            m_obstacleCollider.SetActive(false);
+        }
+
+        if (m_camera == null)
+        {
+            m_camera = Camera.main;
+        }
+
+        m_objectZ = transform.position.z;
+        m_cameraZDistance = Mathf.Abs(m_camera.transform.position.z - transform.position.z);
+
+        GameObject pathObj = GameObject.Find("Tilemap_Path");
+        if (pathObj != null)
+        {
+            m_pathTilemap = pathObj.GetComponent<Tilemap>();
+        }
+    }
+
+    /// <summary>
+    /// 타워 최초 생성 시 원점 및 최대 사거리 초기화
+    /// </summary>
+    public void SetupBoundary(Vector3 towerPos, float maxRange)
+    {
+        m_towerOriginPos = towerPos;
+        m_maxRange = maxRange;
+    }
+
+    /// <summary>
+    /// 타워 이동 시 원점 및 사거리 갱신
+    /// </summary>
+    public void UpdateTowerPosition(Vector3 newTowerPos, float maxRange)
+    {
+        m_towerOriginPos = newTowerPos;
+        m_maxRange = maxRange;
+
+        float dist = Vector2.Distance(m_towerOriginPos, transform.position);
+        if (dist > m_maxRange)
+        {
+            SnapToClosestPathTile();
+        }
+    }
+
+    private void OnDisable()
+    {
+        EnemiesInZone.Clear();
+        m_isTracking = false;
+        m_isDragging = false;
+    }
+
+    private void Update()
+    {
+        if (Mouse.current == null || m_camera == null) return;
+
+        Vector3 mouseWorldPosition = GetMouseWorldPosition();
+
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+
+            if (m_collider2D != null && m_collider2D.OverlapPoint(mouseWorldPosition))
+            {
+                m_isTracking = true;
+                m_isDragging = false;
+
+                m_startMousePosition = mouseWorldPosition;
+                m_offset = transform.position - mouseWorldPosition;
+            }
+        }
+
+        if (Mouse.current.leftButton.isPressed && m_isTracking)
+        {
+            if (!m_isDragging)
+            {
+                float distance = Vector3.Distance(m_startMousePosition, mouseWorldPosition);
+                if (distance > m_dragThreshold)
+                {
+                    m_isDragging = true;
+                }
+            }
+
+            if (m_isDragging)
+            {
+                Vector3 targetPos = mouseWorldPosition + m_offset;
+
+                Vector3 dirFromTower = targetPos - m_towerOriginPos;
+                if (dirFromTower.magnitude > m_maxRange)
+                {
+                    targetPos = m_towerOriginPos + dirFromTower.normalized * m_maxRange;
+                }
+
+                targetPos.z = m_objectZ;
+                transform.position = targetPos;
+            }
+        }
+
+        if (Mouse.current.leftButton.wasReleasedThisFrame && m_isTracking)
+        {
+            if (m_isDragging)
+            {
+                SnapToClosestPathTile();
+            }
+
+            m_isTracking = false;
+            m_isDragging = false;
+        }
+    }
+
+    private Vector3 GetMouseWorldPosition()
+    {
+        Vector2 mouseScreenPosition = Mouse.current.position.ReadValue();
+
+        Vector3 screenPosition = new Vector3(
+            mouseScreenPosition.x,
+            mouseScreenPosition.y,
+            m_cameraZDistance
+        );
+
+        Vector3 worldPosition = m_camera.ScreenToWorldPoint(screenPosition);
+        worldPosition.z = m_objectZ;
+
+        return worldPosition;
+    }
+
+    private void SnapToClosestPathTile()
+    {
+        if (m_pathTilemap == null)
+        {
+            m_pathTilemap = UnityEngine.Object.FindAnyObjectByType<Tilemap>();
+            if (m_pathTilemap == null) return;
+        }
+
+        Vector3 currentPos = transform.position;
+        Vector3Int centerCell = m_pathTilemap.WorldToCell(currentPos);
+        int cellRadius = Mathf.CeilToInt(Mathf.Max(m_maxRange, 1.5f));
+
+        Vector3 bestWorldPos = currentPos;
+        float minDistance = float.MaxValue;
+        bool found = false;
+
+        for (int x = -cellRadius; x <= cellRadius; x++)
+        {
+            for (int y = -cellRadius; y <= cellRadius; y++)
+            {
+                Vector3Int checkCell = new Vector3Int(centerCell.x + x, centerCell.y + y, 0);
+
+                if (m_pathTilemap.HasTile(checkCell))
+                {
+                    Vector3 cellWorldPos = m_pathTilemap.GetCellCenterWorld(checkCell);
+
+                    float distFromTower = Vector2.Distance(m_towerOriginPos, cellWorldPos);
+                    if (distFromTower <= m_maxRange)
+                    {
+                        float distFromMouse = Vector2.Distance(currentPos, cellWorldPos);
+                        if (distFromMouse < minDistance)
+                        {
+                            minDistance = distFromMouse;
+                            bestWorldPos = cellWorldPos;
+                            found = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (found)
+        {
+            bestWorldPos.z = m_objectZ;
+            transform.position = bestWorldPos;
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        EnemyController enemy = collision.GetComponentInParent<EnemyController>();
-        if (enemy != null && !EnemiesInZone.Contains(enemy))
+        if (collision.TryGetComponent<EnemyHealthController>(out var enemyHealth))
         {
-            EnemiesInZone.Add(enemy);
-            OnEnemyEnterEvent?.Invoke(enemy); // Action에 진입 알림
+            if (!EnemiesInZone.Contains(enemyHealth))
+            {
+                EnemiesInZone.Add(enemyHealth);
+                OnEnemyEnterEvent?.Invoke(enemyHealth);
+            }
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        EnemyController enemy = collision.GetComponentInParent<EnemyController>();
-        if (enemy != null && EnemiesInZone.Contains(enemy))
+        if (collision.TryGetComponent<EnemyHealthController>(out var enemyHealth))
         {
-            EnemiesInZone.Remove(enemy);
-            OnEnemyExitEvent?.Invoke(enemy); // Action에 이탈 알림
-        }
-    }
-
-    private void Update()
-    {
-        // 장판 위에서 적이 사망하거나 비활성화되었을 때 리스트에서 안전하게 제거 (역순 순회)
-        for (int i = EnemiesInZone.Count - 1; i >= 0; i--)
-        {
-            if (EnemiesInZone[i] == null || !EnemiesInZone[i].gameObject.activeInHierarchy)
+            if (EnemiesInZone.Contains(enemyHealth))
             {
-                OnEnemyExitEvent?.Invoke(EnemiesInZone[i]);
-                EnemiesInZone.RemoveAt(i);
+                EnemiesInZone.Remove(enemyHealth);
+                OnEnemyExitEvent?.Invoke(enemyHealth);
             }
         }
     }
 
-    // Shield 타워의 주기적인 길막 기능 온오프
     public void ToggleObstacle(bool isActive)
     {
-        if (obstacleCollider != null)
-            obstacleCollider.SetActive(isActive);
+        if (m_obstacleCollider != null)
+        {
+            m_obstacleCollider.SetActive(isActive);
+        }
     }
 }

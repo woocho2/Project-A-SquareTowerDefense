@@ -6,6 +6,7 @@ TagManager:
   tags:
   - FxTemporaire
   - SellArea
+  - Path
   layers:
   - Default
   - TransparentFX
@@ -46,14 +47,11 @@ TagManager:
   - name: MapTile
     uniqueID: 579884663
     locked: 0
-  - name: Enemy
+  - name: Tower
     uniqueID: 421727787
     locked: 0
-  - name: SpawnTile
+  - name: Enemy
     uniqueID: 811733269
-    locked: 0
-  - name: Tower
-    uniqueID: 727745391
     locked: 0
   - name: Projectile
     uniqueID: 3276749985

@@ -12,7 +12,9 @@ GameObject:
   - component: {fileID: 8437019901037981175}
   - component: {fileID: 8594216342706311802}
   - component: {fileID: -509579309956034587}
-  - component: {fileID: -636132886317164355}
+  - component: {fileID: 833550379723969138}
+  - component: {fileID: 8667325651164272175}
+  - component: {fileID: 5842355763917665791}
   - component: {fileID: 6412127163531498615}
   m_Layer: 8
   m_Name: 4. Enemy_specialBoss
@@ -82,8 +84,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 421727787
-  m_SortingLayer: 2
+  m_SortingLayerID: 811733269
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 8023666476962235517, guid: 621adbd419ebea14285a8eeccb246db6, type: 3}
@@ -169,7 +171,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &-636132886317164355
+--- !u!114 &833550379723969138
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -178,19 +180,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 140337874124788210}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51218ff6eba46c74d83dc81365495c61, type: 3}
+  m_Script: {fileID: 11500000, guid: b392b1ddd5591a446a78cd7d2fd749f3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BossController
-  EnemyData: {fileID: 11400000, guid: a7f97c2ce48afde47b934739b24d9111, type: 2}
-  m_projetileLayer:
-    serializedVersion: 2
-    m_Bits: 128
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMovementController
   m_endLayer:
     serializedVersion: 2
     m_Bits: 512
+--- !u!114 &8667325651164272175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140337874124788210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea8d8c52caba825459d4d344983bbcca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthController
   m_uiController: {fileID: 6412127163531498615}
-  HPBar: {fileID: 1078414971211761373}
-  m_damageTextPrefab: {fileID: 3090284476940613925, guid: c5c0197c147ecf74d8a12ea6994c8618, type: 3}
+  m_hpBar: {fileID: 1078414971211761373}
+  m_enemyType: 3
+--- !u!114 &5842355763917665791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140337874124788210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec30eeccd27169843ace8347d850a464, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDebuffController
 --- !u!114 &6412127163531498615
 MonoBehaviour:
   m_ObjectHideFlags: 0

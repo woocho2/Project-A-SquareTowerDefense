@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 1. Enemy_normal
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyID: 1
-  MaxHP: 200000
+  MaxHP: 10
   Defend: 20
   Speed: 1
   Resistance: 0

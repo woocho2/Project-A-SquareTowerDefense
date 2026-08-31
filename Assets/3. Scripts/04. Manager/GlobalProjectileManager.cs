@@ -73,7 +73,7 @@ public class GlobalProjectileManager : MonoBehaviour
 
         if (m_poolDictionary.TryGetValue(sharedKey, out ProjectileObjectPool2D targetPool))
         {
-            return targetPool.Spawn(position, speed, rotateProjectile);
+            return targetPool.Spawn(position);
         }
 
         Debug.LogError($"[GlobalProjectileManager] ID가 {sharedKey}인 투사체 풀을 찾을 수 없습니다.");

@@ -21,12 +21,16 @@ public struct TowerStats
 public class TowerController : MonoBehaviour
 {
     [SerializeField] private TowerData m_towerData;
-    [SerializeField] private TowerStats m_towerStats;
+    [SerializeField] private TowerStats m_baseStats;
     [SerializeField] private GameObject m_range;
 
     private TowerAttackAction m_attackAction;
     private float m_attackCooldown;
 
+    [Header("Debuff Zone Reference")]
+    [SerializeField] private DebuffZone m_debuffZoneChild;
+
+    // 버프 배율 변수들
     private float m_bonusAttackPower = 1f;
     private float m_bonusRange = 1f;
     private float m_bonusAttackSpeed = 1f;
@@ -35,104 +39,72 @@ public class TowerController : MonoBehaviour
     private float m_bonusDuration = 0f;
     private float m_bonusAbilityValue = 1f;
 
-    private Coroutine m_attackPowerBuffRoutine;
-    private Coroutine m_rangeBuffRoutine;
-    private Coroutine m_attackSpeedBuffRoutine;
-    private Coroutine m_criticalRateBuffRoutine;
-    private Coroutine m_criticalDamageBuffRoutine;
-    private Coroutine m_dotDamageBuffRoutine;
-    private Coroutine m_chainBuffRoutine;
+    private Coroutine m_buffRoutine;
 
-    private void Start()
+    private void Awake()
     {
-        if (TowerManager.Instance != null)
+        if (m_debuffZoneChild == null)
         {
-            if (string.IsNullOrEmpty(m_towerStats.Name) || m_towerStats.ID == 0)
-            {
-                GlobalStats();
-            }
-            TowerManager.Instance.OnTowerTypeUpgrade += HandleTypeUpgrade;
-        }
-        else
-        {
-            Debug.LogError("TowerManager 인스턴스를 찾을 수 없습니다. 타워 스탯 동기화가 실패했습니다.");
+            m_debuffZoneChild = GetComponentInChildren<DebuffZone>(true);
         }
     }
 
-    private void OnDestroy()
-    {
-        if (TowerManager.Instance != null)
-        {
-            TowerManager.Instance.OnTowerTypeUpgrade -= HandleTypeUpgrade;
-        }
-    }
-
-    private void HandleTypeUpgrade(int towerID)
-    {
-        if (m_towerData != null && m_towerData.towerID == towerID)
-        {
-            GlobalStats();
-
-            if (m_range != null && m_range.activeSelf)
-            {
-                ShowRange(true);
-            }
-        }
-    }
-
-    public void Init(TowerData data)
+    public void Init(TowerData data, TowerStats initialStats)
     {
         m_towerData = data;
-        GlobalStats();
+        m_baseStats = initialStats;
+
+        if (m_debuffZoneChild != null)
+        {
+            m_debuffZoneChild.gameObject.SetActive(false);
+        }
 
         switch (m_towerData.attackType)
         {
             case AttackType.Splash:
                 m_attackAction = new SplashAttackAction(m_towerData);
                 break;
+
             case AttackType.Target:
                 m_attackAction = new TargetAttackAction(m_towerData);
                 break;
+
             case AttackType.Buff:
                 m_attackAction = new BuffAction(m_towerData);
                 break;
-            case AttackType.Debuff:
-                // DebuffAction 할당 및 장판 객체 스폰 로직 추가
-                DebuffAction debuffAction = new DebuffAction(m_towerData);
-                m_attackAction = debuffAction;
 
-                if (m_towerData.debuffZonePrefab != null)
+            case AttackType.Debuff:
+                var debuffAction = new DebuffAction(m_towerData);
+                if (m_debuffZoneChild != null)
                 {
-                    debuffAction.SpawnZone(m_towerData.debuffZonePrefab, transform.position, GetFinalStats());
+                    debuffAction.BindZone(m_debuffZoneChild, transform.position, GetFinalStats());
                 }
+                m_attackAction = debuffAction;
                 break;
         }
     }
 
-    private void GlobalStats()
+    public void UpdateBaseStats(TowerStats newStats)
     {
-        if (m_towerData != null)
-        {
-            m_towerStats = TowerManager.Instance.GetGlobalStats(m_towerData.towerID);
-        }
+        m_baseStats = newStats;
     }
 
+    /// <summary>
+    /// 업그레이드된 전역 스탯(GlobalStats)을 직접 가져와 현재 버프 배율만 즉시 연산하여 반환합니다.
+    /// </summary>
     public TowerStats GetFinalStats()
     {
-        m_bonusAttackPower = Mathf.Clamp(m_bonusAttackPower, 1f, 10000f);
-        m_bonusAttackSpeed = Mathf.Clamp(m_bonusAttackSpeed, 1f, 10000f);
-        m_bonusRange = Mathf.Clamp(m_bonusRange, 1f, 10000f);
-        m_bonusCriticalRate = Mathf.Clamp(m_bonusCriticalRate, 1f, 10000f);
-        m_bonusCriticalDamage = Mathf.Clamp(m_bonusCriticalDamage, 1f, 10000f);
+        // 1. 매니저의 최신 업그레이드 스탯을 직접 조회
+        TowerStats finalStats = m_baseStats;
 
-        TowerStats finalStats = m_towerStats;
-        finalStats.AttackPower *= m_bonusAttackPower;
-        finalStats.AttackSpeed *= m_bonusAttackSpeed;
-        finalStats.Range *= m_bonusRange;
-        finalStats.CriticalRate *= m_bonusCriticalRate;
-        finalStats.CriticalDamage *= m_bonusCriticalDamage;
+        // 2. 개별 버프 배율 연산
+        finalStats.AttackPower *= Mathf.Clamp(m_bonusAttackPower, 0.01f, 10000f);
+        finalStats.AttackSpeed *= Mathf.Clamp(m_bonusAttackSpeed, 0.01f, 10000f);
+        finalStats.Range *= Mathf.Clamp(m_bonusRange, 0.01f, 10000f);
+        finalStats.CriticalRate *= Mathf.Clamp(m_bonusCriticalRate, 0.01f, 10000f);
+        finalStats.CriticalDamage *= Mathf.Clamp(m_bonusCriticalDamage, 0.01f, 10000f);
         finalStats.Duration += m_bonusDuration;
-        finalStats.AbilityValue *= m_bonusAbilityValue;
+        finalStats.AbilityValue *= Mathf.Clamp(m_bonusAbilityValue, 0.01f, 10000f);
 
         if (finalStats.Range <= 1f) finalStats.Range = 1f;
         if (finalStats.CriticalRate >= 1f) finalStats.CriticalRate = 1f;
@@ -142,30 +114,23 @@ public class TowerController : MonoBehaviour
 
     private void Update()
     {
-        if (m_attackAction == null)
-        {
-            Debug.Log("해당 타워에게 AttackAction이 장착되어있지 않습니다.");
-            return;
-        }
+        if (m_attackAction == null) return;
 
         m_attackCooldown -= Time.deltaTime;
 
         if (m_attackCooldown <= 0f)
         {
-            TowerStats FinalStats = GetFinalStats();
-            bool didAction = m_attackAction.ExecuteAction(transform, FinalStats);
+            TowerStats finalStats = GetFinalStats();
+            bool didAction = m_attackAction.ExecuteAction(transform, finalStats);
 
             if (didAction)
             {
-                m_attackCooldown = FinalStats.AttackSpeed > 0 ? 1f / FinalStats.AttackSpeed : 1f;
+                m_attackCooldown = finalStats.AttackSpeed > 0f ? 1f / finalStats.AttackSpeed : 1f;
             }
         }
     }
 
-    public TowerData GetTowerData()
-    {
-        return m_towerData;
-    }
+    public TowerData GetTowerData() => m_towerData;
 
     public void ShowRange(bool show)
     {
@@ -182,59 +147,43 @@ public class TowerController : MonoBehaviour
         }
     }
 
-    public void AddBuffStat(BuffTarget buffTarget, float abilityValue, float damageValue, float duration, float dotDuration = 0f)
+    public void OnMovedToNewPosition()
     {
-        switch (buffTarget)
+        if (m_attackAction is DebuffAction && m_debuffZoneChild != null)
         {
-            case BuffTarget.AttackPower:
-                if (m_attackPowerBuffRoutine != null) StopCoroutine(m_attackPowerBuffRoutine);
-                m_bonusAttackPower = abilityValue;
-                m_attackPowerBuffRoutine = StartCoroutine(RemoveBuffRoutine(buffTarget, duration));
-                break;
-            case BuffTarget.AttackSpeed:
-                if (m_attackSpeedBuffRoutine != null) StopCoroutine(m_attackSpeedBuffRoutine);
-                m_bonusAttackSpeed = abilityValue;
-                m_attackSpeedBuffRoutine = StartCoroutine(RemoveBuffRoutine(buffTarget, duration));
-                break;
-            case BuffTarget.Range:
-                if (m_rangeBuffRoutine != null) StopCoroutine(m_rangeBuffRoutine);
-                m_bonusRange = abilityValue;
-                m_rangeBuffRoutine = StartCoroutine(RemoveBuffRoutine(buffTarget, duration));
-                break;
-            case BuffTarget.CriticalRate:
-                if (m_criticalRateBuffRoutine != null) StopCoroutine(m_criticalRateBuffRoutine);
-                m_bonusCriticalRate = abilityValue;
-                m_criticalRateBuffRoutine = StartCoroutine(RemoveBuffRoutine(buffTarget, duration));
-                break;
-            case BuffTarget.CriticalDamage:
-                if (m_criticalDamageBuffRoutine != null) StopCoroutine(m_criticalDamageBuffRoutine);
-                m_bonusCriticalDamage = abilityValue;
-                m_criticalDamageBuffRoutine = StartCoroutine(RemoveBuffRoutine(buffTarget, duration));
-                break;
+            m_debuffZoneChild.UpdateTowerPosition(transform.position, GetFinalStats().Range);
         }
     }
 
-    private System.Collections.IEnumerator RemoveBuffRoutine(BuffTarget buffTarget, float duration)
+    public void ApplyBuff(BuffTarget target, float abilityValue, float duration)
+    {
+        if (m_buffRoutine != null) StopCoroutine(m_buffRoutine);
+
+        switch (target)
+        {
+            case BuffTarget.Sword: m_bonusAttackPower = 1f + (abilityValue / 100f); break;
+            case BuffTarget.Bow: m_bonusAttackSpeed = 1f + (abilityValue / 100f); break;
+            case BuffTarget.Spear: m_bonusRange = 1f + (abilityValue / 100f); break;
+            case BuffTarget.Axe: m_bonusCriticalRate = 1f + (abilityValue / 100f); break;
+            case BuffTarget.Hammer: m_bonusCriticalDamage = 1f + (abilityValue / 100f); break;
+        }
+
+        m_buffRoutine = StartCoroutine(RemoveBuffRoutine(target, duration));
+    }
+
+    private System.Collections.IEnumerator RemoveBuffRoutine(BuffTarget target, float duration)
     {
         yield return new WaitForSeconds(duration);
 
-        switch (buffTarget)
+        switch (target)
         {
-            case BuffTarget.AttackPower:
-                m_bonusAttackPower = 1f; m_attackPowerBuffRoutine = null;
-                break;
-            case BuffTarget.AttackSpeed:
-                m_bonusAttackSpeed = 1f; m_attackSpeedBuffRoutine = null;
-                break;
-            case BuffTarget.Range:
-                m_bonusRange = 1f; m_rangeBuffRoutine = null;
-                break;
-            case BuffTarget.CriticalRate:
-                m_bonusCriticalRate = 1f; m_criticalRateBuffRoutine = null;
-                break;
-            case BuffTarget.CriticalDamage:
-                m_bonusCriticalDamage = 1f; m_criticalDamageBuffRoutine = null;
-                break;
+            case BuffTarget.Sword: m_bonusAttackPower = 1f; break;
+            case BuffTarget.Bow: m_bonusAttackSpeed = 1f; break;
+            case BuffTarget.Spear: m_bonusRange = 1f; break;
+            case BuffTarget.Axe: m_bonusCriticalRate = 1f; break;
+            case BuffTarget.Hammer: m_bonusCriticalDamage = 1f; break;
         }
+
+        m_buffRoutine = null;
     }
 }

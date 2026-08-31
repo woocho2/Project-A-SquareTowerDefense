@@ -11,7 +11,13 @@ public abstract class TowerAttackAction
 
     public abstract bool ExecuteAction(Transform towerTransform, TowerStats finalStats);
 
-    protected virtual bool TryFindTarget(Vector2 origin, float range, LayerMask targetLayer, TargetPriority priority, out EnemyController targetEnemy)
+    // priority 매개변수에 기본값(= TargetPriority.Closest)을 지정하여 함수 1개로 통합
+    protected virtual bool TryFindTarget(
+        Vector2 origin,
+        float range,
+        LayerMask targetLayer,
+        out EnemyHealthController targetEnemy,
+        TargetPriority priority = TargetPriority.Closest)
     {
         targetEnemy = null;
 
@@ -23,69 +29,78 @@ public abstract class TowerAttackAction
         }
 
         float minSqrDistance = Mathf.Infinity;
-        float maxDistanceTraveled = -1f;
-        float minDistanceTraveled = Mathf.Infinity;
+        float maxWaveIndex = -1f;
+        float minWaveIndex = Mathf.Infinity;
         float maxHp = -1f;
         float minHp = Mathf.Infinity;
 
-        foreach (Collider2D hit in hitEnemies)
+        for (int i = 0; i < hitEnemies.Length; i++)
         {
-            EnemyController enemy = hit.GetComponentInParent<EnemyController>();
-            if (enemy == null || !enemy.gameObject.activeInHierarchy) continue;
+            Collider2D hit = hitEnemies[i];
+
+            EnemyHealthController health = hit.GetComponentInParent<EnemyHealthController>();
+            if (health == null || !health.gameObject.activeInHierarchy || health.CurrentHP <= 0f) continue;
+
+            hit.transform.parent.TryGetComponent<EnemyMovementController>(out var movement);
+            if (movement == null)
+            {
+                health.TryGetComponent<EnemyMovementController>(out movement);
+            }
 
             switch (priority)
             {
-                // 1. 타워와 물리적 거리가 가장 가까운 적
                 case TargetPriority.Closest:
+                case TargetPriority.Default:
                     Vector2 direction = (Vector2)hit.transform.position - origin;
                     float sqrDistance = direction.sqrMagnitude;
 
                     if (sqrDistance < minSqrDistance)
                     {
                         minSqrDistance = sqrDistance;
-                        targetEnemy = enemy;
+                        targetEnemy = health;
                     }
                     break;
 
-                // 2. 경로상 가장 앞선 적 (진행 거리가 가장 긴 적)
                 case TargetPriority.First:
-                    // EnemyController에 이동 거리/웨이포인트 진행도(DistanceTraveled) 속성이 있다고 가정
-                    if (enemy.DistanceTraveled > maxDistanceTraveled)
+                    if (movement != null && movement.WavePointIndex > maxWaveIndex)
                     {
-                        maxDistanceTraveled = enemy.DistanceTraveled;
-                        targetEnemy = enemy;
+                        maxWaveIndex = movement.WavePointIndex;
+                        targetEnemy = health;
                     }
                     break;
 
-                // 3. 경로상 가장 뒤처진 적 (스폰된 지 얼마 안 된 적)
                 case TargetPriority.Last:
-                    if (enemy.DistanceTraveled < minDistanceTraveled)
+                    if (movement != null && movement.WavePointIndex < minWaveIndex)
                     {
-                        minDistanceTraveled = enemy.DistanceTraveled;
-                        targetEnemy = enemy;
+                        minWaveIndex = movement.WavePointIndex;
+                        targetEnemy = health;
                     }
                     break;
 
-                // 4. 체력이 가장 높거나 보스/엘리트인 적
                 case TargetPriority.Strongest:
-                    // 보스가 있다면 무조건 최우선 타겟 지정 처리 가능
-                    if (enemy.CurrentHp > maxHp)
+                    if (health.IsBoss)
                     {
-                        maxHp = enemy.CurrentHp;
-                        targetEnemy = enemy;
+                        targetEnemy = health;
+                        return true;
+                    }
+
+                    if (health.CurrentHP > maxHp)
+                    {
+                        maxHp = health.CurrentHP;
+                        targetEnemy = health;
                     }
                     break;
 
-                // 5. 체력이 가장 낮아 빠르게 정리 가능한 적
                 case TargetPriority.Weakest:
-                    if (enemy.CurrentHp < minHp)
+                    if (health.CurrentHP < minHp)
                     {
-                        minHp = enemy.CurrentHp;
-                        targetEnemy = enemy;
+                        minHp = health.CurrentHP;
+                        targetEnemy = health;
                     }
                     break;
             }
         }
+
         return targetEnemy != null;
     }
 }

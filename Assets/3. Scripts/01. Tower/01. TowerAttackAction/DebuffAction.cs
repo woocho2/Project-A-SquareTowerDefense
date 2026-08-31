@@ -1,23 +1,6 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using System.Collections;
-
-// 가독성을 높이기 위한 타워 ID 상수 매핑 (기획된 실제 ID로 숫자 변경 필요)
-public static class BlackTowerID
-{
-    public const int SWORD = 2001;
-    public const int BOW = 2002;
-    public const int SHIELD = 2003;
-    public const int SPEAR = 2004;
-    public const int AXE = 2005;
-    public const int HAMMER = 2006;
-    public const int FIRE = 2007;
-    public const int ICE = 2008;
-    public const int ELECTRICITY = 2009;
-    public const int WIND = 2010;
-    public const int EARTH = 2011;
-    public const int LIGHT = 2012;
-    public const int DARKNESS = 2013;
-}
 
 public class DebuffAction : TowerAttackAction
 {
@@ -25,98 +8,203 @@ public class DebuffAction : TowerAttackAction
 
     public DebuffAction(TowerData data) : base(data) { }
 
-    // TowerController에서 타워 초기화 시 호출하여 장판 스폰
-    public void SpawnZone(DebuffZone prefab, Vector3 spawnPos, TowerStats currentStats)
+    public void BindZone(DebuffZone zone, Vector3 towerPosition, TowerStats currentStats)
     {
-        if (prefab == null) return;
+        if (zone == null) return;
 
-        m_activeZone = Object.Instantiate(prefab, spawnPos, Quaternion.identity);
-        m_activeZone.transform.localScale = new Vector3(currentStats.Range, currentStats.Range, 1f);
+        m_activeZone = zone;
+        m_activeZone.gameObject.SetActive(true);
 
-        // 장판의 센서 이벤트 구독
+        // 타워 위치 및 사거리 정보 전달 (드래그 제한용)
+        m_activeZone.SetupBoundary(towerPosition, currentStats.Range);
+
+        // 1. 타일맵에서 가장 가까운 길목 셀의 월드 좌표 계산
+        Vector3 targetRoadPos = FindClosestTilemapRoadPosition(towerPosition, currentStats.Range);
+
+        // 2. 장판 월드 분리 및 해당 타일 정중앙으로 스냅
+        m_activeZone.transform.SetParent(null);
+        m_activeZone.transform.position = targetRoadPos;
+        m_activeZone.transform.localScale = Vector3.one;
+
+        // 3. 이벤트 등록
+        m_activeZone.OnEnemyEnterEvent -= HandleEnemyEnter;
         m_activeZone.OnEnemyEnterEvent += HandleEnemyEnter;
+
+        m_activeZone.OnEnemyExitEvent -= HandleEnemyExit;
         m_activeZone.OnEnemyExitEvent += HandleEnemyExit;
     }
 
-    // 장판을 밟는 즉시 발동하는 패시브/스택형 효과
-    private void HandleEnemyEnter(EnemyController enemy)
+    // Tilemap_Path에서 타워 주변 유효한 길목 타일의 정중앙 좌표를 찾는 함수
+    private Vector3 FindClosestTilemapRoadPosition(Vector3 towerPos, float range)
     {
-        switch (m_data.towerID)
+        // 씬 내의 Tilemap_Path 오브젝트 탐색
+        Tilemap pathTilemap = null;
+        GameObject pathObj = GameObject.Find("Tilemap_Path");
+
+        if (pathObj != null)
         {
-            case BlackTowerID.SWORD:
-                enemy.ApplyStack(DebuffType.Curse, 1); break;
-            case BlackTowerID.BOW:
-                enemy.ApplyStack(DebuffType.Bleeding, 1); break;
-            case BlackTowerID.SPEAR:
-                enemy.ApplyStack(DebuffType.Javelin, 1); break;
-            case BlackTowerID.AXE:
-                enemy.ApplyStack(DebuffType.Vulnerable, 1); break;
-            case BlackTowerID.ICE:
-                enemy.ApplyStack(DebuffType.Slow, 1); break;
-            case BlackTowerID.ELECTRICITY:
-                enemy.ApplyStack(DebuffType.Shock, 1); break;
-            case BlackTowerID.HAMMER:
-                enemy.ApplyStatModifier(StatType.Armor, -m_data.abilityValue); break;
+            pathTilemap = pathObj.GetComponent<Tilemap>();
+        }
+
+        if (pathTilemap == null)
+        {
+            // 이름으로 못 찾을 경우 씬 내 첫 번째 Tilemap 탐색
+            pathTilemap = Object.FindAnyObjectByType<Tilemap>();
+        }
+
+        if (pathTilemap == null)
+        {
+            Debug.LogError("[DebuffZone] Tilemap_Path를 찾을 수 없습니다!");
+            return towerPos;
+        }
+
+        // 타워 위치를 타일맵 셀 그리드 좌표로 변환
+        Vector3Int centerCell = pathTilemap.WorldToCell(towerPos);
+        int cellRadius = Mathf.CeilToInt(Mathf.Max(range, 1.5f));
+
+        Vector3 bestWorldPos = towerPos;
+        float minDistance = float.MaxValue;
+        bool found = false;
+
+        // 타워 주변 반경(cellRadius) 내 모든 그리드 셀 검사
+        for (int x = -cellRadius; x <= cellRadius; x++)
+        {
+            for (int y = -cellRadius; y <= cellRadius; y++)
+            {
+                Vector3Int checkCell = new Vector3Int(centerCell.x + x, centerCell.y + y, 0);
+
+                // 해당 셀에 길목 타일이 존재하는지 확인
+                if (pathTilemap.HasTile(checkCell))
+                {
+                    // 해당 타일 셀의 정확한 정중앙 월드 좌표 취득
+                    Vector3 cellWorldPos = pathTilemap.GetCellCenterWorld(checkCell);
+                    float dist = Vector2.Distance(towerPos, cellWorldPos);
+
+                    if (dist <= range && dist < minDistance)
+                    {
+                        minDistance = dist;
+                        bestWorldPos = cellWorldPos;
+                        found = true;
+                    }
+                }
+            }
+        }
+
+        if (found)
+        {
+            Debug.Log($"[DebuffZone] 길목 타일맵 셀 감지 성공: {bestWorldPos}");
+            return bestWorldPos;
+        }
+
+        Debug.LogWarning($"[DebuffZone] 사거리({range}) 내 길목 타일을 찾지 못해 기본 위치를 반환합니다.");
+        return towerPos;
+    }
+
+    private void HandleEnemyEnter(EnemyHealthController health)
+    {
+        if (health == null || health.CurrentHP <= 0f) return;
+
+        int patternID = m_data.towerID % 100;
+
+        // 최신 업그레이드 스탯 가져오기 (매니저가 없을 경우 기본 데이터 fallback)
+        TowerStats currentStats = TowerManager.Instance != null
+            ? TowerManager.Instance.GetGlobalStats(m_data.towerID)
+            : m_data.ToTowerStats();
+
+        if (health.TryGetComponent<EnemyDebuffController>(out var debuff))
+        {
+            switch (patternID)
+            {
+                case TowerPattern.SWORD:
+                    debuff.AddDebuff(new SwordDebuff(currentStats.Duration, currentStats.AbilityValue));
+                    break;
+                case TowerPattern.BOW:
+                    debuff.AddDebuff(new BowDebuff(currentStats.Duration, currentStats.AbilityValue));
+                    break;
+                case TowerPattern.SPEAR:
+                    debuff.AddDebuff(new SpearDebuff(currentStats.Duration, currentStats.AbilityValue));
+                    break;
+                case TowerPattern.AXE:
+                    debuff.AddDebuff(new AxeDebuff(currentStats.Duration, currentStats.AbilityValue));
+                    break;
+                case TowerPattern.HAMMER:
+                    debuff.AddDebuff(new HammerDebuff(currentStats.Duration, currentStats.AbilityValue));
+                    break;
+                case TowerPattern.FIRE:
+                    debuff.AddDebuff(new FireDebuff(currentStats.Duration, currentStats.AbilityValue));
+                    break;
+                case TowerPattern.ICE:
+                    debuff.AddDebuff(new IceDebuff(currentStats.Duration, currentStats.AbilityValue));
+                    break;
+                case TowerPattern.ELECTRICITY:
+                    debuff.AddDebuff(new ElectricityDebuff(currentStats.Duration, currentStats.AbilityValue));
+                    break;
+                case TowerPattern.LIGHT:
+                    debuff.AddDebuff(new LightDebuff(currentStats.Duration, currentStats.AbilityValue));
+                    break;
+            }
         }
     }
 
-    // 장판 이탈 시 상태 복구
-    private void HandleEnemyExit(EnemyController enemy)
+    private void HandleEnemyExit(EnemyHealthController health)
     {
-        if (m_data.towerID == BlackTowerID.HAMMER)
-        {
-            enemy.RemoveStatModifier(StatType.Armor, m_data.abilityValue);
-        }
+        if (health == null) return;
     }
 
-    // 타워 공격 주기(쿨타임)마다 발동되는 액티브/광역 효과
     public override bool ExecuteAction(Transform towerTransform, TowerStats currentStats)
     {
         if (m_activeZone == null) return false;
 
-        // Shield는 적이 장판에 없어도 길을 막아야 하므로 예외 처리
-        if (m_activeZone.EnemiesInZone.Count == 0 && m_data.towerID != BlackTowerID.SHIELD)
+        int patternID = m_data.towerID % 100;
+
+        if (m_activeZone.EnemiesInZone.Count == 0 && patternID != TowerPattern.SHIELD)
             return false;
 
-        switch (m_data.towerID)
+        switch (patternID)
         {
-            case BlackTowerID.SHIELD:
+            case TowerPattern.SHIELD:
                 towerTransform.GetComponent<MonoBehaviour>().StartCoroutine(ShieldBlockRoutine(currentStats.AbilityValue));
                 break;
-            case BlackTowerID.FIRE:
-                foreach (var enemy in m_activeZone.EnemiesInZone)
-                    enemy.TakeDamage(currentStats.AttackPower);
-                break;
-            case BlackTowerID.WIND:
-                foreach (var enemy in m_activeZone.EnemiesInZone)
-                    enemy.ApplyDebuff(DebuffTarget.Push, currentStats.AbilityValue, 0.1f);
-                break;
-            case BlackTowerID.EARTH:
-                foreach (var enemy in m_activeZone.EnemiesInZone)
+
+            case TowerPattern.WIND:
+                for (int i = 0; i < m_activeZone.EnemiesInZone.Count; i++)
                 {
-                    enemy.ApplyDebuff(DebuffTarget.Stun, 0f, 1.5f); // 임시 속박(Stun) 처리
-                    enemy.TakeDamage(enemy.MaxHP * (currentStats.AbilityValue / 100f));
-                }
-                break;
-            case BlackTowerID.LIGHT:
-                for (int i = m_activeZone.EnemiesInZone.Count - 1; i >= 0; i--)
-                {
-                    var enemy = m_activeZone.EnemiesInZone[i];
-                    if (enemy.currentHP / enemy.MaxHP <= (currentStats.AbilityValue / 100f))
+                    if (m_activeZone.EnemiesInZone[i].TryGetComponent<EnemyDebuffController>(out var debuff))
                     {
-                        enemy.ExecuteDeath();
+                        debuff.AddDebuff(new WindDebuff(0.2f, currentStats.AbilityValue));
                     }
                 }
                 break;
-            case BlackTowerID.DARKNESS:
-                foreach (var enemy in m_activeZone.EnemiesInZone)
+
+            case TowerPattern.EARTH:
+                for (int i = 0; i < m_activeZone.EnemiesInZone.Count; i++)
                 {
-                    enemy.PullToPosition(m_activeZone.transform.position, currentStats.AbilityValue);
-                    enemy.TakeDamage(enemy.MaxHP * 0.005f); // 0.5% 데미지
+                    if (m_activeZone.EnemiesInZone[i].TryGetComponent<EnemyDebuffController>(out var debuff))
+                    {
+                        debuff.AddDebuff(new EarthDebuff(currentStats.Duration, currentStats.AbilityValue));
+                    }
+                }
+                break;
+
+            case TowerPattern.DARKNESS:
+                for (int i = 0; i < m_activeZone.EnemiesInZone.Count; i++)
+                {
+                    if (m_activeZone.EnemiesInZone[i].TryGetComponent<EnemyDebuffController>(out var debuff))
+                    {
+                        debuff.AddDebuff(new DarknessDebuff(currentStats.Duration, m_activeZone.transform.position));
+                    }
+                }
+                break;
+
+            case TowerPattern.FIRE:
+                for (int i = 0; i < m_activeZone.EnemiesInZone.Count; i++)
+                {
+                    m_activeZone.EnemiesInZone[i].ApplyDamage(currentStats.AttackPower);
                 }
                 break;
         }
-        return true; // 액션 실행 완료 (쿨타임 리셋)
+
+        return true;
     }
 
     private IEnumerator ShieldBlockRoutine(float duration)

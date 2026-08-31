@@ -133,8 +133,6 @@ public class TowerManager : MonoBehaviour
     {
         LoadTowerDataFromCSV();
 
-        GlobalStats();
-
         m_synergies.Add(new KnightOfFireSynergy     (this, m_knightData, m_btnKnightOfFire, m_imgKnightOfFireSword, m_imgKnightOfFireShield, m_imgKnightOfFireFire));
         m_synergies.Add(new StormSniperSynergy      (this, m_sniperData, m_btnStormSniper, m_imgStormSniperBow, m_imgStormSniperWind));
         m_synergies.Add(new FrostBerserkerSynergy   (this, m_berserkerData, m_btnFrostBerserker, m_imgFrostBerserkerShield, m_imgFrostBerserkerAxe, m_imgFrostBerserkerIce));
@@ -187,44 +185,90 @@ public class TowerManager : MonoBehaviour
         }
     }
 
-    private void GlobalStats()
+    private void LoadTowerDataFromCSV()
     {
-        if (m_towerData == null || m_towerData.Length == 0)
+        TextAsset csvData = Resources.Load<TextAsset>("TowerDataCSV");
+        if (csvData == null)
         {
+            Debug.LogError("Resources 폴더에서 TowerDataCSV 파일을 찾을 수 없습니다.");
             return;
         }
 
-        foreach (var data in m_towerData)
+        string[] lines = csvData.text.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+        List<TowerData> loadedTowers = new List<TowerData>();
+
+        for (int i = 1; i < lines.Length; i++)
         {
-            TowerStats initStats = new TowerStats
+            string[] values = lines[i].Split(',');
+            if (values.Length < 18 || string.IsNullOrWhiteSpace(values[0])) continue;
+
+            TowerData newData = ScriptableObject.CreateInstance<TowerData>();
+
+            try
             {
-                Name      = data.towerName,
-                Level          = 1,
-                AttackPower = data.attackPower,
-                Range          = data.range,
-                AttackSpeed    = data.attackSpeed,
-                CriticalRate   = data.criticalRate,
-                CriticalDamage = data.criticalDamage,
-                Duration       = data.duration,
-                AbilityValue   = data.abilityValue
-            };
+                newData.towerID = int.Parse(values[0].Trim());
+                newData.towerName = values[1].Replace("\"", "").Trim();
+                newData.towerLevel = int.Parse(values[2].Trim());
+                newData.attackPower = float.Parse(values[3].Trim());
+                newData.range = float.Parse(values[4].Trim());
+                newData.attackSpeed = float.Parse(values[5].Trim());
+                newData.isCritical = bool.Parse(values[6].Trim());
+                newData.criticalRate = float.Parse(values[7].Trim());
+                newData.criticalDamage = float.Parse(values[8].Trim());
+                newData.duration = float.Parse(values[9].Trim());
+                newData.abilityValue = float.Parse(values[10].Trim());
 
-            m_globalTowerStats[data.towerID] = initStats;
+                newData.attackType = ParseEnum<AttackType>(values[11]);
+                string layerName = values[12].Trim();
+                newData.targetLayer = !string.IsNullOrEmpty(layerName) ? LayerMask.GetMask(layerName) : 0;
+                newData.buffTarget = string.IsNullOrEmpty(values[13].Trim()) ? BuffTarget.None : ParseEnum<BuffTarget>(values[13]);
+                newData.debuffTarget = string.IsNullOrEmpty(values[14].Trim()) ? DebuffTarget.None : ParseEnum<DebuffTarget>(values[14]);
 
-            int tier    = data.towerID / 1000;
-            int type    = (data.towerID % 1000) / 100;
-            int variant = data.towerID % 100;
+                newData.projectileSpeed = float.Parse(values[15].Trim());
+                newData.splashRadius = float.Parse(values[16].Trim());
+                newData.hitEffectID = int.Parse(values[17].Trim());
+            }
+            catch (System.Exception)
+            {
+                Debug.LogWarning($"[CSV 데이터 오류] 엑셀의 {i + 1}번째 줄 파싱 실패. 내용: {lines[i]}");
+                continue;
+            }
+
+            string prefabName = newData.towerID.ToString();
+            newData.towerPrefab = Resources.Load<GameObject>($"Towers/{prefabName}");
+            if (newData.towerPrefab == null)
+            {
+                Debug.LogWarning($"[로드 실패] ID {newData.towerID}의 타워 프리팹 누락");
+                continue;
+            }
+
+            int sharedProjID = newData.towerID % 1000;
+            string projPrefabName = sharedProjID.ToString();
+            newData.projectilePrefab = Resources.Load<GameObject>($"Projectiles/{projPrefabName}");
+
+            loadedTowers.Add(newData);
+
+            // [핵심] 생성 즉시 ToTowerStats()를 호출하여 글로벌 스탯 딕셔너리에 등록
+            m_globalTowerStats[newData.towerID] = newData.ToTowerStats();
+
+            // 분류 딕셔너리 적재
+            int tier = newData.towerID / 1000;
+            int type = (newData.towerID % 1000) / 100;
+            int variant = newData.towerID % 100;
 
             if (!m_towerTier.ContainsKey(tier)) m_towerTier[tier] = new List<TowerData>();
-            m_towerTier[tier].Add(data);
+            m_towerTier[tier].Add(newData);
 
             if (!m_towerType.ContainsKey(type)) m_towerType[type] = new List<TowerData>();
-            m_towerType[type].Add(data);
+            m_towerType[type].Add(newData);
 
             if (!m_towerVariant.ContainsKey(variant)) m_towerVariant[variant] = new List<TowerData>();
-            m_towerVariant[variant].Add(data);
+            m_towerVariant[variant].Add(newData);
         }
 
+        m_towerData = loadedTowers.ToArray();
+
+        // 시너지 타워 글로벌 스탯 등록
         TowerData[] synergyDatas = {
             m_knightData, m_sniperData, m_berserkerData,
             m_contradictionData, m_thorData, m_gunData, m_wizardData
@@ -234,23 +278,13 @@ public class TowerManager : MonoBehaviour
         {
             if (sData != null)
             {
-                TowerStats synergyStats = new TowerStats
-                {
-                    Name      = sData.towerName,
-                    Level          = 1,
-                    AttackPower = sData.attackPower,
-                    Range = sData.range,
-                    AttackSpeed    = sData.attackSpeed,
-                    CriticalRate   = sData.criticalRate,
-                    CriticalDamage = sData.criticalDamage,
-                    Duration       = sData.duration,
-                    AbilityValue   = sData.abilityValue
-                };
-
-                m_globalTowerStats[sData.towerID] = synergyStats;
+                m_globalTowerStats[sData.towerID] = sData.ToTowerStats();
             }
         }
+
+        Debug.Log($"총 {m_towerData.Length}개의 타워 데이터 및 글로벌 스탯 로드 완료.");
     }
+
 
     public TowerStats GetGlobalStats(int towerID)
     {
@@ -285,9 +319,9 @@ public class TowerManager : MonoBehaviour
 
         List<TowerData> buildableTowers = m_towerTier[1];
 
-        Vector3Int? randomCell = GetRandomEmptyCell();
+        Vector3Int? emptyCell = GetFirstEmptyCell();
 
-        if (randomCell.HasValue)
+        if (emptyCell.HasValue)
         {
             CurrencyManager.Instance.SpendMoney(BuildCost);
             if (BuildCost < 300) BuildCost += 2;
@@ -301,14 +335,14 @@ public class TowerManager : MonoBehaviour
                 return;
             }
 
-            Vector3 spawnPos = CellToWorld(randomCell.Value);
+            Vector3 spawnPos = CellToWorld(emptyCell.Value);
 
             GameObject spawnedTower = Instantiate(selectedData.towerPrefab, spawnPos, Quaternion.identity);
             TowerController towerController = spawnedTower.GetComponent<TowerController>();
 
             if (towerController != null)
             {
-                towerController.Init(selectedData);
+                towerController.Init(selectedData, GetGlobalStats(selectedData.towerID));
             }
             else
             {
@@ -323,7 +357,7 @@ public class TowerManager : MonoBehaviour
                 Variant    = selectedData.towerID % 100
             };
 
-            m_towersOnGrid.Add(randomCell.Value, newInfo);
+            m_towersOnGrid.Add(emptyCell.Value, newInfo);
             CheckTowerSynergy();
         }
         else
@@ -332,26 +366,26 @@ public class TowerManager : MonoBehaviour
         }
     }
 
-    public int GetBuildCost()
+    private Vector3Int? GetFirstEmptyCell()
     {
-        return BuildCost;
-    }
-
-    private Vector3Int? GetRandomEmptyCell()
-    {
-        List<Vector3Int> emptyCells = new List<Vector3Int>();
-
         BoundsInt bounds = m_spawnPoint.cellBounds;
 
-        foreach (var pos in bounds.allPositionsWithin)
+        // 위(Y 최대치)에서 아래로, 왼쪽(X 최소치)에서 오른쪽으로 순차 탐색
+        for (int y = bounds.yMax - 1; y >= bounds.yMin; y--)
         {
-            if (m_spawnPoint.HasTile(pos) && !m_towersOnGrid.ContainsKey(pos))
+            for (int x = bounds.xMin; x < bounds.xMax; x++)
             {
-                emptyCells.Add(pos);
+                Vector3Int pos = new Vector3Int(x, y, 0);
+
+                // 타일맵에 타일이 존재하고, 현재 타워가 배치되어 있지 않은 첫 자리
+                if (m_spawnPoint.HasTile(pos) && !m_towersOnGrid.ContainsKey(pos))
+                {
+                    return pos; // 발견 즉시 반환 (조기 종료)
+                }
             }
         }
-        if (emptyCells.Count == 0) return null;
-        return emptyCells[UnityEngine.Random.Range(0, emptyCells.Count)];
+
+        return null; // 모든 자리가 가득 찬 경우
     }
 
     private Vector3 CellToWorld(Vector3Int cell)
@@ -365,6 +399,11 @@ public class TowerManager : MonoBehaviour
     public Vector3Int WorldToCell(Vector3 worldPos)
     {
         return m_spawnPoint.WorldToCell(worldPos);
+    }
+
+    public int GetBuildCost()
+    {
+        return BuildCost;
     }
 
     // ==========================================================================================================
@@ -449,11 +488,15 @@ public class TowerManager : MonoBehaviour
                 OnTowerTypeUpgrade?.Invoke(key);
             }
         }
-
-        //if (UIManager.Instance != null)
-        //{
-        //    UIManager.Instance.RefreshUpgradeTowerInfoLabel();
-        //}
+        // 2. 필드에 배치된 해당 타입 타워들에게 최신 스탯 주입(Push)
+        foreach (var gridInfo in m_towersOnGrid.Values)
+        {
+            if (gridInfo.Type == targetType && gridInfo.Controller != null)
+            {
+                int currentTowerID = gridInfo.Controller.GetTowerData().towerID;
+                gridInfo.Controller.UpdateBaseStats(m_globalTowerStats[currentTowerID]);
+            }
+        }
     }
 
     // ==========================================================================================================
@@ -536,7 +579,7 @@ public class TowerManager : MonoBehaviour
 
         GameObject spawnedTower = Instantiate(resultData.towerPrefab, spawnPos, Quaternion.identity);
         TowerController newTowerController = spawnedTower.GetComponent<TowerController>();
-        newTowerController.Init(resultData);
+        newTowerController.Init(resultData, GetGlobalStats(resultData.towerID));
 
         GridTowerInfo newInfo = new GridTowerInfo
         {
@@ -584,30 +627,7 @@ public class TowerManager : MonoBehaviour
             return candidates[UnityEngine.Random.Range(0, candidates.Count)];
         }
         return null;
-    }
-
-    //private void TierUpgrade(GridTowerInfo targetInfo)
-    //{
-    //    int nextTier = targetInfo.Tier + 1;
-
-    //    if (!m_towerTier.ContainsKey(nextTier)) return;
-
-    //    List<TowerData> nextTierTower = m_towerTier[nextTier];
-
-    //    if (CurrencyManager.Instance.HasEnoughGem(UpgradeGemCost))
-    //    {
-    //        Vector3 spawnPos = targetInfo.Controller.transform.position;
-
-    //        m_towersOnGrid.Remove(spawnPos, targetInfo);
-    //        Destroy(targetInfo.Controller.gameObject);
-    //    }
-
-    //    TowerData UpgradeData = new TowerData();
-
-    //    GameObject spawnedTower = Instantiate(UpgradeData.towerPrefab, spawnPos, Quaternion.identity);
-    //    TowerController newTowerController = spawnedTower.GetComponent<TowerController>();
-    //    newTowerController.Init(resultData);
-    //}
+    }   
 
     // ==========================================================================================================
     // ================================================= 시너지 ==================================================
@@ -665,26 +685,9 @@ public class TowerManager : MonoBehaviour
         return activeVariants;
     }
 
-    private Vector3Int? GetRandomSynergyEmptyCell()
-    {
-        List<Vector3Int> spcialEmptyCells = new List<Vector3Int>();
-
-        BoundsInt specialBounds = m_synergySpawnPoint.cellBounds;
-
-        foreach (var pos in specialBounds.allPositionsWithin)
-        {
-            if (m_synergySpawnPoint.HasTile(pos) && !m_towersOnGrid.ContainsKey(pos))
-            {
-                spcialEmptyCells.Add(pos);
-            }
-        }
-        if (spcialEmptyCells.Count == 0) return null;
-        return spcialEmptyCells[UnityEngine.Random.Range(0, spcialEmptyCells.Count)];
-    }
-
     public TowerController CreateSynergyTower(TowerData synergyData)
     {
-        Vector3Int? spawnCell = GetRandomSynergyEmptyCell();
+        Vector3Int? spawnCell = GetFirstEmptyCell(m_synergySpawnPoint);
 
         if (spawnCell.HasValue)
         {
@@ -696,7 +699,7 @@ public class TowerManager : MonoBehaviour
 
             if (synergyTowerController != null)
             {
-                synergyTowerController.Init(synergyData);
+                synergyTowerController.Init(synergyData, GetGlobalStats(synergyData.towerID));
             }
 
             GridTowerInfo newInfo = new GridTowerInfo
@@ -782,7 +785,7 @@ public class TowerManager : MonoBehaviour
         Vector3 spawnPos = CellToWorld(spawnCell);
         GameObject spawnedTower = Instantiate(resultTowerData.towerPrefab, spawnPos, Quaternion.identity);
         TowerController newTowerController = spawnedTower.GetComponent<TowerController>();
-        newTowerController.Init(resultTowerData);
+        newTowerController.Init(resultTowerData, GetGlobalStats(resultTowerData.towerID));
 
         GridTowerInfo newInfo = new GridTowerInfo
         {
@@ -851,7 +854,7 @@ public class TowerManager : MonoBehaviour
         Vector3 spawnPos = CellToWorld(cell);
         GameObject spawnedTower = Instantiate(data.towerPrefab, spawnPos, Quaternion.identity);
         TowerController newTowerController = spawnedTower.GetComponent<TowerController>();
-        newTowerController.Init(data);
+        newTowerController.Init(data, GetGlobalStats(data.towerID));
 
         GridTowerInfo newInfo = new GridTowerInfo
         {
@@ -863,19 +866,51 @@ public class TowerManager : MonoBehaviour
         m_towersOnGrid.Add(cell, newInfo);
     }
 
+    /// <summary>
+    /// 지정된 타일맵에서 첫 번째로 비어있는 셀을 순차적으로 탐색하여 반환합니다.
+    /// </summary>
+    private Vector3Int? GetFirstEmptyCell(Tilemap targetTilemap)
+    {
+        BoundsInt bounds = targetTilemap.cellBounds;
+
+        for (int y = bounds.yMax - 1; y >= bounds.yMin; y--)
+        {
+            for (int x = bounds.xMin; x < bounds.xMax; x++)
+            {
+                Vector3Int pos = new Vector3Int(x, y, 0);
+
+                if (targetTilemap.HasTile(pos) && !m_towersOnGrid.ContainsKey(pos))
+                {
+                    return pos;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// 일반 스폰 타일맵에서 지정된 개수만큼의 빈 셀을 순차적으로 탐색하여 반환합니다.
+    /// </summary>
     private List<Vector3Int> GetMultipleEmptyCells(int count)
     {
         List<Vector3Int> emptyCells = new List<Vector3Int>();
         BoundsInt bounds = m_spawnPoint.cellBounds;
 
-        foreach (var pos in bounds.allPositionsWithin)
+        for (int y = bounds.yMax - 1; y >= bounds.yMin; y--)
         {
-            if (m_spawnPoint.HasTile(pos) && !m_towersOnGrid.ContainsKey(pos))
+            for (int x = bounds.xMin; x < bounds.xMax; x++)
             {
-                emptyCells.Add(pos);
-                if (emptyCells.Count >= count) return emptyCells; // 필요한 만큼 찾으면 즉시 반환
+                Vector3Int pos = new Vector3Int(x, y, 0);
+
+                if (m_spawnPoint.HasTile(pos) && !m_towersOnGrid.ContainsKey(pos))
+                {
+                    emptyCells.Add(pos);
+                    if (emptyCells.Count >= count) return emptyCells;
+                }
             }
         }
+
         return emptyCells;
     }
 
@@ -905,10 +940,16 @@ public class TowerManager : MonoBehaviour
         // 2. 이 타워가 현재 속한 타일맵 결정 (일반 맵 vs 시너지 맵)
         Tilemap originTilemap = m_spawnPoint.HasTile(fromCell) ? m_spawnPoint : m_synergySpawnPoint;
 
-        // 3. [핵심] 제자리 드롭이거나, 목적지가 '자신이 속한 맵'이 아닌 경우 원위치로 강제 되돌림
+        // 3. [핵심] 제자리 드롭이거나 목적지가 유효하지 않은 경우 원위치 복귀
         if (fromCell == toCell || !originTilemap.HasTile(toCell))
         {
             movingInfo.Controller.transform.position = originTilemap.GetCellCenterWorld(fromCell);
+
+            // 디버프존 기준 위치 원위치 동기화
+            if (movingInfo.Controller != null)
+            {
+                movingInfo.Controller.OnMovedToNewPosition();
+            }
             return;
         }
 
@@ -920,6 +961,10 @@ public class TowerManager : MonoBehaviour
 
             movingInfo.Controller.transform.position = originTilemap.GetCellCenterWorld(toCell);
             targetInfo.Controller.transform.position = originTilemap.GetCellCenterWorld(fromCell);
+
+            // 두 타워 모두 디버프존 기준 위치 갱신
+            if (movingInfo.Controller != null) movingInfo.Controller.OnMovedToNewPosition();
+            if (targetInfo.Controller != null) targetInfo.Controller.OnMovedToNewPosition();
             return;
         }
 
@@ -928,6 +973,12 @@ public class TowerManager : MonoBehaviour
         m_towersOnGrid[toCell] = movingInfo;
 
         movingInfo.Controller.transform.position = originTilemap.GetCellCenterWorld(toCell);
+
+        // 이동 완료된 타워의 디버프존 기준 위치 갱신
+        if (movingInfo.Controller != null)
+        {
+            movingInfo.Controller.OnMovedToNewPosition();
+        }
     }
     // ==========================================================================================================
     // ==========================================================================================================
@@ -994,16 +1045,16 @@ public class TowerManager : MonoBehaviour
         }
 
         // 3. 빈 공간 찾아서 생성 (일반 스폰 포인트 사용)
-        Vector3Int? randomCell = GetRandomEmptyCell();
-        if (randomCell.HasValue)
+        Vector3Int? emptyCell = GetFirstEmptyCell();
+        if (emptyCell.HasValue)
         {
-            Vector3 spawnPos = CellToWorld(randomCell.Value);
+            Vector3 spawnPos = CellToWorld(emptyCell.Value);
             GameObject spawnedTower = Instantiate(targetData.towerPrefab, spawnPos, Quaternion.identity);
             TowerController towerController = spawnedTower.GetComponent<TowerController>();
 
             if (towerController != null)
             {
-                towerController.Init(targetData);
+                towerController.Init(targetData, GetGlobalStats(targetData.towerID));
             }
 
             // 4. 그리드 매니저에 정보 등록
@@ -1015,7 +1066,7 @@ public class TowerManager : MonoBehaviour
                 Variant    = targetData.towerID % 100
             };
 
-            m_towersOnGrid.Add(randomCell.Value, newInfo);
+            m_towersOnGrid.Add(emptyCell.Value, newInfo);
             Debug.Log($"[치트] 성공! {targetData.towerName} (ID: {towerID}) 타워가 소환되었습니다!");
 
             // 5. 방금 치트로 소환된 타워 때문에 시너지가 발동될 수 있으므로 검사
@@ -1026,102 +1077,7 @@ public class TowerManager : MonoBehaviour
             Debug.LogWarning("[치트] 맵에 타워를 소환할 빈 공간이 없습니다!");
         }
     }
-
-    private void LoadTowerDataFromCSV()
-    {
-        // 1. Resources 폴더 최상단에 있는 CSV 파일을 텍스트 에셋으로 불러옵니다. (확장자 .csv는 생략)
-        TextAsset csvData = Resources.Load<TextAsset>("TowerDataCSV");
-
-        if (csvData == null)
-        {
-            Debug.LogError("Resources 폴더에서 TowerDataCSV 파일을 찾을 수 없습니다.");
-            return;
-        }
-
-        // 2. 줄바꿈 문자를 기준으로 전체 텍스트를 한 줄씩 쪼개어 배열로 만듭니다.
-        string[] lines = csvData.text.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-
-        List<TowerData> loadedTowers = new List<TowerData>();
-
-        // 3. 첫 줄(헤더)을 제외하고 인덱스 1부터 순회합니다.
-        for (int i = 1; i < lines.Length; i++)
-        {
-            string[] values = lines[i].Split(',');
-
-            // [수정] 투사체 데이터 3개(인덱스 15, 16, 17)가 추가되었으므로 최소 열 개수 조건을 18개로 늘립니다.
-            if (values.Length < 18) continue;
-
-            // 첫 번째 칸(towerID)이 비어있다면 의미 없는 잉여 줄로 간주하고 경고 없이 조용히 건너뜁니다.
-            if (string.IsNullOrWhiteSpace(values[0])) continue;
-
-            TowerData newData = ScriptableObject.CreateInstance<TowerData>();
-
-            // try-catch 블록을 추가하여 변환 실패 시 게임 중단을 막고 원인을 로그로 출력합니다.
-            try
-            {
-                // 타워 기본 스탯 파싱
-                newData.towerID = int.Parse(values[0].Trim());
-                newData.towerName = values[1].Replace("\"", "").Trim();
-                newData.towerLevel = int.Parse(values[2].Trim());
-                newData.attackPower = float.Parse(values[3].Trim());
-                newData.range = float.Parse(values[4].Trim());
-                newData.attackSpeed = float.Parse(values[5].Trim());
-                newData.isCritical = bool.Parse(values[6].Trim());
-                newData.criticalRate = float.Parse(values[7].Trim());
-                newData.criticalDamage = float.Parse(values[8].Trim());
-                newData.duration = float.Parse(values[9].Trim());
-                newData.abilityValue = float.Parse(values[10].Trim());
-
-                newData.attackType = ParseEnum<AttackType>(values[11]);
-
-                string layerName = values[12].Trim();
-                newData.targetLayer = !string.IsNullOrEmpty(layerName) ? LayerMask.GetMask(layerName) : 0;
-
-                newData.buffTarget = string.IsNullOrEmpty(values[13].Trim()) ? BuffTarget.None : ParseEnum<BuffTarget>(values[13]);
-                newData.debuffTarget = string.IsNullOrEmpty(values[14].Trim()) ? DebuffTarget.None : ParseEnum<DebuffTarget>(values[14]);
-
-                // [추가] 통합된 투사체 데이터 파싱 (엑셀의 16, 17, 18번째 열)
-                newData.projectileSpeed = float.Parse(values[15].Trim());
-                newData.splashRadius = float.Parse(values[16].Trim());
-                newData.hitEffectID = int.Parse(values[17].Trim());
-            }
-            catch (System.Exception)
-            {
-                // 엑셀의 몇 번째 줄에서 문제가 발생했는지 출력합니다.
-                Debug.LogWarning($"[CSV 데이터 오류] 엑셀의 {i + 1}번째 줄에 숫자로 변환할 수 없는 값(또는 빈 줄)이 있습니다. 이 줄을 건너뜁니다. 내용: {lines[i]}");
-                continue;
-            }
-
-            // 4. 타워 프리팹 로드 (타워 ID 자체를 이름으로 사용)
-            string prefabName = newData.towerID.ToString();
-            newData.towerPrefab = Resources.Load<GameObject>($"Towers/{prefabName}");
-
-            if (newData.towerPrefab == null)
-            {
-                Debug.LogWarning($"[로드 실패] ID {newData.towerID}의 타워 프리팹('{prefabName}.prefab')을 Resources/Towers 경로에서 찾을 수 없습니다.");
-                continue;
-            }
-
-            int sharedProjID = newData.towerID % 1000;
-
-            // 결과적으로 1101, 2101, 3101 모두 "101_Proj"라는 동일한 프리팹 이름을 찾게 됩니다.
-            string projPrefabName = sharedProjID.ToString();
-            newData.projectilePrefab = Resources.Load<GameObject>($"Projectiles/{projPrefabName}");
-
-            if (newData.projectilePrefab == null)
-            {
-                Debug.LogWarning($"[로드 실패] ID {newData.towerID}의 투사체 프리팹('{projPrefabName}.prefab')을 찾을 수 없습니다.");
-            }
-
-            // 6. 정상적으로 파싱된 데이터를 리스트에 추가합니다.
-            loadedTowers.Add(newData);
-        }
-
-        // 7. 완성된 동적 데이터를 타워 매니저의 메인 배열에 덮어씌웁니다.
-        m_towerData = loadedTowers.ToArray();
-        Debug.Log($"총 {m_towerData.Length}개의 타워 데이터를 CSV로부터 성공적으로 로드했습니다.");
-    }
-
+    
     // Enum 파싱용 헬퍼 함수
     private T ParseEnum<T>(string value) where T : struct
     {

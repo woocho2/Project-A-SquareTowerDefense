@@ -2,33 +2,32 @@ using UnityEngine;
 
 public class BuffAction : TowerAttackAction
 {
-    // base() 매개변수를 data 1개로 맞춥니다.
     public BuffAction(TowerData data) : base(data) { }
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats currentStats)
     {
-        Collider2D[] targets = Physics2D.OverlapCircleAll(towerTransform.position, currentStats.Range, m_data.targetLayer);
+        // 버프 범위 내의 아군 타워 콜라이더 탐색
+        Collider2D[] hitTowers = Physics2D.OverlapCircleAll(towerTransform.position, currentStats.Range, m_data.targetLayer);
 
-        if (targets.Length == 0) return false;
+        if (hitTowers.Length == 0) return false;
 
-        float buffPower = currentStats.AbilityValue * 1f;
+        bool appliedAny = false;
 
-        foreach (Collider2D hit in targets)
+        for (int i = 0; i < hitTowers.Length; i++)
         {
-            ApplyBuffToTarget(hit, buffPower, currentStats);
-        }
-        return true;
-    }
+            Collider2D hit = hitTowers[i];
 
-    private void ApplyBuffToTarget(Collider2D hit, float buffPower, TowerStats buffStats)
-    {
-        TowerController targetTower = hit.GetComponent<TowerController>();
-        if (targetTower != null)
-        {
-            float auraCooldown = buffStats.Duration > 0 ? 1f / buffStats.Duration : 1f;
-            float duration = auraCooldown + 0.1f;
+            // 자기 자신 타워는 제외
+            if (hit.transform == towerTransform) continue;
 
-            targetTower.AddBuffStat(m_data.buffTarget, buffPower, buffStats.AttackPower, duration, buffStats.Duration);
+            if (hit.TryGetComponent<TowerController>(out var targetTower))
+            {
+                // TowerController의 변경된 ApplyBuff 메서드 호출
+                targetTower.ApplyBuff(m_data.buffTarget, currentStats.AbilityValue, currentStats.Duration);
+                appliedAny = true;
+            }
         }
+
+        return appliedAny;
     }
 }

@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 8594216342706311802}
   - component: {fileID: -509579309956034587}
   - component: {fileID: 9067481978086507008}
+  - component: {fileID: 1969506814401737429}
+  - component: {fileID: 9013330657935349445}
   - component: {fileID: 6412127163531498615}
   m_Layer: 8
   m_Name: 1. Enemy_normal
@@ -82,8 +84,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 421727787
-  m_SortingLayer: 2
+  m_SortingLayerID: 811733269
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 8596640243658272642, guid: 34f6579b38780544d9fc3cad33a8f49b, type: 3}
@@ -178,19 +180,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 140337874124788210}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9bfe37ef21196044b672320597ec558, type: 3}
+  m_Script: {fileID: 11500000, guid: b392b1ddd5591a446a78cd7d2fd749f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  EnemyData: {fileID: 11400000, guid: 4fa5a9b0b1bf45942916e4a72ecac46c, type: 2}
-  m_projetileLayer:
-    serializedVersion: 2
-    m_Bits: 128
   m_endLayer:
     serializedVersion: 2
     m_Bits: 512
+--- !u!114 &1969506814401737429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140337874124788210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea8d8c52caba825459d4d344983bbcca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthController
   m_uiController: {fileID: 6412127163531498615}
-  HPBar: {fileID: 1078414971211761373}
-  m_damageTextPrefab: {fileID: 3090284476940613925, guid: c5c0197c147ecf74d8a12ea6994c8618, type: 3}
+  m_hpBar: {fileID: 1078414971211761373}
+  m_enemyType: 0
+--- !u!114 &9013330657935349445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140337874124788210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec30eeccd27169843ace8347d850a464, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDebuffController
 --- !u!114 &6412127163531498615
 MonoBehaviour:
   m_ObjectHideFlags: 0

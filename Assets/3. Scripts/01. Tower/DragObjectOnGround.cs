@@ -4,11 +4,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// New Input System 기준 2D 오브젝트 드래그 스크립트입니다.
-/// OnMouseDown을 사용하지 않고,
-/// Mouse.current와 Collider2D.OverlapPoint를 사용합니다.
-/// </summary>
 [RequireComponent(typeof(Collider2D))]
 public class DragObjectOnGround : MonoBehaviour
 {
@@ -45,6 +40,7 @@ public class DragObjectOnGround : MonoBehaviour
             m_highlight.SetActive(false);
         }
 
+        // 본체 게임오브젝트에 직접 붙은 논-트리거 콜라이더를 정확히 탐색
         Collider2D[] colliders = GetComponents<Collider2D>();
         foreach (var col in colliders)
         {
@@ -54,9 +50,11 @@ public class DragObjectOnGround : MonoBehaviour
                 break;
             }
         }
+
+        // 논-트리거가 없다면 첫 번째 콜라이더 할당
         if (m_collider2D == null)
         {
-            Debug.LogError($"[{gameObject.name}] isTrigger가 false인 타워 몸체용 콜라이더가 없습니다");
+            m_collider2D = GetComponent<Collider2D>();
         }
 
         m_towerController = GetComponent<TowerController>();
@@ -67,16 +65,12 @@ public class DragObjectOnGround : MonoBehaviour
         }
 
         m_objectZ = transform.position.z;
-
         m_cameraZDistance = Mathf.Abs(m_camera.transform.position.z - transform.position.z);
     }
 
     private void Update()
     {
-        if (Mouse.current == null || m_camera == null)
-        {
-            return;
-        }
+        if (Mouse.current == null || m_camera == null) return;
 
         Vector3 mouseWorldPosition = GetMouseWorldPosition();
 
@@ -84,12 +78,18 @@ public class DragObjectOnGround : MonoBehaviour
         {
             if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
 
-            if (m_collider2D.OverlapPoint(mouseWorldPosition))
+            // 2D 마우스 좌표 기준 충돌 검사 (Z축 영향 배제)
+            Vector2 mousePos2D = new Vector2(mouseWorldPosition.x, mouseWorldPosition.y);
+
+            if (m_collider2D != null && m_collider2D.OverlapPoint(mousePos2D))
             {
                 m_isTracking = true;
                 m_isDragging = false;
 
-                UIManager.Instance.ShowButtons(false);
+                if (UIManager.Instance != null)
+                {
+                    UIManager.Instance.ShowButtons(false);
+                }
 
                 m_startMousePosition = mouseWorldPosition;
                 m_offset = transform.position - mouseWorldPosition;
@@ -104,18 +104,26 @@ public class DragObjectOnGround : MonoBehaviour
                     m_highlight.SetActive(true);
                 }
 
-                if (m_towerController != null) m_towerController.ShowRange(true);
+                // 타워 사거리 범위 표시 켜기
+                if (m_towerController != null)
+                {
+                    m_towerController.ShowRange(true);
+                }
 
                 OnTowerDragStateChanged?.Invoke(true);
             }
             else
             {
+                // 타워 외부 클릭 시 사거리 및 하이라이트 끄기
                 if (m_highlight != null && m_highlight.activeInHierarchy)
                 {
                     m_highlight.SetActive(false);
                 }
 
-                if (m_towerController != null) m_towerController.ShowRange(false);
+                if (m_towerController != null)
+                {
+                    m_towerController.ShowRange(false);
+                }
             }
         }
 
@@ -145,8 +153,7 @@ public class DragObjectOnGround : MonoBehaviour
             else
             {
                 Vector3 dropPosition = GetMouseWorldPosition();
-
-                Collider2D hitCollider = Physics2D.OverlapPoint(dropPosition);
+                Collider2D hitCollider = Physics2D.OverlapPoint(new Vector2(dropPosition.x, dropPosition.y));
 
                 bool isOverSellArea = false;
                 if (hitCollider != null && hitCollider.CompareTag("SellArea"))
@@ -185,14 +192,18 @@ public class DragObjectOnGround : MonoBehaviour
                     }
                 }
             }
+
             m_isTracking = false;
             m_isDragging = false;
-            UIManager.Instance.ShowButtons(true);
+
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowButtons(true);
+            }
 
             OnTowerDragStateChanged?.Invoke(false);
         }
     }
-
 
     private Vector3 GetMouseWorldPosition()
     {
@@ -205,7 +216,6 @@ public class DragObjectOnGround : MonoBehaviour
         );
 
         Vector3 worldPosition = m_camera.ScreenToWorldPoint(screenPosition);
-
         worldPosition.z = m_objectZ;
 
         return worldPosition;

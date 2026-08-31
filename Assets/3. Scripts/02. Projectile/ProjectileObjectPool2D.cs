@@ -150,19 +150,12 @@ public class ProjectileObjectPool2D : MonoBehaviour
     // ----------------------------
 
     /// <summary>
-    /// 탄을 꺼내서 -> 위치 세팅 -> 활성화 -> Launch까지 한 번에 처리
+    /// 풀에서 탄을 꺼내 지정된 위치에 배치하고 활성화하여 반환합니다.
     /// </summary>
-    public ProjectileHit2D Spawn(
-        Vector3 position,
-        float speed,
-        bool rotateProjectile,
-        float lifeTimeOverride = -1f)
+    public ProjectileHit2D Spawn(Vector3 position)
     {
-        var p = TryGet();              // (변경) _pool.Get() 직접 호출 대신 TryGet()
+        var p = TryGet();
         if (p == null) return null;
-
-        // 발사 중인 투사체는 container 영향 제거
-        //p.transform.SetParent(null, true);
 
         p.transform.position = position;
         p.gameObject.SetActive(true);

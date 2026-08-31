@@ -1,13 +1,13 @@
-using UnityEngine;
-using UnityEngine.Pool; // (추가) UnityEngine.Pool 사용
 using System.Collections.Generic;
-
+using UnityEngine;
+using UnityEngine.Pool;
 
 public class EnemyObjectPool2D : MonoBehaviour
 {
-    [Header("Prefab")]
-    [SerializeField] private EnemyController enemyPrefab;
-
+    [Header("Data & Prefab")]
+    [SerializeField] private EnemyData m_enemyData;             // 이 풀이 스폰할 전용 ScriptableObject
+    [SerializeField] private EnemyHealthController enemyPrefab;
+    [SerializeField] private EnemyType m_poolEnemyType;         // 이 풀의 적 타입
 
     [Header("Pool Settings")]
     [SerializeField] private int initialSize = 30;
@@ -17,12 +17,8 @@ public class EnemyObjectPool2D : MonoBehaviour
     [Header("Hierarchy")]
     [SerializeField] private Transform container;
 
-    public Transform spawnPoint;
-
-
-    private ObjectPool<EnemyController> m_pool;
+    private ObjectPool<EnemyHealthController> m_pool;
     private int _createdCount = 0;
-
 
     private void Awake()
     {
@@ -35,7 +31,12 @@ public class EnemyObjectPool2D : MonoBehaviour
             return;
         }
 
-        m_pool = new ObjectPool<EnemyController>(
+        if (m_enemyData == null)
+        {
+            Debug.LogError($"[EnemyPool2D] {gameObject.name}에 EnemyData ScriptableObject가 할당되지 않았습니다.");
+        }
+
+        m_pool = new ObjectPool<EnemyHealthController>(
             createFunc: CreateNew,
             actionOnGet: OnGetFromPool,
             actionOnRelease: OnReleaseToPool,
@@ -54,19 +55,13 @@ public class EnemyObjectPool2D : MonoBehaviour
         m_pool = null;
     }
 
-
     private void Prewarm()
     {
         if (initialSize <= 0) return;
 
-        if (initialSize > maxSize)
-        {
-            Debug.LogWarning($"[ProjectilePool2D] initialSize({initialSize})가 maxSize({maxSize})보다 큽니다. maxSize까지만 Prewarm합니다.");
-        }
-
         int count = Mathf.Min(initialSize, maxSize);
+        var temp = new List<EnemyHealthController>(count);
 
-        var temp = new List<EnemyController>(count);
         for (int i = 0; i < count; i++)
         {
             var p = TryGet();
@@ -75,71 +70,83 @@ public class EnemyObjectPool2D : MonoBehaviour
         }
 
         for (int i = 0; i < temp.Count; i++)
+        {
             m_pool.Release(temp[i]);
+        }
     }
 
-
-    private EnemyController CreateNew()
+    private EnemyHealthController CreateNew()
     {
         var e = Instantiate(enemyPrefab, container);
         e.gameObject.SetActive(false);
-
         e.SetPool(this);
-
         _createdCount++;
         return e;
     }
 
-    private void OnGetFromPool(EnemyController e)
+    private void OnGetFromPool(EnemyHealthController e)
     {
         if (e == null) return;
         e.gameObject.SetActive(false);
     }
 
-    private void OnReleaseToPool(EnemyController e)
+    private void OnReleaseToPool(EnemyHealthController e)
     {
         if (e == null) return;
-
         e.gameObject.SetActive(false);
         e.transform.SetParent(container, false);
     }
 
-    private void OnDestroyPooled(EnemyController e)
+    private void OnDestroyPooled(EnemyHealthController e)
     {
         if (e == null) return;
         Destroy(e.gameObject);
     }
 
-
-    public EnemyController Spawn(Vector3 position, float hpMultiPlier, float dependMultiplier)
+    // WaveManager는 위치와 배율만 전달
+    public EnemyHealthController Spawn(Vector3 position, float hpMultiplier, float defendMultiplier)
     {
-        var e = TryGet();
-        if (e == null) return null;
+        if (m_enemyData == null)
+        {
+            Debug.LogError($"[EnemyObjectPool2D] {gameObject.name}에 EnemyData가 없어 스폰을 중단합니다.");
+            return null;
+        }
 
-        e.ResetEnemy(position, hpMultiPlier, dependMultiplier);
-        e.gameObject.SetActive(true);
+        var health = TryGet();
+        if (health == null) return null;
 
-        return e;
+        health.transform.position = position;
+        health.transform.rotation = Quaternion.identity;
+
+        if (health.TryGetComponent<EnemyMovementController>(out var movement))
+        {
+            movement.InitMovement(m_enemyData.Speed);
+        }
+
+        if (health.TryGetComponent<EnemyDebuffController>(out var debuff))
+        {
+            debuff.ClearAllDebuffs();
+        }
+
+        float finalMaxHP = m_enemyData.MaxHP * hpMultiplier;
+        float finalDefend = m_enemyData.Defend * defendMultiplier;
+        health.InitHealth(finalMaxHP, finalDefend, m_poolEnemyType);
+
+        health.gameObject.SetActive(true);
+        return health;
     }
 
-    private EnemyController TryGet()
+    private EnemyHealthController TryGet()
     {
         if (m_pool == null) return null;
-
-        if (m_pool.CountInactive > 0)
-            return m_pool.Get();
-
-        if (!expandable) return null;
-
-        if (_createdCount >= maxSize) return null;
-
+        if (m_pool.CountInactive > 0) return m_pool.Get();
+        if (!expandable || _createdCount >= maxSize) return null;
         return m_pool.Get();
     }
 
-    public void Release(EnemyController enemy)
+    public void Release(EnemyHealthController enemy)
     {
         if (enemy == null) return;
-
         m_pool.Release(enemy);
     }
 }

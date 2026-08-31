@@ -84,7 +84,6 @@ public class UIManager : MonoBehaviour
         }
 
         Instance = this;
-
     }
 
     private void OnEnable()
@@ -97,7 +96,6 @@ public class UIManager : MonoBehaviour
     {
         DragObjectOnGround.OnTowerClickedAction -= ShowTowerpanel;
         GlobalClickDetector.OnGroundClickedAction -= HideTowerPanel;
-
     }
 
     private void Start()
@@ -139,9 +137,7 @@ public class UIManager : MonoBehaviour
             m_btnMainStop.onClick.RemoveAllListeners();
             m_btnMainStop.onClick.AddListener(() =>
             {
-
                 m_btnMainStop.gameObject.SetActive(false);
-
                 m_panelOption.SetActive(true);
 
                 if (GameManager.Instance != null)
@@ -205,24 +201,6 @@ public class UIManager : MonoBehaviour
                 }
             });
         }
-
-/*        if (m_btnTierUpgradeTower != null)
-        {
-            m_btnTierUpgradeTower.onClick.AddListener(() =>
-            {
-                if (m_selectTowerID <= 0)
-                {
-                    Debug.LogWarning("업그레이드할 타워가 선택되지 않았습니다.");
-                    return;
-                }
-
-                TowerManager.Instance.TierUpgrade(m_selectTowerID);
-                if (m_btnTierUpgradeTower != null)
-                {
-                    RefreshTierUpgradeCostLabel();
-                }
-            });
-        }*/
 
         if (m_btnDebug != null)
         {
@@ -300,7 +278,6 @@ public class UIManager : MonoBehaviour
     public void OnGameSpeedButtonClick(float gamespeed)
     {
         GameManager.Instance.OnClickGameSpeed(gamespeed);
-
         ApplyGameSpeedFromButton();
     }
 
@@ -332,14 +309,12 @@ public class UIManager : MonoBehaviour
                 {
                     m_txtColorUpgradeCostGem.text = "MAX";
                 }
-
                 else
                 {
                     int currentColorUpgradeGem = (int)Mathf.Pow(2, currentStats.Level);
                     m_txtColorUpgradeCostGem.text = $"{currentColorUpgradeGem}";
                 }
             }
-
             else
             {
                 m_txtColorUpgradeCostGem.text = "-";
@@ -354,21 +329,18 @@ public class UIManager : MonoBehaviour
             if (m_selectTowerID > 0)
             {
                 TowerStats currentStats = TowerManager.Instance.GetGlobalStats(m_selectTowerID);
-
                 float currentTier = currentStats.ID / 1000;
 
                 if (currentTier >= 5)
                 {
                     m_txtTierUpgradeCostGem.text = "MAX";
                 }
-
                 else
                 {
                     int currentTierUpgradeGem = (int)Mathf.Pow(4, currentStats.Level);
                     m_txtTierUpgradeCostGem.text = $"{currentTierUpgradeGem}";
                 }
             }
-
             else
             {
                 m_txtTierUpgradeCostGem.text = "-";
@@ -397,7 +369,7 @@ public class UIManager : MonoBehaviour
                     m_txtTowerInfoDamage.text = $"{stats.AttackPower:F2}";
                 }
             }
-            if (m_txtTowerInfoRange != null) m_txtTowerInfoRange.text = $"{stats.Range*100}";
+            if (m_txtTowerInfoRange != null) m_txtTowerInfoRange.text = $"{stats.Range * 100}";
             if (m_txtTowerInfoSpeed != null) m_txtTowerInfoSpeed.text = $"{stats.AttackSpeed:F2}";
             if (m_txtTowerInfoCriticalRate != null) m_txtTowerInfoCriticalRate.text = $"{(stats.CriticalRate * 100):F2}%";
             if (m_txtTowerInfoCriticalDamage != null) m_txtTowerInfoCriticalDamage.text = $"{((2 + stats.CriticalDamage) * 100):F0}%";
@@ -413,7 +385,6 @@ public class UIManager : MonoBehaviour
             int displaySeconds = Mathf.CeilToInt(remainingTime);
 
             m_txtWave.text = $"Wave {currentWave}\nNext Wave : {displaySeconds}";
-
             m_lastWave = currentWave;
         }
     }
@@ -435,18 +406,14 @@ public class UIManager : MonoBehaviour
         }
     }
 
-
     float GetGameButtonSpeed()
     {
-        // GameManager에 저장된 현재 실제 속도 값을 가져옴
         return GameManager.Instance.GetGameSpeed();
     }
 
     void ApplyGameSpeedFromButton()
     {
         float gameSpeed = GetGameButtonSpeed();
-
-        // 텍스트 갱신
         RefreshGameSpeedLabel(gameSpeed);
     }
 
@@ -455,7 +422,6 @@ public class UIManager : MonoBehaviour
         if (GameManager.Instance != null)
         {
             float gamespeed = GameManager.Instance.GetGameSpeed();
-
             RefreshGameSpeedLabel(gamespeed);
         }
     }
@@ -463,7 +429,6 @@ public class UIManager : MonoBehaviour
     private void ShowTowerpanel(TowerController clickedTower)
     {
         m_selectedTower = clickedTower;
-
         m_selectedTowerInfo = TowerManager.Instance.WorldToCell(clickedTower.transform.position);
 
         if (clickedTower.GetTowerData() != null)
@@ -473,7 +438,6 @@ public class UIManager : MonoBehaviour
         else
         {
             m_selectTowerID = 0;
-            //Debug.LogWarning("클릭한 타워에 TowerData가 할당되지 않았습니다.");
         }
 
         RefreshColorUpgradeCostLabel();
@@ -485,7 +449,6 @@ public class UIManager : MonoBehaviour
         }
 
         RefreshUpgradeTowerInfoLabel();
-
         UpdateCombineButtons();
         SelectTower(clickedTower);
     }
@@ -504,9 +467,7 @@ public class UIManager : MonoBehaviour
 
         if (m_btnCombineColor != null && m_btnCombineEmblem != null && m_btnCombineExact != null)
         {
-
             Vector3 towerWorldPos = tower.transform.position;
-
             Camera mainCam = Camera.main;
 
             if (mainCam != null)
@@ -522,24 +483,19 @@ public class UIManager : MonoBehaviour
 
     private void OnCombineClick(CombineMode type)
     {
-        if (m_selectedTower != null)
+        if (m_selectedTower != null && m_selectedTower.gameObject != null)
         {
-            if (m_selectedTower != null && m_selectedTower.gameObject != null)
-            {
-                //Debug.Log($"[UIManager] 합성 시도: {type} 타입");
-                TowerManager.Instance.ExecuteCombine(m_selectedTowerInfo, type);
-
-                // 합성 후 상태 갱신
-                HideTowerPanel();
-                m_selectedTower = null;
-            }
-            else
-            {
-                Debug.LogWarning("[UIManager] 합성할 타워가 유효하지 않습니다.");
-                HideTowerPanel();
-            }
+            TowerManager.Instance.ExecuteCombine(m_selectedTowerInfo, type);
+            HideTowerPanel();
+            m_selectedTower = null;
+        }
+        else
+        {
+            Debug.LogWarning("[UIManager] 합성할 타워가 유효하지 않습니다.");
+            HideTowerPanel();
         }
     }
+
     private void UpdateCombineButtons()
     {
         if (m_selectedTower == null) return;
@@ -559,7 +515,6 @@ public class UIManager : MonoBehaviour
     {
         if (isBoss)
         {
-            //Debug.Log("[LifeManager] 보스가 도달했습니다. 즉시 게임오버를 실행합니다.");
             ShowGameOver();
             return;
         }
@@ -581,7 +536,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateEnemyCount()
     {
-        if (m_txtEnemy != null)
+        if (m_txtEnemy != null && WaveManager.Instance != null)
         {
             m_txtEnemy.text = $"Enemy : {WaveManager.Instance.GetEnemyCount()}";
         }
@@ -589,24 +544,25 @@ public class UIManager : MonoBehaviour
 
     public void ShowGameOver()
     {
-        EnemyController[] allEnemies = FindObjectsByType<EnemyController>(FindObjectsSortMode.None);
-        foreach (EnemyController enemy in allEnemies)
+        // EnemyController 대신 EnemyHealthController를 탐색하여 체력바 숨김 처리
+        EnemyHealthController[] allEnemies = FindObjectsByType<EnemyHealthController>(FindObjectsSortMode.None);
+        for (int i = 0; i < allEnemies.Length; i++)
         {
-            enemy.HideHPBar();
+            allEnemies[i].HideHPBar();
         }
 
-        GameManager.Instance.OnPauseGame();
+        GameManager.Instance?.OnPauseGame();
 
         if (m_panelGameover != null)
         {
-            m_towerInfoPanel.SetActive(false);
+            if (m_towerInfoPanel != null) m_towerInfoPanel.SetActive(false);
             m_panelGameover.SetActive(true);
         }
     }
 
     public void ShowGameClear()
     {
-        GameManager.Instance.OnPauseGame();
+        GameManager.Instance?.OnPauseGame();
 
         if (m_panelGameclear != null)
         {
