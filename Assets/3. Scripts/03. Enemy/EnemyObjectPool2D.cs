@@ -103,8 +103,7 @@ public class EnemyObjectPool2D : MonoBehaviour
         Destroy(e.gameObject);
     }
 
-    // WaveManager는 위치와 배율만 전달
-    public EnemyHealthController Spawn(Vector3 position, float hpMultiplier, float defendMultiplier)
+    public EnemyHealthController Spawn(Vector3 position, float hpMultiplier, float defendMultiplier, TilePath tilePath)
     {
         if (m_enemyData == null)
         {
@@ -115,24 +114,29 @@ public class EnemyObjectPool2D : MonoBehaviour
         var health = TryGet();
         if (health == null) return null;
 
+        // 위치 지정 및 오브젝트 활성화 (누락되었던 부분)
         health.transform.position = position;
-        health.transform.rotation = Quaternion.identity;
+        health.gameObject.SetActive(true);
 
-        if (health.TryGetComponent<EnemyMovementController>(out var movement))
-        {
-            movement.InitMovement(m_enemyData.Speed);
-        }
-
+        // 1. 디버프 상태 초기화[cite: 22]
         if (health.TryGetComponent<EnemyDebuffController>(out var debuff))
         {
             debuff.ClearAllDebuffs();
         }
 
+        // 2. 턴제 이동 데이터 초기화 (EnemyData 및 TilePath 전달)[cite: 22]
+        if (health.TryGetComponent<EnemyMovementController>(out var movement))
+        {
+            movement.InitMovement(m_enemyData, tilePath);
+            // 생성된 적을 EnemyManager에 등록[cite: 22]
+            EnemyManager.Instance?.RegisterEnemy(movement);
+        }
+
+        // 3. 체력 초기화[cite: 22]
         float finalMaxHP = m_enemyData.MaxHP * hpMultiplier;
         float finalDefend = m_enemyData.Defend * defendMultiplier;
         health.InitHealth(finalMaxHP, finalDefend, m_poolEnemyType);
 
-        health.gameObject.SetActive(true);
         return health;
     }
 

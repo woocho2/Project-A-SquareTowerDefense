@@ -53,17 +53,32 @@ public class EnemyDebuffController : MonoBehaviour
         }
     }
 
+    // 풀 반환 및 사망 시 호출되는 핵심 초기화 함수
     public void ClearAllDebuffs()
     {
+        // 1. 디버프 컨트롤러에 실행 중인 모든 코루틴(DoT 데미지, 슬로우 등) 강제 종료
+        StopAllCoroutines();
+
+        // 2. 적용 중인 디버프 데이터 해제 및 리스트 비우기
         for (int i = 0; i < m_activeDebuffs.Count; i++)
         {
             m_activeDebuffs[i].OnRemove(m_health, m_movement);
         }
         m_activeDebuffs.Clear();
 
+        // 3. 시너지 및 스탯 배율 초기화
         m_heatwaveTickTimer = 0f;
-        m_movement.SetSynergySlow(1f);
-        m_health.SetSynergyWeak(1f);
+        if (m_movement != null)
+        {
+            m_movement.SetSynergySlow(1f);
+            m_movement.SetSpeedMultiplier(1f);
+        }
+        if (m_health != null)
+        {
+            m_health.SetSynergyWeak(1f);
+            m_health.SetVulnerability(1f);
+            m_health.SetDefendMultiplier(1f);
+        }
     }
 
     private void UpdateSynergyHeatWave(float deltaTime)

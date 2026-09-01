@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,21 +5,15 @@ public class WaveManager : MonoBehaviour
 {
     public static WaveManager Instance;
 
-    [Header("Pool & Spawn Reference")]
-    [SerializeField] private EnemyObjectPool2D[] m_enemyPool;  // 인덱스: 0=Normal, 1=Speed, 2=Depend, 3=SpecialBoss, 4=Boss
-    [SerializeField] private Transform m_spawnPoint;
+    [Header("Pool Reference")]
+    [SerializeField] private EnemyObjectPool2D[] m_enemyPool;  // 0=Normal, 1=Speed, 2=Depend, 3=SpecialBoss, 4=Boss
+    [SerializeField] private TilePath m_tilePath;                // 타일 경로 참조
 
     [Header("Wave Base Settings")]
-    [SerializeField] private float m_waveDuration = 50f;
-    [SerializeField] private int m_enemiesPerNormalWave = 30;
-    [SerializeField] private float m_baseSpawnInterval = 1.5f;
     [SerializeField] private int m_currentWave = 1;
     [SerializeField] private Button btn_specialBoss;
 
     private int m_activeEnemyCount = 0;
-    private Coroutine m_waveCoroutine;
-
-    public float currentWaveTimer { get; private set; }
 
     private void Awake()
     {
@@ -29,15 +22,14 @@ public class WaveManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
     }
 
     private void Start()
     {
-        if (m_enemyPool == null || m_spawnPoint == null)
+        if (m_enemyPool == null || m_tilePath == null)
         {
-            Debug.LogError("[WaveManager] 필수 컴포넌트(Pool 또는 SpawnPoint)가 누락되었습니다.");
+            Debug.LogError("[WaveManager] 필수 컴포넌트(Pool 또는 TilePath)가 누락되었습니다.");
             return;
         }
 
@@ -47,113 +39,93 @@ public class WaveManager : MonoBehaviour
             btn_specialBoss.gameObject.SetActive(false);
         }
 
-        m_waveCoroutine = StartCoroutine(WaveLoopRoutine());
+        UpdateSpecialBossButtonUI();
     }
 
     private void OnDestroy()
     {
         if (Instance == this) Instance = null;
-        if (m_waveCoroutine != null) StopCoroutine(m_waveCoroutine);
     }
 
-    private IEnumerator WaveLoopRoutine()
+    // 턴제 에너미 턴에서 호출될 몬스터 스폰 함수
+    public void SpawnNextWaveEnemyForTurn()
     {
-        while (m_currentWave <= 40)
+        if (m_currentWave > 40) return;
+
+        int subWave = m_currentWave % 10;
+        if (subWave == 0) subWave = 10;
+
+        // 보스 웨이브(subWave == 10)일 때는 일반 잡몹 대신 보스 스폰 처리 등 분기 가능
+        EnemyType currentEnemyType = DetermineEnemyType(m_currentWave, m_activeEnemyCount);
+        int poolIndex = (int)currentEnemyType;
+
+        if (poolIndex >= m_enemyPool.Length || m_enemyPool[poolIndex] == null)
         {
-            int subWave = m_currentWave % 10;
-            if (subWave == 0) subWave = 10;
-
-            if (btn_specialBoss != null)
-            {
-                if (m_currentWave == 5 || m_currentWave == 15 || m_currentWave == 25 || m_currentWave == 35)
-                {
-                    btn_specialBoss.gameObject.SetActive(true);
-                    btn_specialBoss.interactable = true;
-                }
-
-                if (m_currentWave == 8 || m_currentWave == 18 || m_currentWave == 28 || m_currentWave == 38)
-                {
-                    btn_specialBoss.gameObject.SetActive(false);
-                    btn_specialBoss.interactable = false;
-                }
-            }
-
-            float currentHPMultiplier = 1f;
-            float currentDefendMultiplier = 1f;
-
-            switch (subWave)
-            {
-                case 1: currentHPMultiplier = 1.0f; currentDefendMultiplier = 1.0f; break;
-                case 2: currentHPMultiplier = 1.1f; currentDefendMultiplier = 1.0f; break;
-                case 3: currentHPMultiplier = 1.25f; currentDefendMultiplier = 1.2f; break;
-                case 4: currentHPMultiplier = 1.45f; currentDefendMultiplier = 1.6f; break;
-                case 5: currentHPMultiplier = 1.75f; currentDefendMultiplier = 2.0f; break;
-                case 6: currentHPMultiplier = 2.0f; currentDefendMultiplier = 2.4f; break;
-                case 7: currentHPMultiplier = 2.25f; currentDefendMultiplier = 2.6f; break;
-                case 8: currentHPMultiplier = 2.45f; currentDefendMultiplier = 2.9f; break;
-                case 9: currentHPMultiplier = 2.7f; currentDefendMultiplier = 3.5f; break;
-                case 10: currentHPMultiplier = 1.0f; currentDefendMultiplier = 1.0f; break;
-            }
-
-            currentHPMultiplier *= m_currentWave switch
-            {
-                > 30 => 8.0f,
-                > 20 => 4.0f,
-                > 10 => 2.0f,
-                _ => 1.0f
-            };
-
-            currentDefendMultiplier *= m_currentWave switch
-            {
-                > 30 => 2.5f,
-                > 20 => 1.7f,
-                > 10 => 1.2f,
-                _ => 1.0f
-            };
-
-            int spawnCount = (subWave == 10) ? 1 : m_enemiesPerNormalWave;
-
-            StartCoroutine(SpawnEnemiesRoutine(spawnCount, currentHPMultiplier, currentDefendMultiplier));
-
-            currentWaveTimer = m_waveDuration;
-
-            while (currentWaveTimer > 0f)
-            {
-                currentWaveTimer -= Time.deltaTime;
-                yield return null;
-            }
-
-            if (m_currentWave % 2 == 0)
-            {
-                CurrencyManager.Instance?.AddGem(1);
-            }
-
-            m_currentWave++;
-            CurrencyManager.Instance?.AddGold((m_currentWave - 1) * 100);
-            Debug.Log($"{m_currentWave - 1}Wave 클리어! {(m_currentWave - 1) * 100} 골드 지급");
+            Debug.LogError($"[WaveManager] {currentEnemyType}에 해당하는 오브젝트 풀이 없습니다!");
+            return;
         }
+
+        // 스탯 배율 계산
+        GetMultiplier(out float hpMulti, out float defendMulti);
+
+        EnemyObjectPool2D targetPool = m_enemyPool[poolIndex];
+        // 0번 타일 위치에 스폰 요청
+        targetPool.Spawn(m_tilePath.GetWorldPosition(0), hpMulti, defendMulti, m_tilePath);
+
+        m_activeEnemyCount++;
     }
 
-    private IEnumerator SpawnEnemiesRoutine(int spawnCount, float hpMulti, float defendMulti)
+    // 웨이브별 스탯 배율 계산 로직
+    public void GetMultiplier(out float hpMulti, out float defendMulti)
     {
-        for (int i = 0; i < spawnCount; i++)
+        int subWave = m_currentWave % 10;
+        if (subWave == 0) subWave = 10;
+
+        hpMulti = subWave switch
         {
-            EnemyType currentEnemyType = DetermineEnemyType(m_currentWave, i);
-            int poolIndex = (int)currentEnemyType;
+            1 => 1.0f,
+            2 => 1.1f,
+            3 => 1.25f,
+            4 => 1.45f,
+            5 => 1.75f,
+            6 => 2.0f,
+            7 => 2.25f,
+            8 => 2.45f,
+            9 => 2.7f,
+            10 => 1.0f,
+            _ => 1.0f
+        };
 
-            if (poolIndex >= m_enemyPool.Length || m_enemyPool[poolIndex] == null)
-            {
-                Debug.LogError($"[WaveManager] {currentEnemyType}에 해당하는 오브젝트 풀이 없습니다!");
-                yield break;
-            }
+        defendMulti = subWave switch
+        {
+            1 => 1.0f,
+            2 => 1.0f,
+            3 => 1.2f,
+            4 => 1.6f,
+            5 => 2.0f,
+            6 => 2.4f,
+            7 => 2.6f,
+            8 => 2.9f,
+            9 => 3.5f,
+            10 => 1.0f,
+            _ => 1.0f
+        };
 
-            EnemyObjectPool2D targetPool = m_enemyPool[poolIndex];
-            targetPool.Spawn(m_spawnPoint.position, hpMulti, defendMulti);
+        hpMulti *= m_currentWave switch
+        {
+            > 30 => 8.0f,
+            > 20 => 4.0f,
+            > 10 => 2.0f,
+            _ => 1.0f
+        };
 
-            m_activeEnemyCount++;
-
-            yield return new WaitForSeconds(m_baseSpawnInterval);
-        }
+        defendMulti *= m_currentWave switch
+        {
+            > 30 => 2.5f,
+            > 20 => 1.7f,
+            > 10 => 1.2f,
+            _ => 1.0f
+        };
     }
 
     private EnemyType DetermineEnemyType(int wave, int spawnIndex)
@@ -183,6 +155,22 @@ public class WaveManager : MonoBehaviour
         }
     }
 
+    private void UpdateSpecialBossButtonUI()
+    {
+        if (btn_specialBoss == null) return;
+
+        if (m_currentWave == 5 || m_currentWave == 15 || m_currentWave == 25 || m_currentWave == 35)
+        {
+            btn_specialBoss.gameObject.SetActive(true);
+            btn_specialBoss.interactable = true;
+        }
+        else if (m_currentWave == 8 || m_currentWave == 18 || m_currentWave == 28 || m_currentWave == 38)
+        {
+            btn_specialBoss.gameObject.SetActive(false);
+            btn_specialBoss.interactable = false;
+        }
+    }
+
     private void SpawnSpecialBoss()
     {
         if (btn_specialBoss != null)
@@ -192,12 +180,7 @@ public class WaveManager : MonoBehaviour
         }
 
         int poolIndex = (int)EnemyType.SpecialBoss;
-
-        if (poolIndex >= m_enemyPool.Length || m_enemyPool[poolIndex] == null)
-        {
-            Debug.LogError("[WaveManager] Special Boss에 해당하는 오브젝트 풀이 배열에 없습니다.");
-            return;
-        }
+        if (poolIndex >= m_enemyPool.Length || m_enemyPool[poolIndex] == null) return;
 
         float specialHPMulti = m_currentWave switch
         {
@@ -216,11 +199,15 @@ public class WaveManager : MonoBehaviour
         };
 
         EnemyObjectPool2D targetPool = m_enemyPool[poolIndex];
-        targetPool.Spawn(m_spawnPoint.position, specialHPMulti, specialDefendMulti);
-
+        targetPool.Spawn(m_tilePath.GetWorldPosition(0), specialHPMulti, specialDefendMulti, m_tilePath);
         m_activeEnemyCount++;
+    }
 
-        Debug.Log($"[WaveManager] {m_currentWave}웨이브 Special Boss 출현!");
+    public void NextWave()
+    {
+        m_currentWave++;
+        CurrencyManager.Instance?.AddGold((m_currentWave - 1) * 100);
+        UpdateSpecialBossButtonUI();
     }
 
     public int GetEnemyCount() => m_activeEnemyCount;
@@ -229,7 +216,6 @@ public class WaveManager : MonoBehaviour
     public void OnEnemyDied(bool isBoss = false)
     {
         m_activeEnemyCount--;
-
         if (m_activeEnemyCount < 0) m_activeEnemyCount = 0;
 
         if (isBoss && m_currentWave >= 40)
@@ -237,7 +223,6 @@ public class WaveManager : MonoBehaviour
             if (UIManager.Instance != null)
             {
                 UIManager.Instance.ShowGameClear();
-                if (m_waveCoroutine != null) StopCoroutine(m_waveCoroutine);
                 Debug.Log("최종 40웨이브 Boss 처치! 승리하셨습니다.");
             }
         }

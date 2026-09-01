@@ -98,13 +98,33 @@ public class EnemyHealthController : MonoBehaviour
 
     public void ReturnToPool()
     {
+        // 1. 실행 중인 코루틴 전체 정지
+        StopAllCoroutines();
         HideHPBar();
-        m_debuff?.ClearAllDebuffs();
+
+        // 2. 디버프 및 지속 효과 초기화
+        if (m_debuff != null)
+        {
+            m_debuff.ClearAllDebuffs();
+        }
+
+        // 3. 이동 관련 코루틴 및 플래그 정지
+        if (m_movement != null)
+        {
+            m_movement.StopMovement();
+        }
 
         gameObject.SetActive(false);
 
-        if (m_enemyPool != null) m_enemyPool.Release(this);
-        else Destroy(gameObject);
+        // 4. 풀 반환
+        if (m_enemyPool != null)
+        {
+            m_enemyPool.Release(this);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void SetDefendMultiplier(float multiplier) => m_defendMultiplier = multiplier;

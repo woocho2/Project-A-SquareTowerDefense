@@ -1,111 +1,229 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+
+// 턴 상태 정의
+public enum TurnState
+{
+    None,
+    PlayerTurn,
+    EnemyTurn,
+    GameOver,
+    GameClear
+}
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
+    public static GameManager Instance { get; private set; }
 
-    // m_gameSpeed는 게임의 전체적인 속도를 조절하는 변수입니다. 이 변수의 값을 변경하면 게임의 시간 흐름이 빨라지거나 느려질 수 있습니다. 예를 들어, m_gameSpeed가 2.0f로 설정되면 게임이 2배 빠르게 진행되고, 0.5f로 설정되면 게임이 절반 속도로 진행됩니다.
-    [SerializeField] float m_gameSpeed = 1.0f;
+    [Header("게임 배속 및 라이프 설정")]
+    [SerializeField] private float m_gameSpeed = 1.0f;
+    [SerializeField] private int m_totalLife = 20;
 
-    // m_totalLife는 플레이어가 게임에서 가지고 있는 총 생명 수를 나타내는 변수입니다. 이 값이 0이 되면 게임 오버 상태가 됩니다. 게임의 난이도나 레벨에 따라 이 값을 조절할 수 있습니다.
-    [SerializeField] int m_totalLife;
+    [Header("턴 관리 설정")]
+    [Tooltip("플레이어 턴 제한 시간(초)")]
+    [SerializeField] private float playerTurnDuration = 45f;
+
+    public TurnState CurrentState { get; private set; } = TurnState.None;
+    public int CurrentWave { get; private set; } = 1;
+
+    // 턴 진행 제어용 코루틴
+    private Coroutine turnRoutine;
+    private Coroutine playerTimerRoutine;
+    private bool isPlayerTurnSkipped = false;
+
+    // UI 및 외부 시스템 알림용 델리게이트
+    public event Action<TurnState> OnTurnStateChanged;
+    public event Action<float> OnPlayerTurnTimerUpdated; // 남은 시간 UI 갱신용
 
     private void Awake()
     {
         if (Instance != null && Instance != this)
         {
-            // 이미 다른 인스턴스가 존재하는 경우, 현재 게임 오브젝트를 파괴하여 싱글톤 패턴을 유지합니다.
             Destroy(gameObject);
             return;
         }
 
-        // 현재 인스턴스를 싱글톤 인스턴스로 설정합니다.
         Instance = this;
-
-        // 씬이 변경되어도 이 게임 오브젝트가 파괴되지 않도록 설정합니다.
         DontDestroyOnLoad(gameObject);
     }
 
-    void Start()
+    private void Start()
     {
+        OnStartGame();
     }
 
-    void Update()
+    // ==========================================
+    // 게임 시작 및 턴 루프 제어
+    // ==========================================
+
+    public void OnStartGame()
     {
+        Time.timeScale = m_gameSpeed;
+        CurrentState = TurnState.None;
+
+        if (turnRoutine != null) StopCoroutine(turnRoutine);
+        turnRoutine = StartCoroutine(TurnLoopRoutine());
     }
-        
+
+    // [플레이어턴 -> 에너미턴 -> 반복] 메인 루프
+    private IEnumerator TurnLoopRoutine()
+    {
+        while (CurrentState != TurnState.GameOver && CurrentState != TurnState.GameClear)
+        {
+            // 1. 플레이어 턴 시작
+            yield return StartCoroutine(PlayerTurnRoutine());
+
+            // 2. 에너미 턴 시작
+            yield return StartCoroutine(EnemyTurnRoutine());
+
+            // 3. 웨이브(라운드) 증가
+            CurrentWave++;
+        }
+    }
+
+    // ==========================================
+    // 1. 플레이어 턴 로직
+    // ==========================================
+
+    private IEnumerator PlayerTurnRoutine()
+    {
+        CurrentState = TurnState.PlayerTurn;
+        OnTurnStateChanged?.Invoke(CurrentState);
+        isPlayerTurnSkipped = false;
+
+        float remainingTime = playerTurnDuration;
+
+        while (remainingTime > 0f)
+        {
+            // 스킵 버튼을 누르면 즉시 루프 탈출
+            if (isPlayerTurnSkipped) break;
+
+            remainingTime -= Time.deltaTime;
+            OnPlayerTurnTimerUpdated?.Invoke(Mathf.Max(0f, remainingTime));
+            yield return null;
+        }
+
+        OnPlayerTurnTimerUpdated?.Invoke(0f);
+    }
+
+    // 플레이어 턴 스킵 버튼 UI 이벤트 연결용 함수
+    public void OnClickSkipPlayerTurn()
+    {
+        if (CurrentState == TurnState.PlayerTurn)
+        {
+            isPlayerTurnSkipped = true;
+        }
+    }
+
+    // ==========================================
+    // 2. 에너미 턴 로직
+    // ==========================================
+
+    private IEnumerator EnemyTurnRoutine()
+    {
+        CurrentState = TurnState.EnemyTurn;
+        OnTurnStateChanged?.Invoke(CurrentState);
+
+        // 단계 1 & 2: 신규 몬스터 소환 및 전체 몬스터 이동
+        // (EnemyManager/WaveManager에서 소환 후 0번은 1칸, 기존 몬스터는 주사위만큼 이동 수행)
+        yield return StartCoroutine(ProcessEnemyMovement());
+
+        // 단계 3 & 4: 몬스터 아래 타일 검사 및 특수 타일 버프 적용
+        yield return StartCoroutine(ProcessTileBuffs());
+
+        // 단계 5 & 6: 플레이어 타워 공격 및 몬스터 체력 감소 처리
+        yield return StartCoroutine(ProcessTowerAttacks());
+
+        // 몬스터 턴 종료 (다음 루프에서 자동으로 플레이어 턴 시작)
+        yield return new WaitForSeconds(0.3f);
+    }
+
+    // 몬스터 이동 처리 코루틴 (EnemyManager 연동 지점)
+    private IEnumerator ProcessEnemyMovement()
+    {
+        if (EnemyManager.Instance != null)
+        {
+            // 에너미 매니저를 통해 신규 몬스터 스폰 및 이동 실행
+            yield return StartCoroutine(EnemyManager.Instance.ProcessEnemyTurnRoutine());
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    // 특수 타일 효과 적용 코루틴
+    private IEnumerator ProcessTileBuffs()
+    {
+        // TODO: EnemyManager.Instance.ApplyAllTileEffects()
+        yield return new WaitForSeconds(0.3f);
+    }
+
+    // 타워 공격 및 데미지 연산 코루틴
+    private IEnumerator ProcessTowerAttacks()
+    {
+        // TODO: TowerManager.Instance.ExecuteAllTowerAttacks()
+        yield return new WaitForSeconds(1.0f);
+    }
+
+    // ==========================================
+    // 게임 속도 및 일시정지 제어
+    // ==========================================
+
     public void OnClickGameSpeed(float gamespeed)
     {
-        // m_gameSpeed의 현재 값에 따라 다음 게임 속도를 결정하는 switch 표현식입니다. 현재 게임 속도가 1.0f인 경우 다음 게임 속도는 1.5f가 되고, 1.5f인 경우 다음 게임 속도는 2.0f가 됩니다. 2.0f인 경우 다음 게임 속도는 3.0f가 되고, 3.0f인 경우 다음 게임 속도는 다시 1.0f로 돌아갑니다. 이렇게 하면 게임 속도를 순환적으로 변경할 수 있습니다.
         float nextSpeed = m_gameSpeed switch
         {
             1.0f => 1.5f,
             1.5f => 2.0f,
             2.0f => 3.0f,
             3.0f => 1.0f,
-
             _ => 1.0f
         };
-        // 다음 게임 속도를 설정하는 SetGameSpeed 메서드를 호출하여 게임 속도를 변경합니다. 이렇게 하면 게임의 시간 흐름이 다음 게임 속도로 조절됩니다.
         SetGameSpeed(nextSpeed);
     }
 
     public void SetGameSpeed(float speed)
     {
-        // m_gameSpeed 변수에 전달된 speed 값을 할당하여 게임 속도를 업데이트합니다. 이렇게 하면 게임 속도가 변경되며, 이후에 Time.timeScale을 설정할 때 이 값이 사용됩니다.
         m_gameSpeed = speed;
-
-        // Time.timeScale을 m_gameSpeed로 설정하여 게임의 시간 흐름을 조절합니다. 이렇게 하면 게임이 설정된 속도로 진행되도록 합니다. 예를 들어, m_gameSpeed가 2.0f로 설정되면 게임이 2배 빠르게 진행되고, 0.5f로 설정되면 게임이 절반 속도로 진행됩니다.
         Time.timeScale = m_gameSpeed;
-
-        // Time.fixedDeltaTime를 0.02f에 Time.timeScale을 곱한 값으로 설정하여 물리 업데이트의 간격을 조절합니다. 이렇게 하면 게임 속도가 변경될 때 물리 업데이트도 함께 조절되어 게임이 원활하게 진행되도록 합니다. 예를 들어, 게임 속도가 빨라지면 물리 업데이트 간격이 짧아지고, 게임 속도가 느려지면 물리 업데이트 간격이 길어집니다.
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
-    }
-
-    public void OnStartGame()
-    {
-        // 게임이 시작될 때 디버그 로그를 출력하여 게임이 시작되었음을 알립니다.
-        Debug.Log("Game Started!");
-
-        // 게임이 시작될 때 Time.timeScale을 1.0f로 설정하여 게임의 시간 흐름을 정상적으로 시작합니다. 이렇게 하면 게임 내의 모든 시간 기반 이벤트가 정상적으로 작동하게 됩니다.
-        Time.timeScale = 1.0f;
     }
 
     public void OnPauseGame()
     {
-        // 게임을 일시정지할 때 Time.timeScale을 0.0f로 설정하여 게임의 시간 흐름을 멈춥니다. 이렇게 하면 게임 내의 모든 시간 기반 이벤트가 일시정지 상태가 됩니다. 예를 들어, 적의 이동, 타워의 공격, 애니메이션 등이 모두 멈추게 됩니다.
         Time.timeScale = 0.0f;
     }
 
     public void OnResumeGame()
     {
-        // 게임을 다시 시작할 때 Time.timeScale을 GetGameSpeed() 메서드를 호출하여 현재 설정된 게임 속도로 설정합니다. 이렇게 하면 게임이 일시정지 상태에서 다시 시작될 때, 이전에 설정된 게임 속도로 진행되도록 합니다.
         Time.timeScale = GetGameSpeed();
     }
 
-    // OnQuitGame 메서드는 게임을 종료하는 메서드입니다. 이 메서드를 호출하면 게임이 종료됩니다. Unity 에디터에서는 EditorApplication.isPlaying을 false로 설정하여 게임을 종료하고, 빌드된 애플리케이션에서는 Application.Quit()을 호출하여 게임을 종료합니다.
-    public void OnQuitGame()
-    {
-#if UNITY_EDITOR
-        // Unity 에디터에서 게임을 종료하는 메서드입니다.
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        // 애플리케이션을 종료하는 메서드입니다. 이 메서드를 호출하면 게임이 종료됩니다.
-        Application.Quit();
-#endif
-    }
-
-    // GetGameSpeed 메서드는 현재 설정된 게임 속도를 반환하는 메서드입니다. 이 메서드를 호출하면 m_gameSpeed 변수에 저장된 현재 게임 속도 값을 얻을 수 있습니다. 예를 들어, 게임 속도가 1.5f로 설정되어 있다면 이 메서드는 1.5f를 반환합니다.
     public float GetGameSpeed()
     {
         return m_gameSpeed;
     }
 
+    // ==========================================
+    // 라이프 및 게임 종료 처리
+    // ==========================================
 
-    // OnGameOver 메서드는 게임 오버 상태가 되었을 때 호출되는 메서드입니다. 이 메서드를 호출하면 게임이 일시정지되고, UIManager의 ShowGameOver() 메서드를 호출하여 게임 오버 화면을 표시합니다. 이렇게 하면 플레이어에게 게임이 종료되었음을 알리고, 다시 시작하거나 종료할 수 있는 옵션을 제공할 수 있습니다.
+    public void DecreaseLife(int amount)
+    {
+        m_totalLife = Mathf.Max(0, m_totalLife - amount);
+        if (m_totalLife <= 0)
+        {
+            OnGameOver();
+        }
+    }
+
     public void OnGameOver()
     {
+        CurrentState = TurnState.GameOver;
+        if (turnRoutine != null) StopCoroutine(turnRoutine);
         OnPauseGame();
 
         if (UIManager.Instance != null)
@@ -114,13 +232,24 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // OnGameClear 메서드는 게임 클리어 상태가 되었을 때 호출되는 메서드입니다. 이 메서드를 호출하면 게임이 일시정지되고, UIManager의 ShowGameClear() 메서드를 호출하여 게임 클리어 화면을 표시합니다. 이렇게 하면 플레이어에게 게임이 성공적으로 완료되었음을 알리고, 다음 단계로 진행하거나 다시 시작할 수 있는 옵션을 제공할 수 있습니다.
-    void OnGameClear()
+    public void OnGameClear()
     {
+        CurrentState = TurnState.GameClear;
+        if (turnRoutine != null) StopCoroutine(turnRoutine);
         OnPauseGame();
+
         if (UIManager.Instance != null)
         {
             UIManager.Instance.ShowGameClear();
         }
+    }
+
+    public void OnQuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 }

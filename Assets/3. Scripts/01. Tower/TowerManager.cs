@@ -1093,4 +1093,12 @@ public class TowerManager : MonoBehaviour
     {
         return m_towerData;
     }
+    
+    /// <summary>
+     /// TileManager가 타워 스폰 타일맵의 색상을 변경할 수 있도록 타일맵 참조를 반환합니다.
+     /// </summary>
+    public Tilemap GetSpawnPointTilemap()
+    {
+        return m_spawnPoint;
+    }
 }

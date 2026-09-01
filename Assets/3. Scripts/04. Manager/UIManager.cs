@@ -381,10 +381,10 @@ public class UIManager : MonoBehaviour
         if (WaveManager.Instance != null && m_txtWave != null)
         {
             int currentWave = WaveManager.Instance.GetWave();
-            float remainingTime = WaveManager.Instance.currentWaveTimer;
-            int displaySeconds = Mathf.CeilToInt(remainingTime);
+            //float remainingTime = WaveManager.Instance.currentWaveTimer;
+            //int displaySeconds = Mathf.CeilToInt(remainingTime);
 
-            m_txtWave.text = $"Wave {currentWave}\nNext Wave : {displaySeconds}";
+           // m_txtWave.text = $"Wave {currentWave}\nNext Wave : {displaySeconds}";
             m_lastWave = currentWave;
         }
     }

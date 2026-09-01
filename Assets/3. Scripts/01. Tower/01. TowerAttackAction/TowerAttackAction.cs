@@ -29,8 +29,8 @@ public abstract class TowerAttackAction
         }
 
         float minSqrDistance = Mathf.Infinity;
-        float maxWaveIndex = -1f;
-        float minWaveIndex = Mathf.Infinity;
+        int maxTileIndex = -1;
+        int minTileIndex = int.MaxValue;
         float maxHp = -1f;
         float minHp = Mathf.Infinity;
 
@@ -62,17 +62,19 @@ public abstract class TowerAttackAction
                     break;
 
                 case TargetPriority.First:
-                    if (movement != null && movement.WavePointIndex > maxWaveIndex)
+                    // 가장 앞서 나간 적(타일 인덱스가 가장 큰 적) 우선 타겟팅
+                    if (movement != null && movement.CurrentTileIndex > maxTileIndex)
                     {
-                        maxWaveIndex = movement.WavePointIndex;
+                        maxTileIndex = movement.CurrentTileIndex;
                         targetEnemy = health;
                     }
                     break;
 
                 case TargetPriority.Last:
-                    if (movement != null && movement.WavePointIndex < minWaveIndex)
+                    // 가장 뒤처진 적(타일 인덱스가 가장 작은 적) 우선 타겟팅
+                    if (movement != null && movement.CurrentTileIndex < minTileIndex)
                     {
-                        minWaveIndex = movement.WavePointIndex;
+                        minTileIndex = movement.CurrentTileIndex;
                         targetEnemy = health;
                     }
                     break;

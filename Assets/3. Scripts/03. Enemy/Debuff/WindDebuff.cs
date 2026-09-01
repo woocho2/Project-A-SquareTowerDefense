@@ -9,7 +9,7 @@ public class WindDebuff : DebuffBase
     public override void OnUpdate(EnemyHealthController health, EnemyMovementController movement, float deltaTime)
     {
         base.OnUpdate(health, movement, deltaTime);
-        float step = 0.05f * movement.CurrentSpeed * Value * deltaTime;
-        movement.MoveBackward(step);
+      //  float step = 0.05f * movement.CurrentSpeed * Value * deltaTime;
+       // movement.MoveBackward(step);
     }
 }

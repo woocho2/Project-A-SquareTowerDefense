@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: 2. Enemy_speed
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   EnemyID: 2
+  enemyType: 1
   MaxHP: 5
   Defend: 10
-  Speed: 3
+  Speed: 4
+  Action: 2
   Resistance: 0

@@ -17,6 +17,7 @@ public class EnemyData : ScriptableObject
     public EnemyType enemyType; // 에셋 자체에서도 타입을 지정할 수 있도록 필드 추가
     public float MaxHP;
     public float Defend;
-    public float Speed;
+    public int Speed;
+    public int Action;
     public float Resistance;
 }
