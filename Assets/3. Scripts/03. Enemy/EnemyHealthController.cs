@@ -47,6 +47,32 @@ public class EnemyHealthController : MonoBehaviour
         if (m_uiController != null) m_uiController.SetHPBar(m_currentHP, m_maxHP);
     }
 
+    // ==========================================================================================================
+    // 타일 버프 관련 체력/방어력 연동 함수
+    // ==========================================================================================================
+
+    // 현재 체력 기준 퍼센트 힐 적용 (최대 체력 초과 방지)
+    public void HealMaxHealthPercent(float percent)
+    {
+        if (m_currentHP <= 0f) return;
+
+        float healAmount = m_maxHP * percent;
+        m_currentHP = Mathf.Min(m_currentHP + healAmount, m_maxHP);
+
+        ShowHPBar();
+        if (m_uiController != null) m_uiController.SetHPBar(m_currentHP, m_maxHP);
+    }
+
+    // 타일 방어력 버프 초기화
+    public void ResetTileDefendBuff()
+    {
+        m_defendMultiplier = 1f;
+    }
+
+    // ==========================================================================================================
+    // 대미지 및 사망 처리
+    // ==========================================================================================================
+
     public void ApplyDamage(float rawDamage, bool isCritical = false)
     {
         if (m_currentHP <= 0f) return;
@@ -98,17 +124,14 @@ public class EnemyHealthController : MonoBehaviour
 
     public void ReturnToPool()
     {
-        // 1. 실행 중인 코루틴 전체 정지
         StopAllCoroutines();
         HideHPBar();
 
-        // 2. 디버프 및 지속 효과 초기화
         if (m_debuff != null)
         {
             m_debuff.ClearAllDebuffs();
         }
 
-        // 3. 이동 관련 코루틴 및 플래그 정지
         if (m_movement != null)
         {
             m_movement.StopMovement();
@@ -116,7 +139,6 @@ public class EnemyHealthController : MonoBehaviour
 
         gameObject.SetActive(false);
 
-        // 4. 풀 반환
         if (m_enemyPool != null)
         {
             m_enemyPool.Release(this);

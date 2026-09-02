@@ -38,11 +38,7 @@ public class TileManager : MonoBehaviour
     [Header("타워 특수 타일 생성 개수 설정")]
     [Tooltip("공격력 증가 타일 생성 개수")]
     [SerializeField] private int towerAttackPowerCount = 3;
-
-    [Tooltip("행동력 증가 타일 생성 개수")]
     [SerializeField] private int towerActionCount = 3;
-
-    [Tooltip("공격속도 증가 타일 생성 개수")]
     [SerializeField] private int towerAttackSpeedCount = 2;
 
     // 에너미 타일 정보 (좌표 -> 에너미 타일 속성)
@@ -56,12 +52,10 @@ public class TileManager : MonoBehaviour
     private readonly Color speedColor = HexToColor("8AFFFE");
     private readonly Color healColor = HexToColor("9EFFA8");
 
-    // ==========================================================================================================
     // 타워 스폰 타일 16진수 컬러 코드
-    // ==========================================================================================================
-    private readonly Color towerAttackPowerColor = HexToColor("FF5555"); // 공격력 증가 타일 색상
-    private readonly Color towerActionCountColor = HexToColor("FFAA00"); // 행동력 증가 타일 색상
-    private readonly Color towerAttackSpeedColor = HexToColor("55AAFF"); // 공격속도 증가 타일 색상
+    private readonly Color towerAttackPowerColor = HexToColor("FF6161"); // 공격력 증가 타일 색상
+    private readonly Color towerActionCountColor = HexToColor("6ED5FF"); // 행동력 증가 타일 색상
+    private readonly Color towerAttackSpeedColor = HexToColor("FFDE6E"); // 공격속도 증가 타일 색상
 
     void Awake()
     {

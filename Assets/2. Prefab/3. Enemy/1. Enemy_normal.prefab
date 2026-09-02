@@ -88,12 +88,12 @@ SpriteRenderer:
   m_SortingLayer: 3
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 8596640243658272642, guid: 34f6579b38780544d9fc3cad33a8f49b, type: 3}
-  m_Color: {r: 1, g: 0.3660523, b: 0.3537736, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 37985247458351e499dba4a7dd3336d2, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.28, y: 1.28}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -135,9 +135,9 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.28, y: 1.28}
-    newSize: {x: 1.28, y: 1.28}
+    pivot: {x: 0.5, y: 0.25}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -183,9 +183,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b392b1ddd5591a446a78cd7d2fd749f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  m_endLayer:
-    serializedVersion: 2
-    m_Bits: 512
+  m_moveSpeed: 8
+  m_currentTileIndex: 0
+  m_actionInterval: 1
+  m_baseActionInterval: 1
+  m_currentActionCounter: 0
+  m_baseDiceMaxSpeed: 1
+  m_bonusSpeed: 0
 --- !u!114 &1969506814401737429
 MonoBehaviour:
   m_ObjectHideFlags: 0
