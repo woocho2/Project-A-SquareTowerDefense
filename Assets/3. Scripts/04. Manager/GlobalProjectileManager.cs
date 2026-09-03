@@ -8,10 +8,10 @@ public class GlobalProjectileManager : MonoBehaviour
     private Dictionary<int, ProjectileObjectPool2D> m_poolDictionary = new Dictionary<int, ProjectileObjectPool2D>();
 
     [Header("Global Pool Settings")]
-    [Tooltip("°¢ Åõ»çÃ¼ Ç®ÀÇ ±âº» »çÀü »ı¼º °³¼ö")]
+    [Tooltip("ê° íˆ¬ì‚¬ì²´ í’€ì˜ ê¸°ë³¸ ì‚¬ì „ ìƒì„± ê°œìˆ˜")]
     [SerializeField] private int m_defaultInitialSize = 20;
 
-    [Tooltip("°¢ Åõ»çÃ¼ Ç®ÀÇ ÃÖ´ë º¸°ü °³¼ö »óÇÑ")]
+    [Tooltip("ê° íˆ¬ì‚¬ì²´ í’€ì˜ ìµœëŒ€ ë³´ê´€ ê°œìˆ˜ ìƒí•œ")]
     [SerializeField] private int m_defaultMaxSize = 200;
 
     private void Awake()
@@ -26,27 +26,27 @@ public class GlobalProjectileManager : MonoBehaviour
 
     private void Start()
     {
-        // [ÇÙ½É] TowerManagerÀÇ Start() (CSV ·Îµå)°¡ ³¡³­ Á÷ÈÄ¿¡ Ç®À» »ı¼ºÇØ¾ß ÇÕ´Ï´Ù.
-        // ½ºÅ©¸³Æ® ½ÇÇà ¼ø¼­(Script Execution Order)¸¦ TowerManagerº¸´Ù ´Ê°Ô ¼³Á¤ÇÏ°Å³ª Start¿¡¼­ È£ÃâÇÏ½Ê½Ã¿À.
+        // [í•µì‹¬] TowerManagerì˜ Start() (CSV ë¡œë“œ)ê°€ ëë‚œ ì§í›„ì— í’€ì„ ìƒì„±í•´ì•¼ í•©ë‹ˆë‹¤.
+        // ìŠ¤í¬ë¦½íŠ¸ ì‹¤í–‰ ìˆœì„œ(Script Execution Order)ë¥¼ TowerManagerë³´ë‹¤ ëŠ¦ê²Œ ì„¤ì •í•˜ê±°ë‚˜ Startì—ì„œ í˜¸ì¶œí•˜ì‹­ì‹œì˜¤.
         InitializeProjectileDatabase();
     }
 
     public void InitializeProjectileDatabase()
     {
-        // TowerManager¿¡ ·ÎµåµÈ ¸ğµç Å¸¿ö µ¥ÀÌÅÍ¸¦ °¡Á®¿É´Ï´Ù.
-        TowerData[] allTowers = TowerManager.Instance.GetTowerDataArray(); // TowerManager¿¡ ÀÌ ÇÔ¼ö(¹è¿­ ¹İÈ¯)¸¦ ÇÏ³ª ¸¸µé¾îÁÖ¼Å¾ß ÇÕ´Ï´Ù.
+        // TowerManagerì— ë¡œë“œëœ ëª¨ë“  íƒ€ì›Œ ë°ì´í„°ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
+        TowerData[] allTowers = TowerManager.Instance.GetTowerDataArray(); // TowerManagerì— ì´ í•¨ìˆ˜(ë°°ì—´ ë°˜í™˜)ë¥¼ í•˜ë‚˜ ë§Œë“¤ì–´ì£¼ì…”ì•¼ í•©ë‹ˆë‹¤.
 
         if (allTowers == null || allTowers.Length == 0) return;
 
         foreach (var tower in allTowers)
         {
-            // Åõ»çÃ¼°¡ ¾ø´Â Å¸¿ö¶ó¸é °Ç³Ê¶İ´Ï´Ù.
+            // íˆ¬ì‚¬ì²´ê°€ ì—†ëŠ” íƒ€ì›Œë¼ë©´ ê±´ë„ˆëœë‹ˆë‹¤.
             if (tower.projectilePrefab == null) continue;
 
-            // ÃµÀÇ ÀÚ¸®¸¦ ÀÚ¸¥ °øÀ¯ ID »ı¼º (1101 -> 101)
+            // ì²œì˜ ìë¦¬ë¥¼ ìë¥¸ ê³µìœ  ID ìƒì„± (1101 -> 101)
             int sharedKey = tower.towerID % 1000;
 
-            // °øÀ¯ ID·Î ÀÌ¹Ì Ç®(Pool)ÀÌ ¸¸µé¾îÁ® ÀÖ´Ù¸é Áßº¹ »ı¼ºÇÏÁö ¾Ê°í ³Ñ¾î°©´Ï´Ù.
+            // ê³µìœ  IDë¡œ ì´ë¯¸ í’€(Pool)ì´ ë§Œë“¤ì–´ì ¸ ìˆë‹¤ë©´ ì¤‘ë³µ ìƒì„±í•˜ì§€ ì•Šê³  ë„˜ì–´ê°‘ë‹ˆë‹¤.
             if (!m_poolDictionary.ContainsKey(sharedKey))
             {
                 GameObject poolObj = new GameObject($"Pool_{sharedKey}_Proj");
@@ -63,12 +63,12 @@ public class GlobalProjectileManager : MonoBehaviour
                 }
             }
         }
-        Debug.Log($"[GlobalProjectileManager] ÃÑ {m_poolDictionary.Count}°³ÀÇ Åõ»çÃ¼ ¿ÀºêÁ§Æ® Ç® »ı¼º ¿Ï·á.");
+        Debug.Log($"[GlobalProjectileManager] ì´ {m_poolDictionary.Count}ê°œì˜ íˆ¬ì‚¬ì²´ ì˜¤ë¸Œì íŠ¸ í’€ ìƒì„± ì™„ë£Œ.");
     }
 
     public ProjectileHit2D SpawnProjectile(int towerID, Vector3 position, float speed, bool rotateProjectile)
     {
-        // ¹ß»ç ¿äÃ»ÀÌ µé¾î¿ÔÀ» ¶§µµ ÃµÀÇ ÀÚ¸®¸¦ ¶¼¾î³»°í °øÀ¯ Ç®¿¡¼­ Åõ»çÃ¼¸¦ ²¨³À´Ï´Ù.
+        // ë°œì‚¬ ìš”ì²­ì´ ë“¤ì–´ì™”ì„ ë•Œë„ ì²œì˜ ìë¦¬ë¥¼ ë–¼ì–´ë‚´ê³  ê³µìœ  í’€ì—ì„œ íˆ¬ì‚¬ì²´ë¥¼ êº¼ëƒ…ë‹ˆë‹¤.
         int sharedKey = towerID % 1000;
 
         if (m_poolDictionary.TryGetValue(sharedKey, out ProjectileObjectPool2D targetPool))
@@ -76,7 +76,7 @@ public class GlobalProjectileManager : MonoBehaviour
             return targetPool.Spawn(position);
         }
 
-        Debug.LogError($"[GlobalProjectileManager] ID°¡ {sharedKey}ÀÎ Åõ»çÃ¼ Ç®À» Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+        Debug.LogError($"[GlobalProjectileManager] IDê°€ {sharedKey}ì¸ íˆ¬ì‚¬ì²´ í’€ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         return null;
     }
 }

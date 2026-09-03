@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 671948444447976635, guid: e3f8bd0b86a3ec44a93871cda226621b, type: 3}
       propertyPath: m_Name
-      value: 1308_Electricity(TR)
+      value: 1305_Axe(TR)
       objectReference: {fileID: 0}
     - target: {fileID: 7922541315568409329, guid: e3f8bd0b86a3ec44a93871cda226621b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -55,7 +55,7 @@ PrefabInstance:
     - target: {fileID: 8097582329074080250, guid: e3f8bd0b86a3ec44a93871cda226621b, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -8998019867459295250, guid: f1eafa4311d726847a90998f3016ec79, type: 3}
+      objectReference: {fileID: 6472032315794565579, guid: 826bd294c79a73a4daf325f74be9778c, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

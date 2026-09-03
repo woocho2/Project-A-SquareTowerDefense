@@ -3,20 +3,22 @@ using UnityEngine;
 
 public class EnemyMovementController : MonoBehaviour
 {
-    [Header("ÀÌµ¿ ¼Óµµ ¼³Á¤")]
-    [Tooltip("ÇÑ Ä­À» ÀÌµ¿ÇÏ´Â ¼Óµµ (ÀÎ½ºÆåÅÍ Á¶Àı)")]
+    [Header("ì´ë™ ì†ë„ ì„¤ì •")]
+    [Tooltip("í•œ ì¹¸ì„ ì´ë™í•˜ëŠ” ì†ë„ (ì¸ìŠ¤í™í„° ì¡°ì ˆ)")]
     [SerializeField] private float m_moveSpeed = 8f;
 
-    [Header("·±Å¸ÀÓ ÅÏ ½ºÅÈ (µğ¹ö±× È®ÀÎ¿ë)")]
+    [Header("ëŸ°íƒ€ì„ í„´ ìŠ¤íƒ¯ (ë””ë²„ê·¸ í™•ì¸ìš©)")]
     [SerializeField] private int m_currentTileIndex = 0;
-    [SerializeField] private int m_actionInterval = 1;      // ÁÖ»çÀ§ ±¼¸®´Â ÅÏ ÁÖ±â (Action)
-    [SerializeField] private int m_baseActionInterval = 1;  // ¿øº» ±âº» Çàµ¿·Â Ä³½Ì¿ë
-    [SerializeField] private int m_currentActionCounter = 0; // ÅÏ ´©Àû Ä«¿îÅÍ
-    [SerializeField] private int m_baseDiceMaxSpeed = 1;     // EnemyData¿¡¼­ ¹Ş¾Æ¿Â ÁÖ»çÀ§ ÃÖ´ñ°ª (Speed)
-    [SerializeField] private int m_bonusSpeed = 0;          // ½ºÇÇµå Å¸ÀÏ µîÀ¸·Î ´õÇØÁö´Â Ãß°¡ Ä­ ¼ö
+    [SerializeField] private int m_actionInterval = 1;      // ì£¼ì‚¬ìœ„ êµ´ë¦¬ëŠ” í„´ ì£¼ê¸° (Action)
+    [SerializeField] private int m_baseActionInterval = 1;  // ì›ë³¸ ê¸°ë³¸ í–‰ë™ë ¥ ìºì‹±ìš©
+    [SerializeField] private int m_currentActionCounter = 0; // í„´ ëˆ„ì  ì¹´ìš´í„°
+    [SerializeField] private int m_baseDiceMaxSpeed = 1;     // EnemyDataì—ì„œ ë°›ì•„ì˜¨ ì£¼ì‚¬ìœ„ ìµœëŒ“ê°’ (Speed)
+    [SerializeField] private int m_bonusSpeed = 0;          // ìŠ¤í”¼ë“œ íƒ€ì¼ ë“±ìœ¼ë¡œ ë”í•´ì§€ëŠ” ì¶”ê°€ ì¹¸ ìˆ˜
 
     private float m_speedMultiplier = 1f;
+#if false // Synergy system temporarily disabled
     private float m_synergySlow = 1f;
+#endif
 
     private EnemyHealthController m_health;
     private TilePath m_tilePath;
@@ -25,14 +27,14 @@ public class EnemyMovementController : MonoBehaviour
     public int CurrentTileIndex => m_currentTileIndex;
     public bool IsMoving => m_isMoving;
     public float CurrentSpeed => FinalMoveSpeed;
-    public float FinalMoveSpeed => m_moveSpeed * Mathf.Clamp(m_speedMultiplier * m_synergySlow, 0.1f, 5f);
+    public float FinalMoveSpeed => m_moveSpeed * Mathf.Clamp(m_speedMultiplier, 0.1f, 5f);
 
     private void Awake()
     {
         m_health = GetComponent<EnemyHealthController>();
     }
 
-    // ScriptableObject(EnemyData)ÀÇ Action°ú Speed¸¦ ±â¹İÀ¸·Î ÃÊ±âÈ­
+    // ScriptableObject(EnemyData)ì˜ Actionê³¼ Speedë¥¼ ê¸°ë°˜ìœ¼ë¡œ ì´ˆê¸°í™”
     public void InitMovement(EnemyData data, TilePath tilePath)
     {
         m_tilePath = tilePath;
@@ -40,7 +42,7 @@ public class EnemyMovementController : MonoBehaviour
         m_currentActionCounter = 0;
         m_bonusSpeed = 0;
         m_speedMultiplier = 1f;
-        m_synergySlow = 1f;
+
         m_isMoving = false;
 
         if (data != null)
@@ -72,20 +74,20 @@ public class EnemyMovementController : MonoBehaviour
             yield break;
         }
 
-        // 0¹ø Å¸ÀÏÀÇ ½Å±Ô ¼ÒÈ¯ ¸ó½ºÅÍ´Â ¹«Á¶°Ç 1Ä­ ÀüÁø
+        // 0ë²ˆ íƒ€ì¼ì˜ ì‹ ê·œ ì†Œí™˜ ëª¬ìŠ¤í„°ëŠ” ë¬´ì¡°ê±´ 1ì¹¸ ì „ì§„
         if (m_currentTileIndex == 0)
         {
             yield return StartCoroutine(MoveStepsRoutine(1));
             yield break;
         }
 
-        // Çàµ¿ ÁÖ±â µµ´Ş °Ë»ç
+        // í–‰ë™ ì£¼ê¸° ë„ë‹¬ ê²€ì‚¬
         m_currentActionCounter++;
         if (m_currentActionCounter >= m_actionInterval)
         {
             m_currentActionCounter = 0;
 
-            // 1ºÎÅÍ EnemyData¿¡ ¼³Á¤µÈ Speed °ª±îÁö ·£´ı ±¼¸² + ¸ØÃçÀÖ´Â Å¸ÀÏÀÇ º¸³Ê½º Speed
+            // 1ë¶€í„° EnemyDataì— ì„¤ì •ëœ Speed ê°’ê¹Œì§€ ëœë¤ êµ´ë¦¼ + ë©ˆì¶°ìˆëŠ” íƒ€ì¼ì˜ ë³´ë„ˆìŠ¤ Speed
             int maxDice = m_baseDiceMaxSpeed + m_bonusSpeed;
             int totalSteps = Random.Range(1, maxDice + 1);
 
@@ -118,14 +120,14 @@ public class EnemyMovementController : MonoBehaviour
 
         m_isMoving = false;
 
-        // µµÂøÁ¡ µµ´Ş È®ÀÎ
+        // ë„ì°©ì  ë„ë‹¬ í™•ì¸
         if (m_currentTileIndex >= m_tilePath.LastIndex)
         {
             OnReachEnd();
             yield break;
         }
 
-        // ÀÌµ¿ Á¤Áö ½Ã ±âÁ¸ ¹öÇÁ ÃÊ±âÈ­ ÈÄ Á¤Áö Å¸ÀÏÀÇ ¹öÇÁ Àû¿ë
+        // ì´ë™ ì •ì§€ ì‹œ ê¸°ì¡´ ë²„í”„ ì´ˆê¸°í™” í›„ ì •ì§€ íƒ€ì¼ì˜ ë²„í”„ ì ìš©
         CheckAndApplyTileBuff();
     }
 
@@ -135,30 +137,30 @@ public class EnemyMovementController : MonoBehaviour
         StopAllCoroutines();
     }
 
-    // ¸ØÃá ÀÚ¸®ÀÇ Æ¯¼ö Å¸ÀÏ ¹öÇÁ Àû¿ë ·ÎÁ÷
+    // ë©ˆì¶˜ ìë¦¬ì˜ íŠ¹ìˆ˜ íƒ€ì¼ ë²„í”„ ì ìš© ë¡œì§
     public void CheckAndApplyTileBuff()
     {
-        // 1. ±âÁ¸ ¹öÇÁ ¿ÏÀü ÃÊ±âÈ­ (½ºÇÇµå ¹× ¹æ¾î·Â º¹±¸)
+        // 1. ê¸°ì¡´ ë²„í”„ ì™„ì „ ì´ˆê¸°í™” (ìŠ¤í”¼ë“œ ë° ë°©ì–´ë ¥ ë³µêµ¬)
         ResetAllBuffs();
 
         if (TileManager.Instance == null || m_tilePath == null) return;
         if (m_currentTileIndex <= 0 || m_currentTileIndex >= m_tilePath.LastIndex) return;
 
-        // 2. ÇöÀç ¸ØÃçÀÖ´Â Å¸ÀÏ Å¸ÀÔ È®ÀÎ
+        // 2. í˜„ì¬ ë©ˆì¶°ìˆëŠ” íƒ€ì¼ íƒ€ì… í™•ì¸
         Vector3Int gridPos = m_tilePath.GetGridPosition(m_currentTileIndex);
         SpecialTileType tileType = TileManager.Instance.GetTileTypeAt(gridPos);
 
-        // 3. Å¸ÀÏ Å¸ÀÔº° ¹öÇÁ ºĞ±â Ã³¸®
+        // 3. íƒ€ì¼ íƒ€ì…ë³„ ë²„í”„ ë¶„ê¸° ì²˜ë¦¬
         switch (tileType)
         {
             case SpecialTileType.SpeedTile:
-                // ½ºÇÇµå Å¸ÀÏ: Çàµ¿ ÁÖ±â 1 °¨¼Ò (ÃÖ¼Ò 1), ÀÌµ¿ ÁÖ»çÀ§ ÃÖ´ñ°ª +2 Áõ°¡
+                // ìŠ¤í”¼ë“œ íƒ€ì¼: í–‰ë™ ì£¼ê¸° 1 ê°ì†Œ (ìµœì†Œ 1), ì´ë™ ì£¼ì‚¬ìœ„ ìµœëŒ“ê°’ +2 ì¦ê°€
                 m_actionInterval = Mathf.Max(1, m_baseActionInterval - 1);
                 m_bonusSpeed = 2;
                 break;
 
             case SpecialTileType.DefendTile:
-                // ¹æ¾î Å¸ÀÏ: ¹æ¾î·Â 20% Áõ°¡ (°è¼ö 1.2¹è)
+                // ë°©ì–´ íƒ€ì¼: ë°©ì–´ë ¥ 20% ì¦ê°€ (ê³„ìˆ˜ 1.2ë°°)
                 if (m_health != null)
                 {
                     m_health.SetDefendMultiplier(1.2f);
@@ -166,7 +168,7 @@ public class EnemyMovementController : MonoBehaviour
                 break;
 
             case SpecialTileType.HealTile:
-                // Èú Å¸ÀÏ: ÇöÀç Ã¼·ÂÀÇ 20% Áï½Ã È¸º¹
+                // í íƒ€ì¼: í˜„ì¬ ì²´ë ¥ì˜ 20% ì¦‰ì‹œ íšŒë³µ
                 if (m_health != null)
                 {
                     m_health.HealMaxHealthPercent(0.2f);
@@ -175,19 +177,19 @@ public class EnemyMovementController : MonoBehaviour
 
             case SpecialTileType.Normal:
             default:
-                // ÀÏ¹İ Å¸ÀÏÀº ±âº» ½ºÅÈ À¯Áö
+                // ì¼ë°˜ íƒ€ì¼ì€ ê¸°ë³¸ ìŠ¤íƒ¯ ìœ ì§€
                 break;
         }
     }
 
-    // ¸ğµç Å¸ÀÏ ¹öÇÁ¸¦ ±âº»°ªÀ¸·Î ÃÊ±âÈ­
+    // ëª¨ë“  íƒ€ì¼ ë²„í”„ë¥¼ ê¸°ë³¸ê°’ìœ¼ë¡œ ì´ˆê¸°í™”
     private void ResetAllBuffs()
     {
-        // ÀÌµ¿/Çàµ¿·Â ¹öÇÁ ¿øº¹
+        // ì´ë™/í–‰ë™ë ¥ ë²„í”„ ì›ë³µ
         m_actionInterval = m_baseActionInterval;
         m_bonusSpeed = 0;
 
-        // ¹æ¾î·Â ¹öÇÁ ¿øº¹
+        // ë°©ì–´ë ¥ ë²„í”„ ì›ë³µ
         if (m_health != null)
         {
             m_health.ResetTileDefendBuff();
@@ -206,5 +208,7 @@ public class EnemyMovementController : MonoBehaviour
     }
 
     public void SetSpeedMultiplier(float multiplier) => m_speedMultiplier = multiplier;
+#if false // Synergy system temporarily disabled
     public void SetSynergySlow(float slow) => m_synergySlow = slow;
+#endif
 }

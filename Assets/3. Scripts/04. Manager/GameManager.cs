@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// ÅÏ »óÅÂ Á¤ÀÇ
+// í„´ ìƒíƒœ ì •ì˜
 public enum TurnState
 {
     None,
@@ -17,25 +17,25 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    [Header("°ÔÀÓ ¹è¼Ó ¹× ¶óÀÌÇÁ ¼³Á¤")]
+    [Header("ê²Œì„ ë°°ì† ë° ë¼ì´í”„ ì„¤ì •")]
     [SerializeField] private float m_gameSpeed = 1.0f;
     [SerializeField] private int m_totalLife = 20;
 
-    [Header("ÅÏ °ü¸® ¼³Á¤")]
-    [Tooltip("ÇÃ·¹ÀÌ¾î ÅÏ Á¦ÇÑ ½Ã°£(ÃÊ)")]
+    [Header("í„´ ê´€ë¦¬ ì„¤ì •")]
+    [Tooltip("í”Œë ˆì´ì–´ í„´ ì œí•œ ì‹œê°„(ì´ˆ)")]
     [SerializeField] private float playerTurnDuration = 45f;
 
     public TurnState CurrentState { get; private set; } = TurnState.None;
     public int CurrentWave { get; private set; } = 1;
 
-    // ÅÏ ÁøÇà Á¦¾î¿ë ÄÚ·çÆ¾
+    // í„´ ì§„í–‰ ì œì–´ìš© ì½”ë£¨í‹´
     private Coroutine turnRoutine;
     private Coroutine playerTimerRoutine;
     private bool isPlayerTurnSkipped = false;
 
-    // UI ¹× ¿ÜºÎ ½Ã½ºÅÛ ¾Ë¸²¿ë µ¨¸®°ÔÀÌÆ®
+    // UI ë° ì™¸ë¶€ ì‹œìŠ¤í…œ ì•Œë¦¼ìš© ë¸ë¦¬ê²Œì´íŠ¸
     public event Action<TurnState> OnTurnStateChanged;
-    public event Action<float> OnPlayerTurnTimerUpdated; // ³²Àº ½Ã°£ UI °»½Å¿ë
+    public event Action<float> OnPlayerTurnTimerUpdated; // ë‚¨ì€ ì‹œê°„ UI ê°±ì‹ ìš©
 
     private void Awake()
     {
@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour
     }
 
     // ==========================================
-    // °ÔÀÓ ½ÃÀÛ ¹× ÅÏ ·çÇÁ Á¦¾î
+    // ê²Œì„ ì‹œì‘ ë° í„´ ë£¨í”„ ì œì–´
     // ==========================================
 
     public void OnStartGame()
@@ -67,24 +67,40 @@ public class GameManager : MonoBehaviour
         turnRoutine = StartCoroutine(TurnLoopRoutine());
     }
 
-    // [ÇÃ·¹ÀÌ¾îÅÏ -> ¿¡³Ê¹ÌÅÏ -> ¹İº¹] ¸ŞÀÎ ·çÇÁ
+    // [í”Œë ˆì´ì–´í„´ -> ì—ë„ˆë¯¸í„´ -> ë°˜ë³µ] ë©”ì¸ ë£¨í”„
     private IEnumerator TurnLoopRoutine()
     {
         while (CurrentState != TurnState.GameOver && CurrentState != TurnState.GameClear)
         {
-            // 1. ÇÃ·¹ÀÌ¾î ÅÏ ½ÃÀÛ
             yield return StartCoroutine(PlayerTurnRoutine());
+            if (CurrentState == TurnState.GameOver || CurrentState == TurnState.GameClear) yield break;
 
-            // 2. ¿¡³Ê¹Ì ÅÏ ½ÃÀÛ
-            yield return StartCoroutine(EnemyTurnRoutine());
-
-            // 3. ¿şÀÌºê(¶ó¿îµå) Áõ°¡
-            CurrentWave++;
+            yield return StartCoroutine(EnemyWaveRoutine());
         }
     }
 
+    private IEnumerator EnemyWaveRoutine()
+    {
+        int enemyTurns = WaveManager.Instance != null ? WaveManager.Instance.GetEnemiesPerWave() : 1;
+
+        for (int i = 0; i < enemyTurns; i++)
+        {
+            if (CurrentState == TurnState.GameOver || CurrentState == TurnState.GameClear) yield break;
+            yield return StartCoroutine(EnemyTurnRoutine());
+        }
+
+        if (WaveManager.Instance != null)
+        {
+            WaveManager.Instance.NextWave();
+            CurrentWave = WaveManager.Instance.GetWave();
+        }
+        else
+        {
+            CurrentWave++;
+        }
+    }
     // ==========================================
-    // 1. ÇÃ·¹ÀÌ¾î ÅÏ ·ÎÁ÷
+    // 1. í”Œë ˆì´ì–´ í„´ ë¡œì§
     // ==========================================
 
     private IEnumerator PlayerTurnRoutine()
@@ -97,7 +113,7 @@ public class GameManager : MonoBehaviour
 
         while (remainingTime > 0f)
         {
-            // ½ºÅµ ¹öÆ°À» ´©¸£¸é Áï½Ã ·çÇÁ Å»Ãâ
+            // ìŠ¤í‚µ ë²„íŠ¼ì„ ëˆ„ë¥´ë©´ ì¦‰ì‹œ ë£¨í”„ íƒˆì¶œ
             if (isPlayerTurnSkipped) break;
 
             remainingTime -= Time.deltaTime;
@@ -108,7 +124,7 @@ public class GameManager : MonoBehaviour
         OnPlayerTurnTimerUpdated?.Invoke(0f);
     }
 
-    // ÇÃ·¹ÀÌ¾î ÅÏ ½ºÅµ ¹öÆ° UI ÀÌº¥Æ® ¿¬°á¿ë ÇÔ¼ö
+    // í”Œë ˆì´ì–´ í„´ ìŠ¤í‚µ ë²„íŠ¼ UI ì´ë²¤íŠ¸ ì—°ê²°ìš© í•¨ìˆ˜
     public void OnClickSkipPlayerTurn()
     {
         if (CurrentState == TurnState.PlayerTurn)
@@ -118,7 +134,7 @@ public class GameManager : MonoBehaviour
     }
 
     // ==========================================
-    // 2. ¿¡³Ê¹Ì ÅÏ ·ÎÁ÷
+    // 2. ì—ë„ˆë¯¸ í„´ ë¡œì§
     // ==========================================
 
     private IEnumerator EnemyTurnRoutine()
@@ -126,26 +142,26 @@ public class GameManager : MonoBehaviour
         CurrentState = TurnState.EnemyTurn;
         OnTurnStateChanged?.Invoke(CurrentState);
 
-        // ´Ü°è 1 & 2: ½Å±Ô ¸ó½ºÅÍ ¼ÒÈ¯ ¹× ÀüÃ¼ ¸ó½ºÅÍ ÀÌµ¿
-        // (EnemyManager/WaveManager¿¡¼­ ¼ÒÈ¯ ÈÄ 0¹øÀº 1Ä­, ±âÁ¸ ¸ó½ºÅÍ´Â ÁÖ»çÀ§¸¸Å­ ÀÌµ¿ ¼öÇà)
+        // ë‹¨ê³„ 1 & 2: ì‹ ê·œ ëª¬ìŠ¤í„° ì†Œí™˜ ë° ì „ì²´ ëª¬ìŠ¤í„° ì´ë™
+        // (EnemyManager/WaveManagerì—ì„œ ì†Œí™˜ í›„ 0ë²ˆì€ 1ì¹¸, ê¸°ì¡´ ëª¬ìŠ¤í„°ëŠ” ì£¼ì‚¬ìœ„ë§Œí¼ ì´ë™ ìˆ˜í–‰)
         yield return StartCoroutine(ProcessEnemyMovement());
 
-        // ´Ü°è 3 & 4: ¸ó½ºÅÍ ¾Æ·¡ Å¸ÀÏ °Ë»ç ¹× Æ¯¼ö Å¸ÀÏ ¹öÇÁ Àû¿ë
+        // ë‹¨ê³„ 3 & 4: ëª¬ìŠ¤í„° ì•„ë˜ íƒ€ì¼ ê²€ì‚¬ ë° íŠ¹ìˆ˜ íƒ€ì¼ ë²„í”„ ì ìš©
         yield return StartCoroutine(ProcessTileBuffs());
 
-        // ´Ü°è 5 & 6: ÇÃ·¹ÀÌ¾î Å¸¿ö °ø°İ ¹× ¸ó½ºÅÍ Ã¼·Â °¨¼Ò Ã³¸®
+        // ë‹¨ê³„ 5 & 6: í”Œë ˆì´ì–´ íƒ€ì›Œ ê³µê²© ë° ëª¬ìŠ¤í„° ì²´ë ¥ ê°ì†Œ ì²˜ë¦¬
         yield return StartCoroutine(ProcessTowerAttacks());
 
-        // ¸ó½ºÅÍ ÅÏ Á¾·á (´ÙÀ½ ·çÇÁ¿¡¼­ ÀÚµ¿À¸·Î ÇÃ·¹ÀÌ¾î ÅÏ ½ÃÀÛ)
+        // ëª¬ìŠ¤í„° í„´ ì¢…ë£Œ (ë‹¤ìŒ ë£¨í”„ì—ì„œ ìë™ìœ¼ë¡œ í”Œë ˆì´ì–´ í„´ ì‹œì‘)
         yield return new WaitForSeconds(0.3f);
     }
 
-    // ¸ó½ºÅÍ ÀÌµ¿ Ã³¸® ÄÚ·çÆ¾ (EnemyManager ¿¬µ¿ ÁöÁ¡)
+    // ëª¬ìŠ¤í„° ì´ë™ ì²˜ë¦¬ ì½”ë£¨í‹´ (EnemyManager ì—°ë™ ì§€ì )
     private IEnumerator ProcessEnemyMovement()
     {
         if (EnemyManager.Instance != null)
         {
-            // ¿¡³Ê¹Ì ¸Å´ÏÀú¸¦ ÅëÇØ ½Å±Ô ¸ó½ºÅÍ ½ºÆù ¹× ÀÌµ¿ ½ÇÇà
+            // ì—ë„ˆë¯¸ ë§¤ë‹ˆì €ë¥¼ í†µí•´ ì‹ ê·œ ëª¬ìŠ¤í„° ìŠ¤í° ë° ì´ë™ ì‹¤í–‰
             yield return StartCoroutine(EnemyManager.Instance.ProcessEnemyTurnRoutine());
         }
         else
@@ -154,22 +170,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Æ¯¼ö Å¸ÀÏ È¿°ú Àû¿ë ÄÚ·çÆ¾
+    // íŠ¹ìˆ˜ íƒ€ì¼ íš¨ê³¼ ì ìš© ì½”ë£¨í‹´
     private IEnumerator ProcessTileBuffs()
     {
-        // TODO: EnemyManager.Instance.ApplyAllTileEffects()
-        yield return new WaitForSeconds(0.3f);
+        EnemyManager.Instance?.ApplyAllTileBuffs();
+        yield return null;
     }
 
-    // Å¸¿ö °ø°İ ¹× µ¥¹ÌÁö ¿¬»ê ÄÚ·çÆ¾
+    // íƒ€ì›Œ ê³µê²© ë° ë°ë¯¸ì§€ ì—°ì‚° ì½”ë£¨í‹´
     private IEnumerator ProcessTowerAttacks()
     {
-        // TODO: TowerManager.Instance.ExecuteAllTowerAttacks()
-        yield return new WaitForSeconds(1.0f);
+        TowerManager.Instance?.ExecuteTowerActionTurn();
+        yield return null;
     }
 
     // ==========================================
-    // °ÔÀÓ ¼Óµµ ¹× ÀÏ½ÃÁ¤Áö Á¦¾î
+    // ê²Œì„ ì†ë„ ë° ì¼ì‹œì •ì§€ ì œì–´
     // ==========================================
 
     public void OnClickGameSpeed(float gamespeed)
@@ -208,7 +224,7 @@ public class GameManager : MonoBehaviour
     }
 
     // ==========================================
-    // ¶óÀÌÇÁ ¹× °ÔÀÓ Á¾·á Ã³¸®
+    // ë¼ì´í”„ ë° ê²Œì„ ì¢…ë£Œ ì²˜ë¦¬
     // ==========================================
 
     public void DecreaseLife(int amount)

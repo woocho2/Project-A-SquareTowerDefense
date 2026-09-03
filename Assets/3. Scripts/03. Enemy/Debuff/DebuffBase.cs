@@ -15,21 +15,21 @@ public abstract class DebuffBase
         Stack = 1;
     }
 
-    // µğ¹öÇÁ Àû¿ë ½ÃÁ¡
+    // ë””ë²„í”„ ì ìš© ì‹œì 
     public virtual void OnApply(EnemyHealthController health, EnemyMovementController movement) { }
 
-    // ¸Å ÇÁ·¹ÀÓ ½ÇÇà (½Ã°£ Â÷°¨ ¹× µµÆ®/º¯À§ °è»ê)
+    // ë§¤ í”„ë ˆì„ ì‹¤í–‰ (ì‹œê°„ ì°¨ê° ë° ë„íŠ¸/ë³€ìœ„ ê³„ì‚°)
     public virtual void OnUpdate(EnemyHealthController health, EnemyMovementController movement, float deltaTime)
     {
         Duration -= deltaTime;
     }
 
-    // µ¿ÀÏ µğ¹öÇÁ ÁßÃ¸ ½Ã °»½Å
+    // ë™ì¼ ë””ë²„í”„ ì¤‘ì²© ì‹œ ê°±ì‹ 
     public virtual void OnRefresh(EnemyHealthController health, EnemyMovementController movement, float newDuration, float newValue)
     {
         if (newDuration > Duration) Duration = newDuration;
     }
 
-    // µğ¹öÇÁ ¸¸·á/Á¦°Å ½ÃÁ¡
+    // ë””ë²„í”„ ë§Œë£Œ/ì œê±° ì‹œì 
     public virtual void OnRemove(EnemyHealthController health, EnemyMovementController movement) { }
 }

@@ -1,3 +1,4 @@
+#if false // Synergy system temporarily disabled
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,3 +18,4 @@ public abstract class SynergyBase
     public abstract void Activate();
     public abstract void Deactivate();
 }
+#endif

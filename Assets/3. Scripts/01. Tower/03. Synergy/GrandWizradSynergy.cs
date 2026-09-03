@@ -1,3 +1,4 @@
+#if false // Synergy system temporarily disabled
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -88,3 +89,5 @@ public class GrandWizardSynergy : SynergyBase
         IsActive = false;
     }
 }
+
+#endif

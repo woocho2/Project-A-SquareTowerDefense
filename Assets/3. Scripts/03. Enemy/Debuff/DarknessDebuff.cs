@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// 11. Darkness: Áß½ÉºÎ ²ø¾î´ç±è + ÃÊ´ç 0.5% µ¥¹ÌÁö
+// 11. Darkness: ì¤‘ì‹¬ë¶€ ëŒì–´ë‹¹ê¹€ + ì´ˆë‹¹ 0.5% ë°ë¯¸ì§€
 public class DarknessDebuff : DebuffBase
 {
     private Vector3 m_centerPos;
@@ -16,12 +16,12 @@ public class DarknessDebuff : DebuffBase
     {
         base.OnUpdate(health, movement, deltaTime);
 
-        // Áß½ÉºÎ·Î ÈíÀÎ
+        // ì¤‘ì‹¬ë¶€ë¡œ í¡ì¸
         Vector3 dir = (m_centerPos - health.transform.position).normalized;
         float step = movement.CurrentSpeed * 1.5f * deltaTime;
         health.transform.position += dir * step;
 
-        // ÃÊ´ç 0.5% Áö¼Ó ÇÇÇØ
+        // ì´ˆë‹¹ 0.5% ì§€ì† í”¼í•´
         m_tickTimer += deltaTime;
         if (m_tickTimer >= 1.0f)
         {

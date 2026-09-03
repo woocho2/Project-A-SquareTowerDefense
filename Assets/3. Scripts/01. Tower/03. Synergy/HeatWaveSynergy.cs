@@ -1,3 +1,4 @@
+#if false // Synergy system temporarily disabled
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -76,14 +77,14 @@ public class HeatWaveSynergy : SynergyBase
         m_pathCells.Clear();
         BoundsInt bounds = m_pathTilemap.cellBounds;
 
-        // ¸Ê ÀüÃ¼¸¦ ¼øÈ¸ÇÏ¸ç Å¸ÀÏÀÌ Á¸ÀçÇÏ´Â(ÀûÀÌ Áö³ª°¡´Â) °æ·Î¸¦ Ã£À½
+        // ë§µ ì „ì²´ë¥¼ ìˆœíšŒí•˜ë©° íƒ€ì¼ì´ ì¡´ì¬í•˜ëŠ”(ì ì´ ì§€ë‚˜ê°€ëŠ”) ê²½ë¡œë¥¼ ì°¾ìŒ
         foreach (var pos in bounds.allPositionsWithin)
         {
             if (m_pathTilemap.HasTile(pos))
             {
                 m_pathCells.Add(pos);
 
-                // Å¸ÀÏÀÇ »ö»óÀ» º¯°æÇÏ±â À§ÇØ¼­´Â TileFlags ¼³Á¤À» NoneÀ¸·Î ÇØÁ¦ÇØ¾ß ÇÔ
+                // íƒ€ì¼ì˜ ìƒ‰ìƒì„ ë³€ê²½í•˜ê¸° ìœ„í•´ì„œëŠ” TileFlags ì„¤ì •ì„ Noneìœ¼ë¡œ í•´ì œí•´ì•¼ í•¨
                 m_pathTilemap.SetTileFlags(pos, TileFlags.None);
                 m_pathTilemap.SetColor(pos, m_heatColor);              
             }
@@ -98,7 +99,7 @@ public class HeatWaveSynergy : SynergyBase
 
         if (m_pathTilemap != null)
         {
-            // »ö»óÀÌ º¯°æµÇ¾ú´ø Å¸ÀÏµéÀ» ¿ø·¡ »ö»ó(±âº»°ªÀÎ Èò»ö)À¸·Î º¹±¸
+            // ìƒ‰ìƒì´ ë³€ê²½ë˜ì—ˆë˜ íƒ€ì¼ë“¤ì„ ì›ë˜ ìƒ‰ìƒ(ê¸°ë³¸ê°’ì¸ í°ìƒ‰)ìœ¼ë¡œ ë³µêµ¬
             foreach (var pos in m_pathCells)
             {
                 m_pathTilemap.SetColor(pos, Color.white);
@@ -108,3 +109,4 @@ public class HeatWaveSynergy : SynergyBase
         IsActive = false;
     }
 }
+#endif

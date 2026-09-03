@@ -1,17 +1,17 @@
 using UnityEngine;
-using UnityEngine.Pool; // (Ãß°¡) UnityEngine.Pool »ç¿ë
+using UnityEngine.Pool; // (ì¶”ê°€) UnityEngine.Pool ì‚¬ìš©
 using System.Collections.Generic;
 
 /// <summary>
-/// 2D Åõ»çÃ¼(ÃÑ¾Ë µî)¸¦ Àç»ç¿ëÇÏ±â À§ÇÑ ¿ÀºêÁ§Æ® Ç®(ObjectPool ±â¹İ)
-/// - Prewarm(initialSize) Áö¿ø
-/// - expandable=false¸é Ç®¿¡ ³²Àº °Ô ¾øÀ» ¶§ null ¹İÈ¯
-/// - maxSize¸¦ "ÃÑ »ı¼º »óÇÑ"Ã³·³ »ç¿ë(±âÁ¸ ÄÚµå ÀÇµµ À¯Áö)
+/// 2D íˆ¬ì‚¬ì²´(ì´ì•Œ ë“±)ë¥¼ ì¬ì‚¬ìš©í•˜ê¸° ìœ„í•œ ì˜¤ë¸Œì íŠ¸ í’€(ObjectPool ê¸°ë°˜)
+/// - Prewarm(initialSize) ì§€ì›
+/// - expandable=falseë©´ í’€ì— ë‚¨ì€ ê²Œ ì—†ì„ ë•Œ null ë°˜í™˜
+/// - maxSizeë¥¼ "ì´ ìƒì„± ìƒí•œ"ì²˜ëŸ¼ ì‚¬ìš©(ê¸°ì¡´ ì½”ë“œ ì˜ë„ ìœ ì§€)
 /// </summary>
 public class ProjectileObjectPool2D : MonoBehaviour
 {
     // ----------------------------
-    // Inspector ¼³Á¤°ªµé
+    // Inspector ì„¤ì •ê°’ë“¤
     // ----------------------------
 
     [Header("Prefab")]
@@ -26,11 +26,11 @@ public class ProjectileObjectPool2D : MonoBehaviour
     [SerializeField] private Transform container;
 
     // ----------------------------
-    // ³»ºÎ »óÅÂ°ªµé
+    // ë‚´ë¶€ ìƒíƒœê°’ë“¤
     // ----------------------------
 
-    private ObjectPool<ProjectileHit2D> m_pool; // (º¯°æ) Queue -> ObjectPool
-    private int _createdCount = 0;                  // (À¯Áö) "ÃÑ »ı¼º »óÇÑ" ¿ë
+    private ObjectPool<ProjectileHit2D> m_pool; // (ë³€ê²½) Queue -> ObjectPool
+    private int _createdCount = 0;                  // (ìœ ì§€) "ì´ ìƒì„± ìƒí•œ" ìš©
 
     // ----------------------------
     // Unity LifeCycle
@@ -46,16 +46,16 @@ public class ProjectileObjectPool2D : MonoBehaviour
 
         if (projectilePrefab == null)
         {
-            Debug.LogError("[ProjectilePool2D] projectilePrefabÀÌ ºñ¾îÀÖ½À´Ï´Ù.");
+            Debug.LogError("[ProjectilePool2D] projectilePrefabì´ ë¹„ì–´ìˆìŠµë‹ˆë‹¤.");
             enabled = false;
             return;
         }
 
-        // (Ãß°¡) UnityEngine.Pool ObjectPool ±¸¼º
-        // - defaultCapacity: ÃÊ±â ³»ºÎ ¿ë·®(ÇÁ¸®¿ú °³¼ö ÈùÆ®)
-        // - maxSize: "Ç®¿¡ º¸°ü °¡´ÉÇÑ(ºñÈ°¼º) ÃÖ´ë °³¼ö" (Unity ±âº» ÀÇ¹Ì)
-        //   ¿©±â¼­´Â ±âÁ¸ ÄÚµå¿Í ¸ÂÃß±â À§ÇØ maxSize¸¦ ±×´ë·Î ³ÖµÇ,
-        //   »ı¼º »óÇÑÀº _createdCount·Î º°µµ·Î ¸·½À´Ï´Ù.
+        // (ì¶”ê°€) UnityEngine.Pool ObjectPool êµ¬ì„±
+        // - defaultCapacity: ì´ˆê¸° ë‚´ë¶€ ìš©ëŸ‰(í”„ë¦¬ì›œ ê°œìˆ˜ íŒíŠ¸)
+        // - maxSize: "í’€ì— ë³´ê´€ ê°€ëŠ¥í•œ(ë¹„í™œì„±) ìµœëŒ€ ê°œìˆ˜" (Unity ê¸°ë³¸ ì˜ë¯¸)
+        //   ì—¬ê¸°ì„œëŠ” ê¸°ì¡´ ì½”ë“œì™€ ë§ì¶”ê¸° ìœ„í•´ maxSizeë¥¼ ê·¸ëŒ€ë¡œ ë„£ë˜,
+        //   ìƒì„± ìƒí•œì€ _createdCountë¡œ ë³„ë„ë¡œ ë§‰ìŠµë‹ˆë‹¤.
         m_pool = new ObjectPool<ProjectileHit2D>(
             createFunc: CreateNew,
             actionOnGet: OnGetFromPool,
@@ -70,13 +70,13 @@ public class ProjectileObjectPool2D : MonoBehaviour
 
     private void OnDestroy()
     {
-        // (Ãß°¡) ÇÊ¿ä ½Ã Ç® Á¤¸®
+        // (ì¶”ê°€) í•„ìš” ì‹œ í’€ ì •ë¦¬
         m_pool?.Dispose();
         m_pool = null;
     }
 
     /// <summary>
-    /// initialSize ¸¸Å­ ¹Ì¸® »ı¼ºÇØ¼­ Ç®¿¡ ³Ö¾îµÎ´Â ÀÛ¾÷
+    /// initialSize ë§Œí¼ ë¯¸ë¦¬ ìƒì„±í•´ì„œ í’€ì— ë„£ì–´ë‘ëŠ” ì‘ì—…
     /// </summary>
     private void Prewarm()
     {
@@ -85,17 +85,17 @@ public class ProjectileObjectPool2D : MonoBehaviour
         if (initialSize > maxSize)
         {
             Debug.LogWarning(
-                $"[ProjectilePool2D] initialSize({initialSize})°¡ maxSize({maxSize})º¸´Ù Å®´Ï´Ù. maxSize±îÁö¸¸ PrewarmÇÕ´Ï´Ù.");
+                $"[ProjectilePool2D] initialSize({initialSize})ê°€ maxSize({maxSize})ë³´ë‹¤ í½ë‹ˆë‹¤. maxSizeê¹Œì§€ë§Œ Prewarmí•©ë‹ˆë‹¤.");
         }
 
         int count = Mathf.Min(initialSize, maxSize);
 
-        // Prewarm Áß¿¡´Â GetÀ¸·Î ²¨³½ µÚ ´Ù½Ã Release ÇØ¼­ ºñÈ°¼º »óÅÂ·Î ½×¾ÆµÓ´Ï´Ù.
-        // (ObjectPool ³»ºÎ CountAll / CountInactiveµµ ÀÚ¿¬½º·´°Ô ¼¼ÆÃµÊ)
+        // Prewarm ì¤‘ì—ëŠ” Getìœ¼ë¡œ êº¼ë‚¸ ë’¤ ë‹¤ì‹œ Release í•´ì„œ ë¹„í™œì„± ìƒíƒœë¡œ ìŒ“ì•„ë‘¡ë‹ˆë‹¤.
+        // (ObjectPool ë‚´ë¶€ CountAll / CountInactiveë„ ìì—°ìŠ¤ëŸ½ê²Œ ì„¸íŒ…ë¨)
         var temp = new List<ProjectileHit2D>(count);
         for (int i = 0; i < count; i++)
         {
-            var p = TryGet(); // (º¯°æ) »ı¼º »óÇÑ/expandable Ã¼Å© Æ÷ÇÔ
+            var p = TryGet(); // (ë³€ê²½) ìƒì„± ìƒí•œ/expandable ì²´í¬ í¬í•¨
             if (p == null) break;
             temp.Add(p);
         }
@@ -105,17 +105,17 @@ public class ProjectileObjectPool2D : MonoBehaviour
     }
 
     /// <summary>
-    /// ÇÁ¸®ÆÕÀ» Instantiate ÇØ¼­ »õ Åõ»çÃ¼¸¦ ÇÏ³ª »ı¼ºÇÕ´Ï´Ù.
-    /// (È°¼ºÈ­´Â ÇÏÁö ¾ÊÀ½)
+    /// í”„ë¦¬íŒ¹ì„ Instantiate í•´ì„œ ìƒˆ íˆ¬ì‚¬ì²´ë¥¼ í•˜ë‚˜ ìƒì„±í•©ë‹ˆë‹¤.
+    /// (í™œì„±í™”ëŠ” í•˜ì§€ ì•ŠìŒ)
     /// </summary>
     private ProjectileHit2D CreateNew()
     {
-        // (Áß¿ä) createFunc¿¡¼­´Â »óÇÑ Ã¼Å©¸¦ ÇÏÁö ¾Ê½À´Ï´Ù.
-        // »óÇÑÀº TryGet()¿¡¼­ ¸·¾Æ¼­ createFunc°¡ È£ÃâµÇÁö ¾Ê°Ô ÇÕ´Ï´Ù.
+        // (ì¤‘ìš”) createFuncì—ì„œëŠ” ìƒí•œ ì²´í¬ë¥¼ í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
+        // ìƒí•œì€ TryGet()ì—ì„œ ë§‰ì•„ì„œ createFuncê°€ í˜¸ì¶œë˜ì§€ ì•Šê²Œ í•©ë‹ˆë‹¤.
         var p = Instantiate(projectilePrefab, container);
         p.gameObject.SetActive(false);
 
-        // Åõ»çÃ¼°¡ ÀÚ±â ÀÚ½ÅÀ» Ç®·Î µÇµ¹¸± ¼ö ÀÖµµ·Ï
+        // íˆ¬ì‚¬ì²´ê°€ ìê¸° ìì‹ ì„ í’€ë¡œ ë˜ëŒë¦´ ìˆ˜ ìˆë„ë¡
         p.SetPool(this);
 
         _createdCount++;
@@ -124,10 +124,10 @@ public class ProjectileObjectPool2D : MonoBehaviour
 
     private void OnGetFromPool(ProjectileHit2D p)
     {
-        // (Ãß°¡) Get ½ÃÁ¡¿¡ "¾ÈÀü ¸®¼Â"ÀÌ ÇÊ¿äÇÏ¸é ¿©±â¼­ Ã³¸®
-        // ÇöÀç´Â Spawn¿¡¼­ SetActive(true)/Launch¸¦ ÇÏ¹Ç·Î ÃÖ¼ÒÇÑ¸¸ º¸Àå
+        // (ì¶”ê°€) Get ì‹œì ì— "ì•ˆì „ ë¦¬ì…‹"ì´ í•„ìš”í•˜ë©´ ì—¬ê¸°ì„œ ì²˜ë¦¬
+        // í˜„ì¬ëŠ” Spawnì—ì„œ SetActive(true)/Launchë¥¼ í•˜ë¯€ë¡œ ìµœì†Œí•œë§Œ ë³´ì¥
         if (p == null) return;
-        p.gameObject.SetActive(false); // ½Ç¼ö·Î È°¼º »óÅÂ·Î µé¾î¿Â °æ¿ì ¹æÁö
+        p.gameObject.SetActive(false); // ì‹¤ìˆ˜ë¡œ í™œì„± ìƒíƒœë¡œ ë“¤ì–´ì˜¨ ê²½ìš° ë°©ì§€
     }
 
     private void OnReleaseToPool(ProjectileHit2D p)
@@ -135,7 +135,7 @@ public class ProjectileObjectPool2D : MonoBehaviour
         if (p == null) return;
 
         p.gameObject.SetActive(false);
-        // (Áß¿ä) Ç®·Î µ¹¾Æ¿Â Åõ»çÃ¼´Â container ¾Æ·¡·Î ÀÌµ¿½ÃÄÑ¼­ °èÃş Á¤¸®
+        // (ì¤‘ìš”) í’€ë¡œ ëŒì•„ì˜¨ íˆ¬ì‚¬ì²´ëŠ” container ì•„ë˜ë¡œ ì´ë™ì‹œì¼œì„œ ê³„ì¸µ ì •ë¦¬
         p.transform.SetParent(container, false);
     }
 
@@ -146,11 +146,11 @@ public class ProjectileObjectPool2D : MonoBehaviour
     }
 
     // ----------------------------
-    // ¿ÜºÎ¿¡¼­ »ç¿ëÇÏ´Â ÇÙ½É API
+    // ì™¸ë¶€ì—ì„œ ì‚¬ìš©í•˜ëŠ” í•µì‹¬ API
     // ----------------------------
 
     /// <summary>
-    /// Ç®¿¡¼­ ÅºÀ» ²¨³» ÁöÁ¤µÈ À§Ä¡¿¡ ¹èÄ¡ÇÏ°í È°¼ºÈ­ÇÏ¿© ¹İÈ¯ÇÕ´Ï´Ù.
+    /// í’€ì—ì„œ íƒ„ì„ êº¼ë‚´ ì§€ì •ëœ ìœ„ì¹˜ì— ë°°ì¹˜í•˜ê³  í™œì„±í™”í•˜ì—¬ ë°˜í™˜í•©ë‹ˆë‹¤.
     /// </summary>
     public ProjectileHit2D Spawn(Vector3 position)
     {
@@ -164,36 +164,36 @@ public class ProjectileObjectPool2D : MonoBehaviour
     }
 
     /// <summary>
-    /// Ç®¿¡¼­ Åõ»çÃ¼¸¦ ÇÏ³ª ²¨³À´Ï´Ù.
-    /// - ºñÈ°¼º Àç°í°¡ ÀÖÀ¸¸é Get()
-    /// - ¾øÀ¸¸é expandable/maxSize(ÃÑ »ı¼º »óÇÑ) Á¶°Ç¿¡ µû¶ó »ı¼º or null
+    /// í’€ì—ì„œ íˆ¬ì‚¬ì²´ë¥¼ í•˜ë‚˜ êº¼ëƒ…ë‹ˆë‹¤.
+    /// - ë¹„í™œì„± ì¬ê³ ê°€ ìˆìœ¼ë©´ Get()
+    /// - ì—†ìœ¼ë©´ expandable/maxSize(ì´ ìƒì„± ìƒí•œ) ì¡°ê±´ì— ë”°ë¼ ìƒì„± or null
     /// </summary>
     private ProjectileHit2D TryGet()
     {
         if (m_pool == null) return null;
 
-        // ºñÈ°¼º Àç°í°¡ ÀÖÀ¸¸é ¹Ù·Î °¡Á®¿À±â
+        // ë¹„í™œì„± ì¬ê³ ê°€ ìˆìœ¼ë©´ ë°”ë¡œ ê°€ì ¸ì˜¤ê¸°
         if (m_pool.CountInactive > 0)
             return m_pool.Get();
 
-        // Àç°í°¡ ¾øÀ» ¶§ È®Àå ±İÁö¸é ½ÇÆĞ
+        // ì¬ê³ ê°€ ì—†ì„ ë•Œ í™•ì¥ ê¸ˆì§€ë©´ ì‹¤íŒ¨
         if (!expandable) return null;
 
-        // ±âÁ¸ ÄÚµå ÀÇµµ À¯Áö: "ÃÑ »ı¼º »óÇÑ"À¸·Î maxSize »ç¿ë
+        // ê¸°ì¡´ ì½”ë“œ ì˜ë„ ìœ ì§€: "ì´ ìƒì„± ìƒí•œ"ìœ¼ë¡œ maxSize ì‚¬ìš©
         if (_createdCount >= maxSize) return null;
 
-        // »ı¼º Çã¿ë
+        // ìƒì„± í—ˆìš©
         return m_pool.Get();
     }
 
     /// <summary>
-    /// »ç¿ëÀÌ ³¡³­ ÅºÀ» Ç®·Î µÇµ¹¸³´Ï´Ù.
-    /// (Åõ»çÃ¼ ½ºÅ©¸³Æ®¿¡¼­ Ãæµ¹/¼ö¸í Á¾·á ½Ã È£Ãâ)
+    /// ì‚¬ìš©ì´ ëë‚œ íƒ„ì„ í’€ë¡œ ë˜ëŒë¦½ë‹ˆë‹¤.
+    /// (íˆ¬ì‚¬ì²´ ìŠ¤í¬ë¦½íŠ¸ì—ì„œ ì¶©ëŒ/ìˆ˜ëª… ì¢…ë£Œ ì‹œ í˜¸ì¶œ)
     /// </summary>
     public void Release(ProjectileHit2D projectile)
     {
         if (projectile == null) return;
 
-        m_pool.Release(projectile); // (º¯°æ) Queue.Enqueue ´ë½Å ObjectPool.Release
+        m_pool.Release(projectile); // (ë³€ê²½) Queue.Enqueue ëŒ€ì‹  ObjectPool.Release
     }
 }

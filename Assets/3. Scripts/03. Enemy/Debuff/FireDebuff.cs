@@ -1,7 +1,7 @@
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 
-// 6. Fire: Áö¼Ó È­¿° ÇÇÇØ (DoT)
+// 6. Fire: ì§€ì† í™”ì—¼ í”¼í•´ (DoT)
 public class FireDebuff : DebuffBase
 {
     private float m_tickTimer = 0f;

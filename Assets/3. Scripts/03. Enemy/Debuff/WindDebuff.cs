@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// 9. Wind: ³Ë¹é ¹ÐÄ§
+// 9. Wind: ë„‰ë°± ë°€ì¹¨
 public class WindDebuff : DebuffBase
 {
     public WindDebuff(float duration, float pushSpeed)

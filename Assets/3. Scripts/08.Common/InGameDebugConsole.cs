@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 public class InGameDebugConsole : MonoBehaviour
 {
-    [Header("UI ¿¬°á")]
-    [SerializeField, Tooltip("·Î±×¸¦ Ãâ·ÂÇÒ TextMeshPro ÄÄÆ÷³ÍÆ®")]
+    [Header("UI ì—°ê²°")]
+    [SerializeField, Tooltip("ë¡œê·¸ë¥¼ ì¶œë ¥í•  TextMeshPro ì»´í¬ë„ŒíŠ¸")]
     private TextMeshProUGUI m_debugText;
 
-    [Header("¼³Á¤")]
-    [SerializeField, Tooltip("È­¸é¿¡ Ç¥½ÃÇÒ ÃÖ´ë ·Î±× ÁÙ ¼ö")]
+    [Header("ì„¤ì •")]
+    [SerializeField, Tooltip("í™”ë©´ì— í‘œì‹œí•  ìµœëŒ€ ë¡œê·¸ ì¤„ ìˆ˜")]
     private int m_maxLines = 5;
 
     [SerializeField] Color m_basecolor;
@@ -60,8 +60,8 @@ public class InGameDebugConsole : MonoBehaviour
 
     public void TestLog()
     {
-        Debug.Log("ÀÏ¹İ ½Ã½ºÅÛ ¸Ş½ÃÁöÀÔ´Ï´Ù.");
-        Debug.LogWarning("ÁÖÀÇ°¡ ÇÊ¿äÇÑ °æ°í ¸Ş½ÃÁöÀÔ´Ï´Ù.");
-        Debug.LogError("Ä¡¸íÀûÀÎ ¿¡·¯°¡ ¹ß»ıÇß½À´Ï´Ù!");
+        Debug.Log("ì¼ë°˜ ì‹œìŠ¤í…œ ë©”ì‹œì§€ì…ë‹ˆë‹¤.");
+        Debug.LogWarning("ì£¼ì˜ê°€ í•„ìš”í•œ ê²½ê³  ë©”ì‹œì§€ì…ë‹ˆë‹¤.");
+        Debug.LogError("ì¹˜ëª…ì ì¸ ì—ëŸ¬ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤!");
     }
 }

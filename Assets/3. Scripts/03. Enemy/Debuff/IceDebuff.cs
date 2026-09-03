@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// 7. Ice: µĞÈ­ (5½ºÅÃ ½Ã ºù°á -> ÀÌµ¿ºÒ°¡ + ÇØÁ¦ ½Ã ºù°á Áß ´©Àû µ¥¹ÌÁöÀÇ 20% Ãß°¡ ÇÇÇØ)
+// 7. Ice: ë‘”í™” (5ìŠ¤íƒ ì‹œ ë¹™ê²° -> ì´ë™ë¶ˆê°€ + í•´ì œ ì‹œ ë¹™ê²° ì¤‘ ëˆ„ì  ë°ë¯¸ì§€ì˜ 20% ì¶”ê°€ í”¼í•´)
 public class IceDebuff : DebuffBase
 {
     private const int MAX_STACK = 5;
@@ -25,7 +25,7 @@ public class IceDebuff : DebuffBase
             Stack++;
             if (Stack >= MAX_STACK)
             {
-                // 1ÃÊ°£ ºù°á »óÅÂ·Î ÀüÈ¯
+                // 1ì´ˆê°„ ë¹™ê²° ìƒíƒœë¡œ ì „í™˜
                 m_isFrozen = true;
                 Duration = 1.0f;
                 movement.SetSpeedMultiplier(0f);
@@ -40,7 +40,7 @@ public class IceDebuff : DebuffBase
     {
         base.OnUpdate(health, movement, deltaTime);
 
-        // ºù°á »óÅÂ µ¿¾È ¹ŞÀº µ¥¹ÌÁö ÃßÀû
+        // ë¹™ê²° ìƒíƒœ ë™ì•ˆ ë°›ì€ ë°ë¯¸ì§€ ì¶”ì 
         if (m_isFrozen && health.CurrentHP < m_lastObservedHP)
         {
             m_accumulatedDamage += (m_lastObservedHP - health.CurrentHP);
@@ -58,7 +58,7 @@ public class IceDebuff : DebuffBase
     {
         movement.SetSpeedMultiplier(1f);
 
-        // ºù°á ÇØÁ¦ ½Ã ´©Àû µ¥¹ÌÁöÀÇ 20% Ãß°¡ ÇÇÇØ
+        // ë¹™ê²° í•´ì œ ì‹œ ëˆ„ì  ë°ë¯¸ì§€ì˜ 20% ì¶”ê°€ í”¼í•´
         if (m_isFrozen && m_accumulatedDamage > 0f && health.CurrentHP > 0f)
         {
             health.ApplyDamage(m_accumulatedDamage * 0.2f, false);

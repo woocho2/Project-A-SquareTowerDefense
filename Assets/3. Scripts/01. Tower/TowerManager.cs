@@ -13,41 +13,44 @@ public enum CombineMode
 
 public class TowerManager : MonoBehaviour
 {
-    [Header("Å×½ºÆ®")]
+    [Header("í…ŒìŠ¤íŠ¸")]
     private bool m_isTestMode = false;
     private string m_testInputBuffer = "";
 
     // ==========================================================================================================
-    // =============================================== º¯¼ö¼±¾ğ =================================================
+    // =============================================== ë³€ìˆ˜ì„ ì–¸ =================================================
     // ==========================================================================================================
     public static TowerManager Instance { get; private set; }
 
-    [Tooltip("Å¸¿ö¸¦ »ı¼ºÇÒ ¼ö ÀÖ´Â Å¸ÀÏ¸ÊÀ» ÁöÁ¤ÇÕ´Ï´Ù.")]
+    [Tooltip("íƒ€ì›Œë¥¼ ìƒì„±í•  ìˆ˜ ìˆëŠ” íƒ€ì¼ë§µì„ ì§€ì •í•©ë‹ˆë‹¤.")]
     [SerializeField] private Tilemap m_spawnPoint;
+#if false // Synergy system temporarily disabled
     [SerializeField] private Tilemap m_synergySpawnPoint;
+#endif
 
-    [Tooltip("Å¸¿ö ÇÁ¸®ÆÕÀ» Æ÷ÇÔÇÏ´Â µ¥ÀÌÅÍ ¹è¿­ÀÔ´Ï´Ù.")]
+    [Tooltip("íƒ€ì›Œ í”„ë¦¬íŒ¹ì„ í¬í•¨í•˜ëŠ” ë°ì´í„° ë°°ì—´ì…ë‹ˆë‹¤.")]
     [SerializeField] private TowerData[] m_towerData;
 
-    [Header("½Ã³ÊÁö Å¸¿ö µ¥ÀÌÅÍ")]
-    [SerializeField] private TowerData m_knightData;         // ºÒÀÇ ±â»ç
-    [SerializeField] private TowerData m_sniperData;         // ÆøÇ³ Àú°İ¼ö
-    [SerializeField] private TowerData m_berserkerData;      // ¼­¸® ±¤Àü»ç
-    [SerializeField] private TowerData m_contradictionData;  // ¸ğ¼ø
-    [SerializeField] private TowerData m_thorData;           // Åä¸£
-    [SerializeField] private TowerData m_gunData;            // ¿şÆù ¸¶½ºÅÍ
-    [SerializeField] private TowerData m_wizardData;         // ´ë¸¶¹ı»ç
+#if false // Synergy system temporarily disabled
+    [Header("ì‹œë„ˆì§€ íƒ€ì›Œ ë°ì´í„°")]
+    [SerializeField] private TowerData m_knightData;         // ë¶ˆì˜ ê¸°ì‚¬
+    [SerializeField] private TowerData m_sniperData;         // í­í’ ì €ê²©ìˆ˜
+    [SerializeField] private TowerData m_berserkerData;      // ì„œë¦¬ ê´‘ì „ì‚¬
+    [SerializeField] private TowerData m_contradictionData;  // ëª¨ìˆœ
+    [SerializeField] private TowerData m_thorData;           // í† ë¥´
+    [SerializeField] private TowerData m_gunData;            // ì›¨í° ë§ˆìŠ¤í„°
+    [SerializeField] private TowerData m_wizardData;         // ëŒ€ë§ˆë²•ì‚¬
 
-    [Header("½Ã³ÊÁö Æ¯¼ö Å¸ÀÏ¸Ê")]
-    [SerializeField] private Tilemap m_pathTilemap;          // ¿­Ç³
+    [Header("ì‹œë„ˆì§€ íŠ¹ìˆ˜ íƒ€ì¼ë§µ")]
+    [SerializeField] private Tilemap m_pathTilemap;          // ì—´í’
 
-    [Header("½Ã³ÊÁö UI ¹öÆ°")]
+    [Header("ì‹œë„ˆì§€ UI ë²„íŠ¼")]
     [SerializeField] private UnityEngine.UI.Button m_btnCombineContradiction;
     [SerializeField] private UnityEngine.UI.Button m_btnUndoContradiction;
     [SerializeField] private UnityEngine.UI.Button m_btnCombineThor;
     [SerializeField] private UnityEngine.UI.Button m_btnUndoThor;
 
-    [Header("½Ã³ÊÁö INFO ¹öÆ°")]
+    [Header("ì‹œë„ˆì§€ INFO ë²„íŠ¼")]
     [SerializeField] private UnityEngine.UI.Button m_btnKnightOfFire;
     [SerializeField] private UnityEngine.UI.Image  m_imgKnightOfFireSword;
     [SerializeField] private UnityEngine.UI.Image  m_imgKnightOfFireShield;
@@ -88,7 +91,8 @@ public class TowerManager : MonoBehaviour
 
     private List<UnityEngine.UI.Button> m_allSynergyInfoButtons = new List<UnityEngine.UI.Button>();
 
-    [Header("Å¸¿ö »ı¼º ¹× ¾÷±×·¹ÀÌµå ºñ¿ë")]
+#endif
+    [Header("íƒ€ì›Œ ìƒì„± ë° ì—…ê·¸ë ˆì´ë“œ ë¹„ìš©")]
     private int BuildCost = 50;
     private int UpgradeGemCost = 5;
 
@@ -102,20 +106,28 @@ public class TowerManager : MonoBehaviour
 
     private Dictionary<Vector3Int, GridTowerInfo> m_towersOnGrid = new Dictionary<Vector3Int, GridTowerInfo>();
     private Dictionary<int, TowerStats>      m_globalTowerStats  = new Dictionary<int, TowerStats>();
+#if false // Synergy system temporarily disabled
     private Dictionary<int, TowerStats>      m_synergyTowerStats = new Dictionary<int, TowerStats>();
+#endif
     private Dictionary<int, List<TowerData>> m_towerTier         = new Dictionary<int, List<TowerData>>();
     private Dictionary<int, List<TowerData>> m_towerType         = new Dictionary<int, List<TowerData>>();
     private Dictionary<int, List<TowerData>> m_towerVariant      = new Dictionary<int, List<TowerData>>();
 
     public event Action<int> OnTowerTypeUpgrade;
 
+#if false // Synergy system temporarily disabled
     private List<SynergyBase> m_synergies = new List<SynergyBase>();
+#endif
 
+#if false // Synergy system temporarily disabled
     public bool IsAttributionArrowActive { get; set; } = false;
+#endif
+#if false // Synergy system temporarily disabled
     public bool IsHeatWaveActive { get; set; } = false;
+#endif
 
     // ==========================================================================================================
-    // ================================================= ÃÊ±âÈ­ =================================================
+    // ================================================= ì´ˆê¸°í™” =================================================
     // ==========================================================================================================
 
     private void Awake()
@@ -133,6 +145,7 @@ public class TowerManager : MonoBehaviour
     {
         LoadTowerDataFromCSV();
 
+#if false // Synergy system temporarily disabled
         m_synergies.Add(new KnightOfFireSynergy     (this, m_knightData, m_btnKnightOfFire, m_imgKnightOfFireSword, m_imgKnightOfFireShield, m_imgKnightOfFireFire));
         m_synergies.Add(new StormSniperSynergy      (this, m_sniperData, m_btnStormSniper, m_imgStormSniperBow, m_imgStormSniperWind));
         m_synergies.Add(new FrostBerserkerSynergy   (this, m_berserkerData, m_btnFrostBerserker, m_imgFrostBerserkerShield, m_imgFrostBerserkerAxe, m_imgFrostBerserkerIce));
@@ -153,6 +166,7 @@ public class TowerManager : MonoBehaviour
         m_allSynergyInfoButtons.Add(m_btnWeaponMaster);
         m_allSynergyInfoButtons.Add(m_btnGrandWizard);
 
+#endif
         if (GlobalProjectileManager.Instance != null)
         {
             GlobalProjectileManager.Instance.InitializeProjectileDatabase();
@@ -166,8 +180,8 @@ public class TowerManager : MonoBehaviour
         if (Keyboard.current.tKey.wasPressedThisFrame)
         {
             m_isTestMode = !m_isTestMode;
-            m_testInputBuffer = ""; // ÀÔ·Â ÃÊ±âÈ­
-            Debug.Log($"[Ä¡Æ®] Æ¯Á¤ Å¸¿ö ¼ÒÈ¯ ¸ğµå {(m_isTestMode ? "È°¼ºÈ­! 4ÀÚ¸® ¼ıÀÚ¸¦ ÀÔ·ÂÇÏ¼¼¿ä." : "ºñÈ°¼ºÈ­")}");
+            m_testInputBuffer = ""; // ì…ë ¥ ì´ˆê¸°í™”
+            Debug.Log($"[ì¹˜íŠ¸] íŠ¹ì • íƒ€ì›Œ ì†Œí™˜ ëª¨ë“œ {(m_isTestMode ? "í™œì„±í™”! 4ìë¦¬ ìˆ«ìë¥¼ ì…ë ¥í•˜ì„¸ìš”." : "ë¹„í™œì„±í™”")}");
             return;
         }
 
@@ -190,7 +204,7 @@ public class TowerManager : MonoBehaviour
         TextAsset csvData = Resources.Load<TextAsset>("TowerDataCSV");
         if (csvData == null)
         {
-            Debug.LogError("Resources Æú´õ¿¡¼­ TowerDataCSV ÆÄÀÏÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError("Resources í´ë”ì—ì„œ TowerDataCSV íŒŒì¼ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -200,7 +214,7 @@ public class TowerManager : MonoBehaviour
         for (int i = 1; i < lines.Length; i++)
         {
             string[] values = lines[i].Split(',');
-            if (values.Length < 18 || string.IsNullOrWhiteSpace(values[0])) continue;
+            if (values.Length < 20 || string.IsNullOrWhiteSpace(values[0])) continue;
 
             TowerData newData = ScriptableObject.CreateInstance<TowerData>();
 
@@ -211,26 +225,31 @@ public class TowerManager : MonoBehaviour
                 newData.towerLevel = int.Parse(values[2].Trim());
                 newData.attackPower = float.Parse(values[3].Trim());
                 newData.range = float.Parse(values[4].Trim());
-                newData.attackSpeed = float.Parse(values[5].Trim());
-                newData.isCritical = bool.Parse(values[6].Trim());
-                newData.criticalRate = float.Parse(values[7].Trim());
-                newData.criticalDamage = float.Parse(values[8].Trim());
-                newData.duration = float.Parse(values[9].Trim());
-                newData.abilityValue = float.Parse(values[10].Trim());
+                newData.action = Mathf.Max(1, int.Parse(values[5].Trim()));
+                newData.attackCount = Mathf.Max(1, Mathf.RoundToInt(float.Parse(values[6].Trim())));
+                newData.splashRadius = Mathf.Max(0, Mathf.RoundToInt(float.Parse(values[7].Trim())));
+                newData.additionalHitCount = Mathf.Max(0, int.Parse(values[8].Trim()));
+                newData.isCritical = bool.Parse(values[9].Trim());
+                newData.criticalRate = float.Parse(values[10].Trim());
+                newData.criticalDamage = float.Parse(values[11].Trim());
+                newData.duration = float.Parse(values[12].Trim());
+                newData.abilityValue = float.Parse(values[13].Trim());
 
-                newData.attackType = ParseEnum<AttackType>(values[11]);
-                string layerName = values[12].Trim();
+                newData.attackType = ParseEnum<AttackType>(values[14]);
+                string layerName = values[15].Trim();
                 newData.targetLayer = !string.IsNullOrEmpty(layerName) ? LayerMask.GetMask(layerName) : 0;
-                newData.buffTarget = string.IsNullOrEmpty(values[13].Trim()) ? BuffTarget.None : ParseEnum<BuffTarget>(values[13]);
-                newData.debuffTarget = string.IsNullOrEmpty(values[14].Trim()) ? DebuffTarget.None : ParseEnum<DebuffTarget>(values[14]);
+                newData.buffTarget = string.IsNullOrEmpty(values[16].Trim()) ? BuffTarget.None : ParseEnum<BuffTarget>(values[16]);
+                newData.debuffTarget = string.IsNullOrEmpty(values[17].Trim()) ? DebuffTarget.None : ParseEnum<DebuffTarget>(values[17]);
 
-                newData.projectileSpeed = float.Parse(values[15].Trim());
-                newData.splashRadius = float.Parse(values[16].Trim());
-                newData.hitEffectID = int.Parse(values[17].Trim());
+                newData.projectileSpeed = float.Parse(values[18].Trim());
+                newData.hitEffectID = int.Parse(values[19].Trim());
+                newData.targetPriority = values.Length > 20 && !string.IsNullOrWhiteSpace(values[20])
+                    ? ParseEnum<TargetPriority>(values[20])
+                    : TargetPriority.Closest;
             }
             catch (System.Exception)
             {
-                Debug.LogWarning($"[CSV µ¥ÀÌÅÍ ¿À·ù] ¿¢¼¿ÀÇ {i + 1}¹øÂ° ÁÙ ÆÄ½Ì ½ÇÆĞ. ³»¿ë: {lines[i]}");
+                Debug.LogWarning($"[CSV ë°ì´í„° ì˜¤ë¥˜] ì—‘ì…€ì˜ {i + 1}ë²ˆì§¸ ì¤„ íŒŒì‹± ì‹¤íŒ¨. ë‚´ìš©: {lines[i]}");
                 continue;
             }
 
@@ -238,7 +257,7 @@ public class TowerManager : MonoBehaviour
             newData.towerPrefab = Resources.Load<GameObject>($"Towers/{prefabName}");
             if (newData.towerPrefab == null)
             {
-                Debug.LogWarning($"[·Îµå ½ÇÆĞ] ID {newData.towerID}ÀÇ Å¸¿ö ÇÁ¸®ÆÕ ´©¶ô");
+                Debug.LogWarning($"[ë¡œë“œ ì‹¤íŒ¨] ID {newData.towerID}ì˜ íƒ€ì›Œ í”„ë¦¬íŒ¹ ëˆ„ë½");
                 continue;
             }
 
@@ -248,10 +267,10 @@ public class TowerManager : MonoBehaviour
 
             loadedTowers.Add(newData);
 
-            // [ÇÙ½É] »ı¼º Áï½Ã ToTowerStats()¸¦ È£ÃâÇÏ¿© ±Û·Î¹ú ½ºÅÈ µñ¼Å³Ê¸®¿¡ µî·Ï
+            // [í•µì‹¬] ìƒì„± ì¦‰ì‹œ ToTowerStats()ë¥¼ í˜¸ì¶œí•˜ì—¬ ê¸€ë¡œë²Œ ìŠ¤íƒ¯ ë”•ì…”ë„ˆë¦¬ì— ë“±ë¡
             m_globalTowerStats[newData.towerID] = newData.ToTowerStats();
 
-            // ºĞ·ù µñ¼Å³Ê¸® ÀûÀç
+            // ë¶„ë¥˜ ë”•ì…”ë„ˆë¦¬ ì ì¬
             int tier = newData.towerID / 1000;
             int type = (newData.towerID % 1000) / 100;
             int variant = newData.towerID % 100;
@@ -268,7 +287,8 @@ public class TowerManager : MonoBehaviour
 
         m_towerData = loadedTowers.ToArray();
 
-        // ½Ã³ÊÁö Å¸¿ö ±Û·Î¹ú ½ºÅÈ µî·Ï
+        // ì‹œë„ˆì§€ íƒ€ì›Œ ê¸€ë¡œë²Œ ìŠ¤íƒ¯ ë“±ë¡
+#if false // Synergy system temporarily disabled
         TowerData[] synergyDatas = {
             m_knightData, m_sniperData, m_berserkerData,
             m_contradictionData, m_thorData, m_gunData, m_wizardData
@@ -282,7 +302,8 @@ public class TowerManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"ÃÑ {m_towerData.Length}°³ÀÇ Å¸¿ö µ¥ÀÌÅÍ ¹× ±Û·Î¹ú ½ºÅÈ ·Îµå ¿Ï·á.");
+#endif
+        Debug.Log($"ì´ {m_towerData.Length}ê°œì˜ íƒ€ì›Œ ë°ì´í„° ë° ê¸€ë¡œë²Œ ìŠ¤íƒ¯ ë¡œë“œ ì™„ë£Œ.");
     }
 
 
@@ -294,26 +315,26 @@ public class TowerManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"Å¸¿ö ÀÌ¸§ '{towerID}'¿¡ ´ëÇÑ ±Û·Î¹ú ½ºÅÈÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.");
+            Debug.LogWarning($"íƒ€ì›Œ ì´ë¦„ '{towerID}'ì— ëŒ€í•œ ê¸€ë¡œë²Œ ìŠ¤íƒ¯ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
             return default;
         }
     }
 
     // ==========================================================================================================
-    // ================================================ Å¸¿ö»ı¼º ================================================
+    // ================================================ íƒ€ì›Œìƒì„± ================================================
     // ==========================================================================================================
 
     public void BuildTower()
     {
         if (!CurrencyManager.Instance.HasEnoughMoney(BuildCost))
         {
-            Debug.Log("µ·ÀÌ ºÎÁ·ÇÕ´Ï´Ù.");
+            Debug.Log("ëˆì´ ë¶€ì¡±í•©ë‹ˆë‹¤.");
             return;
         }
 
         if (!m_towerTier.ContainsKey(1) || m_towerTier[1].Count == 0)
         {
-            Debug.LogError("»ı¼º °¡´ÉÇÑ 1´Ü°è Å¸¿ö µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù.");            
+            Debug.LogError("ìƒì„± ê°€ëŠ¥í•œ 1ë‹¨ê³„ íƒ€ì›Œ ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤.");            
             return;
         }
 
@@ -323,15 +344,12 @@ public class TowerManager : MonoBehaviour
 
         if (emptyCell.HasValue)
         {
-            CurrencyManager.Instance.SpendMoney(BuildCost);
-            if (BuildCost < 300) BuildCost += 2;
-
             int randomIndex = UnityEngine.Random.Range(0, buildableTowers.Count);
             TowerData selectedData = buildableTowers[randomIndex];
 
             if (selectedData.towerPrefab == null)
             {
-                Debug.LogError($"Å¸¿ö µ¥ÀÌÅÍ {selectedData.towerName}¿¡ ÇÒ´çµÈ ÇÁ¸®ÆÕÀÌ ¾ø½À´Ï´Ù.");
+                Debug.LogError($"íƒ€ì›Œ ë°ì´í„° {selectedData.towerName}ì— í• ë‹¹ëœ í”„ë¦¬íŒ¹ì´ ì—†ìŠµë‹ˆë‹¤.");
                 return;
             }
 
@@ -346,7 +364,7 @@ public class TowerManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"»ı¼ºµÈ Å¸¿ö ÇÁ¸®ÆÕ¿¡ TowerController ÄÄÆ÷³ÍÆ®°¡ ¾ø½À´Ï´Ù: {selectedData.towerName}");
+                Debug.LogError($"ìƒì„±ëœ íƒ€ì›Œ í”„ë¦¬íŒ¹ì— TowerController ì»´í¬ë„ŒíŠ¸ê°€ ì—†ìŠµë‹ˆë‹¤: {selectedData.towerName}");
             }
 
             GridTowerInfo newInfo = new GridTowerInfo
@@ -358,11 +376,15 @@ public class TowerManager : MonoBehaviour
             };
 
             m_towersOnGrid.Add(emptyCell.Value, newInfo);
-            CheckTowerSynergy();
+
+            CurrencyManager.Instance.SpendMoney(BuildCost);
+            if (BuildCost < 300) BuildCost += 2;
+
+            // CheckTowerSynergy();
         }
         else
         {
-            Debug.LogWarning("´õ ÀÌ»ó Å¸¿ö¸¦ °Ç¼³ÇÒ °ø°£ÀÌ ¾ø½À´Ï´Ù!");
+            Debug.LogWarning("ë” ì´ìƒ íƒ€ì›Œë¥¼ ê±´ì„¤í•  ê³µê°„ì´ ì—†ìŠµë‹ˆë‹¤!");
         }
     }
 
@@ -370,30 +392,26 @@ public class TowerManager : MonoBehaviour
     {
         BoundsInt bounds = m_spawnPoint.cellBounds;
 
-        // À§(Y ÃÖ´ëÄ¡)¿¡¼­ ¾Æ·¡·Î, ¿ŞÂÊ(X ÃÖ¼ÒÄ¡)¿¡¼­ ¿À¸¥ÂÊÀ¸·Î ¼øÂ÷ Å½»ö
+        // ìœ„(Y ìµœëŒ€ì¹˜)ì—ì„œ ì•„ë˜ë¡œ, ì™¼ìª½(X ìµœì†Œì¹˜)ì—ì„œ ì˜¤ë¥¸ìª½ìœ¼ë¡œ ìˆœì°¨ íƒìƒ‰
         for (int y = bounds.yMax - 1; y >= bounds.yMin; y--)
         {
             for (int x = bounds.xMin; x < bounds.xMax; x++)
             {
                 Vector3Int pos = new Vector3Int(x, y, 0);
 
-                // Å¸ÀÏ¸Ê¿¡ Å¸ÀÏÀÌ Á¸ÀçÇÏ°í, ÇöÀç Å¸¿ö°¡ ¹èÄ¡µÇ¾î ÀÖÁö ¾ÊÀº Ã¹ ÀÚ¸®
+                // íƒ€ì¼ë§µì— íƒ€ì¼ì´ ì¡´ì¬í•˜ê³ , í˜„ì¬ íƒ€ì›Œê°€ ë°°ì¹˜ë˜ì–´ ìˆì§€ ì•Šì€ ì²« ìë¦¬
                 if (m_spawnPoint.HasTile(pos) && !m_towersOnGrid.ContainsKey(pos))
                 {
-                    return pos; // ¹ß°ß Áï½Ã ¹İÈ¯ (Á¶±â Á¾·á)
+                    return pos; // ë°œê²¬ ì¦‰ì‹œ ë°˜í™˜ (ì¡°ê¸° ì¢…ë£Œ)
                 }
             }
         }
 
-        return null; // ¸ğµç ÀÚ¸®°¡ °¡µæ Âù °æ¿ì
+        return null; // ëª¨ë“  ìë¦¬ê°€ ê°€ë“ ì°¬ ê²½ìš°
     }
 
     private Vector3 CellToWorld(Vector3Int cell)
     {
-        if (m_synergySpawnPoint.HasTile(cell))
-        {
-            return m_synergySpawnPoint.GetCellCenterWorld(cell);
-        }
         return m_spawnPoint.GetCellCenterWorld(cell);
     }
     public Vector3Int WorldToCell(Vector3 worldPos)
@@ -406,8 +424,25 @@ public class TowerManager : MonoBehaviour
         return BuildCost;
     }
 
+    /// <summary>
+    /// ì—ë„ˆë¯¸ í„´ì— í•œ ë²ˆ í˜¸ì¶œë©ë‹ˆë‹¤. ë³´ë“œì˜ ìœ„ìª½ë¶€í„° ì•„ë˜ìª½, ì™¼ìª½ë¶€í„° ì˜¤ë¥¸ìª½ ìˆœì„œë¡œ íƒ€ì›Œê°€ í–‰ë™í•©ë‹ˆë‹¤.
+    /// </summary>
+    public void ExecuteTowerActionTurn()
+    {
+        List<KeyValuePair<Vector3Int, GridTowerInfo>> orderedTowers = new List<KeyValuePair<Vector3Int, GridTowerInfo>>(m_towersOnGrid);
+        orderedTowers.Sort((left, right) =>
+        {
+            int rowComparison = right.Key.y.CompareTo(left.Key.y);
+            return rowComparison != 0 ? rowComparison : left.Key.x.CompareTo(right.Key.x);
+        });
+
+        foreach (KeyValuePair<Vector3Int, GridTowerInfo> tower in orderedTowers)
+        {
+            tower.Value.Controller?.ExecuteTurnAction();
+        }
+    }
     // ==========================================================================================================
-    // ================================================ Å¸¿öÆÇ¸Å ================================================
+    // ================================================ íƒ€ì›ŒíŒë§¤ ================================================
     // ==========================================================================================================
 
     public void SellTower(Vector3Int cell)
@@ -423,7 +458,7 @@ public class TowerManager : MonoBehaviour
                 else
                 {
                     info.Controller.transform.position = CellToWorld(cell);
-                    Debug.Log("½Ã³ÊÁö Å¸¿ö´Â ÆÇ¸ÅÇÒ ¼ö ¾ø½À´Ï´Ù.");
+                    Debug.Log("ì‹œë„ˆì§€ íƒ€ì›ŒëŠ” íŒë§¤í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
                     return;
                 }
             }
@@ -433,12 +468,12 @@ public class TowerManager : MonoBehaviour
             int Amount = (int)Mathf.Pow(3, info.Tier - 1);
             CurrencyManager.Instance.AddGem(Amount);
 
-            CheckTowerSynergy();
+            // CheckTowerSynergy();
         }
     }
 
     // ==========================================================================================================
-    // =============================================== ¾÷±×·¹ÀÌµå ================================================
+    // =============================================== ì—…ê·¸ë ˆì´ë“œ ================================================
     // ==========================================================================================================
 
     public void UpgradeTower(int towerID)
@@ -451,7 +486,7 @@ public class TowerManager : MonoBehaviour
 
         if (currentStats.Level >= 5)
         {
-            Debug.Log($"ÃÖ´ë·¹º§¿¡ µµ´ŞÇÏ¿´½À´Ï´Ù. ÇöÀç ·¹º§¼öÄ¡ {currentStats.Level}");
+            Debug.Log($"ìµœëŒ€ë ˆë²¨ì— ë„ë‹¬í•˜ì˜€ìŠµë‹ˆë‹¤. í˜„ì¬ ë ˆë²¨ìˆ˜ì¹˜ {currentStats.Level}");
             return;
         }
 
@@ -459,7 +494,7 @@ public class TowerManager : MonoBehaviour
 
         if (!CurrencyManager.Instance.HasEnoughGem(currentUpgradeGemCost))
         {
-            Debug.Log("¾÷±×·¹ÀÌµå¿¡ ÇÊ¿äÇÑ ÄÚ½ºÆ®°¡ ºÎÁ·ÇÕ´Ï´Ù.");
+            Debug.Log("ì—…ê·¸ë ˆì´ë“œì— í•„ìš”í•œ ì½”ìŠ¤íŠ¸ê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.");
             return;
         }
 
@@ -482,13 +517,13 @@ public class TowerManager : MonoBehaviour
             {
                 UpgradeStats.AttackPower      = towerData.attackPower * multiplier;
                 UpgradeStats.Range       = towerData.range * multiplier;
-                UpgradeStats.AttackSpeed = towerData.attackSpeed * multiplier;
+                UpgradeStats.AttackCount = Mathf.Max(1, Mathf.RoundToInt(towerData.attackCount * multiplier));
 
                 m_globalTowerStats[key] = UpgradeStats;
                 OnTowerTypeUpgrade?.Invoke(key);
             }
         }
-        // 2. ÇÊµå¿¡ ¹èÄ¡µÈ ÇØ´ç Å¸ÀÔ Å¸¿öµé¿¡°Ô ÃÖ½Å ½ºÅÈ ÁÖÀÔ(Push)
+        // 2. í•„ë“œì— ë°°ì¹˜ëœ í•´ë‹¹ íƒ€ì… íƒ€ì›Œë“¤ì—ê²Œ ìµœì‹  ìŠ¤íƒ¯ ì£¼ì…(Push)
         foreach (var gridInfo in m_towersOnGrid.Values)
         {
             if (gridInfo.Type == targetType && gridInfo.Controller != null)
@@ -500,7 +535,7 @@ public class TowerManager : MonoBehaviour
     }
 
     // ==========================================================================================================
-    // ================================================ Å¸¿öÇÕ¼º =================================================
+    // ================================================ íƒ€ì›Œí•©ì„± =================================================
     // ==========================================================================================================
 
     public bool CanCombine(Vector3Int targetCell, CombineMode mode)
@@ -559,7 +594,7 @@ public class TowerManager : MonoBehaviour
 
         if (resultData == null || resultData.towerPrefab == null)
         {
-            Debug.LogError($"[TowerManager] ÇÕ¼º °á°ú¹°À» Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"[TowerManager] í•©ì„± ê²°ê³¼ë¬¼ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -590,7 +625,7 @@ public class TowerManager : MonoBehaviour
         };
 
         m_towersOnGrid[targetCell] = newInfo;
-        CheckTowerSynergy();
+        // CheckTowerSynergy();
     }
 
     private TowerData GetMergeResultData(GridTowerInfo targetInfo, CombineMode mode)
@@ -630,9 +665,10 @@ public class TowerManager : MonoBehaviour
     }   
 
     // ==========================================================================================================
-    // ================================================= ½Ã³ÊÁö ==================================================
+    // ================================================= ì‹œë„ˆì§€ ==================================================
     // ==========================================================================================================
 
+#if false // Synergy system temporarily disabled
     public void CheckTowerSynergy()
     {
         foreach (var synergy in m_synergies)
@@ -711,12 +747,12 @@ public class TowerManager : MonoBehaviour
             };
             m_towersOnGrid.Add(spawnCell.Value, newInfo);
 
-            Debug.Log($"[½Ã³ÊÁö] Á¶°Ç ´Ş¼º! {synergyData.towerName} Æ¯¼ö Å¸ÀÏ¿¡ ¼ÒÈ¯µÇ¾ú½À´Ï´Ù!");
+            Debug.Log($"[ì‹œë„ˆì§€] ì¡°ê±´ ë‹¬ì„±! {synergyData.towerName} íŠ¹ìˆ˜ íƒ€ì¼ì— ì†Œí™˜ë˜ì—ˆìŠµë‹ˆë‹¤!");
             return synergyTowerController;
         }
         else
         {
-            Debug.LogWarning("[½Ã³ÊÁö] ºÒÀÇ ±â»ç¸¦ ¼ÒÈ¯ÇÒ Æ¯¼ö Å¸ÀÏ °ø°£ÀÌ ºÎÁ·ÇÕ´Ï´Ù!");
+            Debug.LogWarning("[ì‹œë„ˆì§€] ë¶ˆì˜ ê¸°ì‚¬ë¥¼ ì†Œí™˜í•  íŠ¹ìˆ˜ íƒ€ì¼ ê³µê°„ì´ ë¶€ì¡±í•©ë‹ˆë‹¤!");
             return null;
         }
     }
@@ -749,9 +785,9 @@ public class TowerManager : MonoBehaviour
     {
         consumeDatas = new List<TowerData>();
         List<Vector3Int> materialCells = new List<Vector3Int>();
-        List<int> variantsToFind = new List<int>(requiredVariants); // Ã£¾Æ¾ß ÇÒ ¹®¾ç ¹øÈ£ ¸®½ºÆ® º¹»ç
+        List<int> variantsToFind = new List<int>(requiredVariants); // ì°¾ì•„ì•¼ í•  ë¬¸ì–‘ ë²ˆí˜¸ ë¦¬ìŠ¤íŠ¸ ë³µì‚¬
 
-        // 1. ¸ÊÀ» ¼øÈ¸ÇÏ¸ç ÇÊ¿äÇÑ Àç·á Å¸¿öµéÀÇ À§Ä¡¸¦ Å½»ö
+        // 1. ë§µì„ ìˆœíšŒí•˜ë©° í•„ìš”í•œ ì¬ë£Œ íƒ€ì›Œë“¤ì˜ ìœ„ì¹˜ë¥¼ íƒìƒ‰
         foreach (var kvp in m_towersOnGrid)
         {
             if (kvp.Value.Tier >= requiredTier)
@@ -760,19 +796,19 @@ public class TowerManager : MonoBehaviour
                 if (variantsToFind.Contains(variant))
                 {
                     materialCells.Add(kvp.Key);
-                    variantsToFind.Remove(variant); // Áßº¹ Å½»ö ¹æÁö¸¦ À§ÇØ ¸®½ºÆ®¿¡¼­ Á¦°Å
+                    variantsToFind.Remove(variant); // ì¤‘ë³µ íƒìƒ‰ ë°©ì§€ë¥¼ ìœ„í•´ ë¦¬ìŠ¤íŠ¸ì—ì„œ ì œê±°
                 }
             }
-            if (variantsToFind.Count == 0) break; // ¸ğµÎ Ã£¾ÒÀ¸¸é ¹İº¹¹® Á¶±â Á¾·á
+            if (variantsToFind.Count == 0) break; // ëª¨ë‘ ì°¾ì•˜ìœ¼ë©´ ë°˜ë³µë¬¸ ì¡°ê¸° ì¢…ë£Œ
         }
 
-        // Àç·á¸¦ ÀüºÎ Ã£Áö ¸øÇß´Ù¸é ÇÕ¼º ½ÇÆĞ
+        // ì¬ë£Œë¥¼ ì „ë¶€ ì°¾ì§€ ëª»í–ˆë‹¤ë©´ í•©ì„± ì‹¤íŒ¨
         if (variantsToFind.Count > 0) return false;
 
-        // 2. ÇÕ¼ºµÈ Å¸¿ö°¡ »ı¼ºµÉ ±âÁØ À§Ä¡ (Ã¹ ¹øÂ° Àç·á Å¸¿ö°¡ ÀÖ´ø ÀÚ¸®)
+        // 2. í•©ì„±ëœ íƒ€ì›Œê°€ ìƒì„±ë  ê¸°ì¤€ ìœ„ì¹˜ (ì²« ë²ˆì§¸ ì¬ë£Œ íƒ€ì›Œê°€ ìˆë˜ ìë¦¬)
         Vector3Int spawnCell = materialCells[0];
 
-        // 3. Àç·á Å¸¿ö ÀÏ°ı ÆÄ±«
+        // 3. ì¬ë£Œ íƒ€ì›Œ ì¼ê´„ íŒŒê´´
         foreach (Vector3Int cell in materialCells)
         {
             consumeDatas.Add(m_towersOnGrid[cell].Controller.GetTowerData());
@@ -781,7 +817,7 @@ public class TowerManager : MonoBehaviour
             m_towersOnGrid.Remove(cell);
         }
 
-        // 4. ½Ã³ÊÁö Å¸¿ö 1°³ »ı¼º ¹× µî·Ï
+        // 4. ì‹œë„ˆì§€ íƒ€ì›Œ 1ê°œ ìƒì„± ë° ë“±ë¡
         Vector3 spawnPos = CellToWorld(spawnCell);
         GameObject spawnedTower = Instantiate(resultTowerData.towerPrefab, spawnPos, Quaternion.identity);
         TowerController newTowerController = spawnedTower.GetComponent<TowerController>();
@@ -796,7 +832,7 @@ public class TowerManager : MonoBehaviour
         };
         m_towersOnGrid.Add(spawnCell, newInfo);
 
-        CheckTowerSynergy();
+        // CheckTowerSynergy();
         return true;
     }
 
@@ -821,7 +857,7 @@ public class TowerManager : MonoBehaviour
 
         if (availableEmptyCells.Count < requiredEmptySpaces)
         {
-            Debug.LogWarning("[½Ã³ÊÁö] ºó °ø°£ÀÌ ºÎÁ·ÇÏ¿© ÇÕ¼ºÀ» ÇØÁ¦ÇÒ ¼ö ¾ø½À´Ï´Ù!");
+            Debug.LogWarning("[ì‹œë„ˆì§€] ë¹ˆ ê³µê°„ì´ ë¶€ì¡±í•˜ì—¬ í•©ì„±ì„ í•´ì œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤!");
             return false;
         }
 
@@ -845,7 +881,7 @@ public class TowerManager : MonoBehaviour
         }
         materialDatas.Clear();
 
-        CheckTowerSynergy();
+        // CheckTowerSynergy();
         return true;
     }
 
@@ -867,7 +903,7 @@ public class TowerManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ÁöÁ¤µÈ Å¸ÀÏ¸Ê¿¡¼­ Ã¹ ¹øÂ°·Î ºñ¾îÀÖ´Â ¼¿À» ¼øÂ÷ÀûÀ¸·Î Å½»öÇÏ¿© ¹İÈ¯ÇÕ´Ï´Ù.
+    /// ì§€ì •ëœ íƒ€ì¼ë§µì—ì„œ ì²« ë²ˆì§¸ë¡œ ë¹„ì–´ìˆëŠ” ì…€ì„ ìˆœì°¨ì ìœ¼ë¡œ íƒìƒ‰í•˜ì—¬ ë°˜í™˜í•©ë‹ˆë‹¤.
     /// </summary>
     private Vector3Int? GetFirstEmptyCell(Tilemap targetTilemap)
     {
@@ -890,7 +926,7 @@ public class TowerManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀÏ¹İ ½ºÆù Å¸ÀÏ¸Ê¿¡¼­ ÁöÁ¤µÈ °³¼ö¸¸Å­ÀÇ ºó ¼¿À» ¼øÂ÷ÀûÀ¸·Î Å½»öÇÏ¿© ¹İÈ¯ÇÕ´Ï´Ù.
+    /// ì¼ë°˜ ìŠ¤í° íƒ€ì¼ë§µì—ì„œ ì§€ì •ëœ ê°œìˆ˜ë§Œí¼ì˜ ë¹ˆ ì…€ì„ ìˆœì°¨ì ìœ¼ë¡œ íƒìƒ‰í•˜ì—¬ ë°˜í™˜í•©ë‹ˆë‹¤.
     /// </summary>
     private List<Vector3Int> GetMultipleEmptyCells(int count)
     {
@@ -918,34 +954,35 @@ public class TowerManager : MonoBehaviour
     {
         foreach (var btn in m_allSynergyInfoButtons)
         {
-            // Å¬¸¯µÈ 'º»ÀÎ ¹öÆ°'Àº ²ôÁö ¾Ê°í ¹«½ÃÇÕ´Ï´Ù.
+            // í´ë¦­ëœ 'ë³¸ì¸ ë²„íŠ¼'ì€ ë„ì§€ ì•Šê³  ë¬´ì‹œí•©ë‹ˆë‹¤.
             if (btn != null && btn != clickedButton)
             {
-                // º»ÀÎÀÇ Ã¢À» ¿©´Â Áß(isOpening == true)ÀÌ¸é ´Ù¸¥ ¹öÆ°Àº ²ô°í(!true = false)
-                // º»ÀÎÀÇ Ã¢À» ´İ´Â Áß(isOpening == false)ÀÌ¸é ´Ù¸¥ ¹öÆ°Àº ´Ù½Ã ÄÕ´Ï´Ù(!false = true)
+                // ë³¸ì¸ì˜ ì°½ì„ ì—¬ëŠ” ì¤‘(isOpening == true)ì´ë©´ ë‹¤ë¥¸ ë²„íŠ¼ì€ ë„ê³ (!true = false)
+                // ë³¸ì¸ì˜ ì°½ì„ ë‹«ëŠ” ì¤‘(isOpening == false)ì´ë©´ ë‹¤ë¥¸ ë²„íŠ¼ì€ ë‹¤ì‹œ ì¼­ë‹ˆë‹¤(!false = true)
                 btn.gameObject.SetActive(!isOpening);
             }
         }
     }
 
     // ==========================================================================================================
-    // ================================================ Å¸¿öÀÌµ¿ =================================================
+    // ================================================ íƒ€ì›Œì´ë™ =================================================
     // ==========================================================================================================
 
+#endif
     public void MoveTowerOnGrid(Vector3Int fromCell, Vector3Int toCell)
     {
-        // 1. ÀÌµ¿½ÃÅ³ Å¸¿ö°¡ µñ¼Å³Ê¸®¿¡ Á¸ÀçÇÏ´ÂÁö È®ÀÎ
+        // 1. ì´ë™ì‹œí‚¬ íƒ€ì›Œê°€ ë”•ì…”ë„ˆë¦¬ì— ì¡´ì¬í•˜ëŠ”ì§€ í™•ì¸
         if (!m_towersOnGrid.TryGetValue(fromCell, out GridTowerInfo movingInfo)) return;
 
-        // 2. ÀÌ Å¸¿ö°¡ ÇöÀç ¼ÓÇÑ Å¸ÀÏ¸Ê °áÁ¤ (ÀÏ¹İ ¸Ê vs ½Ã³ÊÁö ¸Ê)
-        Tilemap originTilemap = m_spawnPoint.HasTile(fromCell) ? m_spawnPoint : m_synergySpawnPoint;
+        // 2. ì´ íƒ€ì›Œê°€ í˜„ì¬ ì†í•œ íƒ€ì¼ë§µ ê²°ì • (ì¼ë°˜ ë§µ vs ì‹œë„ˆì§€ ë§µ)
+        Tilemap originTilemap = m_spawnPoint;
 
-        // 3. [ÇÙ½É] Á¦ÀÚ¸® µå·ÓÀÌ°Å³ª ¸ñÀûÁö°¡ À¯È¿ÇÏÁö ¾ÊÀº °æ¿ì ¿øÀ§Ä¡ º¹±Í
+        // 3. [í•µì‹¬] ì œìë¦¬ ë“œë¡­ì´ê±°ë‚˜ ëª©ì ì§€ê°€ ìœ íš¨í•˜ì§€ ì•Šì€ ê²½ìš° ì›ìœ„ì¹˜ ë³µê·€
         if (fromCell == toCell || !originTilemap.HasTile(toCell))
         {
             movingInfo.Controller.transform.position = originTilemap.GetCellCenterWorld(fromCell);
 
-            // µğ¹öÇÁÁ¸ ±âÁØ À§Ä¡ ¿øÀ§Ä¡ µ¿±âÈ­
+            // ë””ë²„í”„ì¡´ ê¸°ì¤€ ìœ„ì¹˜ ì›ìœ„ì¹˜ ë™ê¸°í™”
             if (movingInfo.Controller != null)
             {
                 movingInfo.Controller.OnMovedToNewPosition();
@@ -953,7 +990,7 @@ public class TowerManager : MonoBehaviour
             return;
         }
 
-        // 4. Å¸°Ù À§Ä¡¿¡ ´Ù¸¥ Å¸¿ö°¡ ÀÖ´Ù¸é ¼­·Î ÀÚ¸® ±³È¯ (Swap)
+        // 4. íƒ€ê²Ÿ ìœ„ì¹˜ì— ë‹¤ë¥¸ íƒ€ì›Œê°€ ìˆë‹¤ë©´ ì„œë¡œ ìë¦¬ êµí™˜ (Swap)
         if (m_towersOnGrid.TryGetValue(toCell, out GridTowerInfo targetInfo))
         {
             m_towersOnGrid[fromCell] = targetInfo;
@@ -962,19 +999,19 @@ public class TowerManager : MonoBehaviour
             movingInfo.Controller.transform.position = originTilemap.GetCellCenterWorld(toCell);
             targetInfo.Controller.transform.position = originTilemap.GetCellCenterWorld(fromCell);
 
-            // µÎ Å¸¿ö ¸ğµÎ µğ¹öÇÁÁ¸ ±âÁØ À§Ä¡ °»½Å
+            // ë‘ íƒ€ì›Œ ëª¨ë‘ ë””ë²„í”„ì¡´ ê¸°ì¤€ ìœ„ì¹˜ ê°±ì‹ 
             if (movingInfo.Controller != null) movingInfo.Controller.OnMovedToNewPosition();
             if (targetInfo.Controller != null) targetInfo.Controller.OnMovedToNewPosition();
             return;
         }
 
-        // 5. ºó °ø°£À¸·Î ÀÌµ¿
+        // 5. ë¹ˆ ê³µê°„ìœ¼ë¡œ ì´ë™
         m_towersOnGrid.Remove(fromCell);
         m_towersOnGrid[toCell] = movingInfo;
 
         movingInfo.Controller.transform.position = originTilemap.GetCellCenterWorld(toCell);
 
-        // ÀÌµ¿ ¿Ï·áµÈ Å¸¿öÀÇ µğ¹öÇÁÁ¸ ±âÁØ À§Ä¡ °»½Å
+        // ì´ë™ ì™„ë£Œëœ íƒ€ì›Œì˜ ë””ë²„í”„ì¡´ ê¸°ì¤€ ìœ„ì¹˜ ê°±ì‹ 
         if (movingInfo.Controller != null)
         {
             movingInfo.Controller.OnMovedToNewPosition();
@@ -990,19 +1027,19 @@ public class TowerManager : MonoBehaviour
             if (IsDigitPressed(i))
             {
                 m_testInputBuffer += i.ToString();
-                Debug.Log($"[Ä¡Æ®] ÀÔ·Â Áß... {m_testInputBuffer}");
+                Debug.Log($"[ì¹˜íŠ¸] ì…ë ¥ ì¤‘... {m_testInputBuffer}");
 
-                // 4ÀÚ¸®°¡ ²Ë Â÷¸é ¼ÒÈ¯ ½Ãµµ!
+                // 4ìë¦¬ê°€ ê½‰ ì°¨ë©´ ì†Œí™˜ ì‹œë„!
                 if (m_testInputBuffer.Length == 4)
                 {
                     int targetTowerID = int.Parse(m_testInputBuffer);
                     SpawnTowerByTest(targetTowerID);
 
-                    // ¼ÒÈ¯ ÈÄ ±ò²ûÇÏ°Ô Ä¡Æ® ¸ğµå Á¾·á
+                    // ì†Œí™˜ í›„ ê¹”ë”í•˜ê²Œ ì¹˜íŠ¸ ëª¨ë“œ ì¢…ë£Œ
                     m_isTestMode = false;
                     m_testInputBuffer = "";
                 }
-                break; // ÇÑ ÇÁ·¹ÀÓ¿¡´Â ¼ıÀÚ ÇÏ³ª¸¸ Ã³¸®
+                break; // í•œ í”„ë ˆì„ì—ëŠ” ìˆ«ì í•˜ë‚˜ë§Œ ì²˜ë¦¬
             }
         }
     }
@@ -1026,7 +1063,7 @@ public class TowerManager : MonoBehaviour
     }
     private void SpawnTowerByTest(int towerID)
     {
-        // 1. ÀüÃ¼ Å¸¿ö µ¥ÀÌÅÍ ¹è¿­¿¡¼­ ÀÔ·ÂÇÑ ID¿Í ÀÏÄ¡ÇÏ´Â Å¸¿ö¸¦ Ã£À½
+        // 1. ì „ì²´ íƒ€ì›Œ ë°ì´í„° ë°°ì—´ì—ì„œ ì…ë ¥í•œ IDì™€ ì¼ì¹˜í•˜ëŠ” íƒ€ì›Œë¥¼ ì°¾ìŒ
         TowerData targetData = null;
         foreach (var data in m_towerData)
         {
@@ -1037,14 +1074,14 @@ public class TowerManager : MonoBehaviour
             }
         }
 
-        // 2. ¿¹¿Ü Ã³¸®: ¾ø´Â ¹øÈ£¸¦ ÀÔ·ÂÇßÀ» ¶§
+        // 2. ì˜ˆì™¸ ì²˜ë¦¬: ì—†ëŠ” ë²ˆí˜¸ë¥¼ ì…ë ¥í–ˆì„ ë•Œ
         if (targetData == null)
         {
-            Debug.LogWarning($"[Ä¡Æ®] ID°¡ {towerID}ÀÎ Å¸¿ö¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù! µ¥ÀÌÅÍ¸¦ È®ÀÎÇØ ÁÖ¼¼¿ä.");
+            Debug.LogWarning($"[ì¹˜íŠ¸] IDê°€ {towerID}ì¸ íƒ€ì›Œë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤! ë°ì´í„°ë¥¼ í™•ì¸í•´ ì£¼ì„¸ìš”.");
             return;
         }
 
-        // 3. ºó °ø°£ Ã£¾Æ¼­ »ı¼º (ÀÏ¹İ ½ºÆù Æ÷ÀÎÆ® »ç¿ë)
+        // 3. ë¹ˆ ê³µê°„ ì°¾ì•„ì„œ ìƒì„± (ì¼ë°˜ ìŠ¤í° í¬ì¸íŠ¸ ì‚¬ìš©)
         Vector3Int? emptyCell = GetFirstEmptyCell();
         if (emptyCell.HasValue)
         {
@@ -1057,7 +1094,7 @@ public class TowerManager : MonoBehaviour
                 towerController.Init(targetData, GetGlobalStats(targetData.towerID));
             }
 
-            // 4. ±×¸®µå ¸Å´ÏÀú¿¡ Á¤º¸ µî·Ï
+            // 4. ê·¸ë¦¬ë“œ ë§¤ë‹ˆì €ì— ì •ë³´ ë“±ë¡
             GridTowerInfo newInfo = new GridTowerInfo
             {
                 Controller = towerController,
@@ -1067,18 +1104,18 @@ public class TowerManager : MonoBehaviour
             };
 
             m_towersOnGrid.Add(emptyCell.Value, newInfo);
-            Debug.Log($"[Ä¡Æ®] ¼º°ø! {targetData.towerName} (ID: {towerID}) Å¸¿ö°¡ ¼ÒÈ¯µÇ¾ú½À´Ï´Ù!");
+            Debug.Log($"[ì¹˜íŠ¸] ì„±ê³µ! {targetData.towerName} (ID: {towerID}) íƒ€ì›Œê°€ ì†Œí™˜ë˜ì—ˆìŠµë‹ˆë‹¤!");
 
-            // 5. ¹æ±İ Ä¡Æ®·Î ¼ÒÈ¯µÈ Å¸¿ö ¶§¹®¿¡ ½Ã³ÊÁö°¡ ¹ßµ¿µÉ ¼ö ÀÖÀ¸¹Ç·Î °Ë»ç
-            CheckTowerSynergy();
+            // 5. ë°©ê¸ˆ ì¹˜íŠ¸ë¡œ ì†Œí™˜ëœ íƒ€ì›Œ ë•Œë¬¸ì— ì‹œë„ˆì§€ê°€ ë°œë™ë  ìˆ˜ ìˆìœ¼ë¯€ë¡œ ê²€ì‚¬
+            // CheckTowerSynergy();
         }
         else
         {
-            Debug.LogWarning("[Ä¡Æ®] ¸Ê¿¡ Å¸¿ö¸¦ ¼ÒÈ¯ÇÒ ºó °ø°£ÀÌ ¾ø½À´Ï´Ù!");
+            Debug.LogWarning("[ì¹˜íŠ¸] ë§µì— íƒ€ì›Œë¥¼ ì†Œí™˜í•  ë¹ˆ ê³µê°„ì´ ì—†ìŠµë‹ˆë‹¤!");
         }
     }
     
-    // Enum ÆÄ½Ì¿ë ÇïÆÛ ÇÔ¼ö
+    // Enum íŒŒì‹±ìš© í—¬í¼ í•¨ìˆ˜
     private T ParseEnum<T>(string value) where T : struct
     {
         string cleanValue = value.Trim();
@@ -1095,7 +1132,7 @@ public class TowerManager : MonoBehaviour
     }
     
     /// <summary>
-     /// TileManager°¡ Å¸¿ö ½ºÆù Å¸ÀÏ¸ÊÀÇ »ö»óÀ» º¯°æÇÒ ¼ö ÀÖµµ·Ï Å¸ÀÏ¸Ê ÂüÁ¶¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+     /// TileManagerê°€ íƒ€ì›Œ ìŠ¤í° íƒ€ì¼ë§µì˜ ìƒ‰ìƒì„ ë³€ê²½í•  ìˆ˜ ìˆë„ë¡ íƒ€ì¼ë§µ ì°¸ì¡°ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
      /// </summary>
     public Tilemap GetSpawnPointTilemap()
     {

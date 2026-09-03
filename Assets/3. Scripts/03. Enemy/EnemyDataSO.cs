@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// ¿­°ÅÇü(enum) Á¤ÀÇ¸¦ ÇÔ²² ¹èÄ¡ÇÏ¿© ¾îµğ¼­µç EnemyTypeÀ» ÂüÁ¶ÇÒ ¼ö ÀÖµµ·Ï ±¸¼º
+// ì—´ê±°í˜•(enum) ì •ì˜ë¥¼ í•¨ê»˜ ë°°ì¹˜í•˜ì—¬ ì–´ë””ì„œë“  EnemyTypeì„ ì°¸ì¡°í•  ìˆ˜ ìˆë„ë¡ êµ¬ì„±
 public enum EnemyType
 {
     Normal,
@@ -14,7 +14,7 @@ public enum EnemyType
 public class EnemyData : ScriptableObject
 {
     public string EnemyID;
-    public EnemyType enemyType; // ¿¡¼Â ÀÚÃ¼¿¡¼­µµ Å¸ÀÔÀ» ÁöÁ¤ÇÒ ¼ö ÀÖµµ·Ï ÇÊµå Ãß°¡
+    public EnemyType enemyType; // ì—ì…‹ ìì²´ì—ì„œë„ íƒ€ì…ì„ ì§€ì •í•  ìˆ˜ ìˆë„ë¡ í•„ë“œ ì¶”ê°€
     public float MaxHP;
     public float Defend;
     public int Speed;

@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 671948444447976635, guid: e3f8bd0b86a3ec44a93871cda226621b, type: 3}
       propertyPath: m_Name
-      value: 5109_Wind(SP)
+      value: 5108_Electricity(SP)
       objectReference: {fileID: 0}
     - target: {fileID: 5679419633385691433, guid: e3f8bd0b86a3ec44a93871cda226621b, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
@@ -63,7 +63,7 @@ PrefabInstance:
     - target: {fileID: 8097582329074080250, guid: e3f8bd0b86a3ec44a93871cda226621b, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -3081973411302356010, guid: 322fe84e19b48814ba763e9c75d5efcd, type: 3}
+      objectReference: {fileID: 8741697847625193064, guid: 3aecd51f2fda2d049a2904bdf93cb637, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

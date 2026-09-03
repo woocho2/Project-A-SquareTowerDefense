@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,13 +8,15 @@ public class WaveManager : MonoBehaviour
 
     [Header("Pool Reference")]
     [SerializeField] private EnemyObjectPool2D[] m_enemyPool;  // 0=Normal, 1=Speed, 2=Depend, 3=SpecialBoss, 4=Boss
-    [SerializeField] private TilePath m_tilePath;                // Å¸ÀÏ °æ·Î ÂüÁ¶
+    [SerializeField] private TilePath m_tilePath;                // íƒ€ì¼ ê²½ë¡œ ì°¸ì¡°
 
     [Header("Wave Base Settings")]
     [SerializeField] private int m_currentWave = 1;
+
     [SerializeField] private Button btn_specialBoss;
 
     private int m_activeEnemyCount = 0;
+    private int m_spawnedEnemyCountInWave = 0;
 
     private void Awake()
     {
@@ -29,7 +32,7 @@ public class WaveManager : MonoBehaviour
     {
         if (m_enemyPool == null || m_tilePath == null)
         {
-            Debug.LogError("[WaveManager] ÇÊ¼ö ÄÄÆ÷³ÍÆ®(Pool ¶Ç´Â TilePath)°¡ ´©¶ôµÇ¾ú½À´Ï´Ù.");
+            Debug.LogError("[WaveManager] í•„ìˆ˜ ì»´í¬ë„ŒíŠ¸(Pool ë˜ëŠ” TilePath)ê°€ ëˆ„ë½ë˜ì—ˆìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -47,35 +50,89 @@ public class WaveManager : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
-    // ÅÏÁ¦ ¿¡³Ê¹Ì ÅÏ¿¡¼­ È£ÃâµÉ ¸ó½ºÅÍ ½ºÆù ÇÔ¼ö
-    public void SpawnNextWaveEnemyForTurn()
+    // í„´ì œ ì—ë„ˆë¯¸ í„´ì—ì„œ í˜¸ì¶œë  ëª¬ìŠ¤í„° ìŠ¤í° í•¨ìˆ˜
+    // ì—ë„ˆë¯¸ ì„œë¸Œí„´ë§ˆë‹¤ í˜¸ì¶œë©ë‹ˆë‹¤. í˜„ì¬ ì›¨ì´ë¸Œì˜ ì†Œí™˜ ëŒ€ê¸°ì—´ì—ì„œ ì  1ë§ˆë¦¬ë¥¼ ì†Œí™˜í•©ë‹ˆë‹¤.
+    public bool SpawnNextWaveEnemyForTurn()
     {
-        if (m_currentWave > 40) return;
+        List<EnemyType> waveEnemies = GetWaveEnemyComposition(m_currentWave);
+        if (m_spawnedEnemyCountInWave >= waveEnemies.Count) return false;
 
-        int subWave = m_currentWave % 10;
-        if (subWave == 0) subWave = 10;
-
-        // º¸½º ¿şÀÌºê(subWave == 10)ÀÏ ¶§´Â ÀÏ¹İ Àâ¸÷ ´ë½Å º¸½º ½ºÆù Ã³¸® µî ºĞ±â °¡´É
-        EnemyType currentEnemyType = DetermineEnemyType(m_currentWave, m_activeEnemyCount);
+        EnemyType currentEnemyType = waveEnemies[m_spawnedEnemyCountInWave];
         int poolIndex = (int)currentEnemyType;
 
         if (poolIndex >= m_enemyPool.Length || m_enemyPool[poolIndex] == null)
         {
-            Debug.LogError($"[WaveManager] {currentEnemyType}¿¡ ÇØ´çÇÏ´Â ¿ÀºêÁ§Æ® Ç®ÀÌ ¾ø½À´Ï´Ù!");
-            return;
+            Debug.LogError($"[WaveManager] {currentEnemyType}ì— í•´ë‹¹í•˜ëŠ” ì˜¤ë¸Œì íŠ¸ í’€ì´ ì—†ìŠµë‹ˆë‹¤!");
+            return false;
         }
 
-        // ½ºÅÈ ¹èÀ² °è»ê
         GetMultiplier(out float hpMulti, out float defendMulti);
-
-        EnemyObjectPool2D targetPool = m_enemyPool[poolIndex];
-        // 0¹ø Å¸ÀÏ À§Ä¡¿¡ ½ºÆù ¿äÃ»
-        targetPool.Spawn(m_tilePath.GetWorldPosition(0), hpMulti, defendMulti, m_tilePath);
+        m_enemyPool[poolIndex].Spawn(m_tilePath.GetWorldPosition(0), hpMulti, defendMulti, m_tilePath);
 
         m_activeEnemyCount++;
+        m_spawnedEnemyCountInWave++;
+        return true;
     }
 
-    // ¿şÀÌºêº° ½ºÅÈ ¹èÀ² °è»ê ·ÎÁ÷
+    /// <summary>
+    /// 10ì›¨ì´ë¸Œ ì£¼ê¸°ì˜ ì  êµ¬ì„±ì„ ìƒì„±í•©ë‹ˆë‹¤.
+    /// 10Â·20Â·30Â·40ì›¨ì´ë¸ŒëŠ” ë³´ìŠ¤ 1ë§ˆë¦¬ë¡œ ê³ ì •í•©ë‹ˆë‹¤.
+    /// </summary>
+    private List<EnemyType> GetWaveEnemyComposition(int wave)
+    {
+        List<EnemyType> enemies = new List<EnemyType>();
+        if (wave < 1 || wave > 40) return enemies;
+
+        int baseWave = ((wave - 1) % 10) + 1;
+        int cycle = (wave - 1) / 10;
+
+        if (baseWave == 10)
+        {
+            enemies.Add(EnemyType.Boss);
+            return enemies;
+        }
+
+        int singleTypeCount = 4 + (cycle * 2);
+        int mixedTypeCount = 2 + cycle;
+
+        switch (baseWave)
+        {
+            case 1:
+            case 2:
+            case 3:
+                AddEnemies(enemies, EnemyType.Normal, singleTypeCount);
+                break;
+
+            case 4:
+            case 5:
+                AddEnemies(enemies, EnemyType.Normal, mixedTypeCount);
+                AddEnemies(enemies, EnemyType.Speed, mixedTypeCount);
+                break;
+
+            case 6:
+            case 7:
+                AddEnemies(enemies, EnemyType.Normal, mixedTypeCount);
+                AddEnemies(enemies, EnemyType.Depend, mixedTypeCount);
+                break;
+
+            case 8:
+            case 9:
+                AddEnemies(enemies, EnemyType.Speed, mixedTypeCount);
+                AddEnemies(enemies, EnemyType.Depend, mixedTypeCount);
+                break;
+        }
+
+        return enemies;
+    }
+
+    private static void AddEnemies(List<EnemyType> enemies, EnemyType type, int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            enemies.Add(type);
+        }
+    }
+    // ì›¨ì´ë¸Œë³„ ìŠ¤íƒ¯ ë°°ìœ¨ ê³„ì‚° ë¡œì§
     public void GetMultiplier(out float hpMulti, out float defendMulti)
     {
         int subWave = m_currentWave % 10;
@@ -126,33 +183,6 @@ public class WaveManager : MonoBehaviour
             > 10 => 1.2f,
             _ => 1.0f
         };
-    }
-
-    private EnemyType DetermineEnemyType(int wave, int spawnIndex)
-    {
-        int subWave = wave % 10;
-        if (subWave == 0) subWave = 10;
-
-        switch (subWave)
-        {
-            case 1:
-            case 2:
-            case 6:
-            case 7:
-                return EnemyType.Normal;
-            case 3:
-            case 8:
-                return (spawnIndex > 10) ? EnemyType.Normal : EnemyType.Speed;
-            case 4:
-            case 9:
-                return (spawnIndex > 10) ? EnemyType.Normal : EnemyType.Depend;
-            case 5:
-                return (spawnIndex % 2 == 0) ? EnemyType.Speed : EnemyType.Depend;
-            case 10:
-                return EnemyType.Boss;
-            default:
-                return EnemyType.Normal;
-        }
     }
 
     private void UpdateSpecialBossButtonUI()
@@ -206,11 +236,13 @@ public class WaveManager : MonoBehaviour
     public void NextWave()
     {
         m_currentWave++;
+        m_spawnedEnemyCountInWave = 0;
         CurrencyManager.Instance?.AddGold((m_currentWave - 1) * 100);
         UpdateSpecialBossButtonUI();
     }
 
     public int GetEnemyCount() => m_activeEnemyCount;
+    public int GetEnemiesPerWave() => GetWaveEnemyComposition(m_currentWave).Count;
     public int GetWave() => m_currentWave;
 
     public void OnEnemyDied(bool isBoss = false)
@@ -223,7 +255,7 @@ public class WaveManager : MonoBehaviour
             if (UIManager.Instance != null)
             {
                 UIManager.Instance.ShowGameClear();
-                Debug.Log("ÃÖÁ¾ 40¿şÀÌºê Boss Ã³Ä¡! ½Â¸®ÇÏ¼Ì½À´Ï´Ù.");
+                Debug.Log("ìµœì¢… 40ì›¨ì´ë¸Œ Boss ì²˜ì¹˜! ìŠ¹ë¦¬í•˜ì…¨ìŠµë‹ˆë‹¤.");
             }
         }
     }

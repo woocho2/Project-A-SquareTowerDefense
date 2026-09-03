@@ -2,13 +2,12 @@ using UnityEngine;
 
 public class SplashAttackAction : TowerAttackAction
 {
-    // ±âº» »ı¼ºÀÚ: »óÀ§ Å¬·¡½º(TowerAttackAction)¿¡ TowerData Àü´Ş
+    // ê¸°ë³¸ ìƒì„±ì: ìƒìœ„ í´ë˜ìŠ¤(TowerAttackAction)ì— TowerData ì „ë‹¬
     public SplashAttackAction(TowerData data) : base(data) { }
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats finalStats)
     {
-        // EnemyController ´ë½Å EnemyHealthController¸¦ Å¸°ÙÀ¸·Î Å½»ö
-        if (TryFindTarget(towerTransform.position, finalStats.Range, m_data.targetLayer, out EnemyHealthController targetEnemy))
+        if (TryFindTarget(towerTransform.position, finalStats.Range, m_data.targetLayer, out EnemyHealthController targetEnemy, m_data.targetPriority))
         {
             LaunchSplashProjectile(towerTransform, targetEnemy.transform.position, finalStats);
             return true;
@@ -18,17 +17,17 @@ public class SplashAttackAction : TowerAttackAction
 
     private void LaunchSplashProjectile(Transform firePoint, Vector3 targetPosition, TowerStats finalStats)
     {
-        // Àü¿ª Åõ»çÃ¼ ¸Å´ÏÀú À¯È¿¼º °Ë»ç
+        // ì „ì—­ íˆ¬ì‚¬ì²´ ë§¤ë‹ˆì € ìœ íš¨ì„± ê²€ì‚¬
         if (GlobalProjectileManager.Instance == null)
         {
-            Debug.LogError("[SplashAttackAction] ±Û·Î¹ú ¸Å´ÏÀú°¡ ´©¶ôµÇ¾ú½À´Ï´Ù.");
+            Debug.LogError("[SplashAttackAction] ê¸€ë¡œë²Œ ë§¤ë‹ˆì €ê°€ ëˆ„ë½ë˜ì—ˆìŠµë‹ˆë‹¤.");
             return;
         }
 
-        // ¸ñÇ¥ ÁöÁ¡À» ÇâÇÑ ¹ß»ç ¹æÇâ º¤ÅÍ °è»ê
+        // ëª©í‘œ ì§€ì ì„ í–¥í•œ ë°œì‚¬ ë°©í–¥ ë²¡í„° ê³„ì‚°
         Vector3 direction = (targetPosition - firePoint.position).normalized;
 
-        // Åõ»çÃ¼ Ç®¿¡¼­ Åõ»çÃ¼ ÀÎ½ºÅÏ½º »ı¼º/¼ÒÈ¯
+        // íˆ¬ì‚¬ì²´ í’€ì—ì„œ íˆ¬ì‚¬ì²´ ì¸ìŠ¤í„´ìŠ¤ ìƒì„±/ì†Œí™˜
         ProjectileHit2D projectile = GlobalProjectileManager.Instance.SpawnProjectile(
             m_data.towerID,
             firePoint.position,
@@ -38,18 +37,18 @@ public class SplashAttackAction : TowerAttackAction
 
         if (projectile != null)
         {
-            // Ä¡¸íÅ¸ È®·ü °è»ê (TowerStatsÀÇ CriticalRate ÇÊµå Àû¿ë)
+            // ì¹˜ëª…íƒ€ í™•ë¥  ê³„ì‚° (TowerStatsì˜ CriticalRate í•„ë“œ ì ìš©)
             bool isCrit = UnityEngine.Random.Range(0f, 100f) <= (finalStats.CriticalRate * 100f);
             float calculatedDamage = finalStats.AttackPower;
 
-            // Ä¡¸íÅ¸ ¹ß»ı ½Ã µ¥¹ÌÁö ÁõÆø (TowerStatsÀÇ CriticalDamage ÇÊµå Àû¿ë)
+            // ì¹˜ëª…íƒ€ ë°œìƒ ì‹œ ë°ë¯¸ì§€ ì¦í­ (TowerStatsì˜ CriticalDamage í•„ë“œ ì ìš©)
             if (isCrit)
             {
                 float critMultiplier = 2.0f + finalStats.CriticalDamage;
                 calculatedDamage = finalStats.AttackPower * critMultiplier;
             }
 
-            // ProjectileStats ±¸Á¶Ã¼ »ı¼º ¹× ³×ÀÌ¹Ö ±ÔÄ¢¿¡ ¸ÂÃá ÇÊµå ÇÒ´ç
+            // ProjectileStats êµ¬ì¡°ì²´ ìƒì„± ë° ë„¤ì´ë° ê·œì¹™ì— ë§ì¶˜ í•„ë“œ í• ë‹¹
             ProjectileStats projectileStats = new ProjectileStats
             {
                 projectileID = m_data.towerID,
@@ -60,13 +59,14 @@ public class SplashAttackAction : TowerAttackAction
                 criticalRate = finalStats.CriticalRate,
                 criticalDamage = finalStats.CriticalDamage,
                 SplashRadius = m_data.splashRadius,
+                additionalHitCount = 0,
                 duration = finalStats.Duration,
                 abilityValue = finalStats.AbilityValue,
                 debuffTarget = m_data.debuffTarget,
                 hitEffectID = m_data.hitEffectID
             };
 
-            // Åõ»çÃ¼ ÃÊ±âÈ­ ¹× ¹ß»ç ½ÇÇà
+            // íˆ¬ì‚¬ì²´ ì´ˆê¸°í™” ë° ë°œì‚¬ ì‹¤í–‰
             projectile.Init(projectileStats);
             projectile.IsSplash = true;
             projectile.SetTargetPosition(targetPosition);

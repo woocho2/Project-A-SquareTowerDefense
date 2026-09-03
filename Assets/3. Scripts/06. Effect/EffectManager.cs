@@ -55,7 +55,7 @@ public class EffectManager : MonoBehaviour
 
         if (m_effectLibrary == null)
         {
-            Debug.LogError("EffectManager.Awake: m_effectLibrary°¡ ÇÒ´çµÇÁö ¾Ê¾Ò½À´Ï´Ù. EffectLibrary¸¦ ÇÒ´çÇÏ¼¼¿ä.");
+            Debug.LogError("EffectManager.Awake: m_effectLibraryê°€ í• ë‹¹ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤. EffectLibraryë¥¼ í• ë‹¹í•˜ì„¸ìš”.");
             return;
         }
 
@@ -83,7 +83,7 @@ public class EffectManager : MonoBehaviour
 
         if (prefab == null)
         {
-            Debug.LogWarning($"EffectManager.GetOrCreatePool: EffectLibrary¿¡¼­ key '{effectID}'¿¡ ÇØ´çÇÏ´Â ÇÁ¸®ÆÕÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù. Ç®À» »ı¼ºÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning($"EffectManager.GetOrCreatePool: EffectLibraryì—ì„œ key '{effectID}'ì— í•´ë‹¹í•˜ëŠ” í”„ë¦¬íŒ¹ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤. í’€ì„ ìƒì„±í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return null;
         }
 
@@ -178,7 +178,7 @@ public class EffectManager : MonoBehaviour
 
         if (pool == null)
         {
-            Debug.LogWarning($"EffectManager.GetEffect: '{effectID}'¿¡ ´ëÇÑ Ç®À» °¡Á®¿À°Å³ª »ı¼ºÇÒ ¼ö ¾ø½À´Ï´Ù. EffectLibrary¿¡ ÇØ´ç Å°°¡ ÀÖ´ÂÁö, ±×¸®°í ÇÁ¸®ÆÕÀÌ ÇÒ´çµÇ¾î ÀÖ´ÂÁö È®ÀÎÇÏ¼¼¿ä.");
+            Debug.LogWarning($"EffectManager.GetEffect: '{effectID}'ì— ëŒ€í•œ í’€ì„ ê°€ì ¸ì˜¤ê±°ë‚˜ ìƒì„±í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤. EffectLibraryì— í•´ë‹¹ í‚¤ê°€ ìˆëŠ”ì§€, ê·¸ë¦¬ê³  í”„ë¦¬íŒ¹ì´ í• ë‹¹ë˜ì–´ ìˆëŠ”ì§€ í™•ì¸í•˜ì„¸ìš”.");
             return null;
         }
         return pool.Get();

@@ -5,9 +5,9 @@ using UnityEngine.Pool;
 public class EnemyObjectPool2D : MonoBehaviour
 {
     [Header("Data & Prefab")]
-    [SerializeField] private EnemyData m_enemyData;             // ÀÌ Ç®ÀÌ ½ºÆùÇÒ Àü¿ë ScriptableObject
+    [SerializeField] private EnemyData m_enemyData;             // ì´ í’€ì´ ìŠ¤í°í•  ì „ìš© ScriptableObject
     [SerializeField] private EnemyHealthController enemyPrefab;
-    [SerializeField] private EnemyType m_poolEnemyType;         // ÀÌ Ç®ÀÇ Àû Å¸ÀÔ
+    [SerializeField] private EnemyType m_poolEnemyType;         // ì´ í’€ì˜ ì  íƒ€ì…
 
     [Header("Pool Settings")]
     [SerializeField] private int initialSize = 30;
@@ -26,14 +26,14 @@ public class EnemyObjectPool2D : MonoBehaviour
 
         if (enemyPrefab == null)
         {
-            Debug.LogError("[EnemyPool2D] EnemyPrefabÀÌ ºñ¾îÀÖ½À´Ï´Ù.");
+            Debug.LogError("[EnemyPool2D] EnemyPrefabì´ ë¹„ì–´ìˆìŠµë‹ˆë‹¤.");
             enabled = false;
             return;
         }
 
         if (m_enemyData == null)
         {
-            Debug.LogError($"[EnemyPool2D] {gameObject.name}¿¡ EnemyData ScriptableObject°¡ ÇÒ´çµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+            Debug.LogError($"[EnemyPool2D] {gameObject.name}ì— EnemyData ScriptableObjectê°€ í• ë‹¹ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
         }
 
         m_pool = new ObjectPool<EnemyHealthController>(
@@ -107,32 +107,32 @@ public class EnemyObjectPool2D : MonoBehaviour
     {
         if (m_enemyData == null)
         {
-            Debug.LogError($"[EnemyObjectPool2D] {gameObject.name}¿¡ EnemyData°¡ ¾ø¾î ½ºÆùÀ» Áß´ÜÇÕ´Ï´Ù.");
+            Debug.LogError($"[EnemyObjectPool2D] {gameObject.name}ì— EnemyDataê°€ ì—†ì–´ ìŠ¤í°ì„ ì¤‘ë‹¨í•©ë‹ˆë‹¤.");
             return null;
         }
 
         var health = TryGet();
         if (health == null) return null;
 
-        // À§Ä¡ ÁöÁ¤ ¹× ¿ÀºêÁ§Æ® È°¼ºÈ­ (´©¶ôµÇ¾ú´ø ºÎºĞ)
+        // ìœ„ì¹˜ ì§€ì • ë° ì˜¤ë¸Œì íŠ¸ í™œì„±í™” (ëˆ„ë½ë˜ì—ˆë˜ ë¶€ë¶„)
         health.transform.position = position;
         health.gameObject.SetActive(true);
 
-        // 1. µğ¹öÇÁ »óÅÂ ÃÊ±âÈ­[cite: 22]
+        // 1. ë””ë²„í”„ ìƒíƒœ ì´ˆê¸°í™”[cite: 22]
         if (health.TryGetComponent<EnemyDebuffController>(out var debuff))
         {
             debuff.ClearAllDebuffs();
         }
 
-        // 2. ÅÏÁ¦ ÀÌµ¿ µ¥ÀÌÅÍ ÃÊ±âÈ­ (EnemyData ¹× TilePath Àü´Ş)[cite: 22]
+        // 2. í„´ì œ ì´ë™ ë°ì´í„° ì´ˆê¸°í™” (EnemyData ë° TilePath ì „ë‹¬)[cite: 22]
         if (health.TryGetComponent<EnemyMovementController>(out var movement))
         {
             movement.InitMovement(m_enemyData, tilePath);
-            // »ı¼ºµÈ ÀûÀ» EnemyManager¿¡ µî·Ï[cite: 22]
+            // ìƒì„±ëœ ì ì„ EnemyManagerì— ë“±ë¡[cite: 22]
             EnemyManager.Instance?.RegisterEnemy(movement);
         }
 
-        // 3. Ã¼·Â ÃÊ±âÈ­[cite: 22]
+        // 3. ì²´ë ¥ ì´ˆê¸°í™”[cite: 22]
         float finalMaxHP = m_enemyData.MaxHP * hpMultiplier;
         float finalDefend = m_enemyData.Defend * defendMultiplier;
         health.InitHealth(finalMaxHP, finalDefend, m_poolEnemyType);

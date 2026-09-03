@@ -12,7 +12,9 @@ public class EnemyHealthController : MonoBehaviour
     private float m_baseDefend;
     private float m_defendMultiplier = 1f;
     private float m_vulnerabilityMultiplier = 1f;
+#if false // Synergy system temporarily disabled
     private float m_synergyWeak = 1f;
+#endif
 
     private EnemyMovementController m_movement;
     private EnemyDebuffController m_debuff;
@@ -41,17 +43,17 @@ public class EnemyHealthController : MonoBehaviour
         m_baseDefend = defend;
         m_defendMultiplier = 1f;
         m_vulnerabilityMultiplier = 1f;
-        m_synergyWeak = 1f;
+
 
         HideHPBar();
         if (m_uiController != null) m_uiController.SetHPBar(m_currentHP, m_maxHP);
     }
 
     // ==========================================================================================================
-    // Å¸ÀÏ ¹öÇÁ °ü·Ã Ã¼·Â/¹æ¾î·Â ¿¬µ¿ ÇÔ¼ö
+    // íƒ€ì¼ ë²„í”„ ê´€ë ¨ ì²´ë ¥/ë°©ì–´ë ¥ ì—°ë™ í•¨ìˆ˜
     // ==========================================================================================================
 
-    // ÇöÀç Ã¼·Â ±âÁØ ÆÛ¼¾Æ® Èú Àû¿ë (ÃÖ´ë Ã¼·Â ÃÊ°ú ¹æÁö)
+    // í˜„ì¬ ì²´ë ¥ ê¸°ì¤€ í¼ì„¼íŠ¸ í ì ìš© (ìµœëŒ€ ì²´ë ¥ ì´ˆê³¼ ë°©ì§€)
     public void HealMaxHealthPercent(float percent)
     {
         if (m_currentHP <= 0f) return;
@@ -63,14 +65,14 @@ public class EnemyHealthController : MonoBehaviour
         if (m_uiController != null) m_uiController.SetHPBar(m_currentHP, m_maxHP);
     }
 
-    // Å¸ÀÏ ¹æ¾î·Â ¹öÇÁ ÃÊ±âÈ­
+    // íƒ€ì¼ ë°©ì–´ë ¥ ë²„í”„ ì´ˆê¸°í™”
     public void ResetTileDefendBuff()
     {
         m_defendMultiplier = 1f;
     }
 
     // ==========================================================================================================
-    // ´ë¹ÌÁö ¹× »ç¸Á Ã³¸®
+    // ëŒ€ë¯¸ì§€ ë° ì‚¬ë§ ì²˜ë¦¬
     // ==========================================================================================================
 
     public void ApplyDamage(float rawDamage, bool isCritical = false)
@@ -80,7 +82,7 @@ public class EnemyHealthController : MonoBehaviour
         ShowHPBar();
 
         float defend = FinalDefend;
-        float finalWeak = m_vulnerabilityMultiplier * m_synergyWeak;
+        float finalWeak = m_vulnerabilityMultiplier;
         float calculatedDamage = Mathf.Clamp((rawDamage * (1f / (1f + (0.01f * defend))) * finalWeak), 0f, 5000f);
 
         m_currentHP -= calculatedDamage;
@@ -151,7 +153,9 @@ public class EnemyHealthController : MonoBehaviour
 
     public void SetDefendMultiplier(float multiplier) => m_defendMultiplier = multiplier;
     public void SetVulnerability(float multiplier) => m_vulnerabilityMultiplier = multiplier;
+#if false // Synergy system temporarily disabled
     public void SetSynergyWeak(float weak) => m_synergyWeak = weak;
+#endif
 
     private void ShowHPBar()
     {

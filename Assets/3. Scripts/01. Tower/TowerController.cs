@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.Tilemaps;
 
 [System.Serializable]
 public struct TowerStats
@@ -9,13 +12,15 @@ public struct TowerStats
     public int Level;
     public float AttackPower;
     public float Range;
-    public float AttackSpeed;
+    [FormerlySerializedAs("AttackSpeed")]
+    public int AttackCount;
     public float CriticalRate;
     public float CriticalDamage;
     public float Duration;
     public float AbilityValue;
     public float ProjectileSpeed;
-    public float ProjectileRadius;
+    public int ProjectileRadius;
+    public int AdditionalHitCount;
 }
 
 public class TowerController : MonoBehaviour
@@ -24,16 +29,19 @@ public class TowerController : MonoBehaviour
     [SerializeField] private TowerStats m_baseStats;
     [SerializeField] private GameObject m_range;
 
+    private Vector3 m_rangeBaseLocalScale;
+    private readonly List<GameObject> m_enemyRangeHighlights = new List<GameObject>();
+
     private TowerAttackAction m_attackAction;
-    private float m_attackCooldown;
+    private int m_remainingAction;
 
     [Header("Debuff Zone Reference")]
     [SerializeField] private DebuffZone m_debuffZoneChild;
 
-    // ¹öÇÁ ¹èÀ² º¯¼öµé
+    // ëŸ°íƒ€ì„ ë³´ì •ì¹˜
     private float m_bonusAttackPower = 1f;
     private float m_bonusRange = 1f;
-    private float m_bonusAttackSpeed = 1f;
+    private float m_bonusAttackCount = 1f;
     private float m_bonusCriticalRate = 1f;
     private float m_bonusCriticalDamage = 1f;
     private float m_bonusDuration = 0f;
@@ -43,6 +51,11 @@ public class TowerController : MonoBehaviour
 
     private void Awake()
     {
+        if (m_range != null)
+        {
+            m_rangeBaseLocalScale = m_range.transform.localScale;
+        }
+
         if (m_debuffZoneChild == null)
         {
             m_debuffZoneChild = GetComponentInChildren<DebuffZone>(true);
@@ -53,6 +66,7 @@ public class TowerController : MonoBehaviour
     {
         m_towerData = data;
         m_baseStats = initialStats;
+        m_remainingAction = Mathf.Max(1, m_towerData.action);
 
         if (m_debuffZoneChild != null)
         {
@@ -90,16 +104,16 @@ public class TowerController : MonoBehaviour
     }
 
     /// <summary>
-    /// ¾÷±×·¹ÀÌµåµÈ Àü¿ª ½ºÅÈ(GlobalStats)À» Á÷Á¢ °¡Á®¿Í ÇöÀç ¹öÇÁ ¹èÀ²¸¸ Áï½Ã ¿¬»êÇÏ¿© ¹İÈ¯ÇÕ´Ï´Ù.
+    /// ì „ì—­ ê¸°ë³¸ ìŠ¤íƒ¯ì— ëŸ°íƒ€ì„ ë³´ì •ì¹˜ë¥¼ ë°˜ì˜í•œ ìµœì¢… ìŠ¤íƒ¯ì„ ë°˜í™˜í•©ë‹ˆë‹¤.
     /// </summary>
     public TowerStats GetFinalStats()
     {
-        // 1. ¸Å´ÏÀúÀÇ ÃÖ½Å ¾÷±×·¹ÀÌµå ½ºÅÈÀ» Á÷Á¢ Á¶È¸
+        // 1. ì „ì—­ ê¸°ë³¸ ìŠ¤íƒ¯ì„ ë³µì‚¬í•©ë‹ˆë‹¤.
         TowerStats finalStats = m_baseStats;
 
-        // 2. °³º° ¹öÇÁ ¹èÀ² ¿¬»ê
+        // 2. ë²„í”„ì™€ íƒ€ì¼ ë³´ì •ì¹˜ë¥¼ ë°˜ì˜í•©ë‹ˆë‹¤.
         finalStats.AttackPower *= Mathf.Clamp(m_bonusAttackPower, 0.01f, 10000f);
-        finalStats.AttackSpeed *= Mathf.Clamp(m_bonusAttackSpeed, 0.01f, 10000f);
+        finalStats.AttackCount = Mathf.Max(1, Mathf.RoundToInt(finalStats.AttackCount * Mathf.Clamp(m_bonusAttackCount, 0.01f, 10000f)));
         finalStats.Range *= Mathf.Clamp(m_bonusRange, 0.01f, 10000f);
         finalStats.CriticalRate *= Mathf.Clamp(m_bonusCriticalRate, 0.01f, 10000f);
         finalStats.CriticalDamage *= Mathf.Clamp(m_bonusCriticalDamage, 0.01f, 10000f);
@@ -112,25 +126,35 @@ public class TowerController : MonoBehaviour
         return finalStats;
     }
 
+    /// <summary>
+    /// ì—ë„ˆë¯¸ í„´ì— í•œ ë²ˆ í˜¸ì¶œë©ë‹ˆë‹¤. í–‰ë™ë ¥ì„ 1 ì†Œëª¨í•˜ê³ ,
+    /// 0ì´ ëœ í„´ì— AttackCountë§Œí¼ ê³µê²©í•œ ë’¤ í–‰ë™ë ¥ì„ ì¬ì¶©ì „í•©ë‹ˆë‹¤.
+    /// </summary>
+    public bool ExecuteTurnAction()
+    {
+        if (m_attackAction == null || m_towerData == null) return false;
+
+        m_remainingAction--;
+        if (m_remainingAction > 0) return false;
+
+        TowerStats finalStats = GetFinalStats();
+        bool didAttack = false;
+        for (int i = 0; i < finalStats.AttackCount; i++)
+        {
+            didAttack |= m_attackAction.ExecuteAction(transform, finalStats);
+        }
+
+        m_remainingAction = Mathf.Max(1, m_towerData.action);
+        return didAttack;
+    }
+    public TowerData GetTowerData() => m_towerData;
+
     private void Update()
     {
-        if (m_attackAction == null) return;
+        if (m_range == null || !m_range.activeInHierarchy || m_attackAction == null) return;
 
-        m_attackCooldown -= Time.deltaTime;
-
-        if (m_attackCooldown <= 0f)
-        {
-            TowerStats finalStats = GetFinalStats();
-            bool didAction = m_attackAction.ExecuteAction(transform, finalStats);
-
-            if (didAction)
-            {
-                m_attackCooldown = finalStats.AttackSpeed > 0f ? 1f / finalStats.AttackSpeed : 1f;
-            }
-        }
+        RefreshEnemyRangeHighlights();
     }
-
-    public TowerData GetTowerData() => m_towerData;
 
     public void ShowRange(bool show)
     {
@@ -140,10 +164,87 @@ public class TowerController : MonoBehaviour
 
             if (show)
             {
-                float currentRange = GetFinalStats().Range;
-                float scaleValue = (currentRange * 2f) / transform.localScale.x;
+                int tileRange = TowerAttackAction.ToTileRange(GetFinalStats().Range);
+                float scaleValue = (tileRange * 2f + 1f) / transform.localScale.x;
                 m_range.transform.localScale = new Vector3(scaleValue, scaleValue, 1f);
+                RefreshEnemyRangeHighlights();
             }
+            else
+            {
+                SetEnemyRangeHighlightsActive(false);
+            }
+        }
+    }
+
+    private void RefreshEnemyRangeHighlights()
+    {
+        if (m_towerData == null || m_range == null) return;
+
+        Tilemap towerTilemap = TowerManager.Instance?.GetSpawnPointTilemap();
+        SpriteRenderer rangeRenderer = m_range.GetComponent<SpriteRenderer>();
+        if (towerTilemap == null || rangeRenderer == null)
+        {
+            SetEnemyRangeHighlightsActive(false);
+            return;
+        }
+
+        int tileRange = TowerAttackAction.ToTileRange(GetFinalStats().Range);
+        Vector3Int towerCell = towerTilemap.WorldToCell(transform.position);
+        Vector3 cellSize = towerTilemap.cellSize;
+        Vector2 squareSize = new Vector2(
+            cellSize.x * (tileRange * 2 + 1),
+            cellSize.y * (tileRange * 2 + 1));
+
+        Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(transform.position, squareSize, 0f, m_towerData.targetLayer);
+        HashSet<Vector3Int> enemyCells = new HashSet<Vector3Int>();
+
+        for (int i = 0; i < hitEnemies.Length; i++)
+        {
+            EnemyHealthController health = hitEnemies[i].GetComponentInParent<EnemyHealthController>();
+            if (health == null || !health.gameObject.activeInHierarchy || health.CurrentHP <= 0f) continue;
+
+            Vector3Int enemyCell = towerTilemap.WorldToCell(hitEnemies[i].transform.position);
+            if (Mathf.Abs(enemyCell.x - towerCell.x) <= tileRange && Mathf.Abs(enemyCell.y - towerCell.y) <= tileRange)
+            {
+                enemyCells.Add(enemyCell);
+            }
+        }
+
+        int requiredHighlightCount = enemyCells.Count;
+        while (m_enemyRangeHighlights.Count < requiredHighlightCount)
+        {
+            GameObject highlight = Instantiate(m_range, m_range.transform.parent);
+            highlight.name = "EnemyRangeHighlight";
+            highlight.transform.localScale = m_rangeBaseLocalScale;
+
+            SpriteRenderer highlightRenderer = highlight.GetComponent<SpriteRenderer>();
+            highlightRenderer.color = new Color(1f, 0.2f, 0.2f, rangeRenderer.color.a);
+            highlightRenderer.sortingLayerID = rangeRenderer.sortingLayerID;
+            highlightRenderer.sortingOrder = rangeRenderer.sortingOrder + 1;
+
+            m_enemyRangeHighlights.Add(highlight);
+        }
+
+        int highlightIndex = 0;
+        foreach (Vector3Int enemyCell in enemyCells)
+        {
+            GameObject highlight = m_enemyRangeHighlights[highlightIndex++];
+            highlight.transform.position = towerTilemap.GetCellCenterWorld(enemyCell);
+            highlight.transform.localScale = m_rangeBaseLocalScale;
+            highlight.SetActive(true);
+        }
+
+        for (int i = highlightIndex; i < m_enemyRangeHighlights.Count; i++)
+        {
+            m_enemyRangeHighlights[i].SetActive(false);
+        }
+    }
+
+    private void SetEnemyRangeHighlightsActive(bool isActive)
+    {
+        for (int i = 0; i < m_enemyRangeHighlights.Count; i++)
+        {
+            m_enemyRangeHighlights[i].SetActive(isActive);
         }
     }
 
@@ -162,7 +263,8 @@ public class TowerController : MonoBehaviour
         switch (target)
         {
             case BuffTarget.Sword: m_bonusAttackPower = 1f + (abilityValue / 100f); break;
-            case BuffTarget.Bow: m_bonusAttackSpeed = 1f + (abilityValue / 100f); break;
+            case BuffTarget.Bow:
+            case BuffTarget.AttackCount: m_bonusAttackCount = 1f + (abilityValue / 100f); break;
             case BuffTarget.Spear: m_bonusRange = 1f + (abilityValue / 100f); break;
             case BuffTarget.Axe: m_bonusCriticalRate = 1f + (abilityValue / 100f); break;
             case BuffTarget.Hammer: m_bonusCriticalDamage = 1f + (abilityValue / 100f); break;
@@ -178,7 +280,8 @@ public class TowerController : MonoBehaviour
         switch (target)
         {
             case BuffTarget.Sword: m_bonusAttackPower = 1f; break;
-            case BuffTarget.Bow: m_bonusAttackSpeed = 1f; break;
+            case BuffTarget.Bow:
+            case BuffTarget.AttackCount: m_bonusAttackCount = 1f; break;
             case BuffTarget.Spear: m_bonusRange = 1f; break;
             case BuffTarget.Axe: m_bonusCriticalRate = 1f; break;
             case BuffTarget.Hammer: m_bonusCriticalDamage = 1f; break;

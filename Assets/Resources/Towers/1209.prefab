@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 671948444447976635, guid: e3f8bd0b86a3ec44a93871cda226621b, type: 3}
       propertyPath: m_Name
-      value: 1209_Wind(T)
+      value: 1208_Electricity(T)
       objectReference: {fileID: 0}
     - target: {fileID: 7922541315568409329, guid: e3f8bd0b86a3ec44a93871cda226621b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -55,7 +55,7 @@ PrefabInstance:
     - target: {fileID: 8097582329074080250, guid: e3f8bd0b86a3ec44a93871cda226621b, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 8803197236633940570, guid: 6d68f65e7e96607429ee479d2335a873, type: 3}
+      objectReference: {fileID: -7779850810349750613, guid: 154a3f0c95f799640aed8ab49b68f17a, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

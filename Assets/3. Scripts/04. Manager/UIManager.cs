@@ -190,7 +190,7 @@ public class UIManager : MonoBehaviour
             {
                 if (m_selectTowerID <= 0)
                 {
-                    Debug.LogWarning("¾÷±×·¹ÀÌµåÇÒ Å¸¿ö°¡ ¼±ÅÃµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+                    Debug.LogWarning("ì—…ê·¸ë ˆì´ë“œí•  íƒ€ì›Œê°€ ì„ íƒë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
                     return;
                 }
 
@@ -370,7 +370,7 @@ public class UIManager : MonoBehaviour
                 }
             }
             if (m_txtTowerInfoRange != null) m_txtTowerInfoRange.text = $"{stats.Range * 100}";
-            if (m_txtTowerInfoSpeed != null) m_txtTowerInfoSpeed.text = $"{stats.AttackSpeed:F2}";
+            if (m_txtTowerInfoSpeed != null) m_txtTowerInfoSpeed.text = $"{stats.AttackCount}";
             if (m_txtTowerInfoCriticalRate != null) m_txtTowerInfoCriticalRate.text = $"{(stats.CriticalRate * 100):F2}%";
             if (m_txtTowerInfoCriticalDamage != null) m_txtTowerInfoCriticalDamage.text = $"{((2 + stats.CriticalDamage) * 100):F0}%";
         }
@@ -491,7 +491,7 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[UIManager] ÇÕ¼ºÇÒ Å¸¿ö°¡ À¯È¿ÇÏÁö ¾Ê½À´Ï´Ù.");
+            Debug.LogWarning("[UIManager] í•©ì„±í•  íƒ€ì›Œê°€ ìœ íš¨í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
             HideTowerPanel();
         }
     }
@@ -544,7 +544,7 @@ public class UIManager : MonoBehaviour
 
     public void ShowGameOver()
     {
-        // EnemyController ´ë½Å EnemyHealthController¸¦ Å½»öÇÏ¿© Ã¼·Â¹Ù ¼û±è Ã³¸®
+        // EnemyController ëŒ€ì‹  EnemyHealthControllerë¥¼ íƒìƒ‰í•˜ì—¬ ì²´ë ¥ë°” ìˆ¨ê¹€ ì²˜ë¦¬
         EnemyHealthController[] allEnemies = FindObjectsByType<EnemyHealthController>(FindObjectsSortMode.None);
         for (int i = 0; i < allEnemies.Length; i++)
         {

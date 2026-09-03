@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// 3. Spear: ÅõÃ¢ (Á¾·á ½Ã ÇöÀç Ã¼·Â ºñ·Ê ½ºÅÃ µ¥¹ÌÁö Æø¹ß)
+// 3. Spear: íˆ¬ì°½ (ì¢…ë£Œ ì‹œ í˜„ì¬ ì²´ë ¥ ë¹„ë¡€ ìŠ¤íƒ ë°ë¯¸ì§€ í­ë°œ)
 public class SpearDebuff : DebuffBase
 {
     public SpearDebuff(float duration, float damagePerStackPercent)

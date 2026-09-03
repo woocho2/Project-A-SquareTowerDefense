@@ -1,10 +1,10 @@
 using UnityEngine;
 
-// 8. Electricity: °¨Àü (½ºÅÃ´ç 4% µĞÈ­ -> 5½ºÅÃ ½Ã 5ÃÊ°£ ´©Àü: ÀÌ¼Ó 20% °¨¼Ò + ÃÊ´ç MaxHP % ÇÇÇØ)
+// 8. Electricity: ê°ì „ (ìŠ¤íƒë‹¹ 4% ë‘”í™” -> 5ìŠ¤íƒ ì‹œ 5ì´ˆê°„ ëˆ„ì „: ì´ì† 20% ê°ì†Œ + ì´ˆë‹¹ MaxHP % í”¼í•´)
 public class ElectricityDebuff : DebuffBase
 {
     private const int MAX_STACK = 5;
-    private bool m_isShortCircuit = false; // ´©Àü »óÅÂ ¿©ºÎ
+    private bool m_isShortCircuit = false; // ëˆ„ì „ ìƒíƒœ ì—¬ë¶€
     private float m_tickTimer = 0f;
 
     public ElectricityDebuff(float duration, float maxHPDamagePercent)
@@ -24,10 +24,10 @@ public class ElectricityDebuff : DebuffBase
             Stack++;
             if (Stack >= MAX_STACK)
             {
-                // [´©Àü] »óÅÂ·Î ÀüÈ¯: 5ÃÊ Áö¼Ó
+                // [ëˆ„ì „] ìƒíƒœë¡œ ì „í™˜: 5ì´ˆ ì§€ì†
                 m_isShortCircuit = true;
                 Duration = 5.0f;
-                movement.SetSpeedMultiplier(0.8f); // ÀÌµ¿¼Óµµ 20% °¨¼Ò
+                movement.SetSpeedMultiplier(0.8f); // ì´ë™ì†ë„ 20% ê°ì†Œ
                 return;
             }
             movement.SetSpeedMultiplier(1f - (0.04f * Stack));
@@ -38,7 +38,7 @@ public class ElectricityDebuff : DebuffBase
     {
         base.OnUpdate(health, movement, deltaTime);
 
-        // ´©Àü »óÅÂ: ÃÊ´ç ÃÖ´ë Ã¼·Â ºñ·Ê ÇÇÇØ
+        // ëˆ„ì „ ìƒíƒœ: ì´ˆë‹¹ ìµœëŒ€ ì²´ë ¥ ë¹„ë¡€ í”¼í•´
         if (m_isShortCircuit)
         {
             m_tickTimer += deltaTime;

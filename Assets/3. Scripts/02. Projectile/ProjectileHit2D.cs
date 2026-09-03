@@ -1,8 +1,9 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 /// <summary>
-/// Å¸¿ö¿¡¼­ ¹ß»çµÇ´Â Åõ»çÃ¼ÀÇ ÃÖÁ¾ ½ºÅÈ Á¤º¸ ±¸Á¶Ã¼
+/// íƒ€ì›Œì—ì„œ ë°œì‚¬ë˜ëŠ” íˆ¬ì‚¬ì²´ì˜ ìµœì¢… ìŠ¤íƒ¯ ì •ë³´ êµ¬ì¡°ì²´
 /// </summary>
 [System.Serializable]
 public struct ProjectileStats
@@ -14,7 +15,8 @@ public struct ProjectileStats
     public bool isCritical;
     public float criticalRate;
     public float criticalDamage;
-    public float SplashRadius;
+    public int SplashRadius;
+    public int additionalHitCount;
     public float duration;
     public float abilityValue;
     public int hitEffectID;
@@ -22,7 +24,7 @@ public struct ProjectileStats
 }
 
 /// <summary>
-/// ¹°¸® ¿£Áø ¾øÀÌ ¼ø¼ö ¼öÇĞÀû °Å¸® °è»êÀ¸·Î ¸íÁßÀ» ÆÇÁ¤ÇÏ´Â ÃÖÀûÈ­ Åõ»çÃ¼
+/// ë¬¼ë¦¬ ì—”ì§„ ì—†ì´ ìˆœìˆ˜ ìˆ˜í•™ì  ê±°ë¦¬ ê³„ì‚°ìœ¼ë¡œ ëª…ì¤‘ì„ íŒì •í•˜ëŠ” ìµœì í™” íˆ¬ì‚¬ì²´
 /// </summary>
 public class ProjectileHit2D : MonoBehaviour
 {
@@ -44,21 +46,21 @@ public class ProjectileHit2D : MonoBehaviour
     {
         float moveStep = m_stats.speed * Time.deltaTime;
 
-        // 1. À¯È¿ÇÑ Å¸°ÙÀÌ ÀÖÀ¸¸é Å¸°Ù À§Ä¡, ¾ø°Å³ª ½ºÇÃ·¡½Ã¸é ¸ñÇ¥ ÁÂÇ¥¸¦ ¸ñÀûÁö·Î ÁöÁ¤
+        // 1. ìœ íš¨í•œ íƒ€ê²Ÿì´ ìˆìœ¼ë©´ íƒ€ê²Ÿ ìœ„ì¹˜, ì—†ê±°ë‚˜ ìŠ¤í”Œë˜ì‹œë©´ ëª©í‘œ ì¢Œí‘œë¥¼ ëª©ì ì§€ë¡œ ì§€ì •
         Vector2 destination = (m_homingTarget != null && m_homingTarget.gameObject.activeInHierarchy)
             ? (Vector2)m_homingTarget.position
             : m_targetPosition;
 
         float distanceToTarget = Vector2.Distance(transform.position, destination);
 
-        // 2. ¸ñÀûÁö µµ´Ş ½Ã ¸íÁß Ã³¸®
+        // 2. ëª©ì ì§€ ë„ë‹¬ ì‹œ ëª…ì¤‘ ì²˜ë¦¬
         if (distanceToTarget <= moveStep || distanceToTarget < 0.2f)
         {
             OnHit();
             return;
         }
 
-        // 3. ¸ñÀûÁö¸¦ ÇâÇØ È¸Àü ¹× ÀÌµ¿
+        // 3. ëª©ì ì§€ë¥¼ í–¥í•´ íšŒì „ ë° ì´ë™
         m_lastDirection = ((Vector3)destination - transform.position).normalized;
         RotateToDirection(m_lastDirection);
         transform.position = Vector2.MoveTowards(transform.position, destination, moveStep);
@@ -72,10 +74,10 @@ public class ProjectileHit2D : MonoBehaviour
     {
         if (m_lifeCo != null) StopCoroutine(m_lifeCo);
 
-        // Å¸°ÙÀÌ ³Ñ¾î¿Ô´Ù¸é À¯µµ ´ë»óÀ¸·Î ÁöÁ¤
+        // íƒ€ê²Ÿì´ ë„˜ì–´ì™”ë‹¤ë©´ ìœ ë„ ëŒ€ìƒìœ¼ë¡œ ì§€ì •
         m_homingTarget = targetEnemy;
 
-        // Å¸°ÙÀÌ ¾ø°Å³ª »ç¸ÁÇßÀ» ¶§¸¦ ´ëºñÇÑ ±âº» ¹æÇâ ¼³Á¤
+        // íƒ€ê²Ÿì´ ì—†ê±°ë‚˜ ì‚¬ë§í–ˆì„ ë•Œë¥¼ ëŒ€ë¹„í•œ ê¸°ë³¸ ë°©í–¥ ì„¤ì •
         m_lastDirection = dir.sqrMagnitude > 0.0001f ? dir.normalized : Vector3.right;
         if (rotateProjectile) RotateToDirection(m_lastDirection);
 
@@ -90,7 +92,7 @@ public class ProjectileHit2D : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
-    // µµ´Ş ½Ã Å¸ÀÔ¿¡ µû¶ó ¸íÁß Ã³¸® ºĞ±â
+    // ë„ë‹¬ ì‹œ íƒ€ì…ì— ë”°ë¼ ëª…ì¤‘ ì²˜ë¦¬ ë¶„ê¸°
     private void OnHit()
     {
         if (IsSplash)
@@ -103,19 +105,25 @@ public class ProjectileHit2D : MonoBehaviour
         }
     }
 
-    // ´ÜÀÏ Å¸°Ù ¸íÁß ½Ã Ã³¸®
+    // ë‹¨ì¼ íƒ€ê²Ÿ ëª…ì¤‘ ì‹œ ì²˜ë¦¬
     private void HitSingleTarget(Transform target)
     {
         if (target != null)
         {
             if (target.TryGetComponent<EnemyHealthController>(out var health))
             {
-                health.ApplyDamage(m_stats.damage, m_stats.isCritical);
-            }
+                int hitCount = 1 + Mathf.Max(0, m_stats.additionalHitCount);
+                for (int i = 0; i < hitCount; i++)
+                {
+                    if (health.CurrentHP <= 0f) break;
 
-            if (m_stats.debuffTarget != DebuffTarget.None && target.TryGetComponent<EnemyDebuffController>(out var debuff))
-            {
-                ApplyDebuffToObject(debuff);
+                    health.ApplyDamage(m_stats.damage, m_stats.isCritical);
+
+                    if (m_stats.debuffTarget != DebuffTarget.None && target.TryGetComponent<EnemyDebuffController>(out var debuff))
+                    {
+                        ApplyDebuffToObject(debuff);
+                    }
+                }
             }
         }
 
@@ -123,16 +131,44 @@ public class ProjectileHit2D : MonoBehaviour
         ReturnToPool();
     }
 
-    // ½ºÇÃ·¡½Ã ¹üÀ§ Æø¹ß Ã³¸®
+    // ìŠ¤í”Œë˜ì‹œ ë²”ìœ„ í­ë°œ ì²˜ë¦¬
     private void ExplodeSplash()
     {
-        EffectManager.Instance?.PlayEffect(m_stats.hitEffectID, transform.position, Quaternion.identity, m_stats.SplashRadius);
+        int splashRange = Mathf.Max(1, m_stats.SplashRadius);
+        int tileRadius = splashRange - 1;
+        int tileWidth = tileRadius * 2 + 1;
 
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, m_stats.SplashRadius, m_enemyLayer);
+        EffectManager.Instance?.PlayEffect(m_stats.hitEffectID, transform.position, Quaternion.identity, tileWidth);
+
+        Tilemap towerTilemap = TowerManager.Instance?.GetSpawnPointTilemap();
+        Collider2D[] hitEnemies;
+        Vector3Int impactCell = Vector3Int.zero;
+
+        if (towerTilemap != null)
+        {
+            impactCell = towerTilemap.WorldToCell(transform.position);
+            Vector3 cellSize = towerTilemap.cellSize;
+            Vector2 squareSize = new Vector2(cellSize.x * tileWidth, cellSize.y * tileWidth);
+            hitEnemies = Physics2D.OverlapBoxAll(transform.position, squareSize, 0f, m_enemyLayer);
+        }
+        else
+        {
+            Debug.LogWarning("[ProjectileHit2D] íƒ€ì›Œ íƒ€ì¼ë§µì„ ì°¾ì§€ ëª»í•´ ì›í˜• ìŠ¤í”Œë˜ì‹œ íŒì •ì„ ì‚¬ìš©í•©ë‹ˆë‹¤.");
+            hitEnemies = Physics2D.OverlapCircleAll(transform.position, tileRadius, m_enemyLayer);
+        }
 
         for (int i = 0; i < hitEnemies.Length; i++)
         {
             Collider2D hit = hitEnemies[i];
+
+            if (towerTilemap != null)
+            {
+                Vector3Int enemyCell = towerTilemap.WorldToCell(hit.transform.position);
+                if (Mathf.Abs(enemyCell.x - impactCell.x) > tileRadius || Mathf.Abs(enemyCell.y - impactCell.y) > tileRadius)
+                {
+                    continue;
+                }
+            }
 
             if (hit.TryGetComponent<EnemyHealthController>(out var health))
             {
@@ -148,7 +184,7 @@ public class ProjectileHit2D : MonoBehaviour
         ReturnToPool();
     }
 
-    // µğ¹öÇÁ °´Ã¼ »ı¼º ¹× ¿¡³Ê¹Ì µî·Ï
+    // ë””ë²„í”„ ê°ì²´ ìƒì„± ë° ì—ë„ˆë¯¸ ë“±ë¡
     private void ApplyDebuffToObject(EnemyDebuffController debuffController)
     {
         DebuffBase debuff = m_stats.debuffTarget switch

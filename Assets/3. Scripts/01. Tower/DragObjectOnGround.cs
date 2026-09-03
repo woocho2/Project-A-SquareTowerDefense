@@ -11,7 +11,7 @@ public class DragObjectOnGround : MonoBehaviour
     [SerializeField] private Camera m_camera;
 
     [Header("Interaction Settings")]
-    [Tooltip("ÀÌ °Å¸® ÀÌ»ó ¸¶¿ì½º°¡ ÀÌµ¿ÇØ¾ß µå·¡±×·Î ÆÇÁ¤ÇÕ´Ï´Ù.")]
+    [Tooltip("ì´ ê±°ë¦¬ ì´ìƒ ë§ˆìš°ìŠ¤ê°€ ì´ë™í•´ì•¼ ë“œë˜ê·¸ë¡œ íŒì •í•©ë‹ˆë‹¤.")]
     [SerializeField] private float m_dragThreshold = 0.1f;
 
     private Collider2D m_collider2D;
@@ -40,7 +40,7 @@ public class DragObjectOnGround : MonoBehaviour
             m_highlight.SetActive(false);
         }
 
-        // º»Ã¼ °ÔÀÓ¿ÀºêÁ§Æ®¿¡ Á÷Á¢ ºÙÀº ³í-Æ®¸®°Å Äİ¶óÀÌ´õ¸¦ Á¤È®È÷ Å½»ö
+        // ë³¸ì²´ ê²Œì„ì˜¤ë¸Œì íŠ¸ì— ì§ì ‘ ë¶™ì€ ë…¼-íŠ¸ë¦¬ê±° ì½œë¼ì´ë”ë¥¼ ì •í™•íˆ íƒìƒ‰
         Collider2D[] colliders = GetComponents<Collider2D>();
         foreach (var col in colliders)
         {
@@ -51,7 +51,7 @@ public class DragObjectOnGround : MonoBehaviour
             }
         }
 
-        // ³í-Æ®¸®°Å°¡ ¾ø´Ù¸é Ã¹ ¹øÂ° Äİ¶óÀÌ´õ ÇÒ´ç
+        // ë…¼-íŠ¸ë¦¬ê±°ê°€ ì—†ë‹¤ë©´ ì²« ë²ˆì§¸ ì½œë¼ì´ë” í• ë‹¹
         if (m_collider2D == null)
         {
             m_collider2D = GetComponent<Collider2D>();
@@ -78,7 +78,7 @@ public class DragObjectOnGround : MonoBehaviour
         {
             if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
 
-            // 2D ¸¶¿ì½º ÁÂÇ¥ ±âÁØ Ãæµ¹ °Ë»ç (ZÃà ¿µÇâ ¹èÁ¦)
+            // 2D ë§ˆìš°ìŠ¤ ì¢Œí‘œ ê¸°ì¤€ ì¶©ëŒ ê²€ì‚¬ (Zì¶• ì˜í–¥ ë°°ì œ)
             Vector2 mousePos2D = new Vector2(mouseWorldPosition.x, mouseWorldPosition.y);
 
             if (m_collider2D != null && m_collider2D.OverlapPoint(mousePos2D))
@@ -104,7 +104,7 @@ public class DragObjectOnGround : MonoBehaviour
                     m_highlight.SetActive(true);
                 }
 
-                // Å¸¿ö »ç°Å¸® ¹üÀ§ Ç¥½Ã ÄÑ±â
+                // íƒ€ì›Œ ì‚¬ê±°ë¦¬ ë²”ìœ„ í‘œì‹œ ì¼œê¸°
                 if (m_towerController != null)
                 {
                     m_towerController.ShowRange(true);
@@ -114,7 +114,7 @@ public class DragObjectOnGround : MonoBehaviour
             }
             else
             {
-                // Å¸¿ö ¿ÜºÎ Å¬¸¯ ½Ã »ç°Å¸® ¹× ÇÏÀÌ¶óÀÌÆ® ²ô±â
+                // íƒ€ì›Œ ì™¸ë¶€ í´ë¦­ ì‹œ ì‚¬ê±°ë¦¬ ë° í•˜ì´ë¼ì´íŠ¸ ë„ê¸°
                 if (m_highlight != null && m_highlight.activeInHierarchy)
                 {
                     m_highlight.SetActive(false);

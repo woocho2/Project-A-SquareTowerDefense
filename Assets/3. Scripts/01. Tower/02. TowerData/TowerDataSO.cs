@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public enum AttackType { Splash, Target, Buff, Debuff }
-public enum BuffTarget { None, Sword, Bow, Shield, Spear, Axe, Hammer, Fire, Ice, Electricity, Wind, Earth, Light, Darkness }
+public enum BuffTarget { None, Sword, Bow, Shield, Spear, Axe, Hammer, Fire, Ice, Electricity, Wind, Earth, Light, Darkness, AttackCount }
 public enum DebuffTarget { None, Sword, Bow, Shield, Spear, Axe, Hammer, Fire, Ice, Electricity, Wind, Earth, Light, Darkness }
 public enum TargetPriority { Default, Closest, First, Last, Strongest, Weakest }
 public enum StatType { Armor }
@@ -26,39 +26,42 @@ public static class TowerPattern
 [CreateAssetMenu(fileName = "NewTowerData", menuName = "Tower Defense/Tower Data")]
 public class TowerData : ScriptableObject
 {
-    [Header("타워 능력치")]
+    [Header("기본 타워 정보")]
     public GameObject towerPrefab;
     public GameObject projectilePrefab;
     public int towerID;
     public string towerName;
     public int towerLevel;
+    [Min(1)] public int action = 1;
     public float attackPower;
     public float range;
-    public float attackSpeed;
+    [Min(1)] public int attackCount = 1;
     public bool isCritical;
     public float criticalRate;
     public float criticalDamage;
     public float abilityValue;
     public float duration;
     public float projectileSpeed;
-    public float splashRadius;
+    [Min(0)] public int splashRadius;
+    [Min(0)] public int additionalHitCount;
     public int hitEffectID;
 
-    [Header("자동 조립 설정")]
+    [Header("공격 및 타겟 설정")]
     public AttackType attackType;
+    public TargetPriority targetPriority = TargetPriority.Closest;
     public LayerMask targetLayer;
 
     [Header("버프/디버프 타워 전용 설정")]
     public BuffTarget buffTarget;
     public DebuffTarget debuffTarget;
 
-    [Header("디버프타워 전용 설정")]
+    [Header("디버프 영역 전용 설정")]
     public LayerMask pathLayer;
 
     public DebuffZone debuffZonePrefab;
 
     /// <summary>
-    /// TowerData의 기본 스탯을 기반으로 런타임용 TowerStats 구조체를 생성하여 반환합니다.
+    /// 기본 타워 데이터를 런타임에서 사용하는 TowerStats 구조체로 변환합니다.
     /// </summary>
     public TowerStats ToTowerStats()
     {
@@ -69,13 +72,14 @@ public class TowerData : ScriptableObject
             Level = 1,
             AttackPower = this.attackPower,
             Range = this.range,
-            AttackSpeed = this.attackSpeed,
+            AttackCount = this.attackCount,
             CriticalRate = this.criticalRate,
             CriticalDamage = this.criticalDamage,
             Duration = this.duration,
             AbilityValue = this.abilityValue,
             ProjectileSpeed = this.projectileSpeed,
-            ProjectileRadius = this.splashRadius
+            ProjectileRadius = this.splashRadius,
+            AdditionalHitCount = this.additionalHitCount
         };
     }
 }

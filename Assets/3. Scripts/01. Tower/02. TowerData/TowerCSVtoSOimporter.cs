@@ -5,85 +5,93 @@ using System.IO;
 public class TowerCSVToSOImporter
 {
 #if UNITY_EDITOR
-    // À¯´ÏÆ¼ »ó´Ü ¸Ş´º¿¡ ¹öÆ°À» »ı¼ºÇÏ¿© ¿¡µğÅÍ¿¡¼­ ½±°Ô ½ÇÇàÇÒ ¼ö ÀÖµµ·Ï ÇÕ´Ï´Ù.
-    [MenuItem("Tools/CSV µ¥ÀÌÅÍ¸¦ Å¸¿ö SO¿¡ µ¤¾î¾º¿ì±â")]
+    // ìœ ë‹ˆí‹° ìƒë‹¨ ë©”ë‰´ì— ë²„íŠ¼ì„ ìƒì„±í•˜ì—¬ ì—ë””í„°ì—ì„œ ì‰½ê²Œ ì‹¤í–‰í•  ìˆ˜ ìˆë„ë¡ í•©ë‹ˆë‹¤.
+    [MenuItem("Tools/CSV ë°ì´í„°ë¥¼ íƒ€ì›Œ SOì— ë®ì–´ì”Œìš°ê¸°")]
 
     public static void ImportTowerData()
     {
-        // 1. CSV ÆÄÀÏ °æ·Î ¼³Á¤ 
-        // ÇÁ·ÎÁ§Æ® ³» ½ÇÁ¦ CSV ÆÄÀÏÀÌ À§Ä¡ÇÑ °æ·Î·Î ÁöÁ¤ÇØ¾ß ÇÕ´Ï´Ù.
+        // 1. CSV íŒŒì¼ ê²½ë¡œ ì„¤ì • 
+        // í”„ë¡œì íŠ¸ ë‚´ ì‹¤ì œ CSV íŒŒì¼ì´ ìœ„ì¹˜í•œ ê²½ë¡œë¡œ ì§€ì •í•´ì•¼ í•©ë‹ˆë‹¤.
         string csvPath = "Assets/12. DataCSV/TowerDataCSV.csv";
 
-        // ÆÄÀÏ Á¸Àç ¿©ºÎ È®ÀÎ: °æ·Î¿¡ ÆÄÀÏÀÌ ¾ø´Ù¸é ¿¡·¯ ·Î±×¸¦ ¶ç¿ì°í ÇÔ¼ö¸¦ Á¾·áÇÕ´Ï´Ù.
+        // íŒŒì¼ ì¡´ì¬ ì—¬ë¶€ í™•ì¸: ê²½ë¡œì— íŒŒì¼ì´ ì—†ë‹¤ë©´ ì—ëŸ¬ ë¡œê·¸ë¥¼ ë„ìš°ê³  í•¨ìˆ˜ë¥¼ ì¢…ë£Œí•©ë‹ˆë‹¤.
         if (!File.Exists(csvPath))
         {
-            Debug.LogError($"CSV ÆÄÀÏÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù: {csvPath}");
+            Debug.LogError($"CSV íŒŒì¼ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: {csvPath}");
             return;
         }
 
-        // 2. CSV ÆÄÀÏÀÇ ¸ğµç ÅØ½ºÆ®¸¦ ÁÙ(Line) ´ÜÀ§·Î ÀĞ¾î ¹è¿­·Î ÀúÀåÇÕ´Ï´Ù.
+        // 2. CSV íŒŒì¼ì˜ ëª¨ë“  í…ìŠ¤íŠ¸ë¥¼ ì¤„(Line) ë‹¨ìœ„ë¡œ ì½ì–´ ë°°ì—´ë¡œ ì €ì¥í•©ë‹ˆë‹¤.
         string[] lines = File.ReadAllLines(csvPath);
 
-        // ÇÁ·ÎÁ§Æ® ³»¿¡ Á¸ÀçÇÏ´Â ¸ğµç ProjectileData Å¸ÀÔÀÇ ScriptableObject ¿¡¼ÂÀ» °Ë»öÇÕ´Ï´Ù.
+        // í”„ë¡œì íŠ¸ ë‚´ì— ì¡´ì¬í•˜ëŠ” ëª¨ë“  ProjectileData íƒ€ì…ì˜ ScriptableObject ì—ì…‹ì„ ê²€ìƒ‰í•©ë‹ˆë‹¤.
         string[] guids = AssetDatabase.FindAssets("t:TowerData");
 
-        // 3. Ã¹ ¹øÂ° ÁÙ(index 0)Àº µ¥ÀÌÅÍ Ç×¸ñ ÀÌ¸§(Çì´õ)ÀÌ¹Ç·Î Á¦¿ÜÇÏ°í, µÎ ¹øÂ° ÁÙ(index 1)ºÎÅÍ ¼øÈ¸ÇÕ´Ï´Ù.
+        // 3. ì²« ë²ˆì§¸ ì¤„(index 0)ì€ ë°ì´í„° í•­ëª© ì´ë¦„(í—¤ë”)ì´ë¯€ë¡œ ì œì™¸í•˜ê³ , ë‘ ë²ˆì§¸ ì¤„(index 1)ë¶€í„° ìˆœíšŒí•©ë‹ˆë‹¤.
         for (int i = 1; i < lines.Length; i++)
         {
-            // °¢ ÁÙÀ» ½°Ç¥(,)¸¦ ±âÁØÀ¸·Î ºĞ¸®ÇÏ¿© ¹è¿­·Î ¸¸µì´Ï´Ù.
+            // ê° ì¤„ì„ ì‰¼í‘œ(,)ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ë¶„ë¦¬í•˜ì—¬ ë°°ì—´ë¡œ ë§Œë“­ë‹ˆë‹¤.
             string[] values = lines[i].Split(',');
 
-            // µ¥ÀÌÅÍ ¿­ÀÌ ºÎÁ·ÇÑ ºó ÁÙÀÌ³ª Àß¸øµÈ ÁÙÀº °Ç³Ê¶İ´Ï´Ù. (ÇöÀç 9°³ ¿­ ±âÁØ)
+            // ë°ì´í„° ì—´ì´ ë¶€ì¡±í•œ ë¹ˆ ì¤„ì´ë‚˜ ì˜ëª»ëœ ì¤„ì€ ê±´ë„ˆëœë‹ˆë‹¤. (í˜„ì¬ 9ê°œ ì—´ ê¸°ì¤€)
             if (values.Length < 9) continue;
 
-            // Ã¹ ¹øÂ° ¿­(ID)ÀÇ °ªÀ» ÀĞ¾î Á¤¼öÇüÀ¸·Î º¯È¯À» ½ÃµµÇÕ´Ï´Ù.
-            // Trim()À» »ç¿ëÇÏ¿© º¸ÀÌÁö ¾Ê´Â °ø¹éÀ» Á¦°ÅÇÕ´Ï´Ù.
+            // ì²« ë²ˆì§¸ ì—´(ID)ì˜ ê°’ì„ ì½ì–´ ì •ìˆ˜í˜•ìœ¼ë¡œ ë³€í™˜ì„ ì‹œë„í•©ë‹ˆë‹¤.
+            // Trim()ì„ ì‚¬ìš©í•˜ì—¬ ë³´ì´ì§€ ì•ŠëŠ” ê³µë°±ì„ ì œê±°í•©ë‹ˆë‹¤.
             if (int.TryParse(values[0].Trim(), out int csvID))
             {
-                // ¿¡µğÅÍ¿¡¼­ Ã£Àº ¸ğµç SO ÆÄÀÏµéÀ» ÇÏ³ª¾¿ ´ëÁ¶ÇØº¾´Ï´Ù.
+                // ì—ë””í„°ì—ì„œ ì°¾ì€ ëª¨ë“  SO íŒŒì¼ë“¤ì„ í•˜ë‚˜ì”© ëŒ€ì¡°í•´ë´…ë‹ˆë‹¤.
                 foreach (string guid in guids)
                 {
-                    // GUID¸¦ ÅëÇØ ½ÇÁ¦ ÆÄÀÏ °æ·Î¸¦ ¾ò°í, ÇØ´ç ¿¡¼ÂÀ» ¸Ş¸ğ¸®¿¡ ·ÎµåÇÕ´Ï´Ù.
+                    // GUIDë¥¼ í†µí•´ ì‹¤ì œ íŒŒì¼ ê²½ë¡œë¥¼ ì–»ê³ , í•´ë‹¹ ì—ì…‹ì„ ë©”ëª¨ë¦¬ì— ë¡œë“œí•©ë‹ˆë‹¤.
                     string assetPath = AssetDatabase.GUIDToAssetPath(guid);
                     TowerData so = AssetDatabase.LoadAssetAtPath<TowerData>(assetPath);
 
-                    // ·ÎµåÇÑ SOÀÇ ID¿Í CSVÀÇ ID°¡ ÀÏÄ¡ÇÏ´Â °æ¿ì µ¥ÀÌÅÍ¸¦ µ¤¾î¾º¿ó´Ï´Ù.
+                    // ë¡œë“œí•œ SOì˜ IDì™€ CSVì˜ IDê°€ ì¼ì¹˜í•˜ëŠ” ê²½ìš° ë°ì´í„°ë¥¼ ë®ì–´ì”Œì›ë‹ˆë‹¤.
                     if (so != null && so.towerID == csvID)
                     {
-                        // ¿¢¼¿¿¡¼­ »ı¼ºµÉ ¼ö ÀÖ´Â À×¿© Å«µû¿ÈÇ¥(")¸¦ ¿øÃµÀûÀ¸·Î Á¦°ÅÇÏ°í °ø¹éÀ» ¾ø¾Û´Ï´Ù.
+                        // ì—‘ì…€ì—ì„œ ìƒì„±ë  ìˆ˜ ìˆëŠ” ì‰ì—¬ í°ë”°ì˜´í‘œ(")ë¥¼ ì›ì²œì ìœ¼ë¡œ ì œê±°í•˜ê³  ê³µë°±ì„ ì—†ì•±ë‹ˆë‹¤.
                         so.towerName = values[1].Replace("\"", "").Trim();
 
-                        // ¹®ÀÚ¿­À» ½Ç¼ö(float)·Î º¯È¯ÇÏ¿© SO º¯¼ö¿¡ ´ëÀÔÇÕ´Ï´Ù.
+                        // ë¬¸ìì—´ì„ ì‹¤ìˆ˜(float)ë¡œ ë³€í™˜í•˜ì—¬ SO ë³€ìˆ˜ì— ëŒ€ì…í•©ë‹ˆë‹¤.
                         so.towerLevel = int.Parse(values[2].Trim());
                         so.attackPower = float.Parse(values[3].Trim());
                         so.range = float.Parse(values[4].Trim());
-                        so.attackSpeed = float.Parse(values[5].Trim());
-                        so.isCritical = bool.Parse(values[6].Trim());
-                        so.criticalRate = float.Parse(values[7].Trim());
-                        so.criticalDamage = float.Parse(values[8].Trim());
-                        so.duration = float.Parse(values[9].Trim());
-                        so.abilityValue = float.Parse(values[10].Trim());
+                        so.action = values.Length > 5 ? Mathf.Max(1, int.Parse(values[5].Trim())) : 1;
+                        so.attackCount = Mathf.Max(1, Mathf.RoundToInt(float.Parse(values[6].Trim())));
+                        so.splashRadius = Mathf.Max(0, Mathf.RoundToInt(float.Parse(values[7].Trim())));
+                        so.additionalHitCount = values.Length > 8 ? Mathf.Max(0, int.Parse(values[8].Trim())) : 0;
+                        so.isCritical = bool.Parse(values[9].Trim());
+                        so.criticalRate = float.Parse(values[10].Trim());
+                        so.criticalDamage = float.Parse(values[11].Trim());
+                        so.duration = float.Parse(values[12].Trim());
+                        so.abilityValue = float.Parse(values[13].Trim());
+                        so.projectileSpeed = float.Parse(values[18].Trim());
+                        so.hitEffectID = values.Length > 19 ? int.Parse(values[19].Trim()) : 0;
+                        so.targetPriority = values.Length > 20 && !string.IsNullOrWhiteSpace(values[20])
+                            ? ParseEnum<TargetPriority>(values[20])
+                            : TargetPriority.Closest;
 
-                        so.attackType = ParseEnum<AttackType>(values[11]);
-                        string layerName = values[12].Trim();
+                        so.attackType = ParseEnum<AttackType>(values[14]);
+                        string layerName = values[15].Trim();
                         so.targetLayer = !string.IsNullOrEmpty(layerName) ? LayerMask.GetMask(layerName) : 0;
-                        so.buffTarget = string.IsNullOrEmpty(values[13].Trim()) ? BuffTarget.None : ParseEnum<BuffTarget>(values[13]);
-                        so.debuffTarget = string.IsNullOrEmpty(values[14].Trim()) ? DebuffTarget.None : ParseEnum<DebuffTarget>(values[14]);
+                        so.buffTarget = string.IsNullOrEmpty(values[16].Trim()) ? BuffTarget.None : ParseEnum<BuffTarget>(values[16]);
+                        so.debuffTarget = string.IsNullOrEmpty(values[17].Trim()) ? DebuffTarget.None : ParseEnum<DebuffTarget>(values[17]);
 
 
-                        // º¯°æ »çÇ×ÀÌ ÀÖÀ½À» À¯´ÏÆ¼ ¿¡µğÅÍ¿¡ ¾Ë·Á, ÀúÀå ½Ã ÆÄÀÏ¿¡ ¹İ¿µµÇµµ·Ï ¸¶Å·ÇÕ´Ï´Ù.
+                        // ë³€ê²½ ì‚¬í•­ì´ ìˆìŒì„ ìœ ë‹ˆí‹° ì—ë””í„°ì— ì•Œë ¤, ì €ì¥ ì‹œ íŒŒì¼ì— ë°˜ì˜ë˜ë„ë¡ ë§ˆí‚¹í•©ë‹ˆë‹¤.
                         EditorUtility.SetDirty(so);
 
-                        // ÀÏÄ¡ÇÏ´Â µ¥ÀÌÅÍ¸¦ Ã£¾ÒÀ¸¹Ç·Î ´õ ÀÌ»óÀÇ SO Å½»öÀ» ¸ØÃß°í ´ÙÀ½ CSV ÁÙ·Î ³Ñ¾î°©´Ï´Ù.
+                        // ì¼ì¹˜í•˜ëŠ” ë°ì´í„°ë¥¼ ì°¾ì•˜ìœ¼ë¯€ë¡œ ë” ì´ìƒì˜ SO íƒìƒ‰ì„ ë©ˆì¶”ê³  ë‹¤ìŒ CSV ì¤„ë¡œ ë„˜ì–´ê°‘ë‹ˆë‹¤.
                         break;
                     }
                 }
             }
         }
 
-        // ¸¶Å·µÈ ¸ğµç ¿¡¼ÂµéÀÇ º¯°æ »çÇ×À» ÇÏµåµğ½ºÅ©¿¡ ¿ÏÀüÇÏ°Ô ÀúÀåÇÕ´Ï´Ù.
+        // ë§ˆí‚¹ëœ ëª¨ë“  ì—ì…‹ë“¤ì˜ ë³€ê²½ ì‚¬í•­ì„ í•˜ë“œë””ìŠ¤í¬ì— ì™„ì „í•˜ê²Œ ì €ì¥í•©ë‹ˆë‹¤.
         AssetDatabase.SaveAssets();
-        Debug.Log("CSV µ¥ÀÌÅÍ°¡ TowerData SO¿¡ ¼º°øÀûÀ¸·Î µ¤¾î¾º¿öÁ³½À´Ï´Ù.");
+        Debug.Log("CSV ë°ì´í„°ê°€ TowerData SOì— ì„±ê³µì ìœ¼ë¡œ ë®ì–´ì”Œì›Œì¡ŒìŠµë‹ˆë‹¤.");
     }
         private static T ParseEnum<T>(string value) where T : struct
     {
@@ -92,7 +100,7 @@ public class TowerCSVToSOImporter
         {
             return result;
         }
-        Debug.LogWarning($"Enum ÆÄ½Ì ½ÇÆĞ: {value} (±âº»°ª 0À¸·Î ¼³Á¤ÇÕ´Ï´Ù)");
+        Debug.LogWarning($"Enum íŒŒì‹± ì‹¤íŒ¨: {value} (ê¸°ë³¸ê°’ 0ìœ¼ë¡œ ì„¤ì •í•©ë‹ˆë‹¤)");
         return default(T);
     }
 #endif

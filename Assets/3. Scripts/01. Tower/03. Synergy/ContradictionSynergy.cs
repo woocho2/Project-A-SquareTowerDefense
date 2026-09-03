@@ -1,3 +1,4 @@
+#if false // Synergy system temporarily disabled
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -131,3 +132,5 @@ public class ContradictionSynergy : SynergyBase
         IsActive = false;
     }
 }
+
+#endif

@@ -1,3 +1,4 @@
+#if false // Synergy system temporarily disabled
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -74,3 +75,5 @@ public class StormSniperSynergy : SynergyBase
         IsActive = false;
     }
 }
+
+#endif

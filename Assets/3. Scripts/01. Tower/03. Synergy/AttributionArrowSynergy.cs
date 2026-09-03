@@ -1,3 +1,4 @@
+#if false // Synergy system temporarily disabled
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -76,3 +77,4 @@ public class AttributionArrowSynergy : SynergyBase
         IsActive = false;
     }
 }
+#endif

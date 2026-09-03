@@ -31,53 +31,53 @@ public class UIManager_Menu : MonoBehaviour
 
     IEnumerator CoFade(float from, float to, float duration)
     {
-        // CanvasGroupÀÌ ¾øÀ¸¸é ÆäÀÌµå°¡ ºÒ°¡´ÉÇÏ¹Ç·Î Á¾·á
+        // CanvasGroupì´ ì—†ìœ¼ë©´ í˜ì´ë“œê°€ ë¶ˆê°€ëŠ¥í•˜ë¯€ë¡œ ì¢…ë£Œ
         if (!Canvas_Menu)
             yield break;
 
-        // t: ÆäÀÌµå°¡ ÁøÇàµÈ ½Ã°£(ÃÊ)
+        // t: í˜ì´ë“œê°€ ì§„í–‰ëœ ì‹œê°„(ì´ˆ)
         float t = 0f;
 
-        // ÆäÀÌµå Áß¿¡´Â ÀÔ·ÂÀ» ¸·½À´Ï´Ù.
-        // (°ËÀº µ¤°³°¡ ÀÖ´Ù°í °¡Á¤ÇÏ°í, µÚ UI Å¬¸¯ ¹æÁö)
+        // í˜ì´ë“œ ì¤‘ì—ëŠ” ì…ë ¥ì„ ë§‰ìŠµë‹ˆë‹¤.
+        // (ê²€ì€ ë®ê°œê°€ ìˆë‹¤ê³  ê°€ì •í•˜ê³ , ë’¤ UI í´ë¦­ ë°©ì§€)
         Canvas_Menu.blocksRaycasts = true;
 
 
-        // durationÀÌ 0ÀÌ¸é "Áï½Ã" alpha¸¦ ¹Ù²Ù°í ³¡³À´Ï´Ù.
+        // durationì´ 0ì´ë©´ "ì¦‰ì‹œ" alphaë¥¼ ë°”ê¾¸ê³  ëëƒ…ë‹ˆë‹¤.
         if (duration <= 0f)
         {
-            // ¸ñÇ¥ ¾ËÆÄ·Î Áï½Ã ¼³Á¤
+            // ëª©í‘œ ì•ŒíŒŒë¡œ ì¦‰ì‹œ ì„¤ì •
             Canvas_Menu.alpha = to;
 
-            // ¿ÏÀü Åõ¸í (to°¡ °ÅÀÇ 0)ÀÌ¸é ÀÔ·ÂÀ» Ç®¾îµµ µÇ°í,
-            // ºÒÅõ¸í (to°¡ 0º¸´Ù Å©¸é) ÀÔ·ÂÀ» ¸·¾Æ¾ß ÇÔ
+            // ì™„ì „ íˆ¬ëª… (toê°€ ê±°ì˜ 0)ì´ë©´ ì…ë ¥ì„ í’€ì–´ë„ ë˜ê³ ,
+            // ë¶ˆíˆ¬ëª… (toê°€ 0ë³´ë‹¤ í¬ë©´) ì…ë ¥ì„ ë§‰ì•„ì•¼ í•¨
             Canvas_Menu.blocksRaycasts = to > 0.00001f;
             yield break;
         }
 
-        // duration µ¿¾È ¸Å ÇÁ·¹ÀÓ alpha¸¦ Á¶±İ¾¿ ¹Ù²ß´Ï´Ù.
+        // duration ë™ì•ˆ ë§¤ í”„ë ˆì„ alphaë¥¼ ì¡°ê¸ˆì”© ë°”ê¿‰ë‹ˆë‹¤.
         while (t < duration)
         {
-            // ½Ã°£ ´©Àû(Å¸ÀÓ½ºÄÉÀÏ ¿µÇâ X)
+            // ì‹œê°„ ëˆ„ì (íƒ€ì„ìŠ¤ì¼€ì¼ ì˜í–¥ X)
             t += Time.unscaledDeltaTime;
 
-            // 0..1 ºñÀ²·Î ÁøÇà·ü °è»ê
+            // 0..1 ë¹„ìœ¨ë¡œ ì§„í–‰ë¥  ê³„ì‚°
             float normalized = t / duration;
 
-            // Lerp: from°ú to»çÀÌ¸¦ normalized ºñÀ²·Î º¸°£
+            // Lerp: fromê³¼ toì‚¬ì´ë¥¼ normalized ë¹„ìœ¨ë¡œ ë³´ê°„
             float a = Mathf.Lerp(from, to, normalized);
 
-            // CanvasGroup ¾ËÆÄ Àû¿ë
+            // CanvasGroup ì•ŒíŒŒ ì ìš©
             Canvas_Menu.alpha = a;
 
-            // ´ÙÀ½ ÇÁ·¹ÀÓ±îÁö ´ë±â
+            // ë‹¤ìŒ í”„ë ˆì„ê¹Œì§€ ëŒ€ê¸°
             yield return null;
         }
 
-        // ³¡³µÀ¸¸é Á¤È®È÷ to °ªÀ¸·Î °íÁ¤ (¿ÀÂ÷ ¹æÁö)
+        // ëë‚¬ìœ¼ë©´ ì •í™•íˆ to ê°’ìœ¼ë¡œ ê³ ì • (ì˜¤ì°¨ ë°©ì§€)
         Canvas_Menu.alpha = to;
 
-        // ÃÖÁ¾ »óÅÂ¿¡ µû¶ó ÀÔ·Â Â÷´Ü ¿©ºÎ °áÁ¤
+        // ìµœì¢… ìƒíƒœì— ë”°ë¼ ì…ë ¥ ì°¨ë‹¨ ì—¬ë¶€ ê²°ì •
         Canvas_Menu.blocksRaycasts = to > 0.00001f;
     }
 }

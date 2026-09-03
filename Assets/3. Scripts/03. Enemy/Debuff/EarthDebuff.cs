@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// 10. Earth: ¼Ó¹Ú(±âÀı) + ÃÖ´ë Ã¼·Â ºñ·Ê µ¥¹ÌÁö
+// 10. Earth: ì†ë°•(ê¸°ì ˆ) + ìµœëŒ€ ì²´ë ¥ ë¹„ë¡€ ë°ë¯¸ì§€
 public class EarthDebuff : DebuffBase
 {
     public EarthDebuff(float duration, float maxHPDamagePercent)
@@ -8,8 +8,8 @@ public class EarthDebuff : DebuffBase
 
     public override void OnApply(EnemyHealthController health, EnemyMovementController movement)
     {
-        movement.SetSpeedMultiplier(0f); // ¼Ó¹Ú
-        health.ApplyDamage(health.MaxHP * (Value / 100f), false); // ÃÖ´ë Ã¼·Â ºñ·Ê µ¥¹ÌÁö
+        movement.SetSpeedMultiplier(0f); // ì†ë°•
+        health.ApplyDamage(health.MaxHP * (Value / 100f), false); // ìµœëŒ€ ì²´ë ¥ ë¹„ë¡€ ë°ë¯¸ì§€
     }
 
     public override void OnRemove(EnemyHealthController health, EnemyMovementController movement)

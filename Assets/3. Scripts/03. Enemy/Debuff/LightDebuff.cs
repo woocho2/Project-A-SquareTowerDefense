@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// 12. Light: Ã¼·ÂÀÌ ÀÏÁ¤ ºñÀ² ÀÌÇÏÀÏ ¶§ Áï½Ã »êÈ­(Ã³Ä¡)
+// 12. Light: ì²´ë ¥ì´ ì¼ì • ë¹„ìœ¨ ì´í•˜ì¼ ë•Œ ì¦‰ì‹œ ì‚°í™”(ì²˜ì¹˜)
 public class LightDebuff : DebuffBase
 {
     public LightDebuff(float duration, float executionThresholdPercent)
@@ -10,7 +10,7 @@ public class LightDebuff : DebuffBase
     {
         base.OnUpdate(health, movement, deltaTime);
 
-        // Ã¼·Â ºñÀ²ÀÌ ±âÁØÄ¡ ÀÌÇÏ·Î ¶³¾îÁö¸é Áï»ç Ã³¸®
+        // ì²´ë ¥ ë¹„ìœ¨ì´ ê¸°ì¤€ì¹˜ ì´í•˜ë¡œ ë–¨ì–´ì§€ë©´ ì¦‰ì‚¬ ì²˜ë¦¬
         if (health.CurrentHP > 0f && (health.CurrentHP / health.MaxHP) <= (Value / 100f))
         {
             health.ExecuteInstantKill();

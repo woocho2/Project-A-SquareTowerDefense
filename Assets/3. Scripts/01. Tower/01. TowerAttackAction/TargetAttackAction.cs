@@ -2,13 +2,12 @@ using UnityEngine;
 
 public class TargetAttackAction : TowerAttackAction
 {
-    // ±âº» »ı¼ºÀÚ: »óÀ§ Å¬·¡½º(TowerAttackAction)¿¡ TowerData Àü´Ş
+    // ê¸°ë³¸ ìƒì„±ì: ìƒìœ„ í´ë˜ìŠ¤(TowerAttackAction)ì— TowerData ì „ë‹¬
     public TargetAttackAction(TowerData data) : base(data) { }
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats currentStats)
     {
-        // ±âº» ¿ì¼±¼øÀ§(Closest)·Î Å¸°Ù Å½»ö
-        if (TryFindTarget(towerTransform.position, currentStats.Range, m_data.targetLayer, out EnemyHealthController targetEnemy))
+        if (TryFindTarget(towerTransform.position, currentStats.Range, m_data.targetLayer, out EnemyHealthController targetEnemy, m_data.targetPriority))
         {
             LaunchProjectile(towerTransform, targetEnemy.transform, currentStats);
             return true;
@@ -18,13 +17,13 @@ public class TargetAttackAction : TowerAttackAction
 
     private void LaunchProjectile(Transform firePoint, Transform targetTransform, TowerStats finalStats)
     {
-        // Àü¿ª Åõ»çÃ¼ ¸Å´ÏÀú À¯È¿¼º °Ë»ç
+        // ì „ì—­ íˆ¬ì‚¬ì²´ ë§¤ë‹ˆì € ìœ íš¨ì„± ê²€ì‚¬
         if (GlobalProjectileManager.Instance == null) return;
 
-        // ¸ñÇ¥ ÁöÁ¡À» ÇâÇÑ ¹ß»ç ¹æÇâ º¤ÅÍ °è»ê
+        // ëª©í‘œ ì§€ì ì„ í–¥í•œ ë°œì‚¬ ë°©í–¥ ë²¡í„° ê³„ì‚°
         Vector3 direction = (targetTransform.position - firePoint.position).normalized;
 
-        // ±âº» Åõ»çÃ¼ ÀÎ½ºÅÏ½º »ı¼º
+        // ê¸°ë³¸ íˆ¬ì‚¬ì²´ ì¸ìŠ¤í„´ìŠ¤ ìƒì„±
         ProjectileHit2D projectile = GlobalProjectileManager.Instance.SpawnProjectile(
             m_data.towerID,
             firePoint.position,
@@ -34,18 +33,18 @@ public class TargetAttackAction : TowerAttackAction
 
         if (projectile != null)
         {
-            // Ä¡¸íÅ¸ È®·ü °è»ê (TowerStatsÀÇ CriticalRate ÇÊµå Àû¿ë)
+            // ì¹˜ëª…íƒ€ í™•ë¥  ê³„ì‚° (TowerStatsì˜ CriticalRate í•„ë“œ ì ìš©)
             bool isCrit = UnityEngine.Random.Range(0f, 100f) <= (finalStats.CriticalRate * 100f);
             float calculatedDamage = finalStats.AttackPower;
 
-            // Ä¡¸íÅ¸ ¹ß»ı ½Ã µ¥¹ÌÁö ÁõÆø (±âº» 2¹è + CriticalDamage ¹èÀ² Ãß°¡)
+            // ì¹˜ëª…íƒ€ ë°œìƒ ì‹œ ë°ë¯¸ì§€ ì¦í­ (ê¸°ë³¸ 2ë°° + CriticalDamage ë°°ìœ¨ ì¶”ê°€)
             if (isCrit)
             {
                 float critMultiplier = 2.0f + finalStats.CriticalDamage;
                 calculatedDamage = finalStats.AttackPower * critMultiplier;
             }
 
-            // ProjectileStats ±¸Á¶Ã¼ »ı¼º ¹× ¹öÇÁ°¡ Àû¿ëµÈ finalStats °ª ÁÖÀÔ
+            // ProjectileStats êµ¬ì¡°ì²´ ìƒì„± ë° ë²„í”„ê°€ ì ìš©ëœ finalStats ê°’ ì£¼ì…
             ProjectileStats projectileStats = new ProjectileStats
             {
                 projectileID = m_data.towerID,
@@ -55,14 +54,15 @@ public class TargetAttackAction : TowerAttackAction
                 isCritical = isCrit,
                 criticalRate = finalStats.CriticalRate,
                 criticalDamage = finalStats.CriticalDamage,
-                SplashRadius = 0f,
+                SplashRadius = 0,
+                additionalHitCount = finalStats.AdditionalHitCount,
                 duration = finalStats.Duration,
                 abilityValue = finalStats.AbilityValue,
                 debuffTarget = m_data.debuffTarget,
                 hitEffectID = m_data.hitEffectID
             };
 
-            // Åõ»çÃ¼ ÃÊ±âÈ­ ¹× Å¸°Ù ÃßÀû ¹ß»ç
+            // íˆ¬ì‚¬ì²´ ì´ˆê¸°í™” ë° íƒ€ê²Ÿ ì¶”ì  ë°œì‚¬
             projectile.Init(projectileStats);
             projectile.IsSplash = false;
             projectile.SetTargetPosition(targetTransform.position);

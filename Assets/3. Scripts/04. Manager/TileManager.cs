@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Tilemaps;
 
-// 1. ¿¡³Ê¹Ì °æ·Î Å¸ÀÏÀÇ ¿ªÇÒÀ» ±¸ºĞÇÏ´Â ¿­°ÅÇü
+// 1. ì—ë„ˆë¯¸ ê²½ë¡œ íƒ€ì¼ì˜ ì—­í• ì„ êµ¬ë¶„í•˜ëŠ” ì—´ê±°í˜•
 public enum SpecialTileType
 {
     Normal,
@@ -12,13 +13,13 @@ public enum SpecialTileType
     HealTile
 }
 
-// 2. Å¸¿ö ¹èÄ¡ Å¸ÀÏÀÇ Æ¯¼ö ¹öÇÁ ¿ªÇÒÀ» ±¸ºĞÇÏ´Â ¿­°ÅÇü
+// 2. íƒ€ì›Œ ë°°ì¹˜ íƒ€ì¼ì˜ íŠ¹ìˆ˜ ë²„í”„ ì—­í• ì„ êµ¬ë¶„í•˜ëŠ” ì—´ê±°í˜•
 public enum TowerTileBuffType
 {
-    Normal,         // ±âº» Å¸ÀÏ
-    AttackPowerUp,  // °ø°İ·Â Áõ°¡
-    ActionCountUp,  // Çàµ¿·Â Áõ°¡
-    AttackSpeedUp   // °ø°İ¼Óµµ Áõ°¡
+    Normal,         // ê¸°ë³¸ íƒ€ì¼
+    AttackPowerUp,  // ê³µê²©ë ¥ ì¦ê°€
+    ActionCountUp,  // í–‰ë™ë ¥ ì¦ê°€
+    AttackCountUp   // ê³µê²©íšŸìˆ˜ ì¦ê°€
 }
 
 [RequireComponent(typeof(Tilemap))]
@@ -26,42 +27,43 @@ public class TileManager : MonoBehaviour
 {
     public static TileManager Instance { get; private set; }
 
-    [Header("¿¡³Ê¹Ì °æ·Î ÄÄÆ÷³ÍÆ® ÂüÁ¶")]
+    [Header("ì—ë„ˆë¯¸ ê²½ë¡œ ì»´í¬ë„ŒíŠ¸ ì°¸ì¡°")]
     [SerializeField] private Tilemap tilemap;
     [SerializeField] private TilePath tilePath;
 
-    [Header("¿¡³Ê¹Ì Æ¯¼ö Å¸ÀÏ »ı¼º °³¼ö ¼³Á¤")]
+    [Header("ì—ë„ˆë¯¸ íŠ¹ìˆ˜ íƒ€ì¼ ìƒì„± ê°œìˆ˜ ì„¤ì •")]
     [SerializeField] private int defendTileCount = 5;
     [SerializeField] private int speedTileCount = 5;
     [SerializeField] private int healTileCount = 2;
 
-    [Header("Å¸¿ö Æ¯¼ö Å¸ÀÏ »ı¼º °³¼ö ¼³Á¤")]
-    [Tooltip("°ø°İ·Â Áõ°¡ Å¸ÀÏ »ı¼º °³¼ö")]
+    [Header("íƒ€ì›Œ íŠ¹ìˆ˜ íƒ€ì¼ ìƒì„± ê°œìˆ˜ ì„¤ì •")]
+    [Tooltip("ê³µê²©ë ¥ ì¦ê°€ íƒ€ì¼ ìƒì„± ê°œìˆ˜")]
     [SerializeField] private int towerAttackPowerCount = 3;
     [SerializeField] private int towerActionCount = 3;
-    [SerializeField] private int towerAttackSpeedCount = 2;
+    [FormerlySerializedAs("towerAttackSpeedCount")]
+    [SerializeField] private int towerAttackCountTileCount = 2;
 
-    // ¿¡³Ê¹Ì Å¸ÀÏ Á¤º¸ (ÁÂÇ¥ -> ¿¡³Ê¹Ì Å¸ÀÏ ¼Ó¼º)
+    // ì—ë„ˆë¯¸ íƒ€ì¼ ì •ë³´ (ì¢Œí‘œ -> ì—ë„ˆë¯¸ íƒ€ì¼ ì†ì„±)
     public Dictionary<Vector3Int, SpecialTileType> specialTileMap = new Dictionary<Vector3Int, SpecialTileType>();
 
-    // Å¸¿ö Å¸ÀÏ Á¤º¸ (ÁÂÇ¥ -> Å¸¿ö ¹öÇÁ ¼Ó¼º)
+    // íƒ€ì›Œ íƒ€ì¼ ì •ë³´ (ì¢Œí‘œ -> íƒ€ì›Œ ë²„í”„ ì†ì„±)
     public Dictionary<Vector3Int, TowerTileBuffType> towerTileBuffMap = new Dictionary<Vector3Int, TowerTileBuffType>();
 
-    // ¿¡³Ê¹Ì °æ·Î 16Áø¼ö ÄÃ·¯ ÄÚµå
+    // ì—ë„ˆë¯¸ ê²½ë¡œ 16ì§„ìˆ˜ ì»¬ëŸ¬ ì½”ë“œ
     private readonly Color defendColor = HexToColor("FFFFAC");
     private readonly Color speedColor = HexToColor("8AFFFE");
     private readonly Color healColor = HexToColor("9EFFA8");
 
-    // Å¸¿ö ½ºÆù Å¸ÀÏ 16Áø¼ö ÄÃ·¯ ÄÚµå
-    private readonly Color towerAttackPowerColor = HexToColor("FF6161"); // °ø°İ·Â Áõ°¡ Å¸ÀÏ »ö»ó
-    private readonly Color towerActionCountColor = HexToColor("6ED5FF"); // Çàµ¿·Â Áõ°¡ Å¸ÀÏ »ö»ó
-    private readonly Color towerAttackSpeedColor = HexToColor("FFDE6E"); // °ø°İ¼Óµµ Áõ°¡ Å¸ÀÏ »ö»ó
+    // íƒ€ì›Œ ìŠ¤í° íƒ€ì¼ 16ì§„ìˆ˜ ì»¬ëŸ¬ ì½”ë“œ
+    private readonly Color towerAttackPowerColor = HexToColor("FF6161"); // ê³µê²©ë ¥ ì¦ê°€ íƒ€ì¼ ìƒ‰ìƒ
+    private readonly Color towerActionCountColor = HexToColor("6ED5FF"); // í–‰ë™ë ¥ ì¦ê°€ íƒ€ì¼ ìƒ‰ìƒ
+    private readonly Color towerAttackCountColor = HexToColor("FFDE6E"); // ê³µê²©íšŸìˆ˜ ì¦ê°€ íƒ€ì¼ ìƒ‰ìƒ
 
     void Awake()
     {
         if (Instance != null && Instance != this)
         {
-            Debug.LogWarning($"[TileManager] Áßº¹ ÀÎ½ºÅÏ½º Á¦°Å: {gameObject.name}");
+            Debug.LogWarning($"[TileManager] ì¤‘ë³µ ì¸ìŠ¤í„´ìŠ¤ ì œê±°: {gameObject.name}");
             Destroy(gameObject);
             return;
         }
@@ -79,30 +81,30 @@ public class TileManager : MonoBehaviour
 
     void Start()
     {
-        // 1. ¿¡³Ê¹Ì °æ·Î Æ¯¼ö Å¸ÀÏ ¹èÄ¡
+        // 1. ì—ë„ˆë¯¸ ê²½ë¡œ íŠ¹ìˆ˜ íƒ€ì¼ ë°°ì¹˜
         AssignRandomSpecialTiles();
 
-        // 2. Å¸¿ö ½ºÆù Å¸ÀÏ ¹öÇÁ ÁöÁ¤ °³¼ö ¹èÁ¤ ¹× »ö»ó Àû¿ë
+        // 2. íƒ€ì›Œ ìŠ¤í° íƒ€ì¼ ë²„í”„ ì§€ì • ê°œìˆ˜ ë°°ì • ë° ìƒ‰ìƒ ì ìš©
         AssignRandomTowerTileBuffs();
     }
 
     // ==========================================================================================================
-    // Å¸¿ö ½ºÆù Å¸ÀÏ ¹öÇÁ ¹èÁ¤ ·ÎÁ÷ (ÁöÁ¤ °³¼ö ¹æ½Ä)
+    // íƒ€ì›Œ ìŠ¤í° íƒ€ì¼ ë²„í”„ ë°°ì • ë¡œì§ (ì§€ì • ê°œìˆ˜ ë°©ì‹)
     // ==========================================================================================================
 
-    [ContextMenu("Å¸¿ö ½ºÆù Å¸ÀÏ ¹öÇÁ ·£´ı »ı¼º")]
+    [ContextMenu("íƒ€ì›Œ ìŠ¤í° íƒ€ì¼ ë²„í”„ ëœë¤ ìƒì„±")]
     public void AssignRandomTowerTileBuffs()
     {
         if (TowerManager.Instance == null)
         {
-            Debug.LogError("[TileManager] TowerManager.Instance¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError("[TileManager] TowerManager.Instanceë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
         Tilemap spawnTilemap = TowerManager.Instance.GetSpawnPointTilemap();
         if (spawnTilemap == null)
         {
-            Debug.LogError("[TileManager] TowerManagerÀÇ SpawnPoint TilemapÀ» °¡Á®¿ÀÁö ¸øÇß½À´Ï´Ù.");
+            Debug.LogError("[TileManager] TowerManagerì˜ SpawnPoint Tilemapì„ ê°€ì ¸ì˜¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -111,7 +113,7 @@ public class TileManager : MonoBehaviour
         BoundsInt bounds = spawnTilemap.cellBounds;
         List<Vector3Int> availableTilePositions = new List<Vector3Int>();
 
-        // 1. Á¸ÀçÇÏ´Â ¸ğµç Å¸¿ö ½ºÆù Å¸ÀÏ ÁÂÇ¥ ¼öÁı ¹× ÃÊ±âÈ­(±âº» Èò»ö)
+        // 1. ì¡´ì¬í•˜ëŠ” ëª¨ë“  íƒ€ì›Œ ìŠ¤í° íƒ€ì¼ ì¢Œí‘œ ìˆ˜ì§‘ ë° ì´ˆê¸°í™”(ê¸°ë³¸ í°ìƒ‰)
         for (int y = bounds.yMin; y < bounds.yMax; y++)
         {
             for (int x = bounds.xMin; x < bounds.xMax; x++)
@@ -126,13 +128,13 @@ public class TileManager : MonoBehaviour
             }
         }
 
-        // 2. ÁöÁ¤µÈ °³¼ö¸¸Å­ Å¸ÀÏÀ» »Ì¾Æ ¹öÇÁ ¹× »ö»ó ¹èÁ¤
+        // 2. ì§€ì •ëœ ê°œìˆ˜ë§Œí¼ íƒ€ì¼ì„ ë½‘ì•„ ë²„í”„ ë° ìƒ‰ìƒ ë°°ì •
         SetRandomTowerTiles(spawnTilemap, availableTilePositions, towerAttackPowerCount, TowerTileBuffType.AttackPowerUp, towerAttackPowerColor);
         SetRandomTowerTiles(spawnTilemap, availableTilePositions, towerActionCount, TowerTileBuffType.ActionCountUp, towerActionCountColor);
-        SetRandomTowerTiles(spawnTilemap, availableTilePositions, towerAttackSpeedCount, TowerTileBuffType.AttackSpeedUp, towerAttackSpeedColor);
+        SetRandomTowerTiles(spawnTilemap, availableTilePositions, towerAttackCountTileCount, TowerTileBuffType.AttackCountUp, towerAttackCountColor);
     }
 
-    // Å¸¿ö Å¸ÀÏ Ç®¿¡¼­ Æ¯Á¤ °³¼ö¸¸Å­ ·£´ı ÃßÃâ ÈÄ ¹èÁ¤ÇÏ´Â ÇïÆÛ ÇÔ¼ö
+    // íƒ€ì›Œ íƒ€ì¼ í’€ì—ì„œ íŠ¹ì • ê°œìˆ˜ë§Œí¼ ëœë¤ ì¶”ì¶œ í›„ ë°°ì •í•˜ëŠ” í—¬í¼ í•¨ìˆ˜
     private void SetRandomTowerTiles(Tilemap map, List<Vector3Int> pool, int count, TowerTileBuffType type, Color color)
     {
         for (int i = 0; i < count; i++)
@@ -149,7 +151,7 @@ public class TileManager : MonoBehaviour
         }
     }
 
-    // Æ¯Á¤ ÁÂÇ¥¿¡ À§Ä¡ÇÑ Å¸¿öÀÇ ¹öÇÁ Å¸ÀÔ Á¶È¸ ÇÔ¼ö
+    // íŠ¹ì • ì¢Œí‘œì— ìœ„ì¹˜í•œ íƒ€ì›Œì˜ ë²„í”„ íƒ€ì… ì¡°íšŒ í•¨ìˆ˜
     public TowerTileBuffType GetTowerTileBuffAt(Vector3Int gridPos)
     {
         if (towerTileBuffMap.TryGetValue(gridPos, out TowerTileBuffType buffType))
@@ -160,15 +162,15 @@ public class TileManager : MonoBehaviour
     }
 
     // ==========================================================================================================
-    // ±âÁ¸ ¿¡³Ê¹Ì °æ·Î ·ÎÁ÷
+    // ê¸°ì¡´ ì—ë„ˆë¯¸ ê²½ë¡œ ë¡œì§
     // ==========================================================================================================
 
-    [ContextMenu("·£´ı Æ¯¼ö Å¸ÀÏ »ı¼º")]
+    [ContextMenu("ëœë¤ íŠ¹ìˆ˜ íƒ€ì¼ ìƒì„±")]
     public void AssignRandomSpecialTiles()
     {
         if (tilePath == null || tilePath.pathGridPositions.Count < 3)
         {
-            Debug.LogWarning("[TileManager] Æ¯¼ö Å¸ÀÏÀ» ¹èÄ¡ÇÏ±â À§ÇÑ °æ·Î Å¸ÀÏ °³¼ö°¡ ºÎÁ·ÇÕ´Ï´Ù.");
+            Debug.LogWarning("[TileManager] íŠ¹ìˆ˜ íƒ€ì¼ì„ ë°°ì¹˜í•˜ê¸° ìœ„í•œ ê²½ë¡œ íƒ€ì¼ ê°œìˆ˜ê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.");
             return;
         }
 

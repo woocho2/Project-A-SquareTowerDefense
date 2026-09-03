@@ -85,7 +85,7 @@ public class CurrencyManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("°ñµå°¡ ºÎÁ·ÇÕ´Ï´Ù! ÇÊ¿äÇÑ °ñµå: " + amount);
+            Debug.LogWarning("ê³¨ë“œê°€ ë¶€ì¡±í•©ë‹ˆë‹¤! í•„ìš”í•œ ê³¨ë“œ: " + amount);
         }
     }
 
@@ -98,7 +98,7 @@ public class CurrencyManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("º¸¼®ÀÌ ºÎÁ·ÇÕ´Ï´Ù! ÇÊ¿äÇÑ º¸¼®: " + amount);
+            Debug.LogWarning("ë³´ì„ì´ ë¶€ì¡±í•©ë‹ˆë‹¤! í•„ìš”í•œ ë³´ì„: " + amount);
         }
     }
 

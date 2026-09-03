@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// 4. Axe: Ãë¾à (½ºÅÃ´ç ¹Ş´Â ÇÇÇØ Áõ°¡, ÃÖ´ë 5½ºÅÃ)
+// 4. Axe: ì·¨ì•½ (ìŠ¤íƒë‹¹ ë°›ëŠ” í”¼í•´ ì¦ê°€, ìµœëŒ€ 5ìŠ¤íƒ)
 public class AxeDebuff : DebuffBase
 {
     private const int MAX_STACK = 5;

@@ -550,7 +550,7 @@ MonoBehaviour:
   healTileCount: 2
   towerAttackPowerCount: 3
   towerActionCount: 3
-  towerAttackSpeedCount: 2
+  towerAttackCountTileCount: 2
 --- !u!1839735485 &296768363
 Tilemap:
   m_ObjectHideFlags: 0
@@ -7230,9 +7230,9 @@ GameObject:
   - component: {fileID: 2102427781}
   - component: {fileID: 2102427780}
   - component: {fileID: 2102427782}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Path
-  m_TagString: Untagged
+  m_TagString: Path
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

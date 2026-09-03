@@ -9,8 +9,11 @@ public class EnemyDebuffController : MonoBehaviour
     private EnemyHealthController m_health;
     private EnemyMovementController m_movement;
 
+#if false // Synergy system temporarily disabled
     private float m_heatwaveTickTimer = 0f;
     private const float HEATWAVE_INTERVAL = 1f;
+
+#endif
 
     private void Awake()
     {
@@ -22,7 +25,7 @@ public class EnemyDebuffController : MonoBehaviour
     {
         if (m_health.CurrentHP <= 0f) return;
 
-        UpdateSynergyHeatWave(Time.deltaTime);
+        // UpdateSynergyHeatWave(Time.deltaTime);
 
         for (int i = m_activeDebuffs.Count - 1; i >= 0; i--)
         {
@@ -53,34 +56,35 @@ public class EnemyDebuffController : MonoBehaviour
         }
     }
 
-    // Ç® ¹İÈ¯ ¹× »ç¸Á ½Ã È£ÃâµÇ´Â ÇÙ½É ÃÊ±âÈ­ ÇÔ¼ö
+    // í’€ ë°˜í™˜ ë° ì‚¬ë§ ì‹œ í˜¸ì¶œë˜ëŠ” í•µì‹¬ ì´ˆê¸°í™” í•¨ìˆ˜
     public void ClearAllDebuffs()
     {
-        // 1. µğ¹öÇÁ ÄÁÆ®·Ñ·¯¿¡ ½ÇÇà ÁßÀÎ ¸ğµç ÄÚ·çÆ¾(DoT µ¥¹ÌÁö, ½½·Î¿ì µî) °­Á¦ Á¾·á
+        // 1. ë””ë²„í”„ ì»¨íŠ¸ë¡¤ëŸ¬ì— ì‹¤í–‰ ì¤‘ì¸ ëª¨ë“  ì½”ë£¨í‹´(DoT ë°ë¯¸ì§€, ìŠ¬ë¡œìš° ë“±) ê°•ì œ ì¢…ë£Œ
         StopAllCoroutines();
 
-        // 2. Àû¿ë ÁßÀÎ µğ¹öÇÁ µ¥ÀÌÅÍ ÇØÁ¦ ¹× ¸®½ºÆ® ºñ¿ì±â
+        // 2. ì ìš© ì¤‘ì¸ ë””ë²„í”„ ë°ì´í„° í•´ì œ ë° ë¦¬ìŠ¤íŠ¸ ë¹„ìš°ê¸°
         for (int i = 0; i < m_activeDebuffs.Count; i++)
         {
             m_activeDebuffs[i].OnRemove(m_health, m_movement);
         }
         m_activeDebuffs.Clear();
 
-        // 3. ½Ã³ÊÁö ¹× ½ºÅÈ ¹èÀ² ÃÊ±âÈ­
-        m_heatwaveTickTimer = 0f;
+        // 3. ì‹œë„ˆì§€ ë° ìŠ¤íƒ¯ ë°°ìœ¨ ì´ˆê¸°í™”
+
         if (m_movement != null)
         {
-            m_movement.SetSynergySlow(1f);
+
             m_movement.SetSpeedMultiplier(1f);
         }
         if (m_health != null)
         {
-            m_health.SetSynergyWeak(1f);
+
             m_health.SetVulnerability(1f);
             m_health.SetDefendMultiplier(1f);
         }
     }
 
+#if false // Synergy system temporarily disabled
     private void UpdateSynergyHeatWave(float deltaTime)
     {
         if (TowerManager.Instance == null) return;
@@ -99,9 +103,11 @@ public class EnemyDebuffController : MonoBehaviour
         }
         else
         {
-            m_movement.SetSynergySlow(1f);
-            m_health.SetSynergyWeak(1f);
-            m_heatwaveTickTimer = 0f;
+
+
+    
         }
     }
+#endif
+
 }

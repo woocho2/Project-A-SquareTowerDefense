@@ -1,181 +1,261 @@
-﻿ID,Name,towerLevel,attackDamage,attackRange,attackSpeed,IsCritical,criticalRate,criticalDamage,duration,abilityValue,attackType,targetLayer,buffTarget,debuffTarget,Speed,SplashRadius,HitEffectID
-1101,(광역) 검 타워,1,2.5,2.1,0.23,FALSE,0.04,0.08,0.5,8.6957,Splash,Enemy,None,None,10,2.0,101
-1201,(단일) 검 타워,1,1.87,2.1,0.375,FALSE,0.075,0.04,0.0,0.0,Target,Enemy,None,None,15,0.0,201
-1301,(버프) 검 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,5.0,20.0,Buff,Tower,Sword,None,1,0.0,301
-1401,(디버프) 검 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,3.0,20.0,Debuff,Enemy,None,Sword,1,0.0,401
-2101,(광역) 검 타워,1,4.5,2.1,0.48,FALSE,0.048,0.1,0.75,25.0,Splash,Enemy,None,None,10,2.0,1101
-2201,(단일) 검 타워,1,3.18,2.1,0.83,FALSE,0.09,0.05,0.0,0.0,Target,Enemy,None,None,15,0.0,1201
-2301,(버프) 검 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,5.0,40.0,Buff,Tower,Sword,None,1,0.0,1301
-2401,(디버프) 검 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,3.5,35.0,Debuff,Enemy,None,Sword,1,0.0,1401
-3101,(광역) 검 타워,1,10.13,2.1,1.06,FALSE,0.0672,0.15,1.0,60.0,Splash,Enemy,None,None,10,3.0,2101
-3201,(단일) 검 타워,1,6.36,2.1,1.99,FALSE,0.126,0.08,0.0,0.0,Target,Enemy,None,None,15,0.0,2201
-3301,(버프) 검 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,5.0,80.0,Buff,Tower,Sword,None,1,0.0,2301
-3401,(디버프) 검 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,4.0,55.0,Debuff,Enemy,None,Sword,1,0.0,2401
-4101,(광역) 검 타워,1,30.39,2.31,2.65,FALSE,0.10752,0.3,1.5,150.0,Splash,Enemy,None,None,10,4.0,3101
-4201,(단일) 검 타워,1,19.08,2.31,5.47,FALSE,0.2016,0.16,0.0,0.0,Target,Enemy,None,None,15,0.0,3201
-4301,(버프) 검 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,5.0,150.0,Buff,Tower,Sword,None,1,0.0,3301
-4401,(디버프) 검 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,4.5,80.0,Debuff,Enemy,None,Sword,1,0.0,3401
-5101,(광역) 검 타워,1,127.64,2.89,7.95,FALSE,0.193536,0.84,2.5,525.0,Splash,Enemy,None,None,10,6.0,4101
-5201,(단일) 검 타워,1,95.4,2.89,21.88,FALSE,0.36288,0.45,0.0,0.0,Target,Enemy,None,None,15,0.0,4201
-5301,(버프) 검 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,300.0,Buff,Tower,Sword,None,1,0.0,4301
-5401,(디버프) 검 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,120.0,Debuff,Enemy,None,Sword,1,0.0,4401
-1102,(광역) 활 타워,1,2.0,2.75,0.31,FALSE,0.04,0.08,0.5,8.6957,Splash,Enemy,None,None,10,2.0,102
-1202,(단일) 활 타워,1,1.5,2.75,0.5,FALSE,0.075,0.04,0.0,0.0,Target,Enemy,None,None,15,0.0,202
-1302,(버프) 활 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,5.0,20.0,Buff,Tower,Bow,None,1,0.0,302
-1402,(디버프) 활 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,3.0,20.0,Debuff,Enemy,None,Bow,1,0.0,402
-2102,(광역) 활 타워,1,3.6,2.75,0.64,FALSE,0.048,0.1,0.75,25.0,Splash,Enemy,None,None,10,2.0,1102
-2202,(단일) 활 타워,1,2.54,2.75,1.11,FALSE,0.09,0.05,0.0,0.0,Target,Enemy,None,None,15,0.0,1202
-2302,(버프) 활 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,5.0,40.0,Buff,Tower,Bow,None,1,0.0,1302
-2402,(디버프) 활 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,3.5,35.0,Debuff,Enemy,None,Bow,1,0.0,1402
-3102,(광역) 활 타워,1,8.1,2.75,1.41,FALSE,0.0672,0.15,1.0,60.0,Splash,Enemy,None,None,10,3.0,2102
-3202,(단일) 활 타워,1,5.09,2.75,2.65,FALSE,0.126,0.08,0.0,0.0,Target,Enemy,None,None,15,0.0,2202
-3302,(버프) 활 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,5.0,80.0,Buff,Tower,Bow,None,1,0.0,2302
-3402,(디버프) 활 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,4.0,55.0,Debuff,Enemy,None,Bow,1,0.0,2402
-4102,(광역) 활 타워,1,24.31,3.03,3.53,FALSE,0.10752,0.3,1.5,150.0,Splash,Enemy,None,None,10,4.0,3102
-4202,(단일) 활 타워,1,15.26,3.03,7.29,FALSE,0.2016,0.16,0.0,0.0,Target,Enemy,None,None,15,0.0,3202
-4302,(버프) 활 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,5.0,150.0,Buff,Tower,Bow,None,1,0.0,3302
-4402,(디버프) 활 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,4.5,80.0,Debuff,Enemy,None,Bow,1,0.0,3402
-5102,(광역) 활 타워,1,102.11,3.79,10.6,FALSE,0.193536,0.84,2.5,525.0,Splash,Enemy,None,None,10,6.0,4102
-5202,(단일) 활 타워,1,76.32,3.79,29.17,FALSE,0.36288,0.45,0.0,0.0,Target,Enemy,None,None,15,0.0,4202
-5302,(버프) 활 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,300.0,Buff,Tower,Bow,None,1,0.0,4302
-5402,(디버프) 활 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,120.0,Debuff,Enemy,None,Bow,1,0.0,4402
-1103,(광역) 방패 타워,1,1.5,2.0,0.3,FALSE,0.04,0.08,0.1,8.6957,Splash,Enemy,None,Shield,10,2.0,103
-1203,(단일) 방패 타워,1,1.5,2.0,0.375,FALSE,0.075,0.04,0.0,0.0,Target,Enemy,None,None,15,0.0,203
-1303,(버프) 방패 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,5.0,20.0,Buff,Tower,Shield,None,1,0.0,303
-1403,(디버프) 방패 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,3.0,20.0,Debuff,Enemy,None,Shield,1,0.0,403
-2103,(광역) 방패 타워,1,2.7,2.0,0.63,FALSE,0.048,0.1,0.15,25.0,Splash,Enemy,None,Shield,10,2.0,1103
-2203,(단일) 방패 타워,1,2.54,2.0,0.83,FALSE,0.09,0.05,0.0,0.0,Target,Enemy,None,None,15,0.0,1203
-2303,(버프) 방패 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,5.0,40.0,Buff,Tower,Shield,None,1,0.0,1303
-2403,(디버프) 방패 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,3.5,35.0,Debuff,Enemy,None,Shield,1,0.0,1403
-3103,(광역) 방패 타워,1,6.08,2.0,1.38,FALSE,0.0672,0.15,0.2,60.0,Splash,Enemy,None,Shield,10,3.0,2103
-3203,(단일) 방패 타워,1,5.09,2.0,1.99,FALSE,0.126,0.08,0.0,0.0,Target,Enemy,None,None,15,0.0,2203
-3303,(버프) 방패 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,5.0,80.0,Buff,Tower,Shield,None,1,0.0,2303
-3403,(디버프) 방패 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,4.0,55.0,Debuff,Enemy,None,Shield,1,0.0,2403
-4103,(광역) 방패 타워,1,18.23,2.2,3.46,FALSE,0.10752,0.3,0.3,150.0,Splash,Enemy,None,Shield,10,4.0,3103
-4203,(단일) 방패 타워,1,15.26,2.2,5.47,FALSE,0.2016,0.16,0.0,0.0,Target,Enemy,None,None,15,0.0,3203
-4303,(버프) 방패 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,5.0,150.0,Buff,Tower,Shield,None,1,0.0,3303
-4403,(디버프) 방패 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,4.5,80.0,Debuff,Enemy,None,Shield,1,0.0,3403
-5103,(광역) 방패 타워,1,76.58,2.75,10.37,FALSE,0.193536,0.84,0.5,525.0,Splash,Enemy,None,Shield,10,6.0,4103
-5203,(단일) 방패 타워,1,76.32,2.75,21.88,FALSE,0.36288,0.45,0.0,0.0,Target,Enemy,None,None,15,0.0,4203
-5303,(버프) 방패 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,300.0,Buff,Tower,Shield,None,1,0.0,4303
-5403,(디버프) 방패 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,120.0,Debuff,Enemy,None,Shield,1,0.0,4403
-1104,(광역) 창 타워,1,2.0,2.5,0.28,FALSE,0.04,0.08,0.5,8.6957,Splash,Enemy,None,None,10,2.0,104
-1204,(단일) 창 타워,1,1.5,2.5,0.44,FALSE,0.075,0.04,0.0,0.0,Target,Enemy,None,None,15,0.0,204
-1304,(버프) 창 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,5.0,20.0,Buff,Tower,Spear,None,1,0.0,304
-1404,(디버프) 창 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,3.0,20.0,Debuff,Enemy,None,Spear,1,0.0,404
-2104,(광역) 창 타워,1,3.6,2.5,0.58,FALSE,0.048,0.1,0.75,25.0,Splash,Enemy,None,None,10,2.0,1104
-2204,(단일) 창 타워,1,2.54,2.5,0.98,FALSE,0.09,0.05,0.0,0.0,Target,Enemy,None,None,15,0.0,1204
-2304,(버프) 창 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,5.0,40.0,Buff,Tower,Spear,None,1,0.0,1304
-2404,(디버프) 창 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,3.5,35.0,Debuff,Enemy,None,Spear,1,0.0,1404
-3104,(광역) 창 타워,1,8.1,2.5,1.29,FALSE,0.0672,0.15,1.0,60.0,Splash,Enemy,None,None,10,3.0,2104
-3204,(단일) 창 타워,1,5.09,2.5,2.34,FALSE,0.126,0.08,0.0,0.0,Target,Enemy,None,None,15,0.0,2204
-3304,(버프) 창 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,5.0,80.0,Buff,Tower,Spear,None,1,0.0,2304
-3404,(디버프) 창 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,4.0,55.0,Debuff,Enemy,None,Spear,1,0.0,2404
-4104,(광역) 창 타워,1,24.31,2.75,3.22,FALSE,0.10752,0.3,1.5,150.0,Splash,Enemy,None,None,10,4.0,3104
-4204,(단일) 창 타워,1,15.26,2.75,6.44,FALSE,0.2016,0.16,0.0,0.0,Target,Enemy,None,None,15,0.0,3204
-4304,(버프) 창 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,5.0,150.0,Buff,Tower,Spear,None,1,0.0,3304
-4404,(디버프) 창 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,4.5,80.0,Debuff,Enemy,None,Spear,1,0.0,3404
-5104,(광역) 창 타워,1,102.11,3.44,9.66,FALSE,0.193536,0.84,2.5,525.0,Splash,Enemy,None,None,10,6.0,4104
-5204,(단일) 창 타워,1,76.32,3.44,25.75,FALSE,0.36288,0.45,0.0,0.0,Target,Enemy,None,None,15,0.0,4204
-5304,(버프) 창 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,300.0,Buff,Tower,Spear,None,1,0.0,4304
-5404,(디버프) 창 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,120.0,Debuff,Enemy,None,Spear,1,0.0,4404
-1105,(광역) 도끼 타워,1,3.0,1.8,0.23,FALSE,0.04,0.08,0.5,8.6957,Splash,Enemy,None,None,10,2.0,105
-1205,(단일) 도끼 타워,1,2.25,1.8,0.375,FALSE,0.075,0.04,0.0,0.0,Target,Enemy,None,None,15,0.0,205
-1305,(버프) 도끼 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,5.0,20.0,Buff,Tower,Axe,None,1,0.0,305
-1405,(디버프) 도끼 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,3.0,20.0,Debuff,Enemy,None,Axe,1,0.0,405
-2105,(광역) 도끼 타워,1,5.4,1.8,0.48,FALSE,0.048,0.1,0.75,25.0,Splash,Enemy,None,None,10,2.0,1105
-2205,(단일) 도끼 타워,1,3.82,1.8,0.83,FALSE,0.09,0.05,0.0,0.0,Target,Enemy,None,None,15,0.0,1205
-2305,(버프) 도끼 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,5.0,40.0,Buff,Tower,Axe,None,1,0.0,1305
-2405,(디버프) 도끼 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,3.5,35.0,Debuff,Enemy,None,Axe,1,0.0,1405
-3105,(광역) 도끼 타워,1,12.15,1.8,1.06,FALSE,0.0672,0.15,1.0,60.0,Splash,Enemy,None,None,10,3.0,2105
-3205,(단일) 도끼 타워,1,7.64,1.8,1.99,FALSE,0.126,0.08,0.0,0.0,Target,Enemy,None,None,15,0.0,2205
-3305,(버프) 도끼 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,5.0,80.0,Buff,Tower,Axe,None,1,0.0,2305
-3405,(디버프) 도끼 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,4.0,55.0,Debuff,Enemy,None,Axe,1,0.0,2405
-4105,(광역) 도끼 타워,1,36.46,1.98,2.65,FALSE,0.10752,0.3,1.5,150.0,Splash,Enemy,None,None,10,4.0,3105
-4205,(단일) 도끼 타워,1,22.9,1.98,5.47,FALSE,0.2016,0.16,0.0,0.0,Target,Enemy,None,None,15,0.0,3205
-4305,(버프) 도끼 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,5.0,150.0,Buff,Tower,Axe,None,1,0.0,3305
-4405,(디버프) 도끼 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,4.5,80.0,Debuff,Enemy,None,Axe,1,0.0,3405
-5105,(광역) 도끼 타워,1,153.16,2.48,7.95,FALSE,0.193536,0.84,2.5,525.0,Splash,Enemy,None,None,10,6.0,4105
-5205,(단일) 도끼 타워,1,114.48,2.48,21.88,FALSE,0.36288,0.45,0.0,0.0,Target,Enemy,None,None,15,0.0,4205
-5305,(버프) 도끼 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,300.0,Buff,Tower,Axe,None,1,0.0,4305
-5405,(디버프) 도끼 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,120.0,Debuff,Enemy,None,Axe,1,0.0,4405
-1106,(광역) 불 타워,1,1.0,2.1,0.23,FALSE,0.04,0.08,0.5,10.0,Splash,Enemy,None,Fire,10,2.0,106
-1206,(단일) 불 타워,1,0.75,2.1,0.375,FALSE,0.075,0.04,0.0,0.0,Target,Enemy,None,None,15,0.0,206
-1306,(버프) 불 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,5.0,20.0,Buff,Tower,Fire,None,1,0.0,306
-1406,(디버프) 불 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,3.0,20.0,Debuff,Enemy,None,Fire,1,0.0,406
-2106,(광역) 불 타워,1,1.8,2.1,0.48,FALSE,0.048,0.1,0.75,50.0,Splash,Enemy,None,Fire,10,2.0,1106
-2206,(단일) 불 타워,1,1.27,2.1,0.83,FALSE,0.09,0.05,0.0,0.0,Target,Enemy,None,None,15,0.0,1206
-2306,(버프) 불 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,5.0,40.0,Buff,Tower,Fire,None,1,0.0,1306
-2406,(디버프) 불 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,3.5,35.0,Debuff,Enemy,None,Fire,1,0.0,1406
-3106,(광역) 불 타워,1,4.05,2.1,1.06,FALSE,0.0672,0.15,1.0,120.0,Splash,Enemy,None,Fire,10,3.0,2106
-3206,(단일) 불 타워,1,2.54,2.1,1.99,FALSE,0.126,0.08,0.0,0.0,Target,Enemy,None,None,15,0.0,2206
-3306,(버프) 불 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,5.0,80.0,Buff,Tower,Fire,None,1,0.0,2306
-3406,(디버프) 불 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,4.0,55.0,Debuff,Enemy,None,Fire,1,0.0,2406
-4106,(광역) 불 타워,1,12.15,2.31,2.65,FALSE,0.10752,0.3,1.5,500.0,Splash,Enemy,None,Fire,10,4.0,3106
-4206,(단일) 불 타워,1,7.63,2.31,5.47,FALSE,0.2016,0.16,0.0,0.0,Target,Enemy,None,None,15,0.0,3206
-4306,(버프) 불 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,5.0,150.0,Buff,Tower,Fire,None,1,0.0,3306
-4406,(디버프) 불 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,4.5,80.0,Debuff,Enemy,None,Fire,1,0.0,3406
-5106,(광역) 불 타워,1,51.06,2.89,7.95,FALSE,0.193536,0.84,2.5,1500.0,Splash,Enemy,None,Fire,10,6.0,4106
-5206,(단일) 불 타워,1,38.16,2.89,21.88,FALSE,0.36288,0.45,0.0,0.0,Target,Enemy,None,None,15,0.0,4206
-5306,(버프) 불 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,300.0,Buff,Tower,Fire,None,1,0.0,4306
-5406,(디버프) 불 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,120.0,Debuff,Enemy,None,Fire,1,0.0,4406
-1107,(광역) 얼음 타워,1,1.0,2.1,0.23,FALSE,0.04,0.08,0.5,8.6957,Splash,Enemy,None,Ice,10,2.0,107
-1207,(단일) 얼음 타워,1,0.75,2.1,0.375,FALSE,0.075,0.04,0.0,0.0,Target,Enemy,None,None,15,0.0,207
-1307,(버프) 얼음 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,5.0,20.0,Buff,Tower,Ice,None,1,0.0,307
-1407,(디버프) 얼음 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,3.0,20.0,Debuff,Enemy,None,Ice,1,0.0,407
-2107,(광역) 얼음 타워,1,1.8,2.1,0.48,FALSE,0.048,0.1,0.75,25.0,Splash,Enemy,None,Ice,10,2.0,1107
-2207,(단일) 얼음 타워,1,1.27,2.1,0.83,FALSE,0.09,0.05,0.0,0.0,Target,Enemy,None,None,15,0.0,1207
-2307,(버프) 얼음 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,5.0,40.0,Buff,Tower,Ice,None,1,0.0,1307
-2407,(디버프) 얼음 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,3.5,35.0,Debuff,Enemy,None,Ice,1,0.0,1407
-3107,(광역) 얼음 타워,1,4.05,2.1,1.06,FALSE,0.0672,0.15,1.0,60.0,Splash,Enemy,None,Ice,10,3.0,2107
-3207,(단일) 얼음 타워,1,2.54,2.1,1.99,FALSE,0.126,0.08,0.0,0.0,Target,Enemy,None,None,15,0.0,2207
-3307,(버프) 얼음 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,5.0,80.0,Buff,Tower,Ice,None,1,0.0,2307
-3407,(디버프) 얼음 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,4.0,55.0,Debuff,Enemy,None,Ice,1,0.0,2407
-4107,(광역) 얼음 타워,1,12.15,2.31,2.65,FALSE,0.10752,0.3,1.5,150.0,Splash,Enemy,None,Ice,10,4.0,3107
-4207,(단일) 얼음 타워,1,7.63,2.31,5.47,FALSE,0.2016,0.16,0.0,0.0,Target,Enemy,None,None,15,0.0,3207
-4307,(버프) 얼음 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,5.0,150.0,Buff,Tower,Ice,None,1,0.0,3307
-4407,(디버프) 얼음 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,4.5,80.0,Debuff,Enemy,None,Ice,1,0.0,3407
-5107,(광역) 얼음 타워,1,51.06,2.89,7.95,FALSE,0.193536,0.84,2.5,525.0,Splash,Enemy,None,Ice,10,6.0,4107
-5207,(단일) 얼음 타워,1,38.16,2.89,21.88,FALSE,0.36288,0.45,0.0,0.0,Target,Enemy,None,None,15,0.0,4207
-5307,(버프) 얼음 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,300.0,Buff,Tower,Ice,None,1,0.0,4307
-5407,(디버프) 얼음 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,120.0,Debuff,Enemy,None,Ice,1,0.0,4407
-1108,(광역) 전기 타워,1,1.0,2.1,0.23,FALSE,0.04,0.08,0.5,8.6957,Splash,Enemy,None,Electricity,10,2.0,108
-1208,(단일) 전기 타워,1,0.75,2.1,0.375,FALSE,0.075,0.04,0.0,0.0,Target,Enemy,None,None,15,0.0,208
-1308,(버프) 전기 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,5.0,20.0,Buff,Tower,Electricity,None,1,0.0,308
-1408,(디버프) 전기 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,3.0,20.0,Debuff,Enemy,None,Electricity,1,0.0,408
-2108,(광역) 전기 타워,1,1.8,2.1,0.48,FALSE,0.048,0.1,0.75,25.0,Splash,Enemy,None,Electricity,10,2.0,1108
-2208,(단일) 전기 타워,1,1.27,2.1,0.83,FALSE,0.09,0.05,0.0,0.0,Target,Enemy,None,None,15,0.0,1208
-2308,(버프) 전기 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,5.0,40.0,Buff,Tower,Electricity,None,1,0.0,1308
-2408,(디버프) 전기 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,3.5,35.0,Debuff,Enemy,None,Electricity,1,0.0,1408
-3108,(광역) 전기 타워,1,4.05,2.1,1.06,FALSE,0.0672,0.15,1.0,60.0,Splash,Enemy,None,Electricity,10,3.0,2108
-3208,(단일) 전기 타워,1,2.54,2.1,1.99,FALSE,0.126,0.08,0.0,0.0,Target,Enemy,None,None,15,0.0,2208
-3308,(버프) 전기 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,5.0,80.0,Buff,Tower,Electricity,None,1,0.0,2308
-3408,(디버프) 전기 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,4.0,55.0,Debuff,Enemy,None,Electricity,1,0.0,2408
-4108,(광역) 전기 타워,1,12.15,2.31,2.65,FALSE,0.10752,0.3,1.5,150.0,Splash,Enemy,None,Electricity,10,4.0,3108
-4208,(단일) 전기 타워,1,7.63,2.31,5.47,FALSE,0.2016,0.16,0.0,0.0,Target,Enemy,None,None,15,0.0,3208
-4308,(버프) 전기 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,5.0,150.0,Buff,Tower,Electricity,None,1,0.0,3308
-4408,(디버프) 전기 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,4.5,80.0,Debuff,Enemy,None,Electricity,1,0.0,3408
-5108,(광역) 전기 타워,1,51.06,2.89,7.95,FALSE,0.193536,0.84,2.5,525.0,Splash,Enemy,None,Electricity,10,6.0,4108
-5208,(단일) 전기 타워,1,38.16,2.89,21.88,FALSE,0.36288,0.45,0.0,0.0,Target,Enemy,None,None,15,0.0,4208
-5308,(버프) 전기 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,300.0,Buff,Tower,Electricity,None,1,0.0,4308
-5408,(디버프) 전기 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,120.0,Debuff,Enemy,None,Electricity,1,0.0,4408
-1109,(광역) 바람 타워,1,1.0,2.1,0.23,FALSE,0.04,0.08,0.5,8.6957,Splash,Enemy,None,Wind,10,2.0,109
-1209,(단일) 바람 타워,1,0.75,2.1,0.375,FALSE,0.075,0.04,0.0,0.0,Target,Enemy,None,None,15,0.0,209
-1309,(버프) 바람 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,5.0,20.0,Buff,Tower,Wind,None,1,0.0,309
-1409,(디버프) 바람 타워,1,0.0,2.0,1.0,FALSE,0.0,0.0,3.0,20.0,Debuff,Enemy,None,Wind,1,0.0,409
-2109,(광역) 바람 타워,1,1.8,2.1,0.48,FALSE,0.048,0.1,0.75,25.0,Splash,Enemy,None,Wind,10,2.0,1109
-2209,(단일) 바람 타워,1,1.27,2.1,0.83,FALSE,0.09,0.05,0.0,0.0,Target,Enemy,None,None,15,0.0,1209
-2309,(버프) 바람 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,5.0,40.0,Buff,Tower,Wind,None,1,0.0,1309
-2409,(디버프) 바람 타워,1,0.0,2.5,1.0,FALSE,0.0,0.0,3.5,35.0,Debuff,Enemy,None,Wind,1,0.0,1409
-3109,(광역) 바람 타워,1,4.05,2.1,1.06,FALSE,0.0672,0.15,1.0,60.0,Splash,Enemy,None,Wind,10,3.0,2109
-3209,(단일) 바람 타워,1,2.54,2.1,1.99,FALSE,0.126,0.08,0.0,0.0,Target,Enemy,None,None,15,0.0,2209
-3309,(버프) 바람 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,5.0,80.0,Buff,Tower,Wind,None,1,0.0,2309
-3409,(디버프) 바람 타워,1,0.0,3.0,1.0,FALSE,0.0,0.0,4.0,55.0,Debuff,Enemy,None,Wind,1,0.0,2409
-4109,(광역) 바람 타워,1,12.15,2.31,2.65,FALSE,0.10752,0.3,1.5,150.0,Splash,Enemy,None,Wind,10,4.0,3109
-4209,(단일) 바람 타워,1,7.63,2.31,5.47,FALSE,0.2016,0.16,0.0,0.0,Target,Enemy,None,None,15,0.0,3209
-4309,(버프) 바람 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,5.0,150.0,Buff,Tower,Wind,None,1,0.0,3309
-4409,(디버프) 바람 타워,1,0.0,4.0,1.0,FALSE,0.0,0.0,4.5,80.0,Debuff,Enemy,None,Wind,1,0.0,3409
-5109,(광역) 바람 타워,1,51.06,2.89,7.95,FALSE,0.193536,0.84,2.5,525.0,Splash,Enemy,None,Wind,10,6.0,4109
-5209,(단일) 바람 타워,1,38.16,2.89,21.88,FALSE,0.36288,0.45,0.0,0.0,Target,Enemy,None,None,15,0.0,4209
-5309,(버프) 바람 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,300.0,Buff,Tower,Wind,None,1,0.0,4309
-5409,(디버프) 바람 타워,1,0.0,5.5,1.0,FALSE,0.0,0.0,5.0,120.0,Debuff,Enemy,None,Wind,1,0.0,4409
+﻿ID,Name,towerLevel,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCount,IsCritical,criticalRate,criticalDamage,duration,abilityValue,attackType,targetLayer,buffTarget,debuffTarget,Speed,HitEffectID,TargetPriority
+1101,브론즈 광역 검 타워,1,2,1,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,101,Closest
+1102,브론즈 광역 활 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,102,Closest
+1103,브론즈 광역 방패 타워,1,2,1,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,103,Closest
+1104,브론즈 광역 창 타워,1,2,1,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,104,Closest
+1105,브론즈 광역 도끼 타워,1,2,1,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,105,Closest
+1106,브론즈 광역 해머 타워,1,2,1,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,106,Closest
+1107,브론즈 광역 불 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,107,Closest
+1108,브론즈 광역 얼음 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,108,Closest
+1109,브론즈 광역 번개 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,109,Closest
+1110,브론즈 광역 바람 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,110,Closest
+1111,브론즈 광역 대지 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,111,Closest
+1112,브론즈 광역 빛 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,112,Closest
+1113,브론즈 광역 어둠 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,113,Closest
+1201,브론즈 단일 검 타워,1,2,1,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,201,Closest
+1202,브론즈 단일 활 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,202,Closest
+1203,브론즈 단일 방패 타워,1,2,1,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,203,Closest
+1204,브론즈 단일 창 타워,1,2,1,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,204,Closest
+1205,브론즈 단일 도끼 타워,1,2,1,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,205,Closest
+1206,브론즈 단일 해머 타워,1,2,1,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,206,Closest
+1207,브론즈 단일 불 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,207,Closest
+1208,브론즈 단일 얼음 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,208,Closest
+1209,브론즈 단일 번개 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,209,Closest
+1210,브론즈 단일 바람 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,210,Closest
+1211,브론즈 단일 대지 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,211,Closest
+1212,브론즈 단일 빛 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,212,Closest
+1213,브론즈 단일 어둠 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,213,Closest
+1301,브론즈 버프 검 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Sword,None,0,301,Closest
+1302,브론즈 버프 활 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Bow,None,0,302,Closest
+1303,브론즈 버프 방패 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Shield,None,0,303,Closest
+1304,브론즈 버프 창 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Spear,None,0,304,Closest
+1305,브론즈 버프 도끼 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Axe,None,0,305,Closest
+1306,브론즈 버프 해머 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Hammer,None,0,306,Closest
+1307,브론즈 버프 불 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Fire,None,0,307,Closest
+1308,브론즈 버프 얼음 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Ice,None,0,308,Closest
+1309,브론즈 버프 번개 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Electricity,None,0,309,Closest
+1310,브론즈 버프 바람 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Wind,None,0,310,Closest
+1311,브론즈 버프 대지 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Earth,None,0,311,Closest
+1312,브론즈 버프 빛 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Light,None,0,312,Closest
+1313,브론즈 버프 어둠 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Darkness,None,0,313,Closest
+1401,브론즈 디버프 검 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Sword,0,401,Closest
+1402,브론즈 디버프 활 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Bow,0,402,Closest
+1403,브론즈 디버프 방패 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Shield,0,403,Closest
+1404,브론즈 디버프 창 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Spear,0,404,Closest
+1405,브론즈 디버프 도끼 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Axe,0,405,Closest
+1406,브론즈 디버프 해머 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Hammer,0,406,Closest
+1407,브론즈 디버프 불 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Fire,0,407,Closest
+1408,브론즈 디버프 얼음 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Ice,0,408,Closest
+1409,브론즈 디버프 번개 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Electricity,0,409,Closest
+1410,브론즈 디버프 바람 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Wind,0,410,Closest
+1411,브론즈 디버프 대지 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Earth,0,411,Closest
+1412,브론즈 디버프 빛 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Light,0,412,Closest
+1413,브론즈 디버프 어둠 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Darkness,0,413,Closest
+2101,실버 광역 검 타워,1,2,1,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,101,Closest
+2102,실버 광역 활 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,102,Closest
+2103,실버 광역 방패 타워,1,2,1,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,103,Closest
+2104,실버 광역 창 타워,1,2,1,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,104,Closest
+2105,실버 광역 도끼 타워,1,2,1,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,105,Closest
+2106,실버 광역 해머 타워,1,2,1,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,106,Closest
+2107,실버 광역 불 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,107,Closest
+2108,실버 광역 얼음 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,108,Closest
+2109,실버 광역 번개 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,109,Closest
+2110,실버 광역 바람 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,110,Closest
+2111,실버 광역 대지 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,111,Closest
+2112,실버 광역 빛 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,112,Closest
+2113,실버 광역 어둠 타워,1,2,2,3,1,1,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,113,Closest
+2201,실버 단일 검 타워,1,2,1,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,201,Closest
+2202,실버 단일 활 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,202,Closest
+2203,실버 단일 방패 타워,1,2,1,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,203,Closest
+2204,실버 단일 창 타워,1,2,1,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,204,Closest
+2205,실버 단일 도끼 타워,1,2,1,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,205,Closest
+2206,실버 단일 해머 타워,1,2,1,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,206,Closest
+2207,실버 단일 불 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,207,Closest
+2208,실버 단일 얼음 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,208,Closest
+2209,실버 단일 번개 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,209,Closest
+2210,실버 단일 바람 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,210,Closest
+2211,실버 단일 대지 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,211,Closest
+2212,실버 단일 빛 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,212,Closest
+2213,실버 단일 어둠 타워,1,2,2,3,1,0,1,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,213,Closest
+2301,실버 버프 검 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Sword,None,0,301,Closest
+2302,실버 버프 활 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Bow,None,0,302,Closest
+2303,실버 버프 방패 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Shield,None,0,303,Closest
+2304,실버 버프 창 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Spear,None,0,304,Closest
+2305,실버 버프 도끼 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Axe,None,0,305,Closest
+2306,실버 버프 해머 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Hammer,None,0,306,Closest
+2307,실버 버프 불 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Fire,None,0,307,Closest
+2308,실버 버프 얼음 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Ice,None,0,308,Closest
+2309,실버 버프 번개 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Electricity,None,0,309,Closest
+2310,실버 버프 바람 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Wind,None,0,310,Closest
+2311,실버 버프 대지 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Earth,None,0,311,Closest
+2312,실버 버프 빛 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Light,None,0,312,Closest
+2313,실버 버프 어둠 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Darkness,None,0,313,Closest
+2401,실버 디버프 검 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Sword,0,401,Closest
+2402,실버 디버프 활 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Bow,0,402,Closest
+2403,실버 디버프 방패 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Shield,0,403,Closest
+2404,실버 디버프 창 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Spear,0,404,Closest
+2405,실버 디버프 도끼 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Axe,0,405,Closest
+2406,실버 디버프 해머 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Hammer,0,406,Closest
+2407,실버 디버프 불 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Fire,0,407,Closest
+2408,실버 디버프 얼음 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Ice,0,408,Closest
+2409,실버 디버프 번개 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Electricity,0,409,Closest
+2410,실버 디버프 바람 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Wind,0,410,Closest
+2411,실버 디버프 대지 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Earth,0,411,Closest
+2412,실버 디버프 빛 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Light,0,412,Closest
+2413,실버 디버프 어둠 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Darkness,0,413,Closest
+3101,골드 광역 검 타워,1,2,1,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,101,Closest
+3102,골드 광역 활 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,102,Closest
+3103,골드 광역 방패 타워,1,2,1,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,103,Closest
+3104,골드 광역 창 타워,1,2,1,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,104,Closest
+3105,골드 광역 도끼 타워,1,2,1,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,105,Closest
+3106,골드 광역 해머 타워,1,2,1,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,106,Closest
+3107,골드 광역 불 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,107,Closest
+3108,골드 광역 얼음 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,108,Closest
+3109,골드 광역 번개 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,109,Closest
+3110,골드 광역 바람 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,110,Closest
+3111,골드 광역 대지 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,111,Closest
+3112,골드 광역 빛 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,112,Closest
+3113,골드 광역 어둠 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,113,Closest
+3201,골드 단일 검 타워,1,2,1,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,201,Closest
+3202,골드 단일 활 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,202,Closest
+3203,골드 단일 방패 타워,1,2,1,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,203,Closest
+3204,골드 단일 창 타워,1,2,1,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,204,Closest
+3205,골드 단일 도끼 타워,1,2,1,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,205,Closest
+3206,골드 단일 해머 타워,1,2,1,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,206,Closest
+3207,골드 단일 불 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,207,Closest
+3208,골드 단일 얼음 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,208,Closest
+3209,골드 단일 번개 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,209,Closest
+3210,골드 단일 바람 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,210,Closest
+3211,골드 단일 대지 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,211,Closest
+3212,골드 단일 빛 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,212,Closest
+3213,골드 단일 어둠 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,213,Closest
+3301,골드 버프 검 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Sword,None,0,301,Closest
+3302,골드 버프 활 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Bow,None,0,302,Closest
+3303,골드 버프 방패 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Shield,None,0,303,Closest
+3304,골드 버프 창 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Spear,None,0,304,Closest
+3305,골드 버프 도끼 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Axe,None,0,305,Closest
+3306,골드 버프 해머 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Hammer,None,0,306,Closest
+3307,골드 버프 불 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Fire,None,0,307,Closest
+3308,골드 버프 얼음 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Ice,None,0,308,Closest
+3309,골드 버프 번개 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Electricity,None,0,309,Closest
+3310,골드 버프 바람 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Wind,None,0,310,Closest
+3311,골드 버프 대지 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Earth,None,0,311,Closest
+3312,골드 버프 빛 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Light,None,0,312,Closest
+3313,골드 버프 어둠 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Darkness,None,0,313,Closest
+3401,골드 디버프 검 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Sword,0,401,Closest
+3402,골드 디버프 활 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Bow,0,402,Closest
+3403,골드 디버프 방패 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Shield,0,403,Closest
+3404,골드 디버프 창 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Spear,0,404,Closest
+3405,골드 디버프 도끼 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Axe,0,405,Closest
+3406,골드 디버프 해머 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Hammer,0,406,Closest
+3407,골드 디버프 불 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Fire,0,407,Closest
+3408,골드 디버프 얼음 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Ice,0,408,Closest
+3409,골드 디버프 번개 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Electricity,0,409,Closest
+3410,골드 디버프 바람 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Wind,0,410,Closest
+3411,골드 디버프 대지 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Earth,0,411,Closest
+3412,골드 디버프 빛 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Light,0,412,Closest
+3413,골드 디버프 어둠 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Darkness,0,413,Closest
+4101,미스릴 광역 검 타워,1,2,1,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,101,Closest
+4102,미스릴 광역 활 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,102,Closest
+4103,미스릴 광역 방패 타워,1,2,1,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,103,Closest
+4104,미스릴 광역 창 타워,1,2,1,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,104,Closest
+4105,미스릴 광역 도끼 타워,1,2,1,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,105,Closest
+4106,미스릴 광역 해머 타워,1,2,1,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,106,Closest
+4107,미스릴 광역 불 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,107,Closest
+4108,미스릴 광역 얼음 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,108,Closest
+4109,미스릴 광역 번개 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,109,Closest
+4110,미스릴 광역 바람 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,110,Closest
+4111,미스릴 광역 대지 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,111,Closest
+4112,미스릴 광역 빛 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,112,Closest
+4113,미스릴 광역 어둠 타워,1,2,2,3,1,2,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,113,Closest
+4201,미스릴 단일 검 타워,1,2,1,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,201,Closest
+4202,미스릴 단일 활 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,202,Closest
+4203,미스릴 단일 방패 타워,1,2,1,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,203,Closest
+4204,미스릴 단일 창 타워,1,2,1,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,204,Closest
+4205,미스릴 단일 도끼 타워,1,2,1,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,205,Closest
+4206,미스릴 단일 해머 타워,1,2,1,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,206,Closest
+4207,미스릴 단일 불 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,207,Closest
+4208,미스릴 단일 얼음 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,208,Closest
+4209,미스릴 단일 번개 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,209,Closest
+4210,미스릴 단일 바람 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,210,Closest
+4211,미스릴 단일 대지 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,211,Closest
+4212,미스릴 단일 빛 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,212,Closest
+4213,미스릴 단일 어둠 타워,1,2,2,3,1,0,2,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,213,Closest
+4301,미스릴 버프 검 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Sword,None,0,301,Closest
+4302,미스릴 버프 활 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Bow,None,0,302,Closest
+4303,미스릴 버프 방패 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Shield,None,0,303,Closest
+4304,미스릴 버프 창 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Spear,None,0,304,Closest
+4305,미스릴 버프 도끼 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Axe,None,0,305,Closest
+4306,미스릴 버프 해머 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Hammer,None,0,306,Closest
+4307,미스릴 버프 불 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Fire,None,0,307,Closest
+4308,미스릴 버프 얼음 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Ice,None,0,308,Closest
+4309,미스릴 버프 번개 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Electricity,None,0,309,Closest
+4310,미스릴 버프 바람 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Wind,None,0,310,Closest
+4311,미스릴 버프 대지 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Earth,None,0,311,Closest
+4312,미스릴 버프 빛 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Light,None,0,312,Closest
+4313,미스릴 버프 어둠 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Darkness,None,0,313,Closest
+4401,미스릴 디버프 검 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Sword,0,401,Closest
+4402,미스릴 디버프 활 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Bow,0,402,Closest
+4403,미스릴 디버프 방패 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Shield,0,403,Closest
+4404,미스릴 디버프 창 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Spear,0,404,Closest
+4405,미스릴 디버프 도끼 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Axe,0,405,Closest
+4406,미스릴 디버프 해머 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Hammer,0,406,Closest
+4407,미스릴 디버프 불 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Fire,0,407,Closest
+4408,미스릴 디버프 얼음 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Ice,0,408,Closest
+4409,미스릴 디버프 번개 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Electricity,0,409,Closest
+4410,미스릴 디버프 바람 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Wind,0,410,Closest
+4411,미스릴 디버프 대지 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Earth,0,411,Closest
+4412,미스릴 디버프 빛 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Light,0,412,Closest
+4413,미스릴 디버프 어둠 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Darkness,0,413,Closest
+5101,다이아몬드 광역 검 타워,1,2,1,3,1,3,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,101,Closest
+5102,다이아몬드 광역 활 타워,1,2,2,3,1,3,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,102,Closest
+5103,다이아몬드 광역 방패 타워,1,2,1,3,1,3,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,103,Closest
+5104,다이아몬드 광역 창 타워,1,2,1,3,1,3,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,104,Closest
+5105,다이아몬드 광역 도끼 타워,1,2,1,3,1,3,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,105,Closest
+5106,다이아몬드 광역 해머 타워,1,2,1,3,1,3,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,106,Closest
+5107,다이아몬드 광역 불 타워,1,2,2,3,1,3,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,107,Closest
+5108,다이아몬드 광역 얼음 타워,1,2,2,3,1,3,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,108,Closest
+5109,다이아몬드 광역 번개 타워,1,2,2,3,1,3,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,109,Closest
+5110,다이아몬드 광역 바람 타워,1,2,2,3,1,3,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,110,Closest
+5111,다이아몬드 광역 대지 타워,1,2,2,3,1,3,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,111,Closest
+5112,다이아몬드 광역 빛 타워,1,2,2,3,1,3,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,112,Closest
+5113,다이아몬드 광역 어둠 타워,1,2,2,3,1,3,0,FALSE,0.5,0.5,3,10,Splash,Enemy,None,None,5,113,Closest
+5201,다이아몬드 단일 검 타워,1,2,1,3,1,0,3,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,201,Closest
+5202,다이아몬드 단일 활 타워,1,2,2,3,1,0,3,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,202,Closest
+5203,다이아몬드 단일 방패 타워,1,2,1,3,1,0,3,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,203,Closest
+5204,다이아몬드 단일 창 타워,1,2,1,3,1,0,3,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,204,Closest
+5205,다이아몬드 단일 도끼 타워,1,2,1,3,1,0,3,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,205,Closest
+5206,다이아몬드 단일 해머 타워,1,2,1,3,1,0,3,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,206,Closest
+5207,다이아몬드 단일 불 타워,1,2,2,3,1,0,3,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,207,Closest
+5208,다이아몬드 단일 얼음 타워,1,2,2,3,1,0,3,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,208,Closest
+5209,다이아몬드 단일 번개 타워,1,2,2,3,1,0,3,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,209,Closest
+5210,다이아몬드 단일 바람 타워,1,2,2,3,1,0,3,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,210,Closest
+5211,다이아몬드 단일 대지 타워,1,2,2,3,1,0,3,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,211,Closest
+5212,다이아몬드 단일 빛 타워,1,2,2,3,1,0,3,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,212,Closest
+5213,다이아몬드 단일 어둠 타워,1,2,2,3,1,0,3,FALSE,0.5,0.5,3,10,Target,Enemy,None,None,10,213,Closest
+5301,다이아몬드 버프 검 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Sword,None,0,301,Closest
+5302,다이아몬드 버프 활 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Bow,None,0,302,Closest
+5303,다이아몬드 버프 방패 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Shield,None,0,303,Closest
+5304,다이아몬드 버프 창 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Spear,None,0,304,Closest
+5305,다이아몬드 버프 도끼 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Axe,None,0,305,Closest
+5306,다이아몬드 버프 해머 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Hammer,None,0,306,Closest
+5307,다이아몬드 버프 불 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Fire,None,0,307,Closest
+5308,다이아몬드 버프 얼음 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Ice,None,0,308,Closest
+5309,다이아몬드 버프 번개 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Electricity,None,0,309,Closest
+5310,다이아몬드 버프 바람 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Wind,None,0,310,Closest
+5311,다이아몬드 버프 대지 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Earth,None,0,311,Closest
+5312,다이아몬드 버프 빛 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Light,None,0,312,Closest
+5313,다이아몬드 버프 어둠 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Buff,Tower,Darkness,None,0,313,Closest
+5401,다이아몬드 디버프 검 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Sword,0,401,Closest
+5402,다이아몬드 디버프 활 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Bow,0,402,Closest
+5403,다이아몬드 디버프 방패 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Shield,0,403,Closest
+5404,다이아몬드 디버프 창 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Spear,0,404,Closest
+5405,다이아몬드 디버프 도끼 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Axe,0,405,Closest
+5406,다이아몬드 디버프 해머 타워,1,2,1,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Hammer,0,406,Closest
+5407,다이아몬드 디버프 불 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Fire,0,407,Closest
+5408,다이아몬드 디버프 얼음 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Ice,0,408,Closest
+5409,다이아몬드 디버프 번개 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Electricity,0,409,Closest
+5410,다이아몬드 디버프 바람 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Wind,0,410,Closest
+5411,다이아몬드 디버프 대지 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Earth,0,411,Closest
+5412,다이아몬드 디버프 빛 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Light,0,412,Closest
+5413,다이아몬드 디버프 어둠 타워,1,2,2,3,1,0,0,FALSE,0.5,0.5,3,10,Debuff,Enemy,None,Darkness,0,413,Closest

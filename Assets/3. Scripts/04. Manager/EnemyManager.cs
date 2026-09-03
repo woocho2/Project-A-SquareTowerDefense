@@ -6,7 +6,7 @@ public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager Instance { get; private set; }
 
-    [Header("ÂüÁ¶")]
+    [Header("ì°¸ì¡°")]
     [SerializeField] private TilePath m_tilePath;
 
     public List<EnemyMovementController> activeEnemies = new List<EnemyMovementController>();
@@ -26,16 +26,16 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    // ¿¡³Ê¹Ì ÅÏ ½ÃÀÛ ½Ã È£Ãâ: ½Å±Ô ¸ó½ºÅÍ ½ºÆù + ÀüÃ¼ ¸ó½ºÅÍ ÁÖ»çÀ§ ÀÌµ¿ ¹× Å¸ÀÏ °Ë»ç ÅëÇÕ
+    // ì—ë„ˆë¯¸ í„´ ì‹œì‘ ì‹œ í˜¸ì¶œ: ì‹ ê·œ ëª¬ìŠ¤í„° ìŠ¤í° + ì „ì²´ ëª¬ìŠ¤í„° ì£¼ì‚¬ìœ„ ì´ë™ ë° íƒ€ì¼ ê²€ì‚¬ í†µí•©
     public IEnumerator ProcessEnemyTurnRoutine()
     {
-        // 1. WaveManager¸¦ ÅëÇØ »õ Àû ½ºÆù (¿şÀÌºê ´ç 1¸¶¸®¾¿ »ı¼º ±¸Á¶¶ó¸é ¿©±â¼­ È£Ãâ)
+        // 1. WaveManagerë¥¼ í†µí•´ ìƒˆ ì  ìŠ¤í° (ì›¨ì´ë¸Œ ë‹¹ 1ë§ˆë¦¬ì”© ìƒì„± êµ¬ì¡°ë¼ë©´ ì—¬ê¸°ì„œ í˜¸ì¶œ)
         if (WaveManager.Instance != null)
         {
             WaveManager.Instance.SpawnNextWaveEnemyForTurn();
         }
 
-        // 2. »ì¾ÆÀÖ´Â ¸ğµç Àû ÀÌµ¿ Ã³¸® (0¹øÀº 1Ä­, ³ª¸ÓÁö´Â ÁÖ»çÀ§)
+        // 2. ì‚´ì•„ìˆëŠ” ëª¨ë“  ì  ì´ë™ ì²˜ë¦¬ (0ë²ˆì€ 1ì¹¸, ë‚˜ë¨¸ì§€ëŠ” ì£¼ì‚¬ìœ„)
         List<Coroutine> runningCoroutines = new List<Coroutine>();
         foreach (var enemy in activeEnemies)
         {
@@ -45,7 +45,7 @@ public class EnemyManager : MonoBehaviour
             }
         }
 
-        // ¸ğµç ÀûÀÇ ÀÌµ¿ÀÌ ³¡³¯ ¶§±îÁö ´ë±â
+        // ëª¨ë“  ì ì˜ ì´ë™ì´ ëë‚  ë•Œê¹Œì§€ ëŒ€ê¸°
         bool anyMoving = true;
         while (anyMoving)
         {
@@ -61,10 +61,9 @@ public class EnemyManager : MonoBehaviour
             yield return null;
         }
 
-        // 3. ÀÌµ¿ ¿Ï·á ÈÄ ¹ß¹Ø Æ¯¼ö Å¸ÀÏ °Ë»ç ¹× ¹öÇÁ Àû¿ë
-        ApplyAllTileBuffs();
+        // íŠ¹ìˆ˜ íƒ€ì¼ íš¨ê³¼ëŠ” GameManagerì˜ ProcessTileBuffs ë‹¨ê³„ì—ì„œ ì ìš©í•©ë‹ˆë‹¤.
 
-        // ÆÄ±«µÇ°Å³ª Ç®·Î µ¹¾Æ°£ Àû ¸ñ·Ï Á¤¸®
+        // íŒŒê´´ë˜ê±°ë‚˜ í’€ë¡œ ëŒì•„ê°„ ì  ëª©ë¡ ì •ë¦¬
         activeEnemies.RemoveAll(e => e == null || !e.gameObject.activeInHierarchy);
     }
 

@@ -5,12 +5,12 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(Tilemap))]
 public class TilePath : MonoBehaviour
 {
-    [Tooltip("¿¡µğÅÍ¿¡¼­ µî·ÏµÈ °æ·Î Å¸ÀÏ ±×¸®µå ÁÂÇ¥ ¸®½ºÆ®")]
+    [Tooltip("ì—ë””í„°ì—ì„œ ë“±ë¡ëœ ê²½ë¡œ íƒ€ì¼ ê·¸ë¦¬ë“œ ì¢Œí‘œ ë¦¬ìŠ¤íŠ¸")]
     public List<Vector3Int> pathGridPositions = new List<Vector3Int>();
 
     private Tilemap tilemap;
 
-    // °æ·ÎÀÇ ¸¶Áö¸· ÀÎµ¦½º (ÀÚµ¿ °è»ê: µî·ÏµÈ Å¸ÀÏ °³¼ö - 1)
+    // ê²½ë¡œì˜ ë§ˆì§€ë§‰ ì¸ë±ìŠ¤ (ìë™ ê³„ì‚°: ë“±ë¡ëœ íƒ€ì¼ ê°œìˆ˜ - 1)
     public int LastIndex => pathGridPositions.Count > 0 ? pathGridPositions.Count - 1 : 0;
 
     void Awake()
@@ -18,18 +18,18 @@ public class TilePath : MonoBehaviour
         tilemap = GetComponent<Tilemap>();
     }
 
-    // ÀÎµ¦½º ¹øÈ£¿¡ ÇØ´çÇÏ´Â Å¸ÀÏÀÇ ¿ùµå Áß¾Ó ÁÂÇ¥ ¹İÈ¯
+    // ì¸ë±ìŠ¤ ë²ˆí˜¸ì— í•´ë‹¹í•˜ëŠ” íƒ€ì¼ì˜ ì›”ë“œ ì¤‘ì•™ ì¢Œí‘œ ë°˜í™˜
     public Vector3 GetWorldPosition(int index)
     {
         if (tilemap == null) tilemap = GetComponent<Tilemap>();
         if (pathGridPositions.Count == 0) return transform.position;
 
-        // ÀÎµ¦½º°¡ ¹üÀ§¸¦ ¹ş¾î³ªÁö ¾Êµµ·Ï Å¬·¥ÇÁ Ã³¸®
+        // ì¸ë±ìŠ¤ê°€ ë²”ìœ„ë¥¼ ë²—ì–´ë‚˜ì§€ ì•Šë„ë¡ í´ë¨í”„ ì²˜ë¦¬
         int clampedIndex = Mathf.Clamp(index, 0, LastIndex);
         return tilemap.GetCellCenterWorld(pathGridPositions[clampedIndex]);
     }
 
-    // Æ¯Á¤ ÀÎµ¦½ºÀÇ ±×¸®µå ÁÂÇ¥ ¹İÈ¯ (Å¸ÀÏ ¼Ó¼º Ã¼Å©¿ë)
+    // íŠ¹ì • ì¸ë±ìŠ¤ì˜ ê·¸ë¦¬ë“œ ì¢Œí‘œ ë°˜í™˜ (íƒ€ì¼ ì†ì„± ì²´í¬ìš©)
     public Vector3Int GetGridPosition(int index)
     {
         if (pathGridPositions.Count == 0) return Vector3Int.zero;
@@ -37,7 +37,7 @@ public class TilePath : MonoBehaviour
         return pathGridPositions[clampedIndex];
     }
 
-    // ¾À ºä ½Ã°¢È­
+    // ì”¬ ë·° ì‹œê°í™”
     private void OnDrawGizmos()
     {
         if (pathGridPositions == null || pathGridPositions.Count == 0) return;

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// 5. Hammer: ¹æ¾î·Â °¨¼Ò (¼öÄ¡¸¸Å­ ¹æ¾î·Â ¹èÀ² °¨¼Ò)
+// 5. Hammer: ë°©ì–´ë ¥ ê°ì†Œ (ìˆ˜ì¹˜ë§Œí¼ ë°©ì–´ë ¥ ë°°ìœ¨ ê°ì†Œ)
 public class HammerDebuff : DebuffBase
 {
     public HammerDebuff(float duration, float defenseReductionPercent)

@@ -1,10 +1,10 @@
 using UnityEngine;
 
-// 1. Sword: ÀúÁÖ (ÃÖ´ë 10½ºÅÃ, ½ºÅÃ´ç MaxHP 2% °¨¼Ò -> 10½ºÅÃ µµ´Ş ½Ã ¿µ±¸ ÁÖ¹Ú ÀüÈ¯)
+// 1. Sword: ì €ì£¼ (ìµœëŒ€ 10ìŠ¤íƒ, ìŠ¤íƒë‹¹ MaxHP 2% ê°ì†Œ -> 10ìŠ¤íƒ ë„ë‹¬ ì‹œ ì˜êµ¬ ì£¼ë°• ì „í™˜)
 public class SwordDebuff : DebuffBase
 {
     private const int MAX_STACK = 10;
-    private bool m_isBinding = false; // 10½ºÅÃ ÁÖ¹Ú »óÅÂ ¿©ºÎ
+    private bool m_isBinding = false; // 10ìŠ¤íƒ ì£¼ë°• ìƒíƒœ ì—¬ë¶€
     private float m_reducedMaxHP = 0f;
 
     public SwordDebuff(float duration, float value) : base(DebuffTarget.Sword, duration, value) { }
@@ -23,7 +23,7 @@ public class SwordDebuff : DebuffBase
             Stack++;
             if (Stack >= MAX_STACK)
             {
-                // [ÁÖ¹Ú]À¸·Î º¯°æ: ¿µ±¸ Áö¼Ó(½Ã°£ ¹«Á¦ÇÑ)
+                // [ì£¼ë°•]ìœ¼ë¡œ ë³€ê²½: ì˜êµ¬ ì§€ì†(ì‹œê°„ ë¬´ì œí•œ)
                 m_isBinding = true;
                 Duration = float.MaxValue;
             }
@@ -33,7 +33,7 @@ public class SwordDebuff : DebuffBase
 
     private void ApplyCurse(EnemyHealthController health)
     {
-        // ½ºÅÃ´ç ÃÖ´ë Ã¼·Â 2% °¨¼Ò Àû¿ë
+        // ìŠ¤íƒë‹¹ ìµœëŒ€ ì²´ë ¥ 2% ê°ì†Œ ì ìš©
         float reductionPercent = m_isBinding ? 0.2f : (Stack * 0.02f);
         m_reducedMaxHP = health.MaxHP * reductionPercent;
     }
