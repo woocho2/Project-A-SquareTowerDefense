@@ -28,6 +28,7 @@ public class TowerController : MonoBehaviour
     [SerializeField] private TowerData m_towerData;
     [SerializeField] private TowerStats m_baseStats;
     [SerializeField] private GameObject m_range;
+    [SerializeField] private TowerVisual m_towerVisual;
 
     private Vector3 m_rangeBaseLocalScale;
     private readonly List<GameObject> m_enemyRangeHighlights = new List<GameObject>();
@@ -51,6 +52,11 @@ public class TowerController : MonoBehaviour
 
     private void Awake()
     {
+        if (m_towerVisual == null)
+        {
+            m_towerVisual = GetComponentInChildren<TowerVisual>(true);
+        }
+
         if (m_range != null)
         {
             m_rangeBaseLocalScale = m_range.transform.localScale;
@@ -67,6 +73,8 @@ public class TowerController : MonoBehaviour
         m_towerData = data;
         m_baseStats = initialStats;
         m_remainingAction = Mathf.Max(1, m_towerData.action);
+
+        m_towerVisual?.Apply(m_towerData);
 
         if (m_debuffZoneChild != null)
         {
