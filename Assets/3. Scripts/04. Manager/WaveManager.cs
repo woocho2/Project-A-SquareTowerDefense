@@ -7,13 +7,13 @@ public class WaveManager : MonoBehaviour
     public static WaveManager Instance;
 
     [Header("Pool Reference")]
-    [SerializeField] private EnemyObjectPool2D[] m_enemyPool;  // 0=Normal, 1=Speed, 2=Depend, 3=SpecialBoss, 4=Boss
+    [SerializeField] private EnemyObjectPool2D[] m_enemyPool;  // 0=Normal, 1=Speed, 2=Depend, 3=MiddleBoss, 4=Boss
     [SerializeField] private TilePath m_tilePath;                // 타일 경로 참조
 
     [Header("Wave Base Settings")]
     [SerializeField] private int m_currentWave = 1;
 
-    [SerializeField] private Button btn_specialBoss;
+    [SerializeField] private Button btn_middleBoss;
 
     private int m_activeEnemyCount = 0;
     private int m_spawnedEnemyCountInWave = 0;
@@ -36,13 +36,13 @@ public class WaveManager : MonoBehaviour
             return;
         }
 
-        if (btn_specialBoss != null)
+        if (btn_middleBoss != null)
         {
-            btn_specialBoss.onClick.AddListener(SpawnSpecialBoss);
-            btn_specialBoss.gameObject.SetActive(false);
+            btn_middleBoss.onClick.AddListener(SpawnMiddleBoss);
+            btn_middleBoss.gameObject.SetActive(false);
         }
 
-        UpdateSpecialBossButtonUI();
+        UpdateMiddleBossButtonUI();
     }
 
     private void OnDestroy()
@@ -185,34 +185,34 @@ public class WaveManager : MonoBehaviour
         };
     }
 
-    private void UpdateSpecialBossButtonUI()
+    private void UpdateMiddleBossButtonUI()
     {
-        if (btn_specialBoss == null) return;
+        if (btn_middleBoss == null) return;
 
         if (m_currentWave == 5 || m_currentWave == 15 || m_currentWave == 25 || m_currentWave == 35)
         {
-            btn_specialBoss.gameObject.SetActive(true);
-            btn_specialBoss.interactable = true;
+            btn_middleBoss.gameObject.SetActive(true);
+            btn_middleBoss.interactable = true;
         }
         else if (m_currentWave == 8 || m_currentWave == 18 || m_currentWave == 28 || m_currentWave == 38)
         {
-            btn_specialBoss.gameObject.SetActive(false);
-            btn_specialBoss.interactable = false;
+            btn_middleBoss.gameObject.SetActive(false);
+            btn_middleBoss.interactable = false;
         }
     }
 
-    private void SpawnSpecialBoss()
+    private void SpawnMiddleBoss()
     {
-        if (btn_specialBoss != null)
+        if (btn_middleBoss != null)
         {
-            btn_specialBoss.interactable = false;
-            btn_specialBoss.gameObject.SetActive(false);
+            btn_middleBoss.interactable = false;
+            btn_middleBoss.gameObject.SetActive(false);
         }
 
-        int poolIndex = (int)EnemyType.SpecialBoss;
+        int poolIndex = (int)EnemyType.MiddleBoss;
         if (poolIndex >= m_enemyPool.Length || m_enemyPool[poolIndex] == null) return;
 
-        float specialHPMulti = m_currentWave switch
+        float middleBossHPMulti = m_currentWave switch
         {
             >= 15 and <= 17 => 2.0f,
             >= 25 and <= 27 => 4.0f,
@@ -220,7 +220,7 @@ public class WaveManager : MonoBehaviour
             _ => 1.0f
         };
 
-        float specialDefendMulti = m_currentWave switch
+        float middleBossDefendMulti = m_currentWave switch
         {
             >= 15 and <= 17 => 1.2f,
             >= 25 and <= 27 => 1.5f,
@@ -229,7 +229,7 @@ public class WaveManager : MonoBehaviour
         };
 
         EnemyObjectPool2D targetPool = m_enemyPool[poolIndex];
-        targetPool.Spawn(m_tilePath.GetWorldPosition(0), specialHPMulti, specialDefendMulti, m_tilePath);
+        targetPool.Spawn(m_tilePath.GetWorldPosition(0), middleBossHPMulti, middleBossDefendMulti, m_tilePath);
         m_activeEnemyCount++;
     }
 
@@ -238,7 +238,7 @@ public class WaveManager : MonoBehaviour
         m_currentWave++;
         m_spawnedEnemyCountInWave = 0;
         CurrencyManager.Instance?.AddGold((m_currentWave - 1) * 100);
-        UpdateSpecialBossButtonUI();
+        UpdateMiddleBossButtonUI();
     }
 
     public int GetEnemyCount() => m_activeEnemyCount;

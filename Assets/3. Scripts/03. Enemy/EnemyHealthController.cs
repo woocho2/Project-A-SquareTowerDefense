@@ -9,6 +9,7 @@ public class EnemyHealthController : MonoBehaviour
 
     private float m_currentHP;
     private float m_maxHP;
+    private float m_originalMaxHP;
     private float m_baseDefend;
     private float m_defendMultiplier = 1f;
     private float m_vulnerabilityMultiplier = 1f;
@@ -24,7 +25,7 @@ public class EnemyHealthController : MonoBehaviour
     public float CurrentHP => m_currentHP;
     public float MaxHP => m_maxHP;
     public float FinalDefend => Mathf.Clamp(m_baseDefend * m_defendMultiplier, 0.1f, 500f);
-    public bool IsBoss => m_enemyType == EnemyType.Boss || m_enemyType == EnemyType.SpecialBoss;
+    public bool IsBoss => m_enemyType == EnemyType.Boss || m_enemyType == EnemyType.MiddleBoss;
 
     private void Awake()
     {
@@ -38,6 +39,7 @@ public class EnemyHealthController : MonoBehaviour
     public void InitHealth(float maxHP, float defend, EnemyType enemyType = EnemyType.Normal)
     {
         m_enemyType = enemyType;
+        m_originalMaxHP = maxHP;
         m_maxHP = maxHP;
         m_currentHP = maxHP;
         m_baseDefend = defend;
@@ -75,15 +77,20 @@ public class EnemyHealthController : MonoBehaviour
     // 대미지 및 사망 처리
     // ==========================================================================================================
 
-    public void ApplyDamage(float rawDamage, bool isCritical = false)
+    public void ApplyDamage(float rawDamage, bool isCritical = false, float armorPenetrationPercent = 0f, TowerController sourceTower = null)
     {
         if (m_currentHP <= 0f) return;
 
+        if (isCritical) m_debuff?.RegisterCriticalHit();
+
         ShowHPBar();
 
-        float defend = FinalDefend;
+        float fixedDamageRatio = m_debuff != null ? m_debuff.GetFixedDamageConversionRatio() : 0f;
+        float fixedDamage = rawDamage * fixedDamageRatio;
+        float defendedDamage = rawDamage - fixedDamage;
+        float defend = FinalDefend * (1f - Mathf.Clamp01(armorPenetrationPercent / 100f));
         float finalWeak = m_vulnerabilityMultiplier;
-        float calculatedDamage = Mathf.Clamp((rawDamage * (1f / (1f + (0.01f * defend))) * finalWeak), 0f, 5000f);
+        float calculatedDamage = Mathf.Clamp((defendedDamage * (1f / (1f + (0.01f * defend))) * finalWeak) + fixedDamage, 0f, 5000f);
 
         m_currentHP -= calculatedDamage;
 
@@ -98,7 +105,7 @@ public class EnemyHealthController : MonoBehaviour
         if (m_currentHP <= 0f)
         {
             m_currentHP = 0f;
-            Die();
+            Die(sourceTower);
         }
     }
 
@@ -108,8 +115,9 @@ public class EnemyHealthController : MonoBehaviour
         Die();
     }
 
-    private void Die()
+    private void Die(TowerController sourceTower = null)
     {
+        sourceTower?.NotifyEnemyKilled();
         if (IsBoss)
         {
             CurrencyManager.Instance?.AddGold(500);
@@ -153,6 +161,13 @@ public class EnemyHealthController : MonoBehaviour
 
     public void SetDefendMultiplier(float multiplier) => m_defendMultiplier = multiplier;
     public void SetVulnerability(float multiplier) => m_vulnerabilityMultiplier = multiplier;
+
+    public void SetMaxHealthReductionPercent(float reductionPercent)
+    {
+        m_maxHP = Mathf.Max(1f, m_originalMaxHP * (1f - Mathf.Clamp01(reductionPercent / 100f)));
+        m_currentHP = Mathf.Min(m_currentHP, m_maxHP);
+        if (m_uiController != null) m_uiController.SetHPBar(m_currentHP, m_maxHP);
+    }
 #if false // Synergy system temporarily disabled
     public void SetSynergyWeak(float weak) => m_synergyWeak = weak;
 #endif

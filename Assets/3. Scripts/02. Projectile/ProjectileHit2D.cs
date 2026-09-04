@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -17,6 +18,11 @@ public struct ProjectileStats
     public float criticalDamage;
     public int SplashRadius;
     public int additionalHitCount;
+    public float armorPenetrationPercent;
+    public int iceAdditionalTargetCount;
+    public int chainCount;
+    public float extraHitChance;
+    public TowerController ownerTower;
     public float duration;
     public float abilityValue;
     public int hitEffectID;
@@ -117,12 +123,20 @@ public class ProjectileHit2D : MonoBehaviour
                 {
                     if (health.CurrentHP <= 0f) break;
 
-                    health.ApplyDamage(m_stats.damage, m_stats.isCritical);
+                    DealDamage(health, m_stats.damage);
 
                     if (m_stats.debuffTarget != DebuffTarget.None && target.TryGetComponent<EnemyDebuffController>(out var debuff))
                     {
                         ApplyDebuffToObject(debuff);
                     }
+                }
+
+                ApplyIceAdditionalHits(health);
+                ApplyChainHits(health.transform.position, new List<EnemyHealthController> { health });
+
+                if (UnityEngine.Random.Range(0f, 100f) < m_stats.extraHitChance && health.CurrentHP > 0f)
+                {
+                    DealDamage(health, m_stats.damage);
                 }
             }
         }
@@ -140,48 +154,100 @@ public class ProjectileHit2D : MonoBehaviour
 
         EffectManager.Instance?.PlayEffect(m_stats.hitEffectID, transform.position, Quaternion.identity, tileWidth);
 
-        Tilemap towerTilemap = TowerManager.Instance?.GetSpawnPointTilemap();
-        Collider2D[] hitEnemies;
-        Vector3Int impactCell = Vector3Int.zero;
-
-        if (towerTilemap != null)
+        TilePath path = TilePath.Instance;
+        if (path == null)
         {
-            impactCell = towerTilemap.WorldToCell(transform.position);
-            Vector3 cellSize = towerTilemap.cellSize;
-            Vector2 squareSize = new Vector2(cellSize.x * tileWidth, cellSize.y * tileWidth);
-            hitEnemies = Physics2D.OverlapBoxAll(transform.position, squareSize, 0f, m_enemyLayer);
-        }
-        else
-        {
-            Debug.LogWarning("[ProjectileHit2D] 타워 타일맵을 찾지 못해 원형 스플래시 판정을 사용합니다.");
-            hitEnemies = Physics2D.OverlapCircleAll(transform.position, tileRadius, m_enemyLayer);
+            Debug.LogWarning("[ProjectileHit2D] TilePath가 없어 스플래시 피해를 계산할 수 없습니다.");
+            ReturnToPool();
+            return;
         }
 
-        for (int i = 0; i < hitEnemies.Length; i++)
+        // 실제 피해 대상은 물리 탐색이 아니라 패스 타일별 적 목록에서만 결정합니다.
+        List<EnemyHealthController> damagedEnemies = path.GetEnemiesInSquare(transform.position, tileRadius);
+        for (int i = 0; i < damagedEnemies.Count; i++)
         {
-            Collider2D hit = hitEnemies[i];
+            EnemyHealthController health = damagedEnemies[i];
+            DealDamage(health, m_stats.damage);
 
-            if (towerTilemap != null)
+            if (UnityEngine.Random.Range(0f, 100f) < m_stats.extraHitChance && health.CurrentHP > 0f)
             {
-                Vector3Int enemyCell = towerTilemap.WorldToCell(hit.transform.position);
-                if (Mathf.Abs(enemyCell.x - impactCell.x) > tileRadius || Mathf.Abs(enemyCell.y - impactCell.y) > tileRadius)
-                {
-                    continue;
-                }
+                DealDamage(health, m_stats.damage);
             }
 
-            if (hit.TryGetComponent<EnemyHealthController>(out var health))
-            {
-                health.ApplyDamage(m_stats.damage, m_stats.isCritical);
-            }
-
-            if (m_stats.debuffTarget != DebuffTarget.None && hit.TryGetComponent<EnemyDebuffController>(out var debuff))
+            if (m_stats.debuffTarget != DebuffTarget.None && health.TryGetComponent(out EnemyDebuffController debuff))
             {
                 ApplyDebuffToObject(debuff);
             }
         }
 
+        ApplyChainHits(transform.position, damagedEnemies);
+
         ReturnToPool();
+    }
+
+    private void DealDamage(EnemyHealthController health, float damage)
+    {
+        if (health == null || health.CurrentHP <= 0f) return;
+        health.ApplyDamage(damage, m_stats.isCritical, m_stats.armorPenetrationPercent, m_stats.ownerTower);
+    }
+
+    // Ice 버프를 받은 단일 타겟 공격은 명중 적의 인접 적을 추가로 타격합니다.
+    private void ApplyIceAdditionalHits(EnemyHealthController primaryTarget)
+    {
+        int remainingHits = Mathf.Max(0, m_stats.iceAdditionalTargetCount);
+        if (remainingHits == 0 || primaryTarget == null) return;
+
+        List<EnemyHealthController> excluded = new List<EnemyHealthController> { primaryTarget };
+        for (int i = 0; i < remainingHits; i++)
+        {
+            EnemyHealthController nextTarget = FindClosestEnemy(primaryTarget.transform.position, 1.5f, excluded);
+            if (nextTarget == null) break;
+
+            DealDamage(nextTarget, m_stats.damage);
+            excluded.Add(nextTarget);
+        }
+    }
+
+    // Light 버프: 공격 지점에서 가까운 적에게 원래 피해의 20%를 연쇄합니다.
+    private void ApplyChainHits(Vector3 origin, List<EnemyHealthController> excluded)
+    {
+        int remainingChains = Mathf.Max(0, m_stats.chainCount);
+        Vector3 chainOrigin = origin;
+
+        for (int i = 0; i < remainingChains; i++)
+        {
+            EnemyHealthController nextTarget = FindClosestEnemy(chainOrigin, 2f, excluded);
+            if (nextTarget == null) break;
+
+            DealDamage(nextTarget, m_stats.damage * .2f);
+            excluded.Add(nextTarget);
+            chainOrigin = nextTarget.transform.position;
+        }
+    }
+
+    private EnemyHealthController FindClosestEnemy(Vector3 origin, float searchRadius, List<EnemyHealthController> excluded)
+    {
+        TilePath path = TilePath.Instance;
+        if (path == null) return null;
+
+        List<EnemyHealthController> candidates = path.GetAllActiveEnemies();
+        EnemyHealthController closest = null;
+        float closestSqrDistance = float.MaxValue;
+
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            EnemyHealthController candidate = candidates[i];
+            if (candidate == null || candidate.CurrentHP <= 0f || excluded.Contains(candidate)) continue;
+
+            float sqrDistance = (candidate.transform.position - origin).sqrMagnitude;
+            if (sqrDistance <= searchRadius * searchRadius && sqrDistance < closestSqrDistance)
+            {
+                closestSqrDistance = sqrDistance;
+                closest = candidate;
+            }
+        }
+
+        return closest;
     }
 
     // 디버프 객체 생성 및 에너미 등록

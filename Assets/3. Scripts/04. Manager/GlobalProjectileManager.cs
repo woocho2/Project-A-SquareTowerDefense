@@ -79,4 +79,9 @@ public class GlobalProjectileManager : MonoBehaviour
         Debug.LogError($"[GlobalProjectileManager] ID가 {sharedKey}인 투사체 풀을 찾을 수 없습니다.");
         return null;
     }
+
+    public bool HasActiveProjectiles()
+    {
+        return FindObjectsByType<ProjectileHit2D>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Length > 0;
+    }
 }

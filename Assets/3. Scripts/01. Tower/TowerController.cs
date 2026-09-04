@@ -21,6 +21,11 @@ public struct TowerStats
     public float ProjectileSpeed;
     public int ProjectileRadius;
     public int AdditionalHitCount;
+    public float DistanceDamageBonusPercent;
+    public float ArmorPenetrationPercent;
+    public int IceAdditionalTargetCount;
+    public int ChainCount;
+    public float ExtraHitChance;
 }
 
 public class TowerController : MonoBehaviour
@@ -30,9 +35,6 @@ public class TowerController : MonoBehaviour
     [SerializeField] private GameObject m_range;
     [SerializeField] private TowerVisual m_towerVisual;
 
-    private Vector3 m_rangeBaseLocalScale;
-    private readonly List<GameObject> m_enemyRangeHighlights = new List<GameObject>();
-
     private TowerAttackAction m_attackAction;
     private int m_remainingAction;
 
@@ -41,25 +43,44 @@ public class TowerController : MonoBehaviour
 
     // 런타임 보정치
     private float m_bonusAttackPower = 1f;
-    private float m_bonusRange = 1f;
-    private float m_bonusAttackCount = 1f;
-    private float m_bonusCriticalRate = 1f;
-    private float m_bonusCriticalDamage = 1f;
+    private float m_bonusRange;
+    private int m_bonusAttackCount;
+    private int m_bonusActionReduction;
+    private float m_bonusDistanceDamagePercent;
+    private float m_bonusCriticalRate;
+    private float m_bonusCriticalDamage;
     private float m_bonusDuration = 0f;
     private float m_bonusAbilityValue = 1f;
+    private float m_bonusArmorPenetrationPercent;
+    private int m_bonusProjectileRadius;
+    private int m_bonusIceAdditionalTargetCount;
+    private int m_bonusChainCount;
+    private float m_bonusExtraHitChance;
 
-    private Coroutine m_buffRoutine;
+    private float m_darknessBonusAttackPower;
+    private int m_darknessBonusAttackCount;
+    private float m_darknessBonusRange;
+    private float m_darknessBonusCriticalRate;
+    private float m_darknessBonusCriticalDamage;
+
+    private sealed class ActiveBuff
+    {
+        public int SourceID;
+        public TowerController SourceTower;
+        public int Tier;
+        public float AbilityValue;
+        public int RemainingTurns;
+    }
+
+    // 버프 종류별로 시전자 효과를 따로 저장합니다. 같은 종류는 가장 높은 수치만 반영합니다.
+    private readonly Dictionary<BuffTarget, Dictionary<int, ActiveBuff>> m_activeBuffs =
+        new Dictionary<BuffTarget, Dictionary<int, ActiveBuff>>();
 
     private void Awake()
     {
         if (m_towerVisual == null)
         {
             m_towerVisual = GetComponentInChildren<TowerVisual>(true);
-        }
-
-        if (m_range != null)
-        {
-            m_rangeBaseLocalScale = m_range.transform.localScale;
         }
 
         if (m_debuffZoneChild == null)
@@ -99,7 +120,7 @@ public class TowerController : MonoBehaviour
                 var debuffAction = new DebuffAction(m_towerData);
                 if (m_debuffZoneChild != null)
                 {
-                    debuffAction.BindZone(m_debuffZoneChild, transform.position, GetFinalStats());
+                    debuffAction.BindZone(m_debuffZoneChild, transform, GetFinalStats());
                 }
                 m_attackAction = debuffAction;
                 break;
@@ -120,16 +141,23 @@ public class TowerController : MonoBehaviour
         TowerStats finalStats = m_baseStats;
 
         // 2. 버프와 타일 보정치를 반영합니다.
-        finalStats.AttackPower *= Mathf.Clamp(m_bonusAttackPower, 0.01f, 10000f);
-        finalStats.AttackCount = Mathf.Max(1, Mathf.RoundToInt(finalStats.AttackCount * Mathf.Clamp(m_bonusAttackCount, 0.01f, 10000f)));
-        finalStats.Range *= Mathf.Clamp(m_bonusRange, 0.01f, 10000f);
-        finalStats.CriticalRate *= Mathf.Clamp(m_bonusCriticalRate, 0.01f, 10000f);
-        finalStats.CriticalDamage *= Mathf.Clamp(m_bonusCriticalDamage, 0.01f, 10000f);
+        finalStats.AttackPower *= Mathf.Clamp(m_bonusAttackPower * (1f + m_darknessBonusAttackPower), 0.01f, 10000f);
+        finalStats.AttackCount = Mathf.Max(1, finalStats.AttackCount + m_bonusAttackCount + m_darknessBonusAttackCount);
+        finalStats.Range += m_bonusRange + m_darknessBonusRange;
+        finalStats.CriticalRate += m_bonusCriticalRate + m_darknessBonusCriticalRate;
+        finalStats.CriticalDamage += m_bonusCriticalDamage + m_darknessBonusCriticalDamage;
         finalStats.Duration += m_bonusDuration;
         finalStats.AbilityValue *= Mathf.Clamp(m_bonusAbilityValue, 0.01f, 10000f);
+        finalStats.DistanceDamageBonusPercent += m_bonusDistanceDamagePercent;
+        finalStats.ArmorPenetrationPercent += m_bonusArmorPenetrationPercent;
+        finalStats.ProjectileRadius += m_bonusProjectileRadius;
+        finalStats.IceAdditionalTargetCount += m_bonusIceAdditionalTargetCount;
+        finalStats.ChainCount += m_bonusChainCount;
+        finalStats.ExtraHitChance += m_bonusExtraHitChance;
 
         if (finalStats.Range <= 1f) finalStats.Range = 1f;
-        if (finalStats.CriticalRate >= 1f) finalStats.CriticalRate = 1f;
+        finalStats.CriticalRate = Mathf.Clamp01(finalStats.CriticalRate);
+        finalStats.ArmorPenetrationPercent = Mathf.Clamp(finalStats.ArmorPenetrationPercent, 0f, 100f);
 
         return finalStats;
     }
@@ -152,17 +180,10 @@ public class TowerController : MonoBehaviour
             didAttack |= m_attackAction.ExecuteAction(transform, finalStats);
         }
 
-        m_remainingAction = Mathf.Max(1, m_towerData.action);
+        m_remainingAction = GetFinalAction();
         return didAttack;
     }
     public TowerData GetTowerData() => m_towerData;
-
-    private void Update()
-    {
-        if (m_range == null || !m_range.activeInHierarchy || m_attackAction == null) return;
-
-        RefreshEnemyRangeHighlights();
-    }
 
     public void ShowRange(bool show)
     {
@@ -175,84 +196,7 @@ public class TowerController : MonoBehaviour
                 int tileRange = TowerAttackAction.ToTileRange(GetFinalStats().Range);
                 float scaleValue = (tileRange * 2f + 1f) / transform.localScale.x;
                 m_range.transform.localScale = new Vector3(scaleValue, scaleValue, 1f);
-                RefreshEnemyRangeHighlights();
             }
-            else
-            {
-                SetEnemyRangeHighlightsActive(false);
-            }
-        }
-    }
-
-    private void RefreshEnemyRangeHighlights()
-    {
-        if (m_towerData == null || m_range == null) return;
-
-        Tilemap towerTilemap = TowerManager.Instance?.GetSpawnPointTilemap();
-        SpriteRenderer rangeRenderer = m_range.GetComponent<SpriteRenderer>();
-        if (towerTilemap == null || rangeRenderer == null)
-        {
-            SetEnemyRangeHighlightsActive(false);
-            return;
-        }
-
-        int tileRange = TowerAttackAction.ToTileRange(GetFinalStats().Range);
-        Vector3Int towerCell = towerTilemap.WorldToCell(transform.position);
-        Vector3 cellSize = towerTilemap.cellSize;
-        Vector2 squareSize = new Vector2(
-            cellSize.x * (tileRange * 2 + 1),
-            cellSize.y * (tileRange * 2 + 1));
-
-        Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(transform.position, squareSize, 0f, m_towerData.targetLayer);
-        HashSet<Vector3Int> enemyCells = new HashSet<Vector3Int>();
-
-        for (int i = 0; i < hitEnemies.Length; i++)
-        {
-            EnemyHealthController health = hitEnemies[i].GetComponentInParent<EnemyHealthController>();
-            if (health == null || !health.gameObject.activeInHierarchy || health.CurrentHP <= 0f) continue;
-
-            Vector3Int enemyCell = towerTilemap.WorldToCell(hitEnemies[i].transform.position);
-            if (Mathf.Abs(enemyCell.x - towerCell.x) <= tileRange && Mathf.Abs(enemyCell.y - towerCell.y) <= tileRange)
-            {
-                enemyCells.Add(enemyCell);
-            }
-        }
-
-        int requiredHighlightCount = enemyCells.Count;
-        while (m_enemyRangeHighlights.Count < requiredHighlightCount)
-        {
-            GameObject highlight = Instantiate(m_range, m_range.transform.parent);
-            highlight.name = "EnemyRangeHighlight";
-            highlight.transform.localScale = m_rangeBaseLocalScale;
-
-            SpriteRenderer highlightRenderer = highlight.GetComponent<SpriteRenderer>();
-            highlightRenderer.color = new Color(1f, 0.2f, 0.2f, rangeRenderer.color.a);
-            highlightRenderer.sortingLayerID = rangeRenderer.sortingLayerID;
-            highlightRenderer.sortingOrder = rangeRenderer.sortingOrder + 1;
-
-            m_enemyRangeHighlights.Add(highlight);
-        }
-
-        int highlightIndex = 0;
-        foreach (Vector3Int enemyCell in enemyCells)
-        {
-            GameObject highlight = m_enemyRangeHighlights[highlightIndex++];
-            highlight.transform.position = towerTilemap.GetCellCenterWorld(enemyCell);
-            highlight.transform.localScale = m_rangeBaseLocalScale;
-            highlight.SetActive(true);
-        }
-
-        for (int i = highlightIndex; i < m_enemyRangeHighlights.Count; i++)
-        {
-            m_enemyRangeHighlights[i].SetActive(false);
-        }
-    }
-
-    private void SetEnemyRangeHighlightsActive(bool isActive)
-    {
-        for (int i = 0; i < m_enemyRangeHighlights.Count; i++)
-        {
-            m_enemyRangeHighlights[i].SetActive(isActive);
         }
     }
 
@@ -264,37 +208,252 @@ public class TowerController : MonoBehaviour
         }
     }
 
-    public void ApplyBuff(BuffTarget target, float abilityValue, float duration)
+    private int GetFinalAction()
     {
-        if (m_buffRoutine != null) StopCoroutine(m_buffRoutine);
+        return Mathf.Max(1, m_towerData.action - m_bonusActionReduction);
+    }
+
+    public void ApplyBuff(BuffTarget target, TowerController sourceTower, int sourceID, int sourceTier, float abilityValue, float duration)
+    {
+        if (target == BuffTarget.None) return;
+
+        if (!m_activeBuffs.TryGetValue(target, out Dictionary<int, ActiveBuff> buffsBySource))
+        {
+            buffsBySource = new Dictionary<int, ActiveBuff>();
+            m_activeBuffs.Add(target, buffsBySource);
+        }
+
+        buffsBySource[sourceID] = new ActiveBuff
+        {
+            SourceID = sourceID,
+            SourceTower = sourceTower,
+            Tier = Mathf.Clamp(sourceTier, 1, 5),
+            AbilityValue = abilityValue,
+            RemainingTurns = Mathf.Max(1, Mathf.RoundToInt(duration))
+        };
+
+        RefreshBuff(target);
+    }
+
+    /// <summary>
+    /// 에너미 턴 시작 시 한 번 호출됩니다. 각 버프의 남은 턴을 줄이고 최고 수치를 다시 선택합니다.
+    /// </summary>
+    public void AdvanceBuffTurn()
+    {
+        List<BuffTarget> targetsToRefresh = new List<BuffTarget>(m_activeBuffs.Keys);
+
+        foreach (BuffTarget target in targetsToRefresh)
+        {
+            Dictionary<int, ActiveBuff> buffsBySource = m_activeBuffs[target];
+            List<int> expiredSources = new List<int>();
+
+            foreach (KeyValuePair<int, ActiveBuff> pair in buffsBySource)
+            {
+                pair.Value.RemainingTurns--;
+                if (pair.Value.RemainingTurns <= 0)
+                {
+                    expiredSources.Add(pair.Key);
+                }
+            }
+
+            foreach (int sourceID in expiredSources)
+            {
+                buffsBySource.Remove(sourceID);
+            }
+
+            if (buffsBySource.Count == 0)
+            {
+                m_activeBuffs.Remove(target);
+            }
+
+            RefreshBuff(target);
+        }
+    }
+
+    /// <summary>
+    /// 이 타워가 적을 처치했을 때, 적용 중인 최상위 Darkness 버프의 성장치를 누적합니다.
+    /// </summary>
+    public void NotifyEnemyKilled()
+    {
+        if (!m_activeBuffs.TryGetValue(BuffTarget.Darkness, out Dictionary<int, ActiveBuff> darknessBuffs) || darknessBuffs.Count == 0)
+        {
+            return;
+        }
+
+        ActiveBuff strongestDarkness = null;
+        foreach (ActiveBuff buff in darknessBuffs.Values)
+        {
+            if (strongestDarkness == null || GetBuffStrength(BuffTarget.Darkness, buff) > GetBuffStrength(BuffTarget.Darkness, strongestDarkness))
+            {
+                strongestDarkness = buff;
+            }
+        }
+
+        if (strongestDarkness != null)
+        {
+            TowerManager.Instance?.AddSharedDarknessAbility(strongestDarkness.Tier);
+        }
+    }
+
+    public void RefreshExternalBuff(BuffTarget target)
+    {
+        RefreshBuff(target);
+    }
+
+    private void RefreshBuff(BuffTarget target)
+    {
+        if (!m_activeBuffs.TryGetValue(target, out Dictionary<int, ActiveBuff> buffsBySource) || buffsBySource.Count == 0)
+        {
+            ResetBuff(target);
+            return;
+        }
+
+        ActiveBuff strongestBuff = null;
+        foreach (ActiveBuff buff in buffsBySource.Values)
+        {
+            if (strongestBuff == null || GetBuffStrength(target, buff) > GetBuffStrength(target, strongestBuff))
+            {
+                strongestBuff = buff;
+            }
+        }
+
+        ApplyStrongestBuff(target, strongestBuff);
+    }
+
+    private static float GetBuffStrength(BuffTarget target, ActiveBuff buff)
+    {
+        switch (target)
+        {
+            case BuffTarget.Darkness:
+                return TowerManager.Instance != null ? TowerManager.Instance.GetSharedDarknessAbility() : 0f;
+            default:
+                return buff.Tier;
+        }
+    }
+
+    private void ApplyStrongestBuff(BuffTarget target, ActiveBuff buff)
+    {
+        int tierValue = buff.Tier;
 
         switch (target)
         {
-            case BuffTarget.Sword: m_bonusAttackPower = 1f + (abilityValue / 100f); break;
+            case BuffTarget.Sword: m_bonusAttackPower = 1f + (GetTierValue(tierValue, 10f, 20f, 40f, 100f, 200f) / 100f); break;
             case BuffTarget.Bow:
-            case BuffTarget.AttackCount: m_bonusAttackCount = 1f + (abilityValue / 100f); break;
-            case BuffTarget.Spear: m_bonusRange = 1f + (abilityValue / 100f); break;
-            case BuffTarget.Axe: m_bonusCriticalRate = 1f + (abilityValue / 100f); break;
-            case BuffTarget.Hammer: m_bonusCriticalDamage = 1f + (abilityValue / 100f); break;
+                m_bonusRange = 1f;
+                m_bonusDistanceDamagePercent = GetBowDistanceDamageBonus(tierValue);
+                break;
+            case BuffTarget.Fire: m_bonusAttackCount = tierValue; break;
+            case BuffTarget.Wind: m_bonusActionReduction = tierValue; break;
+            case BuffTarget.AttackCount: m_bonusAttackCount = Mathf.RoundToInt(buff.AbilityValue); break;
+            case BuffTarget.Spear: m_bonusCriticalRate = GetTierValue(tierValue, .01f, .025f, .05f, .10f, .20f); break;
+            case BuffTarget.Axe: m_bonusCriticalDamage = GetTierValue(tierValue, .25f, .50f, 1f, 2f, 4f); break;
+            case BuffTarget.Hammer: m_bonusArmorPenetrationPercent = GetTierValue(tierValue, 2f, 7.5f, 15f, 25f, 50f); break;
+            case BuffTarget.Ice:
+                ApplyIceBuff(tierValue);
+                break;
+            case BuffTarget.Electricity: m_bonusExtraHitChance = GetTierValue(tierValue, 4f, 8f, 12.5f, 25f, 50f); break;
+            case BuffTarget.Light: m_bonusChainCount = tierValue; break;
+            case BuffTarget.Darkness: ApplyDarknessBuff(buff); break;
         }
 
-        m_buffRoutine = StartCoroutine(RemoveBuffRoutine(target, duration));
+        // Wind가 새로 적용된 경우, 이미 충전 중인 행동력도 새 최대치 안으로 맞춥니다.
+        if (target == BuffTarget.Wind)
+        {
+            m_remainingAction = Mathf.Min(m_remainingAction, GetFinalAction());
+        }
+
     }
 
-    private System.Collections.IEnumerator RemoveBuffRoutine(BuffTarget target, float duration)
+    private static float GetBowDistanceDamageBonus(int tier)
     {
-        yield return new WaitForSeconds(duration);
+        return tier switch
+        {
+            1 => 10f,
+            2 => 25f,
+            3 => 50f,
+            4 => 100f,
+            _ => 200f
+        };
+    }
 
+    private static float GetTierValue(int tier, float tier1, float tier2, float tier3, float tier4, float tier5)
+    {
+        switch (Mathf.Clamp(tier, 1, 5))
+        {
+            case 1: return tier1;
+            case 2: return tier2;
+            case 3: return tier3;
+            case 4: return tier4;
+            default: return tier5;
+        }
+    }
+
+    private void ApplyIceBuff(int tier)
+    {
+        if (m_towerData == null) return;
+
+        if (m_towerData.attackType == AttackType.Splash)
+        {
+            m_bonusProjectileRadius = tier;
+        }
+        else if (m_towerData.attackType == AttackType.Target)
+        {
+            m_bonusIceAdditionalTargetCount = tier;
+        }
+    }
+
+    private void ApplyDarknessBuff(ActiveBuff buff)
+    {
+        float abilityValue = TowerManager.Instance != null ? TowerManager.Instance.GetSharedDarknessAbility() : 0f;
+        int milestones = Mathf.FloorToInt(abilityValue / 50f);
+
+        m_darknessBonusAttackPower = 0f;
+        m_darknessBonusAttackCount = 0;
+        m_darknessBonusRange = 0f;
+        m_darknessBonusCriticalRate = 0f;
+        m_darknessBonusCriticalDamage = 0f;
+
+        for (int i = 0; i < milestones; i++)
+        {
+            switch (i % 5)
+            {
+                case 0: m_darknessBonusAttackPower += .10f; break;
+                case 1: m_darknessBonusAttackCount += 1; break;
+                case 2: m_darknessBonusRange += 1f; break;
+                case 3: m_darknessBonusCriticalRate += .10f; break;
+                case 4: m_darknessBonusCriticalDamage += .50f; break;
+            }
+        }
+    }
+
+    private void ResetBuff(BuffTarget target)
+    {
         switch (target)
         {
             case BuffTarget.Sword: m_bonusAttackPower = 1f; break;
             case BuffTarget.Bow:
-            case BuffTarget.AttackCount: m_bonusAttackCount = 1f; break;
-            case BuffTarget.Spear: m_bonusRange = 1f; break;
-            case BuffTarget.Axe: m_bonusCriticalRate = 1f; break;
-            case BuffTarget.Hammer: m_bonusCriticalDamage = 1f; break;
+                m_bonusRange = 0f;
+                m_bonusDistanceDamagePercent = 0f;
+                break;
+            case BuffTarget.Fire:
+            case BuffTarget.AttackCount: m_bonusAttackCount = 0; break;
+            case BuffTarget.Wind: m_bonusActionReduction = 0; break;
+            case BuffTarget.Spear: m_bonusCriticalRate = 0f; break;
+            case BuffTarget.Axe: m_bonusCriticalDamage = 0f; break;
+            case BuffTarget.Hammer: m_bonusArmorPenetrationPercent = 0f; break;
+            case BuffTarget.Ice:
+                m_bonusProjectileRadius = 0;
+                m_bonusIceAdditionalTargetCount = 0;
+                break;
+            case BuffTarget.Electricity: m_bonusExtraHitChance = 0f; break;
+            case BuffTarget.Light: m_bonusChainCount = 0; break;
+            case BuffTarget.Darkness:
+                m_darknessBonusAttackPower = 0f;
+                m_darknessBonusAttackCount = 0;
+                m_darknessBonusRange = 0f;
+                m_darknessBonusCriticalRate = 0f;
+                m_darknessBonusCriticalDamage = 0f;
+                break;
         }
-
-        m_buffRoutine = null;
     }
 }

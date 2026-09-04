@@ -20,6 +20,6 @@ public class UIManager_Start : MonoBehaviour
 
     public void OnGameStartButtonClick()
     {
-        SceneLoader.StartLoad(m_sceneName);
+        SceneManager.LoadScene(m_sceneName);
     }
 }

@@ -8,6 +8,6 @@ public static class SceneLoader
     {
         NextScene = nextScene;
 
-        SceneManager.LoadScene("LoadingScene", LoadSceneMode.Single);
+        //SceneManager.LoadScene("LoadingScene", LoadSceneMode.Single);
     }
 }

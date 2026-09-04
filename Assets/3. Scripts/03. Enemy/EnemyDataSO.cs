@@ -6,7 +6,7 @@ public enum EnemyType
     Normal,
     Speed,
     Depend,
-    SpecialBoss,
+    MiddleBoss,
     Boss
 }
 

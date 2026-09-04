@@ -25,6 +25,7 @@ public class DebuffZone : MonoBehaviour
 
     private Collider2D m_collider2D;
     private Tilemap m_pathTilemap;
+    private TilePath m_tilePath;
 
     private Vector3 m_towerOriginPos;
     private float m_maxRange = 1f;
@@ -62,6 +63,19 @@ public class DebuffZone : MonoBehaviour
         if (pathObj != null)
         {
             m_pathTilemap = pathObj.GetComponent<Tilemap>();
+        }
+
+        if (m_pathTilemap == null)
+        {
+            m_tilePath = FindFirstObjectByType<TilePath>();
+            if (m_tilePath != null)
+            {
+                m_pathTilemap = m_tilePath.GetComponent<Tilemap>();
+            }
+        }
+        else
+        {
+            m_tilePath = m_pathTilemap.GetComponent<TilePath>();
         }
     }
 
@@ -138,7 +152,12 @@ public class DebuffZone : MonoBehaviour
                 }
 
                 targetPos.z = m_objectZ;
-                transform.position = targetPos;
+
+                // 장판은 드래그 중에도 경로 타일의 정중앙에서만 이동합니다.
+                if (TryGetClosestPathTilePosition(targetPos, out Vector3 snappedPosition))
+                {
+                    transform.position = snappedPosition;
+                }
             }
         }
 
@@ -172,13 +191,17 @@ public class DebuffZone : MonoBehaviour
 
     private void SnapToClosestPathTile()
     {
-        if (m_pathTilemap == null)
+        if (TryGetClosestPathTilePosition(transform.position, out Vector3 snappedPosition))
         {
-            m_pathTilemap = UnityEngine.Object.FindAnyObjectByType<Tilemap>();
-            if (m_pathTilemap == null) return;
+            transform.position = snappedPosition;
         }
+    }
 
-        Vector3 currentPos = transform.position;
+    private bool TryGetClosestPathTilePosition(Vector3 currentPos, out Vector3 snappedPosition)
+    {
+        snappedPosition = transform.position;
+        if (m_pathTilemap == null) return false;
+
         Vector3Int centerCell = m_pathTilemap.WorldToCell(currentPos);
         int cellRadius = Mathf.CeilToInt(Mathf.Max(m_maxRange, 1.5f));
 
@@ -214,8 +237,10 @@ public class DebuffZone : MonoBehaviour
         if (found)
         {
             bestWorldPos.z = m_objectZ;
-            transform.position = bestWorldPos;
+            snappedPosition = bestWorldPos;
         }
+
+        return found;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -248,5 +273,52 @@ public class DebuffZone : MonoBehaviour
         {
             m_obstacleCollider.SetActive(isActive);
         }
+    }
+
+    /// <summary>
+    /// 드래그로 장판을 적 위에 올렸을 때도 트리거 이벤트에 의존하지 않고,
+    /// 현재 장판 내부의 활성 적을 즉시 다시 수집합니다.
+    /// </summary>
+    public List<EnemyHealthController> GetCurrentEnemiesInZone()
+    {
+        // 이전 TriggerEnter 목록은 드래그 후에도 남을 수 있으므로 사용하지 않습니다.
+        EnemiesInZone.Clear();
+        if (m_collider2D == null || EnemyManager.Instance == null) return EnemiesInZone;
+
+        foreach (EnemyMovementController movement in EnemyManager.Instance.activeEnemies)
+        {
+            if (movement == null || !movement.gameObject.activeInHierarchy) continue;
+            if (!movement.TryGetComponent(out EnemyHealthController health) || health.CurrentHP <= 0f) continue;
+
+            if (m_collider2D.OverlapPoint(health.transform.position) && !EnemiesInZone.Contains(health))
+            {
+                EnemiesInZone.Add(health);
+            }
+        }
+
+        return EnemiesInZone;
+    }
+
+    /// <summary>
+    /// 장판의 보이는 콜라이더 크기와 무관하게, 패스 타일 인덱스가 같은 적만 반환합니다.
+    /// </summary>
+    public List<EnemyHealthController> GetEnemiesOnPlacedPathTile()
+    {
+        EnemiesInZone.Clear();
+        if (EnemyManager.Instance == null || m_tilePath == null || m_pathTilemap == null) return EnemiesInZone;
+
+        Vector3Int zoneCell = m_pathTilemap.WorldToCell(transform.position);
+        int zoneIndex = m_tilePath.pathGridPositions.IndexOf(zoneCell);
+        if (zoneIndex < 0) return EnemiesInZone;
+
+        foreach (EnemyMovementController movement in EnemyManager.Instance.activeEnemies)
+        {
+            if (movement == null || !movement.gameObject.activeInHierarchy || movement.CurrentTileIndex != zoneIndex) continue;
+            if (movement.TryGetComponent(out EnemyHealthController health) && health.CurrentHP > 0f)
+            {
+                EnemiesInZone.Add(health);
+            }
+        }
+        return EnemiesInZone;
     }
 }

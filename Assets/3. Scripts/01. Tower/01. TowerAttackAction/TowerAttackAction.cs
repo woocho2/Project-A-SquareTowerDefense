@@ -40,28 +40,19 @@ public abstract class TowerAttackAction
         int tileRange = ToTileRange(range);
         Tilemap towerTilemap = TowerManager.Instance?.GetSpawnPointTilemap();
 
-        Collider2D[] hitEnemies;
         Vector3Int towerCell = Vector3Int.zero;
         if (towerTilemap != null)
         {
             towerCell = towerTilemap.WorldToCell(origin);
-            Vector3 cellSize = towerTilemap.cellSize;
-            Vector2 squareSize = new Vector2(
-                cellSize.x * (tileRange * 2 + 1),
-                cellSize.y * (tileRange * 2 + 1));
-
-            hitEnemies = Physics2D.OverlapBoxAll(origin, squareSize, 0f, targetLayer);
-        }
-        else
-        {
-            Debug.LogWarning("[TowerAttackAction] 타워 타일맵을 찾지 못해 원형 사거리 판정을 사용합니다.");
-            hitEnemies = Physics2D.OverlapCircleAll(origin, tileRange, targetLayer);
         }
 
-        if (hitEnemies.Length == 0)
+        TilePath path = TilePath.Instance;
+        if (path == null)
         {
             return false;
         }
+
+        var enemies = path.GetAllActiveEnemies();
 
         float minSqrDistance = Mathf.Infinity;
         int maxTileIndex = -1;
@@ -69,34 +60,32 @@ public abstract class TowerAttackAction
         float maxHp = -1f;
         float minHp = Mathf.Infinity;
 
-        for (int i = 0; i < hitEnemies.Length; i++)
+        for (int i = 0; i < enemies.Count; i++)
         {
-            Collider2D hit = hitEnemies[i];
-
-            EnemyHealthController health = hit.GetComponentInParent<EnemyHealthController>();
-            if (health == null || !health.gameObject.activeInHierarchy || health.CurrentHP <= 0f) continue;
+            EnemyHealthController health = enemies[i];
 
             if (towerTilemap != null)
             {
-                Vector3Int enemyCell = towerTilemap.WorldToCell(hit.transform.position);
+                Vector3Int enemyCell = towerTilemap.WorldToCell(health.transform.position);
                 int cellDistanceX = Mathf.Abs(enemyCell.x - towerCell.x);
                 int cellDistanceY = Mathf.Abs(enemyCell.y - towerCell.y);
 
                 // Range 1 = 3x3, Range 2 = 5x5인 체비셰프 거리 판정입니다.
                 if (cellDistanceX > tileRange || cellDistanceY > tileRange) continue;
             }
-
-            hit.transform.parent.TryGetComponent<EnemyMovementController>(out var movement);
-            if (movement == null)
+            else
             {
-                health.TryGetComponent<EnemyMovementController>(out movement);
+                Vector2 offset = (Vector2)health.transform.position - origin;
+                if (Mathf.Abs(offset.x) > tileRange || Mathf.Abs(offset.y) > tileRange) continue;
             }
+
+            health.TryGetComponent(out EnemyMovementController movement);
 
             switch (priority)
             {
                 case TargetPriority.Closest:
                 case TargetPriority.Default:
-                    Vector2 direction = (Vector2)hit.transform.position - origin;
+                    Vector2 direction = (Vector2)health.transform.position - origin;
                     float sqrDistance = direction.sqrMagnitude;
 
                     if (sqrDistance < minSqrDistance)

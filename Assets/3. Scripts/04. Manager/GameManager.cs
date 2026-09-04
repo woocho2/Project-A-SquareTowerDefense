@@ -25,6 +25,10 @@ public class GameManager : MonoBehaviour
     [Tooltip("플레이어 턴 제한 시간(초)")]
     [SerializeField] private float playerTurnDuration = 45f;
 
+    [Header("에너미 턴 연출 속도")]
+    [SerializeField, Min(0f)] private float m_towerAttackResolutionDelay = 0.2f;
+    [SerializeField, Min(0.1f)] private float m_projectileWaitTimeout = 5f;
+
     public TurnState CurrentState { get; private set; } = TurnState.None;
     public int CurrentWave { get; private set; } = 1;
 
@@ -32,6 +36,17 @@ public class GameManager : MonoBehaviour
     private Coroutine turnRoutine;
     private Coroutine playerTimerRoutine;
     private bool isPlayerTurnSkipped = false;
+
+    private sealed class ShieldEffect
+    {
+        public int Amount;
+        public int RemainingShield;
+        public int RemainingTurns;
+    }
+
+    private readonly Dictionary<int, ShieldEffect> m_shieldsBySource = new Dictionary<int, ShieldEffect>();
+    private int m_currentShield;
+    private int m_currentShieldSourceID;
 
     // UI 및 외부 시스템 알림용 델리게이트
     public event Action<TurnState> OnTurnStateChanged;
@@ -91,8 +106,10 @@ public class GameManager : MonoBehaviour
 
         if (WaveManager.Instance != null)
         {
+            int completedWave = WaveManager.Instance.GetWave();
             WaveManager.Instance.NextWave();
             CurrentWave = WaveManager.Instance.GetWave();
+            TowerManager.Instance?.ProcessEarthTowerWave(completedWave);
         }
         else
         {
@@ -141,16 +158,16 @@ public class GameManager : MonoBehaviour
     {
         CurrentState = TurnState.EnemyTurn;
         OnTurnStateChanged?.Invoke(CurrentState);
+        AdvanceShieldTurn();
 
-        // 단계 1 & 2: 신규 몬스터 소환 및 전체 몬스터 이동
-        // (EnemyManager/WaveManager에서 소환 후 0번은 1칸, 기존 몬스터는 주사위만큼 이동 수행)
+        // 단계 1: 타워의 투사체가 실제로 명중한 뒤에만 적 이동을 시작합니다.
+        yield return StartCoroutine(ProcessTowerAttacks());
+
+        // 단계 2: 신규 몬스터 소환 및 전체 몬스터 이동
         yield return StartCoroutine(ProcessEnemyMovement());
 
-        // 단계 3 & 4: 몬스터 아래 타일 검사 및 특수 타일 버프 적용
+        // 단계 3: 몬스터 아래 타일 검사 및 턴 기반 디버프 처리
         yield return StartCoroutine(ProcessTileBuffs());
-
-        // 단계 5 & 6: 플레이어 타워 공격 및 몬스터 체력 감소 처리
-        yield return StartCoroutine(ProcessTowerAttacks());
 
         // 몬스터 턴 종료 (다음 루프에서 자동으로 플레이어 턴 시작)
         yield return new WaitForSeconds(0.3f);
@@ -174,6 +191,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator ProcessTileBuffs()
     {
         EnemyManager.Instance?.ApplyAllTileBuffs();
+        EnemyManager.Instance?.AdvanceAllDebuffTurns();
         yield return null;
     }
 
@@ -181,7 +199,18 @@ public class GameManager : MonoBehaviour
     private IEnumerator ProcessTowerAttacks()
     {
         TowerManager.Instance?.ExecuteTowerActionTurn();
-        yield return null;
+
+        float elapsed = 0f;
+        while (GlobalProjectileManager.Instance != null && GlobalProjectileManager.Instance.HasActiveProjectiles() && elapsed < m_projectileWaitTimeout)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        if (m_towerAttackResolutionDelay > 0f)
+        {
+            yield return new WaitForSeconds(m_towerAttackResolutionDelay);
+        }
     }
 
     // ==========================================
@@ -229,11 +258,65 @@ public class GameManager : MonoBehaviour
 
     public void DecreaseLife(int amount)
     {
+        if (m_currentShield > 0)
+        {
+            int absorbedAmount = Mathf.Min(m_currentShield, amount);
+            m_currentShield -= absorbedAmount;
+            amount -= absorbedAmount;
+
+            if (m_shieldsBySource.TryGetValue(m_currentShieldSourceID, out ShieldEffect shieldEffect))
+            {
+                shieldEffect.RemainingShield = m_currentShield;
+            }
+
+            if (amount <= 0) return;
+        }
+
         m_totalLife = Mathf.Max(0, m_totalLife - amount);
         if (m_totalLife <= 0)
         {
             OnGameOver();
         }
+    }
+
+    public void ApplyTemporaryShield(int sourceID, int amount, int durationTurns)
+    {
+        m_shieldsBySource[sourceID] = new ShieldEffect
+        {
+            Amount = Mathf.Clamp(amount, 1, 5),
+            RemainingShield = Mathf.Clamp(amount, 1, 5),
+            RemainingTurns = Mathf.Max(1, durationTurns)
+        };
+        RefreshShield();
+    }
+
+    private void AdvanceShieldTurn()
+    {
+        List<int> expiredSources = new List<int>();
+        foreach (KeyValuePair<int, ShieldEffect> pair in m_shieldsBySource)
+        {
+            pair.Value.RemainingTurns--;
+            if (pair.Value.RemainingTurns <= 0) expiredSources.Add(pair.Key);
+        }
+
+        foreach (int sourceID in expiredSources) m_shieldsBySource.Remove(sourceID);
+        RefreshShield();
+    }
+
+    private void RefreshShield()
+    {
+        int highestShield = 0;
+        int highestShieldSourceID = 0;
+        foreach (KeyValuePair<int, ShieldEffect> pair in m_shieldsBySource)
+        {
+            if (pair.Value.RemainingShield > highestShield)
+            {
+                highestShield = pair.Value.RemainingShield;
+                highestShieldSourceID = pair.Key;
+            }
+        }
+        m_currentShield = highestShield;
+        m_currentShieldSourceID = highestShieldSourceID;
     }
 
     public void OnGameOver()

@@ -94,7 +94,7 @@ public class TowerManager : MonoBehaviour
 #endif
     [Header("타워 생성 및 업그레이드 비용")]
     private int BuildCost = 50;
-    private int UpgradeGemCost = 5;
+    private const int TierUpgradeBaseGemCost = 5;
 
     public struct GridTowerInfo
     {
@@ -106,6 +106,7 @@ public class TowerManager : MonoBehaviour
 
     private Dictionary<Vector3Int, GridTowerInfo> m_towersOnGrid = new Dictionary<Vector3Int, GridTowerInfo>();
     private Dictionary<int, TowerStats>      m_globalTowerStats  = new Dictionary<int, TowerStats>();
+    private float m_sharedDarknessAbilityValue;
 #if false // Synergy system temporarily disabled
     private Dictionary<int, TowerStats>      m_synergyTowerStats = new Dictionary<int, TowerStats>();
 #endif
@@ -436,6 +437,12 @@ public class TowerManager : MonoBehaviour
             return rowComparison != 0 ? rowComparison : left.Key.x.CompareTo(right.Key.x);
         });
 
+        // 이번 에너미 턴이 시작되었으므로, 기존 버프의 남은 턴을 먼저 차감합니다.
+        foreach (KeyValuePair<Vector3Int, GridTowerInfo> tower in orderedTowers)
+        {
+            tower.Value.Controller?.AdvanceBuffTurn();
+        }
+
         foreach (KeyValuePair<Vector3Int, GridTowerInfo> tower in orderedTowers)
         {
             tower.Value.Controller?.ExecuteTurnAction();
@@ -475,6 +482,207 @@ public class TowerManager : MonoBehaviour
     // ==========================================================================================================
     // =============================================== 업그레이드 ================================================
     // ==========================================================================================================
+
+    /// <summary>
+    /// 현재 타워 ID의 천의 자리(티어)를 한 단계 올리는 데 필요한 젬 비용을 반환합니다.
+    /// 1→2: 5, 2→3: 15, 3→4: 45, 4→5: 135
+    /// </summary>
+    public int GetTierUpgradeCost(int towerID)
+    {
+        int currentTier = towerID / 1000;
+        if (currentTier < 1 || currentTier >= 5) return 0;
+
+        return TierUpgradeBaseGemCost * Mathf.RoundToInt(Mathf.Pow(3f, currentTier - 1));
+    }
+
+    /// <summary>
+    /// 선택한 셀의 타워를 다음 티어의 같은 색상/문양 ID 타워로 교체합니다.
+    /// 예: 1234 → 2234
+    /// </summary>
+    public bool UpgradeTowerTier(Vector3Int targetCell, out TowerController upgradedTower)
+    {
+        upgradedTower = null;
+
+        if (!m_towersOnGrid.TryGetValue(targetCell, out GridTowerInfo currentInfo) || currentInfo.Controller == null)
+        {
+            Debug.LogWarning("티어 강화할 타워를 찾을 수 없습니다.");
+            return false;
+        }
+
+        TowerData currentData = currentInfo.Controller.GetTowerData();
+        if (currentData == null)
+        {
+            Debug.LogWarning("티어 강화할 타워 데이터가 없습니다.");
+            return false;
+        }
+
+        int currentTier = currentData.towerID / 1000;
+        int upgradeCost = GetTierUpgradeCost(currentData.towerID);
+        if (upgradeCost <= 0)
+        {
+            Debug.Log("5티어 타워는 더 이상 티어 강화할 수 없습니다.");
+            return false;
+        }
+
+        if (CurrencyManager.Instance == null || !CurrencyManager.Instance.HasEnoughGem(upgradeCost))
+        {
+            Debug.Log($"티어 강화에 필요한 젬이 부족합니다. 필요 젬: {upgradeCost}");
+            return false;
+        }
+
+        int upgradedTowerID = currentData.towerID + 1000;
+        TowerData upgradedData = null;
+        for (int i = 0; i < m_towerData.Length; i++)
+        {
+            if (m_towerData[i] != null && m_towerData[i].towerID == upgradedTowerID)
+            {
+                upgradedData = m_towerData[i];
+                break;
+            }
+        }
+
+        if (upgradedData == null || upgradedData.towerPrefab == null)
+        {
+            Debug.LogError($"티어 강화 결과 타워(ID: {upgradedTowerID})를 찾을 수 없습니다.");
+            return false;
+        }
+
+        Vector3 spawnPosition = currentInfo.Controller.transform.position;
+        GameObject spawnedTower = Instantiate(upgradedData.towerPrefab, spawnPosition, Quaternion.identity);
+        upgradedTower = spawnedTower.GetComponent<TowerController>();
+        if (upgradedTower == null)
+        {
+            Debug.LogError($"티어 강화 결과 프리팹에 TowerController가 없습니다: {upgradedData.towerName}");
+            Destroy(spawnedTower);
+            return false;
+        }
+
+        upgradedTower.Init(upgradedData, GetGlobalStats(upgradedData.towerID));
+
+        Destroy(currentInfo.Controller.gameObject);
+        m_towersOnGrid[targetCell] = new GridTowerInfo
+        {
+            Controller = upgradedTower,
+            Tier = currentTier + 1,
+            Type = (upgradedData.towerID % 1000) / 100,
+            Variant = upgradedData.towerID % 100
+        };
+
+        CurrencyManager.Instance.SpendGem(upgradeCost);
+        return true;
+    }
+
+    /// <summary>
+    /// 매 3웨이브 완료 시 Earth 버프 타워가 주변의 낮은 티어 타워 하나를 무료 강화합니다.
+    /// 1티어 Earth는 대상이 없으므로 자기 자신을 2티어로 강화합니다.
+    /// </summary>
+    public void ProcessEarthTowerWave(int completedWave)
+    {
+        if (completedWave <= 0 || completedWave % 3 != 0) return;
+
+        List<KeyValuePair<Vector3Int, GridTowerInfo>> earthTowers = new List<KeyValuePair<Vector3Int, GridTowerInfo>>();
+        foreach (KeyValuePair<Vector3Int, GridTowerInfo> pair in m_towersOnGrid)
+        {
+            TowerData data = pair.Value.Controller != null ? pair.Value.Controller.GetTowerData() : null;
+            if (data != null && data.attackType == AttackType.Buff && data.buffTarget == BuffTarget.Earth)
+            {
+                earthTowers.Add(pair);
+            }
+        }
+
+        foreach (KeyValuePair<Vector3Int, GridTowerInfo> earthTower in earthTowers)
+        {
+            if (!m_towersOnGrid.TryGetValue(earthTower.Key, out GridTowerInfo liveInfo) || liveInfo.Controller == null) continue;
+
+            TowerData earthData = liveInfo.Controller.GetTowerData();
+            int earthTier = earthData.towerID / 1000;
+            if (earthTier == 1)
+            {
+                UpgradeTowerTierWithoutCost(earthTower.Key);
+                continue;
+            }
+
+            int tileRange = TowerAttackAction.ToTileRange(liveInfo.Controller.GetFinalStats().Range);
+            List<Vector3Int> candidates = new List<Vector3Int>();
+
+            foreach (KeyValuePair<Vector3Int, GridTowerInfo> candidate in m_towersOnGrid)
+            {
+                if (candidate.Key == earthTower.Key || candidate.Value.Controller == null) continue;
+                if (candidate.Value.Tier >= earthTier || candidate.Value.Tier >= 5) continue;
+
+                if (Mathf.Abs(candidate.Key.x - earthTower.Key.x) <= tileRange &&
+                    Mathf.Abs(candidate.Key.y - earthTower.Key.y) <= tileRange)
+                {
+                    candidates.Add(candidate.Key);
+                }
+            }
+
+            if (candidates.Count > 0)
+            {
+                UpgradeTowerTierWithoutCost(candidates[UnityEngine.Random.Range(0, candidates.Count)]);
+            }
+        }
+    }
+
+    private bool UpgradeTowerTierWithoutCost(Vector3Int targetCell)
+    {
+        if (!m_towersOnGrid.TryGetValue(targetCell, out GridTowerInfo currentInfo) || currentInfo.Controller == null) return false;
+
+        TowerData currentData = currentInfo.Controller.GetTowerData();
+        if (currentData == null || currentData.towerID / 1000 >= 5) return false;
+
+        int upgradedTowerID = currentData.towerID + 1000;
+        TowerData upgradedData = Array.Find(m_towerData, data => data != null && data.towerID == upgradedTowerID);
+        if (upgradedData == null || upgradedData.towerPrefab == null) return false;
+
+        Vector3 spawnPosition = currentInfo.Controller.transform.position;
+        GameObject spawnedTower = Instantiate(upgradedData.towerPrefab, spawnPosition, Quaternion.identity);
+        TowerController upgradedTower = spawnedTower.GetComponent<TowerController>();
+        if (upgradedTower == null)
+        {
+            Destroy(spawnedTower);
+            return false;
+        }
+
+        upgradedTower.Init(upgradedData, GetGlobalStats(upgradedData.towerID));
+        Destroy(currentInfo.Controller.gameObject);
+        m_towersOnGrid[targetCell] = new GridTowerInfo
+        {
+            Controller = upgradedTower,
+            Tier = upgradedData.towerID / 1000,
+            Type = (upgradedData.towerID % 1000) / 100,
+            Variant = upgradedData.towerID % 100
+        };
+        return true;
+    }
+
+    public void RefreshBuffOnAllTowers(BuffTarget target)
+    {
+        foreach (GridTowerInfo info in m_towersOnGrid.Values)
+        {
+            info.Controller?.RefreshExternalBuff(target);
+        }
+    }
+
+    public float GetSharedDarknessAbility()
+    {
+        return m_sharedDarknessAbilityValue;
+    }
+
+    public void AddSharedDarknessAbility(int towerTier)
+    {
+        float gainedValue = towerTier switch
+        {
+            1 => .1f,
+            2 => .25f,
+            3 => .5f,
+            4 => 1f,
+            _ => 2f
+        };
+
+        m_sharedDarknessAbilityValue += gainedValue;
+        RefreshBuffOnAllTowers(BuffTarget.Darkness);
+    }
 
     public void UpgradeTower(int towerID)
     {

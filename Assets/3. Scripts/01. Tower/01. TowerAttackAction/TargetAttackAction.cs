@@ -37,6 +37,11 @@ public class TargetAttackAction : TowerAttackAction
             bool isCrit = UnityEngine.Random.Range(0f, 100f) <= (finalStats.CriticalRate * 100f);
             float calculatedDamage = finalStats.AttackPower;
 
+            // Bow 버프: 사거리 끝에서 최대 보너스가 되도록, 타워와 적의 실제 거리에 비례해 증가합니다.
+            float distanceRatio = Mathf.Clamp01(
+                Vector2.Distance(firePoint.position, targetTransform.position) / Mathf.Max(0.01f, finalStats.Range));
+            calculatedDamage *= 1f + (finalStats.DistanceDamageBonusPercent / 100f * distanceRatio);
+
             // 치명타 발생 시 데미지 증폭 (기본 2배 + CriticalDamage 배율 추가)
             if (isCrit)
             {
@@ -56,6 +61,11 @@ public class TargetAttackAction : TowerAttackAction
                 criticalDamage = finalStats.CriticalDamage,
                 SplashRadius = 0,
                 additionalHitCount = finalStats.AdditionalHitCount,
+                armorPenetrationPercent = finalStats.ArmorPenetrationPercent,
+                iceAdditionalTargetCount = finalStats.IceAdditionalTargetCount,
+                chainCount = finalStats.ChainCount,
+                extraHitChance = finalStats.ExtraHitChance,
+                ownerTower = firePoint.GetComponent<TowerController>(),
                 duration = finalStats.Duration,
                 abilityValue = finalStats.AbilityValue,
                 debuffTarget = m_data.debuffTarget,

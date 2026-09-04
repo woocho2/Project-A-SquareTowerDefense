@@ -41,6 +41,11 @@ public class SplashAttackAction : TowerAttackAction
             bool isCrit = UnityEngine.Random.Range(0f, 100f) <= (finalStats.CriticalRate * 100f);
             float calculatedDamage = finalStats.AttackPower;
 
+            // Bow 버프는 공격 지점까지의 거리에 비례해 피해를 증가시킵니다.
+            float distanceRatio = Mathf.Clamp01(
+                Vector2.Distance(firePoint.position, targetPosition) / Mathf.Max(0.01f, finalStats.Range));
+            calculatedDamage *= 1f + (finalStats.DistanceDamageBonusPercent / 100f * distanceRatio);
+
             // 치명타 발생 시 데미지 증폭 (TowerStats의 CriticalDamage 필드 적용)
             if (isCrit)
             {
@@ -58,8 +63,13 @@ public class SplashAttackAction : TowerAttackAction
                 isCritical = isCrit,
                 criticalRate = finalStats.CriticalRate,
                 criticalDamage = finalStats.CriticalDamage,
-                SplashRadius = m_data.splashRadius,
+                SplashRadius = finalStats.ProjectileRadius,
                 additionalHitCount = 0,
+                armorPenetrationPercent = finalStats.ArmorPenetrationPercent,
+                iceAdditionalTargetCount = 0,
+                chainCount = finalStats.ChainCount,
+                extraHitChance = finalStats.ExtraHitChance,
+                ownerTower = firePoint.GetComponent<TowerController>(),
                 duration = finalStats.Duration,
                 abilityValue = finalStats.AbilityValue,
                 debuffTarget = m_data.debuffTarget,

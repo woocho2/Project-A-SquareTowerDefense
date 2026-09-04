@@ -6,6 +6,21 @@ public class BuffAction : TowerAttackAction
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats currentStats)
     {
+        int sourceTier = Mathf.Clamp(m_data.towerID / 1000, 1, 5);
+        TowerController sourceTower = towerTransform.GetComponent<TowerController>();
+
+        if (m_data.buffTarget == BuffTarget.Shield)
+        {
+            GameManager.Instance?.ApplyTemporaryShield(
+                towerTransform.GetInstanceID(),
+                sourceTier,
+                Mathf.Max(1, Mathf.RoundToInt(currentStats.Duration)));
+            return true;
+        }
+
+        // Earth는 TowerController의 100초 타이머에서 전역 강화하므로, 주변 타워에 일반 버프를 적용하지 않습니다.
+        if (m_data.buffTarget == BuffTarget.Earth) return true;
+
         // 버프 범위 내의 아군 타워 콜라이더 탐색
         Collider2D[] hitTowers = Physics2D.OverlapCircleAll(towerTransform.position, currentStats.Range, m_data.targetLayer);
 
@@ -22,8 +37,14 @@ public class BuffAction : TowerAttackAction
 
             if (hit.TryGetComponent<TowerController>(out var targetTower))
             {
-                // TowerController의 변경된 ApplyBuff 메서드 호출
-                targetTower.ApplyBuff(m_data.buffTarget, currentStats.AbilityValue, currentStats.Duration);
+                // 버프 타워 자신의 티어를 기준으로 특수 버프 수치를 계산합니다.
+                targetTower.ApplyBuff(
+                    m_data.buffTarget,
+                    sourceTower,
+                    towerTransform.GetInstanceID(),
+                    sourceTier,
+                    currentStats.AbilityValue,
+                    currentStats.Duration);
                 appliedAny = true;
             }
         }

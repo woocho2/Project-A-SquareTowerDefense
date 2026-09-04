@@ -34,6 +34,7 @@ public class CurrencyManager : MonoBehaviour
         currentGold = startGold;
         currentGem = startGem;
         UpdateGoldUI();
+        UpdateGemUI();
     }
 
     private void OnDestroy()

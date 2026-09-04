@@ -14,6 +14,14 @@ public class EnemyMovementController : MonoBehaviour
     [SerializeField] private int m_currentActionCounter = 0; // 턴 누적 카운터
     [SerializeField] private int m_baseDiceMaxSpeed = 1;     // EnemyData에서 받아온 주사위 최댓값 (Speed)
     [SerializeField] private int m_bonusSpeed = 0;          // 스피드 타일 등으로 더해지는 추가 칸 수
+    private int m_permanentActionPenalty;
+    private int m_temporaryActionPenalty;
+    private int m_temporaryActionPenaltyTurns;
+    private int m_diceMaxModifier;
+    private int m_temporaryDiceMaxModifier;
+    private int m_temporaryDiceMaxModifierTurns;
+    private int m_forcedNoMoveTurns;
+    private bool m_reverseNextDice;
 
     private float m_speedMultiplier = 1f;
 #if false // Synergy system temporarily disabled
@@ -42,6 +50,14 @@ public class EnemyMovementController : MonoBehaviour
         m_currentActionCounter = 0;
         m_bonusSpeed = 0;
         m_speedMultiplier = 1f;
+        m_permanentActionPenalty = 0;
+        m_temporaryActionPenalty = 0;
+        m_temporaryActionPenaltyTurns = 0;
+        m_diceMaxModifier = 0;
+        m_temporaryDiceMaxModifier = 0;
+        m_temporaryDiceMaxModifierTurns = 0;
+        m_forcedNoMoveTurns = 0;
+        m_reverseNextDice = false;
 
         m_isMoving = false;
 
@@ -61,12 +77,19 @@ public class EnemyMovementController : MonoBehaviour
         if (m_tilePath != null)
         {
             transform.position = m_tilePath.GetWorldPosition(0);
+            m_tilePath.RegisterEnemyAtIndex(m_health, m_currentTileIndex);
         }
     }
 
     public IEnumerator ProcessTurnMoveRoutine()
     {
         if (m_tilePath == null) yield break;
+
+        if (m_forcedNoMoveTurns > 0)
+        {
+            m_forcedNoMoveTurns--;
+            yield break;
+        }
 
         if (m_currentTileIndex >= m_tilePath.LastIndex)
         {
@@ -88,11 +111,38 @@ public class EnemyMovementController : MonoBehaviour
             m_currentActionCounter = 0;
 
             // 1부터 EnemyData에 설정된 Speed 값까지 랜덤 굴림 + 멈춰있는 타일의 보너스 Speed
-            int maxDice = m_baseDiceMaxSpeed + m_bonusSpeed;
+            int maxDice = Mathf.Max(0, m_baseDiceMaxSpeed + m_bonusSpeed + m_diceMaxModifier + m_temporaryDiceMaxModifier);
+            if (maxDice <= 0) yield break;
             int totalSteps = Random.Range(1, maxDice + 1);
-
-            yield return StartCoroutine(MoveStepsRoutine(totalSteps));
+            if (m_reverseNextDice)
+            {
+                m_reverseNextDice = false;
+                yield return StartCoroutine(MoveBackwardStepsRoutine(totalSteps));
+            }
+            else
+            {
+                yield return StartCoroutine(MoveStepsRoutine(totalSteps));
+            }
         }
+    }
+
+    private IEnumerator MoveBackwardStepsRoutine(int steps)
+    {
+        m_isMoving = true;
+        for (int i = 0; i < steps && m_currentTileIndex > 0; i++)
+        {
+            m_currentTileIndex--;
+            Vector3 targetPos = m_tilePath.GetWorldPosition(m_currentTileIndex);
+            while (Vector3.Distance(transform.position, targetPos) > 0.02f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, targetPos, FinalMoveSpeed * Time.deltaTime);
+                yield return null;
+            }
+            transform.position = targetPos;
+            m_tilePath.RegisterEnemyAtIndex(m_health, m_currentTileIndex);
+        }
+        m_isMoving = false;
+        CheckAndApplyTileBuff();
     }
 
     private IEnumerator MoveStepsRoutine(int steps)
@@ -116,6 +166,7 @@ public class EnemyMovementController : MonoBehaviour
             }
 
             transform.position = targetPos;
+            m_tilePath.RegisterEnemyAtIndex(m_health, m_currentTileIndex);
         }
 
         m_isMoving = false;
@@ -135,6 +186,7 @@ public class EnemyMovementController : MonoBehaviour
     {
         m_isMoving = false;
         StopAllCoroutines();
+        m_tilePath?.UnregisterEnemy(m_health);
     }
 
     // 멈춘 자리의 특수 타일 버프 적용 로직
@@ -155,7 +207,7 @@ public class EnemyMovementController : MonoBehaviour
         {
             case SpecialTileType.SpeedTile:
                 // 스피드 타일: 행동 주기 1 감소 (최소 1), 이동 주사위 최댓값 +2 증가
-                m_actionInterval = Mathf.Max(1, m_baseActionInterval - 1);
+                m_actionInterval = Mathf.Max(1, m_baseActionInterval + m_permanentActionPenalty + m_temporaryActionPenalty - 1);
                 m_bonusSpeed = 2;
                 break;
 
@@ -186,7 +238,7 @@ public class EnemyMovementController : MonoBehaviour
     private void ResetAllBuffs()
     {
         // 이동/행동력 버프 원복
-        m_actionInterval = m_baseActionInterval;
+        m_actionInterval = Mathf.Max(1, m_baseActionInterval + m_permanentActionPenalty + m_temporaryActionPenalty);
         m_bonusSpeed = 0;
 
         // 방어력 버프 원복
@@ -208,6 +260,60 @@ public class EnemyMovementController : MonoBehaviour
     }
 
     public void SetSpeedMultiplier(float multiplier) => m_speedMultiplier = multiplier;
+    public void SetPermanentActionPenalty(int penalty)
+    {
+        m_permanentActionPenalty = Mathf.Max(0, penalty);
+        m_actionInterval = Mathf.Max(1, m_baseActionInterval + m_permanentActionPenalty + m_temporaryActionPenalty);
+    }
+
+    public void ApplyTemporaryActionPenalty(int penalty, int turns)
+    {
+        m_temporaryActionPenalty = Mathf.Max(m_temporaryActionPenalty, Mathf.Max(0, penalty));
+        m_temporaryActionPenaltyTurns = Mathf.Max(m_temporaryActionPenaltyTurns, Mathf.Max(1, turns));
+        m_actionInterval = Mathf.Max(1, m_baseActionInterval + m_permanentActionPenalty + m_temporaryActionPenalty);
+    }
+
+    public void AdvanceDebuffTurn()
+    {
+        if (m_temporaryDiceMaxModifierTurns > 0)
+        {
+            m_temporaryDiceMaxModifierTurns--;
+            if (m_temporaryDiceMaxModifierTurns == 0) m_temporaryDiceMaxModifier = 0;
+        }
+        if (m_temporaryActionPenaltyTurns <= 0) return;
+        m_temporaryActionPenaltyTurns--;
+        if (m_temporaryActionPenaltyTurns == 0)
+        {
+            m_temporaryActionPenalty = 0;
+            m_actionInterval = Mathf.Max(1, m_baseActionInterval + m_permanentActionPenalty);
+        }
+    }
+
+    public void ForceNoMoveForTurns(int turns) => m_forcedNoMoveTurns = Mathf.Max(m_forcedNoMoveTurns, Mathf.Max(1, turns));
+    public void SetPermanentDiceMaxModifier(int modifier) => m_diceMaxModifier = Mathf.Min(0, modifier);
+    public void ApplyTemporaryDiceMaxModifier(int modifier, int turns)
+    {
+        m_temporaryDiceMaxModifier = modifier;
+        m_temporaryDiceMaxModifierTurns = Mathf.Max(1, turns);
+    }
+    public void ReverseNextDiceMove() => m_reverseNextDice = true;
+
+    public int GetPathIndexClosestTo(Vector3 worldPosition)
+    {
+        if (m_tilePath == null) return m_currentTileIndex;
+        int closestIndex = 0;
+        float closestDistance = float.MaxValue;
+        for (int i = 0; i <= m_tilePath.LastIndex; i++)
+        {
+            float distance = Vector2.SqrMagnitude(m_tilePath.GetWorldPosition(i) - worldPosition);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestIndex = i;
+            }
+        }
+        return closestIndex;
+    }
 #if false // Synergy system temporarily disabled
     public void SetSynergySlow(float slow) => m_synergySlow = slow;
 #endif

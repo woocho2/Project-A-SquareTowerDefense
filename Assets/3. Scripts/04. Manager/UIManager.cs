@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject m_panelGameInfo;
     [SerializeField] Button m_btnGameSpeed;
     [SerializeField] TextMeshProUGUI m_txtGameSpeed;
+    [SerializeField] Button m_btnSkipPlayerTurn;
     [SerializeField] Button m_btnMainStop;
     [SerializeField] Button m_btnCreateTower;
     [SerializeField] TextMeshProUGUI m_txtCreateCostGold;
@@ -20,6 +21,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] Image[] m_LifePoints;
     [SerializeField] TextMeshProUGUI m_txtWave;
     [SerializeField] TextMeshProUGUI m_txtEnemy;
+    [SerializeField] TextMeshProUGUI m_txtCurrentWaveIndex;
+    [SerializeField] TextMeshProUGUI m_txtPlayerTurnRemainingTime;
 
     [Header("UI Tower Info")]
     [SerializeField] GameObject m_towerInfoPanel;
@@ -102,6 +105,8 @@ public class UIManager : MonoBehaviour
     {
         InitUI();
 
+        SubscribeGameManagerEvents();
+
         Button[] quitButtons = { m_btnQuit, m_btnGameOverHome, m_btnGameClearHome, m_btnNextStage };
         foreach (var btn in quitButtons)
         {
@@ -162,6 +167,15 @@ public class UIManager : MonoBehaviour
             });
         }
 
+        if (m_btnSkipPlayerTurn != null)
+        {
+            m_btnSkipPlayerTurn.onClick.RemoveAllListeners();
+            m_btnSkipPlayerTurn.onClick.AddListener(() =>
+            {
+                GameManager.Instance?.OnClickSkipPlayerTurn();
+            });
+        }
+
         if (m_btnNextStage != null)
         {
             m_btnNextStage.onClick.RemoveAllListeners();
@@ -202,6 +216,30 @@ public class UIManager : MonoBehaviour
             });
         }
 
+        if (m_btnTierUpgradeTower != null)
+        {
+            m_btnTierUpgradeTower.onClick.AddListener(() =>
+            {
+                if (m_selectedTower == null || m_selectTowerID <= 0)
+                {
+                    Debug.LogWarning("티어 강화할 타워가 선택되지 않았습니다.");
+                    return;
+                }
+
+                if (!TowerManager.Instance.UpgradeTowerTier(m_selectedTowerInfo, out TowerController upgradedTower))
+                {
+                    return;
+                }
+
+                m_selectedTower = upgradedTower;
+                m_selectTowerID = upgradedTower.GetTowerData().towerID;
+                RefreshColorUpgradeCostLabel();
+                RefreshTierUpgradeCostLabel();
+                RefreshUpgradeTowerInfoLabel();
+                SelectTower(upgradedTower);
+            });
+        }
+
         if (m_btnDebug != null)
         {
             m_btnDebug.onClick.AddListener(() =>
@@ -232,6 +270,8 @@ public class UIManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        UnsubscribeGameManagerEvents();
+
         if (Instance == this)
         {
             Instance = null;
@@ -328,17 +368,14 @@ public class UIManager : MonoBehaviour
         {
             if (m_selectTowerID > 0)
             {
-                TowerStats currentStats = TowerManager.Instance.GetGlobalStats(m_selectTowerID);
-                float currentTier = currentStats.ID / 1000;
-
-                if (currentTier >= 5)
+                int tierUpgradeGemCost = TowerManager.Instance.GetTierUpgradeCost(m_selectTowerID);
+                if (tierUpgradeGemCost <= 0)
                 {
                     m_txtTierUpgradeCostGem.text = "MAX";
                 }
                 else
                 {
-                    int currentTierUpgradeGem = (int)Mathf.Pow(4, currentStats.Level);
-                    m_txtTierUpgradeCostGem.text = $"{currentTierUpgradeGem}";
+                    m_txtTierUpgradeCostGem.text = $"{tierUpgradeGemCost}";
                 }
             }
             else
@@ -378,14 +415,50 @@ public class UIManager : MonoBehaviour
 
     private void UpdateWaveUI()
     {
-        if (WaveManager.Instance != null && m_txtWave != null)
+        if (WaveManager.Instance != null)
         {
             int currentWave = WaveManager.Instance.GetWave();
-            //float remainingTime = WaveManager.Instance.currentWaveTimer;
-            //int displaySeconds = Mathf.CeilToInt(remainingTime);
 
-           // m_txtWave.text = $"Wave {currentWave}\nNext Wave : {displaySeconds}";
+            if (m_txtCurrentWaveIndex != null)
+            {
+                m_txtCurrentWaveIndex.text = $"Wave {currentWave}";
+            }
+
             m_lastWave = currentWave;
+        }
+    }
+
+    private void SubscribeGameManagerEvents()
+    {
+        if (GameManager.Instance == null) return;
+
+        GameManager.Instance.OnPlayerTurnTimerUpdated += RefreshPlayerTurnRemainingTime;
+        GameManager.Instance.OnTurnStateChanged += RefreshPlayerTurnStateUI;
+    }
+
+    private void UnsubscribeGameManagerEvents()
+    {
+        if (GameManager.Instance == null) return;
+
+        GameManager.Instance.OnPlayerTurnTimerUpdated -= RefreshPlayerTurnRemainingTime;
+        GameManager.Instance.OnTurnStateChanged -= RefreshPlayerTurnStateUI;
+    }
+
+    private void RefreshPlayerTurnRemainingTime(float remainingTime)
+    {
+        if (m_txtPlayerTurnRemainingTime == null) return;
+
+        int displaySeconds = Mathf.CeilToInt(Mathf.Max(0f, remainingTime));
+        m_txtPlayerTurnRemainingTime.text = $"{displaySeconds}s";
+    }
+
+    private void RefreshPlayerTurnStateUI(TurnState turnState)
+    {
+        if (m_txtPlayerTurnRemainingTime == null) return;
+
+        if (turnState != TurnState.PlayerTurn)
+        {
+            m_txtPlayerTurnRemainingTime.text = "-";
         }
     }
 

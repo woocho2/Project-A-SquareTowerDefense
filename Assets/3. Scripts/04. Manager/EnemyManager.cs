@@ -78,6 +78,17 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
+    public void AdvanceAllDebuffTurns()
+    {
+        foreach (EnemyMovementController enemy in activeEnemies)
+        {
+            if (enemy != null && enemy.gameObject.activeInHierarchy && enemy.TryGetComponent(out EnemyDebuffController debuff))
+            {
+                debuff.AdvanceDebuffTurn();
+            }
+        }
+    }
+
     public void RegisterEnemy(EnemyMovementController enemy)
     {
         if (!activeEnemies.Contains(enemy))

@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIManager_Menu : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class UIManager_Menu : MonoBehaviour
 
     public void StageButtonClick()
     {
-        SceneLoader.StartLoad(m_sceneName);
+        SceneManager.LoadScene(m_sceneName);
     }
 
     IEnumerator CoFade(float from, float to, float duration)
