@@ -89,7 +89,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
 --- !u!1 &671948444447976635
 GameObject:
@@ -245,30 +245,30 @@ MonoBehaviour:
   m_colorRenderer: {fileID: 69109820115675441}
   m_tierRenderer: {fileID: 652120831702425239}
   m_tierSprites:
-  - {fileID: 21300000, guid: 811903556cb08a94e9948db5954e24fe, type: 3}
-  - {fileID: 21300000, guid: 9cd0f0b06e7d46644925156f2d661408, type: 3}
-  - {fileID: 21300000, guid: 835b7df4ae897ef41b07b15c470f85aa, type: 3}
-  - {fileID: 21300000, guid: efa910d1bac71f1409d79d8930ebb518, type: 3}
-  - {fileID: 21300000, guid: 4600c7e135e21744c91a0651f2cfe696, type: 3}
+  - {fileID: 21300000, guid: 80a8ee532805bb74bb2b2c9ef0f63baf, type: 3}
+  - {fileID: 21300000, guid: 6c3bbc91f7895d24797a5ce523e4d962, type: 3}
+  - {fileID: 21300000, guid: 2b4ccf87e2b0e0849a5e46e22461f261, type: 3}
+  - {fileID: 21300000, guid: 534d2ce6f1537074e9cd5e802bb14253, type: 3}
+  - {fileID: 21300000, guid: d6c1c4ab92bec864c84453da932ee320, type: 3}
   m_colorSprites:
-  - {fileID: 21300000, guid: a9e8564ad1ed60e4088eb5d67fb5e3af, type: 3}
-  - {fileID: 21300000, guid: 6f1d073bd0b5e8e43ab9cdbef7ef0f6f, type: 3}
-  - {fileID: 21300000, guid: 0b12f9a4a88a52b44a0b4712b4976d1b, type: 3}
-  - {fileID: 21300000, guid: 87347656942cab54c9a7955b3da1d1f2, type: 3}
+  - {fileID: 21300000, guid: 1a157cc4949fbce40ab3c01a5e91d322, type: 3}
+  - {fileID: 21300000, guid: 3517191a32c794a49a1c754a459e56d4, type: 3}
+  - {fileID: 21300000, guid: 5614e9739ab783e4688f62c353ae606e, type: 3}
+  - {fileID: 21300000, guid: ec9b8993c90c3df44a184a62fd3d9105, type: 3}
   m_emblemSprites:
-  - {fileID: 21300000, guid: 931fdd2ae4a2cf74899302ca66ad6c1d, type: 3}
-  - {fileID: 21300000, guid: b200705acee62cd4a8cd914ff5d5e42c, type: 3}
-  - {fileID: 21300000, guid: 69df361fbf1475c4f888c7a982d02b44, type: 3}
-  - {fileID: 21300000, guid: e0839d849f477f34791cb63ff0484bfb, type: 3}
-  - {fileID: 21300000, guid: f4075fb60d767e446bf94b6e0554b171, type: 3}
-  - {fileID: 21300000, guid: bf32d94c3e660604b847890782255bb9, type: 3}
-  - {fileID: 21300000, guid: 74aba291dbd7517459a75b7f2f5b73cc, type: 3}
-  - {fileID: 21300000, guid: 6d793110c24921b46af24b23e99bde76, type: 3}
-  - {fileID: 21300000, guid: 192cb2584b3dca541bb529e2ff0bebed, type: 3}
-  - {fileID: 21300000, guid: f1fffcab885b6a24f98194da93eaf066, type: 3}
-  - {fileID: 21300000, guid: f5c7ebae69e937344bc432a8627c8968, type: 3}
-  - {fileID: 21300000, guid: 89e92e579ab4740489f150d1a89602bb, type: 3}
-  - {fileID: 21300000, guid: 6e0d0a3b00fae034d9540bacd07a4254, type: 3}
+  - {fileID: 21300000, guid: 37e9c90d63e0ca04ab1b55e0286e1ef8, type: 3}
+  - {fileID: 21300000, guid: e0fd65ee6b7f68141b5f845fd71236bc, type: 3}
+  - {fileID: 21300000, guid: ef6678b2774038b4883a560462338972, type: 3}
+  - {fileID: 21300000, guid: fd79e52a463e5584da0018d5a29e30fa, type: 3}
+  - {fileID: 21300000, guid: 6bc15156156a9b54b8479c1817508332, type: 3}
+  - {fileID: 21300000, guid: f9ca042824041ab41b9066b801c1ed81, type: 3}
+  - {fileID: 21300000, guid: 231a63513ba63724882cb768f50ba1bd, type: 3}
+  - {fileID: 21300000, guid: 5636d704eadf8b14d891a65a95866e3a, type: 3}
+  - {fileID: 21300000, guid: cc99c5284bfaaba4382b0d36b7c2a19d, type: 3}
+  - {fileID: 21300000, guid: fa08eabb9fc98c240872294e3f55116a, type: 3}
+  - {fileID: 21300000, guid: 9c802f077f0a95b48bb08971387d7797, type: 3}
+  - {fileID: 21300000, guid: 339e6c594c743a1458d56721ba5c01cd, type: 3}
+  - {fileID: 21300000, guid: 47bbd826dd596574a8e33ce7c6407ad0, type: 3}
 --- !u!1 &2127725103623809396
 GameObject:
   m_ObjectHideFlags: 0

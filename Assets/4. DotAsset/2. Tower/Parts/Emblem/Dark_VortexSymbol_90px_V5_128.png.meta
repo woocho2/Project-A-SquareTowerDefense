@@ -1,22 +1,10 @@
 fileFormatVersion: 2
-guid: 8a111fe1d7b5b7847b4cfd7c224cba88
+guid: 47bbd826dd596574a8e33ce7c6407ad0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8542296737181505263
-    second: Sword_SimpleSymbol_V2_128_0
-  - first:
-      213: 3175957490426392790
-    second: Sword_SimpleSymbol_V2_128_1
-  - first:
-      213: 4113186732114007969
-    second: Sword_SimpleSymbol_V2_128_2
-  - first:
-      213: 5670801884050964559
-    second: Sword_SimpleSymbol_V2_128_3
-  - first:
-      213: 273247590348391648
-    second: Sword_SimpleSymbol_V2_128_4
+      213: 7352935994360143258
+    second: Dark_VortexSymbol_90px_V5_128_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,12 +46,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 128
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -138,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Sword_SimpleSymbol_V2_128_0
+      name: Dark_VortexSymbol_90px_V5_128_0
       rect:
         serializedVersion: 2
-        x: 46
-        y: 35
-        width: 36
-        height: 14
+        x: 24
+        y: 18
+        width: 80
+        height: 92
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -153,96 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1196156606aa37980800000000000000
-      internalID: -8542296737181505263
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Sword_SimpleSymbol_V2_128_1
-      rect:
-        serializedVersion: 2
-        x: 54
-        y: 45
-        width: 21
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 6d03b96b284431c20800000000000000
-      internalID: 3175957490426392790
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Sword_SimpleSymbol_V2_128_2
-      rect:
-        serializedVersion: 2
-        x: 58
-        y: 28
-        width: 12
-        height: 8
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 1a7518e4a89f41930800000000000000
-      internalID: 4113186732114007969
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Sword_SimpleSymbol_V2_128_3
-      rect:
-        serializedVersion: 2
-        x: 58
-        y: 22
-        width: 12
-        height: 7
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f404972b44cb2be40800000000000000
-      internalID: 5670801884050964559
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Sword_SimpleSymbol_V2_128_4
-      rect:
-        serializedVersion: 2
-        x: 56
-        y: 17
-        width: 16
-        height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0e482765c35cac300800000000000000
-      internalID: 273247590348391648
+      spriteID: a9d15005450ea0660800000000000000
+      internalID: 7352935994360143258
       vertices: []
       indices: 
       edges: []
@@ -251,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -261,11 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Sword_SimpleSymbol_V2_128_0: -8542296737181505263
-      Sword_SimpleSymbol_V2_128_1: 3175957490426392790
-      Sword_SimpleSymbol_V2_128_2: 4113186732114007969
-      Sword_SimpleSymbol_V2_128_3: 5670801884050964559
-      Sword_SimpleSymbol_V2_128_4: 273247590348391648
+      Dark_VortexSymbol_90px_V5_128_0: 7352935994360143258
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

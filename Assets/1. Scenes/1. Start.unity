@@ -332,6 +332,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIMAnager_Start
   Btn_GameStart: {fileID: 694228528}
   m_sceneName: 2. Menu
+  m_txtGameStart: {fileID: 1719586543}
+  m_gameStartSparkleSpeed: 2.2
+  m_gameStartMinAlpha: 0.45
+  m_gameStartMaxScale: 1.06
 --- !u!4 &615115551
 Transform:
   m_ObjectHideFlags: 0
@@ -748,15 +752,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: '- Game Start -'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4a76840c0cf414d4fb9886d23da718ab, type: 2}
-  m_sharedMaterial: {fileID: -1611222443085715870, guid: 4a76840c0cf414d4fb9886d23da718ab, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 25ec6746260d2b248bd58cbed5e0a614, type: 2}
+  m_sharedMaterial: {fileID: -5890009124914715361, guid: 25ec6746260d2b248bd58cbed5e0a614, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282795590
-  m_fontColor: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 1}
+    rgba: 4282335039
+  m_fontColor: {r: 0.24528301, g: 0.24528301, b: 0.24528301, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

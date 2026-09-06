@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 029d1bc1ce5a3bd4494087dca24cb0e0
+guid: 339e6c594c743a1458d56721ba5c01cd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2469695498068656730
-    second: Sword_SimpleSymbol_95px_V3_128_0
+      213: -4844222808187075188
+    second: Light_RadiantSymbol_90px_V5_128_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Sword_SimpleSymbol_95px_V3_128_0
+      name: Light_RadiantSymbol_90px_V5_128_0
       rect:
         serializedVersion: 2
-        x: 55
-        y: 16
-        width: 17
-        height: 97
+        x: 21
+        y: 18
+        width: 85
+        height: 92
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6ad7c3e8701e9bdd0800000000000000
-      internalID: -2469695498068656730
+      spriteID: c850a21950dd5ccb0800000000000000
+      internalID: -4844222808187075188
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Sword_SimpleSymbol_95px_V3_128_0: -2469695498068656730
+      Light_RadiantSymbol_90px_V5_128_0: -4844222808187075188
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

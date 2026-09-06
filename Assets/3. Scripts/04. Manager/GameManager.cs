@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
     [Header("에너미 턴 연출 속도")]
     [SerializeField, Min(0f)] private float m_towerAttackResolutionDelay = 0.2f;
     [SerializeField, Min(0.1f)] private float m_projectileWaitTimeout = 5f;
+    [Tooltip("같은 웨이브에서 다음 적이 소환되기 전 대기 시간(초)")]
+    [SerializeField, Min(0f)] private float m_enemySpawnInterval = 4f;
 
     public TurnState CurrentState { get; private set; } = TurnState.None;
     public int CurrentWave { get; private set; } = 1;
@@ -102,6 +104,12 @@ public class GameManager : MonoBehaviour
         {
             if (CurrentState == TurnState.GameOver || CurrentState == TurnState.GameClear) yield break;
             yield return StartCoroutine(EnemyTurnRoutine());
+
+            // 마지막 적 뒤에는 다음 웨이브로 바로 넘어가고, 적과 적 사이에만 대기합니다.
+            if (i < enemyTurns - 1 && m_enemySpawnInterval > 0f)
+            {
+                yield return new WaitForSeconds(m_enemySpawnInterval);
+            }
         }
 
         if (WaveManager.Instance != null)

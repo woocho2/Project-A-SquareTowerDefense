@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 313c97ce9b8e5de47993f412636d24ef
+guid: 9c802f077f0a95b48bb08971387d7797
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4492950295755761729
-    second: Fire_SimpleSymbol_V2_128_0
+      213: 6576115022120445722
+    second: Earth_MountainSymbol_90px_V5_128_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,12 +46,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 128
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Fire_SimpleSymbol_V2_128_0
+      name: Earth_MountainSymbol_90px_V5_128_0
       rect:
         serializedVersion: 2
-        x: 35
-        y: 19
-        width: 59
-        height: 92
+        x: 18
+        y: 27
+        width: 92
+        height: 75
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fb7ddfbb285d5a1c0800000000000000
-      internalID: -4492950295755761729
+      spriteID: a17699755cd034b50800000000000000
+      internalID: 6576115022120445722
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Fire_SimpleSymbol_V2_128_0: -4492950295755761729
+      Earth_MountainSymbol_90px_V5_128_0: 6576115022120445722
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
