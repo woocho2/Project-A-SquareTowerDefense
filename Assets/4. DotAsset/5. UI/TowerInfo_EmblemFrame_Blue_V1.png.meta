@@ -1,0 +1,403 @@
+fileFormatVersion: 2
+guid: ef031af32dd8feb47ae47d1df5346f71
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3701750279322836883
+    second: TowerInfo_EmblemFrame_Blue_V1_0
+  - first:
+      213: -6707527123577292631
+    second: TowerInfo_EmblemFrame_Blue_V1_1
+  - first:
+      213: 5874097978103026147
+    second: TowerInfo_EmblemFrame_Blue_V1_2
+  - first:
+      213: -6620956340650766135
+    second: TowerInfo_EmblemFrame_Blue_V1_3
+  - first:
+      213: -3170455285328687064
+    second: TowerInfo_EmblemFrame_Blue_V1_4
+  - first:
+      213: 4302807009033096622
+    second: TowerInfo_EmblemFrame_Blue_V1_5
+  - first:
+      213: 4448669048969257190
+    second: TowerInfo_EmblemFrame_Blue_V1_6
+  - first:
+      213: -219260404703520943
+    second: TowerInfo_EmblemFrame_Blue_V1_7
+  - first:
+      213: -1964346582832775925
+    second: TowerInfo_EmblemFrame_Blue_V1_8
+  - first:
+      213: 6992454726782155219
+    second: TowerInfo_EmblemFrame_Blue_V1_9
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: TowerInfo_EmblemFrame_Blue_V1_0
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 150
+        width: 1183
+        height: 1086
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39f9d3e24424f5330800000000000000
+      internalID: 3701750279322836883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TowerInfo_EmblemFrame_Blue_V1_1
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 33
+        width: 858
+        height: 123
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a8b0ed7e931ae2a0800000000000000
+      internalID: -6707527123577292631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TowerInfo_EmblemFrame_Blue_V1_2
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 91
+        width: 30
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e1dba02dfcf48150800000000000000
+      internalID: 5874097978103026147
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TowerInfo_EmblemFrame_Blue_V1_3
+      rect:
+        serializedVersion: 2
+        x: 1117
+        y: 75
+        width: 54
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c0142a9943ad14a0800000000000000
+      internalID: -6620956340650766135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TowerInfo_EmblemFrame_Blue_V1_4
+      rect:
+        serializedVersion: 2
+        x: 1190
+        y: 79
+        width: 23
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82059bd37b74004d0800000000000000
+      internalID: -3170455285328687064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TowerInfo_EmblemFrame_Blue_V1_5
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 83
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ead8a7e6d24a6bb30800000000000000
+      internalID: 4302807009033096622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TowerInfo_EmblemFrame_Blue_V1_6
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 65
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e066131ee8dcbd30800000000000000
+      internalID: 4448669048969257190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TowerInfo_EmblemFrame_Blue_V1_7
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 48
+        width: 38
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1579658d2d705fcf0800000000000000
+      internalID: -219260404703520943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TowerInfo_EmblemFrame_Blue_V1_8
+      rect:
+        serializedVersion: 2
+        x: 1155
+        y: 47
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0dff72c03d3db4e0800000000000000
+      internalID: -1964346582832775925
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TowerInfo_EmblemFrame_Blue_V1_9
+      rect:
+        serializedVersion: 2
+        x: 1164
+        y: 49
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d9f9d1c6803a0160800000000000000
+      internalID: 6992454726782155219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      TowerInfo_EmblemFrame_Blue_V1_0: 3701750279322836883
+      TowerInfo_EmblemFrame_Blue_V1_1: -6707527123577292631
+      TowerInfo_EmblemFrame_Blue_V1_2: 5874097978103026147
+      TowerInfo_EmblemFrame_Blue_V1_3: -6620956340650766135
+      TowerInfo_EmblemFrame_Blue_V1_4: -3170455285328687064
+      TowerInfo_EmblemFrame_Blue_V1_5: 4302807009033096622
+      TowerInfo_EmblemFrame_Blue_V1_6: 4448669048969257190
+      TowerInfo_EmblemFrame_Blue_V1_7: -219260404703520943
+      TowerInfo_EmblemFrame_Blue_V1_8: -1964346582832775925
+      TowerInfo_EmblemFrame_Blue_V1_9: 6992454726782155219
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

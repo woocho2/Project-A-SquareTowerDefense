@@ -12,9 +12,8 @@ public class DebuffAction : TowerAttackAction
         if (zone == null || towerTransform == null) return;
 
         m_activeZone = zone;
-        // 프리팹에 포함된 자식 존을 타워의 직접 자식으로 보장합니다.
-        // 따라서 타워의 이동·삭제 시 존도 반드시 함께 이동·삭제됩니다.
-        m_activeZone.transform.SetParent(towerTransform, true);
+        // 존은 최초 배치 위치에 고정합니다. 타워를 드래그해도 장판은 따라가지 않습니다.
+        m_activeZone.transform.SetParent(null, true);
 
         // 타워 위치 및 사거리 정보 전달 (드래그 제한용)
         m_activeZone.SetupBoundary(towerTransform.position, currentStats.Range);

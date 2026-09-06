@@ -184,9 +184,18 @@ public class TowerController : MonoBehaviour
         return didAttack;
     }
     public TowerData GetTowerData() => m_towerData;
+    public int GetRemainingAction() => m_remainingAction;
+    public int GetMaxAction() => GetFinalAction();
 
     public void ShowRange(bool show)
     {
+        // 디버프 타워는 고정 장판이 범위를 대신 보여주므로 사거리 원형은 표시하지 않습니다.
+        if (m_towerData != null && m_towerData.attackType == AttackType.Debuff)
+        {
+            if (m_range != null) m_range.SetActive(false);
+            return;
+        }
+
         if (m_range != null)
         {
             m_range.SetActive(show);
@@ -202,9 +211,15 @@ public class TowerController : MonoBehaviour
 
     public void OnMovedToNewPosition()
     {
-        if (m_attackAction is DebuffAction && m_debuffZoneChild != null)
+        // 디버프 존은 최초로 배치된 길목에 남습니다.
+    }
+
+    private void OnDestroy()
+    {
+        // 디버프 존은 타워와 분리되어 있으므로, 타워가 판매·합성·파괴될 때 함께 정리합니다.
+        if (m_debuffZoneChild != null && m_debuffZoneChild.transform.parent != transform)
         {
-            m_debuffZoneChild.UpdateTowerPosition(transform.position, GetFinalStats().Range);
+            Destroy(m_debuffZoneChild.gameObject);
         }
     }
 

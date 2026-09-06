@@ -27,12 +27,18 @@ public class UIManager : MonoBehaviour
     [Header("UI Tower Info")]
     [SerializeField] GameObject m_towerInfoPanel;
     [SerializeField] TextMeshProUGUI m_txtTowerInfoName;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoTier;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoColor;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoEmblem;
     [SerializeField] Button m_btnCombineColor;
     [SerializeField] Button m_btnCombineEmblem;
     [SerializeField] Button m_btnCombineExact;
     [SerializeField] TextMeshProUGUI m_txtTowerInfoLV;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoPowerLabel;
     [SerializeField] TextMeshProUGUI m_txtTowerInfoDamage;
     [SerializeField] TextMeshProUGUI m_txtTowerInfoRange;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoAction;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoSpeedLabel;
     [SerializeField] TextMeshProUGUI m_txtTowerInfoSpeed;
     [SerializeField] TextMeshProUGUI m_txtTowerInfoCriticalRate;
     [SerializeField] TextMeshProUGUI m_txtTowerInfoCriticalDamage;
@@ -87,6 +93,40 @@ public class UIManager : MonoBehaviour
         }
 
         Instance = this;
+        FindTowerInfoValueTexts();
+    }
+
+    // TowerInfoPanel 아래의 값 텍스트를 이름으로 자동 연결합니다.
+    // 인스펙터에 직접 연결한 레퍼런스는 유지하고, 비어 있는 항목만 찾습니다.
+    private void FindTowerInfoValueTexts()
+    {
+        if (m_towerInfoPanel == null) return;
+
+        m_txtTowerInfoTier ??= FindTowerInfoText("TowerTier");
+        m_txtTowerInfoColor ??= FindTowerInfoText("TowerColor");
+        m_txtTowerInfoEmblem ??= FindTowerInfoText("TowerEmblem");
+        m_txtTowerInfoPowerLabel ??= FindTowerInfoText("Txt_TowerPower");
+        m_txtTowerInfoDamage ??= FindTowerInfoText("Txt_TowerPowerValue");
+        m_txtTowerInfoRange ??= FindTowerInfoText("Txt_TowerRangeValue");
+        m_txtTowerInfoAction ??= FindTowerInfoText("Txt_TowerActionValue");
+        m_txtTowerInfoSpeedLabel ??= FindTowerInfoText("Txt_TowerAttackSpeed");
+        m_txtTowerInfoSpeed ??= FindTowerInfoText("Txt_TowerAttackSpeedValue");
+        m_txtTowerInfoCriticalRate ??= FindTowerInfoText("Txt_TowerCriticalRateValue");
+        m_txtTowerInfoCriticalDamage ??= FindTowerInfoText("Txt_TowerCriticalDamageValue");
+    }
+
+    private TextMeshProUGUI FindTowerInfoText(string objectName)
+    {
+        TextMeshProUGUI[] texts = m_towerInfoPanel.GetComponentsInChildren<TextMeshProUGUI>(true);
+        foreach (TextMeshProUGUI text in texts)
+        {
+            if (text.name == objectName)
+            {
+                return text;
+            }
+        }
+
+        return null;
     }
 
     private void OnEnable()
@@ -286,6 +326,11 @@ public class UIManager : MonoBehaviour
         if (m_selectedTower != null && !m_selectedTower.Equals(null))
         {
             UpdateCombineButtons();
+
+            if (m_towerInfoPanel != null && m_towerInfoPanel.activeSelf)
+            {
+                RefreshUpgradeTowerInfoLabel();
+            }
         }
     }
 
@@ -389,28 +434,117 @@ public class UIManager : MonoBehaviour
     {
         if (m_selectedTower != null && m_towerInfoPanel.activeSelf)
         {
+            FindTowerInfoValueTexts();
+
             TowerStats stats = m_selectedTower.GetFinalStats();
             TowerData data = m_selectedTower.GetTowerData();
 
             if (m_txtTowerInfoName != null) m_txtTowerInfoName.text = stats.Name;
-            if (m_txtTowerInfoLV != null) m_txtTowerInfoLV.text = $"{stats.Level}";
+            RefreshTowerIdentityInfo(data != null ? data.towerID : stats.ID);
+            if (m_txtTowerInfoLV != null) m_txtTowerInfoLV.text = $"UPGRADE : {stats.Level}";
+            AttackType attackType = data != null ? data.attackType : AttackType.Target;
+            bool isBuffTower = attackType == AttackType.Buff;
+            bool isDebuffTower = attackType == AttackType.Debuff;
+
+            if (m_txtTowerInfoPowerLabel != null)
+            {
+                m_txtTowerInfoPowerLabel.text = isBuffTower ? "버프력" : isDebuffTower ? "디버프력" : "공격력";
+            }
+
+            if (m_txtTowerInfoSpeedLabel != null)
+            {
+                m_txtTowerInfoSpeedLabel.text = (isBuffTower || isDebuffTower) ? "지속시간" : "공격횟수";
+            }
+
             if (m_txtTowerInfoDamage != null)
             {
-                if (data != null && data.attackType == AttackType.Buff)
+                if (isBuffTower)
                 {
                     float buffPower = stats.AbilityValue;
                     m_txtTowerInfoDamage.text = $"+{buffPower * 100}%";
+                }
+                else if (isDebuffTower)
+                {
+                    m_txtTowerInfoDamage.text = $"{stats.AbilityValue:F2}";
                 }
                 else
                 {
                     m_txtTowerInfoDamage.text = $"{stats.AttackPower:F2}";
                 }
             }
-            if (m_txtTowerInfoRange != null) m_txtTowerInfoRange.text = $"{stats.Range * 100}";
-            if (m_txtTowerInfoSpeed != null) m_txtTowerInfoSpeed.text = $"{stats.AttackCount}";
+            if (m_txtTowerInfoRange != null)
+            {
+                m_txtTowerInfoRange.text = isDebuffTower
+                    ? "전체 지역"
+                    : $"{TowerAttackAction.ToTileRange(stats.Range)}칸";
+            }
+            if (m_txtTowerInfoAction != null) m_txtTowerInfoAction.text = $"{m_selectedTower.GetRemainingAction()} / {m_selectedTower.GetMaxAction()}";
+            if (m_txtTowerInfoSpeed != null)
+            {
+                m_txtTowerInfoSpeed.text = (isBuffTower || isDebuffTower)
+                    ? $"{stats.Duration:F0}턴"
+                    : $"x{stats.AttackCount}";
+            }
             if (m_txtTowerInfoCriticalRate != null) m_txtTowerInfoCriticalRate.text = $"{(stats.CriticalRate * 100):F2}%";
             if (m_txtTowerInfoCriticalDamage != null) m_txtTowerInfoCriticalDamage.text = $"{((2 + stats.CriticalDamage) * 100):F0}%";
         }
+    }
+
+    private void RefreshTowerIdentityInfo(int towerID)
+    {
+        int tier = towerID / 1000;
+        int color = (towerID % 1000) / 100;
+        int emblem = towerID % 100;
+
+        if (m_txtTowerInfoTier != null) m_txtTowerInfoTier.text = GetTowerTierName(tier);
+        if (m_txtTowerInfoColor != null) m_txtTowerInfoColor.text = GetTowerColorName(color);
+        if (m_txtTowerInfoEmblem != null) m_txtTowerInfoEmblem.text = GetTowerEmblemName(emblem);
+    }
+
+    private static string GetTowerTierName(int tier)
+    {
+        return tier switch
+        {
+            1 => "브론즈",
+            2 => "실버",
+            3 => "골드",
+            4 => "미스릴",
+            5 => "다이아몬드",
+            _ => "-"
+        };
+    }
+
+    private static string GetTowerColorName(int color)
+    {
+        return color switch
+        {
+            1 => "빨강",
+            2 => "파랑",
+            3 => "하양",
+            4 => "검정",
+            _ => "-"
+        };
+    }
+
+    private static string GetTowerEmblemName(int emblem)
+    {
+        return emblem switch
+        {
+            1 => "검",
+            2 => "활",
+            3 => "방패",
+            4 => "창",
+            5 => "도끼",
+            6 => "해머",
+            7 => "불",
+            8 => "얼음",
+            9 => "전기",
+            10 => "바람",
+            11 => "대지",
+            12 => "빛",
+            13 => "어둠",
+            _ => "-"
+        };
     }
 
     private void UpdateWaveUI()
