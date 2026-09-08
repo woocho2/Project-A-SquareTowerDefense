@@ -10,7 +10,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject m_panelGameInfo;
     [SerializeField] Button m_btnGameSpeed;
     [SerializeField] TextMeshProUGUI m_txtGameSpeed;
-    [SerializeField] Button m_btnSkipPlayerTurn;
+    [SerializeField] Button m_btnEndPlayerTurn;
     [SerializeField] Button m_btnMainStop;
     [SerializeField] Button m_btnCreateTower;
     [SerializeField] TextMeshProUGUI m_txtCreateCostGold;
@@ -23,6 +23,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI m_txtEnemy;
     [SerializeField] TextMeshProUGUI m_txtCurrentWaveIndex;
     [SerializeField] TextMeshProUGUI m_txtPlayerTurnRemainingTime;
+
+    [Header("Turn State UI")]
+    [Tooltip("타워 생성·컬러 강화·티어 강화 버튼만 포함하는 패널입니다.")]
+    [SerializeField] GameObject m_playerActionPanel;
 
     [Header("UI Tower Info")]
     [SerializeField] GameObject m_towerInfoPanel;
@@ -83,6 +87,7 @@ public class UIManager : MonoBehaviour
     private int m_selectTowerID = 0;
     private int currentLifeIndex;
     private int m_lastWave = -1;
+    private bool m_isPlayerActionUIVisible;
 
     private void Awake()
     {
@@ -146,6 +151,11 @@ public class UIManager : MonoBehaviour
         InitUI();
 
         SubscribeGameManagerEvents();
+        if (GameManager.Instance != null)
+        {
+            SetPlayerActionUI(GameManager.Instance.CanPerformPlayerAction);
+            RefreshPlayerTurnStateUI(GameManager.Instance.CurrentState);
+        }
 
         Button[] quitButtons = { m_btnQuit, m_btnGameOverHome, m_btnGameClearHome, m_btnNextStage };
         foreach (var btn in quitButtons)
@@ -207,10 +217,10 @@ public class UIManager : MonoBehaviour
             });
         }
 
-        if (m_btnSkipPlayerTurn != null)
+        if (m_btnEndPlayerTurn != null)
         {
-            m_btnSkipPlayerTurn.onClick.RemoveAllListeners();
-            m_btnSkipPlayerTurn.onClick.AddListener(() =>
+            m_btnEndPlayerTurn.onClick.RemoveAllListeners();
+            m_btnEndPlayerTurn.onClick.AddListener(() =>
             {
                 GameManager.Instance?.OnClickSkipPlayerTurn();
             });
@@ -229,6 +239,7 @@ public class UIManager : MonoBehaviour
         {
             m_btnCreateTower.onClick.AddListener(() =>
             {
+                if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
                 TowerManager.Instance.BuildTower();
 
                 if (m_btnCreateTower != null)
@@ -242,6 +253,7 @@ public class UIManager : MonoBehaviour
         {
             m_btnColorUpgradeTower.onClick.AddListener(() =>
             {
+                if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
                 if (m_selectTowerID <= 0)
                 {
                     Debug.LogWarning("업그레이드할 타워가 선택되지 않았습니다.");
@@ -260,6 +272,7 @@ public class UIManager : MonoBehaviour
         {
             m_btnTierUpgradeTower.onClick.AddListener(() =>
             {
+                if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
                 if (m_selectedTower == null || m_selectTowerID <= 0)
                 {
                     Debug.LogWarning("티어 강화할 타워가 선택되지 않았습니다.");
@@ -690,6 +703,8 @@ public class UIManager : MonoBehaviour
 
     private void OnCombineClick(CombineMode type)
     {
+        if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
+
         if (m_selectedTower != null && m_selectedTower.gameObject != null)
         {
             TowerManager.Instance.ExecuteCombine(m_selectedTowerInfo, type);
@@ -714,9 +729,43 @@ public class UIManager : MonoBehaviour
 
     public void ShowButtons(bool isShow)
     {
-        if (m_btnCreateTower != null) m_btnCreateTower.gameObject.SetActive(isShow);
-        if (m_btnColorUpgradeTower != null) m_btnColorUpgradeTower.gameObject.SetActive(isShow);
+        if (!m_isPlayerActionUIVisible) return;
+
+        if (m_playerActionPanel != null)
+        {
+            m_playerActionPanel.SetActive(isShow);
+            return;
+        }
+
+        SetMainActionButtonsVisible(isShow);
     }
+
+    /// <summary>
+    /// 턴 상태가 바뀔 때 행동 UI만 표시하거나 숨깁니다.
+    /// 타워/적 정보 패널은 건드리지 않으므로 적 턴에도 정보를 확인할 수 있습니다.
+    /// </summary>
+    public void SetPlayerActionUI(bool isVisible)
+    {
+        m_isPlayerActionUIVisible = isVisible;
+
+        if (m_playerActionPanel != null)
+        {
+            m_playerActionPanel.SetActive(isVisible);
+        }
+        else
+        {
+            // 씬에 새 패널이 아직 반영되지 않은 경우의 안전장치입니다.
+            SetMainActionButtonsVisible(isVisible);
+        }
+    }
+
+    private void SetMainActionButtonsVisible(bool isVisible)
+    {
+        if (m_btnCreateTower != null) m_btnCreateTower.gameObject.SetActive(isVisible);
+        if (m_btnColorUpgradeTower != null) m_btnColorUpgradeTower.gameObject.SetActive(isVisible);
+        if (m_btnTierUpgradeTower != null) m_btnTierUpgradeTower.gameObject.SetActive(isVisible);
+    }
+
 
     public void OnPlayerHit(bool isBoss = false)
     {

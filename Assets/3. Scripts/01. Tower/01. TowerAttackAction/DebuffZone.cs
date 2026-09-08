@@ -119,6 +119,7 @@ public class DebuffZone : MonoBehaviour
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+            if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
 
             if (m_collider2D != null && m_collider2D.OverlapPoint(mouseWorldPosition))
             {
@@ -194,6 +195,21 @@ public class DebuffZone : MonoBehaviour
         if (TryGetClosestPathTilePosition(transform.position, out Vector3 snappedPosition))
         {
             transform.position = snappedPosition;
+        }
+    }
+
+    public void CancelInteraction()
+    {
+        m_isTracking = false;
+        m_isDragging = false;
+    }
+
+    public static void CancelAllInteractions()
+    {
+        DebuffZone[] zones = FindObjectsByType<DebuffZone>(FindObjectsSortMode.None);
+        foreach (DebuffZone zone in zones)
+        {
+            zone.CancelInteraction();
         }
     }
 

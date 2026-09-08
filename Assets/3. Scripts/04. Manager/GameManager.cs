@@ -21,32 +21,30 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float m_gameSpeed = 1.0f;
     [SerializeField] private int m_totalLife = 20;
 
-    [Header("턴 관리 설정")]
-    [Tooltip("플레이어 턴 제한 시간(초)")]
-    [SerializeField] private float playerTurnDuration = 45f;
 
     [Header("에너미 턴 연출 속도")]
     [SerializeField, Min(0f)] private float m_towerAttackResolutionDelay = 0.2f;
     [SerializeField, Min(0.1f)] private float m_projectileWaitTimeout = 5f;
     [Tooltip("같은 웨이브에서 다음 적이 소환되기 전 대기 시간(초)")]
-    [SerializeField, Min(0f)] private float m_enemySpawnInterval = 4f;
+    [SerializeField, Min(0f)] private float m_enemySpawnInterval = 0.5f;
 
     public TurnState CurrentState { get; private set; } = TurnState.None;
+    public bool CanPerformPlayerAction => m_currentTurnState != null && m_currentTurnState.CanPerformPlayerAction;
     public int CurrentWave { get; private set; } = 1;
+
+    private IGameTurnState m_currentTurnState;
 
     // 턴 진행 제어용 코루틴
     private Coroutine turnRoutine;
-    private Coroutine playerTimerRoutine;
-    private bool isPlayerTurnSkipped = false;
+    private bool isPlayerTurnEnd = false;
 
-    private sealed class ShieldEffect
+    private sealed class ShieldBuff
     {
-        public int Amount;
+        public int MaxShield;
         public int RemainingShield;
-        public int RemainingTurns;
     }
 
-    private readonly Dictionary<int, ShieldEffect> m_shieldsBySource = new Dictionary<int, ShieldEffect>();
+    private readonly Dictionary<int, ShieldBuff> m_shieldsBySource = new Dictionary<int, ShieldBuff>();
     private int m_currentShield;
     private int m_currentShieldSourceID;
 
@@ -78,7 +76,7 @@ public class GameManager : MonoBehaviour
     public void OnStartGame()
     {
         Time.timeScale = m_gameSpeed;
-        CurrentState = TurnState.None;
+        ChangeState(new IdleTurnState());
 
         if (turnRoutine != null) StopCoroutine(turnRoutine);
         turnRoutine = StartCoroutine(TurnLoopRoutine());
@@ -130,19 +128,12 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator PlayerTurnRoutine()
     {
-        CurrentState = TurnState.PlayerTurn;
-        OnTurnStateChanged?.Invoke(CurrentState);
-        isPlayerTurnSkipped = false;
+        ChangeState(new PlayerTurnState());
+        isPlayerTurnEnd = false;
 
-        float remainingTime = playerTurnDuration;
-
-        while (remainingTime > 0f)
+        // 스킵 버튼을 누를 때까지 플레이어 행동을 기다립니다.
+        while (!isPlayerTurnEnd && CurrentState != TurnState.GameOver && CurrentState != TurnState.GameClear)
         {
-            // 스킵 버튼을 누르면 즉시 루프 탈출
-            if (isPlayerTurnSkipped) break;
-
-            remainingTime -= Time.deltaTime;
-            OnPlayerTurnTimerUpdated?.Invoke(Mathf.Max(0f, remainingTime));
             yield return null;
         }
 
@@ -154,7 +145,7 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentState == TurnState.PlayerTurn)
         {
-            isPlayerTurnSkipped = true;
+            isPlayerTurnEnd = true;
         }
     }
 
@@ -164,9 +155,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator EnemyTurnRoutine()
     {
-        CurrentState = TurnState.EnemyTurn;
-        OnTurnStateChanged?.Invoke(CurrentState);
-        AdvanceShieldTurn();
+        ChangeState(new EnemyTurnState());
 
         // 단계 1: 타워의 투사체가 실제로 명중한 뒤에만 적 이동을 시작합니다.
         yield return StartCoroutine(ProcessTowerAttacks());
@@ -272,10 +261,13 @@ public class GameManager : MonoBehaviour
             m_currentShield -= absorbedAmount;
             amount -= absorbedAmount;
 
-            if (m_shieldsBySource.TryGetValue(m_currentShieldSourceID, out ShieldEffect shieldEffect))
+            if (m_shieldsBySource.TryGetValue(m_currentShieldSourceID, out ShieldBuff shieldEffect))
             {
                 shieldEffect.RemainingShield = m_currentShield;
             }
+
+            // 현재 가장 높은 쉴드가 줄어들었을 수 있으므로 적용 대상을 다시 선택합니다.
+            RefreshShield();
 
             if (amount <= 0) return;
         }
@@ -287,35 +279,37 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ApplyTemporaryShield(int sourceID, int amount, int durationTurns)
+    /// <summary>
+    /// 쉴드 타워가 행동할 때마다 쉴드 1을 충전합니다.
+    /// 각 타워는 자신의 티어만큼만 쉴드를 보유할 수 있습니다.
+    /// </summary>
+    public void AddShield(int sourceID, int tier)
     {
-        m_shieldsBySource[sourceID] = new ShieldEffect
-        {
-            Amount = Mathf.Clamp(amount, 1, 5),
-            RemainingShield = Mathf.Clamp(amount, 1, 5),
-            RemainingTurns = Mathf.Max(1, durationTurns)
-        };
-        RefreshShield();
-    }
+        int maxShield = Mathf.Clamp(tier, 1, 5);
 
-    private void AdvanceShieldTurn()
-    {
-        List<int> expiredSources = new List<int>();
-        foreach (KeyValuePair<int, ShieldEffect> pair in m_shieldsBySource)
+        if (!m_shieldsBySource.TryGetValue(sourceID, out ShieldBuff shield))
         {
-            pair.Value.RemainingTurns--;
-            if (pair.Value.RemainingTurns <= 0) expiredSources.Add(pair.Key);
+            shield = new ShieldBuff
+            {
+                MaxShield = maxShield,
+                RemainingShield = 0
+            };
+            m_shieldsBySource.Add(sourceID, shield);
         }
 
-        foreach (int sourceID in expiredSources) m_shieldsBySource.Remove(sourceID);
+        // 티어 강화 등으로 같은 출처의 최대치가 달라질 가능성도 반영합니다.
+        shield.MaxShield = maxShield;
+        shield.RemainingShield = Mathf.Min(shield.RemainingShield + 1, shield.MaxShield);
+
         RefreshShield();
     }
+
 
     private void RefreshShield()
     {
         int highestShield = 0;
         int highestShieldSourceID = 0;
-        foreach (KeyValuePair<int, ShieldEffect> pair in m_shieldsBySource)
+        foreach (KeyValuePair<int, ShieldBuff> pair in m_shieldsBySource)
         {
             if (pair.Value.RemainingShield > highestShield)
             {
@@ -329,7 +323,7 @@ public class GameManager : MonoBehaviour
 
     public void OnGameOver()
     {
-        CurrentState = TurnState.GameOver;
+        ChangeState(new GameOverTurnState());
         if (turnRoutine != null) StopCoroutine(turnRoutine);
         OnPauseGame();
 
@@ -341,7 +335,7 @@ public class GameManager : MonoBehaviour
 
     public void OnGameClear()
     {
-        CurrentState = TurnState.GameClear;
+        ChangeState(new GameClearTurnState());
         if (turnRoutine != null) StopCoroutine(turnRoutine);
         OnPauseGame();
 
@@ -358,5 +352,16 @@ public class GameManager : MonoBehaviour
 #else
         Application.Quit();
 #endif
+    }
+
+    private void ChangeState(IGameTurnState nextState)
+    {
+        if (nextState == null) return;
+
+        m_currentTurnState?.Exit(this);
+        m_currentTurnState = nextState;
+        CurrentState = nextState.Type;
+        m_currentTurnState.Enter(this);
+        OnTurnStateChanged?.Invoke(CurrentState);
     }
 }

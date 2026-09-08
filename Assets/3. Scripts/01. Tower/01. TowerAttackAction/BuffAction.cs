@@ -11,10 +11,10 @@ public class BuffAction : TowerAttackAction
 
         if (m_data.buffTarget == BuffTarget.Shield)
         {
-            GameManager.Instance?.ApplyTemporaryShield(
+            // 쉴드 타워는 행동할 때마다 자신의 티어를 최대치로 하여 쉴드 1을 충전합니다.
+            GameManager.Instance?.AddShield(
                 towerTransform.GetInstanceID(),
-                sourceTier,
-                Mathf.Max(1, Mathf.RoundToInt(currentStats.Duration)));
+                sourceTier);
             return true;
         }
 

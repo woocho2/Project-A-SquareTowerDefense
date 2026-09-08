@@ -37,7 +37,7 @@ public class TilePath : MonoBehaviour
         int clampedIndex = Mathf.Clamp(index, 0, LastIndex);
         return tilemap.GetCellCenterWorld(pathGridPositions[clampedIndex]);
     }
-
+    
     // 특정 인덱스의 그리드 좌표 반환 (타일 속성 체크용)
     public Vector3Int GetGridPosition(int index)
     {

@@ -327,6 +327,8 @@ public class TowerManager : MonoBehaviour
 
     public void BuildTower()
     {
+        if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
+
         if (!CurrencyManager.Instance.HasEnoughMoney(BuildCost))
         {
             Debug.Log("돈이 부족합니다.");
@@ -454,6 +456,8 @@ public class TowerManager : MonoBehaviour
 
     public void SellTower(Vector3Int cell)
     {
+        if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
+
         if (m_towersOnGrid.TryGetValue(cell, out GridTowerInfo info))
         {
             if (info.Controller != null)
@@ -502,6 +506,8 @@ public class TowerManager : MonoBehaviour
     public bool UpgradeTowerTier(Vector3Int targetCell, out TowerController upgradedTower)
     {
         upgradedTower = null;
+
+        if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return false;
 
         if (!m_towersOnGrid.TryGetValue(targetCell, out GridTowerInfo currentInfo) || currentInfo.Controller == null)
         {
@@ -686,6 +692,8 @@ public class TowerManager : MonoBehaviour
 
     public void UpgradeTower(int towerID)
     {
+        if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
+
         if (!m_globalTowerStats.ContainsKey(towerID)) return;
 
         int targetType = (towerID % 1000) / 100;
@@ -774,6 +782,8 @@ public class TowerManager : MonoBehaviour
 
     public void ExecuteCombine(Vector3Int targetCell, CombineMode mode)
     {
+        if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
+
         if (!CanCombine(targetCell, mode)) return;
 
         GridTowerInfo targetInfo = m_towersOnGrid[targetCell];
@@ -1179,6 +1189,8 @@ public class TowerManager : MonoBehaviour
 #endif
     public void MoveTowerOnGrid(Vector3Int fromCell, Vector3Int toCell)
     {
+        if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
+
         // 1. 이동시킬 타워가 딕셔너리에 존재하는지 확인
         if (!m_towersOnGrid.TryGetValue(fromCell, out GridTowerInfo movingInfo)) return;
 

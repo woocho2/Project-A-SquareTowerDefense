@@ -19,8 +19,10 @@ public class DragObjectOnGround : MonoBehaviour
 
     private bool m_isTracking;
     private bool m_isDragging;
+    private bool m_canDrag;
 
     private Vector3 m_startMousePosition;
+    private Vector3 m_startWorldPosition;
     private Vector3 m_offset;
     private Vector3Int m_startCell;
 
@@ -85,13 +87,15 @@ public class DragObjectOnGround : MonoBehaviour
             {
                 m_isTracking = true;
                 m_isDragging = false;
+                m_canDrag = GameManager.Instance == null || GameManager.Instance.CanPerformPlayerAction;
 
-                if (UIManager.Instance != null)
+                if (m_canDrag && UIManager.Instance != null)
                 {
                     UIManager.Instance.ShowButtons(false);
                 }
 
                 m_startMousePosition = mouseWorldPosition;
+                m_startWorldPosition = transform.position;
                 m_offset = transform.position - mouseWorldPosition;
 
                 if (TowerManager.Instance != null)
@@ -110,7 +114,10 @@ public class DragObjectOnGround : MonoBehaviour
                     m_towerController.ShowRange(true);
                 }
 
-                OnTowerDragStateChanged?.Invoke(true);
+                if (m_canDrag)
+                {
+                    OnTowerDragStateChanged?.Invoke(true);
+                }
             }
             else
             {
@@ -127,7 +134,7 @@ public class DragObjectOnGround : MonoBehaviour
             }
         }
 
-        if (Mouse.current.leftButton.isPressed && m_isTracking)
+        if (Mouse.current.leftButton.isPressed && m_isTracking && m_canDrag)
         {
             if (!m_isDragging)
             {
@@ -150,7 +157,7 @@ public class DragObjectOnGround : MonoBehaviour
             {
                 OnTowerClickedAction?.Invoke(m_towerController);
             }
-            else
+            else if (m_canDrag)
             {
                 Vector3 dropPosition = GetMouseWorldPosition();
                 Collider2D hitCollider = Physics2D.OverlapPoint(new Vector2(dropPosition.x, dropPosition.y));
@@ -196,12 +203,47 @@ public class DragObjectOnGround : MonoBehaviour
             m_isTracking = false;
             m_isDragging = false;
 
-            if (UIManager.Instance != null)
+            if (m_canDrag && UIManager.Instance != null)
             {
                 UIManager.Instance.ShowButtons(true);
             }
 
+            if (m_canDrag)
+            {
+                OnTowerDragStateChanged?.Invoke(false);
+            }
+
+            m_canDrag = false;
+        }
+    }
+
+    /// <summary>상태 전환 시 진행 중인 드래그를 원래 위치로 되돌립니다.</summary>
+    public void CancelInteraction()
+    {
+        if (!m_isTracking && !m_isDragging) return;
+
+        if (m_isDragging)
+        {
+            transform.position = m_startWorldPosition;
+        }
+
+        bool wasDragging = m_canDrag;
+        m_isTracking = false;
+        m_isDragging = false;
+        m_canDrag = false;
+
+        if (wasDragging)
+        {
             OnTowerDragStateChanged?.Invoke(false);
+        }
+    }
+
+    public static void CancelAllInteractions()
+    {
+        DragObjectOnGround[] dragObjects = FindObjectsByType<DragObjectOnGround>(FindObjectsSortMode.None);
+        foreach (DragObjectOnGround dragObject in dragObjects)
+        {
+            dragObject.CancelInteraction();
         }
     }
 
