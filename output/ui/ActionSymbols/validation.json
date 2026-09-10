@@ -1,0 +1,124 @@
+{
+  "TowerCreate": {
+    "logical_size": [
+      41,
+      43
+    ],
+    "placement": [
+      359,
+      336
+    ],
+    "anchor": [
+      508,
+      508
+    ],
+    "visible_bounds": [
+      359,
+      336,
+      687,
+      680
+    ],
+    "tower_body_alignment": {
+      "axis_x": 508,
+      "horizontal_shift_px": 15,
+      "basis": "tower body visual centroid; plus mark excluded from alignment"
+    }
+  },
+  "TierUpgrade": {
+    "logical_size": [
+      41,
+      41
+    ],
+    "placement": [
+      344,
+      344
+    ],
+    "anchor": [
+      508,
+      508
+    ],
+    "visible_bounds": [
+      344,
+      344,
+      672,
+      672
+    ]
+  },
+  "ColorUpgrade": {
+    "logical_size": [
+      41,
+      41
+    ],
+    "placement": [
+      344,
+      344
+    ],
+    "anchor": [
+      508,
+      508
+    ],
+    "visible_bounds": [
+      344,
+      344,
+      672,
+      672
+    ]
+  },
+  "Speed": {
+    "logical_size": [
+      65,
+      43
+    ],
+    "placement": [
+      248,
+      336
+    ],
+    "anchor": [
+      508,
+      508
+    ],
+    "visible_bounds": [
+      248,
+      336,
+      768,
+      680
+    ],
+    "geometry": "Identical arrow copies; exact vertical mirror symmetry"
+  },
+  "Skip": {
+    "logical_size": [
+      41,
+      43
+    ],
+    "placement": [
+      344,
+      336
+    ],
+    "anchor": [
+      508,
+      508
+    ],
+    "visible_bounds": [
+      344,
+      336,
+      672,
+      680
+    ]
+  },
+  "canvas": [
+    1024,
+    1024
+  ],
+  "reference_bounds": [
+    344,
+    320,
+    672,
+    696
+  ],
+  "alpha_verified": true,
+  "playback_alignment": {
+    "height": 344,
+    "same_center": true,
+    "same_top_bottom": true
+  }
+}

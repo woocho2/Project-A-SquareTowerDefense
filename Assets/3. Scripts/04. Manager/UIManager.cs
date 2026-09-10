@@ -10,23 +10,21 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject m_panelGameInfo;
     [SerializeField] Button m_btnGameSpeed;
     [SerializeField] TextMeshProUGUI m_txtGameSpeed;
-    [SerializeField] Button m_btnEndPlayerTurn;
-    [SerializeField] Button m_btnMainStop;
+    [SerializeField] Button m_btnMemu;    
+    [SerializeField] Image[] m_LifePoints;
+    [SerializeField] TextMeshProUGUI m_txtWave;
+    [SerializeField] TextMeshProUGUI m_txtCurrentWaveIndex;
+
+    [Header("Player Turn Panel UI")]
+    [Tooltip("타워 생성·컬러 강화·티어 강화 버튼만 포함하는 패널입니다.")]
+    [SerializeField] GameObject m_playerTurnPanel;
     [SerializeField] Button m_btnCreateTower;
     [SerializeField] TextMeshProUGUI m_txtCreateCostGold;
     [SerializeField] Button m_btnColorUpgradeTower;
     [SerializeField] TextMeshProUGUI m_txtColorUpgradeCostGem;
     [SerializeField] Button m_btnTierUpgradeTower;
     [SerializeField] TextMeshProUGUI m_txtTierUpgradeCostGem;
-    [SerializeField] Image[] m_LifePoints;
-    [SerializeField] TextMeshProUGUI m_txtWave;
-    [SerializeField] TextMeshProUGUI m_txtEnemy;
-    [SerializeField] TextMeshProUGUI m_txtCurrentWaveIndex;
-    [SerializeField] TextMeshProUGUI m_txtPlayerTurnRemainingTime;
-
-    [Header("Turn State UI")]
-    [Tooltip("타워 생성·컬러 강화·티어 강화 버튼만 포함하는 패널입니다.")]
-    [SerializeField] GameObject m_playerActionPanel;
+    [SerializeField] Button m_btnEndPlayerTurn;
 
     [Header("UI Tower Info")]
     [SerializeField] GameObject m_towerInfoPanel;
@@ -71,15 +69,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI m_txtDebug;
     [SerializeField] Button m_btnDebug;
 
-    [Header("Trash")]
-    public GameObject SellAreaPanel;
-
     [SerializeField] string m_sceneName_Restart;
     [SerializeField] string m_sceneName_Menu;
-
-    [SerializeField] private Vector3 m_combineColorOffset = new Vector3(-50f, 0f, 50f);
-    [SerializeField] private Vector3 m_combineEmblemOffset = new Vector3(0f, 0f, 50f);
-    [SerializeField] private Vector3 m_combineExactOffset = new Vector3(50f, 0f, 50f);
 
     private TowerController m_selectedTower;
     private Vector3Int m_selectedTowerInfo;
@@ -150,11 +141,9 @@ public class UIManager : MonoBehaviour
     {
         InitUI();
 
-        SubscribeGameManagerEvents();
         if (GameManager.Instance != null)
         {
             SetPlayerActionUI(GameManager.Instance.CanPerformPlayerAction);
-            RefreshPlayerTurnStateUI(GameManager.Instance.CurrentState);
         }
 
         Button[] quitButtons = { m_btnQuit, m_btnGameOverHome, m_btnGameClearHome, m_btnNextStage };
@@ -187,12 +176,12 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        if (m_btnMainStop != null)
+        if (m_btnMemu != null)
         {
-            m_btnMainStop.onClick.RemoveAllListeners();
-            m_btnMainStop.onClick.AddListener(() =>
+            m_btnMemu.onClick.RemoveAllListeners();
+            m_btnMemu.onClick.AddListener(() =>
             {
-                m_btnMainStop.gameObject.SetActive(false);
+                m_btnMemu.gameObject.SetActive(false);
                 m_panelOption.SetActive(true);
 
                 if (GameManager.Instance != null)
@@ -323,8 +312,6 @@ public class UIManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        UnsubscribeGameManagerEvents();
-
         if (Instance == this)
         {
             Instance = null;
@@ -334,7 +321,6 @@ public class UIManager : MonoBehaviour
     private void Update()
     {
         UpdateWaveUI();
-        UpdateEnemyCount();
 
         if (m_selectedTower != null && !m_selectedTower.Equals(null))
         {
@@ -365,9 +351,9 @@ public class UIManager : MonoBehaviour
             m_panelOption.SetActive(false);
         }
 
-        if (m_btnMainStop != null)
+        if (m_btnMemu != null)
         {
-            m_btnMainStop.gameObject.SetActive(true);
+            m_btnMemu.gameObject.SetActive(true);
         }
 
         GameManager.Instance.OnResumeGame();
@@ -575,47 +561,13 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void SubscribeGameManagerEvents()
-    {
-        if (GameManager.Instance == null) return;
-
-        GameManager.Instance.OnPlayerTurnTimerUpdated += RefreshPlayerTurnRemainingTime;
-        GameManager.Instance.OnTurnStateChanged += RefreshPlayerTurnStateUI;
-    }
-
-    private void UnsubscribeGameManagerEvents()
-    {
-        if (GameManager.Instance == null) return;
-
-        GameManager.Instance.OnPlayerTurnTimerUpdated -= RefreshPlayerTurnRemainingTime;
-        GameManager.Instance.OnTurnStateChanged -= RefreshPlayerTurnStateUI;
-    }
-
-    private void RefreshPlayerTurnRemainingTime(float remainingTime)
-    {
-        if (m_txtPlayerTurnRemainingTime == null) return;
-
-        int displaySeconds = Mathf.CeilToInt(Mathf.Max(0f, remainingTime));
-        m_txtPlayerTurnRemainingTime.text = $"{displaySeconds}s";
-    }
-
-    private void RefreshPlayerTurnStateUI(TurnState turnState)
-    {
-        if (m_txtPlayerTurnRemainingTime == null) return;
-
-        if (turnState != TurnState.PlayerTurn)
-        {
-            m_txtPlayerTurnRemainingTime.text = "-";
-        }
-    }
-
     public void InitUI()
     {
         if (m_panelGameInfo != null) m_panelGameInfo.SetActive(true);
         if (m_panelOption != null) m_panelOption.SetActive(false);
         if (m_panelGameover != null) m_panelGameover.SetActive(false);
         if (m_panelGameclear != null) m_panelGameclear.SetActive(false);
-        if (m_btnMainStop != null) m_btnMainStop.gameObject.SetActive(true);
+        if (m_btnMemu != null) m_btnMemu.gameObject.SetActive(true);
         if (m_towerInfoPanel != null) m_towerInfoPanel.SetActive(false);
 
         currentLifeIndex = m_LifePoints.Length - 1;
@@ -684,21 +636,6 @@ public class UIManager : MonoBehaviour
     public void SelectTower(TowerController tower)
     {
         m_selectedTower = tower;
-
-        if (m_btnCombineColor != null && m_btnCombineEmblem != null && m_btnCombineExact != null)
-        {
-            Vector3 towerWorldPos = tower.transform.position;
-            Camera mainCam = Camera.main;
-
-            if (mainCam != null)
-            {
-                Vector3 screenPos = mainCam.WorldToScreenPoint(towerWorldPos);
-
-                m_btnCombineColor.transform.position = screenPos + m_combineColorOffset;
-                m_btnCombineEmblem.transform.position = screenPos + m_combineEmblemOffset;
-                m_btnCombineExact.transform.position = screenPos + m_combineExactOffset;
-            }
-        }
     }
 
     private void OnCombineClick(CombineMode type)
@@ -731,9 +668,9 @@ public class UIManager : MonoBehaviour
     {
         if (!m_isPlayerActionUIVisible) return;
 
-        if (m_playerActionPanel != null)
+        if (m_playerTurnPanel != null)
         {
-            m_playerActionPanel.SetActive(isShow);
+            m_playerTurnPanel.SetActive(isShow);
             return;
         }
 
@@ -748,9 +685,9 @@ public class UIManager : MonoBehaviour
     {
         m_isPlayerActionUIVisible = isVisible;
 
-        if (m_playerActionPanel != null)
+        if (m_playerTurnPanel != null)
         {
-            m_playerActionPanel.SetActive(isVisible);
+            m_playerTurnPanel.SetActive(isVisible);
         }
         else
         {
@@ -790,13 +727,6 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void UpdateEnemyCount()
-    {
-        if (m_txtEnemy != null && WaveManager.Instance != null)
-        {
-            m_txtEnemy.text = $"Enemy : {WaveManager.Instance.GetEnemyCount()}";
-        }
-    }
 
     public void ShowGameOver()
     {

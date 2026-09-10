@@ -49,8 +49,7 @@ public class GameManager : MonoBehaviour
     private int m_currentShieldSourceID;
 
     // UI 및 외부 시스템 알림용 델리게이트
-    public event Action<TurnState> OnTurnStateChanged;
-    public event Action<float> OnPlayerTurnTimerUpdated; // 남은 시간 UI 갱신용
+    public event Action<TurnState> OnTurnStateChanged;    
 
     private void Awake()
     {
@@ -135,9 +134,7 @@ public class GameManager : MonoBehaviour
         while (!isPlayerTurnEnd && CurrentState != TurnState.GameOver && CurrentState != TurnState.GameClear)
         {
             yield return null;
-        }
-
-        OnPlayerTurnTimerUpdated?.Invoke(0f);
+        }        
     }
 
     // 플레이어 턴 스킵 버튼 UI 이벤트 연결용 함수

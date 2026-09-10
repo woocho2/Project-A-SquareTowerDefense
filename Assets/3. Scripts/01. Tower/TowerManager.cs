@@ -28,8 +28,12 @@ public class TowerManager : MonoBehaviour
     [SerializeField] private Tilemap m_synergySpawnPoint;
 #endif
 
-    [Tooltip("타워 프리팹을 포함하는 데이터 배열입니다.")]
+    [Tooltip("CSV에서 런타임으로 생성한 타워 데이터 배열입니다.")]
     [SerializeField] private TowerData[] m_towerData;
+
+    [Header("타워 공통 프리팹")]
+    [Tooltip("모든 타워가 공통으로 사용하는 원본 프리팹입니다. 티어·색상·엠블럼은 소환 시 TowerVisual이 ID에 맞춰 교체합니다.")]
+    [SerializeField] private GameObject m_towerBasePrefab;
 
 #if false // Synergy system temporarily disabled
     [Header("시너지 타워 데이터")]
@@ -202,6 +206,12 @@ public class TowerManager : MonoBehaviour
 
     private void LoadTowerDataFromCSV()
     {
+        if (m_towerBasePrefab == null)
+        {
+            Debug.LogError("TowerBase 프리팹이 할당되지 않았습니다. TowerManager의 Tower Base Prefab 필드에 TowerBase를 연결하세요.");
+            return;
+        }
+
         TextAsset csvData = Resources.Load<TextAsset>("TowerDataCSV");
         if (csvData == null)
         {
@@ -254,13 +264,9 @@ public class TowerManager : MonoBehaviour
                 continue;
             }
 
-            string prefabName = newData.towerID.ToString();
-            newData.towerPrefab = Resources.Load<GameObject>($"Towers/{prefabName}");
-            if (newData.towerPrefab == null)
-            {
-                Debug.LogWarning($"[로드 실패] ID {newData.towerID}의 타워 프리팹 누락");
-                continue;
-            }
+            // 모든 타워는 TowerBase 하나만 소환한다.
+            // 타워 ID에 따른 스탯과 외형은 TowerController.Init / TowerVisual.Apply에서 주입된다.
+            newData.towerPrefab = m_towerBasePrefab;
 
             int sharedProjID = newData.towerID % 1000;
             string projPrefabName = sharedProjID.ToString();
