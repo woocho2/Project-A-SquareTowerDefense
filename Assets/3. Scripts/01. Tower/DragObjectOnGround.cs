@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -28,8 +27,6 @@ public class DragObjectOnGround : MonoBehaviour
 
     private float m_objectZ;
     private float m_cameraZDistance;
-
-    public static event Action<bool> OnTowerDragStateChanged;
 
     [SerializeField] private GameObject m_highlight;
 
@@ -89,11 +86,6 @@ public class DragObjectOnGround : MonoBehaviour
                 m_isDragging = false;
                 m_canDrag = GameManager.Instance == null || GameManager.Instance.CanPerformPlayerAction;
 
-                if (m_canDrag && UIManager.Instance != null)
-                {
-                    UIManager.Instance.ShowButtons(false);
-                }
-
                 m_startMousePosition = mouseWorldPosition;
                 m_startWorldPosition = transform.position;
                 m_offset = transform.position - mouseWorldPosition;
@@ -114,10 +106,6 @@ public class DragObjectOnGround : MonoBehaviour
                     m_towerController.ShowRange(true);
                 }
 
-                if (m_canDrag)
-                {
-                    OnTowerDragStateChanged?.Invoke(true);
-                }
             }
             else
             {
@@ -159,59 +147,15 @@ public class DragObjectOnGround : MonoBehaviour
             }
             else if (m_canDrag)
             {
-                Vector3 dropPosition = GetMouseWorldPosition();
-                Collider2D hitCollider = Physics2D.OverlapPoint(new Vector2(dropPosition.x, dropPosition.y));
-
-                bool isOverSellArea = false;
-                if (hitCollider != null && hitCollider.CompareTag("SellArea"))
+                if (TowerManager.Instance != null)
                 {
-                    isOverSellArea = true;
-                }
-                else
-                {
-                    PointerEventData pointerData = new PointerEventData(EventSystem.current) { position = Mouse.current.position.ReadValue() };
-                    List<RaycastResult> results = new List<RaycastResult>();
-                    EventSystem.current.RaycastAll(pointerData, results);
-
-                    foreach (var result in results)
-                    {
-                        if (result.gameObject.CompareTag("SellArea"))
-                        {
-                            isOverSellArea = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (isOverSellArea)
-                {
-                    if (TowerManager.Instance != null)
-                    {
-                        TowerManager.Instance.SellTower(m_startCell);
-                    }
-                }
-                else
-                {
-                    if (TowerManager.Instance != null)
-                    {
-                        Vector3Int endCell = TowerManager.Instance.WorldToCell(transform.position);
-                        TowerManager.Instance.MoveTowerOnGrid(m_startCell, endCell);
-                    }
+                    Vector3Int endCell = TowerManager.Instance.WorldToCell(transform.position);
+                    TowerManager.Instance.MoveTowerOnGrid(m_startCell, endCell);
                 }
             }
 
             m_isTracking = false;
             m_isDragging = false;
-
-            if (m_canDrag && UIManager.Instance != null)
-            {
-                UIManager.Instance.ShowButtons(true);
-            }
-
-            if (m_canDrag)
-            {
-                OnTowerDragStateChanged?.Invoke(false);
-            }
 
             m_canDrag = false;
         }
@@ -227,15 +171,9 @@ public class DragObjectOnGround : MonoBehaviour
             transform.position = m_startWorldPosition;
         }
 
-        bool wasDragging = m_canDrag;
         m_isTracking = false;
         m_isDragging = false;
         m_canDrag = false;
-
-        if (wasDragging)
-        {
-            OnTowerDragStateChanged?.Invoke(false);
-        }
     }
 
     public static void CancelAllInteractions()

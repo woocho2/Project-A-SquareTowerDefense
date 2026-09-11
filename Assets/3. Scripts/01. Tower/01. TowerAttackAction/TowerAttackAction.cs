@@ -3,18 +3,39 @@ using UnityEngine.Tilemaps;
 
 public abstract class TowerAttackAction
 {
+    public const float WorldUnitsPerTile = 1.5f;
+
     protected TowerData m_data;
+    private TargetPriority m_targetPriority;
+
+    protected TargetPriority CurrentTargetPriority => m_targetPriority;
 
     public TowerAttackAction(TowerData data)
     {
         m_data = data;
+        m_targetPriority = NormalizeTargetPriority(data != null ? data.targetPriority : TargetPriority.Closest);
+    }
+
+    public void SetTargetPriority(TargetPriority priority)
+    {
+        m_targetPriority = NormalizeTargetPriority(priority);
+    }
+
+    private static TargetPriority NormalizeTargetPriority(TargetPriority priority)
+    {
+        return priority == TargetPriority.Default ? TargetPriority.Closest : priority;
     }
 
     public abstract bool ExecuteAction(Transform towerTransform, TowerStats finalStats);
 
     public static int ToTileRange(float range)
     {
-        return Mathf.Max(1, Mathf.RoundToInt(range));
+        return Mathf.Max(1, Mathf.RoundToInt(range / WorldUnitsPerTile));
+    }
+
+    public static float ToWorldRange(float tileRange)
+    {
+        return Mathf.Max(1f, tileRange) * WorldUnitsPerTile;
     }
 
     public bool HasTargetInRange(Transform towerTransform, TowerStats finalStats)
@@ -24,7 +45,7 @@ public abstract class TowerAttackAction
             finalStats.Range,
             m_data.targetLayer,
             out _,
-            m_data.targetPriority);
+            m_targetPriority);
     }
 
     // priority 매개변수에 기본값(= TargetPriority.Closest)을 지정하여 함수 1개로 통합
@@ -76,7 +97,7 @@ public abstract class TowerAttackAction
             else
             {
                 Vector2 offset = (Vector2)health.transform.position - origin;
-                if (Mathf.Abs(offset.x) > tileRange || Mathf.Abs(offset.y) > tileRange) continue;
+                if (Mathf.Abs(offset.x) > range || Mathf.Abs(offset.y) > range) continue;
             }
 
             health.TryGetComponent(out EnemyMovementController movement);

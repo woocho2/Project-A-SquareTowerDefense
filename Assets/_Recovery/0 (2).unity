@@ -4413,18 +4413,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5058087960413882263, guid: 3c5e95054d27df74db67effbc156ea5c, type: 3}
   m_PrefabInstance: {fileID: 5677182344908706201}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &700174642
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 700174639}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1b4473da97fe2d48a98a642174c94b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WayPointController
 --- !u!1001 &706859406
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14355,10 +14343,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 9101991241444419909, guid: 3c5e95054d27df74db67effbc156ea5c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1810727163}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5058087960413882263, guid: 3c5e95054d27df74db67effbc156ea5c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 700174642}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3c5e95054d27df74db67effbc156ea5c, type: 3}
 --- !u!1001 &6419816361603218687
 PrefabInstance:

@@ -142,6 +142,8 @@ public class GameManager : MonoBehaviour
     {
         if (CurrentState == TurnState.PlayerTurn)
         {
+            CameraController.SmoothToEndTurnProjectionSize(this);
+            UIManager.Instance?.SetPlayerActionUI(false);
             isPlayerTurnEnd = true;
         }
     }

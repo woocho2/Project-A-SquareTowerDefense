@@ -7,16 +7,18 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance { get; private set; }
 
     [Header("UI Game Info")]
-    [SerializeField] GameObject m_panelGameInfo;
+    [SerializeField] GameObject m_gameInfoPanel;
+    [SerializeField] Image[] m_LifePoints;
+    [SerializeField] Image[] m_ShieldPoints;
+    [SerializeField] TextMeshProUGUI m_txtCurrentGold;
+    [SerializeField] TextMeshProUGUI m_txtCurrentGem;
+    [SerializeField] TextMeshProUGUI m_txtCurrentWaveIndex;
     [SerializeField] Button m_btnGameSpeed;
     [SerializeField] TextMeshProUGUI m_txtGameSpeed;
-    [SerializeField] Button m_btnMemu;    
-    [SerializeField] Image[] m_LifePoints;
-    [SerializeField] TextMeshProUGUI m_txtWave;
-    [SerializeField] TextMeshProUGUI m_txtCurrentWaveIndex;
+    [SerializeField] Button m_btnOption;
 
-    [Header("Player Turn Panel UI")]
-    [Tooltip("타워 생성·컬러 강화·티어 강화 버튼만 포함하는 패널입니다.")]
+
+    [Header("UI Player Action")]
     [SerializeField] GameObject m_playerTurnPanel;
     [SerializeField] Button m_btnCreateTower;
     [SerializeField] TextMeshProUGUI m_txtCreateCostGold;
@@ -24,26 +26,36 @@ public class UIManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI m_txtColorUpgradeCostGem;
     [SerializeField] Button m_btnTierUpgradeTower;
     [SerializeField] TextMeshProUGUI m_txtTierUpgradeCostGem;
+    [SerializeField] Button m_btnSpawnMiddleBoss;
     [SerializeField] Button m_btnEndPlayerTurn;
 
     [Header("UI Tower Info")]
     [SerializeField] GameObject m_towerInfoPanel;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoLevel;
     [SerializeField] TextMeshProUGUI m_txtTowerInfoName;
     [SerializeField] TextMeshProUGUI m_txtTowerInfoTier;
     [SerializeField] TextMeshProUGUI m_txtTowerInfoColor;
     [SerializeField] TextMeshProUGUI m_txtTowerInfoEmblem;
+    [SerializeField] Image m_imgTowerInfoTier;
+    [SerializeField] Image m_imgTowerInfoColor;
+    [SerializeField] Image m_imgTowerInfoEmblem;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoTargetType;
+    [SerializeField] Button m_btnPreviousTargetType;
+    [SerializeField] Button m_btnNextTargetType;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoPowerLabel; 
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoPower;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoRange;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoAction;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoAttackCount;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoCriticalRate;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoCriticalDamage;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoDefault;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoSkill;
+    [SerializeField] TextMeshProUGUI m_txtTowerInfoSellTowerGem;
     [SerializeField] Button m_btnCombineColor;
     [SerializeField] Button m_btnCombineEmblem;
     [SerializeField] Button m_btnCombineExact;
-    [SerializeField] TextMeshProUGUI m_txtTowerInfoLV;
-    [SerializeField] TextMeshProUGUI m_txtTowerInfoPowerLabel;
-    [SerializeField] TextMeshProUGUI m_txtTowerInfoDamage;
-    [SerializeField] TextMeshProUGUI m_txtTowerInfoRange;
-    [SerializeField] TextMeshProUGUI m_txtTowerInfoAction;
-    [SerializeField] TextMeshProUGUI m_txtTowerInfoSpeedLabel;
-    [SerializeField] TextMeshProUGUI m_txtTowerInfoSpeed;
-    [SerializeField] TextMeshProUGUI m_txtTowerInfoCriticalRate;
-    [SerializeField] TextMeshProUGUI m_txtTowerInfoCriticalDamage;
+    [SerializeField] Button m_btnSellTower;
 
     [Header("UI Option")]
     [SerializeField] GameObject m_panelOption;
@@ -79,6 +91,16 @@ public class UIManager : MonoBehaviour
     private int currentLifeIndex;
     private int m_lastWave = -1;
     private bool m_isPlayerActionUIVisible;
+    private WaveManager m_waveManager;
+
+    private static readonly TargetPriority[] s_targetPriorityOrder =
+    {
+        TargetPriority.Closest,
+        TargetPriority.Strongest,
+        TargetPriority.Weakest,
+        TargetPriority.First,
+        TargetPriority.Last
+    };
 
     private void Awake()
     {
@@ -89,31 +111,57 @@ public class UIManager : MonoBehaviour
         }
 
         Instance = this;
-        FindTowerInfoValueTexts();
+        FindUITexts();
     }
 
     // TowerInfoPanel 아래의 값 텍스트를 이름으로 자동 연결합니다.
     // 인스펙터에 직접 연결한 레퍼런스는 유지하고, 비어 있는 항목만 찾습니다.
-    private void FindTowerInfoValueTexts()
+    private void FindUITexts()
     {
-        if (m_towerInfoPanel == null) return;
+        if (m_gameInfoPanel != null)
+        {
+            m_txtCurrentGold ??= FindGameInfoText("Txt_Gold");
+            m_txtCurrentGem ??= FindGameInfoText("Txt_Gem");
+            m_txtCurrentWaveIndex ??= FindGameInfoText("Txt_Wave");
+            m_txtGameSpeed ??= FindGameInfoText("Txt_GameSpeed");
+        }
 
-        m_txtTowerInfoTier ??= FindTowerInfoText("TowerTier");
-        m_txtTowerInfoColor ??= FindTowerInfoText("TowerColor");
-        m_txtTowerInfoEmblem ??= FindTowerInfoText("TowerEmblem");
-        m_txtTowerInfoPowerLabel ??= FindTowerInfoText("Txt_TowerPower");
-        m_txtTowerInfoDamage ??= FindTowerInfoText("Txt_TowerPowerValue");
-        m_txtTowerInfoRange ??= FindTowerInfoText("Txt_TowerRangeValue");
-        m_txtTowerInfoAction ??= FindTowerInfoText("Txt_TowerActionValue");
-        m_txtTowerInfoSpeedLabel ??= FindTowerInfoText("Txt_TowerAttackSpeed");
-        m_txtTowerInfoSpeed ??= FindTowerInfoText("Txt_TowerAttackSpeedValue");
-        m_txtTowerInfoCriticalRate ??= FindTowerInfoText("Txt_TowerCriticalRateValue");
-        m_txtTowerInfoCriticalDamage ??= FindTowerInfoText("Txt_TowerCriticalDamageValue");
+        if (m_playerTurnPanel != null)
+        {
+            m_txtCreateCostGold ??= FindPlayerTurnText("Txt_CreateTowerValue");
+            m_txtColorUpgradeCostGem ??= FindPlayerTurnText("Txt_ColorUpTowerValue");
+            m_txtTierUpgradeCostGem ??= FindPlayerTurnText("Txt_TierUpTowerValue");
+        }
+
+        if (m_towerInfoPanel != null)
+        {
+            m_txtTowerInfoLevel ??= FindTowerInfoText("Txt_LV_Value");
+            m_txtTowerInfoName ??= FindTowerInfoText("Txt_Name");
+            m_txtTowerInfoTier ??= FindTowerInfoText("Txt_Tier");
+            m_txtTowerInfoColor ??= FindTowerInfoText("Txt_Color");
+            m_txtTowerInfoEmblem ??= FindTowerInfoText("Txt_Emblem");
+            m_txtTowerInfoTargetType ??= FindTowerInfoText("Txt_Target");
+            m_txtTowerInfoPower ??= FindTowerInfoText("Txt_PowerValue");
+            m_txtTowerInfoRange ??= FindTowerInfoText("Txt_RangeValue");
+            m_txtTowerInfoAction ??= FindTowerInfoText("Txt_ActionValue");
+            m_txtTowerInfoAttackCount ??= FindTowerInfoText("Txt_AtteckCountValue");
+            m_txtTowerInfoCriticalRate ??= FindTowerInfoText("Txt_CriticalRateValue");
+            m_txtTowerInfoCriticalDamage ??= FindTowerInfoText("Txt_CriticalDamageValue");
+            m_txtTowerInfoDefault ??= FindTowerInfoText("Txt_Default");
+            m_txtTowerInfoSkill ??= FindTowerInfoText("Txt_Skill");
+            m_txtTowerInfoSellTowerGem ??= FindTowerInfoText("Txt_SellTowerValueName");
+        }
     }
 
-    private TextMeshProUGUI FindTowerInfoText(string objectName)
+
+
+    private TextMeshProUGUI FindTextInPanel(GameObject rootPanel, string objectName)
     {
-        TextMeshProUGUI[] texts = m_towerInfoPanel.GetComponentsInChildren<TextMeshProUGUI>(true);
+        if (rootPanel == null) return null;
+
+        TextMeshProUGUI[] texts =
+            rootPanel.GetComponentsInChildren<TextMeshProUGUI>(true);
+
         foreach (TextMeshProUGUI text in texts)
         {
             if (text.name == objectName)
@@ -124,6 +172,22 @@ public class UIManager : MonoBehaviour
 
         return null;
     }
+
+    private TextMeshProUGUI FindGameInfoText(string objectName)
+    {
+        return FindTextInPanel(m_gameInfoPanel, objectName);
+    }
+
+    private TextMeshProUGUI FindPlayerTurnText(string objectName)
+    {
+        return FindTextInPanel(m_playerTurnPanel, objectName);
+    }
+
+    private TextMeshProUGUI FindTowerInfoText(string objectName)
+    {
+        return FindTextInPanel(m_towerInfoPanel, objectName);
+    }
+
 
     private void OnEnable()
     {
@@ -176,12 +240,12 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        if (m_btnMemu != null)
+        if (m_btnOption != null)
         {
-            m_btnMemu.onClick.RemoveAllListeners();
-            m_btnMemu.onClick.AddListener(() =>
+            m_btnOption.onClick.RemoveAllListeners();
+            m_btnOption.onClick.AddListener(() =>
             {
-                m_btnMemu.gameObject.SetActive(false);
+                m_btnOption.gameObject.SetActive(false);
                 m_panelOption.SetActive(true);
 
                 if (GameManager.Instance != null)
@@ -214,6 +278,8 @@ public class UIManager : MonoBehaviour
                 GameManager.Instance?.OnClickSkipPlayerTurn();
             });
         }
+
+        BindMiddleBossSummonButton();
 
         if (m_btnNextStage != null)
         {
@@ -282,6 +348,14 @@ public class UIManager : MonoBehaviour
             });
         }
 
+        if (m_btnSellTower != null)
+        {
+            m_btnSellTower.onClick.RemoveAllListeners();
+            m_btnSellTower.onClick.AddListener(SellSelectedTower);
+        }
+
+        BindTargetPriorityButtons();
+
         if (m_btnDebug != null)
         {
             m_btnDebug.onClick.AddListener(() =>
@@ -312,10 +386,45 @@ public class UIManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (m_waveManager != null)
+        {
+            m_waveManager.MiddleBossSummonAvailabilityChanged -= RefreshMiddleBossSummonButton;
+        }
+
         if (Instance == this)
         {
             Instance = null;
         }
+    }
+
+    private void BindMiddleBossSummonButton()
+    {
+        if (m_btnSpawnMiddleBoss != null)
+        {
+            m_btnSpawnMiddleBoss.onClick.RemoveAllListeners();
+            m_btnSpawnMiddleBoss.onClick.AddListener(() =>
+            {
+                WaveManager.Instance?.TrySpawnMiddleBoss();
+                RefreshMiddleBossSummonButton();
+            });
+        }
+
+        m_waveManager = WaveManager.Instance;
+        if (m_waveManager != null)
+        {
+            m_waveManager.MiddleBossSummonAvailabilityChanged += RefreshMiddleBossSummonButton;
+        }
+
+        RefreshMiddleBossSummonButton();
+    }
+
+    private void RefreshMiddleBossSummonButton()
+    {
+        if (m_btnSpawnMiddleBoss == null) return;
+
+        bool canSummon = WaveManager.Instance != null && WaveManager.Instance.CanSummonMiddleBoss;
+        m_btnSpawnMiddleBoss.gameObject.SetActive(canSummon);
+        m_btnSpawnMiddleBoss.interactable = canSummon;
     }
 
     private void Update()
@@ -351,9 +460,9 @@ public class UIManager : MonoBehaviour
             m_panelOption.SetActive(false);
         }
 
-        if (m_btnMemu != null)
+        if (m_btnOption != null)
         {
-            m_btnMemu.gameObject.SetActive(true);
+            m_btnOption.gameObject.SetActive(true);
         }
 
         GameManager.Instance.OnResumeGame();
@@ -431,61 +540,39 @@ public class UIManager : MonoBehaviour
 
     public void RefreshUpgradeTowerInfoLabel()
     {
-        if (m_selectedTower != null && m_towerInfoPanel.activeSelf)
+        if (m_selectedTower == null || m_towerInfoPanel == null || !m_towerInfoPanel.activeSelf)
         {
-            FindTowerInfoValueTexts();
+            return;
+        }
 
-            TowerStats stats = m_selectedTower.GetFinalStats();
-            TowerData data = m_selectedTower.GetTowerData();
+        FindUITexts();
 
-            if (m_txtTowerInfoName != null) m_txtTowerInfoName.text = stats.Name;
-            RefreshTowerIdentityInfo(data != null ? data.towerID : stats.ID);
-            if (m_txtTowerInfoLV != null) m_txtTowerInfoLV.text = $"UPGRADE : {stats.Level}";
-            AttackType attackType = data != null ? data.attackType : AttackType.Target;
-            bool isBuffTower = attackType == AttackType.Buff;
-            bool isDebuffTower = attackType == AttackType.Debuff;
+        TowerStats stats = m_selectedTower.GetFinalStats();
+        TowerData data = m_selectedTower.GetTowerData();
+        int towerID = data != null ? data.towerID : stats.ID;
+        int tier = towerID / 1000;
 
-            if (m_txtTowerInfoPowerLabel != null)
-            {
-                m_txtTowerInfoPowerLabel.text = isBuffTower ? "버프력" : isDebuffTower ? "디버프력" : "공격력";
-            }
+        if (m_txtTowerInfoLevel != null) m_txtTowerInfoLevel.text = stats.Level.ToString();
+        if (m_txtTowerInfoName != null) m_txtTowerInfoName.text = stats.Name;
+        RefreshTowerIdentityInfo(towerID);
+        RefreshTowerInfoVisuals();
 
-            if (m_txtTowerInfoSpeedLabel != null)
-            {
-                m_txtTowerInfoSpeedLabel.text = (isBuffTower || isDebuffTower) ? "지속시간" : "공격횟수";
-            }
+        RefreshTargetPriorityUI();
 
-            if (m_txtTowerInfoDamage != null)
-            {
-                if (isBuffTower)
-                {
-                    float buffPower = stats.AbilityValue;
-                    m_txtTowerInfoDamage.text = $"+{buffPower * 100}%";
-                }
-                else if (isDebuffTower)
-                {
-                    m_txtTowerInfoDamage.text = $"{stats.AbilityValue:F2}";
-                }
-                else
-                {
-                    m_txtTowerInfoDamage.text = $"{stats.AttackPower:F2}";
-                }
-            }
-            if (m_txtTowerInfoRange != null)
-            {
-                m_txtTowerInfoRange.text = isDebuffTower
-                    ? "전체 지역"
-                    : $"{TowerAttackAction.ToTileRange(stats.Range)}칸";
-            }
-            if (m_txtTowerInfoAction != null) m_txtTowerInfoAction.text = $"{m_selectedTower.GetRemainingAction()} / {m_selectedTower.GetMaxAction()}";
-            if (m_txtTowerInfoSpeed != null)
-            {
-                m_txtTowerInfoSpeed.text = (isBuffTower || isDebuffTower)
-                    ? $"{stats.Duration:F0}턴"
-                    : $"x{stats.AttackCount}";
-            }
-            if (m_txtTowerInfoCriticalRate != null) m_txtTowerInfoCriticalRate.text = $"{(stats.CriticalRate * 100):F2}%";
-            if (m_txtTowerInfoCriticalDamage != null) m_txtTowerInfoCriticalDamage.text = $"{((2 + stats.CriticalDamage) * 100):F0}%";
+        if (m_txtTowerInfoPower != null) m_txtTowerInfoPower.text = $"{stats.AttackPower:F2}";
+        if (m_txtTowerInfoRange != null) m_txtTowerInfoRange.text = $"{TowerAttackAction.ToTileRange(stats.Range)}칸";
+        if (m_txtTowerInfoAction != null) m_txtTowerInfoAction.text = m_selectedTower.GetMaxAction().ToString();
+        if (m_txtTowerInfoAttackCount != null) m_txtTowerInfoAttackCount.text = stats.AttackCount.ToString();
+        if (m_txtTowerInfoCriticalRate != null) m_txtTowerInfoCriticalRate.text = $"{stats.CriticalRate * 100f:F2}%";
+        if (m_txtTowerInfoCriticalDamage != null) m_txtTowerInfoCriticalDamage.text = $"{(2f + stats.CriticalDamage) * 100f:F0}%";
+
+        RefreshTowerInfoDescriptions(data, stats);
+
+        if (m_txtTowerInfoSellTowerGem != null)
+        {
+            m_txtTowerInfoSellTowerGem.text = tier >= 1
+                ? Mathf.RoundToInt(Mathf.Pow(3f, tier - 1)).ToString()
+                : "-";
         }
     }
 
@@ -498,6 +585,199 @@ public class UIManager : MonoBehaviour
         if (m_txtTowerInfoTier != null) m_txtTowerInfoTier.text = GetTowerTierName(tier);
         if (m_txtTowerInfoColor != null) m_txtTowerInfoColor.text = GetTowerColorName(color);
         if (m_txtTowerInfoEmblem != null) m_txtTowerInfoEmblem.text = GetTowerEmblemName(emblem);
+    }
+
+    private void RefreshTowerInfoVisuals()
+    {
+        TowerVisual towerVisual = m_selectedTower != null
+            ? m_selectedTower.GetComponentInChildren<TowerVisual>(true)
+            : null;
+
+        SetTowerInfoImage(m_imgTowerInfoTier, towerVisual != null ? towerVisual.TierSprite : null);
+        SetTowerInfoImage(m_imgTowerInfoColor, towerVisual != null ? towerVisual.ColorSprite : null);
+        SetTowerInfoImage(m_imgTowerInfoEmblem, towerVisual != null ? towerVisual.EmblemSprite : null);
+    }
+
+    private static void SetTowerInfoImage(Image image, Sprite sprite)
+    {
+        if (image == null) return;
+
+        image.sprite = sprite;
+        image.color = Color.white;
+        image.enabled = sprite != null;
+    }
+
+    private void RefreshTowerInfoDescriptions(TowerData data, TowerStats stats)
+    {
+        if (data == null)
+        {
+            if (m_txtTowerInfoDefault != null) m_txtTowerInfoDefault.text = "-";
+            if (m_txtTowerInfoSkill != null) m_txtTowerInfoSkill.text = "-";
+            return;
+        }
+
+        int tileRange = TowerAttackAction.ToTileRange(stats.Range);
+        int totalTargetHitCount = 1 + Mathf.Max(0, stats.AdditionalHitCount);
+
+        switch (data.attackType)
+        {
+            case AttackType.Splash:
+                if (m_txtTowerInfoDefault != null)
+                {
+                    m_txtTowerInfoDefault.text =
+                        $"{stats.ProjectileRadius}칸 범위의 모든 적에게\n{stats.AttackPower:0.##}만큼의 피해";
+                }
+
+                if (m_txtTowerInfoSkill != null)
+                {
+                    m_txtTowerInfoSkill.text =
+                        $"{stats.ProjectileRadius}칸 범위의 모든 적에게\n{stats.AbilityValue:0.##}만큼의 피해 (쿨타임: {stats.Duration:0.##}턴)";
+                }
+                break;
+
+            case AttackType.Target:
+                if (m_txtTowerInfoDefault != null)
+                {
+                    m_txtTowerInfoDefault.text =
+                        $"대상에게 {stats.AttackPower:0.##}만큼의 피해\n총 {totalTargetHitCount}회 적중";
+                }
+
+                if (m_txtTowerInfoSkill != null)
+                {
+                    m_txtTowerInfoSkill.text =
+                        $"대상에게 {stats.Duration:0.##}회 공격 적중 시\n{stats.AbilityValue:0.##} 적용";
+                }
+                break;
+
+            case AttackType.Buff:
+                if (m_txtTowerInfoDefault != null)
+                {
+                    m_txtTowerInfoDefault.text =
+                        $"{tileRange}칸 범위 아군 타워의\n{GetBuffTargetName(data.buffTarget)} 능력 {stats.AbilityValue:0.##} 증가";
+                }
+
+                if (m_txtTowerInfoSkill != null) m_txtTowerInfoSkill.text = "스킬 미구현";
+                break;
+
+            case AttackType.Debuff:
+                if (m_txtTowerInfoDefault != null)
+                {
+                    m_txtTowerInfoDefault.text =
+                        $"디버프존 위 모든 적에게\n{GetDebuffTargetName(data.debuffTarget)} 디버프 부여";
+                }
+
+                if (m_txtTowerInfoSkill != null) m_txtTowerInfoSkill.text = "스킬 미구현";
+                break;
+        }
+    }
+
+    private static string GetBuffTargetName(BuffTarget buffTarget)
+    {
+        return buffTarget switch
+        {
+            BuffTarget.Sword => "공격력",
+            BuffTarget.Bow => "사거리",
+            BuffTarget.Shield => "방어막",
+            BuffTarget.Spear => "치명타 확률",
+            BuffTarget.Axe => "치명타 피해",
+            BuffTarget.Hammer => "방어 관통",
+            BuffTarget.Fire => "공격 횟수",
+            BuffTarget.Ice => "스플래시/추가 타격",
+            BuffTarget.Electricity => "추가 공격",
+            BuffTarget.Wind => "행동력",
+            BuffTarget.Earth => "티어 강화",
+            BuffTarget.Light => "체인 공격",
+            BuffTarget.Darkness => "다크니스 강화",
+            _ => "버프"
+        };
+    }
+
+    private static string GetDebuffTargetName(DebuffTarget debuffTarget)
+    {
+        return debuffTarget switch
+        {
+            DebuffTarget.Fire => "화상",
+            DebuffTarget.Ice => "빙결",
+            DebuffTarget.Wind => "바람",
+            DebuffTarget.Darkness => "암흑",
+            _ => "일반"
+        };
+    }
+
+    private void BindTargetPriorityButtons()
+    {
+        if (m_btnPreviousTargetType != null)
+        {
+            m_btnPreviousTargetType.onClick.RemoveAllListeners();
+            m_btnPreviousTargetType.onClick.AddListener(() => ChangeSelectedTowerTargetPriority(-1));
+        }
+
+        if (m_btnNextTargetType != null)
+        {
+            m_btnNextTargetType.onClick.RemoveAllListeners();
+            m_btnNextTargetType.onClick.AddListener(() => ChangeSelectedTowerTargetPriority(1));
+        }
+    }
+
+    private void ChangeSelectedTowerTargetPriority(int direction)
+    {
+        if (m_selectedTower == null || !m_selectedTower.CanChangeTargetPriority)
+        {
+            return;
+        }
+
+        if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction)
+        {
+            return;
+        }
+
+        int currentIndex = System.Array.IndexOf(s_targetPriorityOrder, m_selectedTower.GetTargetPriority());
+        if (currentIndex < 0)
+        {
+            currentIndex = 0;
+        }
+
+        int nextIndex = (currentIndex + direction + s_targetPriorityOrder.Length) % s_targetPriorityOrder.Length;
+        m_selectedTower.SetTargetPriority(s_targetPriorityOrder[nextIndex]);
+        RefreshTargetPriorityUI();
+    }
+
+    private void RefreshTargetPriorityUI()
+    {
+        bool canChangeTarget = m_selectedTower != null &&
+            m_selectedTower.CanChangeTargetPriority &&
+            (GameManager.Instance == null || GameManager.Instance.CanPerformPlayerAction);
+
+        if (m_btnPreviousTargetType != null)
+        {
+            m_btnPreviousTargetType.interactable = canChangeTarget;
+        }
+
+        if (m_btnNextTargetType != null)
+        {
+            m_btnNextTargetType.interactable = canChangeTarget;
+        }
+
+        if (m_txtTowerInfoTargetType != null)
+        {
+            m_txtTowerInfoTargetType.text = m_selectedTower != null && m_selectedTower.CanChangeTargetPriority
+                ? GetTargetPriorityName(m_selectedTower.GetTargetPriority())
+                : "-";
+        }
+    }
+
+    private static string GetTargetPriorityName(TargetPriority priority)
+    {
+        return priority switch
+        {
+            TargetPriority.Strongest => "체력 많은 적",
+            TargetPriority.Weakest => "체력 적은 적",
+            TargetPriority.First => "결승점에 가까운 적",
+            TargetPriority.Last => "결승점에서 먼 적",
+            TargetPriority.Closest => "가까운 적",
+            TargetPriority.Default => "가까운 적",
+            _ => "-"
+        };
     }
 
     private static string GetTowerTierName(int tier)
@@ -563,11 +843,11 @@ public class UIManager : MonoBehaviour
 
     public void InitUI()
     {
-        if (m_panelGameInfo != null) m_panelGameInfo.SetActive(true);
+        if (m_gameInfoPanel != null) m_gameInfoPanel.SetActive(true);
         if (m_panelOption != null) m_panelOption.SetActive(false);
         if (m_panelGameover != null) m_panelGameover.SetActive(false);
         if (m_panelGameclear != null) m_panelGameclear.SetActive(false);
-        if (m_btnMemu != null) m_btnMemu.gameObject.SetActive(true);
+        if (m_btnOption != null) m_btnOption.gameObject.SetActive(true);
         if (m_towerInfoPanel != null) m_towerInfoPanel.SetActive(false);
 
         currentLifeIndex = m_LifePoints.Length - 1;
@@ -633,6 +913,24 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    private void SellSelectedTower()
+    {
+        if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction)
+        {
+            return;
+        }
+
+        if (m_selectedTower == null || TowerManager.Instance == null)
+        {
+            return;
+        }
+
+        TowerManager.Instance.SellTower(m_selectedTowerInfo);
+        m_selectedTower = null;
+        m_selectTowerID = 0;
+        HideTowerPanel();
+    }
+
     public void SelectTower(TowerController tower)
     {
         m_selectedTower = tower;
@@ -662,19 +960,6 @@ public class UIManager : MonoBehaviour
         m_btnCombineColor.interactable = TowerManager.Instance.CanCombine(m_selectedTowerInfo, CombineMode.TypeMatch);
         m_btnCombineEmblem.interactable = TowerManager.Instance.CanCombine(m_selectedTowerInfo, CombineMode.VariantMatch);
         m_btnCombineExact.interactable = TowerManager.Instance.CanCombine(m_selectedTowerInfo, CombineMode.ExactMatch);
-    }
-
-    public void ShowButtons(bool isShow)
-    {
-        if (!m_isPlayerActionUIVisible) return;
-
-        if (m_playerTurnPanel != null)
-        {
-            m_playerTurnPanel.SetActive(isShow);
-            return;
-        }
-
-        SetMainActionButtonsVisible(isShow);
     }
 
     /// <summary>

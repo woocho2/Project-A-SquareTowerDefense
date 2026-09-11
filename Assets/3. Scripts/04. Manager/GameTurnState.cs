@@ -36,6 +36,8 @@ public sealed class PlayerTurnState : GameTurnStateBase
 
     public override void Enter(GameManager gameManager)
     {
+        CameraController.SmoothToPlayerTurnProjectionSize(gameManager);
+
         // 타워/적 정보 패널은 계속 남기고, 생성·강화·합성 등 행동 UI만 표시합니다.
         UIManager.Instance?.SetPlayerActionUI(true);
     }

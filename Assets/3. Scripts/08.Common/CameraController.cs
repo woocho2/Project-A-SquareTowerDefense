@@ -1,66 +1,78 @@
+using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem; // 💡 [추가] 새로운 인풋 시스템 네임스페이스
 
 public class CameraController : MonoBehaviour
 {
-    [Header("이동 제한 (맵 크기)")]
-    public float panLimitX = 20f;
-    public float panLimitY = 15f;
-
-    [Header("조작감 설정")]
-    [Tooltip("관성(미끄러짐) 마찰력. 숫자가 높을수록 손을 뗐을 때 카메라가 빨리 멈춥니다.")]
-    public float inertiaDamping = 10f;
+    [Header("Turn Projection Size")]
+    [SerializeField, Min(0.1f)] private float m_playerTurnProjectionSize = 7.5f;
+    [SerializeField, Min(0.1f)] private float m_endTurnProjectionSize = 5f;
+    [SerializeField, Min(0f)] private float m_projectionTransitionDuration = 0.3f;
 
     private Camera m_cam;
-    private Vector3 m_dragOrigin;
-    private Vector3 m_velocity;
-    private bool m_isDragging;
+    private static Coroutine s_projectionTransitionRoutine;
 
-    void Start()
+    public static void SmoothToPlayerTurnProjectionSize(MonoBehaviour coroutineOwner)
     {
-        m_cam = Camera.main;
+        StartProjectionTransition(coroutineOwner, controller => controller.m_playerTurnProjectionSize, 7.5f);
     }
 
-    void LateUpdate()
+    public static void SmoothToEndTurnProjectionSize(MonoBehaviour coroutineOwner)
     {
-        // 💡 [추가] 입력 장치(마우스, 터치 등)가 연결되어 있지 않다면 실행하지 않음
-        if (Pointer.current == null) return;
+        StartProjectionTransition(coroutineOwner, controller => controller.m_endTurnProjectionSize, 5f);
+    }
 
-        // 1. 화면 터치 (또는 마우스 좌클릭) 시작
-        if (Pointer.current.press.wasPressedThisFrame)
+    private static void StartProjectionTransition(MonoBehaviour coroutineOwner, System.Func<CameraController, float> getSize, float fallbackSize)
+    {
+        CameraController controller = FindFirstObjectByType<CameraController>(FindObjectsInactive.Include);
+        Camera targetCamera = controller != null ? controller.GetCamera() : Camera.main;
+
+        if (targetCamera == null || !targetCamera.orthographic) return;
+
+        float targetSize = controller != null ? getSize(controller) : fallbackSize;
+        float duration = controller != null ? controller.m_projectionTransitionDuration : 0.3f;
+
+        if (coroutineOwner == null || duration <= 0f)
         {
-            m_dragOrigin = m_cam.ScreenToWorldPoint(Pointer.current.position.ReadValue());
-            m_isDragging = true;
-            m_velocity = Vector3.zero;
+            targetCamera.orthographicSize = targetSize;
+            return;
         }
 
-        // 2. 화면을 누른 채로 밀어내기 (스와이프)
-        if (Pointer.current.press.isPressed && m_isDragging)
+        if (s_projectionTransitionRoutine != null)
         {
-            Vector3 currentPos = m_cam.ScreenToWorldPoint(Pointer.current.position.ReadValue());
-
-            Vector3 difference = m_dragOrigin - currentPos;
-            m_cam.transform.position += difference;
-
-            m_velocity = difference;
-        }
-        // 3. 화면 터치 종료
-        else if (Pointer.current.press.wasReleasedThisFrame)
-        {
-            m_isDragging = false;
+            coroutineOwner.StopCoroutine(s_projectionTransitionRoutine);
         }
 
-        // 4. 터치 종료 후 관성에 의해 스르륵 미끄러지는 연출
-        if (!m_isDragging && m_velocity.magnitude > 0.0001f)
+        s_projectionTransitionRoutine = coroutineOwner.StartCoroutine(ProjectionTransitionRoutine(targetCamera, targetSize, duration));
+    }
+
+    private static IEnumerator ProjectionTransitionRoutine(Camera targetCamera, float targetSize, float duration)
+    {
+        float startSize = targetCamera.orthographicSize;
+        float elapsed = 0f;
+
+        while (elapsed < duration && targetCamera != null)
         {
-            m_cam.transform.position += m_velocity;
-            m_velocity = Vector3.Lerp(m_velocity, Vector3.zero, inertiaDamping * Time.deltaTime);
+            elapsed += Time.unscaledDeltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            targetCamera.orthographicSize = Mathf.Lerp(startSize, targetSize, t * t * (3f - 2f * t));
+            yield return null;
         }
 
-        // 5. 카메라가 맵 밖으로 벗어나지 않도록 강제 고정
-        Vector3 pos = m_cam.transform.position;
-        pos.x = Mathf.Clamp(pos.x, -panLimitX, panLimitX);
-        pos.y = Mathf.Clamp(pos.y, -panLimitY, panLimitY);
-        m_cam.transform.position = pos;
+        if (targetCamera != null)
+        {
+            targetCamera.orthographicSize = targetSize;
+        }
+
+        s_projectionTransitionRoutine = null;
+    }
+
+    private Camera GetCamera()
+    {
+        if (m_cam == null)
+        {
+            m_cam = GetComponent<Camera>();
+        }
+
+        return m_cam != null ? m_cam : Camera.main;
     }
 }

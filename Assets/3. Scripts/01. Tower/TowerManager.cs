@@ -234,7 +234,7 @@ public class TowerManager : MonoBehaviour
                 newData.towerID = int.Parse(values[0].Trim());
                 newData.towerName = values[1].Replace("\"", "").Trim();
                 newData.towerLevel = int.Parse(values[2].Trim());
-                newData.attackPower = float.Parse(values[3].Trim());
+                newData.power = float.Parse(values[3].Trim());
                 newData.range = float.Parse(values[4].Trim());
                 newData.action = Mathf.Max(1, int.Parse(values[5].Trim()));
                 newData.attackCount = Mathf.Max(1, Mathf.RoundToInt(float.Parse(values[6].Trim())));
@@ -522,6 +522,7 @@ public class TowerManager : MonoBehaviour
         }
 
         TowerData currentData = currentInfo.Controller.GetTowerData();
+        TargetPriority previousTargetPriority = currentInfo.Controller.GetTargetPriority();
         if (currentData == null)
         {
             Debug.LogWarning("티어 강화할 타워 데이터가 없습니다.");
@@ -570,6 +571,7 @@ public class TowerManager : MonoBehaviour
         }
 
         upgradedTower.Init(upgradedData, GetGlobalStats(upgradedData.towerID));
+        upgradedTower.SetTargetPriority(previousTargetPriority);
 
         Destroy(currentInfo.Controller.gameObject);
         m_towersOnGrid[targetCell] = new GridTowerInfo
@@ -641,6 +643,7 @@ public class TowerManager : MonoBehaviour
         if (!m_towersOnGrid.TryGetValue(targetCell, out GridTowerInfo currentInfo) || currentInfo.Controller == null) return false;
 
         TowerData currentData = currentInfo.Controller.GetTowerData();
+        TargetPriority previousTargetPriority = currentInfo.Controller.GetTargetPriority();
         if (currentData == null || currentData.towerID / 1000 >= 5) return false;
 
         int upgradedTowerID = currentData.towerID + 1000;
@@ -657,6 +660,7 @@ public class TowerManager : MonoBehaviour
         }
 
         upgradedTower.Init(upgradedData, GetGlobalStats(upgradedData.towerID));
+        upgradedTower.SetTargetPriority(previousTargetPriority);
         Destroy(currentInfo.Controller.gameObject);
         m_towersOnGrid[targetCell] = new GridTowerInfo
         {
@@ -737,8 +741,8 @@ public class TowerManager : MonoBehaviour
 
             if (UpgradeStats.Level <= 5)
             {
-                UpgradeStats.AttackPower      = towerData.attackPower * multiplier;
-                UpgradeStats.Range       = towerData.range * multiplier;
+                UpgradeStats.AttackPower      = towerData.power * multiplier;
+                UpgradeStats.Range       = TowerAttackAction.ToWorldRange(towerData.range * multiplier);
                 UpgradeStats.AttackCount = Mathf.Max(1, Mathf.RoundToInt(towerData.attackCount * multiplier));
 
                 m_globalTowerStats[key] = UpgradeStats;

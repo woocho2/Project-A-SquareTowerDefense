@@ -7,7 +7,7 @@ public class TargetAttackAction : TowerAttackAction
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats currentStats)
     {
-        if (TryFindTarget(towerTransform.position, currentStats.Range, m_data.targetLayer, out EnemyHealthController targetEnemy, m_data.targetPriority))
+        if (TryFindTarget(towerTransform.position, currentStats.Range, m_data.targetLayer, out EnemyHealthController targetEnemy, CurrentTargetPriority))
         {
             LaunchProjectile(towerTransform, targetEnemy.transform, currentStats);
             return true;

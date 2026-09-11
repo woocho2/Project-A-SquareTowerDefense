@@ -5,7 +5,8 @@ public class EnemyMovementController : MonoBehaviour
 {
     [Header("이동 속도 설정")]
     [Tooltip("한 칸을 이동하는 속도 (인스펙터 조절)")]
-    [SerializeField] private float m_moveSpeed = 8f;
+    [SerializeField] private float m_moveSpeed = 3;
+    [SerializeField] private bool m_spriteFacesLeftByDefault = true;
 
     [Header("런타임 턴 스탯 (디버그 확인용)")]
     [SerializeField] private int m_currentTileIndex = 0;
@@ -29,6 +30,11 @@ public class EnemyMovementController : MonoBehaviour
 #endif
 
     private EnemyHealthController m_health;
+    private SpriteRenderer m_spriteRenderer;
+    private Quaternion m_baseRotation;
+    private Transform[] m_uiTransforms;
+    private Vector3[] m_uiLocalPositions;
+    private Quaternion[] m_uiLocalRotations;
     private TilePath m_tilePath;
     private bool m_isMoving = false;
 
@@ -40,11 +46,26 @@ public class EnemyMovementController : MonoBehaviour
     private void Awake()
     {
         m_health = GetComponent<EnemyHealthController>();
+        m_spriteRenderer = GetComponent<SpriteRenderer>();
+        m_baseRotation = transform.rotation;
+
+        Canvas[] canvases = GetComponentsInChildren<Canvas>(true);
+        m_uiTransforms = new Transform[canvases.Length];
+        m_uiLocalPositions = new Vector3[canvases.Length];
+        m_uiLocalRotations = new Quaternion[canvases.Length];
+
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            m_uiTransforms[i] = canvases[i].transform;
+            m_uiLocalPositions[i] = m_uiTransforms[i].localPosition;
+            m_uiLocalRotations[i] = m_uiTransforms[i].localRotation;
+        }
     }
 
     // ScriptableObject(EnemyData)의 Action과 Speed를 기반으로 초기화
     public void InitMovement(EnemyData data, TilePath tilePath)
     {
+        ResetFacingDirection();
         m_tilePath = tilePath;
         m_currentTileIndex = 0;
         m_currentActionCounter = 0;
@@ -132,7 +153,8 @@ public class EnemyMovementController : MonoBehaviour
         for (int i = 0; i < steps && m_currentTileIndex > 0; i++)
         {
             m_currentTileIndex--;
-            Vector3 targetPos = m_tilePath.GetWorldPosition(m_currentTileIndex);
+            Vector3 targetPos = m_tilePath.ReserveArrivalPosition(m_health, m_currentTileIndex);
+            FaceMoveDirection(targetPos);
             while (Vector3.Distance(transform.position, targetPos) > 0.02f)
             {
                 transform.position = Vector3.MoveTowards(transform.position, targetPos, FinalMoveSpeed * Time.deltaTime);
@@ -157,7 +179,8 @@ public class EnemyMovementController : MonoBehaviour
             }
 
             m_currentTileIndex++;
-            Vector3 targetPos = m_tilePath.GetWorldPosition(m_currentTileIndex);
+            Vector3 targetPos = m_tilePath.ReserveArrivalPosition(m_health, m_currentTileIndex);
+            FaceMoveDirection(targetPos);
 
             while (Vector3.Distance(transform.position, targetPos) > 0.02f)
             {
@@ -187,6 +210,47 @@ public class EnemyMovementController : MonoBehaviour
         m_isMoving = false;
         StopAllCoroutines();
         m_tilePath?.UnregisterEnemy(m_health);
+    }
+
+    private void FaceMoveDirection(Vector3 targetPosition)
+    {
+        if (m_spriteRenderer == null) return;
+
+        Vector2 direction = targetPosition - transform.position;
+        if (direction.sqrMagnitude < 0.0001f) return;
+
+        if (Mathf.Abs(direction.x) >= Mathf.Abs(direction.y))
+        {
+            bool isMovingLeft = direction.x < 0f;
+            m_spriteRenderer.flipX = m_spriteFacesLeftByDefault ? !isMovingLeft : isMovingLeft;
+            ApplyFacingRotation(0f);
+            return;
+        }
+
+        bool isMovingUp = direction.y > 0f;
+        m_spriteRenderer.flipX = false;
+        float verticalRotation = (m_spriteFacesLeftByDefault ? -1f : 1f) * (isMovingUp ? 90f : -90f);
+        ApplyFacingRotation(verticalRotation);
+    }
+
+    private void ResetFacingDirection()
+    {
+        if (m_spriteRenderer != null) m_spriteRenderer.flipX = false;
+        ApplyFacingRotation(0f);
+    }
+
+    private void ApplyFacingRotation(float zAngle)
+    {
+        Quaternion rotationDelta = Quaternion.Euler(0f, 0f, zAngle);
+        transform.rotation = m_baseRotation * rotationDelta;
+
+        for (int i = 0; i < m_uiTransforms.Length; i++)
+        {
+            if (m_uiTransforms[i] == null) continue;
+
+            m_uiTransforms[i].localPosition = Quaternion.Inverse(rotationDelta) * m_uiLocalPositions[i];
+            m_uiTransforms[i].localRotation = Quaternion.Inverse(rotationDelta) * m_uiLocalRotations[i];
+        }
     }
 
     // 멈춘 자리의 특수 타일 버프 적용 로직

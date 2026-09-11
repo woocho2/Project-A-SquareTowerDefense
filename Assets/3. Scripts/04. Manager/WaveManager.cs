@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class WaveManager : MonoBehaviour
 {
@@ -13,10 +13,14 @@ public class WaveManager : MonoBehaviour
     [Header("Wave Base Settings")]
     [SerializeField] private int m_currentWave = 1;
 
-    [SerializeField] private Button btn_middleBoss;
 
     private int m_activeEnemyCount = 0;
     private int m_spawnedEnemyCountInWave = 0;
+    private bool m_hasSummonedMiddleBossInWindow;
+
+    public event Action MiddleBossSummonAvailabilityChanged;
+
+    public bool CanSummonMiddleBoss => IsMiddleBossSummonWindow(m_currentWave) && !m_hasSummonedMiddleBossInWindow;
 
     private void Awake()
     {
@@ -36,13 +40,7 @@ public class WaveManager : MonoBehaviour
             return;
         }
 
-        if (btn_middleBoss != null)
-        {
-            btn_middleBoss.onClick.AddListener(SpawnMiddleBoss);
-            btn_middleBoss.gameObject.SetActive(false);
-        }
-
-        UpdateMiddleBossButtonUI();
+        MiddleBossSummonAvailabilityChanged?.Invoke();
     }
 
     private void OnDestroy()
@@ -185,32 +183,20 @@ public class WaveManager : MonoBehaviour
         };
     }
 
-    private void UpdateMiddleBossButtonUI()
+    private static bool IsMiddleBossSummonWindow(int wave)
     {
-        if (btn_middleBoss == null) return;
-
-        if (m_currentWave == 5 || m_currentWave == 15 || m_currentWave == 25 || m_currentWave == 35)
-        {
-            btn_middleBoss.gameObject.SetActive(true);
-            btn_middleBoss.interactable = true;
-        }
-        else if (m_currentWave == 8 || m_currentWave == 18 || m_currentWave == 28 || m_currentWave == 38)
-        {
-            btn_middleBoss.gameObject.SetActive(false);
-            btn_middleBoss.interactable = false;
-        }
+        return (wave >= 5 && wave <= 7)
+            || (wave >= 15 && wave <= 17)
+            || (wave >= 25 && wave <= 27)
+            || (wave >= 35 && wave <= 37);
     }
 
-    private void SpawnMiddleBoss()
+    public bool TrySpawnMiddleBoss()
     {
-        if (btn_middleBoss != null)
-        {
-            btn_middleBoss.interactable = false;
-            btn_middleBoss.gameObject.SetActive(false);
-        }
+        if (!CanSummonMiddleBoss) return false;
 
         int poolIndex = (int)EnemyType.MiddleBoss;
-        if (poolIndex >= m_enemyPool.Length || m_enemyPool[poolIndex] == null) return;
+        if (m_enemyPool == null || poolIndex >= m_enemyPool.Length || m_enemyPool[poolIndex] == null) return false;
 
         float middleBossHPMulti = m_currentWave switch
         {
@@ -231,6 +217,9 @@ public class WaveManager : MonoBehaviour
         EnemyObjectPool2D targetPool = m_enemyPool[poolIndex];
         targetPool.Spawn(m_tilePath.GetWorldPosition(0), middleBossHPMulti, middleBossDefendMulti, m_tilePath);
         m_activeEnemyCount++;
+        m_hasSummonedMiddleBossInWindow = true;
+        MiddleBossSummonAvailabilityChanged?.Invoke();
+        return true;
     }
 
     public void NextWave()
@@ -238,7 +227,13 @@ public class WaveManager : MonoBehaviour
         m_currentWave++;
         m_spawnedEnemyCountInWave = 0;
         CurrencyManager.Instance?.AddGold((m_currentWave - 1) * 100);
-        UpdateMiddleBossButtonUI();
+
+        if (m_currentWave == 5 || m_currentWave == 15 || m_currentWave == 25 || m_currentWave == 35)
+        {
+            m_hasSummonedMiddleBossInWindow = false;
+        }
+
+        MiddleBossSummonAvailabilityChanged?.Invoke();
     }
 
     public int GetEnemyCount() => m_activeEnemyCount;

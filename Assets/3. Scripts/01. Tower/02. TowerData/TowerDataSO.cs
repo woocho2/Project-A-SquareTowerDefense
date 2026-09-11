@@ -32,9 +32,9 @@ public class TowerData : ScriptableObject
     public int towerID;
     public string towerName;
     public int towerLevel;
-    [Min(1)] public int action = 1;
-    public float attackPower;
+    public float power;
     public float range;
+    [Min(1)] public int action = 1;
     [Min(1)] public int attackCount = 1;
     public bool isCritical;
     public float criticalRate;
@@ -70,8 +70,8 @@ public class TowerData : ScriptableObject
             ID = this.towerID,
             Name = this.towerName,
             Level = 1,
-            AttackPower = this.attackPower,
-            Range = this.range,
+            AttackPower = this.power,
+            Range = TowerAttackAction.ToWorldRange(this.range),
             AttackCount = this.attackCount,
             CriticalRate = this.criticalRate,
             CriticalDamage = this.criticalDamage,

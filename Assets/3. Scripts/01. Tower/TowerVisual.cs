@@ -15,6 +15,33 @@ public class TowerVisual : MonoBehaviour
     [Tooltip("Index 0 = Sword(1), index 1 = Bow(2), ...")]
     [SerializeField] private Sprite[] m_emblemSprites;
 
+    public Sprite TierSprite
+    {
+        get
+        {
+            CacheRenderers();
+            return m_tierRenderer != null ? m_tierRenderer.sprite : null;
+        }
+    }
+
+    public Sprite ColorSprite
+    {
+        get
+        {
+            CacheRenderers();
+            return m_colorRenderer != null ? m_colorRenderer.sprite : null;
+        }
+    }
+
+    public Sprite EmblemSprite
+    {
+        get
+        {
+            CacheRenderers();
+            return m_emblemRenderer != null ? m_emblemRenderer.sprite : null;
+        }
+    }
+
     /// <summary>
     /// towerID 형식: [Tier][Type][Variant]
     /// 예) 1203 = Tier 1, Color(Type) 2, Emblem(Variant) 3

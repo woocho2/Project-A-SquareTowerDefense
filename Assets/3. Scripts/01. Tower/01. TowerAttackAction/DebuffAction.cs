@@ -63,7 +63,7 @@ public class DebuffAction : TowerAttackAction
 
         // 타워 위치를 타일맵 셀 그리드 좌표로 변환
         Vector3Int centerCell = pathTilemap.WorldToCell(towerPos);
-        int cellRadius = Mathf.CeilToInt(Mathf.Max(range, 1.5f));
+        int cellRadius = TowerAttackAction.ToTileRange(range);
 
         float minDistance = float.MaxValue;
         bool found = false;

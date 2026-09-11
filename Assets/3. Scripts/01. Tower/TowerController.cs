@@ -37,6 +37,7 @@ public class TowerController : MonoBehaviour
 
     private TowerAttackAction m_attackAction;
     private int m_remainingAction;
+    private TargetPriority m_targetPriority = TargetPriority.Closest;
 
     [Header("Debuff Zone Reference")]
     [SerializeField] private DebuffZone m_debuffZoneChild;
@@ -94,6 +95,7 @@ public class TowerController : MonoBehaviour
         m_towerData = data;
         m_baseStats = initialStats;
         m_remainingAction = Mathf.Max(1, m_towerData.action);
+        m_targetPriority = NormalizeTargetPriority(m_towerData.targetPriority);
 
         m_towerVisual?.Apply(m_towerData);
 
@@ -125,6 +127,8 @@ public class TowerController : MonoBehaviour
                 m_attackAction = debuffAction;
                 break;
         }
+
+        m_attackAction?.SetTargetPriority(m_targetPriority);
     }
 
     public void UpdateBaseStats(TowerStats newStats)
@@ -155,7 +159,10 @@ public class TowerController : MonoBehaviour
         finalStats.ChainCount += m_bonusChainCount;
         finalStats.ExtraHitChance += m_bonusExtraHitChance;
 
-        if (finalStats.Range <= 1f) finalStats.Range = 1f;
+        if (finalStats.Range < TowerAttackAction.WorldUnitsPerTile)
+        {
+            finalStats.Range = TowerAttackAction.WorldUnitsPerTile;
+        }
         finalStats.CriticalRate = Mathf.Clamp01(finalStats.CriticalRate);
         finalStats.ArmorPenetrationPercent = Mathf.Clamp(finalStats.ArmorPenetrationPercent, 0f, 100f);
 
@@ -186,6 +193,20 @@ public class TowerController : MonoBehaviour
     public TowerData GetTowerData() => m_towerData;
     public int GetRemainingAction() => m_remainingAction;
     public int GetMaxAction() => GetFinalAction();
+    public TargetPriority GetTargetPriority() => m_targetPriority;
+    public bool CanChangeTargetPriority => m_towerData != null &&
+        (m_towerData.attackType == AttackType.Target || m_towerData.attackType == AttackType.Splash);
+
+    public void SetTargetPriority(TargetPriority priority)
+    {
+        m_targetPriority = NormalizeTargetPriority(priority);
+        m_attackAction?.SetTargetPriority(m_targetPriority);
+    }
+
+    private static TargetPriority NormalizeTargetPriority(TargetPriority priority)
+    {
+        return priority == TargetPriority.Default ? TargetPriority.Closest : priority;
+    }
 
     public void ShowRange(bool show)
     {
@@ -203,7 +224,7 @@ public class TowerController : MonoBehaviour
             if (show)
             {
                 int tileRange = TowerAttackAction.ToTileRange(GetFinalStats().Range);
-                float scaleValue = (tileRange * 2f + 1f) / transform.localScale.x;
+                float scaleValue = (tileRange * 2f + 1f) * TowerAttackAction.WorldUnitsPerTile / transform.localScale.x;
                 m_range.transform.localScale = new Vector3(scaleValue, scaleValue, 1f);
             }
         }
@@ -354,7 +375,7 @@ public class TowerController : MonoBehaviour
         {
             case BuffTarget.Sword: m_bonusAttackPower = 1f + (GetTierValue(tierValue, 10f, 20f, 40f, 100f, 200f) / 100f); break;
             case BuffTarget.Bow:
-                m_bonusRange = 1f;
+                m_bonusRange = TowerAttackAction.WorldUnitsPerTile;
                 m_bonusDistanceDamagePercent = GetBowDistanceDamageBonus(tierValue);
                 break;
             case BuffTarget.Fire: m_bonusAttackCount = tierValue; break;
@@ -434,7 +455,7 @@ public class TowerController : MonoBehaviour
             {
                 case 0: m_darknessBonusAttackPower += .10f; break;
                 case 1: m_darknessBonusAttackCount += 1; break;
-                case 2: m_darknessBonusRange += 1f; break;
+                case 2: m_darknessBonusRange += TowerAttackAction.WorldUnitsPerTile; break;
                 case 3: m_darknessBonusCriticalRate += .10f; break;
                 case 4: m_darknessBonusCriticalDamage += .50f; break;
             }

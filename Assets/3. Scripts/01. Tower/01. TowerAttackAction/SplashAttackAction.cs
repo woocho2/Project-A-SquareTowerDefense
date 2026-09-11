@@ -7,7 +7,7 @@ public class SplashAttackAction : TowerAttackAction
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats finalStats)
     {
-        if (TryFindTarget(towerTransform.position, finalStats.Range, m_data.targetLayer, out EnemyHealthController targetEnemy, m_data.targetPriority))
+        if (TryFindTarget(towerTransform.position, finalStats.Range, m_data.targetLayer, out EnemyHealthController targetEnemy, CurrentTargetPriority))
         {
             LaunchSplashProjectile(towerTransform, targetEnemy.transform.position, finalStats);
             return true;
