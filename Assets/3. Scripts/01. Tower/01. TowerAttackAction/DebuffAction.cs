@@ -18,6 +18,15 @@ public class DebuffAction : TowerAttackAction
         // 타워 위치 및 사거리 정보 전달 (드래그 제한용)
         m_activeZone.SetupBoundary(towerTransform.position, currentStats.Range);
 
+        // 장판의 시각 연출은 TileSatelliteOrbiter가 전담합니다.
+        // DebuffZone은 오비터를 직접 보관하지 않고, 배치/드래그/적 판정만 담당합니다.
+        TileSatelliteOrbiter orbiter = m_activeZone.GetComponent<TileSatelliteOrbiter>();
+        if (orbiter != null)
+        {
+            orbiter.SetEffectType(TileSatelliteEffectType.Debuff);
+            orbiter.SetDebuffType(m_data.debuffTarget);
+        }
+
         // 길 타일을 찾지 못한 경우에는 타워 위치에 존을 만들지 않습니다.
         if (!TryFindClosestPathTilePosition(towerTransform.position, currentStats.Range, out Vector3 targetRoadPos))
         {
@@ -29,7 +38,6 @@ public class DebuffAction : TowerAttackAction
         // 월드 좌표는 패스 타일 정중앙으로만 설정합니다.
         m_activeZone.transform.position = targetRoadPos;
         m_activeZone.gameObject.SetActive(true);
-
     }
 
     // Tilemap_Path에서 타워 주변 유효한 길목 타일의 정중앙 좌표를 찾는 함수
@@ -117,5 +125,4 @@ public class DebuffAction : TowerAttackAction
         }
         return true;
     }
-
 }

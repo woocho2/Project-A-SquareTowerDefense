@@ -77,6 +77,7 @@ public class DebuffZone : MonoBehaviour
         {
             m_tilePath = m_pathTilemap.GetComponent<TilePath>();
         }
+
     }
 
     /// <summary>

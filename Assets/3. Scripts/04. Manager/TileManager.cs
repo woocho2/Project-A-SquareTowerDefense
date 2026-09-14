@@ -43,21 +43,39 @@ public class TileManager : MonoBehaviour
     [FormerlySerializedAs("towerAttackSpeedCount")]
     [SerializeField] private int towerAttackCountTileCount = 2;
 
+    [Header("맵 특수 타일 이펙트")]
+    [Tooltip("타워/에너미 특수 타일 위에 생성할 MapBuff 프리팹")]
+    [FormerlySerializedAs("towerTileBuffEffectPrefab")]
+    [SerializeField] private TileSatelliteOrbiter mapTileBuffEffectPrefab;
+    [Tooltip("생성된 특수 타일 이펙트를 정리할 부모 Transform (비워두면 TileManager 하위에 생성)")]
+    [FormerlySerializedAs("towerTileBuffEffectParent")]
+    [SerializeField] private Transform mapTileBuffEffectParent;
+
     // 에너미 타일 정보 (좌표 -> 에너미 타일 속성)
     public Dictionary<Vector3Int, SpecialTileType> specialTileMap = new Dictionary<Vector3Int, SpecialTileType>();
 
     // 타워 타일 정보 (좌표 -> 타워 버프 속성)
+    // 실제 버프 판정은 이 Dictionary만 사용한다.
+    // 즉, MapBuff 이펙트가 꺼져 있거나 없어도 타워 버프 계산 자체는 영향을 받지 않는다.
     public Dictionary<Vector3Int, TowerTileBuffType> towerTileBuffMap = new Dictionary<Vector3Int, TowerTileBuffType>();
 
-    // 에너미 경로 16진수 컬러 코드
-    private readonly Color defendColor = HexToColor("FFFFAC");
-    private readonly Color speedColor = HexToColor("8AFFFE");
-    private readonly Color healColor = HexToColor("9EFFA8");
+    // 현재 씬에 생성되어 있는 버프 이펙트 목록 (좌표 -> 이펙트 인스턴스)
+    // 버프 타일을 다시 랜덤 배정할 때 이전 이펙트를 안전하게 제거하기 위해 관리한다.
+    private readonly Dictionary<Vector3Int, TileSatelliteOrbiter> towerTileBuffEffects = new Dictionary<Vector3Int, TileSatelliteOrbiter>();
 
-    // 타워 스폰 타일 16진수 컬러 코드
-    private readonly Color towerAttackPowerColor = HexToColor("FF6161"); // 공격력 증가 타일 색상
-    private readonly Color towerActionCountColor = HexToColor("6ED5FF"); // 행동력 증가 타일 색상
-    private readonly Color towerAttackCountColor = HexToColor("FFDE6E"); // 공격횟수 증가 타일 색상
+    // 에너미 경로 특수 타일의 시각 이펙트 목록이다.
+    // 타워 타일 이펙트와 별도로 관리해야 한쪽만 재배정해도 다른 쪽 이펙트가 지워지지 않는다.
+    private readonly Dictionary<Vector3Int, TileSatelliteOrbiter> specialTileEffects = new Dictionary<Vector3Int, TileSatelliteOrbiter>();
+
+    // 에너미 경로 16진수 컬러 코드
+    private readonly Color defendColor = HexToColor("ffc74f");
+    private readonly Color speedColor = HexToColor("57cfff");
+    private readonly Color healColor = HexToColor("60ff68");
+
+    // 타워 스폰 타일 16진수 컬러 코드    
+    private readonly Color towerAttackPowerColor = HexToColor("ff5d5d"); // 공격력 증가 타일 색상
+    private readonly Color towerActionCountColor = HexToColor("57cfff"); // 행동력 증가 타일 색상
+    private readonly Color towerAttackCountColor = HexToColor("ffc74f"); // 공격횟수 증가 타일 색상
 
     void Awake()
     {
@@ -108,7 +126,10 @@ public class TileManager : MonoBehaviour
             return;
         }
 
+        // 기존 데이터와 시각 이펙트를 함께 초기화한다.
+        // 둘 중 하나만 남으면 실제 버프와 화면 표시가 서로 달라질 수 있다.
         towerTileBuffMap.Clear();
+        ClearTowerTileBuffEffects();
 
         BoundsInt bounds = spawnTilemap.cellBounds;
         List<Vector3Int> availableTilePositions = new List<Vector3Int>();
@@ -123,12 +144,14 @@ public class TileManager : MonoBehaviour
                 {
                     availableTilePositions.Add(pos);
                     spawnTilemap.SetTileFlags(pos, TileFlags.None);
+                    // 버프 색은 이제 타일 자체가 아닌 MapBuff 프리팹이 담당한다.
+                    // 이전 방식으로 칠해져 있던 타일 색이 남지 않도록 항상 흰색으로 되돌린다.
                     spawnTilemap.SetColor(pos, Color.white);
                 }
             }
         }
 
-        // 2. 지정된 개수만큼 타일을 뽑아 버프 및 색상 배정
+        // 2. 지정된 개수만큼 타일을 뽑아 버프 데이터와 시각 이펙트 배정
         SetRandomTowerTiles(spawnTilemap, availableTilePositions, towerAttackPowerCount, TowerTileBuffType.AttackPowerUp, towerAttackPowerColor);
         SetRandomTowerTiles(spawnTilemap, availableTilePositions, towerActionCount, TowerTileBuffType.ActionCountUp, towerActionCountColor);
         SetRandomTowerTiles(spawnTilemap, availableTilePositions, towerAttackCountTileCount, TowerTileBuffType.AttackCountUp, towerAttackCountColor);
@@ -144,11 +167,71 @@ public class TileManager : MonoBehaviour
             int randomIndex = Random.Range(0, pool.Count);
             Vector3Int selectedPos = pool[randomIndex];
 
+            // 1) 게임 로직이 조회할 버프 타입을 좌표에 저장한다.
             towerTileBuffMap[selectedPos] = type;
-            map.SetColor(selectedPos, color);
+
+            // 2) 같은 좌표에 시각 전용 이펙트를 생성하고, 버프 타입에 맞는 색상을 입힌다.
+            // 이펙트는 보기 위한 것이며 실제 버프 판정에는 관여하지 않는다.
+            SpawnMapTileEffect(map, selectedPos, color, towerTileBuffEffects, "TowerMapBuff");
 
             pool.RemoveAt(randomIndex);
         }
+    }
+
+    private void SpawnMapTileEffect(
+        Tilemap map,
+        Vector3Int cellPosition,
+        Color color,
+        Dictionary<Vector3Int, TileSatelliteOrbiter> effectMap,
+        string effectNamePrefix)
+    {
+        if (mapTileBuffEffectPrefab == null)
+        {
+            Debug.LogWarning("[TileManager] Map Tile Buff Effect Prefab이 연결되지 않았습니다.");
+            return;
+        }
+
+        // 별도 부모를 지정하지 않았다면 TileManager 하위에 생성해
+        // Hierarchy에서 MapBuff 이펙트들을 한곳에 모아 볼 수 있게 한다.
+        Transform parent = mapTileBuffEffectParent != null ? mapTileBuffEffectParent : transform;
+
+        // Tilemap의 셀 중심 좌표를 사용해야 Grid의 셀 크기가 바뀌어도
+        // 이펙트가 타일 정중앙에 생성된다.
+        Vector3 worldPosition = map.GetCellCenterWorld(cellPosition);
+        TileSatelliteOrbiter effect = Instantiate(mapTileBuffEffectPrefab, worldPosition, Quaternion.identity, parent);
+        effect.name = $"{effectNamePrefix}_{cellPosition.x}_{cellPosition.y}";
+
+        // MapBuff 프리팹 내부 SpriteRenderer들의 색상을 한 번에 변경한다.
+        effect.SetColor(color);
+        effectMap[cellPosition] = effect;
+    }
+
+    private void ClearTowerTileBuffEffects()
+    {
+        // Dictionary에 기록해 둔 이전 이펙트들을 모두 파괴한다.
+        // Destroy는 프레임 종료 시 실행되므로, 이후 새 이펙트를 생성해도 충돌하지 않는다.
+        foreach (TileSatelliteOrbiter effect in towerTileBuffEffects.Values)
+        {
+            if (effect != null)
+            {
+                Destroy(effect.gameObject);
+            }
+        }
+
+        towerTileBuffEffects.Clear();
+    }
+
+    private void ClearSpecialTileEffects()
+    {
+        foreach (TileSatelliteOrbiter effect in specialTileEffects.Values)
+        {
+            if (effect != null)
+            {
+                Destroy(effect.gameObject);
+            }
+        }
+
+        specialTileEffects.Clear();
     }
 
     // 특정 좌표에 위치한 타워의 버프 타입 조회 함수
@@ -176,6 +259,7 @@ public class TileManager : MonoBehaviour
 
         ResetAllTileColors();
         specialTileMap.Clear();
+        ClearSpecialTileEffects();
 
         List<Vector3Int> availableTiles = new List<Vector3Int>();
         for (int i = 1; i < tilePath.pathGridPositions.Count - 1; i++)
@@ -199,7 +283,10 @@ public class TileManager : MonoBehaviour
 
             specialTileMap[selectedPos] = type;
             tilemap.SetTileFlags(selectedPos, TileFlags.None);
-            tilemap.SetColor(selectedPos, color);
+
+            // 실제 적 효과는 specialTileMap을 통해 계산하고,
+            // 이펙트는 버프 타일이라는 사실과 종류를 색으로 보여주기만 한다.
+            SpawnMapTileEffect(tilemap, selectedPos, color, specialTileEffects, "PathMapBuff");
 
             pool.RemoveAt(randomIndex);
         }
@@ -210,6 +297,7 @@ public class TileManager : MonoBehaviour
         foreach (Vector3Int pos in tilePath.pathGridPositions)
         {
             tilemap.SetTileFlags(pos, TileFlags.None);
+            // 경로 타일은 기본 흰색으로 유지하고, 특수 타일의 색은 이펙트가 담당한다.
             tilemap.SetColor(pos, Color.white);
         }
     }

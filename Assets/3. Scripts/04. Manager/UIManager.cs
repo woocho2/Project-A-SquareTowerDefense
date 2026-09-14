@@ -208,6 +208,8 @@ public class UIManager : MonoBehaviour
         if (GameManager.Instance != null)
         {
             SetPlayerActionUI(GameManager.Instance.CanPerformPlayerAction);
+            GameManager.Instance.OnShieldChanged += RefreshShieldPoints;
+            RefreshShieldPoints(GameManager.Instance.CurrentShield);
         }
 
         Button[] quitButtons = { m_btnQuit, m_btnGameOverHome, m_btnGameClearHome, m_btnNextStage };
@@ -386,6 +388,11 @@ public class UIManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnShieldChanged -= RefreshShieldPoints;
+        }
+
         if (m_waveManager != null)
         {
             m_waveManager.MiddleBossSummonAvailabilityChanged -= RefreshMiddleBossSummonButton;
@@ -855,6 +862,28 @@ public class UIManager : MonoBehaviour
         foreach (var hpImage in m_LifePoints)
         {
             if (hpImage != null) hpImage.gameObject.SetActive(true);
+        }
+
+        // 게임 시작 시에는 쉴드가 없으므로 LifeArmor 아이콘을 모두 숨깁니다.
+        RefreshShieldPoints(GameManager.Instance != null ? GameManager.Instance.CurrentShield : 0);
+    }
+
+    /// <summary>
+    /// 현재 쉴드 수만큼 LifeArmor 아이콘을 왼쪽부터 표시합니다.
+    /// 쉴드 타워의 행동 충전과 피해 흡수 시 GameManager 이벤트로 즉시 호출됩니다.
+    /// </summary>
+    private void RefreshShieldPoints(int shieldCount)
+    {
+        if (m_ShieldPoints == null) return;
+
+        int visibleShieldCount = Mathf.Clamp(shieldCount, 0, m_ShieldPoints.Length);
+        for (int index = 0; index < m_ShieldPoints.Length; index++)
+        {
+            Image shieldPoint = m_ShieldPoints[index];
+            if (shieldPoint != null)
+            {
+                shieldPoint.gameObject.SetActive(index < visibleShieldCount);
+            }
         }
     }
 

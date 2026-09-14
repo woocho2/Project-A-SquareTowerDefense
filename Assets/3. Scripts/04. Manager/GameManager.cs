@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     public TurnState CurrentState { get; private set; } = TurnState.None;
     public bool CanPerformPlayerAction => m_currentTurnState != null && m_currentTurnState.CanPerformPlayerAction;
     public int CurrentWave { get; private set; } = 1;
+    public int CurrentShield => m_currentShield;
 
     private IGameTurnState m_currentTurnState;
 
@@ -50,6 +51,7 @@ public class GameManager : MonoBehaviour
 
     // UI 및 외부 시스템 알림용 델리게이트
     public event Action<TurnState> OnTurnStateChanged;    
+    public event Action<int> OnShieldChanged;
 
     private void Awake()
     {
@@ -318,6 +320,7 @@ public class GameManager : MonoBehaviour
         }
         m_currentShield = highestShield;
         m_currentShieldSourceID = highestShieldSourceID;
+        OnShieldChanged?.Invoke(m_currentShield);
     }
 
     public void OnGameOver()

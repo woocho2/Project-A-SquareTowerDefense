@@ -94,8 +94,10 @@ public class TowerController : MonoBehaviour
     {
         m_towerData = data;
         m_baseStats = initialStats;
-        m_remainingAction = Mathf.Max(1, m_towerData.action);
         m_targetPriority = NormalizeTargetPriority(m_towerData.targetPriority);
+
+        // 타워가 생성된 셀의 행동력 타일 효과까지 반영해 첫 행동력부터 맞춥니다.
+        m_remainingAction = GetFinalAction();
 
         m_towerVisual?.Apply(m_towerData);
 
@@ -158,6 +160,20 @@ public class TowerController : MonoBehaviour
         finalStats.IceAdditionalTargetCount += m_bonusIceAdditionalTargetCount;
         finalStats.ChainCount += m_bonusChainCount;
         finalStats.ExtraHitChance += m_bonusExtraHitChance;
+
+        // 타워 스폰 타일 효과는 타워의 현재 월드 위치를 기준으로 매번 계산합니다.
+        // 따라서 생성, 이동, 교체(티어/컬러 강화) 후에도 별도 버프 해제 과정 없이 즉시 반영됩니다.
+        TowerTileBuffType tileBuff = GetCurrentTowerTileBuff();
+        switch (tileBuff)
+        {
+            case TowerTileBuffType.AttackPowerUp:
+                finalStats.AttackPower *= 1.5f;
+                break;
+
+            case TowerTileBuffType.AttackCountUp:
+                finalStats.AttackCount += 1;
+                break;
+        }
 
         if (finalStats.Range < TowerAttackAction.WorldUnitsPerTile)
         {
@@ -233,6 +249,9 @@ public class TowerController : MonoBehaviour
     public void OnMovedToNewPosition()
     {
         // 디버프 존은 최초로 배치된 길목에 남습니다.
+
+        // 행동력 감소 타일로 이동한 경우, 이미 충전되어 있던 행동력도 새 최대치 안으로 맞춥니다.
+        m_remainingAction = Mathf.Min(m_remainingAction, GetFinalAction());
     }
 
     private void OnDestroy()
@@ -246,7 +265,25 @@ public class TowerController : MonoBehaviour
 
     private int GetFinalAction()
     {
-        return Mathf.Max(1, m_towerData.action - m_bonusActionReduction);
+        if (m_towerData == null) return 1;
+
+        int tileActionReduction = GetCurrentTowerTileBuff() == TowerTileBuffType.ActionCountUp ? 1 : 0;
+        return Mathf.Max(1, m_towerData.action - m_bonusActionReduction - tileActionReduction);
+    }
+
+    /// <summary>
+    /// 현재 타워가 서 있는 SpawnPoint 셀의 맵 버프를 조회합니다.
+    /// TileManager의 Dictionary가 실제 버프 데이터의 기준이며, MapBuff 이펙트는 시각 전용입니다.
+    /// </summary>
+    private TowerTileBuffType GetCurrentTowerTileBuff()
+    {
+        if (TileManager.Instance == null || TowerManager.Instance == null)
+        {
+            return TowerTileBuffType.Normal;
+        }
+
+        Vector3Int currentCell = TowerManager.Instance.WorldToCell(transform.position);
+        return TileManager.Instance.GetTowerTileBuffAt(currentCell);
     }
 
     public void ApplyBuff(BuffTarget target, TowerController sourceTower, int sourceID, int sourceTier, float abilityValue, float duration)
