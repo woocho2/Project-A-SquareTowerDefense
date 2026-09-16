@@ -4,6 +4,7 @@ using UnityEngine.Tilemaps;
 public class DebuffAction : TowerAttackAction
 {
     private DebuffZone m_activeZone;
+    private int m_sourceID;
 
     public DebuffAction(TowerData data) : base(data) { }
 
@@ -11,7 +12,10 @@ public class DebuffAction : TowerAttackAction
     {
         if (zone == null || towerTransform == null) return;
 
+        if (m_activeZone != null) m_activeZone.OnPlacedPathCellChanged -= HandleZoneCellChanged;
         m_activeZone = zone;
+        m_sourceID = towerTransform.GetInstanceID();
+        m_activeZone.OnPlacedPathCellChanged += HandleZoneCellChanged;
         // 존은 최초 배치 위치에 고정합니다. 타워를 드래그해도 장판은 따라가지 않습니다.
         m_activeZone.transform.SetParent(null, true);
 
@@ -19,7 +23,7 @@ public class DebuffAction : TowerAttackAction
         m_activeZone.SetupBoundary(towerTransform.position, currentStats.Range);
 
         // 장판의 시각 연출은 TileSatelliteOrbiter가 전담합니다.
-        // DebuffZone은 오비터를 직접 보관하지 않고, 배치/드래그/적 판정만 담당합니다.
+        // DebuffZone은 오비터를 직접 보관하지 않고, 배치/드래그만 담당합니다.
         TileSatelliteOrbiter orbiter = m_activeZone.GetComponent<TileSatelliteOrbiter>();
         if (orbiter != null)
         {
@@ -38,6 +42,27 @@ public class DebuffAction : TowerAttackAction
         // 월드 좌표는 패스 타일 정중앙으로만 설정합니다.
         m_activeZone.transform.position = targetRoadPos;
         m_activeZone.gameObject.SetActive(true);
+
+        // 장판을 놓는 즉시 타일 정보 패널에는 디버프가 보이게 등록합니다.
+        // 실제 적 스택은 ExecuteAction에서 ApplicationVersion이 1 이상이 된 뒤부터 적용됩니다.
+        if (TileManager.Instance != null && m_activeZone.TryGetPlacedPathCell(out Vector3Int pathCell))
+        {
+            int tier = Mathf.Clamp(m_data.towerID / 1000, 1, 5);
+            TileManager.Instance.RegisterPathDebuffZone(
+                pathCell,
+                m_sourceID,
+                m_data.debuffTarget,
+                tier,
+                currentStats.AbilityValue,
+                currentStats.Duration,
+                m_activeZone.transform.position);
+        }
+    }
+
+    private void HandleZoneCellChanged(Vector3Int cell, Vector3 worldPosition)
+    {
+        // 아직 한 번도 행동하지 않은 장판은 데이터가 없습니다. 행동 후에는 드래그 즉시 기존 효과를 함께 이동합니다.
+        TileManager.Instance?.MovePathDebuffEffect(m_sourceID, cell, worldPosition);
     }
 
     // Tilemap_Path에서 타워 주변 유효한 길목 타일의 정중앙 좌표를 찾는 함수
@@ -111,18 +136,19 @@ public class DebuffAction : TowerAttackAction
     public override bool ExecuteAction(Transform towerTransform, TowerStats currentStats)
     {
         if (m_activeZone == null) return false;
-        var enemiesInZone = m_activeZone.GetEnemiesOnPlacedPathTile();
-        if (enemiesInZone.Count == 0) return false;
+        if (TileManager.Instance == null || !m_activeZone.TryGetPlacedPathCell(out Vector3Int pathCell)) return false;
 
         int tier = Mathf.Clamp(m_data.towerID / 1000, 1, 5);
-        for (int i = 0; i < enemiesInZone.Count; i++)
-        {
-            EnemyHealthController enemy = enemiesInZone[i];
-            if (enemy != null && enemy.TryGetComponent(out EnemyDebuffController debuff))
-            {
-                debuff.ApplyZoneStack(m_data.debuffTarget, tier, currentStats.AbilityValue, m_activeZone.transform.position);
-            }
-        }
+        // 실제 적 탐색은 하지 않습니다. 장판의 패스 타일에 효과 데이터만 기록하고,
+        // 적은 이동을 마친 뒤 자신이 서 있는 타일의 데이터를 읽습니다.
+        TileManager.Instance.SetPathDebuffEffect(
+            pathCell,
+            towerTransform.GetInstanceID(),
+            m_data.debuffTarget,
+            tier,
+            currentStats.AbilityValue,
+            currentStats.Duration,
+            m_activeZone.transform.position);
         return true;
     }
 }

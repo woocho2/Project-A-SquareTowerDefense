@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -99,6 +100,10 @@ public class TowerManager : MonoBehaviour
     [Header("타워 생성 및 업그레이드 비용")]
     private int BuildCost = 50;
     private const int TierUpgradeBaseGemCost = 5;
+
+    [Header("타워 순차 행동")]
+    [Tooltip("공격 타워의 투사체가 명중해 이펙트가 발동한 뒤 다음 공격 타워가 행동하기까지의 간격입니다.")]
+    [SerializeField, Min(0f)] private float m_nextAttackTowerDelay = 0.3f;
 
     public struct GridTowerInfo
     {
@@ -435,8 +440,18 @@ public class TowerManager : MonoBehaviour
 
     /// <summary>
     /// 에너미 턴에 한 번 호출됩니다. 보드의 위쪽부터 아래쪽, 왼쪽부터 오른쪽 순서로 타워가 행동합니다.
+    /// 화면의 첫 번째 슬롯을 1번으로 보았을 때 1번부터 증가하는 순서입니다.
     /// </summary>
     public void ExecuteTowerActionTurn()
+    {
+        StartCoroutine(ExecuteTowerActionTurnRoutine());
+    }
+
+    /// <summary>
+    /// 공격 타워는 자신의 투사체가 모두 명중하거나 회수된 뒤 지정된 간격만큼 기다리고 다음 공격 타워로 넘어갑니다.
+    /// 버프/디버프 타워는 이 대기 계산에서 제외하며 자기 순서에 즉시 행동합니다.
+    /// </summary>
+    public IEnumerator ExecuteTowerActionTurnRoutine()
     {
         List<KeyValuePair<Vector3Int, GridTowerInfo>> orderedTowers = new List<KeyValuePair<Vector3Int, GridTowerInfo>>(m_towersOnGrid);
         orderedTowers.Sort((left, right) =>
@@ -446,6 +461,8 @@ public class TowerManager : MonoBehaviour
         });
 
         // 이번 에너미 턴이 시작되었으므로, 기존 버프의 남은 턴을 먼저 차감합니다.
+        // 버프 타워가 기록한 타일 효과도 같은 턴 규칙으로 함께 갱신합니다.
+        TileManager.Instance?.AdvanceTowerBuffEffectTurns();
         foreach (KeyValuePair<Vector3Int, GridTowerInfo> tower in orderedTowers)
         {
             tower.Value.Controller?.AdvanceBuffTurn();
@@ -453,7 +470,29 @@ public class TowerManager : MonoBehaviour
 
         foreach (KeyValuePair<Vector3Int, GridTowerInfo> tower in orderedTowers)
         {
-            tower.Value.Controller?.ExecuteTurnAction();
+            TowerController controller = tower.Value.Controller;
+            if (controller == null) continue;
+
+            bool didAct = controller.ExecuteTurnAction();
+            if (!didAct) continue;
+
+            TowerData towerData = controller.GetTowerData();
+            if (towerData == null || towerData.attackType == AttackType.Buff || towerData.attackType == AttackType.Debuff)
+            {
+                continue;
+            }
+
+            // 이 타워가 만든 위성 투사체의 생성·발사·명중이 끝날 때까지 기다립니다.
+            // 명중 순간 EffectManager가 이펙트를 재생하므로, 이 반복문을 벗어날 때는 공격 이펙트도 발동된 상태입니다.
+            while (GlobalProjectileManager.Instance != null && GlobalProjectileManager.Instance.HasActiveProjectiles())
+            {
+                yield return null;
+            }
+
+            if (m_nextAttackTowerDelay > 0f)
+            {
+                yield return new WaitForSeconds(m_nextAttackTowerDelay);
+            }
         }
     }
     // ==========================================================================================================
@@ -487,6 +526,19 @@ public class TowerManager : MonoBehaviour
 
             // CheckTowerSynergy();
         }
+    }
+
+    /// <summary>UI가 타워 스폰 타일의 현재 타워를 안전하게 조회할 때 사용합니다.</summary>
+    public bool TryGetTowerAt(Vector3Int cell, out TowerController tower)
+    {
+        tower = null;
+        if (!m_towersOnGrid.TryGetValue(cell, out GridTowerInfo info) || info.Controller == null)
+        {
+            return false;
+        }
+
+        tower = info.Controller;
+        return true;
     }
 
     // ==========================================================================================================

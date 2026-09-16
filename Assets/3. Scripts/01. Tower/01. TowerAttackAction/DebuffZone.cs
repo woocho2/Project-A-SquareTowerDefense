@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
 
-[RequireComponent(typeof(Collider2D))]
 public class DebuffZone : MonoBehaviour
 {
     [Header("Camera")]
@@ -18,14 +16,9 @@ public class DebuffZone : MonoBehaviour
     [Tooltip("이 거리 이상 마우스가 이동해야 드래그로 판정합니다.")]
     [SerializeField] private float m_dragThreshold = 0.1f;
 
-    public readonly List<EnemyHealthController> EnemiesInZone = new List<EnemyHealthController>();
+    public event Action<Vector3Int, Vector3> OnPlacedPathCellChanged;
 
-    public event Action<EnemyHealthController> OnEnemyEnterEvent;
-    public event Action<EnemyHealthController> OnEnemyExitEvent;
-
-    private Collider2D m_collider2D;
     private Tilemap m_pathTilemap;
-    private TilePath m_tilePath;
 
     private Vector3 m_towerOriginPos;
     private float m_maxRange = 1f;
@@ -37,15 +30,11 @@ public class DebuffZone : MonoBehaviour
     private Vector3 m_offset;
     private float m_objectZ;
     private float m_cameraZDistance;
+    private bool m_hasNotifiedPathCell;
+    private Vector3Int m_lastNotifiedPathCell;
 
     private void Awake()
     {
-        m_collider2D = GetComponent<Collider2D>();
-        if (m_collider2D != null)
-        {
-            m_collider2D.isTrigger = true;
-        }
-
         if (m_obstacleCollider != null)
         {
             m_obstacleCollider.SetActive(false);
@@ -67,17 +56,12 @@ public class DebuffZone : MonoBehaviour
 
         if (m_pathTilemap == null)
         {
-            m_tilePath = FindFirstObjectByType<TilePath>();
-            if (m_tilePath != null)
+            TilePath tilePath = FindFirstObjectByType<TilePath>();
+            if (tilePath != null)
             {
-                m_pathTilemap = m_tilePath.GetComponent<Tilemap>();
+                m_pathTilemap = tilePath.GetComponent<Tilemap>();
             }
         }
-        else
-        {
-            m_tilePath = m_pathTilemap.GetComponent<TilePath>();
-        }
-
     }
 
     /// <summary>
@@ -106,7 +90,6 @@ public class DebuffZone : MonoBehaviour
 
     private void OnDisable()
     {
-        EnemiesInZone.Clear();
         m_isTracking = false;
         m_isDragging = false;
     }
@@ -122,7 +105,9 @@ public class DebuffZone : MonoBehaviour
             if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
             if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
 
-            if (m_collider2D != null && m_collider2D.OverlapPoint(mouseWorldPosition))
+            // Physics Raycast는 Collider2D를 필요로 합니다.
+            // 장판은 정확히 한 패스 타일에만 놓이므로, 클릭 좌표를 셀로 변환해 현재 장판 셀과 비교하는 편이 더 정확합니다.
+            if (IsPointerOnPlacedPathCell(mouseWorldPosition))
             {
                 m_isTracking = true;
                 m_isDragging = false;
@@ -159,6 +144,7 @@ public class DebuffZone : MonoBehaviour
                 if (TryGetClosestPathTilePosition(targetPos, out Vector3 snappedPosition))
                 {
                     transform.position = snappedPosition;
+                    NotifyPlacedPathCellChanged();
                 }
             }
         }
@@ -196,6 +182,7 @@ public class DebuffZone : MonoBehaviour
         if (TryGetClosestPathTilePosition(transform.position, out Vector3 snappedPosition))
         {
             transform.position = snappedPosition;
+            NotifyPlacedPathCellChanged();
         }
     }
 
@@ -260,30 +247,6 @@ public class DebuffZone : MonoBehaviour
         return found;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.TryGetComponent<EnemyHealthController>(out var enemyHealth))
-        {
-            if (!EnemiesInZone.Contains(enemyHealth))
-            {
-                EnemiesInZone.Add(enemyHealth);
-                OnEnemyEnterEvent?.Invoke(enemyHealth);
-            }
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.TryGetComponent<EnemyHealthController>(out var enemyHealth))
-        {
-            if (EnemiesInZone.Contains(enemyHealth))
-            {
-                EnemiesInZone.Remove(enemyHealth);
-                OnEnemyExitEvent?.Invoke(enemyHealth);
-            }
-        }
-    }
-
     public void ToggleObstacle(bool isActive)
     {
         if (m_obstacleCollider != null)
@@ -292,50 +255,29 @@ public class DebuffZone : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 드래그로 장판을 적 위에 올렸을 때도 트리거 이벤트에 의존하지 않고,
-    /// 현재 장판 내부의 활성 적을 즉시 다시 수집합니다.
-    /// </summary>
-    public List<EnemyHealthController> GetCurrentEnemiesInZone()
+    /// <summary>현재 장판이 스냅되어 있는 패스 타일 좌표를 반환합니다. 실제 디버프 판정은 이 좌표만 사용합니다.</summary>
+    public bool TryGetPlacedPathCell(out Vector3Int cell)
     {
-        // 이전 TriggerEnter 목록은 드래그 후에도 남을 수 있으므로 사용하지 않습니다.
-        EnemiesInZone.Clear();
-        if (m_collider2D == null || EnemyManager.Instance == null) return EnemiesInZone;
+        cell = default;
+        if (m_pathTilemap == null) return false;
 
-        foreach (EnemyMovementController movement in EnemyManager.Instance.activeEnemies)
-        {
-            if (movement == null || !movement.gameObject.activeInHierarchy) continue;
-            if (!movement.TryGetComponent(out EnemyHealthController health) || health.CurrentHP <= 0f) continue;
-
-            if (m_collider2D.OverlapPoint(health.transform.position) && !EnemiesInZone.Contains(health))
-            {
-                EnemiesInZone.Add(health);
-            }
-        }
-
-        return EnemiesInZone;
+        cell = m_pathTilemap.WorldToCell(transform.position);
+        return m_pathTilemap.HasTile(cell);
     }
 
-    /// <summary>
-    /// 장판의 보이는 콜라이더 크기와 무관하게, 패스 타일 인덱스가 같은 적만 반환합니다.
-    /// </summary>
-    public List<EnemyHealthController> GetEnemiesOnPlacedPathTile()
+    private bool IsPointerOnPlacedPathCell(Vector3 worldPosition)
     {
-        EnemiesInZone.Clear();
-        if (EnemyManager.Instance == null || m_tilePath == null || m_pathTilemap == null) return EnemiesInZone;
+        if (!TryGetPlacedPathCell(out Vector3Int zoneCell) || m_pathTilemap == null) return false;
+        return m_pathTilemap.WorldToCell(worldPosition) == zoneCell;
+    }
 
-        Vector3Int zoneCell = m_pathTilemap.WorldToCell(transform.position);
-        int zoneIndex = m_tilePath.pathGridPositions.IndexOf(zoneCell);
-        if (zoneIndex < 0) return EnemiesInZone;
+    private void NotifyPlacedPathCellChanged()
+    {
+        if (!TryGetPlacedPathCell(out Vector3Int cell)) return;
+        if (m_hasNotifiedPathCell && cell == m_lastNotifiedPathCell) return;
 
-        foreach (EnemyMovementController movement in EnemyManager.Instance.activeEnemies)
-        {
-            if (movement == null || !movement.gameObject.activeInHierarchy || movement.CurrentTileIndex != zoneIndex) continue;
-            if (movement.TryGetComponent(out EnemyHealthController health) && health.CurrentHP > 0f)
-            {
-                EnemiesInZone.Add(health);
-            }
-        }
-        return EnemiesInZone;
+        m_hasNotifiedPathCell = true;
+        m_lastNotifiedPathCell = cell;
+        OnPlacedPathCellChanged?.Invoke(cell, transform.position);
     }
 }

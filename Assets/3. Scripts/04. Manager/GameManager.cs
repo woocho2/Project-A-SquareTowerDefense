@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
 
     [Header("에너미 턴 연출 속도")]
     [SerializeField, Min(0f)] private float m_towerAttackResolutionDelay = 0.2f;
-    [SerializeField, Min(0.1f)] private float m_projectileWaitTimeout = 5f;
+    [SerializeField, Min(0.1f)] private float m_projectileWaitTimeout = 10f;
     [Tooltip("같은 웨이브에서 다음 적이 소환되기 전 대기 시간(초)")]
     [SerializeField, Min(0f)] private float m_enemySpawnInterval = 0.5f;
 
@@ -196,12 +196,31 @@ public class GameManager : MonoBehaviour
     // 타워 공격 및 데미지 연산 코루틴
     private IEnumerator ProcessTowerAttacks()
     {
-        TowerManager.Instance?.ExecuteTowerActionTurn();
-
-        float elapsed = 0f;
-        while (GlobalProjectileManager.Instance != null && GlobalProjectileManager.Instance.HasActiveProjectiles() && elapsed < m_projectileWaitTimeout)
+        if (TowerManager.Instance != null)
         {
-            elapsed += Time.deltaTime;
+            yield return StartCoroutine(TowerManager.Instance.ExecuteTowerActionTurnRoutine());
+        }
+
+        // 타임아웃은 전체 연출 시간이 아니라 "투사체 개수 변화가 없는 시간"을 감시합니다.
+        // 위성을 여러 단계로 생성하더라도 정상적으로 변화가 이어지는 동안에는 적이 먼저 움직이지 않습니다.
+        float inactiveProgressTime = 0f;
+        int previousProjectileCount = -1;
+        while (GlobalProjectileManager.Instance != null)
+        {
+            int activeProjectileCount = GlobalProjectileManager.Instance.GetActiveProjectileCount();
+            if (activeProjectileCount <= 0) break;
+
+            if (activeProjectileCount != previousProjectileCount)
+            {
+                previousProjectileCount = activeProjectileCount;
+                inactiveProgressTime = 0f;
+            }
+            else
+            {
+                inactiveProgressTime += Time.deltaTime;
+                if (inactiveProgressTime >= m_projectileWaitTimeout) break;
+            }
+
             yield return null;
         }
 

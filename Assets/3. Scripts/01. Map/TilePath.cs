@@ -5,24 +5,40 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(Tilemap))]
 public class TilePath : MonoBehaviour
 {
+    // 다른 시스템(에너미 이동, 타워 타겟팅, 디버프 등)이 현재 스테이지의 경로를 공통으로 참조할 때 사용합니다.
     public static TilePath Instance { get; private set; }
     [Tooltip("에디터에서 등록된 경로 타일 그리드 좌표 리스트")]
+    // 에너미가 이동할 패스 타일을 순서대로 저장합니다.
+    // 리스트의 인덱스 자체가 "경로 진행도"가 되므로, 숫자가 클수록 도착 지점에 가깝습니다.
     public List<Vector3Int> pathGridPositions = new List<Vector3Int>();
 
     [Header("Enemy Visual Formation")]
+    // 한 타일에 적이 여럿 있을 때, 서로 겹치지 않도록 벌릴 간격입니다. (타일 크기에 비례)
     [SerializeField, Range(0.05f, 0.45f)] private float m_enemySlotSpacing = 0.28f;
+    // 한 타일 안에서 적을 몇 열까지 배치할지 결정합니다. 초과한 적은 다음 행으로 내려갑니다.
     [SerializeField, Range(1, 5)] private int m_enemyFormationMaxColumns = 3;
+    // 적 수가 바뀌어 진형을 재정렬할 때, 새 자리까지 부드럽게 이동하는 시각 연출 속도입니다.
     [SerializeField, Min(0.1f)] private float m_enemyFormationMoveSpeed = 1.5f;
 
+    // pathGridPositions의 그리드 좌표를 실제 월드 좌표로 변환하기 위해 사용하는 패스 Tilemap입니다.
     private Tilemap tilemap;
+    // 핵심 전투 판정 데이터입니다.
+    // "패스 인덱스 -> 그 타일 위에 실제로 서 있는 적 목록"으로 관리합니다.
+    // 타겟 선택, 스플래시 피해, 디버프 장판 판정은 콜라이더 대신 이 목록을 기준으로 계산합니다.
     private readonly Dictionary<int, List<EnemyHealthController>> m_enemiesByPathIndex =
         new Dictionary<int, List<EnemyHealthController>>();
+    // 이동 중인 적이 도착할 타일의 진형 자리를 미리 예약하는 목록입니다.
+    // 아직 도착하지 않은 적을 위 전투 목록에 넣으면 공격 대상이 되어버리므로 따로 보관합니다.
+    // 덕분에 이동 시작부터 목표 진형 위치로 자연스럽게 이동할 수 있습니다.
     private readonly Dictionary<int, List<EnemyHealthController>> m_pendingArrivalsByPathIndex =
         new Dictionary<int, List<EnemyHealthController>>();
+    // 이미 타일에 도착한 적의 "화면상 목표 위치"입니다.
+    // 진형 인원이 바뀌면 목표 좌표만 갱신하고, LateUpdate에서 해당 위치까지 천천히 이동시킵니다.
     private readonly Dictionary<EnemyHealthController, Vector3> m_enemyVisualTargets =
         new Dictionary<EnemyHealthController, Vector3>();
 
     // 경로의 마지막 인덱스 (자동 계산: 등록된 타일 개수 - 1)
+    // 유효한 마지막 패스 인덱스입니다. 경로가 비어 있으면 0으로 처리해 범위 오류를 막습니다.
     public int LastIndex => pathGridPositions.Count > 0 ? pathGridPositions.Count - 1 : 0;
 
     void Awake()

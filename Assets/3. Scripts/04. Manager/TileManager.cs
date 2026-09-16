@@ -22,6 +22,34 @@ public enum TowerTileBuffType
     AttackCountUp   // 공격횟수 증가
 }
 
+/// <summary>
+/// 버프 타워가 타워 스폰 타일에 남기는 런타임 효과입니다.
+/// 이 데이터가 실제 판정의 기준이며, 타일 위 이펙트는 표현만 담당합니다.
+/// </summary>
+public sealed class TowerTileBuffEffect
+{
+    public int SourceID;
+    public BuffTarget Target;
+    public int Tier;
+    public float AbilityValue;
+    public int RemainingTurns;
+}
+
+/// <summary>
+/// 디버프 타워가 패스 타일에 남기는 런타임 효과입니다.
+/// ApplicationVersion은 같은 장판을 밟고 있는 적에게 같은 공격이 중복 스택되는 것을 막습니다.
+/// </summary>
+public sealed class PathTileDebuffEffect
+{
+    public int SourceID;
+    public DebuffTarget Target;
+    public int Tier;
+    public float AbilityValue;
+    public int Duration;
+    public int ApplicationVersion;
+    public Vector3 ZoneWorldPosition;
+}
+
 [RequireComponent(typeof(Tilemap))]
 public class TileManager : MonoBehaviour
 {
@@ -58,6 +86,11 @@ public class TileManager : MonoBehaviour
     // 실제 버프 판정은 이 Dictionary만 사용한다.
     // 즉, MapBuff 이펙트가 꺼져 있거나 없어도 타워 버프 계산 자체는 영향을 받지 않는다.
     public Dictionary<Vector3Int, TowerTileBuffType> towerTileBuffMap = new Dictionary<Vector3Int, TowerTileBuffType>();
+
+    // 버프/디버프 타워가 남긴 동적 효과입니다. 특수 맵 타일(towerTileBuffMap, specialTileMap)과는 별개입니다.
+    private readonly Dictionary<Vector3Int, List<TowerTileBuffEffect>> m_towerBuffEffectsByCell = new Dictionary<Vector3Int, List<TowerTileBuffEffect>>();
+    private readonly Dictionary<Vector3Int, List<PathTileDebuffEffect>> m_pathDebuffEffectsByCell = new Dictionary<Vector3Int, List<PathTileDebuffEffect>>();
+    private readonly Dictionary<int, int> m_debuffApplicationVersions = new Dictionary<int, int>();
 
     // 현재 씬에 생성되어 있는 버프 이펙트 목록 (좌표 -> 이펙트 인스턴스)
     // 버프 타일을 다시 랜덤 배정할 때 이전 이펙트를 안전하게 제거하기 위해 관리한다.
@@ -245,6 +278,178 @@ public class TileManager : MonoBehaviour
     }
 
     // ==========================================================================================================
+    // 타워/적이 읽는 동적 타일 효과
+    // ==========================================================================================================
+
+    public IReadOnlyList<TowerTileBuffEffect> GetTowerBuffEffectsAt(Vector3Int cell)
+    {
+        return m_towerBuffEffectsByCell.TryGetValue(cell, out List<TowerTileBuffEffect> effects)
+            ? effects
+            : System.Array.Empty<TowerTileBuffEffect>();
+    }
+
+    public IReadOnlyList<PathTileDebuffEffect> GetPathDebuffEffectsAt(Vector3Int cell)
+    {
+        return m_pathDebuffEffectsByCell.TryGetValue(cell, out List<PathTileDebuffEffect> effects)
+            ? effects
+            : System.Array.Empty<PathTileDebuffEffect>();
+    }
+
+    /// <summary>한 버프 타워가 새로 행동할 때 기존 범위 기록을 지우고, 이번 행동의 타일 범위 기록을 새로 남깁니다.</summary>
+    public void RemoveTowerBuffEffectsBySource(int sourceID)
+    {
+        List<Vector3Int> emptyCells = new List<Vector3Int>();
+        foreach (KeyValuePair<Vector3Int, List<TowerTileBuffEffect>> pair in m_towerBuffEffectsByCell)
+        {
+            pair.Value.RemoveAll(effect => effect.SourceID == sourceID);
+            if (pair.Value.Count == 0) emptyCells.Add(pair.Key);
+        }
+
+        foreach (Vector3Int cell in emptyCells) m_towerBuffEffectsByCell.Remove(cell);
+    }
+
+    public void AddTowerBuffEffect(Vector3Int cell, int sourceID, BuffTarget target, int tier, float abilityValue, float duration)
+    {
+        if (target == BuffTarget.None) return;
+        if (!m_towerBuffEffectsByCell.TryGetValue(cell, out List<TowerTileBuffEffect> effects))
+        {
+            effects = new List<TowerTileBuffEffect>();
+            m_towerBuffEffectsByCell.Add(cell, effects);
+        }
+
+        effects.Add(new TowerTileBuffEffect
+        {
+            SourceID = sourceID,
+            Target = target,
+            Tier = Mathf.Clamp(tier, 1, 5),
+            AbilityValue = abilityValue,
+            RemainingTurns = Mathf.Max(1, Mathf.RoundToInt(duration))
+        });
+    }
+
+    /// <summary>버프 타워의 남은 지속시간을 한 에너미 턴 단위로 줄입니다.</summary>
+    public void AdvanceTowerBuffEffectTurns()
+    {
+        List<Vector3Int> emptyCells = new List<Vector3Int>();
+        foreach (KeyValuePair<Vector3Int, List<TowerTileBuffEffect>> pair in m_towerBuffEffectsByCell)
+        {
+            pair.Value.RemoveAll(effect => --effect.RemainingTurns <= 0);
+            if (pair.Value.Count == 0) emptyCells.Add(pair.Key);
+        }
+
+        foreach (Vector3Int cell in emptyCells) m_towerBuffEffectsByCell.Remove(cell);
+    }
+
+    /// <summary>디버프 장판의 현재 패스 타일을 갱신합니다. 장판 하나는 한 패스 타일에만 존재하므로 이전 위치 기록을 제거합니다.</summary>
+    public void SetPathDebuffEffect(Vector3Int cell, int sourceID, DebuffTarget target, int tier, float abilityValue, float duration, Vector3 zoneWorldPosition)
+    {
+        if (target == DebuffTarget.None) return;
+
+        RemovePathDebuffEffectsBySource(sourceID);
+        int nextVersion = m_debuffApplicationVersions.TryGetValue(sourceID, out int version) ? version + 1 : 1;
+        m_debuffApplicationVersions[sourceID] = nextVersion;
+
+        if (!m_pathDebuffEffectsByCell.TryGetValue(cell, out List<PathTileDebuffEffect> effects))
+        {
+            effects = new List<PathTileDebuffEffect>();
+            m_pathDebuffEffectsByCell.Add(cell, effects);
+        }
+
+        effects.Add(new PathTileDebuffEffect
+        {
+            SourceID = sourceID,
+            Target = target,
+            Tier = Mathf.Clamp(tier, 1, 5),
+            AbilityValue = abilityValue,
+            Duration = Mathf.Max(1, Mathf.RoundToInt(duration)),
+            ApplicationVersion = nextVersion,
+            ZoneWorldPosition = zoneWorldPosition
+        });
+    }
+
+    /// <summary>
+    /// 장판이 처음 배치되었을 때 위치와 설명을 타일에 등록합니다.
+    /// ApplicationVersion 0은 아직 타워가 행동하지 않은 대기 상태이므로, UI에는 표시되지만 적에게는 적용되지 않습니다.
+    /// </summary>
+    public void RegisterPathDebuffZone(Vector3Int cell, int sourceID, DebuffTarget target, int tier, float abilityValue, float duration, Vector3 zoneWorldPosition)
+    {
+        if (target == DebuffTarget.None) return;
+
+        RemovePathDebuffEffectsBySource(sourceID);
+        if (!m_pathDebuffEffectsByCell.TryGetValue(cell, out List<PathTileDebuffEffect> effects))
+        {
+            effects = new List<PathTileDebuffEffect>();
+            m_pathDebuffEffectsByCell.Add(cell, effects);
+        }
+
+        effects.Add(new PathTileDebuffEffect
+        {
+            SourceID = sourceID,
+            Target = target,
+            Tier = Mathf.Clamp(tier, 1, 5),
+            AbilityValue = abilityValue,
+            Duration = Mathf.Max(1, Mathf.RoundToInt(duration)),
+            ApplicationVersion = 0,
+            ZoneWorldPosition = zoneWorldPosition
+        });
+    }
+
+    public void RemovePathDebuffEffectsBySource(int sourceID)
+    {
+        List<Vector3Int> emptyCells = new List<Vector3Int>();
+        foreach (KeyValuePair<Vector3Int, List<PathTileDebuffEffect>> pair in m_pathDebuffEffectsByCell)
+        {
+            pair.Value.RemoveAll(effect => effect.SourceID == sourceID);
+            if (pair.Value.Count == 0) emptyCells.Add(pair.Key);
+        }
+
+        foreach (Vector3Int cell in emptyCells) m_pathDebuffEffectsByCell.Remove(cell);
+    }
+
+    /// <summary>
+    /// 드래그로 장판 위치만 바뀐 경우의 이동 처리입니다.
+    /// 공격 버전은 유지하므로, 이미 이 공격을 받은 적에게 스택이 중복되지 않습니다.
+    /// </summary>
+    public void MovePathDebuffEffect(int sourceID, Vector3Int destinationCell, Vector3 zoneWorldPosition)
+    {
+        PathTileDebuffEffect movedEffect = null;
+        Vector3Int sourceCell = default;
+
+        foreach (KeyValuePair<Vector3Int, List<PathTileDebuffEffect>> pair in m_pathDebuffEffectsByCell)
+        {
+            int index = pair.Value.FindIndex(effect => effect.SourceID == sourceID);
+            if (index < 0) continue;
+
+            movedEffect = pair.Value[index];
+            sourceCell = pair.Key;
+            pair.Value.RemoveAt(index);
+            break;
+        }
+
+        if (movedEffect == null) return;
+        if (m_pathDebuffEffectsByCell.TryGetValue(sourceCell, out List<PathTileDebuffEffect> oldCellEffects) && oldCellEffects.Count == 0)
+        {
+            m_pathDebuffEffectsByCell.Remove(sourceCell);
+        }
+
+        movedEffect.ZoneWorldPosition = zoneWorldPosition;
+        if (!m_pathDebuffEffectsByCell.TryGetValue(destinationCell, out List<PathTileDebuffEffect> destinationEffects))
+        {
+            destinationEffects = new List<PathTileDebuffEffect>();
+            m_pathDebuffEffectsByCell.Add(destinationCell, destinationEffects);
+        }
+        destinationEffects.Add(movedEffect);
+    }
+
+    /// <summary>타워 판매/합성/파괴 시, 그 타워가 기록한 모든 동적 타일 효과를 즉시 정리합니다.</summary>
+    public void RemoveAllDynamicEffectsBySource(int sourceID)
+    {
+        RemoveTowerBuffEffectsBySource(sourceID);
+        RemovePathDebuffEffectsBySource(sourceID);
+        m_debuffApplicationVersions.Remove(sourceID);
+    }
+
+    // ==========================================================================================================
     // 기존 에너미 경로 로직
     // ==========================================================================================================
 
@@ -318,5 +523,18 @@ public class TileManager : MonoBehaviour
             return type;
         }
         return SpecialTileType.Normal;
+    }
+
+    /// <summary>
+    /// 월드 클릭 좌표가 실제 패스 타일인지 판별하고 해당 셀을 반환합니다.
+    /// UI는 Tilemap을 직접 찾지 않고 이 API만 사용합니다.
+    /// </summary>
+    public bool TryGetPathCellAtWorldPosition(Vector3 worldPosition, out Vector3Int cell)
+    {
+        cell = default;
+        if (tilemap == null) return false;
+
+        cell = tilemap.WorldToCell(worldPosition);
+        return tilemap.HasTile(cell);
     }
 }

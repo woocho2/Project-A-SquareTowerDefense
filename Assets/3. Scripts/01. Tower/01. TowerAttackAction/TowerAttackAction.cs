@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Collections.Generic;
 
 public abstract class TowerAttackAction
 {
@@ -27,6 +28,44 @@ public abstract class TowerAttackAction
     }
 
     public abstract bool ExecuteAction(Transform towerTransform, TowerStats finalStats);
+
+    /// <summary>
+    /// 투사체를 사용하는 공격은 타워 주위에 투사체를 미리 배치한 뒤 순차 발사할 수 있습니다.
+    /// 버프/디버프처럼 투사체를 사용하지 않는 행동은 기본값(false)을 그대로 사용합니다.
+    /// </summary>
+    public virtual bool UsesProjectileSatellites => false;
+
+    /// <summary>위성 자리 하나에 생성할 실제 투사체 개수입니다.</summary>
+    public virtual int GetProjectilesPerSatellite(TowerStats finalStats) => 1;
+
+    /// <summary>지정한 위성 위치에 아직 발사되지 않은 투사체를 준비합니다.</summary>
+    public virtual ProjectileHit2D PrepareSatelliteProjectile(Vector3 spawnPosition, float preparationLifetime)
+    {
+        return null;
+    }
+
+    /// <summary>준비된 한 자리의 투사체들을 현재 우선순위 대상에게 발사합니다.</summary>
+    public virtual bool LaunchSatelliteProjectiles(
+        Transform towerTransform,
+        TowerStats finalStats,
+        IReadOnlyList<ProjectileHit2D> projectiles)
+    {
+        return false;
+    }
+
+    protected ProjectileHit2D SpawnPreparedProjectile(Vector3 spawnPosition, float preparationLifetime)
+    {
+        if (m_data == null || GlobalProjectileManager.Instance == null) return null;
+
+        ProjectileHit2D projectile = GlobalProjectileManager.Instance.SpawnProjectile(
+            m_data.towerID,
+            spawnPosition,
+            0f,
+            false);
+
+        projectile?.PrepareAsSatellite(preparationLifetime);
+        return projectile;
+    }
 
     public static int ToTileRange(float range)
     {

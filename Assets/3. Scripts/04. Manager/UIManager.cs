@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Tilemaps;
 
 public class UIManager : MonoBehaviour
 {
@@ -57,6 +59,29 @@ public class UIManager : MonoBehaviour
     [SerializeField] Button m_btnCombineExact;
     [SerializeField] Button m_btnSellTower;
 
+    [Header("UI Tile Info")]
+    [Tooltip("타일을 클릭했을 때 표시할 패널")]
+    [SerializeField] GameObject m_tileInfoPanel;
+    [Tooltip("버프 항목을 생성할 부모 RectTransform. ScrollRect를 쓴다면 Content를 연결합니다.")]
+    [SerializeField] RectTransform m_tileBuffContent;
+    [Tooltip("디버프 항목을 생성할 부모 RectTransform. ScrollRect를 쓴다면 Content를 연결합니다.")]
+    [SerializeField] RectTransform m_tileDebuffContent;
+    [Tooltip("버프 한 줄을 표시하는 UI 프리팹. 하위에 TextMeshProUGUI 하나가 필요합니다.")]
+    [SerializeField] GameObject m_tileBuffEntryPrefab;
+    [Tooltip("디버프 한 줄을 표시하는 UI 프리팹. 하위에 TextMeshProUGUI 하나가 필요합니다.")]
+    [SerializeField] GameObject m_tileDebuffEntryPrefab;
+    [Tooltip("선택 사항: 버프 목록만 스크롤할 ScrollRect")]
+    [SerializeField] ScrollRect m_tileBuffScrollRect;
+    [Tooltip("선택 사항: 디버프 목록만 스크롤할 ScrollRect")]
+    [SerializeField] ScrollRect m_tileDebuffScrollRect;
+    [SerializeField] float m_tileBuffStartY = 150f;
+    [SerializeField] float m_tileDebuffStartY = 105f;
+    [SerializeField] float m_tileEntrySpacing = 75f;
+    [Tooltip("두 정보 패널 안에 있는 '타워 정보로 전환' 버튼들을 모두 넣습니다.")]
+    [SerializeField] Button[] m_btnChangeTowerInfoPanels = System.Array.Empty<Button>();
+    [Tooltip("두 정보 패널 안에 있는 '타일 정보로 전환' 버튼들을 모두 넣습니다.")]
+    [SerializeField] Button[] m_btnChangeTileInfoPanels = System.Array.Empty<Button>();
+
     [Header("UI Option")]
     [SerializeField] GameObject m_panelOption;
     [SerializeField] Button m_btnQuit;
@@ -92,6 +117,11 @@ public class UIManager : MonoBehaviour
     private int m_lastWave = -1;
     private bool m_isPlayerActionUIVisible;
     private WaveManager m_waveManager;
+    private readonly List<GameObject> m_spawnedTileBuffEntries = new List<GameObject>();
+    private readonly List<GameObject> m_spawnedTileDebuffEntries = new List<GameObject>();
+    private Vector3Int m_selectedTileCell;
+    private bool m_selectedTileIsTowerSpawn;
+    private bool m_hasSelectedTile;
 
     private static readonly TargetPriority[] s_targetPriorityOrder =
     {
@@ -192,13 +222,13 @@ public class UIManager : MonoBehaviour
     private void OnEnable()
     {
         DragObjectOnGround.OnTowerClickedAction += ShowTowerpanel;
-        GlobalClickDetector.OnGroundClickedAction += HideTowerPanel;
+        GlobalClickDetector.OnGroundWorldClickedAction += HandleGroundWorldClick;
     }
 
     private void OnDisable()
     {
         DragObjectOnGround.OnTowerClickedAction -= ShowTowerpanel;
-        GlobalClickDetector.OnGroundClickedAction -= HideTowerPanel;
+        GlobalClickDetector.OnGroundWorldClickedAction -= HandleGroundWorldClick;
     }
 
     private void Start()
@@ -357,6 +387,7 @@ public class UIManager : MonoBehaviour
         }
 
         BindTargetPriorityButtons();
+        BindInfoPanelSwitchButtons();
 
         if (m_btnDebug != null)
         {
@@ -703,11 +734,20 @@ public class UIManager : MonoBehaviour
     {
         return debuffTarget switch
         {
+            DebuffTarget.Sword => "저주",
+            DebuffTarget.Bow => "고정 피해",
+            DebuffTarget.Shield => "속박",
+            DebuffTarget.Spear => "투창",
+            DebuffTarget.Axe => "취약",
+            DebuffTarget.Hammer => "방어 파괴",
             DebuffTarget.Fire => "화상",
             DebuffTarget.Ice => "빙결",
+            DebuffTarget.Electricity => "감전",
             DebuffTarget.Wind => "바람",
+            DebuffTarget.Earth => "대지",
+            DebuffTarget.Light => "빛",
             DebuffTarget.Darkness => "암흑",
-            _ => "일반"
+            _ => "디버프"
         };
     }
 
@@ -856,6 +896,8 @@ public class UIManager : MonoBehaviour
         if (m_panelGameclear != null) m_panelGameclear.SetActive(false);
         if (m_btnOption != null) m_btnOption.gameObject.SetActive(true);
         if (m_towerInfoPanel != null) m_towerInfoPanel.SetActive(false);
+        if (m_tileInfoPanel != null) m_tileInfoPanel.SetActive(false);
+        RefreshInfoPanelSwitchButtons();
 
         currentLifeIndex = m_LifePoints.Length - 1;
 
@@ -909,6 +951,7 @@ public class UIManager : MonoBehaviour
 
     private void ShowTowerpanel(TowerController clickedTower)
     {
+        HideTileInfoPanel();
         m_selectedTower = clickedTower;
         m_selectedTowerInfo = TowerManager.Instance.WorldToCell(clickedTower.transform.position);
 
@@ -932,6 +975,7 @@ public class UIManager : MonoBehaviour
         RefreshUpgradeTowerInfoLabel();
         UpdateCombineButtons();
         SelectTower(clickedTower);
+        RefreshInfoPanelSwitchButtons();
     }
 
     private void HideTowerPanel()
@@ -939,6 +983,279 @@ public class UIManager : MonoBehaviour
         if (m_towerInfoPanel != null && m_towerInfoPanel.activeSelf)
         {
             m_towerInfoPanel.SetActive(false);
+        }
+        RefreshInfoPanelSwitchButtons();
+    }
+
+    /// <summary>
+    /// 빈 월드 클릭 중 실제 타일을 클릭한 경우, 타일 종류에 맞는 Dictionary 내용을 패널에 출력합니다.
+    /// 타워 스폰 타일과 패스 타일은 서로 다른 Tilemap이므로 각각 먼저 확인합니다.
+    /// </summary>
+    private void HandleGroundWorldClick(Vector3 worldPosition)
+    {
+        HideTowerPanel();
+
+        if (TryGetTowerSpawnTileAtWorldPosition(worldPosition, out Vector3Int towerCell))
+        {
+            ShowTileInfoPanel(towerCell, true);
+            return;
+        }
+
+        if (TileManager.Instance != null && TileManager.Instance.TryGetPathCellAtWorldPosition(worldPosition, out Vector3Int pathCell))
+        {
+            ShowTileInfoPanel(pathCell, false);
+            return;
+        }
+
+        HideTileInfoPanel();
+    }
+
+    private static bool TryGetTowerSpawnTileAtWorldPosition(Vector3 worldPosition, out Vector3Int cell)
+    {
+        cell = default;
+        if (TowerManager.Instance == null) return false;
+
+        Tilemap spawnTilemap = TowerManager.Instance.GetSpawnPointTilemap();
+        if (spawnTilemap == null) return false;
+
+        cell = spawnTilemap.WorldToCell(worldPosition);
+        return spawnTilemap.HasTile(cell);
+    }
+
+    /// <summary>
+    /// 선택한 타일의 고정 맵 효과와 동적 버프/디버프 효과를 각각 항목 프리팹으로 표시합니다.
+    /// </summary>
+    private void ShowTileInfoPanel(Vector3Int cell, bool isTowerSpawnTile)
+    {
+        if (m_tileInfoPanel == null) return;
+
+        m_selectedTileCell = cell;
+        m_selectedTileIsTowerSpawn = isTowerSpawnTile;
+        m_hasSelectedTile = true;
+
+        ClearTileInfoEntries(m_spawnedTileBuffEntries);
+        ClearTileInfoEntries(m_spawnedTileDebuffEntries);
+
+        List<string> buffDescriptions = new List<string>();
+        List<string> debuffDescriptions = new List<string>();
+
+        if (TileManager.Instance != null)
+        {
+            if (isTowerSpawnTile)
+            {
+                AddTowerMapTileDescription(TileManager.Instance.GetTowerTileBuffAt(cell), buffDescriptions);
+                IReadOnlyList<TowerTileBuffEffect> effects = TileManager.Instance.GetTowerBuffEffectsAt(cell);
+                for (int i = 0; i < effects.Count; i++)
+                {
+                    TowerTileBuffEffect effect = effects[i];
+                    buffDescriptions.Add($"{GetBuffTargetName(effect.Target)} 버프\n티어 {effect.Tier} · 지속 {effect.RemainingTurns}턴");
+                }
+            }
+            else
+            {
+                AddPathMapTileDescription(TileManager.Instance.GetTileTypeAt(cell), buffDescriptions);
+                IReadOnlyList<PathTileDebuffEffect> effects = TileManager.Instance.GetPathDebuffEffectsAt(cell);
+                for (int i = 0; i < effects.Count; i++)
+                {
+                    PathTileDebuffEffect effect = effects[i];
+                    string state = effect.ApplicationVersion <= 0
+                        ? "첫 행동 대기"
+                        : $"지속 {effect.Duration}턴";
+                    debuffDescriptions.Add($"{GetDebuffTargetName(effect.Target)} 디버프\n티어 {effect.Tier} · {state}");
+                }
+            }
+        }
+
+        // ScrollRect가 연결되어 있다면 외부 Rect가 아니라 실제 Content에 생성해야
+        // Viewport 마스크와 스크롤바가 정상적으로 목록을 제어합니다.
+        RectTransform buffContent = m_tileBuffScrollRect != null && m_tileBuffScrollRect.content != null
+            ? m_tileBuffScrollRect.content
+            : m_tileBuffContent;
+        RectTransform debuffContent = m_tileDebuffScrollRect != null && m_tileDebuffScrollRect.content != null
+            ? m_tileDebuffScrollRect.content
+            : m_tileDebuffContent;
+
+        CreateTileInfoEntries(
+            m_tileBuffEntryPrefab,
+            buffContent,
+            buffDescriptions,
+            m_tileBuffStartY,
+            m_spawnedTileBuffEntries);
+        CreateTileInfoEntries(
+            m_tileDebuffEntryPrefab,
+            debuffContent,
+            debuffDescriptions,
+            m_tileDebuffStartY,
+            m_spawnedTileDebuffEntries);
+
+        m_tileInfoPanel.SetActive(true);
+        if (m_tileBuffScrollRect != null) m_tileBuffScrollRect.verticalNormalizedPosition = 1f;
+        if (m_tileDebuffScrollRect != null) m_tileDebuffScrollRect.verticalNormalizedPosition = 1f;
+        RefreshInfoPanelSwitchButtons();
+    }
+
+    private void HideTileInfoPanel()
+    {
+        if (m_tileInfoPanel != null && m_tileInfoPanel.activeSelf)
+        {
+            m_tileInfoPanel.SetActive(false);
+        }
+        RefreshInfoPanelSwitchButtons();
+    }
+
+    private void BindInfoPanelSwitchButtons()
+    {
+        foreach (Button button in m_btnChangeTowerInfoPanels)
+        {
+            if (button == null) continue;
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(SwitchToTowerInfoPanel);
+        }
+
+        foreach (Button button in m_btnChangeTileInfoPanels)
+        {
+            if (button == null) continue;
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(SwitchToTileInfoPanel);
+        }
+
+        RefreshInfoPanelSwitchButtons();
+    }
+
+    private void SwitchToTowerInfoPanel()
+    {
+        if (m_selectedTower != null && !m_selectedTower.Equals(null))
+        {
+            ShowTowerpanel(m_selectedTower);
+            return;
+        }
+
+        if (m_hasSelectedTile && m_selectedTileIsTowerSpawn &&
+            TowerManager.Instance != null && TowerManager.Instance.TryGetTowerAt(m_selectedTileCell, out TowerController tower))
+        {
+            ShowTowerpanel(tower);
+            return;
+        }
+
+        Debug.Log("[UIManager] 선택된 타워가 없어 타워 정보 패널로 전환할 수 없습니다.");
+    }
+
+    private void SwitchToTileInfoPanel()
+    {
+        if (m_selectedTower != null && !m_selectedTower.Equals(null) && TowerManager.Instance != null)
+        {
+            ShowTileInfoPanel(TowerManager.Instance.WorldToCell(m_selectedTower.transform.position), true);
+            HideTowerPanel();
+            return;
+        }
+
+        if (m_hasSelectedTile)
+        {
+            HideTowerPanel();
+            ShowTileInfoPanel(m_selectedTileCell, m_selectedTileIsTowerSpawn);
+        }
+    }
+
+    /// <summary>
+    /// 현재 열려 있는 정보 패널에 해당하는 전환 버튼은 비활성화합니다.
+    /// Button의 Transition이 Color Tint이면 interactable=false 상태가 자동으로 회색으로 표현됩니다.
+    /// </summary>
+    private void RefreshInfoPanelSwitchButtons()
+    {
+        bool isTowerInfoOpen = m_towerInfoPanel != null && m_towerInfoPanel.activeSelf;
+        bool isTileInfoOpen = m_tileInfoPanel != null && m_tileInfoPanel.activeSelf;
+
+        foreach (Button button in m_btnChangeTowerInfoPanels)
+        {
+            if (button != null) button.interactable = !isTowerInfoOpen;
+        }
+
+        foreach (Button button in m_btnChangeTileInfoPanels)
+        {
+            if (button != null) button.interactable = !isTileInfoOpen;
+        }
+    }
+
+    private void CreateTileInfoEntries(
+        GameObject entryPrefab,
+        RectTransform content,
+        List<string> descriptions,
+        float startY,
+        List<GameObject> spawnedEntries)
+    {
+        if (entryPrefab == null || content == null) return;
+
+        for (int index = 0; index < descriptions.Count; index++)
+        {
+            GameObject entry = Instantiate(entryPrefab, content);
+            entry.name = $"{entryPrefab.name}_{index + 1}";
+            entry.SetActive(true);
+
+            RectTransform entryRect = entry.GetComponent<RectTransform>();
+            if (entryRect != null)
+            {
+                entryRect.anchoredPosition = new Vector2(entryRect.anchoredPosition.x, startY - m_tileEntrySpacing * index);
+            }
+
+            TextMeshProUGUI text = entry.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (text != null)
+            {
+                text.text = descriptions[index];
+            }
+            else
+            {
+                Debug.LogWarning($"[UIManager] {entryPrefab.name} 프리팹에서 TextMeshProUGUI를 찾지 못했습니다.");
+            }
+
+            spawnedEntries.Add(entry);
+        }
+
+        // Content 높이를 늘려 ScrollRect가 항목 전체를 스크롤할 수 있게 합니다.
+        if (descriptions.Count > 0)
+        {
+            float requiredHeight = Mathf.Abs(startY - m_tileEntrySpacing * (descriptions.Count - 1)) + m_tileEntrySpacing;
+            content.sizeDelta = new Vector2(content.sizeDelta.x, Mathf.Max(content.sizeDelta.y, requiredHeight));
+        }
+    }
+
+    private static void ClearTileInfoEntries(List<GameObject> entries)
+    {
+        foreach (GameObject entry in entries)
+        {
+            if (entry != null) Destroy(entry);
+        }
+        entries.Clear();
+    }
+
+    private static void AddTowerMapTileDescription(TowerTileBuffType type, List<string> descriptions)
+    {
+        switch (type)
+        {
+            case TowerTileBuffType.AttackPowerUp:
+                descriptions.Add("공격력 타일\n공격력 50% 증가");
+                break;
+            case TowerTileBuffType.ActionCountUp:
+                descriptions.Add("행동력 타일\n행동력 1 감소");
+                break;
+            case TowerTileBuffType.AttackCountUp:
+                descriptions.Add("공격 횟수 타일\n공격 횟수 1 증가");
+                break;
+        }
+    }
+
+    private static void AddPathMapTileDescription(SpecialTileType type, List<string> descriptions)
+    {
+        switch (type)
+        {
+            case SpecialTileType.DefendTile:
+                descriptions.Add("방어 타일\n방어력 20% 증가");
+                break;
+            case SpecialTileType.SpeedTile:
+                descriptions.Add("속도 타일\n행동 주기 1 감소 · 이동 주사위 최대값 +2");
+                break;
+            case SpecialTileType.HealTile:
+                descriptions.Add("회복 타일\n현재 체력의 20% 회복");
+                break;
         }
     }
 

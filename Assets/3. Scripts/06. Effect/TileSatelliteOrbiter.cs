@@ -102,18 +102,67 @@ public class TileSatelliteOrbiter : MonoBehaviour
     [Tooltip("타워 후면(Back) 정점을 지날 때의 Bloom/밝기 배수 (0.5 ~ 0.8: 어두워짐)")]
     [SerializeField] private float m_backBloomIntensity = 0.75f;
 
+    [Header("Satellite Trail Settings")]
+    [Tooltip("위성 공전 시 유선형 꼬리(TrailRenderer) 연출 활성화 여부")]
+    [SerializeField] private bool m_enableTrails = true;
+    [Tooltip("꼬리 잔상 유지 시간(초) - 공전 속도 2.0 기준 0.35초는 약 1/4 바퀴를 따라 흐릅니다.")]
+    [SerializeField] private float m_trailTime = 0.35f;
+    [Tooltip("꼬리 시작 두께 (위성 구체 직경과 일치)")]
+    [SerializeField] private float m_trailStartWidth = 0.22f;
+    [Tooltip("꼬리 끝 두께 (날렵한 소멸)")]
+    [SerializeField] private float m_trailEndWidth = 0.0f;
+    [Tooltip("꼬리 최소 버텍스 간격")]
+    [SerializeField] private float m_trailMinVertexDistance = 0.02f;
+
+    [Header("Satellite Particle Settings (Optional Sparkles)")]
+    [Tooltip("위성 공전 궤적을 따라 미세하게 반짝이는 스파클 파티클 활성화 여부")]
+    [SerializeField] private bool m_enableParticles = true;
+    [Tooltip("초당 파티클 방출 수")]
+    [SerializeField] private float m_particleRate = 12f;
+    [Tooltip("파티클 수명(초)")]
+    [SerializeField] private float m_particleLifetime = 0.3f;
+    [Tooltip("파티클 크기")]
+    [SerializeField] private float m_particleSize = 0.06f;
+
     private float m_currentAngle = 0f;
     private SpriteRenderer[] m_orbit1Renderers;
     private SpriteRenderer[] m_orbit2Renderers;
+    private TrailRenderer[] m_orbit1Trails;
+    private TrailRenderer[] m_orbit2Trails;
+    private ParticleSystem[] m_orbit1Particles;
+    private ParticleSystem[] m_orbit2Particles;
+    private ParticleSystemRenderer[] m_orbit1ParticleRenderers;
+    private ParticleSystemRenderer[] m_orbit2ParticleRenderers;
+
+    private bool m_hasFirstPositioned = false;
+    private Vector3 m_lastParentPosition;
     private Dictionary<DebuffTarget, Sprite> m_symbolMapCache;
+
+#if UNITY_EDITOR
+    [System.NonSerialized] private bool m_editorVisualSetupQueued;
+#endif
 
     private void Awake()
     {
         BuildSymbolMapCache();
         AutoDetectReferences();
         CacheRenderers();
+        SetupSatelliteVisualEffects();
         ApplyDebuffSymbol(m_currentDebuffTarget);
         ApplyColor(m_buffColor);
+        m_lastParentPosition = transform.position;
+    }
+
+    private void OnEnable()
+    {
+        m_hasFirstPositioned = false;
+        m_lastParentPosition = transform.position;
+        ClearAllTrails();
+    }
+
+    private void OnDisable()
+    {
+        ClearAllTrails();
     }
 
     private void BuildSymbolMapCache()
@@ -184,6 +233,13 @@ public class TileSatelliteOrbiter : MonoBehaviour
 
     private void Update()
     {
+        // 타일/존이 순간이동하거나 드래그로 크게 이동할 때 꼬리가 튀지 않도록 초기화
+        if ((transform.position - m_lastParentPosition).sqrMagnitude > 0.25f)
+        {
+            ClearAllTrails();
+        }
+        m_lastParentPosition = transform.position;
+
         // 맵 버프(X)는 기존 시계방향을 유지하고,
         // 디버프 존(+)의 가로/세로 궤도는 함께 반시계방향으로 회전한다.
         float rotationDirection = m_effectType == TileSatelliteEffectType.Debuff ? -1f : 1f;
@@ -196,11 +252,23 @@ public class TileSatelliteOrbiter : MonoBehaviour
         float firstOrbitAngle = m_effectType == TileSatelliteEffectType.Buff ? 45f : 0f;
         float secondOrbitAngle = m_effectType == TileSatelliteEffectType.Buff ? -45f : 90f;
 
-        UpdateOrbitSatellites(m_orbit1Satellites, m_orbit1Renderers, firstOrbitAngle, 0f);
-        UpdateOrbitSatellites(m_orbit2Satellites, m_orbit2Renderers, secondOrbitAngle, Mathf.PI * 0.5f);
+        UpdateOrbitSatellites(m_orbit1Satellites, m_orbit1Renderers, m_orbit1Trails, m_orbit1ParticleRenderers, firstOrbitAngle, 0f);
+        UpdateOrbitSatellites(m_orbit2Satellites, m_orbit2Renderers, m_orbit2Trails, m_orbit2ParticleRenderers, secondOrbitAngle, Mathf.PI * 0.5f);
+
+        if (!m_hasFirstPositioned)
+        {
+            m_hasFirstPositioned = true;
+            ClearAllTrails();
+        }
     }
 
-    private void UpdateOrbitSatellites(Transform[] satellites, SpriteRenderer[] renderers, float rotAngleDeg, float phaseOffset)
+    private void UpdateOrbitSatellites(
+        Transform[] satellites,
+        SpriteRenderer[] renderers,
+        TrailRenderer[] trails,
+        ParticleSystemRenderer[] particleRenderers,
+        float rotAngleDeg,
+        float phaseOffset)
     {
         if (satellites == null || satellites.Length == 0) return;
 
@@ -248,6 +316,23 @@ public class TileSatelliteOrbiter : MonoBehaviour
             if (sr != null)
             {
                 SyncSorting(sr, depth);
+
+                // 트레일 정렬 및 원근 굵기 동기화
+                TrailRenderer tr = (trails != null && i < trails.Length) ? trails[i] : null;
+                if (tr != null)
+                {
+                    tr.sortingLayerID = sr.sortingLayerID;
+                    tr.sortingOrder = sr.sortingOrder - 1;
+                    tr.widthMultiplier = m_trailStartWidth * scale;
+                }
+
+                // 파티클 정렬 레이어 동기화
+                ParticleSystemRenderer pr = (particleRenderers != null && i < particleRenderers.Length) ? particleRenderers[i] : null;
+                if (pr != null)
+                {
+                    pr.sortingLayerID = sr.sortingLayerID;
+                    pr.sortingOrder = sr.sortingOrder - 1;
+                }
 
                 // 3. Bloom & White-Hot 발광 동적 조절 (앞으로 올 때 눈부신 하얀 빛 발광)
                 if (m_enableBloomEffect)
@@ -318,6 +403,265 @@ public class TileSatelliteOrbiter : MonoBehaviour
     }
 
     /// <summary>
+    /// 위성들의 트레일 궤적을 즉시 비웁니다.
+    /// </summary>
+    public void ClearAllTrails()
+    {
+        if (m_orbit1Trails != null)
+        {
+            foreach (TrailRenderer tr in m_orbit1Trails)
+            {
+                if (tr != null) tr.Clear();
+            }
+        }
+        if (m_orbit2Trails != null)
+        {
+            foreach (TrailRenderer tr in m_orbit2Trails)
+            {
+                if (tr != null) tr.Clear();
+            }
+        }
+    }
+
+    private Color GetEffectiveBuffColor()
+    {
+        return m_buffColor;
+    }
+
+    /// <summary>
+    /// 위성 객체들에 TrailRenderer 및 ParticleSystem을 구성합니다.
+    /// </summary>
+    public void SetupSatelliteVisualEffects()
+    {
+        SetupOrbitEffects(m_orbit1Satellites, m_orbit1Renderers, ref m_orbit1Trails, ref m_orbit1Particles, ref m_orbit1ParticleRenderers);
+        SetupOrbitEffects(m_orbit2Satellites, m_orbit2Renderers, ref m_orbit2Trails, ref m_orbit2Particles, ref m_orbit2ParticleRenderers);
+        UpdateAllTrailsAndParticlesColor(GetEffectiveBuffColor());
+    }
+
+    private void SetupOrbitEffects(
+        Transform[] satellites,
+        SpriteRenderer[] renderers,
+        ref TrailRenderer[] trails,
+        ref ParticleSystem[] particles,
+        ref ParticleSystemRenderer[] particleRenderers)
+    {
+        if (satellites == null || satellites.Length == 0) return;
+
+        int count = satellites.Length;
+        trails = new TrailRenderer[count];
+        particles = new ParticleSystem[count];
+        particleRenderers = new ParticleSystemRenderer[count];
+
+        Color effColor = GetEffectiveBuffColor();
+
+        for (int i = 0; i < count; i++)
+        {
+            Transform sat = satellites[i];
+            if (sat == null) continue;
+
+            SpriteRenderer sr = (renderers != null && i < renderers.Length && renderers[i] != null)
+                ? renderers[i]
+                : sat.GetComponentInChildren<SpriteRenderer>(true);
+
+            Material sharedMat = sr != null ? sr.sharedMaterial : null;
+
+            if (m_enableTrails)
+            {
+                TrailRenderer tr = sat.GetComponent<TrailRenderer>();
+                if (tr == null)
+                {
+                    tr = sat.gameObject.AddComponent<TrailRenderer>();
+                }
+
+                tr.time = m_trailTime;
+                tr.minVertexDistance = m_trailMinVertexDistance;
+                tr.alignment = LineAlignment.View;
+                // widthMultiplier는 위성의 현재 원근 스케일에 맞춰 갱신하고,
+                // 커브는 시작 굵기 대비 끝 굵기의 비율만 담당합니다.
+                float endWidthRatio = m_trailStartWidth > Mathf.Epsilon
+                    ? Mathf.Clamp01(m_trailEndWidth / m_trailStartWidth)
+                    : 0f;
+                tr.widthCurve = AnimationCurve.Linear(0f, 1f, 1f, endWidthRatio);
+                tr.widthMultiplier = m_trailStartWidth;
+                tr.autodestruct = false;
+                tr.emitting = true;
+
+                Material trMat = sharedMat;
+                if (trMat == null)
+                {
+                    Shader s = Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default");
+                    if (s == null) s = Shader.Find("Sprites/Default");
+                    if (s != null) trMat = new Material(s);
+                }
+
+                if (trMat != null)
+                {
+                    tr.sharedMaterial = trMat;
+                }
+
+                if (sr != null)
+                {
+                    tr.sortingLayerID = sr.sortingLayerID;
+                    tr.sortingOrder = sr.sortingOrder - 1;
+                }
+
+                tr.colorGradient = CreateSatelliteTrailGradient(effColor);
+                trails[i] = tr;
+            }
+
+            if (m_enableParticles)
+            {
+                try
+                {
+                    ParticleSystem ps = sat.GetComponent<ParticleSystem>();
+                    if (ps == null)
+                    {
+                        ps = sat.gameObject.AddComponent<ParticleSystem>();
+                    }
+
+                    ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+                    var main = ps.main;
+                    main.playOnAwake = false;
+                    main.loop = true;
+                    main.startLifetime = m_particleLifetime;
+                    main.startSpeed = 0.05f;
+                    main.startSize = m_particleSize;
+                    main.simulationSpace = ParticleSystemSimulationSpace.World;
+                    main.maxParticles = 50;
+                    main.startColor = new ParticleSystem.MinMaxGradient(
+                        Color.Lerp(effColor, Color.white, 0.4f),
+                        effColor
+                    );
+
+                    var emission = ps.emission;
+                    emission.enabled = true;
+                    emission.rateOverTime = m_particleRate;
+
+                    var shape = ps.shape;
+                    shape.enabled = true;
+                    shape.shapeType = ParticleSystemShapeType.Sphere;
+                    shape.radius = 0.04f;
+
+                    var sizeOverLifetime = ps.sizeOverLifetime;
+                    sizeOverLifetime.enabled = true;
+                    sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 1f, 1f, 0f));
+
+                    var colorOverLifetime = ps.colorOverLifetime;
+                    colorOverLifetime.enabled = true;
+                    Gradient particleGrad = new Gradient();
+                    particleGrad.SetKeys(
+                        new GradientColorKey[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(effColor, 1f) },
+                        new GradientAlphaKey[] { new GradientAlphaKey(0.8f, 0f), new GradientAlphaKey(0f, 1f) }
+                    );
+                    colorOverLifetime.color = particleGrad;
+
+                    ParticleSystemRenderer pr = sat.GetComponent<ParticleSystemRenderer>();
+                    if (sharedMat != null && pr != null)
+                    {
+                        pr.sharedMaterial = sharedMat;
+                    }
+
+                    if (sr != null && pr != null)
+                    {
+                        pr.sortingLayerID = sr.sortingLayerID;
+                        pr.sortingOrder = sr.sortingOrder - 1;
+                    }
+
+                    ps.Play();
+
+                    particles[i] = ps;
+                    particleRenderers[i] = pr;
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogWarning($"[TileSatelliteOrbiter] ParticleSystem setup failed on {sat.name}: {ex.Message}");
+                }
+            }
+        }
+    }
+
+    private Gradient CreateSatelliteTrailGradient(Color baseColor)
+    {
+        if (baseColor.r < 0.35f && baseColor.g < 0.35f && baseColor.b < 0.35f)
+        {
+            baseColor = new Color(0.75f, 0.45f, 1.0f, 1f);
+        }
+
+        Gradient gradient = new Gradient();
+        Color brightColor = Color.Lerp(baseColor, Color.white, 0.55f);
+        brightColor.a = 1f;
+
+        Color midColor = baseColor;
+        midColor.a = 1f;
+
+        gradient.SetKeys(
+            new GradientColorKey[]
+            {
+                new GradientColorKey(brightColor, 0f),
+                new GradientColorKey(midColor, 0.35f),
+                new GradientColorKey(midColor, 1f)
+            },
+            new GradientAlphaKey[]
+            {
+                new GradientAlphaKey(0.95f, 0f),
+                new GradientAlphaKey(0.60f, 0.4f),
+                new GradientAlphaKey(0.0f, 1f)
+            }
+        );
+        return gradient;
+    }
+
+    private void UpdateParticleColor(ParticleSystem ps, Color baseColor)
+    {
+        if (ps == null) return;
+        if (baseColor.r < 0.35f && baseColor.g < 0.35f && baseColor.b < 0.35f)
+        {
+            baseColor = new Color(0.75f, 0.45f, 1.0f, 1f);
+        }
+        var main = ps.main;
+        main.startColor = new ParticleSystem.MinMaxGradient(
+            Color.Lerp(baseColor, Color.white, 0.4f),
+            baseColor
+        );
+    }
+
+    private void UpdateAllTrailsAndParticlesColor(Color color)
+    {
+        Gradient trailGrad = CreateSatelliteTrailGradient(color);
+
+        if (m_orbit1Trails != null)
+        {
+            foreach (TrailRenderer tr in m_orbit1Trails)
+            {
+                if (tr != null) tr.colorGradient = trailGrad;
+            }
+        }
+        if (m_orbit2Trails != null)
+        {
+            foreach (TrailRenderer tr in m_orbit2Trails)
+            {
+                if (tr != null) tr.colorGradient = trailGrad;
+            }
+        }
+
+        if (m_orbit1Particles != null)
+        {
+            foreach (ParticleSystem ps in m_orbit1Particles)
+            {
+                if (ps != null) UpdateParticleColor(ps, color);
+            }
+        }
+        if (m_orbit2Particles != null)
+        {
+            foreach (ParticleSystem ps in m_orbit2Particles)
+            {
+                if (ps != null) UpdateParticleColor(ps, color);
+            }
+        }
+    }
+
+    /// <summary>
     /// 런타임에 버프/디버프 색상을 변경합니다.
     /// </summary>
     public void SetColor(Color color)
@@ -339,6 +683,8 @@ public class TileSatelliteOrbiter : MonoBehaviour
         {
             ApplyDebuffSymbol(m_currentDebuffTarget);
         }
+
+        UpdateAllTrailsAndParticlesColor(GetEffectiveBuffColor());
     }
 
     /// <summary>
@@ -349,15 +695,30 @@ public class TileSatelliteOrbiter : MonoBehaviour
     {
         m_currentDebuffTarget = target;
         ApplyDebuffSymbol(target);
+        UpdateAllTrailsAndParticlesColor(GetEffectiveBuffColor());
     }
 
     private void ApplyDebuffSymbol(DebuffTarget target)
     {
         Sprite symbol = GetDebuffSymbolSprite(target);
-        if (symbol == null) return;
+        if (symbol != null)
+        {
+            SetSatelliteSprites(m_orbit1Renderers, symbol);
+            SetSatelliteSprites(m_orbit2Renderers, symbol);
+        }
 
-        SetSatelliteSprites(m_orbit1Renderers, symbol);
-        SetSatelliteSprites(m_orbit2Renderers, symbol);
+        Color effColor = GetEffectiveBuffColor();
+        SetSatelliteColor(m_orbit1Renderers, effColor);
+        SetSatelliteColor(m_orbit2Renderers, effColor);
+    }
+
+    private static void SetSatelliteColor(SpriteRenderer[] renderers, Color color)
+    {
+        if (renderers == null) return;
+        foreach (SpriteRenderer renderer in renderers)
+        {
+            if (renderer != null) renderer.color = color;
+        }
     }
 
     private Sprite GetDebuffSymbolSprite(DebuffTarget target)
@@ -397,6 +758,8 @@ public class TileSatelliteOrbiter : MonoBehaviour
                 m_renderers[i].color = color;
             }
         }
+
+        UpdateAllTrailsAndParticlesColor(color);
     }
 
 #if UNITY_EDITOR
@@ -407,6 +770,51 @@ public class TileSatelliteOrbiter : MonoBehaviour
         CacheRenderers();
         ApplyDebuffSymbol(m_currentDebuffTarget);
         ApplyColor(m_buffColor);
+
+        QueueEditorVisualEffectSetup();
+    }
+
+    /// <summary>
+    /// OnValidate 도중에는 Unity가 AddComponent 호출을 허용하지 않습니다.
+    /// 프리팹 편집 화면의 인스턴스에 한해 다음 에디터 프레임에서
+    /// TrailRenderer와 ParticleSystem을 안전하게 구성합니다.
+    /// </summary>
+    private void QueueEditorVisualEffectSetup()
+    {
+        if (Application.isPlaying || m_editorVisualSetupQueued || UnityEditor.EditorUtility.IsPersistent(this))
+        {
+            return;
+        }
+
+        // 일반 씬에 배치된 프리팹 인스턴스에는 불필요한 오버라이드를 만들지 않습니다.
+        // 실제 프리팹 편집 화면에서만 컴포넌트를 자식 위성에 저장합니다.
+        UnityEditor.SceneManagement.PrefabStage prefabStage =
+            UnityEditor.SceneManagement.PrefabStageUtility.GetPrefabStage(gameObject);
+        if (prefabStage == null)
+        {
+            return;
+        }
+
+        m_editorVisualSetupQueued = true;
+        UnityEditor.EditorApplication.delayCall += () =>
+        {
+            if (this == null)
+            {
+                return;
+            }
+
+            try
+            {
+                SetupSatelliteVisualEffects();
+                ApplyDebuffSymbol(m_currentDebuffTarget);
+                ApplyColor(m_buffColor);
+                UnityEditor.EditorUtility.SetDirty(this);
+            }
+            finally
+            {
+                m_editorVisualSetupQueued = false;
+            }
+        };
     }
 #endif
 }

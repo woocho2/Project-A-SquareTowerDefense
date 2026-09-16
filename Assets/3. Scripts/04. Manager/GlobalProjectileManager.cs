@@ -14,6 +14,9 @@ public class GlobalProjectileManager : MonoBehaviour
     [Tooltip("각 투사체 풀의 최대 보관 개수 상한")]
     [SerializeField] private int m_defaultMaxSize = 200;
 
+    [Tooltip("모든 투사체 프리팹의 원본 크기에 곱하는 전역 배율입니다.")]
+    [SerializeField, Range(0.1f, 2f)] private float m_projectileScaleMultiplier = 0.5f;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -73,7 +76,9 @@ public class GlobalProjectileManager : MonoBehaviour
 
         if (m_poolDictionary.TryGetValue(sharedKey, out ProjectileObjectPool2D targetPool))
         {
-            return targetPool.Spawn(position);
+            ProjectileHit2D projectile = targetPool.Spawn(position);
+            projectile?.SetVisualScale(m_projectileScaleMultiplier);
+            return projectile;
         }
 
         Debug.LogError($"[GlobalProjectileManager] ID가 {sharedKey}인 투사체 풀을 찾을 수 없습니다.");
@@ -82,6 +87,11 @@ public class GlobalProjectileManager : MonoBehaviour
 
     public bool HasActiveProjectiles()
     {
-        return FindObjectsByType<ProjectileHit2D>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Length > 0;
+        return GetActiveProjectileCount() > 0;
+    }
+
+    public int GetActiveProjectileCount()
+    {
+        return FindObjectsByType<ProjectileHit2D>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Length;
     }
 }

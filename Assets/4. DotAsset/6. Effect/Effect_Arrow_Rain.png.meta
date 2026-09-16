@@ -1,0 +1,988 @@
+fileFormatVersion: 2
+guid: 9ff0901042c96dc41b063d6d740ec9a0
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6029713109268794970
+    second: Effect_Arrow_Rain_0
+  - first:
+      213: -8257919654346303199
+    second: Effect_Arrow_Rain_1
+  - first:
+      213: 1834171998861502811
+    second: Effect_Arrow_Rain_2
+  - first:
+      213: 1557096382374137261
+    second: Effect_Arrow_Rain_3
+  - first:
+      213: -8435489073218395406
+    second: Effect_Arrow_Rain_4
+  - first:
+      213: 6837480343420351759
+    second: Effect_Arrow_Rain_5
+  - first:
+      213: 4123893325810453288
+    second: Effect_Arrow_Rain_6
+  - first:
+      213: -7545882605870903811
+    second: Effect_Arrow_Rain_7
+  - first:
+      213: 2166589134115770727
+    second: Effect_Arrow_Rain_8
+  - first:
+      213: -5263723783100748568
+    second: Effect_Arrow_Rain_9
+  - first:
+      213: -5056865350375484547
+    second: Effect_Arrow_Rain_10
+  - first:
+      213: 5356064548037859955
+    second: Effect_Arrow_Rain_11
+  - first:
+      213: 8661133907560646651
+    second: Effect_Arrow_Rain_12
+  - first:
+      213: -414927186670943294
+    second: Effect_Arrow_Rain_13
+  - first:
+      213: 5705055971388875852
+    second: Effect_Arrow_Rain_14
+  - first:
+      213: 4071308140061847120
+    second: Effect_Arrow_Rain_15
+  - first:
+      213: -4570723165763086712
+    second: Effect_Arrow_Rain_16
+  - first:
+      213: 7475390732939519357
+    second: Effect_Arrow_Rain_17
+  - first:
+      213: -5120459979987939885
+    second: Effect_Arrow_Rain_18
+  - first:
+      213: 7265901548502218663
+    second: Effect_Arrow_Rain_19
+  - first:
+      213: 3460380027294701250
+    second: Effect_Arrow_Rain_20
+  - first:
+      213: -3435008212116830727
+    second: Effect_Arrow_Rain_21
+  - first:
+      213: 4933218045953693872
+    second: Effect_Arrow_Rain_22
+  - first:
+      213: 3220552081353479254
+    second: Effect_Arrow_Rain_23
+  - first:
+      213: 5930321035065245
+    second: Effect_Arrow_Rain_24
+  - first:
+      213: -4917046230503579177
+    second: Effect_Arrow_Rain_25
+  - first:
+      213: 6381671958729230087
+    second: Effect_Arrow_Rain_26
+  - first:
+      213: -4643078689494277749
+    second: Effect_Arrow_Rain_27
+  - first:
+      213: -7682827586100644474
+    second: Effect_Arrow_Rain_28
+  - first:
+      213: -3715446128416292224
+    second: Effect_Arrow_Rain_29
+  - first:
+      213: -2355430402514924124
+    second: Effect_Arrow_Rain_30
+  - first:
+      213: 6452083038838133140
+    second: Effect_Arrow_Rain_31
+  - first:
+      213: -6485560478549863121
+    second: Effect_Arrow_Rain_32
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_0
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 34
+        width: 70
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a17488bfd7225ca0800000000000000
+      internalID: -6029713109268794970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_1
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 98
+        width: 91
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 129d8f2a3d9f56d80800000000000000
+      internalID: -8257919654346303199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_2
+      rect:
+        serializedVersion: 2
+        x: 264
+        y: 84
+        width: 13
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b59ab1117b9447910800000000000000
+      internalID: 1834171998861502811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_3
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 72
+        width: 45
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dadc470f8eaeb9510800000000000000
+      internalID: 1557096382374137261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_4
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 72
+        width: 18
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f2e02c816f1fea80800000000000000
+      internalID: -8435489073218395406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_5
+      rect:
+        serializedVersion: 2
+        x: 319
+        y: 81
+        width: 18
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f053944552c93ee50800000000000000
+      internalID: 6837480343420351759
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_6
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 29
+        width: 97
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82b498861230b3930800000000000000
+      internalID: 4123893325810453288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_7
+      rect:
+        serializedVersion: 2
+        x: 402
+        y: 46
+        width: 14
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfd0440ffb3a74790800000000000000
+      internalID: -7545882605870903811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_8
+      rect:
+        serializedVersion: 2
+        x: 411
+        y: 32
+        width: 46
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7611131a655411e10800000000000000
+      internalID: 2166589134115770727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_9
+      rect:
+        serializedVersion: 2
+        x: 450
+        y: 44
+        width: 28
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ec21809b1f73f6b0800000000000000
+      internalID: -5263723783100748568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_10
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 7
+        width: 91
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7353e991c762d9b0800000000000000
+      internalID: -5056865350375484547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_11
+      rect:
+        serializedVersion: 2
+        x: 645
+        y: 7
+        width: 119
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37a1cdb2450945a40800000000000000
+      internalID: 5356064548037859955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_12
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 7
+        width: 129
+        height: 71
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf74e387667823870800000000000000
+      internalID: 8661133907560646651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_13
+      rect:
+        serializedVersion: 2
+        x: 936
+        y: 67
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c383de0ce1ed3af0800000000000000
+      internalID: -414927186670943294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_14
+      rect:
+        serializedVersion: 2
+        x: 956
+        y: 63
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c44ea56ed2e6c2f40800000000000000
+      internalID: 5705055971388875852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_15
+      rect:
+        serializedVersion: 2
+        x: 976
+        y: 69
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05eea83ce21308830800000000000000
+      internalID: 4071308140061847120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_16
+      rect:
+        serializedVersion: 2
+        x: 926
+        y: 55
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 886da0a5f778190c0800000000000000
+      internalID: -4570723165763086712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_17
+      rect:
+        serializedVersion: 2
+        x: 934
+        y: 33
+        width: 14
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d756b1ae34cedb760800000000000000
+      internalID: 7475390732939519357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_18
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 7
+        width: 33
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3dd073e07c870f8b0800000000000000
+      internalID: -5120459979987939885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_19
+      rect:
+        serializedVersion: 2
+        x: 961
+        y: 18
+        width: 26
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a77f6346faa5d460800000000000000
+      internalID: 7265901548502218663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_20
+      rect:
+        serializedVersion: 2
+        x: 986
+        y: 57
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c6d1ca0d4db50030800000000000000
+      internalID: 3460380027294701250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_21
+      rect:
+        serializedVersion: 2
+        x: 1062
+        y: 33
+        width: 14
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f50a340b366450d0800000000000000
+      internalID: -3435008212116830727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_22
+      rect:
+        serializedVersion: 2
+        x: 1070
+        y: 7
+        width: 26
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b8dd9cecaf467440800000000000000
+      internalID: 4933218045953693872
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_23
+      rect:
+        serializedVersion: 2
+        x: 1089
+        y: 18
+        width: 26
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65418b50e03b1bc20800000000000000
+      internalID: 3220552081353479254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_24
+      rect:
+        serializedVersion: 2
+        x: 1190
+        y: 33
+        width: 14
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d97f2b67891151000800000000000000
+      internalID: 5930321035065245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_25
+      rect:
+        serializedVersion: 2
+        x: 1198
+        y: 7
+        width: 26
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d129a6418423cbb0800000000000000
+      internalID: -4917046230503579177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_26
+      rect:
+        serializedVersion: 2
+        x: 1217
+        y: 18
+        width: 26
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 707802db5d0409850800000000000000
+      internalID: 6381671958729230087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_27
+      rect:
+        serializedVersion: 2
+        x: 926
+        y: 23
+        width: 11
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b81e1803888709fb0800000000000000
+      internalID: -4643078689494277749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_28
+      rect:
+        serializedVersion: 2
+        x: 982
+        y: 27
+        width: 15
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68536eb040d116590800000000000000
+      internalID: -7682827586100644474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_29
+      rect:
+        serializedVersion: 2
+        x: 1054
+        y: 23
+        width: 11
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08285a57e65107cc0800000000000000
+      internalID: -3715446128416292224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_30
+      rect:
+        serializedVersion: 2
+        x: 1110
+        y: 27
+        width: 15
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ad41fc4784df4fd0800000000000000
+      internalID: -2355430402514924124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_31
+      rect:
+        serializedVersion: 2
+        x: 1182
+        y: 23
+        width: 11
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4911547d6576a8950800000000000000
+      internalID: 6452083038838133140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Effect_Arrow_Rain_32
+      rect:
+        serializedVersion: 2
+        x: 1238
+        y: 27
+        width: 15
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2519b25b19aef5a0800000000000000
+      internalID: -6485560478549863121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Effect_Arrow_Rain_0: -6029713109268794970
+      Effect_Arrow_Rain_1: -8257919654346303199
+      Effect_Arrow_Rain_10: -5056865350375484547
+      Effect_Arrow_Rain_11: 5356064548037859955
+      Effect_Arrow_Rain_12: 8661133907560646651
+      Effect_Arrow_Rain_13: -414927186670943294
+      Effect_Arrow_Rain_14: 5705055971388875852
+      Effect_Arrow_Rain_15: 4071308140061847120
+      Effect_Arrow_Rain_16: -4570723165763086712
+      Effect_Arrow_Rain_17: 7475390732939519357
+      Effect_Arrow_Rain_18: -5120459979987939885
+      Effect_Arrow_Rain_19: 7265901548502218663
+      Effect_Arrow_Rain_2: 1834171998861502811
+      Effect_Arrow_Rain_20: 3460380027294701250
+      Effect_Arrow_Rain_21: -3435008212116830727
+      Effect_Arrow_Rain_22: 4933218045953693872
+      Effect_Arrow_Rain_23: 3220552081353479254
+      Effect_Arrow_Rain_24: 5930321035065245
+      Effect_Arrow_Rain_25: -4917046230503579177
+      Effect_Arrow_Rain_26: 6381671958729230087
+      Effect_Arrow_Rain_27: -4643078689494277749
+      Effect_Arrow_Rain_28: -7682827586100644474
+      Effect_Arrow_Rain_29: -3715446128416292224
+      Effect_Arrow_Rain_3: 1557096382374137261
+      Effect_Arrow_Rain_30: -2355430402514924124
+      Effect_Arrow_Rain_31: 6452083038838133140
+      Effect_Arrow_Rain_32: -6485560478549863121
+      Effect_Arrow_Rain_4: -8435489073218395406
+      Effect_Arrow_Rain_5: 6837480343420351759
+      Effect_Arrow_Rain_6: 4123893325810453288
+      Effect_Arrow_Rain_7: -7545882605870903811
+      Effect_Arrow_Rain_8: 2166589134115770727
+      Effect_Arrow_Rain_9: -5263723783100748568
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

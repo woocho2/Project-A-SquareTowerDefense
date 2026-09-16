@@ -16,7 +16,7 @@ MonoBehaviour:
   - effectID: 101
     effectPrefab: {fileID: 5220447335354414950, guid: ed78f9e99ece3a148a74b17ad122da5a, type: 3}
   - effectID: 201
-    effectPrefab: {fileID: 5220447335354414950, guid: f50548a5917290643a3c4160bc2354e4, type: 3}
+    effectPrefab: {fileID: 5220447335354414950, guid: e201a921dbfc447d807df3a428980501, type: 3}
   - effectID: 301
     effectPrefab: {fileID: 9157105887711914197, guid: c4f829cb7dd4b864caf8832ec5b1ee55, type: 3}
   - effectID: 102
@@ -26,7 +26,7 @@ MonoBehaviour:
   - effectID: 302
     effectPrefab: {fileID: 9157105887711914197, guid: c4f829cb7dd4b864caf8832ec5b1ee55, type: 3}
   - effectID: 103
-    effectPrefab: {fileID: 9157105887711914197, guid: c4f829cb7dd4b864caf8832ec5b1ee55, type: 3}
+    effectPrefab: {fileID: 5220447335354414950, guid: e103000000000000000000000000e103, type: 3}
   - effectID: 203
     effectPrefab: {fileID: 3471829553732252764, guid: 804b31f6846cbcd44b4546248df287e4, type: 3}
   - effectID: 303
@@ -67,3 +67,19 @@ MonoBehaviour:
     effectPrefab: {fileID: 1142942343058428718, guid: da4fc7619d48d544690a0ec6f90927ae, type: 3}
   - effectID: 309
     effectPrefab: {fileID: 5220447335354414950, guid: deea12e758c57c043a6995c240e7b714, type: 3}
+  - effectID: 210
+    effectPrefab: {fileID: 1142942343058428718, guid: 7a07022100000000000000000000210f, type: 3}
+  - effectID: 211
+    effectPrefab: {fileID: 1142942343058428718, guid: 7a07022110000000000000000000211f, type: 3}
+  - effectID: 212
+    effectPrefab: {fileID: 1142942343058428718, guid: 7a07022120000000000000000000212f, type: 3}
+  - effectID: 213
+    effectPrefab: {fileID: 1142942343058428718, guid: 7a07022130000000000000000000213f, type: 3}
+  - effectID: 110
+    effectPrefab: {fileID: 5220447335354414950, guid: 520a011100000000000000000000110f, type: 3}
+  - effectID: 111
+    effectPrefab: {fileID: 5220447335354414950, guid: 520a011110000000000000000000111f, type: 3}
+  - effectID: 112
+    effectPrefab: {fileID: 5220447335354414950, guid: 520a011120000000000000000000112f, type: 3}
+  - effectID: 113
+    effectPrefab: {fileID: 5220447335354414950, guid: 520a011130000000000000000000113f, type: 3}

@@ -28,6 +28,10 @@ public class EffectManager : MonoBehaviour
     [SerializeField] int m_poolSize = 10;
     [SerializeField] int m_maxSize = 50;
 
+    [Header("Global Effect Scale")]
+    [Tooltip("PlayEffect로 재생되는 모든 전투 이펙트의 최종 크기에 곱하는 전역 배율입니다.")]
+    [SerializeField, Range(0.1f, 3f)] private float m_globalEffectScaleMultiplier = 1.5f;
+
     private Dictionary<int, ObjectPool<GameObject>> m_pools = new Dictionary<int, ObjectPool<GameObject>>();
 
     private Dictionary<int, PoolOverride> m_overrideMap = new Dictionary<int, PoolOverride>();
@@ -194,7 +198,8 @@ public class EffectManager : MonoBehaviour
             effect.transform.position = position;
             effect.transform.rotation = rotation;
 
-            effect.transform.localScale = new Vector3 (scale, scale, scale);
+            float finalScale = scale * m_globalEffectScaleMultiplier;
+            effect.transform.localScale = new Vector3(finalScale, finalScale, finalScale);
             effect.SetActive(true);
         }
     }

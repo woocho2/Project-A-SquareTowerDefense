@@ -1,41 +1,50 @@
-- towerData : 원본 데이터
-- towerStats : towerData를 복사한 현재 값
-- globalStats : ID가 같은 타워들이 갖는 동일한 Stat
-- finalStats : 버프 계산만을 위해 towerStats의 값을 임의로 복사한 값
+문제점 모음
 
-BuildTower
-1. TowerManager에서 Start()로 GlobalStats 메서드 실행
-2. GlobalStats() : TowerData로 변수생성
-3. TowerManager의 BuildTower에서 Init() 메서드 실행
-4. TowerController에서 Init() : GlobalStats주입 후 GlobalProjectileManager에서 GetMatchingProjectile()실행
-5. GlobalProjectileManager에서 GetMatchingProjectile() : Tower key와 Projectile key가 동일한것 끼리 매칭하여 반환
-6. 다시 Init으로 돌아와서 switch로 맞는 AttackType 반환하고 해당 Action에 원본 TowerData와 ProjectileData 주입
-   (주입된 데이터는 이펙트, 사운드, 고유ID 등의 정보만을 반환하도록 설계했고, Damage나 AttackSpeed같은 변수들은
-    AttackAction 내부에서 변수값을 호출하여 처리)
-7. TowerController에서 Start()로 GlobalStats을 Get한 후 타워에 GlobalStats 주입 *방어 로직
-8. 타워가 버프를 받을 시 GetFinalStats() 호출 후 bonusStats를 곱한 후 이걸 finalStats에 주입
-   (finalStats을 만드는 이유 : 버프 주입 시 값 복사를 막기 위해)
+확인해봤습니다. 지금은 성능 최적화보다 전투 계산과 상태 갱신 오류를 먼저 잡는 게 중요합니다.
+자체 스크립트 69개의 목록과 핵심 호출 흐름을 점검했고, 런타임·에디터 프로젝트 빌드는 통과했습니다. 아래는 코드상 확인한 문제이며, Unity 플레이 모드 재현은 아직 하지 않았습니다. 코드는 수정하지 않았습니다.
+먼저 고쳐야 할 문제
+1. 실드가 피해를 막아도 하트는 줄어듭니다
+적이 도착하면 GameManager.DecreaseLife(1)을 호출한 뒤, 실드 흡수 여부와 상관없이 UIManager.OnPlayerHit()도 호출합니다.
+그래서 실제 생명력은 그대로인데 UI 하트가 줄고, UI의 하트가 다 없어지면 게임오버까지 발생할 수 있습니다.
+[EnemyMoveController.cs (line 322)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/03. Enemy/EnemyMoveController.cs:322) · [UIManager.cs (line 1338)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/04. Manager/UIManager.cs:1338)
+2. 불장판으로 적이 죽으면 오류가 발생하는 경로가 있습니다
+RefreshTileDebuffs()에서 불 피해 적용 → 적 사망 → 디버프 Dictionary 초기화가 일어납니다.
+그런데 바로 다음 줄에서 지워진 Dictionary 항목을 다시 읽어서 KeyNotFoundException이 발생할 수 있습니다.
+[EnemyDebuffController.cs (line 104)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/03. Enemy/EnemyDebuffController.cs:104)
+3. 창 디버프의 즉사 효과가 사망 처리를 두 번 실행할 수 있습니다
+치명타 처리 중 창의 누적 피해 조건을 만족하면 즉사합니다. 그런데 바깥쪽 ApplyDamage()는 계속 진행하면서 다시 Die()를 호출합니다.
+처치 보상 중복 지급과 오브젝트 풀 중복 반환으로 이어질 수 있습니다.
+[EnemyHealthController.cs (line 80)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/03. Enemy/EnemyHealthController.cs:80) · [EnemyDebuffController.cs (line 123)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/03. Enemy/EnemyDebuffController.cs:123)
+4. 40웨이브 이후 남은 적을 처리할 수 없습니다
+현재는 소환 횟수만큼 적 턴을 실행하고 바로 다음 웨이브로 넘어갑니다.
+40웨이브 보스가 살아남아도 41웨이브로 넘어가는데, 41부터는 소환 목록이 비어 있어서 타워 공격과 적 이동 자체가 실행되지 않습니다. 반면 다음 웨이브 보상은 계속 받을 수 있습니다.
+[GameManager.cs (line 98)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/04. Manager/GameManager.cs:98) · [WaveManager.cs (line 82)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/04. Manager/WaveManager.cs:82)
+5. 적의 맵 버프를 디버프 계산이 덮어씁니다
+방어 타일에서 방어력을 1.2배로 설정해도, 뒤이어 실행되는 디버프 갱신이 다시 1배로 설정합니다. 이동 타일의 행동력 -1도 같은 방식으로 사라집니다.
+디버프가 하나도 없는 적에게도 발생합니다. 맵 버프와 디버프가 같은 최종 변수에 각각 값을 쓰고 있기 때문입니다.
+[EnemyDebuffController.cs (line 248)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/03. Enemy/EnemyDebuffController.cs:248)
+6. 같은 턴에 회복·불 피해가 중복 적용됩니다
+- 회복: 이동 완료 시 타일 검사 → 턴 마지막 전체 타일 검사에서 다시 회복합니다. 회복 타일에 도착한 적은 최대 체력의 20%를 두 번 받을 수 있습니다.
+- 불: 새 스택 적용 시 즉시 피해 → 같은 턴의 디버프 갱신에서 다시 피해를 줍니다.
+현재는 스탯 갱신과 턴당 효과 발동이 같은 처리 안에 섞여 있습니다.
+[EnemyMoveController.cs (line 205)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/03. Enemy/EnemyMoveController.cs:205) · [GameManager.cs (line 189)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/04. Manager/GameManager.cs:189) · [EnemyDebuffController.cs (line 191)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/03. Enemy/EnemyDebuffController.cs:191)
+전투·표시에서 추가로 발견한 문제
+문제	현재 동작
+투사체가 여전히 피해 처리의 필수 조건	생성 실패하거나 도착 전에 수명이 끝나면 피해 없이 공격이 끝납니다. “투사체는 시각 효과만”이라는 목표와 다릅니다. [관련 코드 (line 270)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/02. Projectile/ProjectileHit2D.cs:270)
+치명타에서 활 버프 누락	거리 비례 피해를 계산한 뒤, 치명타 분기에서 기본 공격력으로 덮어써 거리 보너스가 사라집니다. 광역·단일 모두 해당합니다. [관련 코드 (line 49)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/01. Tower/01. TowerAttackAction/TargetAttackAction.cs:49)
+창의 지연 피해 누락	새 타일 기반 경로에서는 duration 만료 시 상태를 삭제합니다. 누적 피해를 지급하는 코드는 옛 경로에서만 실행됩니다. [관련 코드 (line 162)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/03. Enemy/EnemyDebuffController.cs:162)
+‘체력 많은 적’과 실제 타겟 선택 불일치	보스를 발견하면 체력 비교 없이 바로 선택합니다. 체력 1인 보스가 체력 1,000인 일반 적보다 우선됩니다. [관련 코드 (line 137)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/01. Tower/01. TowerAttackAction/TowerAttackAction.cs:137)
+디버프 duration 설정 무시	데이터 변환에서 디버프 타워의 duration을 무조건 1로 만듭니다. 최신 지속시간 기획을 적용하려면 수정해야 합니다. [관련 코드 (line 78)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/01. Tower/02. TowerData/TowerDataSO.cs:78)
+타일 정보창 갱신 누락	목록을 창을 열 때 생성하므로, 열린 상태에서 버프가 만료되거나 장판이 행동해도 표시가 그대로 남습니다. [관련 코드 (line 1028)](D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/3. Scripts/04. Manager/UIManager.cs:1028)
 
-UpgradeTower
-1. 업그레이드 버튼을 누를 시, TowerManager의 UpgradeTower메서드 호출
-2. 해당 타워의 TowerStats를 복사한 후 여기에 GlobalStats주입
-   (현재 타워의 레벨을 바탕으로 최대레벨 업그레이드를 막기 위함과 동시에 해당 타워가 무슨 타입인지 계산하기 위하여)
-3. towerID를 key로 사용해서 TowerData에서 해당 타워의 원본 데이터를 불러옴
-4. UpgradeDamage = 원본 Data의 1.1, 1.2, 1.4, 1.8의 수치만큼 곱함
-   (2레벨 = 1.1배, 3레벨 = 1.2배, 4레벨 = 1.4배, 5레벨 = 1.8배)
-5. HandleTypeUpgrade로 업그레이드 이벤트 발생
+
+구조는 어떻게 보는가
+타일 Dictionary 중심 구조를 버리거나 전체를 다시 만들 필요는 없습니다. 문제는 새 구조로 옮기면서 옛 처리 경로가 함께 남아 있다는 점입니다.
+정리 방향은 이렇습니다.
+- 생명력·사망: 한 곳에서만 확정하고 UI는 결과만 표시.
+- 스탯: 기본값 + 맵 버프 + 타워 버프/디버프를 한 번에 합산.
+- 턴 효과: 타일 정보 읽기와 회복·지속 피해 발동을 분리.
+- UI: UIManager가 전부 담당하기보다 타워 정보창·타일 정보창부터 분리.
+우선은 실드/생명력 → 사망 중복·예외 → 타일 효과 중복·덮어쓰기 → 최종 웨이브 순서로 잡는 게 좋겠습니다. 이 부분들이 안정돼야 이후 스킬과 밸런스를 제대로 테스트할 수 있습니다.
 
 
-CombineTower
-1. UIManager의 Update()를 통해 CanCombine 리스너를 등록
-2. TowerManager의 CanCombine에서 TowerController를 가지고 있는 targetTower의
-   TowerID, TowerTier, TowerType, TowerVariant를 각각 계산
-3. Tier로 최고등급 타워는 합성할 수 없도록 함
-4. tower를 설치할 수 있는 Grid에 같은 Tier의 타워들을 모두 가져옴
-5. 해당 타워의 ID와 targetTower의 ID가 동일 = ExactMatch의 matchCount를 1 더함
-6. 해당 타워의 Type과 targetTower의 Type이 동일 = TypeMatch의 matchCount를 1 더함
-7. 해당 타워의 Variant와 targetTower의 Variant가 동일 = Variant의 matchCount를 1 더함
-8. 합성이 가능한 타입의 버튼의 불이 들어와서 버튼을 클릭하면 TowerManager의 ExecuteCombine() 메서드 호출
-9. GetMergeResultData()를 이용하여 합성 후보자들을 추려내고 후보자들을 합성결과에 담음
-10. CombineTower의 SpawnPosition = targetTower의 Position, 합성 타워와 재료타워를 Take()한 뒤 Destroy 하며 합성 진행
-11. 합성된 타워의 Data를 Init으로 Data를 주입

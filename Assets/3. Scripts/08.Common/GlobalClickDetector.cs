@@ -15,6 +15,8 @@ public class GlobalClickDetector : MonoBehaviour
     [SerializeField] private LayerMask m_towerLayer;
 
     public static event Action OnGroundClickedAction;
+    /// <summary>타워·UI가 아닌 월드 클릭의 실제 좌표입니다. 타일 정보 패널처럼 좌표가 필요한 UI가 사용합니다.</summary>
+    public static event Action<Vector3> OnGroundWorldClickedAction;
 
     private void Awake()
     {
@@ -89,6 +91,7 @@ public class GlobalClickDetector : MonoBehaviour
         if (towerHit == null)
         {
             OnGroundClickedAction?.Invoke();
+            OnGroundWorldClickedAction?.Invoke(worldPosition);
         }
     }
 }

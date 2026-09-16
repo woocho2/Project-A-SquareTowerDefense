@@ -15,6 +15,9 @@ public class EnemyDebuffController : MonoBehaviour
         public Vector3 ZonePosition;
         public float AbilityValue;
         public float PendingDamage;
+        public int RemainingDuration = -1;
+        public bool RefreshedOnCurrentTile;
+        public readonly Dictionary<int, int> AppliedVersionsBySource = new Dictionary<int, int>();
     }
 
     private readonly Dictionary<DebuffTarget, DebuffState> m_states = new Dictionary<DebuffTarget, DebuffState>();
@@ -76,6 +79,47 @@ public class EnemyDebuffController : MonoBehaviour
         RefreshPersistentStats();
     }
 
+    /// <summary>
+    /// 적이 현재 서 있는 패스 타일의 디버프 데이터를 읽습니다.
+    /// 같은 장판의 같은 공격 버전은 한 번만 스택을 올리고, 그 뒤로는 타일 위에 있는 동안 지속시간만 새로 고칩니다.
+    /// </summary>
+    public void RefreshTileDebuffs(Vector3Int currentCell)
+    {
+        if (TileManager.Instance == null || m_health == null || m_health.CurrentHP <= 0f) return;
+
+        IReadOnlyList<PathTileDebuffEffect> effects = TileManager.Instance.GetPathDebuffEffectsAt(currentCell);
+        for (int i = 0; i < effects.Count; i++)
+        {
+            PathTileDebuffEffect effect = effects[i];
+            if (effect.Target == DebuffTarget.None) continue;
+
+            // 장판이 막 배치된 상태(ApplicationVersion 0)는 UI 표기용입니다.
+            // 디버프 타워가 실제 행동한 뒤에만 적 스택과 duration 갱신을 시작합니다.
+            if (effect.ApplicationVersion <= 0) continue;
+
+            bool isNewApplication = !m_states.TryGetValue(effect.Target, out DebuffState state) ||
+                !state.AppliedVersionsBySource.TryGetValue(effect.SourceID, out int appliedVersion) ||
+                appliedVersion != effect.ApplicationVersion;
+
+            if (isNewApplication)
+            {
+                ApplyZoneStack(effect.Target, effect.Tier, effect.AbilityValue, effect.ZoneWorldPosition);
+                state = m_states[effect.Target];
+                state.AppliedVersionsBySource[effect.SourceID] = effect.ApplicationVersion;
+            }
+            else
+            {
+                // 장판이 계속 유지되는 동안 더 높은 티어/수치 장판으로 교체되었을 때도 즉시 최신값을 사용합니다.
+                state.Tier = Mathf.Max(state.Tier, effect.Tier);
+                state.AbilityValue = Mathf.Max(state.AbilityValue, effect.AbilityValue);
+                state.ZonePosition = effect.ZoneWorldPosition;
+            }
+
+            state.RemainingDuration = Mathf.Max(state.RemainingDuration, effect.Duration);
+            state.RefreshedOnCurrentTile = true;
+        }
+    }
+
     public void RegisterCriticalHit()
     {
         if (!m_states.TryGetValue(DebuffTarget.Spear, out DebuffState state)) return;
@@ -107,16 +151,31 @@ public class EnemyDebuffController : MonoBehaviour
     {
         if (m_health.CurrentHP <= 0f) return;
         m_movement.AdvanceDebuffTurn();
+        List<DebuffTarget> expiredTargets = new List<DebuffTarget>();
         foreach (KeyValuePair<DebuffTarget, DebuffState> pair in m_states)
         {
             DebuffState state = pair.Value;
             state.TurnCount++;
-            if (pair.Key == DebuffTarget.Spear && state.ExpireTurns < 0 &&
+
+            // 타일 위에 있으면 RefreshTileDebuffs가 매 적 턴 남은 시간을 다시 duration으로 맞춥니다.
+            // 타일을 벗어난 뒤부터만 1턴씩 줄어듭니다.
+            if (!state.RefreshedOnCurrentTile && state.RemainingDuration > 0)
+            {
+                state.RemainingDuration--;
+                if (state.RemainingDuration <= 0)
+                {
+                    expiredTargets.Add(pair.Key);
+                    continue;
+                }
+            }
+
+            // 아래 창 전용 2턴 처리는 레거시 직접 적용 경로(RemainingDuration < 0)와의 호환을 위해서만 유지합니다.
+            if (pair.Key == DebuffTarget.Spear && state.RemainingDuration < 0 && state.ExpireTurns < 0 &&
                 m_movement.CurrentTileIndex != m_movement.GetPathIndexClosestTo(state.ZonePosition))
             {
                 state.ExpireTurns = 2;
             }
-            if (pair.Key == DebuffTarget.Spear && state.ExpireTurns > 0)
+            if (pair.Key == DebuffTarget.Spear && state.RemainingDuration < 0 && state.ExpireTurns > 0)
             {
                 state.ExpireTurns--;
                 if (state.ExpireTurns == 0 && state.PendingDamage > 0f)
@@ -146,7 +205,10 @@ public class EnemyDebuffController : MonoBehaviour
                     break;
             }
             if (m_health.CurrentHP <= 0f) break;
+            state.RefreshedOnCurrentTile = false;
         }
+
+        foreach (DebuffTarget target in expiredTargets) m_states.Remove(target);
         RefreshPersistentStats();
     }
 
@@ -185,6 +247,10 @@ public class EnemyDebuffController : MonoBehaviour
 
     private void RefreshPersistentStats()
     {
+        // 만료된 스택이 남긴 영구 보정이 유지되지 않도록, 매번 현재 활성 상태만으로 다시 계산합니다.
+        m_movement.SetPermanentActionPenalty(0);
+        m_movement.SetPermanentDiceMaxModifier(0);
+
         float curse = 0f;
         if (m_states.TryGetValue(DebuffTarget.Sword, out DebuffState sword)) curse = TierValue(sword.Tier, 1f, 2f, 3f, 4f, 5f) * sword.Stack;
         m_health.SetMaxHealthReductionPercent(curse);

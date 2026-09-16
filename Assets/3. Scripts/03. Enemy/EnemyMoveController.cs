@@ -296,6 +296,13 @@ public class EnemyMovementController : MonoBehaviour
                 // 일반 타일은 기본 스탯 유지
                 break;
         }
+
+        // 패스 타일의 디버프 데이터도 같은 좌표를 기준으로 읽습니다.
+        // 이 시점에는 적이 이동을 마치고 TilePath의 해당 인덱스 리스트에 등록된 상태입니다.
+        if (TryGetComponent(out EnemyDebuffController debuffController))
+        {
+            debuffController.RefreshTileDebuffs(gridPos);
+        }
     }
 
     // 모든 타일 버프를 기본값으로 초기화
