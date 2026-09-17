@@ -49,8 +49,43 @@ public struct RealmThemeColor
 }
 
 /// <summary>
-/// Canvas 하위 UI 이미지의 이름을 기준으로 스테이지 테마 색상을 적용합니다.
+/// 각 스테이지 렐름에 적용할 전용 UI 스프라이트 세트입니다.
+/// </summary>
+[Serializable]
+public class RealmThemeSprites
+{
+    public StageRealm realm;
+    public string displayName;
+
+    [Header("메인 정보창 (우측 패널)")]
+    [Tooltip("우측 정보창 외곽 프레임 (BackGround_Frame)")]
+    public Sprite panelMainFrame;
+    [Tooltip("우측 정보창 배경 (BackGround_BG)")]
+    public Sprite panelMainBG;
+
+    [Header("주요 액션 버튼 (High: 턴 종료, 보스 소환)")]
+    [Tooltip("턴 종료 / 보스 소환 버튼 프레임")]
+    public Sprite btnHighFrame;
+    [Tooltip("턴 종료 / 보스 소환 버튼 배경")]
+    public Sprite btnHighBG;
+
+    [Header("타워 조작 카드 (Middle: 생성, 컬러강화, 티어강화 등)")]
+    [Tooltip("타워 조작 카드 프레임")]
+    public Sprite btnMiddleFrame;
+    [Tooltip("타워 조작 카드 배경")]
+    public Sprite btnMiddleBG;
+
+    [Header("기능 / 스탯 슬롯 (Low)")]
+    [Tooltip("기능/옵션/스탯 슬롯 프레임")]
+    public Sprite btnLowFrame;
+    [Tooltip("기능/옵션/스탯 슬롯 배경")]
+    public Sprite btnLowBG;
+}
+
+/// <summary>
+/// Canvas 하위 UI 이미지의 이름을 기준으로 스테이지 테마 색상 및 전용 스프라이트를 적용합니다.
 /// 이름에 _bg가 있으면 배경색, _frame이 있으면 프레임색을 적용합니다.
+/// 전용 스프라이트가 설정된 경우 해당 스프라이트를 교체하고 오리지널 색감을 보존합니다.
 /// TextMeshPro와 Legacy Text는 텍스트 가독성을 위해 변경하지 않습니다.
 /// </summary>
 [ExecuteAlways]
@@ -77,6 +112,13 @@ public class UIStageThemeController : MonoBehaviour
 
     [Tooltip("이 문자열이 이름에 포함된 Graphic은 프레임으로 처리합니다. 대소문자를 구분하지 않습니다.")]
     [SerializeField] private string frameKeyword = "_frame";
+
+    [Header("스테이지별 전용 스프라이트 세트 (Atlas/Theme Sprites)")]
+    [Tooltip("체크하면 각 스테이지 렐름 전용 스프라이트(아스가르드 황금/네이비 등)를 적용하고 오리지널 재질 색상을 유지합니다.")]
+    [SerializeField] private bool useThemeSprites = true;
+
+    [Tooltip("스테이지별 전용 스프라이트 목록입니다.")]
+    [SerializeField] private List<RealmThemeSprites> realmSprites = new List<RealmThemeSprites>();
 
     [Header("색상 적용 옵션")]
     [Tooltip("기존 UI 이미지의 알파값을 유지합니다. 반투명 연출을 보존할 때 켜 둡니다.")]
@@ -133,6 +175,9 @@ public class UIStageThemeController : MonoBehaviour
     private void Reset()
     {
         EnsureCanvasReference();
+#if UNITY_EDITOR
+        EnsureDefaultAsgardSprites();
+#endif
         ApplyTheme();
     }
 
@@ -150,12 +195,50 @@ public class UIStageThemeController : MonoBehaviour
         }
 
         EnsureCanvasReference();
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            EnsureDefaultAsgardSprites();
+        }
+#endif
     }
 
     private void Start()
     {
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            EnsureDefaultAsgardSprites();
+        }
+#endif
         ApplyTheme();
     }
+
+#if UNITY_EDITOR
+    public void EnsureDefaultAsgardSprites()
+    {
+        if (realmSprites == null) realmSprites = new List<RealmThemeSprites>();
+        var asgard = realmSprites.Find(r => r.realm == StageRealm.Asgard);
+        if (asgard == null)
+        {
+            asgard = new RealmThemeSprites { realm = StageRealm.Asgard, displayName = "아스가르드 (Asgard)" };
+            realmSprites.Add(asgard);
+        }
+
+        if (asgard.panelMainFrame == null)
+            asgard.panelMainFrame = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Panel_Main_Frame.png");
+        if (asgard.panelMainBG == null)
+            asgard.panelMainBG = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Panel_Main_BG.png");
+        if (asgard.btnHighFrame == null)
+            asgard.btnHighFrame = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_High_Frame.png");
+        if (asgard.btnHighBG == null)
+            asgard.btnHighBG = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_High_BG.png");
+        if (asgard.btnMiddleFrame == null)
+            asgard.btnMiddleFrame = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_Middle_Frame.png");
+        if (asgard.btnMiddleBG == null)
+            asgard.btnMiddleBG = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_Middle_BG.png");
+    }
+#endif
 
     private void OnDestroy()
     {
@@ -216,11 +299,58 @@ public class UIStageThemeController : MonoBehaviour
         return (Color.white, Color.gray, realm.ToString());
     }
 
+    public RealmThemeSprites GetThemeSprites(StageRealm realm)
+    {
+        if (!useThemeSprites || realmSprites == null) return null;
+        return realmSprites.Find(s => s.realm == realm);
+    }
+
+    private Sprite GetThemeSpriteForObject(string objectName, RealmThemeSprites sprites)
+    {
+        if (sprites == null) return null;
+
+        // 1. 메인 패널 (우측 정보창)
+        if (objectName.IndexOf("BackGround_Frame", StringComparison.OrdinalIgnoreCase) >= 0)
+            return sprites.panelMainFrame;
+        if (objectName.IndexOf("BackGround_BG", StringComparison.OrdinalIgnoreCase) >= 0)
+            return sprites.panelMainBG;
+
+        // 2. High Tier 버튼 (턴 종료, 보스 소환)
+        if (objectName.IndexOf("TurnEnd", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("SpawnMiddleBoss", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            if (IsFrameName(objectName)) return sprites.btnHighFrame;
+            if (IsBgName(objectName)) return sprites.btnHighBG;
+        }
+
+        // 3. Middle Tier 버튼 / 카드 (타워 생성, 컬러강화, 티어강화, 합성, 판매 등)
+        if (objectName.IndexOf("CreateTower", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("ColorUp", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("TierUp", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Combine", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("SellTower", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            if (IsFrameName(objectName)) return sprites.btnMiddleFrame;
+            if (IsBgName(objectName)) return sprites.btnMiddleBG;
+        }
+
+        // 4. Low Tier (기능/옵션/스탯 슬롯)
+        if (objectName.IndexOf("Option", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("GameSpeed", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            if (IsFrameName(objectName) && sprites.btnLowFrame != null) return sprites.btnLowFrame;
+            if (IsBgName(objectName) && sprites.btnLowBG != null) return sprites.btnLowBG;
+        }
+
+        return null;
+    }
+
     /// <summary>
     /// Canvas 하위의 _bg, _frame Graphic에 현재 테마를 적용합니다.
+    /// 전용 스프라이트가 등록된 경우 스프라이트를 교체하고 원본 색감을 보존합니다.
     /// Inspector에서 직접 연결한 TowerInfoPanel 배경만 일반 _bg보다 한 단계 밝거나 어둡게 보정합니다.
     /// </summary>
-    [ContextMenu("테마 색상 적용")]
+    [ContextMenu("테마 색상/스프라이트 적용")]
     public void ApplyTheme()
     {
         EnsureCanvasReference();
@@ -231,6 +361,7 @@ public class UIStageThemeController : MonoBehaviour
         }
 
         var theme = GetCurrentThemeColors();
+        var spriteTheme = GetThemeSprites(currentRealm);
         Graphic[] graphics = targetCanvas.GetComponentsInChildren<Graphic>(true);
 
         foreach (Graphic graphic in graphics)
@@ -238,6 +369,22 @@ public class UIStageThemeController : MonoBehaviour
             if (graphic is TMP_Text || graphic is Text) continue;
 
             string objectName = graphic.gameObject.name;
+            Image img = graphic as Image;
+
+            // 1) 전용 테마 스프라이트 스왑
+            if (img != null && spriteTheme != null)
+            {
+                Sprite customSprite = GetThemeSpriteForObject(objectName, spriteTheme);
+                if (customSprite != null)
+                {
+                    img.sprite = customSprite;
+                    img.type = Image.Type.Sliced;
+                    ApplyColor(graphic, Color.white);
+                    continue;
+                }
+            }
+
+            // 2) 기본 틴팅 로직
             if (IsFrameName(objectName))
             {
                 ApplyColor(graphic, theme.frame);
@@ -248,7 +395,7 @@ public class UIStageThemeController : MonoBehaviour
             }
         }
 
-        if (towerInfoBackground != null)
+        if (towerInfoBackground != null && (spriteTheme == null || spriteTheme.panelMainBG == null))
         {
             ApplyColor(towerInfoBackground, GetTowerInfoBackgroundColor(theme.bg));
         }
@@ -408,6 +555,30 @@ public class UIStageThemeController : MonoBehaviour
                 ApplyTheme();
             }
         };
+    }
+
+    [ContextMenu("아스가르드 기본 스프라이트 세트 등록 및 적용")]
+    public void LoadDefaultAsgardSprites()
+    {
+        if (realmSprites == null) realmSprites = new List<RealmThemeSprites>();
+        var asgard = realmSprites.Find(r => r.realm == StageRealm.Asgard);
+        if (asgard == null)
+        {
+            asgard = new RealmThemeSprites { realm = StageRealm.Asgard, displayName = "아스가르드 (Asgard)" };
+            realmSprites.Add(asgard);
+        }
+
+        asgard.panelMainFrame = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Panel_Main_Frame.png");
+        asgard.panelMainBG = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Panel_Main_BG.png");
+        asgard.btnHighFrame = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_High_Frame.png");
+        asgard.btnHighBG = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_High_BG.png");
+        asgard.btnMiddleFrame = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_Middle_Frame.png");
+        asgard.btnMiddleBG = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_Middle_BG.png");
+
+        CurrentRealm = StageRealm.Asgard;
+        EditorUtility.SetDirty(this);
+        ApplyTheme();
+        Debug.Log("[UIStageThemeController] 아스가르드 전용 UI 스프라이트가 성공적으로 등록 및 적용되었습니다!");
     }
 #endif
 }

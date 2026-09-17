@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class TowerVisual : MonoBehaviour
 {
@@ -43,8 +43,8 @@ public class TowerVisual : MonoBehaviour
     }
 
     /// <summary>
-    /// towerID 형식: [Tier][Type][Variant]
-    /// 예) 1203 = Tier 1, Color(Type) 2, Emblem(Variant) 3
+    /// towerID ?뺤떇: [Tier][Type][Variant]
+    /// ?? 1203 = Tier 1, Color(Type) 2, Emblem(Variant) 3
     /// </summary>
     public void Apply(int towerID)
     {
@@ -61,7 +61,7 @@ public class TowerVisual : MonoBehaviour
     {
         if (towerData == null)
         {
-            Debug.LogWarning("[TowerVisual] TowerData가 없습니다.", this);
+            Debug.LogWarning("[TowerVisual] TowerData媛 ?놁뒿?덈떎.", this);
             return;
         }
 
@@ -105,14 +105,14 @@ public class TowerVisual : MonoBehaviour
     {
         if (renderer == null)
         {
-            Debug.LogWarning($"[TowerVisual] {visualName} SpriteRenderer가 연결되지 않았습니다.", this);
+            Debug.LogWarning($"[TowerVisual] {visualName} SpriteRenderer媛 ?곌껐?섏? ?딆븯?듬땲??", this);
             return;
         }
 
         int index = visualID - 1;
         if (index < 0 || sprites == null || index >= sprites.Length || sprites[index] == null)
         {
-            Debug.LogWarning($"[TowerVisual] TowerID {towerID}의 {visualName} ID {visualID}에 해당하는 스프라이트가 없습니다.", this);
+            Debug.LogWarning($"[TowerVisual] TowerID {towerID}??{visualName} ID {visualID}???대떦?섎뒗 ?ㅽ봽?쇱씠?멸? ?놁뒿?덈떎.", this);
             renderer.sprite = null;
             return;
         }

@@ -4,7 +4,7 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [Header("Turn Projection Size")]
-    [SerializeField, Min(0.1f)] private float m_playerTurnProjectionSize = 7.5f;
+    [SerializeField, Min(0.1f)] private float m_playerTurnProjectionSize = 10f;
     [SerializeField, Min(0.1f)] private float m_endTurnProjectionSize = 5f;
     [SerializeField, Min(0f)] private float m_projectionTransitionDuration = 0.3f;
 
