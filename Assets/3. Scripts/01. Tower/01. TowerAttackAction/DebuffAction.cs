@@ -53,7 +53,7 @@ public class DebuffAction : TowerAttackAction
                 m_sourceID,
                 m_data.debuffTarget,
                 tier,
-                currentStats.AbilityValue,
+                currentStats.AttackPower,
                 currentStats.Duration,
                 m_activeZone.transform.position);
         }
@@ -146,7 +146,7 @@ public class DebuffAction : TowerAttackAction
             towerTransform.GetInstanceID(),
             m_data.debuffTarget,
             tier,
-            currentStats.AbilityValue,
+            currentStats.AttackPower,
             currentStats.Duration,
             m_activeZone.transform.position);
         return true;

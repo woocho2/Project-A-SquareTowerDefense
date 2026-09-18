@@ -47,7 +47,7 @@ public class BuffAction : TowerAttackAction
                     sourceID,
                     m_data.buffTarget,
                     sourceTier,
-                    currentStats.AbilityValue,
+                    currentStats.AttackPower,
                     currentStats.Duration);
                 appliedAny = true;
             }

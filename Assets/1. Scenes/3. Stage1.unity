@@ -5363,6 +5363,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Img_CriticalRate_Frame 512*128
       objectReference: {fileID: 0}
+    - target: {fileID: 95584446591155007, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 95584446591155007, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 129655753578317568, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_SizeDelta.y
       value: 45
@@ -5669,7 +5677,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1867507772995780214, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1893922851707005216, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_Sprite
@@ -6207,6 +6215,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Txt_B_Target
       objectReference: {fileID: 0}
+    - target: {fileID: 4302315564900681717, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_text
+      value: "\uC544\uC2A4\uAC00\uB974\uB4DC"
+      objectReference: {fileID: 0}
     - target: {fileID: 4302486706278580439, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_Name
       value: Btn_TierUpTower
@@ -6293,7 +6305,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4649794295154865034, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 0.9996263
       objectReference: {fileID: 0}
     - target: {fileID: 4711203183044248710, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_Name
@@ -6359,6 +6371,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Txt_A_ChangeTilePanelName
       objectReference: {fileID: 0}
+    - target: {fileID: 5163458070327605466, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d3398f2c8503d2149a939a30a2dbad57, type: 3}
     - target: {fileID: 5239025561517766405, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -6487,6 +6503,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Img_Default_Frame 512*128
       objectReference: {fileID: 0}
+    - target: {fileID: 5832268529121849265, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b40cc71ad579fa94086d10dfe7148395, type: 3}
     - target: {fileID: 5834985488085633010, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_Name
       value: Img_Range_Frame 512*128
@@ -6683,6 +6703,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Img_TowerColor
       objectReference: {fileID: 0}
+    - target: {fileID: 6750087168105672008, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6761488893559694896, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_SizeDelta.y
       value: 45
@@ -6737,7 +6761,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6995016675193235437, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.00038831227
+      value: 0.000035976253
       objectReference: {fileID: 0}
     - target: {fileID: 7023444030945136980, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_Name
@@ -7283,6 +7307,7 @@ PrefabInstance:
     - {fileID: 4166936534149923723, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
     m_RemovedGameObjects:
     - {fileID: 7467349695814225390, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+    - {fileID: 7332430045452893040, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 5161206797678341329, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       insertIndex: 4
@@ -7610,7 +7635,7 @@ PrefabInstance:
     - target: {fileID: 8902031544456177409, guid: 1259c084bc3ec6d4d966ec8c71d6875c, type: 3}
       propertyPath: m_txtCurrentGem
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 691927194}
     - target: {fileID: 8902031544456177409, guid: 1259c084bc3ec6d4d966ec8c71d6875c, type: 3}
       propertyPath: m_txtCurrntGold
       value: 

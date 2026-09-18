@@ -1,4 +1,4 @@
-fileFormatVersion: 2
+﻿fileFormatVersion: 2
 guid: 237e98f3f95be8e4fa2188b09a898e8f
 TextureImporter:
   internalIDToNameTable:
@@ -54,7 +54,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 1024
+  spritePixelsToUnits: 256
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -119,10 +119,10 @@ TextureImporter:
       name: Emblem_Lightning_1024_0
       rect:
         serializedVersion: 2
-        x: 276
-        y: 281
-        width: 117
-        height: 502
+        x: 69
+        y: 70
+        width: 29
+        height: 126
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,10 +141,10 @@ TextureImporter:
       name: Emblem_Lightning_1024_1
       rect:
         serializedVersion: 2
-        x: 386
-        y: 221
-        width: 362
-        height: 582
+        x: 96
+        y: 55
+        width: 90
+        height: 146
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

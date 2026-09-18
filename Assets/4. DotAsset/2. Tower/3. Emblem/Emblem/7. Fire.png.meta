@@ -1,4 +1,4 @@
-fileFormatVersion: 2
+﻿fileFormatVersion: 2
 guid: 3c29c84cdf6d0834e8c46511896a8d3e
 TextureImporter:
   internalIDToNameTable:
@@ -54,7 +54,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 1024
+  spritePixelsToUnits: 256
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -119,10 +119,10 @@ TextureImporter:
       name: Emblem_Fire_1024_0
       rect:
         serializedVersion: 2
-        x: 320
-        y: 235
-        width: 385
-        height: 553
+        x: 80
+        y: 59
+        width: 96
+        height: 138
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,10 +141,10 @@ TextureImporter:
       name: Emblem_Fire_1024_1
       rect:
         serializedVersion: 2
-        x: 676
-        y: 578
-        width: 31
-        height: 57
+        x: 169
+        y: 144
+        width: 8
+        height: 14
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

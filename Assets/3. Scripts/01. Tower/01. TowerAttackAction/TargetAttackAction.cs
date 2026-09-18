@@ -11,7 +11,9 @@ public class TargetAttackAction : TowerAttackAction
     // CSV 값이 0인 기존 타워는 최소 1발을 발사합니다.
     public override int GetProjectilesPerSatellite(TowerStats finalStats)
     {
-        return Mathf.Max(1, finalStats.AdditionalHitCount);
+        // 기본 1발에 AdditionalHitCount만큼 추가합니다.
+        // 총 타격 수 = AttackCount * (1 + AdditionalHitCount)
+        return 1 + Mathf.Max(0, finalStats.AdditionalHitCount);
     }
 
     public override ProjectileHit2D PrepareSatelliteProjectile(Vector3 spawnPosition, float preparationLifetime)

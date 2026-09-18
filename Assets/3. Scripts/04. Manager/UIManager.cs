@@ -655,7 +655,8 @@ public class UIManager : MonoBehaviour
         }
 
         int tileRange = TowerAttackAction.ToTileRange(stats.Range);
-        int totalTargetHitCount = 1 + Mathf.Max(0, stats.AdditionalHitCount);
+        int totalTargetHitCount =
+            Mathf.Max(1, stats.AttackCount) * (1 + Mathf.Max(0, stats.AdditionalHitCount));
 
         switch (data.attackType)
         {
@@ -669,7 +670,7 @@ public class UIManager : MonoBehaviour
                 if (m_txtTowerInfoSkill != null)
                 {
                     m_txtTowerInfoSkill.text =
-                        $"{stats.ProjectileRadius}칸 범위의 모든 적에게\n{stats.AbilityValue:0.##}만큼의 피해 (쿨타임: {stats.Duration:0.##}턴)";
+                        $"{stats.ProjectileRadius}칸 범위의 모든 적에게\n{stats.AttackPower * stats.AbilityValue:0.##}만큼의 피해 (쿨타임: {stats.Duration:0.##}턴)";
                 }
                 break;
 
@@ -683,7 +684,7 @@ public class UIManager : MonoBehaviour
                 if (m_txtTowerInfoSkill != null)
                 {
                     m_txtTowerInfoSkill.text =
-                        $"대상에게 {stats.Duration:0.##}회 공격 적중 시\n{stats.AbilityValue:0.##} 적용";
+                        $"대상에게 {stats.Duration:0.##}회 공격 적중 시\n{stats.AttackPower * stats.AbilityValue:0.##} 피해";
                 }
                 break;
 
@@ -691,7 +692,7 @@ public class UIManager : MonoBehaviour
                 if (m_txtTowerInfoDefault != null)
                 {
                     m_txtTowerInfoDefault.text =
-                        $"{tileRange}칸 범위 아군 타워의\n{GetBuffTargetName(data.buffTarget)} 능력 {stats.AbilityValue:0.##} 증가";
+                        $"{tileRange}칸 범위 아군 타워의\n{GetBuffTargetName(data.buffTarget)} 능력 {stats.AttackPower:0.##} 증가";
                 }
 
                 if (m_txtTowerInfoSkill != null) m_txtTowerInfoSkill.text = "스킬 미구현";
@@ -701,7 +702,7 @@ public class UIManager : MonoBehaviour
                 if (m_txtTowerInfoDefault != null)
                 {
                     m_txtTowerInfoDefault.text =
-                        $"디버프존 위 모든 적에게\n{GetDebuffTargetName(data.debuffTarget)} 디버프 부여";
+                        $"디버프존 위 모든 적에게\n{GetDebuffTargetName(data.debuffTarget)} 디버프 {stats.AttackPower:0.##} 부여 ({stats.Duration:0.##}턴)";
                 }
 
                 if (m_txtTowerInfoSkill != null) m_txtTowerInfoSkill.text = "스킬 미구현";
@@ -1315,6 +1316,13 @@ public class UIManager : MonoBehaviour
     public void SetPlayerActionUI(bool isVisible)
     {
         m_isPlayerActionUIVisible = isVisible;
+
+        // 턴 종료 버튼이 PlayerTurnPanel 밖에 배치되어 있어도
+        // 플레이어 턴 상태와 항상 같은 표시 상태를 유지합니다.
+        if (m_btnEndPlayerTurn != null)
+        {
+            m_btnEndPlayerTurn.gameObject.SetActive(isVisible);
+        }
 
         if (m_playerTurnPanel != null)
         {

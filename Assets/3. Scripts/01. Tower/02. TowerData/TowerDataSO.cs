@@ -75,7 +75,7 @@ public class TowerData : ScriptableObject
             AttackCount = this.attackCount,
             CriticalRate = this.criticalRate,
             CriticalDamage = this.criticalDamage,
-            Duration = this.attackType == AttackType.Debuff ? 1f : this.duration,
+            Duration = this.duration,
             AbilityValue = this.abilityValue,
             ProjectileSpeed = this.projectileSpeed,
             ProjectileRadius = this.splashRadius,
