@@ -25,9 +25,9 @@ public class TowerManager : MonoBehaviour
 
     [Tooltip("타워를 생성할 수 있는 타일맵을 지정합니다.")]
     [SerializeField] private Tilemap m_spawnPoint;
-#if false // Synergy system temporarily disabled
+    [Header("시너지 타워 생성 위치")]
+    [Tooltip("시너지 조건을 만족했을 때 생성 전용 타워가 배치될 타일맵입니다. 비어 있으면 일반 타워 타일맵을 사용합니다.")]
     [SerializeField] private Tilemap m_synergySpawnPoint;
-#endif
 
     [Tooltip("CSV에서 런타임으로 생성한 타워 데이터 배열입니다.")]
     [SerializeField] private TowerData[] m_towerData;
@@ -36,67 +36,6 @@ public class TowerManager : MonoBehaviour
     [Tooltip("모든 타워가 공통으로 사용하는 원본 프리팹입니다. 티어·색상·엠블럼은 소환 시 TowerVisual이 ID에 맞춰 교체합니다.")]
     [SerializeField] private GameObject m_towerBasePrefab;
 
-#if false // Synergy system temporarily disabled
-    [Header("시너지 타워 데이터")]
-    [SerializeField] private TowerData m_knightData;         // 불의 기사
-    [SerializeField] private TowerData m_sniperData;         // 폭풍 저격수
-    [SerializeField] private TowerData m_berserkerData;      // 서리 광전사
-    [SerializeField] private TowerData m_contradictionData;  // 모순
-    [SerializeField] private TowerData m_thorData;           // 토르
-    [SerializeField] private TowerData m_gunData;            // 웨폰 마스터
-    [SerializeField] private TowerData m_wizardData;         // 대마법사
-
-    [Header("시너지 특수 타일맵")]
-    [SerializeField] private Tilemap m_pathTilemap;          // 열풍
-
-    [Header("시너지 UI 버튼")]
-    [SerializeField] private UnityEngine.UI.Button m_btnCombineContradiction;
-    [SerializeField] private UnityEngine.UI.Button m_btnUndoContradiction;
-    [SerializeField] private UnityEngine.UI.Button m_btnCombineThor;
-    [SerializeField] private UnityEngine.UI.Button m_btnUndoThor;
-
-    [Header("시너지 INFO 버튼")]
-    [SerializeField] private UnityEngine.UI.Button m_btnKnightOfFire;
-    [SerializeField] private UnityEngine.UI.Image  m_imgKnightOfFireSword;
-    [SerializeField] private UnityEngine.UI.Image  m_imgKnightOfFireShield;
-    [SerializeField] private UnityEngine.UI.Image  m_imgKnightOfFireFire;
-    [SerializeField] private UnityEngine.UI.Button m_btnStormSniper;
-    [SerializeField] private UnityEngine.UI.Image  m_imgStormSniperBow;
-    [SerializeField] private UnityEngine.UI.Image  m_imgStormSniperWind;
-    [SerializeField] private UnityEngine.UI.Button m_btnFrostBerserker;
-    [SerializeField] private UnityEngine.UI.Image  m_imgFrostBerserkerShield;
-    [SerializeField] private UnityEngine.UI.Image  m_imgFrostBerserkerAxe;
-    [SerializeField] private UnityEngine.UI.Image  m_imgFrostBerserkerIce;
-    [SerializeField] private UnityEngine.UI.Button m_btnContradiction;
-    [SerializeField] private UnityEngine.UI.Image  m_imgContradictionShield;
-    [SerializeField] private UnityEngine.UI.Image  m_imgContradictionSpear;
-    [SerializeField] private UnityEngine.UI.Button m_btnHeatWave;
-    [SerializeField] private UnityEngine.UI.Image  m_imgHeatWaveFire;
-    [SerializeField] private UnityEngine.UI.Image  m_imgHeatWaveElectricity;
-    [SerializeField] private UnityEngine.UI.Image  m_imgHeatWaveWind;
-    [SerializeField] private UnityEngine.UI.Button m_btnAttributionArrow;
-    [SerializeField] private UnityEngine.UI.Image  m_imgAttributionArrowBow;
-    [SerializeField] private UnityEngine.UI.Image  m_imgAttributionArrowFire;
-    [SerializeField] private UnityEngine.UI.Image  m_imgAttributionArrowIce;
-    [SerializeField] private UnityEngine.UI.Button m_btnThor;
-    [SerializeField] private UnityEngine.UI.Image  m_imgThorSword;
-    [SerializeField] private UnityEngine.UI.Image  m_imgThorAxe;
-    [SerializeField] private UnityEngine.UI.Image  m_imgThorElectricity;
-    [SerializeField] private UnityEngine.UI.Button m_btnWeaponMaster;
-    [SerializeField] private UnityEngine.UI.Image  m_imgWeaponMasterSword;
-    [SerializeField] private UnityEngine.UI.Image  m_imgWeaponMasterBow;
-    [SerializeField] private UnityEngine.UI.Image  m_imgWeaponMasterShield;
-    [SerializeField] private UnityEngine.UI.Image  m_imgWeaponMasterSpear;
-    [SerializeField] private UnityEngine.UI.Image  m_imgWeaponMasterAxe;
-    [SerializeField] private UnityEngine.UI.Button m_btnGrandWizard;
-    [SerializeField] private UnityEngine.UI.Image  m_imgGrandWizardFire;
-    [SerializeField] private UnityEngine.UI.Image  m_imgGrandWizardIce;
-    [SerializeField] private UnityEngine.UI.Image  m_imgGrandWizardElectricity;
-    [SerializeField] private UnityEngine.UI.Image  m_imgGrandWizardWind;
-
-    private List<UnityEngine.UI.Button> m_allSynergyInfoButtons = new List<UnityEngine.UI.Button>();
-
-#endif
     [Header("타워 생성 및 업그레이드 비용")]
     private int BuildCost = 50;
     private const int TierUpgradeBaseGemCost = 5;
@@ -116,25 +55,64 @@ public class TowerManager : MonoBehaviour
     private Dictionary<Vector3Int, GridTowerInfo> m_towersOnGrid = new Dictionary<Vector3Int, GridTowerInfo>();
     private Dictionary<int, TowerStats>      m_globalTowerStats  = new Dictionary<int, TowerStats>();
     private float m_sharedDarknessAbilityValue;
-#if false // Synergy system temporarily disabled
-    private Dictionary<int, TowerStats>      m_synergyTowerStats = new Dictionary<int, TowerStats>();
-#endif
     private Dictionary<int, List<TowerData>> m_towerTier         = new Dictionary<int, List<TowerData>>();
     private Dictionary<int, List<TowerData>> m_towerType         = new Dictionary<int, List<TowerData>>();
     private Dictionary<int, List<TowerData>> m_towerVariant      = new Dictionary<int, List<TowerData>>();
 
     public event Action<int> OnTowerTypeUpgrade;
 
-#if false // Synergy system temporarily disabled
-    private List<SynergyBase> m_synergies = new List<SynergyBase>();
-#endif
+    private sealed class SynergyDefinition
+    {
+        public readonly int TowerID;
+        public readonly string Name;
+        public readonly int VisualTowerID;
+        public readonly int[] RequiredPatterns;
 
-#if false // Synergy system temporarily disabled
-    public bool IsAttributionArrowActive { get; set; } = false;
-#endif
-#if false // Synergy system temporarily disabled
-    public bool IsHeatWaveActive { get; set; } = false;
-#endif
+        public SynergyDefinition(int towerID, string name, int visualTowerID, params int[] requiredPatterns)
+        {
+            TowerID = towerID;
+            Name = name;
+            VisualTowerID = visualTowerID;
+            RequiredPatterns = requiredPatterns;
+        }
+
+        public bool IsSatisfiedBy(HashSet<int> activePatterns)
+        {
+            for (int i = 0; i < RequiredPatterns.Length; i++)
+            {
+                if (!activePatterns.Contains(RequiredPatterns[i])) return false;
+            }
+            return true;
+        }
+    }
+
+    private sealed class ActiveSynergyTower
+    {
+        public TowerController Controller;
+        public TowerData Data;
+        public Vector3Int Cell;
+    }
+
+    // 시너지 기획.txt 순서. 각 항목은 4티어 이상 재료 문양을 모두 보유하면 생성된다.
+    private static readonly SynergyDefinition[] s_synergyDefinitions =
+    {
+        new SynergyDefinition(6001, "오딘", 5104, TowerPattern.SPEAR, TowerPattern.LIGHT, TowerPattern.DARKNESS),
+        new SynergyDefinition(6002, "토르", 5106, TowerPattern.HAMMER, TowerPattern.ELECTRICITY, TowerPattern.WIND),
+        new SynergyDefinition(6003, "로키", 5102, TowerPattern.BOW, TowerPattern.FIRE, TowerPattern.DARKNESS),
+        new SynergyDefinition(6004, "헬", 5101, TowerPattern.SWORD, TowerPattern.AXE, TowerPattern.DARKNESS),
+        new SynergyDefinition(6005, "수르트", 5101, TowerPattern.SWORD, TowerPattern.FIRE, TowerPattern.EARTH),
+        new SynergyDefinition(6006, "헤임달", 5101, TowerPattern.SWORD, TowerPattern.WIND, TowerPattern.LIGHT),
+        new SynergyDefinition(6007, "발드르", 5103, TowerPattern.SHIELD, TowerPattern.EARTH, TowerPattern.LIGHT),
+        new SynergyDefinition(6008, "스카디", 5102, TowerPattern.BOW, TowerPattern.ICE, TowerPattern.WIND),
+        new SynergyDefinition(6009, "비다르", 5104, TowerPattern.SPEAR, TowerPattern.SHIELD, TowerPattern.ICE),
+        new SynergyDefinition(6010, "이미르", 5106, TowerPattern.HAMMER, TowerPattern.ICE, TowerPattern.EARTH),
+        new SynergyDefinition(6011, "트루드", 5103, TowerPattern.SHIELD, TowerPattern.AXE, TowerPattern.ELECTRICITY),
+        new SynergyDefinition(6012, "발키리", 5102, TowerPattern.BOW, TowerPattern.SPEAR, TowerPattern.ELECTRICITY),
+        new SynergyDefinition(6013, "브록 & 에이트리", 5105, TowerPattern.AXE, TowerPattern.HAMMER, TowerPattern.FIRE)
+    };
+
+    private readonly Dictionary<int, ActiveSynergyTower> m_activeSynergyTowers =
+        new Dictionary<int, ActiveSynergyTower>();
 
     // ==========================================================================================================
     // ================================================= 초기화 =================================================
@@ -154,29 +132,7 @@ public class TowerManager : MonoBehaviour
     private void Start()
     {
         LoadTowerDataFromCSV();
-
-#if false // Synergy system temporarily disabled
-        m_synergies.Add(new KnightOfFireSynergy     (this, m_knightData, m_btnKnightOfFire, m_imgKnightOfFireSword, m_imgKnightOfFireShield, m_imgKnightOfFireFire));
-        m_synergies.Add(new StormSniperSynergy      (this, m_sniperData, m_btnStormSniper, m_imgStormSniperBow, m_imgStormSniperWind));
-        m_synergies.Add(new FrostBerserkerSynergy   (this, m_berserkerData, m_btnFrostBerserker, m_imgFrostBerserkerShield, m_imgFrostBerserkerAxe, m_imgFrostBerserkerIce));
-        m_synergies.Add(new ContradictionSynergy    (this, m_contradictionData, m_btnCombineContradiction, m_btnUndoContradiction, m_btnContradiction, m_imgContradictionShield, m_imgContradictionSpear));
-        m_synergies.Add(new HeatWaveSynergy         (this, m_pathTilemap, m_btnHeatWave, m_imgHeatWaveFire, m_imgHeatWaveElectricity, m_imgHeatWaveWind));
-        m_synergies.Add(new AttributionArrowSynergy (this, m_btnAttributionArrow, m_imgAttributionArrowBow, m_imgAttributionArrowFire, m_imgAttributionArrowIce));
-        m_synergies.Add(new ThorSynergy             (this, m_thorData, m_btnCombineThor, m_btnUndoThor, m_btnThor, m_imgThorSword, m_imgThorAxe, m_imgThorElectricity));
-        m_synergies.Add(new WeaponMasterSynergy     (this, m_gunData, m_btnWeaponMaster, m_imgWeaponMasterSword, m_imgWeaponMasterBow, m_imgWeaponMasterShield, m_imgWeaponMasterSpear, m_imgWeaponMasterAxe));
-        m_synergies.Add(new GrandWizardSynergy      (this, m_wizardData, m_btnGrandWizard, m_imgGrandWizardFire, m_imgGrandWizardIce, m_imgGrandWizardElectricity, m_imgGrandWizardWind));
-
-        m_allSynergyInfoButtons.Add(m_btnKnightOfFire);
-        m_allSynergyInfoButtons.Add(m_btnStormSniper);
-        m_allSynergyInfoButtons.Add(m_btnFrostBerserker);
-        m_allSynergyInfoButtons.Add(m_btnContradiction);
-        m_allSynergyInfoButtons.Add(m_btnHeatWave);
-        m_allSynergyInfoButtons.Add(m_btnAttributionArrow);
-        m_allSynergyInfoButtons.Add(m_btnThor);
-        m_allSynergyInfoButtons.Add(m_btnWeaponMaster);
-        m_allSynergyInfoButtons.Add(m_btnGrandWizard);
-
-#endif
+        EvaluateSynergyTowers();
         if (GlobalProjectileManager.Instance != null)
         {
             GlobalProjectileManager.Instance.InitializeProjectileDatabase();
@@ -299,22 +255,6 @@ public class TowerManager : MonoBehaviour
 
         m_towerData = loadedTowers.ToArray();
 
-        // 시너지 타워 글로벌 스탯 등록
-#if false // Synergy system temporarily disabled
-        TowerData[] synergyDatas = {
-            m_knightData, m_sniperData, m_berserkerData,
-            m_contradictionData, m_thorData, m_gunData, m_wizardData
-        };
-
-        foreach (var sData in synergyDatas)
-        {
-            if (sData != null)
-            {
-                m_globalTowerStats[sData.towerID] = sData.ToTowerStats();
-            }
-        }
-
-#endif
         Debug.Log($"총 {m_towerData.Length}개의 타워 데이터 및 글로벌 스탯 로드 완료.");
     }
 
@@ -393,8 +333,7 @@ public class TowerManager : MonoBehaviour
 
             CurrencyManager.Instance.SpendMoney(BuildCost);
             if (BuildCost < 300) BuildCost += 2;
-
-            // CheckTowerSynergy();
+            EvaluateSynergyTowers();
         }
         else
         {
@@ -523,8 +462,7 @@ public class TowerManager : MonoBehaviour
 
             int Amount = (int)Mathf.Pow(3, info.Tier - 1);
             CurrencyManager.Instance.AddGem(Amount);
-
-            // CheckTowerSynergy();
+            EvaluateSynergyTowers();
         }
     }
 
@@ -635,6 +573,7 @@ public class TowerManager : MonoBehaviour
         };
 
         CurrencyManager.Instance.SpendGem(upgradeCost);
+        EvaluateSynergyTowers();
         return true;
     }
 
@@ -721,6 +660,7 @@ public class TowerManager : MonoBehaviour
             Type = (upgradedData.towerID % 1000) / 100,
             Variant = upgradedData.towerID % 100
         };
+        EvaluateSynergyTowers();
         return true;
     }
 
@@ -905,7 +845,7 @@ public class TowerManager : MonoBehaviour
         };
 
         m_towersOnGrid[targetCell] = newInfo;
-        // CheckTowerSynergy();
+        EvaluateSynergyTowers();
     }
 
     private TowerData GetMergeResultData(GridTowerInfo targetInfo, CombineMode mode)
@@ -948,313 +888,168 @@ public class TowerManager : MonoBehaviour
     // ================================================= 시너지 ==================================================
     // ==========================================================================================================
 
-#if false // Synergy system temporarily disabled
-    public void CheckTowerSynergy()
-    {
-        foreach (var synergy in m_synergies)
-        {
-            bool conditionMet = synergy.CheckCondition(m_towersOnGrid);
 
-            if (conditionMet && !synergy.IsActive)
+    // ==========================================================================================================
+    // ================================================ 시너지 타워 ===============================================
+    // ==========================================================================================================
+
+    /// <summary>
+    /// 4티어 이상 일반 타워가 가진 문양만 시너지 재료로 사용한다.
+    /// 생성된 6티어 시너지 타워는 다른 시너지의 재료가 되지 않는다.
+    /// </summary>
+    private HashSet<int> GetSynergyMaterialPatterns()
+    {
+        HashSet<int> activePatterns = new HashSet<int>();
+        foreach (KeyValuePair<Vector3Int, GridTowerInfo> pair in m_towersOnGrid)
+        {
+            if (pair.Value.Tier >= 4 && pair.Value.Tier <= 5)
             {
-                synergy.Activate();
+                activePatterns.Add(pair.Value.Variant);
             }
-            else if (!conditionMet && synergy.IsActive)
+        }
+        return activePatterns;
+    }
+
+    /// <summary>
+    /// 조건을 만족한 시너지는 전용 타일에 생성하고, 조건이 깨지면 생성물만 제거한다.
+    /// 시너지 타워는 공격/버프/디버프/합성/해제 등 자체 효과를 갖지 않는 표시 전용 상태다.
+    /// </summary>
+    private void EvaluateSynergyTowers()
+    {
+        if (m_towerBasePrefab == null || m_spawnPoint == null) return;
+
+        HashSet<int> activePatterns = GetSynergyMaterialPatterns();
+        for (int i = 0; i < s_synergyDefinitions.Length; i++)
+        {
+            SynergyDefinition definition = s_synergyDefinitions[i];
+            bool shouldExist = definition.IsSatisfiedBy(activePatterns);
+            bool exists = m_activeSynergyTowers.TryGetValue(definition.TowerID, out ActiveSynergyTower active) &&
+                          active != null && active.Controller != null;
+
+            if (shouldExist && !exists)
             {
-                synergy.Deactivate();
+                TrySpawnSynergyTower(definition);
+            }
+            else if (!shouldExist && exists)
+            {
+                RemoveSynergyTower(definition.TowerID, active);
             }
         }
     }
 
-    public HashSet<int> GetActiveVariants()
+    private bool TrySpawnSynergyTower(SynergyDefinition definition)
     {
-        HashSet<int> activeVariants = new HashSet<int>();
-
-        foreach (var kvp in m_towersOnGrid)
+        Tilemap spawnTilemap = m_synergySpawnPoint != null ? m_synergySpawnPoint : m_spawnPoint;
+        Vector3Int? cell = GetFirstEmptyCell(spawnTilemap);
+        if (!cell.HasValue)
         {
-            if (kvp.Value.Tier >= 4 && kvp.Value.Tier <= 5)
-            {
-                activeVariants.Add(kvp.Value.Variant);
-            }
-            if (kvp.Value.Tier >= 6)
-            {
-                if (kvp.Value.Controller != null)
-                {
-                    TowerData currentData = kvp.Value.Controller.GetTowerData();
-                    if (currentData != null)
-                    {
-                        if (m_thorData != null && currentData.towerID == m_thorData.towerID)
-                        {
-                            activeVariants.Add(1);
-                            activeVariants.Add(5);
-                            activeVariants.Add(8);
-                        }
-                        else if (m_contradictionData != null && currentData.towerID == m_contradictionData.towerID)
-                        {
-                            activeVariants.Add(3);
-                            activeVariants.Add(4);
-                        }
-                    }
-                }            
-            }
-        }
-        return activeVariants;
-    }
-
-    public TowerController CreateSynergyTower(TowerData synergyData)
-    {
-        Vector3Int? spawnCell = GetFirstEmptyCell(m_synergySpawnPoint);
-
-        if (spawnCell.HasValue)
-        {
-            Vector3 spawnPos = m_synergySpawnPoint.GetCellCenterWorld(spawnCell.Value);
-
-            GameObject spawnedTower = Instantiate(synergyData.towerPrefab, spawnPos, Quaternion.identity);
-
-            TowerController synergyTowerController = spawnedTower.GetComponent<TowerController>();
-
-            if (synergyTowerController != null)
-            {
-                synergyTowerController.Init(synergyData, GetGlobalStats(synergyData.towerID));
-            }
-
-            GridTowerInfo newInfo = new GridTowerInfo
-            {
-                Controller = synergyTowerController,
-                Tier       = synergyData.towerID / 1000,
-                Type       = (synergyData.towerID % 1000) / 100,
-                Variant    = synergyData.towerID % 100
-            };
-            m_towersOnGrid.Add(spawnCell.Value, newInfo);
-
-            Debug.Log($"[시너지] 조건 달성! {synergyData.towerName} 특수 타일에 소환되었습니다!");
-            return synergyTowerController;
-        }
-        else
-        {
-            Debug.LogWarning("[시너지] 불의 기사를 소환할 특수 타일 공간이 부족합니다!");
-            return null;
-        }
-    }
-
-    public TowerController DestroySynergyTower(TowerController targetTower)
-    {
-        if (targetTower != null)
-        {
-            Vector3Int? targetCell = null;
-            foreach (var kvp in m_towersOnGrid)
-            {
-                if (kvp.Value.Controller == targetTower)
-                {
-                    targetCell = kvp.Key;
-                    break;
-                }
-            }
-
-            if (targetCell.HasValue)
-            {
-                m_towersOnGrid.Remove(targetCell.Value);
-            }
-
-            Destroy(targetTower.gameObject);
-        }
-        return null;
-    }
-
-    public bool CombineSynergyTower(TowerData resultTowerData, int requiredTier, List<int> requiredVariants, out List<TowerData> consumeDatas)
-    {
-        consumeDatas = new List<TowerData>();
-        List<Vector3Int> materialCells = new List<Vector3Int>();
-        List<int> variantsToFind = new List<int>(requiredVariants); // 찾아야 할 문양 번호 리스트 복사
-
-        // 1. 맵을 순회하며 필요한 재료 타워들의 위치를 탐색
-        foreach (var kvp in m_towersOnGrid)
-        {
-            if (kvp.Value.Tier >= requiredTier)
-            {
-                int variant = kvp.Value.Variant;
-                if (variantsToFind.Contains(variant))
-                {
-                    materialCells.Add(kvp.Key);
-                    variantsToFind.Remove(variant); // 중복 탐색 방지를 위해 리스트에서 제거
-                }
-            }
-            if (variantsToFind.Count == 0) break; // 모두 찾았으면 반복문 조기 종료
-        }
-
-        // 재료를 전부 찾지 못했다면 합성 실패
-        if (variantsToFind.Count > 0) return false;
-
-        // 2. 합성된 타워가 생성될 기준 위치 (첫 번째 재료 타워가 있던 자리)
-        Vector3Int spawnCell = materialCells[0];
-
-        // 3. 재료 타워 일괄 파괴
-        foreach (Vector3Int cell in materialCells)
-        {
-            consumeDatas.Add(m_towersOnGrid[cell].Controller.GetTowerData());
-
-            Destroy(m_towersOnGrid[cell].Controller.gameObject);
-            m_towersOnGrid.Remove(cell);
-        }
-
-        // 4. 시너지 타워 1개 생성 및 등록
-        Vector3 spawnPos = CellToWorld(spawnCell);
-        GameObject spawnedTower = Instantiate(resultTowerData.towerPrefab, spawnPos, Quaternion.identity);
-        TowerController newTowerController = spawnedTower.GetComponent<TowerController>();
-        newTowerController.Init(resultTowerData, GetGlobalStats(resultTowerData.towerID));
-
-        GridTowerInfo newInfo = new GridTowerInfo
-        {
-            Controller = newTowerController,
-            Tier       = resultTowerData.towerID / 1000,
-            Type       = (resultTowerData.towerID % 1000) / 100,
-            Variant    = resultTowerData.towerID % 100
-        };
-        m_towersOnGrid.Add(spawnCell, newInfo);
-
-        // CheckTowerSynergy();
-        return true;
-    }
-
-    public bool UndoSynergyTower(TowerData synergyTowerData, List<TowerData> materialDatas)
-    {
-        Vector3Int? synergyCell = null;
-        int targetTier = synergyTowerData.towerID / 1000;
-        int targetVariant = synergyTowerData.towerID % 100;
-
-        foreach (var kvp in m_towersOnGrid)
-        {
-            if (kvp.Value.Tier == targetTier && kvp.Value.Variant == targetVariant)
-            {
-                synergyCell = kvp.Key;
-                break;
-            }
-        }
-        if (synergyCell == null) return false;
-
-        int requiredEmptySpaces = materialDatas.Count - 1;
-        List<Vector3Int> availableEmptyCells = GetMultipleEmptyCells(requiredEmptySpaces);
-
-        if (availableEmptyCells.Count < requiredEmptySpaces)
-        {
-            Debug.LogWarning("[시너지] 빈 공간이 부족하여 합성을 해제할 수 없습니다!");
+            Debug.LogWarning($"[시너지] {definition.Name} 생성 공간이 없습니다.");
             return false;
         }
 
-        Destroy(m_towersOnGrid[synergyCell.Value].Controller.gameObject);
-        m_towersOnGrid.Remove(synergyCell.Value);
-
-        int emptyCellIndex = 0;
-        for (int i = 0; i < materialDatas.Count; i++)
+        TowerData data = CreateSynergyTowerData(definition);
+        GameObject spawnedTower = Instantiate(data.towerPrefab, spawnTilemap.GetCellCenterWorld(cell.Value), Quaternion.identity);
+        TowerController controller = spawnedTower.GetComponent<TowerController>();
+        if (controller == null)
         {
-            Vector3Int restoreCell;
-            if (i == 0)
-            {
-                restoreCell = synergyCell.Value;
-            }
-            else
-            {
-                restoreCell = availableEmptyCells[emptyCellIndex];
-                emptyCellIndex++;
-            }
-            RestoreTowerAtCell(restoreCell, materialDatas[i]);
+            Debug.LogError($"[시너지] {definition.Name} 생성 프리팹에 TowerController가 없습니다.");
+            Destroy(spawnedTower);
+            Destroy(data);
+            return false;
         }
-        materialDatas.Clear();
 
-        // CheckTowerSynergy();
+        controller.Init(data, data.ToTowerStats());
+        m_towersOnGrid[cell.Value] = new GridTowerInfo
+        {
+            Controller = controller,
+            Tier = data.towerID / 1000,
+            Type = 0,
+            Variant = 0
+        };
+        m_activeSynergyTowers[definition.TowerID] = new ActiveSynergyTower
+        {
+            Controller = controller,
+            Data = data,
+            Cell = cell.Value
+        };
+
+        Debug.Log($"[시너지] {definition.Name} 조건 달성: 생성 전용 시너지 타워를 배치했습니다.");
         return true;
     }
 
-    private void RestoreTowerAtCell(Vector3Int cell, TowerData data)
+    private TowerData CreateSynergyTowerData(SynergyDefinition definition)
     {
-        Vector3 spawnPos = CellToWorld(cell);
-        GameObject spawnedTower = Instantiate(data.towerPrefab, spawnPos, Quaternion.identity);
-        TowerController newTowerController = spawnedTower.GetComponent<TowerController>();
-        newTowerController.Init(data, GetGlobalStats(data.towerID));
-
-        GridTowerInfo newInfo = new GridTowerInfo
-        {
-            Controller = newTowerController,
-            Tier       = data.towerID / 1000,
-            Type       = (data.towerID % 1000) / 100,
-            Variant    = data.towerID % 100
-        };
-        m_towersOnGrid.Add(cell, newInfo);
+        TowerData data = ScriptableObject.CreateInstance<TowerData>();
+        data.hideFlags = HideFlags.DontSave;
+        data.towerID = definition.TowerID;
+        data.visualTowerID = definition.VisualTowerID;
+        data.towerName = $"{definition.Name} 시너지 타워";
+        data.towerLevel = 1;
+        data.power = 0f;
+        data.range = 1f;
+        data.action = 1;
+        data.attackCount = 1;
+        data.duration = 0f;
+        data.abilityValue = 0f;
+        data.attackType = AttackType.None;
+        data.targetPriority = TargetPriority.Closest;
+        data.buffTarget = BuffTarget.None;
+        data.debuffTarget = DebuffTarget.None;
+        data.towerPrefab = m_towerBasePrefab;
+        return data;
     }
 
-    /// <summary>
-    /// 지정된 타일맵에서 첫 번째로 비어있는 셀을 순차적으로 탐색하여 반환합니다.
-    /// </summary>
+    private void RemoveSynergyTower(int towerID, ActiveSynergyTower active)
+    {
+        if (active != null)
+        {
+            if (m_towersOnGrid.TryGetValue(active.Cell, out GridTowerInfo info) && info.Controller == active.Controller)
+            {
+                m_towersOnGrid.Remove(active.Cell);
+            }
+
+            if (active.Controller != null) Destroy(active.Controller.gameObject);
+            if (active.Data != null) Destroy(active.Data);
+        }
+        m_activeSynergyTowers.Remove(towerID);
+    }
+
     private Vector3Int? GetFirstEmptyCell(Tilemap targetTilemap)
     {
-        BoundsInt bounds = targetTilemap.cellBounds;
+        if (targetTilemap == null) return null;
 
+        BoundsInt bounds = targetTilemap.cellBounds;
         for (int y = bounds.yMax - 1; y >= bounds.yMin; y--)
         {
             for (int x = bounds.xMin; x < bounds.xMax; x++)
             {
-                Vector3Int pos = new Vector3Int(x, y, 0);
-
-                if (targetTilemap.HasTile(pos) && !m_towersOnGrid.ContainsKey(pos))
+                Vector3Int position = new Vector3Int(x, y, 0);
+                if (targetTilemap.HasTile(position) && !m_towersOnGrid.ContainsKey(position))
                 {
-                    return pos;
+                    return position;
                 }
             }
         }
-
         return null;
     }
 
-    /// <summary>
-    /// 일반 스폰 타일맵에서 지정된 개수만큼의 빈 셀을 순차적으로 탐색하여 반환합니다.
-    /// </summary>
-    private List<Vector3Int> GetMultipleEmptyCells(int count)
-    {
-        List<Vector3Int> emptyCells = new List<Vector3Int>();
-        BoundsInt bounds = m_spawnPoint.cellBounds;
-
-        for (int y = bounds.yMax - 1; y >= bounds.yMin; y--)
-        {
-            for (int x = bounds.xMin; x < bounds.xMax; x++)
-            {
-                Vector3Int pos = new Vector3Int(x, y, 0);
-
-                if (m_spawnPoint.HasTile(pos) && !m_towersOnGrid.ContainsKey(pos))
-                {
-                    emptyCells.Add(pos);
-                    if (emptyCells.Count >= count) return emptyCells;
-                }
-            }
-        }
-
-        return emptyCells;
-    }
-
-    public void HandleSynergyButtonToggle(UnityEngine.UI.Button clickedButton, bool isOpening)
-    {
-        foreach (var btn in m_allSynergyInfoButtons)
-        {
-            // 클릭된 '본인 버튼'은 끄지 않고 무시합니다.
-            if (btn != null && btn != clickedButton)
-            {
-                // 본인의 창을 여는 중(isOpening == true)이면 다른 버튼은 끄고(!true = false)
-                // 본인의 창을 닫는 중(isOpening == false)이면 다른 버튼은 다시 켭니다(!false = true)
-                btn.gameObject.SetActive(!isOpening);
-            }
-        }
-    }
-
-    // ==========================================================================================================
-    // ================================================ 타워이동 =================================================
-    // ==========================================================================================================
-
-#endif
     public void MoveTowerOnGrid(Vector3Int fromCell, Vector3Int toCell)
     {
         if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
 
         // 1. 이동시킬 타워가 딕셔너리에 존재하는지 확인
         if (!m_towersOnGrid.TryGetValue(fromCell, out GridTowerInfo movingInfo)) return;
+
+        // 시너지 타워는 조건 달성 보상으로 생성된 전용 타일의 표시물이라 드래그/교환 대상이 아니다.
+        if (movingInfo.Tier >= 6)
+        {
+            Tilemap synergyTilemap = m_synergySpawnPoint != null ? m_synergySpawnPoint : m_spawnPoint;
+            if (movingInfo.Controller != null)
+            {
+                movingInfo.Controller.transform.position = synergyTilemap.GetCellCenterWorld(fromCell);
+            }
+            return;
+        }
 
         // 2. 이 타워가 현재 속한 타일맵 결정 (일반 맵 vs 시너지 맵)
         Tilemap originTilemap = m_spawnPoint;
@@ -1387,9 +1182,7 @@ public class TowerManager : MonoBehaviour
 
             m_towersOnGrid.Add(emptyCell.Value, newInfo);
             Debug.Log($"[치트] 성공! {targetData.towerName} (ID: {towerID}) 타워가 소환되었습니다!");
-
-            // 5. 방금 치트로 소환된 타워 때문에 시너지가 발동될 수 있으므로 검사
-            // CheckTowerSynergy();
+            EvaluateSynergyTowers();
         }
         else
         {

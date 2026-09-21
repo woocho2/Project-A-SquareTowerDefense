@@ -112,7 +112,7 @@ public class TowerController : MonoBehaviour
         // 타워가 생성된 셀의 행동력 타일 효과까지 반영해 첫 행동력부터 맞춥니다.
         m_remainingAction = GetFinalAction();
 
-        m_towerVisual?.Apply(m_towerData);
+        m_towerVisual?.Apply(m_towerData.VisualTowerID);
 
         if (m_debuffZoneChild != null)
         {
@@ -140,6 +140,11 @@ public class TowerController : MonoBehaviour
                     debuffAction.BindZone(m_debuffZoneChild, transform, GetFinalStats());
                 }
                 m_attackAction = debuffAction;
+                break;
+
+            // 시너지 타워는 생성·표시 전용이다. 공격/버프/디버프 행동을 만들지 않는다.
+            case AttackType.None:
+                m_attackAction = null;
                 break;
         }
 

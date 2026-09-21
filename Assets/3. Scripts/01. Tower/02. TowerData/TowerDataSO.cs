@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum AttackType { Splash, Target, Buff, Debuff }
+public enum AttackType { Splash, Target, Buff, Debuff, None }
 public enum BuffTarget { None, Sword, Bow, Shield, Spear, Axe, Hammer, Fire, Ice, Electricity, Wind, Earth, Light, Darkness, AttackCount }
 public enum DebuffTarget { None, Sword, Bow, Shield, Spear, Axe, Hammer, Fire, Ice, Electricity, Wind, Earth, Light, Darkness }
 public enum TargetPriority { Default, Closest, First, Last, Strongest, Weakest }
@@ -30,6 +30,8 @@ public class TowerData : ScriptableObject
     public GameObject towerPrefab;
     public GameObject projectilePrefab;
     public int towerID;
+    [Tooltip("0이면 towerID를 그대로 외형 ID로 사용합니다. 시너지 타워처럼 논리 ID와 외형 조합이 다른 경우에만 지정합니다.")]
+    public int visualTowerID;
     public string towerName;
     public int towerLevel;
     public float power;
@@ -59,6 +61,8 @@ public class TowerData : ScriptableObject
     public LayerMask pathLayer;
 
     public DebuffZone debuffZonePrefab;
+
+    public int VisualTowerID => visualTowerID > 0 ? visualTowerID : towerID;
 
     /// <summary>
     /// 기본 타워 데이터를 런타임에서 사용하는 TowerStats 구조체로 변환합니다.

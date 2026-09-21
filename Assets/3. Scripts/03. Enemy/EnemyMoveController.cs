@@ -25,9 +25,6 @@ public class EnemyMovementController : MonoBehaviour
     private bool m_reverseNextDice;
 
     private float m_speedMultiplier = 1f;
-#if false // Synergy system temporarily disabled
-    private float m_synergySlow = 1f;
-#endif
 
     private EnemyHealthController m_health;
     private SpriteRenderer m_spriteRenderer;
@@ -385,7 +382,4 @@ public class EnemyMovementController : MonoBehaviour
         }
         return closestIndex;
     }
-#if false // Synergy system temporarily disabled
-    public void SetSynergySlow(float slow) => m_synergySlow = slow;
-#endif
 }

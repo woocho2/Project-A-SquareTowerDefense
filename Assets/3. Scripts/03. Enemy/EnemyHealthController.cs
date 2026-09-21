@@ -13,9 +13,6 @@ public class EnemyHealthController : MonoBehaviour
     private float m_baseDefend;
     private float m_defendMultiplier = 1f;
     private float m_vulnerabilityMultiplier = 1f;
-#if false // Synergy system temporarily disabled
-    private float m_synergyWeak = 1f;
-#endif
 
     private EnemyMovementController m_movement;
     private EnemyDebuffController m_debuff;
@@ -168,10 +165,6 @@ public class EnemyHealthController : MonoBehaviour
         m_currentHP = Mathf.Min(m_currentHP, m_maxHP);
         if (m_uiController != null) m_uiController.SetHPBar(m_currentHP, m_maxHP);
     }
-#if false // Synergy system temporarily disabled
-    public void SetSynergyWeak(float weak) => m_synergyWeak = weak;
-#endif
-
     private void ShowHPBar()
     {
         if (m_hpBar != null)
