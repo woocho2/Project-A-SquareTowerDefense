@@ -47,7 +47,6 @@ public class EnemyDebuffController : MonoBehaviour
         {
             case DebuffTarget.Fire:
                 // 불 장판의 첫 피해는 스택이 적용된 현재 행동 턴에 즉시 보여줍니다.
-                m_health.ApplyDamage(m_health.MaxHP * TierValue(state.Tier, .5f, 1.5f, 4.5f, 13.5f, 40.5f) / 100f);
                 break;
             case DebuffTarget.Sword:
                 state.Stack = Mathf.Min(10, state.Stack + 1);

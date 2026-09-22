@@ -255,10 +255,10 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 6d2a38d11b9246deb88024059d29b69e, type: 3}
   - {fileID: 21300000, guid: 28a604edf9364dd48e60d0708a8b3c26, type: 3}
   m_colorSprites:
-  - {fileID: 21300000, guid: d3398f2c8503d2149a939a30a2dbad57, type: 3}
-  - {fileID: 21300000, guid: 3e7cd68643b3ea84fbb0fe1d2b42c4f0, type: 3}
-  - {fileID: 21300000, guid: e7dd9fec8f6de1b4982681bc52fdfef9, type: 3}
-  - {fileID: 21300000, guid: 80d45b2d6b5513e42b2f2b1cd3569203, type: 3}
+  - {fileID: 21300000, guid: 674dbc4cd34f4517aa7a96d7974a47aa, type: 3}
+  - {fileID: 21300000, guid: 991f7f2cff274d7fbc91f9738ea25c10, type: 3}
+  - {fileID: 21300000, guid: 510cc7ebf23f4c1ca383ddfc126afb20, type: 3}
+  - {fileID: 21300000, guid: be446db533414e738eb6a1146d027173, type: 3}
   m_emblemSprites:
   - {fileID: 21300000, guid: 2f28e01ce08c5bb4bbabef926aff6ed2, type: 3}
   - {fileID: 21300000, guid: 2c62765ad9baadc47a9bb8b3dcabcb2e, type: 3}
@@ -536,7 +536,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 3e7cd68643b3ea84fbb0fe1d2b42c4f0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 991f7f2cff274d7fbc91f9738ea25c10, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

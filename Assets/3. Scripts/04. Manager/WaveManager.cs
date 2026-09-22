@@ -81,17 +81,21 @@ public class WaveManager : MonoBehaviour
         List<EnemyType> enemies = new List<EnemyType>();
         if (wave < 1 || wave > 40) return enemies;
 
-        int baseWave = ((wave - 1) % 10) + 1;
-        int cycle = (wave - 1) / 10;
+        int baseWave = wave % 10;
+        int cycleIndex = (wave - 1) / 10;
+        
 
-        if (baseWave == 10)
+        if (baseWave == 0)
         {
             enemies.Add(EnemyType.Boss);
             return enemies;
         }
 
-        int singleTypeCount = 4 + (cycle * 2);
-        int mixedTypeCount = 2 + cycle;
+        int turnPerWave = 5;
+        int enemiesPerTurn = 2 * (cycleIndex + 1);
+
+        int singleTypeCount = turnPerWave * enemiesPerTurn;
+        int mixedTypeCount = turnPerWave;
 
         switch (baseWave)
         {
@@ -135,50 +139,58 @@ public class WaveManager : MonoBehaviour
     {
         int subWave = m_currentWave % 10;
         if (subWave == 0) subWave = 10;
-
-        hpMulti = subWave switch
+      
+        float subWaveHp = subWave switch
         {
             1 => 1.0f,
-            2 => 1.1f,
-            3 => 1.25f,
-            4 => 1.45f,
-            5 => 1.75f,
-            6 => 2.0f,
-            7 => 2.25f,
-            8 => 2.45f,
-            9 => 2.7f,
+            2 => 1.5f,
+            3 => 2.0f,
+            4 => 2.5f,
+            5 => 3.0f,
+            6 => 3.5f,
+            7 => 4.0f,
+            8 => 4.5f,
+            9 => 5.0f,
             10 => 1.0f,
             _ => 1.0f
         };
 
-        defendMulti = subWave switch
+        float subWaveDefend = subWave switch
         {
             1 => 1.0f,
             2 => 1.0f,
-            3 => 1.2f,
-            4 => 1.6f,
-            5 => 2.0f,
-            6 => 2.4f,
-            7 => 2.6f,
-            8 => 2.9f,
-            9 => 3.5f,
+            3 => 1.0f,
+            4 => 1.0f,
+            5 => 1.0f,
+            6 => 2.0f,
+            7 => 2.0f,
+            8 => 2.0f,
+            9 => 2.0f,
             10 => 1.0f,
             _ => 1.0f
         };
 
-        hpMulti *= m_currentWave switch
+        GetCycleMultiplier(m_currentWave, out float cycleHp, out float cycleDefend);
+        
+        hpMulti = subWaveHp * cycleHp;
+        defendMulti = subWaveDefend * cycleDefend;
+    }
+
+    public void GetCycleMultiplier(int wave, out float hpMulti, out float defendMulti)
+    {
+        hpMulti = wave switch
         {
-            > 30 => 8.0f,
-            > 20 => 4.0f,
-            > 10 => 2.0f,
+            >30 => 8.0f,
+            >20 => 4.0f,
+            >10 => 2.0f,
             _ => 1.0f
         };
 
-        defendMulti *= m_currentWave switch
+        defendMulti = wave switch
         {
-            > 30 => 2.5f,
-            > 20 => 1.7f,
-            > 10 => 1.2f,
+            >30 => 4.0f,
+            >20 => 3.0f,
+            >10 => 2.0f,
             _ => 1.0f
         };
     }
@@ -208,9 +220,9 @@ public class WaveManager : MonoBehaviour
 
         float middleBossDefendMulti = m_currentWave switch
         {
-            >= 15 and <= 17 => 1.2f,
-            >= 25 and <= 27 => 1.5f,
-            >= 35 and <= 37 => 3.0f,
+            >= 15 and <= 17 => 2.0f,
+            >= 25 and <= 27 => 3.0f,
+            >= 35 and <= 37 => 4.0f,
             _ => 1.0f
         };
 
@@ -236,7 +248,6 @@ public class WaveManager : MonoBehaviour
         MiddleBossSummonAvailabilityChanged?.Invoke();
     }
 
-    public int GetEnemyCount() => m_activeEnemyCount;
     public int GetEnemiesPerWave() => GetWaveEnemyComposition(m_currentWave).Count;
     public int GetWave() => m_currentWave;
 

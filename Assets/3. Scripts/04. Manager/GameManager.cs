@@ -25,8 +25,7 @@ public class GameManager : MonoBehaviour
     [Header("에너미 턴 연출 속도")]
     [SerializeField, Min(0f)] private float m_towerAttackResolutionDelay = 0.2f;
     [SerializeField, Min(0.1f)] private float m_projectileWaitTimeout = 10f;
-    [Tooltip("같은 웨이브에서 다음 적이 소환되기 전 대기 시간(초)")]
-    [SerializeField, Min(0f)] private float m_enemySpawnInterval = 0.5f;
+
 
     public TurnState CurrentState { get; private set; } = TurnState.None;
     public bool CanPerformPlayerAction => m_currentTurnState != null && m_currentTurnState.CanPerformPlayerAction;
@@ -103,12 +102,6 @@ public class GameManager : MonoBehaviour
         {
             if (CurrentState == TurnState.GameOver || CurrentState == TurnState.GameClear) yield break;
             yield return StartCoroutine(EnemyTurnRoutine());
-
-            // 마지막 적 뒤에는 다음 웨이브로 바로 넘어가고, 적과 적 사이에만 대기합니다.
-            if (i < enemyTurns - 1 && m_enemySpawnInterval > 0f)
-            {
-                yield return new WaitForSeconds(m_enemySpawnInterval);
-            }
         }
 
         if (WaveManager.Instance != null)
@@ -158,14 +151,16 @@ public class GameManager : MonoBehaviour
     {
         ChangeState(new EnemyTurnState());
 
-        // 단계 1: 타워의 투사체가 실제로 명중한 뒤에만 적 이동을 시작합니다.
-        yield return StartCoroutine(ProcessTowerAttacks());
-
-        // 단계 2: 신규 몬스터 소환 및 전체 몬스터 이동
+        // 단계 1: 적 소환 및 이동
         yield return StartCoroutine(ProcessEnemyMovement());
 
-        // 단계 3: 몬스터 아래 타일 검사 및 턴 기반 디버프 처리
+        // 단계 2: 이동한 타일의 스탯형 버프/디버프 적용
         yield return StartCoroutine(ProcessTileBuffs());
+
+        // 단계 3: 타워 행동 및 투사체 명중 처리
+        yield return StartCoroutine(ProcessTowerAttacks());
+        // 단계 4: 타워 공격 이후 피해형 디버프 처리
+        yield return StartCoroutine(ProcessDamageDebuffs());
 
         // 몬스터 턴 종료 (다음 루프에서 자동으로 플레이어 턴 시작)
         yield return new WaitForSeconds(0.3f);
@@ -189,6 +184,11 @@ public class GameManager : MonoBehaviour
     private IEnumerator ProcessTileBuffs()
     {
         EnemyManager.Instance?.ApplyAllTileBuffs();
+        yield return null;
+    }
+
+    private IEnumerator ProcessDamageDebuffs()
+    {
         EnemyManager.Instance?.AdvanceAllDebuffTurns();
         yield return null;
     }

@@ -161,7 +161,6 @@ public class EnemyMovementController : MonoBehaviour
             m_tilePath.RegisterEnemyAtIndex(m_health, m_currentTileIndex);
         }
         m_isMoving = false;
-        CheckAndApplyTileBuff();
     }
 
     private IEnumerator MoveStepsRoutine(int steps)
@@ -198,8 +197,7 @@ public class EnemyMovementController : MonoBehaviour
             yield break;
         }
 
-        // 이동 정지 시 기존 버프 초기화 후 정지 타일의 버프 적용
-        CheckAndApplyTileBuff();
+        // 타일 효과는 모든 적의 이동이 끝난 뒤 EnemyManager가 한 번만 적용한다.
     }
 
     public void StopMovement()
