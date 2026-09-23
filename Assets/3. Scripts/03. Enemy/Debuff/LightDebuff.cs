@@ -6,7 +6,7 @@ public class LightDebuff : DebuffBase
     public LightDebuff(float duration, float executionThresholdPercent)
         : base(DebuffTarget.Light, duration, executionThresholdPercent) { }
 
-    public override void OnUpdate(EnemyHealthController health, EnemyMovementController movement, float deltaTime)
+    public override void OnUpdate(EnemyHealthController health, EnemyMoveController movement, float deltaTime)
     {
         base.OnUpdate(health, movement, deltaTime);
 

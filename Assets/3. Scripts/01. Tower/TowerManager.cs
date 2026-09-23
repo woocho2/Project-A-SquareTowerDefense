@@ -387,6 +387,82 @@ public class TowerManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Runs exactly once per enemy turn before support actions.  Status duration is
+    /// target-owned, while tile records from the previous turn expire here.
+    /// </summary>
+    public void BeginEnemyTurnForTowers()
+    {
+        List<KeyValuePair<Vector3Int, GridTowerInfo>> orderedTowers = GetOrderedTowers();
+        TileManager.Instance?.AdvanceTowerBuffEffectTurns();
+        foreach (KeyValuePair<Vector3Int, GridTowerInfo> tower in orderedTowers)
+        {
+            tower.Value.Controller?.AdvanceBuffTurn();
+            tower.Value.Controller?.AdvanceFireStatusTurn();
+        }
+    }
+
+    /// <summary>Support towers act before enemies read path effects this turn.</summary>
+    public IEnumerator ExecuteSupportTowerActionTurnRoutine()
+    {
+        List<KeyValuePair<Vector3Int, GridTowerInfo>> orderedTowers = GetOrderedTowers();
+        foreach (KeyValuePair<Vector3Int, GridTowerInfo> tower in orderedTowers)
+        {
+            TowerController controller = tower.Value.Controller;
+            TowerData data = controller != null ? controller.GetTowerData() : null;
+            if (data == null || (data.attackType != AttackType.Buff && data.attackType != AttackType.Debuff)) continue;
+
+            controller.ExecuteTurnAction();
+        }
+
+        // A Fire field is only a delivery record.  Each target reads it once here,
+        // after all support towers have placed their effects.
+        foreach (KeyValuePair<Vector3Int, GridTowerInfo> tower in orderedTowers)
+        {
+            tower.Value.Controller?.RefreshFireTileStatus();
+        }
+        yield return null;
+    }
+
+    /// <summary>Damage towers act after support and tile effects have resolved.</summary>
+    public IEnumerator ExecuteAttackTowerActionTurnRoutine()
+    {
+        List<KeyValuePair<Vector3Int, GridTowerInfo>> orderedTowers = GetOrderedTowers();
+        foreach (KeyValuePair<Vector3Int, GridTowerInfo> tower in orderedTowers)
+        {
+            TowerController controller = tower.Value.Controller;
+            TowerData data = controller != null ? controller.GetTowerData() : null;
+            if (data == null || (data.attackType != AttackType.Splash && data.attackType != AttackType.Target)) continue;
+
+            // Fire Splash skill 2 checks its own Duration counter independently of
+            // the basic action gauge, then the normal skill 1 attack follows.
+            controller.TryTriggerFireMeteor();
+            bool didAct = controller.ExecuteTurnAction();
+            if (!didAct && (GlobalProjectileManager.Instance == null || !GlobalProjectileManager.Instance.HasActiveProjectiles())) continue;
+
+            while (GlobalProjectileManager.Instance != null && GlobalProjectileManager.Instance.HasActiveProjectiles())
+            {
+                yield return null;
+            }
+
+            if (m_nextAttackTowerDelay > 0f)
+            {
+                yield return new WaitForSeconds(m_nextAttackTowerDelay);
+            }
+        }
+    }
+
+    private List<KeyValuePair<Vector3Int, GridTowerInfo>> GetOrderedTowers()
+    {
+        List<KeyValuePair<Vector3Int, GridTowerInfo>> orderedTowers = new List<KeyValuePair<Vector3Int, GridTowerInfo>>(m_towersOnGrid);
+        orderedTowers.Sort((left, right) =>
+        {
+            int rowComparison = right.Key.y.CompareTo(left.Key.y);
+            return rowComparison != 0 ? rowComparison : left.Key.x.CompareTo(right.Key.x);
+        });
+        return orderedTowers;
+    }
+
+    /// <summary>
     /// 공격 타워는 자신의 투사체가 모두 명중하거나 회수된 뒤 지정된 간격만큼 기다리고 다음 공격 타워로 넘어갑니다.
     /// 버프/디버프 타워는 이 대기 계산에서 제외하며 자기 순서에 즉시 행동합니다.
     /// </summary>
@@ -708,7 +784,7 @@ public class TowerManager : MonoBehaviour
             return;
         }
 
-        float currentUpgradeGemCost = Mathf.Pow(2 , currentStats.Level);
+        int currentUpgradeGemCost = (int)Mathf.Pow(2, currentStats.Level);
 
         if (!CurrencyManager.Instance.HasEnoughGem(currentUpgradeGemCost))
         {

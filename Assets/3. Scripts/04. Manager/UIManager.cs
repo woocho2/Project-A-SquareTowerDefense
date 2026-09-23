@@ -4,8 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Tilemaps;
 
+/// <summary>
+/// 인게임 HUD, 플레이어 행동 버튼, 타워/타일 정보 패널과 게임 종료 패널을 관리합니다.
+/// 게임 규칙을 직접 결정하지 않고 각 매니저의 상태를 표시하거나 사용자 입력을 전달합니다.
+/// </summary>
 public class UIManager : MonoBehaviour
 {
+    #region Singleton and Inspector References
+
     public static UIManager Instance { get; private set; }
 
     [Header("UI Game Info")]
@@ -68,6 +74,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] RectTransform m_tileDebuffContent;
     [Tooltip("버프 한 줄을 표시하는 UI 프리팹. 하위에 TextMeshProUGUI 하나가 필요합니다.")]
     [SerializeField] GameObject m_tileBuffEntryPrefab;
+    public GameObject TileBuffEntryPrefab => m_tileBuffEntryPrefab;
     [Tooltip("디버프 한 줄을 표시하는 UI 프리팹. 하위에 TextMeshProUGUI 하나가 필요합니다.")]
     [SerializeField] GameObject m_tileDebuffEntryPrefab;
     [Tooltip("선택 사항: 버프 목록만 스크롤할 ScrollRect")]
@@ -81,6 +88,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] Button[] m_btnChangeTowerInfoPanels = System.Array.Empty<Button>();
     [Tooltip("두 정보 패널 안에 있는 '타일 정보로 전환' 버튼들을 모두 넣습니다.")]
     [SerializeField] Button[] m_btnChangeTileInfoPanels = System.Array.Empty<Button>();
+
+    [Header("UI Enemy Info")]
+    [Tooltip("패스 타일을 클릭했을 때 표시할 적 정보 패널")]
+    [SerializeField] GameObject m_enemyInfoPanel;
+    [SerializeField] EnemyInfoPanelUI m_enemyInfoPanelUI;
 
     [Header("UI Option")]
     [SerializeField] GameObject m_panelOption;
@@ -109,6 +121,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] string m_sceneName_Restart;
     [SerializeField] string m_sceneName_Menu;
 
+    #endregion
+
+    #region Runtime State
+
     private TowerController m_selectedTower;
     private Vector3Int m_selectedTowerInfo;
 
@@ -132,6 +148,10 @@ public class UIManager : MonoBehaviour
         TargetPriority.Last
     };
 
+    #endregion
+
+    #region Lifecycle and Binding
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -141,6 +161,21 @@ public class UIManager : MonoBehaviour
         }
 
         Instance = this;
+
+        if (m_enemyInfoPanel == null)
+        {
+            m_enemyInfoPanel = GameObject.Find("EnemyInfoPanel");
+        }
+
+        if (m_enemyInfoPanel != null)
+        {
+            if (m_enemyInfoPanelUI == null)
+            {
+                m_enemyInfoPanelUI = m_enemyInfoPanel.GetComponent<EnemyInfoPanelUI>();
+                if (m_enemyInfoPanelUI == null) m_enemyInfoPanelUI = m_enemyInfoPanel.AddComponent<EnemyInfoPanelUI>();
+            }
+        }
+
         FindUITexts();
     }
 
@@ -234,6 +269,12 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         InitUI();
+
+        if (CurrencyManager.Instance != null)
+        {
+            CurrencyManager.Instance.CurrencyChanged += RefreshCurrencyLabels;
+            RefreshCurrencyLabels();
+        }
 
         if (GameManager.Instance != null)
         {
@@ -419,6 +460,11 @@ public class UIManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (CurrencyManager.Instance != null)
+        {
+            CurrencyManager.Instance.CurrencyChanged -= RefreshCurrencyLabels;
+        }
+
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnShieldChanged -= RefreshShieldPoints;
@@ -426,7 +472,7 @@ public class UIManager : MonoBehaviour
 
         if (m_waveManager != null)
         {
-            m_waveManager.MiddleBossSummonAvailabilityChanged -= RefreshMiddleBossSummonButton;
+            m_waveManager.MiddleBossSummonableChanged -= RefreshMiddleBossSummonButton;
         }
 
         if (Instance == this)
@@ -450,7 +496,7 @@ public class UIManager : MonoBehaviour
         m_waveManager = WaveManager.Instance;
         if (m_waveManager != null)
         {
-            m_waveManager.MiddleBossSummonAvailabilityChanged += RefreshMiddleBossSummonButton;
+            m_waveManager.MiddleBossSummonableChanged += RefreshMiddleBossSummonButton;
         }
 
         RefreshMiddleBossSummonButton();
@@ -479,6 +525,10 @@ public class UIManager : MonoBehaviour
             }
         }
     }
+
+    #endregion
+
+    #region General UI Actions and Cost Labels
 
     void RestartGameLogic()
     {
@@ -575,6 +625,10 @@ public class UIManager : MonoBehaviour
             }
         }
     }
+
+    #endregion
+
+    #region Tower Information
 
     public void RefreshUpgradeTowerInfoLabel()
     {
@@ -874,11 +928,38 @@ public class UIManager : MonoBehaviour
         };
     }
 
+    #endregion
+
+    #region HUD and Selection
+
+    /// <summary>CurrencyManager의 현재 보유 재화를 HUD에 반영합니다.</summary>
+    private void RefreshCurrencyLabels()
+    {
+        RefreshGoldLabel();
+        RefreshGemLabel();
+    }
+
+    private void RefreshGoldLabel()
+    {
+        if (m_txtCurrentGold != null && CurrencyManager.Instance != null)
+        {
+            m_txtCurrentGold.text = CurrencyManager.Instance.GetCurrentGold().ToString();
+        }
+    }
+
+    private void RefreshGemLabel()
+    {
+        if (m_txtCurrentGem != null && CurrencyManager.Instance != null)
+        {
+            m_txtCurrentGem.text = CurrencyManager.Instance.GetCurrentGem().ToString();
+        }
+    }
+
     private void UpdateWaveUI()
     {
         if (WaveManager.Instance != null)
         {
-            int currentWave = WaveManager.Instance.GetWave();
+            int currentWave = WaveManager.Instance.CurrentWave;
 
             if (m_txtCurrentWaveIndex != null)
             {
@@ -898,6 +979,7 @@ public class UIManager : MonoBehaviour
         if (m_btnOption != null) m_btnOption.gameObject.SetActive(true);
         if (m_towerInfoPanel != null) m_towerInfoPanel.SetActive(false);
         if (m_tileInfoPanel != null) m_tileInfoPanel.SetActive(false);
+        HideEnemyInfoPanel();
         RefreshInfoPanelSwitchButtons();
 
         currentLifeIndex = m_LifePoints.Length - 1;
@@ -953,6 +1035,7 @@ public class UIManager : MonoBehaviour
     private void ShowTowerpanel(TowerController clickedTower)
     {
         HideTileInfoPanel();
+        HideEnemyInfoPanel();
         m_selectedTower = clickedTower;
         m_selectedTowerInfo = TowerManager.Instance.WorldToCell(clickedTower.transform.position);
 
@@ -998,17 +1081,20 @@ public class UIManager : MonoBehaviour
 
         if (TryGetTowerSpawnTileAtWorldPosition(worldPosition, out Vector3Int towerCell))
         {
+            HideEnemyInfoPanel();
             ShowTileInfoPanel(towerCell, true);
             return;
         }
 
         if (TileManager.Instance != null && TileManager.Instance.TryGetPathCellAtWorldPosition(worldPosition, out Vector3Int pathCell))
         {
-            ShowTileInfoPanel(pathCell, false);
+            HideTileInfoPanel();
+            ShowEnemyInfoPanel(pathCell);
             return;
         }
 
         HideTileInfoPanel();
+        HideEnemyInfoPanel();
     }
 
     private static bool TryGetTowerSpawnTileAtWorldPosition(Vector3 worldPosition, out Vector3Int cell)
@@ -1029,6 +1115,7 @@ public class UIManager : MonoBehaviour
     private void ShowTileInfoPanel(Vector3Int cell, bool isTowerSpawnTile)
     {
         if (m_tileInfoPanel == null) return;
+        HideEnemyInfoPanel();
 
         m_selectedTileCell = cell;
         m_selectedTileIsTowerSpawn = isTowerSpawnTile;
@@ -1104,6 +1191,52 @@ public class UIManager : MonoBehaviour
         RefreshInfoPanelSwitchButtons();
     }
 
+    public void ShowEnemyInfoPanel(Vector3Int pathCell)
+    {
+        HideTowerPanel();
+        HideTileInfoPanel();
+
+        m_selectedTileCell = pathCell;
+        m_selectedTileIsTowerSpawn = false;
+        m_hasSelectedTile = true;
+
+        if (m_enemyInfoPanel == null)
+        {
+            m_enemyInfoPanel = GameObject.Find("EnemyInfoPanel");
+        }
+
+        if (m_enemyInfoPanel != null)
+        {
+            if (m_enemyInfoPanelUI == null)
+            {
+                m_enemyInfoPanelUI = m_enemyInfoPanel.GetComponent<EnemyInfoPanelUI>();
+                if (m_enemyInfoPanelUI == null) m_enemyInfoPanelUI = m_enemyInfoPanel.AddComponent<EnemyInfoPanelUI>();
+            }
+
+            int pathIndex = TilePath.Instance != null ? TilePath.Instance.GetPathIndexAtGridPosition(pathCell) : -1;
+            m_enemyInfoPanelUI.OpenForTile(pathCell, pathIndex);
+        }
+
+        RefreshInfoPanelSwitchButtons();
+    }
+
+    public void HideEnemyInfoPanel()
+    {
+        if (m_enemyInfoPanelUI != null)
+        {
+            m_enemyInfoPanelUI.Hide();
+        }
+        else if (m_enemyInfoPanel != null && m_enemyInfoPanel.activeSelf)
+        {
+            m_enemyInfoPanel.SetActive(false);
+        }
+        RefreshInfoPanelSwitchButtons();
+    }
+
+    #endregion
+
+    #region Info Panel Switching and Tile Entries
+
     private void BindInfoPanelSwitchButtons()
     {
         foreach (Button button in m_btnChangeTowerInfoPanels)
@@ -1120,11 +1253,31 @@ public class UIManager : MonoBehaviour
             button.onClick.AddListener(SwitchToTileInfoPanel);
         }
 
+        if (m_enemyInfoPanel != null)
+        {
+            Button[] enemyButtons = m_enemyInfoPanel.GetComponentsInChildren<Button>(true);
+            foreach (Button button in enemyButtons)
+            {
+                if (button.name.Contains("Tower"))
+                {
+                    button.onClick.RemoveAllListeners();
+                    button.onClick.AddListener(SwitchToTowerInfoPanel);
+                }
+                else if (button.name.Contains("Tile"))
+                {
+                    button.onClick.RemoveAllListeners();
+                    button.onClick.AddListener(SwitchToTileInfoPanel);
+                }
+            }
+        }
+
         RefreshInfoPanelSwitchButtons();
     }
 
     private void SwitchToTowerInfoPanel()
     {
+        HideEnemyInfoPanel();
+
         if (m_selectedTower != null && !m_selectedTower.Equals(null))
         {
             ShowTowerpanel(m_selectedTower);
@@ -1143,6 +1296,8 @@ public class UIManager : MonoBehaviour
 
     private void SwitchToTileInfoPanel()
     {
+        HideEnemyInfoPanel();
+
         if (m_selectedTower != null && !m_selectedTower.Equals(null) && TowerManager.Instance != null)
         {
             ShowTileInfoPanel(TowerManager.Instance.WorldToCell(m_selectedTower.transform.position), true);
@@ -1165,6 +1320,7 @@ public class UIManager : MonoBehaviour
     {
         bool isTowerInfoOpen = m_towerInfoPanel != null && m_towerInfoPanel.activeSelf;
         bool isTileInfoOpen = m_tileInfoPanel != null && m_tileInfoPanel.activeSelf;
+        bool isEnemyInfoOpen = m_enemyInfoPanel != null && m_enemyInfoPanel.activeSelf;
 
         foreach (Button button in m_btnChangeTowerInfoPanels)
         {
@@ -1174,6 +1330,16 @@ public class UIManager : MonoBehaviour
         foreach (Button button in m_btnChangeTileInfoPanels)
         {
             if (button != null) button.interactable = !isTileInfoOpen;
+        }
+
+        if (m_enemyInfoPanel != null)
+        {
+            Button[] enemyButtons = m_enemyInfoPanel.GetComponentsInChildren<Button>(true);
+            foreach (Button button in enemyButtons)
+            {
+                if (button.name.Contains("Tower")) button.interactable = !isTowerInfoOpen;
+                else if (button.name.Contains("Tile")) button.interactable = !isTileInfoOpen;
+            }
         }
     }
 
@@ -1260,6 +1426,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region Tower Actions
+
     private void SellSelectedTower()
     {
         if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction)
@@ -1313,6 +1483,10 @@ public class UIManager : MonoBehaviour
     /// 턴 상태가 바뀔 때 행동 UI만 표시하거나 숨깁니다.
     /// 타워/적 정보 패널은 건드리지 않으므로 적 턴에도 정보를 확인할 수 있습니다.
     /// </summary>
+    #endregion
+
+    #region Player Action and Game Result UI
+
     public void SetPlayerActionUI(bool isVisible)
     {
         m_isPlayerActionUIVisible = isVisible;
@@ -1394,4 +1568,6 @@ public class UIManager : MonoBehaviour
             m_panelGameclear.SetActive(true);
         }
     }
+
+    #endregion
 }

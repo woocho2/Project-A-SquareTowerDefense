@@ -1,0 +1,1941 @@
+24. TowerDefense2 — 전체 스크립트 결합도와 호출 흐름 점검
+작성일: 2026-09-23
+대상: 현재 작업 폴더에 실제로 저장된 코드. 이전 대화의 계획이 아니라 현재 구현을 기준으로 함.
+목적: 코드를 어디서부터 읽어야 하는지, 무엇을 바꾸면 어디에 영향이 가는지 파악하기.
+작업 범위: 분석 및 이 문서 작성만 수행. C#·프리팹·씬·CSV는 수정하지 않음.
+
+======================================================================
+0. 이 문서를 읽는 방법 / 조사 범위
+======================================================================
+
+처음부터 부록까지 전부 읽을 필요는 없습니다.
+1) 1장의 핵심 요약 → 2장의 실제 턴 순서부터 읽습니다.
+2) 이해하려는 기능이 생기면 3장의 결합 사례를 봅니다.
+3) 특정 파일을 수정하기 직전에는 7장의 해당 파일 항목을 찾습니다.
+4) 부록의 '들어오는 참조'는 함께 점검할 후보입니다. 모두 실행되는 호출자는 아닙니다.
+
+검사한 자체 C# 파일: 총 69개.
+- Assets/3. Scripts: 61개. 이 안에 CSV 에디터 임포터 1개가 포함됨.
+- Assets/Editor: 8개.
+- DOTween 등 외부 플러그인 구현과 Unity/패키지 내부는 파일별 감사 대상에서 제외.
+  단, 자체 코드가 엔진·플러그인·씬·프리팹에 의존하는 부분은 포함.
+- .unity/.prefab/.asset의 스크립트 GUID 참조, 애니메이션 이벤트도 보조 확인.
+
+검증 수준:
+- 현재 소스의 정적 분석 및 주요 실행 흐름 수동 추적.
+- Unity 실행, 실제 장면의 전체 오브젝트 상태, 플레이 테스트는 수행하지 않음.
+- '확인 사실'과 '실행 조건에 따라 발생 가능한 위험'을 구분함.
+- 파일별 참조 수는 주석·문자열을 제외한 자체 타입 이름 참조를 파일 단위로 집계한 값.
+  변수의 실제 호출 대상, 리플렉션, Unity 직렬화 전체를 해석한 C# 컴파일러 결과는 아님.
+- 같은 파일의 enum/struct만 사용해도 그 파일을 참조한 것으로 집계됨.
+  따라서 참조 수를 결합도의 점수나 버그 수로 읽으면 안 됨.
+- 본문 및 부록의 줄 번호는 작성 시점 기준. 코드 수정 후에는 메서드 이름으로 검색할 것.
+
+용어:
+- 나가는 참조: 이 파일이 알고 있는 다른 파일.
+- 들어오는 참조: 이 파일의 타입을 알고 있는 다른 파일.
+- 강한 결합: 상대의 구체 구현·전역 상태·내부 순서까지 알아야 제대로 동작.
+- 중간 결합: 구체 타입/공유 데이터에 연결되지만 역할 경계가 비교적 분명.
+- 약한 결합: 단순 값·인터페이스·콜백 등 제한된 약속만 공유.
+- 숨은 결합: 코드 호출 대신 오브젝트 이름, 배열 순서, CSV 열, 실행 시점 등에 의존.
+- 순환 참조: 서로의 타입을 알고 있는 구조. 무한 재귀를 뜻하는 것은 아님.
+
+======================================================================
+1. 결론: '파일이 나뉘어 있음'과 '역할이 분리되어 있음'은 다릅니다
+======================================================================
+
+현재 읽기 어려운 이유는 하나의 기능이 여러 파일로 분리된 것 자체보다,
+그 기능의 시작·종료·데이터 소유자가 서로 다른 곳에 분산되어 있기 때문입니다.
+
+특히 아래가 동시에 존재합니다.
+A. GameManager가 턴을 진행하지만, 종료 대기는 TowerManager와 투사체 관리자에도 있음.
+B. 적의 체력 담당이 보상, 승리 판정 통보, 풀 반환, 이동 정리까지 담당.
+C. TileManager가 상태 전달 데이터를 관리하고, 타워/적이 읽지만,
+   동시에 각 대상이 자기 스탯을 직접 덮어쓰는 예전 방식도 남아 있음.
+D. UI가 상태를 표시하는 동시에 생명 감소 표현과 게임오버 흐름도 일부 판단.
+E. TowerController에 공통 스탯, 구체 공격 생성, 불 스킬, 버프, 투사체 연출이 모임.
+F. 타입 참조가 거의 없는 파일도 씬 이름·리소스 경로·애니메이션 이벤트에는 강하게 연결됨.
+
+우선 읽을 중심 파일:
+- GameManager: 한 턴의 큰 순서.
+- TowerManager: 타워 전체 작업, 데이터, 경제/합성/시너지/행동 순서.
+- TowerController: 타워 1개의 실제 행동과 최종 스탯.
+- EnemyHealthController: 피해→사망→보상→클리어 통보→반환.
+- EnemyMoveController / EnemyDebuffController: 이동 규칙과 상태 변화.
+- TileManager / TilePath: '칸의 효과'와 '길/점유 정보'라는 서로 다른 책임.
+- UIManager: 화면 표시 외에도 게임 흐름으로 되돌아가는 연결이 많은 곳.
+
+좋은 분리도 있습니다.
+- DamageText는 구체 DamageTextPool 대신 IObjectPool을 받아 반환함.
+- EnemyListItemUI는 패널을 직접 알지 않고 선택 콜백을 받음.
+- CurrencyManager의 변경 이벤트로 UI가 갱신됨.
+- EnemyUIController → HPBarSlider는 목적이 좁은 연결.
+이런 연결까지 전부 이벤트나 인터페이스로 바꿀 필요는 없습니다.
+
+======================================================================
+2. 실제 실행 흐름: 위에서 아래로 따라 읽는 길
+======================================================================
+
+[2-1] 게임 시작과 한 웨이브
+
+GameManager.OnStartGame() [93]
+  → Idle 상태로 변경
+  → 기존 turnRoutine이 있으면 중지
+  → TurnLoopRoutine() [103]
+      → PlayerTurnRoutine() [144]
+          → Player 상태
+          → 턴 종료 버튼 입력을 기다림
+      → EnemyWaveRoutine() [114]
+          → 10번 EnemyTurnRoutine 실행
+          → 처음 5번만 shouldSpawn=true
+          → 종료 상태가 아니면 NextWave()
+          → 완료 웨이브 번호로 대지 타워 웨이브 처리
+      → 다시 플레이어 턴
+
+주의:
+- turnRoutine은 '누구 턴인가' 값이 아니라 실행 중인 코루틴을 가리키는 핸들입니다.
+- 현재 코드에서는 적 1턴마다 플레이어 턴이 오는 것이 아니라 10턴 후에 옵니다.
+- GameManager[187]의 '다음 루프에서 자동으로 플레이어 턴' 주석은 현재 웨이브
+  반복 구조를 충분히 설명하지 못합니다.
+- EnemyTurnRoutine 끝에 WaitForSeconds(0.3f)[188]가 현재 남아 있습니다.
+  흐름은 완료 대기를 사용하지만 모든 초 단위 대기가 제거된 상태는 아닙니다.
+
+[2-2] 적 1턴
+
+GameManager.EnemyTurnRoutine() [171]
+  ① ProcessEnemyMovement()
+      → EnemyManager.ProcessEnemyTurnRoutine()
+          → 필요할 때 WaveManager.SpawnWaveEnemiesForTurn()
+          → 적마다 EnemyMoveController.ProcessTurnMoveRoutine()
+          → 모든 이동 완료 대기
+
+  ② ProcessTowerSupport()
+      → TowerManager.BeginEnemyTurnForTowers()
+          → 이전 타일 버프 기록 및 타워 상태 시간 감소
+      → ExecuteSupportTowerActionTurnRoutine()
+          → 버프/디버프 타워 실행
+          → 모든 타워가 불 버프 타일 기록을 읽음
+
+  ③ ProcessTileBuffs()
+      → EnemyManager.ApplyAllTileBuffs()
+          → 적마다 EnemyMoveController.CheckAndApplyTileBuff()
+              → 기존 타일 스탯 초기화
+              → 도착 타일의 속도/방어/회복 적용
+              → EnemyDebuffController.RefreshTileDebuffs()
+
+  ④ ProcessTowerAttacks()
+      → TowerManager.ExecuteAttackTowerActionTurnRoutine()
+          → 타워별 불 메테오 확인
+          → 타워 기본 행동
+          → 활성 투사체가 없어질 때까지 대기
+      → GameManager의 추가 투사체 완료 확인
+
+  ⑤ ProcessDamageDebuffs()
+      → EnemyManager.AdvanceAllDebuffTurns()
+          → 적마다 EnemyDebuffController.AdvanceDebuffTurn()
+              → 상태 시간/도트 피해/조건부 즉사 처리
+
+핵심: 지원 타워 실행 → 타일 읽기 → 공격 → 도트라는 순서는 게임 규칙입니다.
+단순히 메서드 위치를 옮기는 것만으로도 같은 턴 적용 여부가 달라집니다.
+
+[2-3] 적 한 마리 생성
+
+EnemyManager
+  → WaveManager: 이번 턴에 무엇을 몇 마리 만들지 결정
+  → EnemyObjectPool2D.Spawn()
+      → 풀에서 객체 꺼내기 및 활성화
+      → 이전 디버프 정리
+      → 이동 초기화 / TilePath 등록
+      → EnemyManager에 적 등록
+      → 체력 초기화
+
+읽다가 EnemyManager로 다시 돌아오는 이유:
+소환을 요청한 관리자가 '생성된 적 목록'도 가지고 있기 때문입니다.
+이 경로 자체는 끝나는 등록 흐름이지 무한 반복 호출이 아닙니다.
+다만 풀 클래스가 이동·체력·상태 초기화와 전역 등록 순서까지 알고 있다는 결합이 있습니다.
+
+[2-4] 타워 한 발의 공격과 사망
+
+TowerManager
+  → TowerController.ExecuteTurnAction()
+  → TargetAttackAction / SplashAttackAction
+  → TowerAttackAction의 투사체 준비/발사 경로
+  → GlobalProjectileManager / ProjectileObjectPool2D
+  → ProjectileHit2D가 이동하여 명중 판정
+  → EnemyHealthController.ApplyDamage()
+      → 치명타 관련 디버프 반응
+      → 방어력 등을 반영한 피해
+      → HP 표시 / 대미지 텍스트
+      → 사망 시 Die()
+          → 공격 타워의 처치 반응
+          → CurrencyManager에 보상
+          → WaveManager에 사망 통보
+              → 조건을 만족하면 GameManager.OnGameClear()
+          → 상태/이동/점유 정리
+          → 풀 반환
+
+불 타겟 공격은 ProjectileHit2D에서 TowerController.NotifyFireTargetHit()로도 돌아옵니다.
+따라서 '피해 처리 하나'를 따라가면 타워·재화·웨이브·게임 종료까지 보이는 구조입니다.
+
+[2-5] 타일 효과의 전달
+
+BuffAction / DebuffAction
+  → TileManager: SourceID, 적용 버전, 좌표, 수치 등의 효과 기록
+      → TowerController: 타워가 받는 버프/스택 적용
+      → EnemyDebuffController: 적이 받는 디버프/스택 적용
+
+소유권을 구분해서 읽어야 합니다.
+- TilePath: 길의 순서와 적의 위치/점유.
+- TileManager: 그 위치에 전달할 효과 데이터.
+- TowerController / EnemyDebuffController: 각 대상에게 이미 적용된 상태와 스택.
+
+방향 자체는 사용자가 원한 '타일에 기록하고 대상이 읽는 구조'입니다.
+하지만 중복 적용 방지, 소스 제거, 지속 시간, 스택 갱신 시점까지 함께 맞아야 하므로
+지금은 세 영역 사이에 실행 순서 결합이 큽니다.
+
+======================================================================
+3. 강하게 결합된 부분: 근거 / 영향 / 분리 방향
+======================================================================
+
+[3-1] GameManager ↔ GameTurnState ↔ UIManager / 입력
+강도: 높음. 실제 동작·상태·화면을 양방향으로 연결.
+
+확인:
+- GameManager가 구체 PlayerTurnState/EnemyTurnState 등을 생성.
+- 상태 클래스가 UIManager, 드래그 취소, DebuffZone 취소, 카메라를 직접 조작.
+- UIManager도 GameManager를 호출.
+- UIManager.OnPlayerHit()[1520]가 자체 생명 아이콘 인덱스로 게임오버 화면을 결정.
+- GameManager.DecreaseLife()[306]도 실제 생명과 게임오버 상태를 관리.
+- UIManager.ShowGameOver()[1544]는 적 HP바를 숨기고 OnPauseGame()을 호출.
+  GameManager의 GameOver 상태 전환과 같은 일은 아님.
+
+영향:
+생명 판정과 화면 판정이 다른 경로로 움직일 수 있습니다.
+표시 코드 변경이 게임 흐름에 영향을 주며, 보스 도착 등의 예외를 따라가기 어렵습니다.
+
+권장:
+GameManager가 생명/종료의 원본 값을 소유하고, UI는 그 결과만 표시.
+상태 클래스는 턴의 허용 행동/진입·종료를 담당하되 화면 배치는 UI에 맡김.
+이때 모든 호출을 이벤트화할 필요는 없고 '표시 → 게임오버 재판정' 역방향부터 제거.
+
+[3-2] TowerManager ↔ TowerController ↔ 공격 클래스
+강도: 매우 높음. 여러 기능이 한 연결망에 포함됨.
+
+확인:
+- TowerManager는 CSV 읽기, 타워 생성, 비용, 배치, 판매, 합성, 강화, 시너지,
+  대지 타워 웨이브 효과, 공격 순서까지 담당.
+- TowerController는 구체 공격 클래스를 직접 new로 생성하고, 최종 스탯과 불 상태도 관리.
+- TowerController가 TowerManager의 공유 강화 상태를 읽거나 갱신하는 역방향도 존재.
+- TowerStats가 TowerController.cs 안에 선언되어 다른 계층도 컨트롤러 파일에 연결됨.
+- TowerData.ToTowerStats()는 공격 기반 클래스의 거리 변환 도우미에도 의존.
+
+영향:
+새 스킬이나 강화 규칙 하나를 넣어도 관리자·개별 타워·데이터·투사체까지 수정 후보가 됨.
+'공통 데이터 참조'와 '행동 책임 참조'가 같은 파일에 섞여 추적이 어렵습니다.
+
+권장 분리 순서:
+① TowerStats/enum 같은 순수 데이터부터 별도 파일로 분리.
+② CSV 로딩과 조회를 TowerDataCatalog 같은 데이터 전담 역할로 분리.
+③ 비용/강화/합성 규칙을 독립 계산 함수로 분리.
+④ 이후 타워 행동 실행과 배치 관리 분리.
+처음부터 모든 것을 새 매니저로 쪼개면 오히려 이동할 파일만 늘어납니다.
+
+[3-3] 불 스킬이 공통 코드에 직접 박힌 연결
+강도: 높음. 새 문양을 추가할 때 같은 결합이 반복될 가능성.
+
+확인:
+- TowerManager.ExecuteAttackTowerActionTurnRoutine()[438]이 TryTriggerFireMeteor() 호출.
+- TowerController.TryTriggerFireMeteor()[559]는 구체 SplashAttackAction을 사용.
+- ProjectileStats에 ownerTower, 불 메테오 여부가 있음.
+- ProjectileHit2D의 피해 경로가 화상/연소 배율을 조회하고 타워의 불 적중 함수 호출.
+- EnemyDebuffController도 불 상태 배율을 별도 메서드로 노출.
+
+영향:
+불은 작동 흐름을 이해하기 위한 첫 구현이지만, 이 형태로 원소를 계속 추가하면
+공통 클래스에 원소별 if/switch와 전용 함수가 계속 증가합니다.
+최근 추가된 불 코드도 분리 검토 대상이며 예외로 볼 수 없습니다.
+
+권장:
+공격 요청에 '피해 정보 + 명중 결과 통보'를 전달하고,
+불 스킬이 그 결과를 받아 자기 카운터를 처리하도록 책임 분리.
+투사체는 특정 원소 타워의 내부 카운터 이름을 모르는 쪽이 좋습니다.
+단, 명중 순간 피해가 들어가는 현재 연출 요구는 유지할 것.
+
+[3-4] 턴 완료 ↔ 투사체 생존 상태
+강도: 매우 높음. 시각 객체 수명이 전투 진행 조건이 됨.
+
+확인:
+- TowerManager[442]가 HasActiveProjectiles()를 제한 없이 기다림.
+- GlobalProjectileManager[117]는 씬의 활성 ProjectileHit2D 전체를 검색해서 셈.
+- GameManager.ProcessTowerAttacks()[227]의 추가 대기/안전 처리는
+  TowerManager 코루틴이 반환된 뒤 실행되는 구조.
+- 준비된 위성형 투사체도 활성 ProjectileHit2D이면 집계 대상에 들어갈 수 있음.
+
+위험:
+반환되지 않은 투사체 하나가 다음 타워와 턴 전체를 멈출 수 있음.
+안쪽 대기가 끝나지 않으면 바깥쪽 안전 대기 코드에 도달하지 못함.
+매 대기 프레임 씬 전체 검색 비용도 연결되어 있음.
+
+권장:
+'이번 공격에서 발사하고 아직 해결되지 않은 공격'을 명시적으로 추적.
+준비 연출/장식 객체와 실제 진행 중 공격을 구분.
+대기 완료·취소·타깃 소멸·풀 반환을 같은 종료 약속으로 연결.
+타임아웃은 실제로 대기하는 가장 안쪽 경계에도 필요.
+
+[3-5] EnemyHealthController가 전투 외 책임도 소유
+강도: 매우 높음. 수명주기의 허브.
+
+확인:
+EnemyHealthController.Die()[128]가 타워 처치 반응, 재화, 웨이브 통보, 반환을 수행.
+현재 보상은 보스 500골드/5젬, 일반 10골드로 코드에 직접 작성되어 있음[133~138].
+이 값은 이전 대화의 웨이브별 보상 계획이 적용되어 있다고 볼 수 없습니다.
+
+위험:
+체력 구현을 재사용하거나 사망 규칙을 바꾸면 보상·승리 조건까지 따라옴.
+ApplyDamage[94] → RegisterCriticalHit → ExecuteInstantKill 경로에서는
+중간에 사망한 뒤 원래 ApplyDamage가 이어질 가능성이 있음.
+Die/ExecuteInstantKill에 1회 처리 가드가 없어 중복 보상·중복 반환 위험이 있음.
+이 부분은 코드상 위험 경로이며 실제 발생 조건은 플레이 테스트로 확인 필요.
+
+권장:
+먼저 사망/반환 1회 보장부터 마련.
+다음으로 사망 결과에 적 종류, 생성 웨이브, 공격자, 종료 원인을 전달하고
+보상·클리어 담당이 해당 결과를 처리하도록 분리.
+사망 이벤트를 만들더라도 '누가 언제 구독하는지'를 문서에 명시할 것.
+
+[3-6] WaveManager의 보스 식별 정보가 부족
+강도: 높음. 일반 사망 정보로 최종 클리어를 판단.
+
+확인:
+OnEnemyDied(bool isBoss)[287]에서 isBoss && 현재 웨이브 >= 40이면 게임 클리어.
+전달 값은 최종보스 고유 식별자가 아니라 보스 여부뿐임.
+중간보스도 체력 컨트롤러에서는 보스로 취급되는 경로가 있음.
+
+위험:
+이전 중간보스가 살아남아 40웨이브에 죽는 등의 조건에서 최종보스와 구분 불가.
+현재 웨이브는 '죽은 적이 생성된 웨이브'와 반드시 같지 않음.
+
+권장:
+EnemyType / 생성 웨이브 / 최종보스 여부를 사망 정보에 명시.
+클리어 규칙은 WaveManager 또는 진행 담당 한 곳에서 판단.
+
+[3-7] EnemyMoveController ↔ TilePath ↔ EnemyHealthController
+강도: 높음. 위치와 수명주기가 서로 연결.
+
+확인:
+- Move가 현재 인덱스·이동·도착·타일 적용·끝 도달을 처리.
+- TilePath는 실제 점유, 예약, 시각적 배치 목표를 별도로 관리.
+- TilePath.LateUpdate는 적 루트 transform 위치까지 조정.
+- 이동 시 현재 인덱스를 먼저 증가시키고, 실제 도착 후 점유 등록을 갱신.
+  이동 중 이전 칸 목록에 남아 있는 시간과 다음 인덱스를 가진 시간이 겹칠 수 있음.
+- EnemyManager가 적 이동 코루틴을 StartCoroutine으로 실행.
+  이동 컴포넌트의 StopAllCoroutines만으로 외부 호스트 코루틴까지 멈추는 것은 아님.
+
+영향:
+'현재 칸'을 인덱스로 읽느냐 목록으로 읽느냐에 따라 이동 중 답이 다를 수 있음.
+현재 턴 순서상 이동 후 공격이어서 가려질 수 있지만 실시간 UI/범위 조회에는 중요.
+이동 도중 제거·게임 종료·풀 재사용 시 예약/점유 정리가 함께 맞아야 함.
+
+권장:
+논리 위치, 이동 목적지, 화면 보간 위치의 의미를 명확히 구분.
+이동 중단과 점유 해제의 책임자를 하나로 정하고 취소 경로를 통합.
+맵이 적의 내부 컴포넌트를 계속 조회하기보다 등록/해제 계약을 좁히는 방향 권장.
+
+[3-8] 타일 방어 버프와 디버프가 같은 스탯 값을 덮어씀
+강도: 높음. 타입 참조 수보다 실행 순서가 중요한 사례.
+
+확인:
+Move.CheckAndApplyTileBuff()[284] → SetDefendMultiplier(1.2f)
+그 뒤 Debuff.RefreshTileDebuffs() → RefreshPersistentStats()
+Debuff[285] → SetDefendMultiplier(defenseMultiplier)
+둘이 서로 다른 효과를 같은 최종 배율 슬롯에 기록.
+
+영향:
+타일 방어 버프와 상태 디버프를 동시에 받아도 나중 기록이 앞 값을 대체할 수 있음.
+순서를 바꾸면 결과가 바뀌므로 개별 함수만 읽어서는 실제 스탯을 알기 어려움.
+회복 타일은 같은 함수 안에서 새 장판 디버프 적용보다 먼저 실행됨.
+새로 연소가 걸리는 턴의 치유 감소 적용 여부도 이 순서의 영향을 받음.
+
+권장:
+기본값 / 타일 보정 / 상태 보정을 따로 보관하고 최종값 계산 한 곳에서 합성.
+적용 즉시 효과(회복)와 상태 등록 효과의 우선순위도 기획 규칙으로 확정.
+
+[3-9] 신형 타일 상태와 구형 Debuff 클래스가 공존
+강도: 높음. 연결은 있는데 실제 효과가 없는 경로.
+
+확인:
+- ProjectileHit2D가 FireDebuff/IceDebuff/WindDebuff를 만들어 AddDebuff로 전달.
+- 현재 EnemyDebuffController.AddDebuff(DebuffBase _)[306]는 빈 메서드.
+- EnemyMoveController.SetSpeedMultiplier(float _)[49]도 빈 메서드.
+- 구형 DebuffBase 계열과 신형 상태 Dictionary가 함께 남아 있음.
+
+영향:
+호출 코드는 정상처럼 보이지만 아무 효과가 없어서 추적할수록 혼동.
+예전 초 단위 디버프와 새 턴 단위 디버프의 수명 기준도 다름.
+
+권장:
+빈 호환 메서드로 연결을 유지하기보다 현재 사용 경로를 먼저 표시.
+투사체에서 실제로 디버프를 부여할지 기획을 확인한 뒤 신형 API로 이관.
+그 후 호출자·프리팹·이벤트 검색과 테스트를 마치고 구형 코드 제거.
+참조 수 0이라는 이유만으로 즉시 삭제하는 것은 금지.
+
+[3-10] 디버프 장판 이동 ↔ 여러 칸 효과
+강도: 높음. 한 칸 API에 넓은 장판 규칙이 연결됨.
+
+확인:
+불 디버프는 반경 여러 칸에 같은 소스의 효과를 기록할 수 있음.
+TileManager.MovePathDebuffEffect()[507]는 처음 찾은 소스 항목 하나만 제거하고
+break 후 목적지 한 칸으로 옮김[512~535].
+
+영향:
+반경 장판을 드래그하면 나머지 기존 칸 기록이 남을 가능성이 있음.
+한 소스=한 칸을 가정한 함수와 한 소스=여러 칸 기록이 충돌.
+
+권장:
+소스 단위로 기존 영역 전체를 제거하고 새 영역을 계산해 배치.
+공격 적용 버전은 유지해야 하는지 별도로 전달해 중복 스택을 방지.
+
+[3-11] 불 버프 스택의 수명 ↔ 행동횟수 ↔ 갱신 순서
+강도: 높음. 같은 숫자가 서로 다른 의미로 사용됨.
+
+확인:
+불 예열 스택 수명은 타일 효과의 StackLifetime을 읽음.
+TowerController.AdvanceFireStatusTurn()[499]에서 스택을 먼저 감소/제거하고,
+지원 타워 실행 뒤 RefreshFireTileStatus()[463]가 새 스택을 읽음.
+지원 행동이 같은 소스 기록을 여러 번 갱신해도 대상은 최종 버전을 읽는 구조.
+
+영향:
+수명이 1턴인 예열을 턴당 한 번 주는 단일 소스라면 다음 공급 전에 지워져
+높은 스택 문턱에 도달하지 못할 수 있음.
+AttackCount가 반복 행동 횟수와 효과 수명에 함께 영향을 주면 설명이 어려워짐.
+
+권장:
+행동 횟수 / 버프 수명 / 스택 누적 단위 / 발동 문턱을 개별 규칙으로 분리.
+먼저 '1소스 3턴 누적', '2소스 동시 공급', '타워 이동/판매' 예제를 종이에 검증.
+
+[3-12] 데이터 ↔ 파일명 ↔ enum 숫자 ↔ 인스펙터 순서
+강도: 숨은 결합 높음.
+
+확인:
+- TowerManager는 Resources/TowerDataCSV를 실행 중 읽어 TowerData를 생성.
+- 별도 CSV 임포터는 Assets/12. DataCSV/TowerDataCSV.csv 경로를 사용.
+  해당 임포터 경로의 파일은 점검 시 존재하지 않음.
+- 투사체는 타워 ID 연산 및 Resources/Projectiles/{이름} 규칙으로 연결.
+- WaveManager의 풀 배열은 (int)EnemyType 위치에 올바른 프리팹이 있어야 함.
+- TowerDataSO.cs는 데이터 타입뿐 아니라 공용 enum들의 정의 장소이기도 함.
+
+영향:
+IDE의 '참조 찾기'에 안 잡히는 이름/열 순서 변경으로 게임이 깨질 수 있음.
+CSV→SO 변환 결과와 실행 중 CSV 파싱이 별도 경로라 원본의 의미가 흐려짐.
+
+권장:
+CSV를 원본으로 사용할지 명시하고 로더 하나에서 검증/변환.
+헤더/열 수/ID 중복/투사체 누락/enum 범위 검사를 넣을 것.
+풀은 enum 순번 배열보다 타입-풀 매핑을 명시하는 편이 실수 방지에 유리.
+
+[3-13] UIManager / EnemyInfoPanelUI / UIStageThemeController
+강도: 동작 또는 에셋 의존이 높음.
+
+확인:
+UIManager는 타워 데이터/스탯/강화/선택/적 정보/타일/재화/턴/게임 종료에 관여.
+EnemyInfoPanelUI는 적 목록과 상세 상태를 직접 읽고, 누락 UI를 만드는 경로도 있음.
+UIStageThemeController는 게임 클래스 참조가 적어도 이름/계층/아틀라스에 의존.
+EnemyDebuffController 안에도 UI 표시 문자열을 만드는 코드가 있음.
+
+권장:
+먼저 화면 단위로 생명·재화 / 타워 정보 / 적 정보 / 턴 조작 책임을 구분.
+디버프 계산과 디버프 문구 생성을 분리할 것.
+이름으로 찾는 부분은 누락 경고와 명시적 참조를 우선 검토.
+게임 클래스 참조가 적다는 이유로 UI 테마 코드를 저위험으로 판단하면 안 됨.
+
+[3-14] 초기화·에디터 자동 실행 결합
+강도: 숨은 결합 높음.
+
+확인:
+- TowerManager.Start가 투사체 데이터 초기화를 요청하고
+  GlobalProjectileManager.Start도 자체 초기화를 수행.
+- EnemyObjectPool2D는 활성화 이후 여러 컴포넌트를 순서대로 초기화.
+  OnEnable에서 완성된 데이터를 가정하면 위험.
+- EnemyInfoPanelSetupEditor는 에디터 로드 후 지연 실행하여 특정 씬을 열고
+  컴포넌트/직렬화 필드를 구성하고 저장하는 경로가 있음.
+- SerializedObject.FindProperty의 필드명 문자열은 변수명 변경에 자동 대응하지 않음.
+- 이 조사에서는 해당 에디터 작업을 실행하지 않음.
+
+권장:
+준비 완료 순서를 한 진입점에서 보장하고 중복 초기화 계약을 명확히 할 것.
+에디터 자동 씬 변경은 메뉴 실행/검증 모드 등으로 명시화 검토.
+필드 이름 변경 전 에디터 문자열과 기존 직렬화 데이터까지 점검.
+
+======================================================================
+4. 작지만 놓치면 안 되는 연결
+======================================================================
+
+[이벤트 / 콜백]
+- CurrencyManager 변경 이벤트 → UIManager 재화 표시.
+- GameManager.ShieldChanged → UIManager 방패 표시.
+- WaveManager.MiddleBossSummonableChanged → UIManager 소환 버튼 갱신.
+- DragObjectOnGround 선택 이벤트 → UIManager 타워 선택 표시.
+- GlobalClickDetector.OnWorldClicked → UIManager 선택 해제 등.
+- DebuffZone 배치 좌표 이벤트 → DebuffAction → TileManager 기록 이동.
+- EnemyListItemUI의 선택 콜백 → EnemyInfoPanelUI 선택 처리.
+이벤트도 결합입니다. 직접 타입 참조가 없어도 발행 시점·인자 의미·구독 수명이 계약입니다.
+
+현재 C# 검색에서 구독자를 찾지 못한 선언도 있음:
+- GameManager.OnTurnStateChanged
+- TowerManager.OnTowerTypeUpgrade
+- GlobalClickDetector.OnGroundClicked
+삭제 확정이 아니라 현재 사용 여부 재검토 대상입니다.
+
+[애니메이션]
+EffectController.DestroyEffect()는 C# 호출자 0으로 보이지만
+Assets/10.Animation/Effect의 애니메이션 클립 이벤트가 이름으로 호출합니다.
+확인된 DestroyEffect 이벤트는 26개 클립에 있음.
+메서드 이름을 바꾸면 클립 이벤트도 함께 바꿔야 합니다.
+
+[씬 이동]
+UIManager_Start/Menu는 SceneManager.LoadScene 경로를 직접 사용.
+다른 경로는 SceneLoader.NextScene이라는 static 값과 LoadingManager를 사용.
+SceneLoader.StartLoad()는 현재 다음 씬 이름 설정만 하고 실제 LoadScene 줄은 주석 상태.
+따라서 이 메서드 호출만으로 씬이 바뀐다고 가정하면 안 됩니다.
+여러 이동 방식과 로딩 씬 진입 조건을 한 표준 경로로 정리할 필요가 있습니다.
+
+[프리팹 / 이름 / 에디터]
+- WaveManager 스크립트가 붙는 프리팹 이름은 SpawnManager인 자료가 확인됨.
+  파일명과 역할명이 다르면 탐색할 때 혼동을 줌.
+- DebuffAction / DebuffZone의 Tilemap_Path 이름 검색.
+- Resources 투사체 ID 파일명.
+- UIStageTheme의 자식 이름 및 스프라이트 이름.
+- TilePathEditor가 pathGridPositions를 직접 추가/삭제/초기화.
+  경로 인덱스를 저장해 둔 데이터는 경로 편집과 함께 검토해야 함.
+- DOTween, TMP, Unity UI, Tilemap, Unity ObjectPool은 외부 계약.
+  자체 코드 참조 수에는 포함하지 않았지만 패키지/컴포넌트 제거 시 영향이 있음.
+
+[경로 인덱스와 좌표]
+길의 순서 인덱스와 Vector3Int 셀 좌표는 같은 개념이 아닙니다.
+현재 일부 범위 조회는 좌표 HashSet으로 중복 제거하고,
+좌표→인덱스 조회는 첫 위치를 찾습니다.
+나중에 같은 좌표를 다시 방문하는 순환/분기 경로를 만들 때에는 별도 점검이 필요합니다.
+
+[공유 데이터]
+IReadOnlyList로 반환해도 그 안의 효과 객체가 수정 가능한 참조형이면
+다른 코드가 항목 내부를 바꾸는 것까지 막아주지는 않습니다.
+TileManager 효과 기록의 읽기 계약을 확실히 하려면 값 스냅샷/읽기 전용 항목도 검토.
+
+======================================================================
+5. 어떤 순서로 리팩토링할지
+======================================================================
+
+0단계: 현재 동작을 고정할 최소 확인 목록부터 작성
+- 한 웨이브 10턴, 첫 5턴 소환.
+- 이동 완료 → 지원/타일 → 공격 명중 완료 → 도트.
+- 사망 보상/풀 반환은 1회.
+- 일반/중간/최종보스의 종료 조건은 서로 구분.
+- 소환 직후, 이동 중 사망, 공격 도중 대상 사망, 게임 종료 시 중단.
+- 장판 이동/판매/합성 후 기존 효과 정리.
+- 방어 타일 + 방어 디버프 동시 적용.
+- 불 버프 스택 누적/소모/만료.
+이것이 없으면 파일을 예쁘게 나눠도 동작이 바뀐 것을 발견하기 어렵습니다.
+
+1단계: 혼동을 만드는 거짓 연결 제거 계획
+- AddDebuff / SetSpeedMultiplier 빈 메서드의 호출 의도 확인.
+- 신형/구형 타워 턴 진입점을 하나로 수렴.
+  현재 GameManager는 지원/공격 분리 경로를 사용하지만
+  TowerManager.ExecuteTowerActionTurnRoutine이라는 구형 통합 경로도 남아 있음.
+- 실행 흐름과 어긋난 주석 수정.
+이 단계에서도 사용 여부를 확인하기 전 삭제하지 않습니다.
+
+2단계: 게임 결과가 틀어질 수 있는 책임 정리
+- 사망 중복 방지와 최종보스 식별.
+- 생명/종료 판정의 단일 소유자.
+- 실제 투사체 완료 대기 위치의 안전성.
+- 타일/디버프 스탯의 합성 규칙.
+
+3단계: 순수 데이터와 계산 분리
+- TowerStats, 효과 기록, enum 등은 동작 컴포넌트와 분리.
+- 거리/셀 범위 변환은 TowerAttackAction이 아니라 공용 격자 계산 역할로.
+  TilePath도 현재 TowerAttackAction.ToTileRange를 호출하므로 역방향 결합이 있음.
+- CSV 조회, 비용, 강화 계산을 가능한 한 입력→출력이 분명한 함수로 분리.
+
+4단계: 큰 관리자 책임을 순서대로 축소
+- TowerManager: 데이터 → 경제/강화 → 배치 → 턴 실행 순으로 경계 검토.
+- UIManager: 화면 단위로 분리. UI가 게임 결과를 다시 결정하지 않게 함.
+- EnemyObjectPool: 저장/반환과 적 초기화 절차를 구분.
+새 클래스 이름보다 '원본 데이터를 누가 가진다'를 먼저 결정합니다.
+
+5단계: 불을 기준으로 스킬 확장점 설계
+- 타일에 기록할 효과 / 대상이 소유할 상태 / 명중 시 반응을 구분.
+- 불 전용 분기를 공통 관리자와 투사체에서 줄임.
+- 나머지 문양은 불의 스택 예제 테스트가 통과한 뒤 같은 계약으로 추가.
+
+굳이 하지 않아도 되는 것:
+- 모든 메서드를 이벤트로 바꾸기.
+- 모든 클래스에 인터페이스 추가하기.
+- 직접 연결을 전부 금지하기.
+- GameManager에 모든 로직을 합치기.
+호출 순서는 명시적으로, 결과 알림은 필요할 때 이벤트로 나누는 편이 읽기 쉽습니다.
+
+======================================================================
+6. 수정 전에 옆에 놓고 볼 소유권 표
+======================================================================
+
+값/규칙                       현재 주요 소유자                 주의점
+----------------------------------------------------------------------
+현재 턴/웨이브 내 진행 순서     GameManager                     다른 곳에도 대기 존재
+현재 웨이브/사이클/소환 구성    WaveManager                     5턴 상수 중복
+타워 배치/강화/합성/소환비      TowerManager                    너무 많은 책임
+타워 1개 스탯/불 상태           TowerController                 공유 강화도 조회
+적 체력/사망                   EnemyHealthController           보상/승리까지 호출
+적 행동력/이동 인덱스          EnemyMoveController             타일 스탯도 변경
+적 디버프 상태                 EnemyDebuffController           구형 API와 공존
+길 순서/점유/예약              TilePath                        시각 루트 위치도 변경
+타일 효과 기록                 TileManager                     시각화도 함께 관리
+재화 원본                     CurrencyManager                 획득 정책은 외부
+생명 원본/생명 화면 인덱스      GameManager / UIManager         중복 판단 주의
+타워 원본 데이터               Resources의 CSV 실행 로더       별도 SO 임포터 존재
+투사체 진행 여부               GlobalProjectileManager         씬의 활성 객체로 판정
+
+이 표에서 '현재'는 좋은 구조라는 뜻이 아니라 지금 확인한 소유 위치입니다.
+
+======================================================================
+7. 전 스크립트별 연결 목록
+======================================================================
+
+아래 목록은 69개 자체 C# 파일 전부를 포함합니다.
+등급은 정성 판단이며 서로 다른 상대와의 모든 연결을 같은 강도로 뜻하지 않습니다.
+실제 연결 대상과 타입, 최초 참조 줄을 함께 기록합니다.
+'들어오는 참조'에는 에디터와 구형 코드도 포함됩니다.
+직렬화 연결은 직접 m_Script GUID가 기록된 에셋 기준입니다.
+프리팹 인스턴스의 간접 연결·런타임 AddComponent·Resources 로딩은 별도일 수 있습니다.
+
+[01/69] TilePath.cs
+경로: Assets/3. Scripts/01. Map/TilePath.cs
+결합 평가: 높음
+역할/연결: 길의 순서·적 점유·예약·칸 안 배치를 관리합니다. 적 체력/이동 컴포넌트와 공격 클래스의 범위 변환 함수까지 알아야 합니다.
+검토 의견: 경로 인덱스와 좌표를 구분하고, 논리 점유와 화면 위치의 책임을 분리할 후보입니다.
+직접 타입 참조: 나감 3파일 / 들어옴 13파일
+이 파일 → 다른 파일:
+  - TowerAttackAction.cs: TowerAttackAction [이 파일 406행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 56행 외 37개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 111행]
+다른 파일 → 이 파일:
+  - DebuffAction.cs, DebuffZone.cs, SplashAttackAction.cs, TowerAttackAction.cs, ProjectileHit2D.cs, EnemyMoveController.cs, EnemyObjectPool2D.cs, EnemyInfoPanelUI.cs, EnemyManager.cs, TileManager.cs, UIManager.cs, WaveManager.cs, TilePathEditor.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/1. Scenes/3. Stage1.unity
+
+[02/69] DragObjectOnGround.cs
+경로: Assets/3. Scripts/01. Tower/DragObjectOnGround.cs
+결합 평가: 높음
+역할/연결: 입력, 플레이어 턴 여부, 타워 배치 이동, 선택 통보를 함께 처리합니다.
+검토 의견: GameManager의 턴 규칙과 TowerManager의 배치 정책 변경 시 함께 확인. UI 이벤트와 물리/UI 클릭 필터에도 연결됩니다.
+직접 타입 참조: 나감 3파일 / 들어옴 2파일
+이 파일 → 다른 파일:
+  - TowerController.cs: TowerController [이 파일 17행 외 2개 위치]
+  - TowerManager.cs: TowerManager [이 파일 93행 외 4개 위치]
+  - GameManager.cs: GameManager [이 파일 87행 외 0개 위치]
+다른 파일 → 이 파일:
+  - GameTurnState.cs, UIManager.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/2. Prefab/2. Tower/TowerBase.prefab
+
+[03/69] TowerController.cs
+경로: Assets/3. Scripts/01. Tower/TowerController.cs
+결합 평가: 매우 높음
+역할/연결: 타워 1개 초기화·최종 스탯·행동·버프·불 스킬·위성 투사체를 관리합니다. TowerStats도 이 파일에 있습니다.
+검토 의견: 공통 스탯, 상태, 원소별 반응, 시각 준비를 점진적으로 분리. 투사체에서 되돌아오는 불 명중 콜백 확인.
+직접 타입 참조: 나감 11파일 / 들어옴 11파일
+이 파일 → 다른 파일:
+  - BuffAction.cs: BuffAction [이 파일 150행]
+  - DebuffAction.cs: DebuffAction [이 파일 154행]
+  - DebuffZone.cs: DebuffZone [이 파일 44행 외 1개 위치]
+  - SplashAttackAction.cs: SplashAttackAction [이 파일 142행 외 1개 위치]
+  - TargetAttackAction.cs: TargetAttackAction [이 파일 146행]
+  - TowerAttackAction.cs: TowerAttackAction [이 파일 39행 외 8개 위치]
+  - TowerDataSO.cs: AttackType [이 파일 141행 외 12개 위치]; BuffTarget [이 파일 90행 외 58개 위치]; TargetPriority [이 파일 41행 외 4개 위치]; TowerPattern [이 파일 574행 외 1개 위치]; TowerData [이 파일 34행 외 2개 위치]
+  - TowerManager.cs: TowerManager [이 파일 409행 외 14개 위치]
+  - TowerVisual.cs: TowerVisual [이 파일 37행 외 1개 위치]
+  - ProjectileHit2D.cs: ProjectileHit2D [이 파일 271행 외 2개 위치]
+  - TileManager.cs: TowerTileBuffType [이 파일 201행 외 5개 위치]; TowerTileBuffEffect [이 파일 427행 외 13개 위치]; TileManager [이 파일 385행 외 10개 위치]
+다른 파일 → 이 파일:
+  - BuffAction.cs, DebuffAction.cs, SplashAttackAction.cs, TargetAttackAction.cs, TowerAttackAction.cs, TowerDataSO.cs, DragObjectOnGround.cs, TowerManager.cs, ProjectileHit2D.cs, EnemyHealthController.cs, UIManager.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/2. Prefab/2. Tower/TowerBase.prefab
+
+[04/69] TowerManager.cs
+경로: Assets/3. Scripts/01. Tower/TowerManager.cs
+결합 평가: 매우 높음
+역할/연결: CSV 데이터, 배치, 소환비, 판매, 합성, 강화, 시너지, 전체 행동 순서를 담당합니다.
+검토 의견: 자기 타워를 실행하는 동시에 타워가 관리자 공유 값을 읽습니다. 구형 통합 턴 API와 신형 분리 API도 공존.
+직접 타입 참조: 나감 7파일 / 들어옴 8파일
+이 파일 → 다른 파일:
+  - TowerAttackAction.cs: TowerAttackAction [이 파일 686행 외 1개 위치]
+  - TowerDataSO.cs: AttackType [이 파일 210행 외 5개 위치]; BuffTarget [이 파일 213행 외 4개 위치]; DebuffTarget [이 파일 214행 외 1개 위치]; TargetPriority [이 파일 219행 외 4개 위치]; TowerPattern [이 파일 99행 외 12개 위치]; TowerData [이 파일 33행 외 32개 위치]
+  - TowerController.cs: TowerStats [이 파일 56행 외 3개 위치]; TowerController [이 파일 49행 외 12개 위치]
+  - CurrencyManager.cs: CurrencyManager [이 파일 283행 외 6개 위치]
+  - GameManager.cs: GameManager [이 파일 281행 외 5개 위치]
+  - GlobalProjectileManager.cs: GlobalProjectileManager [이 파일 136행 외 4개 위치]
+  - TileManager.cs: TileManager [이 파일 396행 외 1개 위치]
+다른 파일 → 이 파일:
+  - BuffAction.cs, TowerAttackAction.cs, DragObjectOnGround.cs, TowerController.cs, GameManager.cs, GlobalProjectileManager.cs, TileManager.cs, UIManager.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/2. Prefab/1. Manager/TowerManager.prefab
+
+[05/69] TowerVisual.cs
+경로: Assets/3. Scripts/01. Tower/TowerVisual.cs
+결합 평가: 중간 / 에셋 높음
+역할/연결: 타워 데이터에 따라 티어·컬러·문양 시각 요소를 조합합니다.
+검토 의견: 데이터 ID 및 스프라이트/자식 오브젝트 규칙을 확인. 전투 계산과의 추가 결합은 피하는 편이 좋습니다.
+직접 타입 참조: 나감 1파일 / 들어옴 2파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: TowerData [이 파일 60행]
+다른 파일 → 이 파일:
+  - TowerController.cs, UIManager.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/2. Prefab/2. Tower/TowerBase.prefab
+
+[06/69] BuffAction.cs
+경로: Assets/3. Scripts/01. Tower/01. TowerAttackAction/BuffAction.cs
+결합 평가: 높음
+역할/연결: 아군 범위 버프·불 예열 기록 외에 방패 등 전역 효과에도 접근합니다.
+검토 의견: Action이 타워 한 개만 아는 구조가 아니라 GameManager, TowerManager, TileManager를 함께 사용합니다.
+직접 타입 참조: 나감 6파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - TowerAttackAction.cs: TowerAttackAction [이 파일 5행]
+  - TowerDataSO.cs: BuffTarget [이 파일 12행 외 3개 위치]; TowerData [이 파일 7행]
+  - TowerController.cs: TowerStats [이 파일 9행]
+  - TowerManager.cs: TowerManager [이 파일 24행 외 1개 위치]
+  - GameManager.cs: GameManager [이 파일 15행]
+  - TileManager.cs: TileManager [이 파일 24행 외 3개 위치]
+다른 파일 → 이 파일:
+  - TowerController.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[07/69] DebuffAction.cs
+경로: Assets/3. Scripts/01. Tower/01. TowerAttackAction/DebuffAction.cs
+결합 평가: 높음
+역할/연결: 타워별 장판을 생성/관리하고 장판 이벤트를 타일 효과 기록에 연결합니다.
+검토 의견: 장판 소스 ID·적용 버전·반경·드래그 이동·해제를 한 계약으로 맞춰야 합니다. 이름 기반 Tilemap 검색도 있음.
+직접 타입 참조: 나감 7파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - TilePath.cs: TilePath [이 파일 85행 외 2개 위치]
+  - DebuffZone.cs: DebuffZone [이 파일 7행 외 1개 위치]
+  - TowerAttackAction.cs: TowerAttackAction [이 파일 5행 외 1개 위치]
+  - TowerDataSO.cs: DebuffTarget [이 파일 143행]; TowerData [이 파일 10행]
+  - TowerController.cs: TowerStats [이 파일 12행 외 1개 위치]
+  - TileManager.cs: TileManager [이 파일 49행 외 5개 위치]
+  - TileSatelliteOrbiter.cs: TileSatelliteEffectType [이 파일 31행]; TileSatelliteOrbiter [이 파일 28행 외 0개 위치]
+다른 파일 → 이 파일:
+  - TowerController.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[08/69] DebuffZone.cs
+경로: Assets/3. Scripts/01. Tower/01. TowerAttackAction/DebuffZone.cs
+결합 평가: 높음
+역할/연결: 장판 입력/배치 좌표/턴 제한/시각 효과와 좌표 변경 이벤트를 담당합니다.
+검토 의견: GameTurnState의 취소 호출, DebuffAction의 구독과 수명, Tilemap 이름 규칙에 연결됩니다.
+직접 타입 참조: 나감 2파일 / 들어옴 4파일
+이 파일 → 다른 파일:
+  - TilePath.cs: TilePath [이 파일 59행 외 0개 위치]
+  - GameManager.cs: GameManager [이 파일 106행 외 0개 위치]
+다른 파일 → 이 파일:
+  - DebuffAction.cs, TowerDataSO.cs, TowerController.cs, GameTurnState.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/2. Prefab/DebuffZone.prefab
+
+[09/69] SplashAttackAction.cs
+경로: Assets/3. Scripts/01. Tower/01. TowerAttackAction/SplashAttackAction.cs
+결합 평가: 높음
+역할/연결: 범위 공격과 불 메테오를 설정하고 투사체를 통해 피해를 전달합니다.
+검토 의견: 기본 공격 기반 클래스뿐 아니라 타워/적 위치와 불 전용 설정에 의존. Target과 중복 수식도 점검 대상.
+직접 타입 참조: 나감 7파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - TilePath.cs: TilePath [이 파일 48행 외 3개 위치]
+  - TowerAttackAction.cs: TowerAttackAction [이 파일 4행]
+  - TowerDataSO.cs: TowerData [이 파일 6행]
+  - TowerController.cs: TowerStats [이 파일 17행 외 3개 위치]; TowerController [이 파일 131행]
+  - ProjectileHit2D.cs: ProjectileStats [이 파일 116행 외 0개 위치]; ProjectileHit2D [이 파일 10행 외 6개 위치]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 26행 외 1개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 49행]
+다른 파일 → 이 파일:
+  - TowerController.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[10/69] TargetAttackAction.cs
+경로: Assets/3. Scripts/01. Tower/01. TowerAttackAction/TargetAttackAction.cs
+결합 평가: 높음
+역할/연결: 사거리 내 대상 공격, 추가 공격, 투사체 피해 정보를 구성합니다.
+검토 의견: 발사 데이터와 불 타워 소유자 통보가 연결됨. 공통 피해 구성은 Splash와 함께 변경 검토.
+직접 타입 참조: 나감 5파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - TowerAttackAction.cs: TowerAttackAction [이 파일 4행]
+  - TowerDataSO.cs: TowerData [이 파일 6행]
+  - TowerController.cs: TowerStats [이 파일 12행 외 3개 위치]; TowerController [이 파일 103행]
+  - ProjectileHit2D.cs: ProjectileStats [이 파일 87행 외 0개 위치]; ProjectileHit2D [이 파일 19행 외 6개 위치]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 35행]
+다른 파일 → 이 파일:
+  - TowerController.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[11/69] TowerAttackAction.cs
+경로: Assets/3. Scripts/01. Tower/01. TowerAttackAction/TowerAttackAction.cs
+결합 평가: 높음
+역할/연결: 공통 공격 계약, 대상 탐색, 격자 범위 변환, 투사체 준비를 담당합니다.
+검토 의견: 추상 기반이지만 구체 전역 관리자와 적 컴포넌트를 직접 사용합니다. 단순 계산 도우미부터 떼는 것이 쉬운 시작.
+직접 타입 참조: 나감 8파일 / 들어옴 9파일
+이 파일 → 다른 파일:
+  - TilePath.cs: TilePath [이 파일 109행 외 0개 위치]
+  - TowerDataSO.cs: TargetPriority [이 파일 10행 외 12개 위치]; TowerData [이 파일 9행 외 1개 위치]
+  - TowerController.cs: TowerStats [이 파일 30행 외 3개 위치]
+  - TowerManager.cs: TowerManager [이 파일 101행]
+  - ProjectileHit2D.cs: ProjectileHit2D [이 파일 42행 외 3개 위치]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 95행 외 1개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 142행]
+  - GlobalProjectileManager.cs: GlobalProjectileManager [이 파일 58행 외 1개 위치]
+다른 파일 → 이 파일:
+  - TilePath.cs, BuffAction.cs, DebuffAction.cs, SplashAttackAction.cs, TargetAttackAction.cs, TowerDataSO.cs, TowerController.cs, TowerManager.cs, UIManager.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[12/69] TowerCSVtoSOimporter.cs
+경로: Assets/3. Scripts/01. Tower/02. TowerData/TowerCSVtoSOimporter.cs
+결합 평가: 중간 / 파일 규칙 높음
+역할/연결: 에디터에서 CSV를 TowerData 에셋으로 변환하는 별도 경로입니다.
+검토 의견: 현재 런타임 CSV 로더와 입력 경로가 다릅니다. UnityEditor 의존 및 실행 파일 위치도 빌드 시 별도 확인 필요.
+직접 타입 참조: 나감 1파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: AttackType [이 파일 75행]; BuffTarget [이 파일 78행 외 0개 위치]; DebuffTarget [이 파일 79행 외 0개 위치]; TargetPriority [이 파일 72행 외 1개 위치]; TowerData [이 파일 48행 외 0개 위치]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[13/69] TowerDataSO.cs
+경로: Assets/3. Scripts/01. Tower/02. TowerData/TowerDataSO.cs
+결합 평가: 중간 / 파급 범위 높음
+역할/연결: TowerData와 여러 전투 enum을 정의하고 TowerStats로 변환합니다.
+검토 의견: 단순 정의를 읽는 참조가 많습니다. 참조 수가 곧 나쁜 설계는 아니지만 변환에서 Controller/Action 계층으로 역참조.
+직접 타입 참조: 나감 3파일 / 들어옴 28파일
+이 파일 → 다른 파일:
+  - DebuffZone.cs: DebuffZone [이 파일 63행]
+  - TowerAttackAction.cs: TowerAttackAction [이 파일 78행]
+  - TowerController.cs: TowerStats [이 파일 70행 외 1개 위치]
+다른 파일 → 이 파일:
+  - BuffAction.cs, DebuffAction.cs, SplashAttackAction.cs, TargetAttackAction.cs, TowerAttackAction.cs, TowerCSVtoSOimporter.cs, TowerController.cs, TowerManager.cs, TowerVisual.cs, ProjectileHit2D.cs, AxeDebuff.cs, BowDebuff.cs, DarknessDebuff.cs, DebuffBase.cs, EarthDebuff.cs, ElectricityDebuff.cs, FireDebuff.cs, HammerDebuff.cs, IceDebuff.cs, LightDebuff.cs, SpearDebuff.cs, SwordDebuff.cs, WindDebuff.cs, EnemyDebuffController.cs, GlobalProjectileManager.cs, TileManager.cs, UIManager.cs, TileSatelliteOrbiter.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[14/69] ProjectileHit2D.cs
+경로: Assets/3. Scripts/02. Projectile/ProjectileHit2D.cs
+결합 평가: 매우 높음
+역할/연결: 투사체 이동·명중·연쇄/범위·피해·불 반응·구형 디버프·효과·반환을 담당합니다. ProjectileStats도 선언합니다.
+검토 의견: 명중 시점 요구는 유지하되 시각 수명과 전투 결과 처리 계약을 분리할 후보. 공격자 콜백과 대상 사망 재진입 주의.
+직접 타입 참조: 나감 11파일 / 들어옴 8파일
+이 파일 → 다른 파일:
+  - TilePath.cs: TilePath [이 파일 230행 외 1개 위치]
+  - TowerDataSO.cs: DebuffTarget [이 파일 29행 외 5개 위치]
+  - TowerController.cs: TowerController [이 파일 25행]
+  - ProjectileObjectPool2D.cs: ProjectileObjectPool2D [이 파일 50행 외 1개 위치]
+  - DebuffBase.cs: DebuffBase [이 파일 337행]
+  - FireDebuff.cs: FireDebuff [이 파일 339행]
+  - IceDebuff.cs: IceDebuff [이 파일 340행]
+  - WindDebuff.cs: WindDebuff [이 파일 341행]
+  - EnemyDebuffController.cs: EnemyDebuffController [이 파일 196행 외 3개 위치]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 187행 외 13개 위치]
+  - EffectManager.cs: EffectManager [이 파일 215행 외 1개 위치]
+다른 파일 → 이 파일:
+  - SplashAttackAction.cs, TargetAttackAction.cs, TowerAttackAction.cs, TowerController.cs, ProjectileObjectPool2D.cs, GlobalProjectileManager.cs, CheckProjectileVisuals.cs, ProjectileTrailSetupEditor.cs
+직렬화된 직접 스크립트 연결: 26개 에셋
+  - Assets/Resources/Projectiles/101.prefab
+  - Assets/Resources/Projectiles/102.prefab
+  - Assets/Resources/Projectiles/103.prefab
+  - 그 외 23개. 전체 연결 경로는 8장 참고.
+
+[15/69] ProjectileObjectPool2D.cs
+경로: Assets/3. Scripts/02. Projectile/ProjectileObjectPool2D.cs
+결합 평가: 중간
+역할/연결: 구체 ProjectileHit2D를 생성하고 회수하는 풀입니다.
+검토 의견: 투사체와 풀의 상호 참조는 수명주기상 자연스럽지만 초기화·반환·중복 반환 약속은 명확해야 합니다.
+직접 타입 참조: 나감 1파일 / 들어옴 2파일
+이 파일 → 다른 파일:
+  - ProjectileHit2D.cs: ProjectileHit2D [이 파일 18행 외 11개 위치]
+다른 파일 → 이 파일:
+  - ProjectileHit2D.cs, GlobalProjectileManager.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[16/69] EnemyDataSO.cs
+경로: Assets/3. Scripts/03. Enemy/EnemyDataSO.cs
+결합 평가: 약함 / 데이터 계약
+역할/연결: EnemyData와 EnemyType을 정의합니다.
+검토 의견: 자체 코드 의존은 없지만 enum 숫자가 WaveManager의 풀 배열 순서와 연결됩니다. 순서 변경 영향이 큼.
+직접 타입 참조: 나감 0파일 / 들어옴 6파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - EnemyHealthController.cs, EnemyListItemUI.cs, EnemyMoveController.cs, EnemyObjectPool2D.cs, EnemyInfoPanelUI.cs, WaveManager.cs
+직렬화된 직접 스크립트 연결: 5개 에셋
+  - Assets/2. Prefab/3. Enemy/1. Enemy_normal.asset
+  - Assets/2. Prefab/3. Enemy/2. Enemy_speed.asset
+  - Assets/2. Prefab/3. Enemy/3. Enemy_depend.asset
+  - 그 외 2개. 전체 연결 경로는 8장 참고.
+
+[17/69] EnemyDebuffController.cs
+경로: Assets/3. Scripts/03. Enemy/EnemyDebuffController.cs
+결합 평가: 매우 높음
+역할/연결: 적 상태 Dictionary, 스택, 지속 피해, 즉사, 이동/방어/치유 보정과 UI 설명을 관리합니다.
+검토 의견: 타일 입력과 실제 스탯 변경, 상태 시간, 표시 문구가 혼합됨. 구형 AddDebuff는 현재 빈 메서드.
+직접 타입 참조: 나감 5파일 / 들어옴 6파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 24행 외 61개 위치]
+  - DebuffBase.cs: DebuffBase [이 파일 306행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 4행 외 2개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 5행 외 2개 위치]
+  - TileManager.cs: PathTileDebuffEffect [이 파일 100행 외 1개 위치]; TileManager [이 파일 98행 외 1개 위치]
+다른 파일 → 이 파일:
+  - ProjectileHit2D.cs, EnemyHealthController.cs, EnemyMoveController.cs, EnemyObjectPool2D.cs, EnemyInfoPanelUI.cs, EnemyManager.cs
+직렬화된 직접 스크립트 연결: 5개 에셋
+  - Assets/2. Prefab/3. Enemy/1. Enemy_normal.prefab
+  - Assets/2. Prefab/3. Enemy/2. Enemy_speed.prefab
+  - Assets/2. Prefab/3. Enemy/3. Enemy_depend.prefab
+  - 그 외 2개. 전체 연결 경로는 8장 참고.
+
+[18/69] EnemyHealthController.cs
+경로: Assets/3. Scripts/03. Enemy/EnemyHealthController.cs
+결합 평가: 매우 높음
+역할/연결: 적 체력과 피해 처리뿐 아니라 처치 반응·재화·클리어 통보·풀 반환까지 담당합니다.
+검토 의견: 사망 1회 보장과 사망 결과 전달을 우선. 전투 수치 수정도 여러 외부 기능으로 번지는 중심점.
+직접 타입 참조: 나감 9파일 / 들어옴 24파일
+이 파일 → 다른 파일:
+  - TowerController.cs: TowerController [이 파일 90행 외 1개 위치]
+  - EnemyDataSO.cs: EnemyType [이 파일 8행 외 4개 위치]; EnemyData [이 파일 31행 외 2개 위치]
+  - EnemyDebuffController.cs: EnemyDebuffController [이 파일 19행 외 1개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 18행 외 1개 위치]
+  - EnemyObjectPool2D.cs: EnemyObjectPool2D [이 파일 20행 외 1개 위치]
+  - EnemyUIController.cs: EnemyUIController [이 파일 6행]
+  - CurrencyManager.cs: CurrencyManager [이 파일 133행 외 2개 위치]
+  - WaveManager.cs: WaveManager [이 파일 141행]
+  - DamageTextPool.cs: DamageTextPool [이 파일 107행 외 1개 위치]
+다른 파일 → 이 파일:
+  - TilePath.cs, SplashAttackAction.cs, TargetAttackAction.cs, TowerAttackAction.cs, ProjectileHit2D.cs, AxeDebuff.cs, BowDebuff.cs, DarknessDebuff.cs, DebuffBase.cs, EarthDebuff.cs, ElectricityDebuff.cs, FireDebuff.cs, HammerDebuff.cs, IceDebuff.cs, LightDebuff.cs, SpearDebuff.cs, SwordDebuff.cs, WindDebuff.cs, EnemyDebuffController.cs, EnemyListItemUI.cs, EnemyMoveController.cs, EnemyObjectPool2D.cs, EnemyInfoPanelUI.cs, UIManager.cs
+직렬화된 직접 스크립트 연결: 5개 에셋
+  - Assets/2. Prefab/3. Enemy/1. Enemy_normal.prefab
+  - Assets/2. Prefab/3. Enemy/2. Enemy_speed.prefab
+  - Assets/2. Prefab/3. Enemy/3. Enemy_depend.prefab
+  - 그 외 2개. 전체 연결 경로는 8장 참고.
+
+[19/69] EnemyListItemUI.cs
+경로: Assets/3. Scripts/03. Enemy/EnemyListItemUI.cs
+결합 평가: 약함~중간
+역할/연결: 적 한 마리의 목록 UI와 선택 콜백을 관리합니다.
+검토 의견: 건강/데이터 타입은 알지만 상위 패널 타입을 직접 호출하지 않는 점은 좋은 분리입니다.
+직접 타입 참조: 나감 2파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - EnemyDataSO.cs: EnemyData [이 파일 48행 외 1개 위치]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 16행 외 2개 위치]
+다른 파일 → 이 파일:
+  - EnemyInfoPanelUI.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[20/69] EnemyMoveController.cs
+경로: Assets/3. Scripts/03. Enemy/EnemyMoveController.cs
+결합 평가: 매우 높음
+역할/연결: 행동 카운터·주사위·이동·길 점유·타일 적용·끝 도달을 처리합니다.
+검토 의견: 타일 스탯과 이동 자체를 구분할 후보. 게임 생명/UI/풀 반환으로 이어지는 끝 도달 흐름도 확인.
+직접 타입 참조: 나감 7파일 / 들어옴 21파일
+이 파일 → 다른 파일:
+  - TilePath.cs: TilePath [이 파일 33행 외 1개 위치]
+  - EnemyDataSO.cs: EnemyData [이 파일 71행]
+  - EnemyDebuffController.cs: EnemyDebuffController [이 파일 304행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 27행 외 1개 위치]
+  - GameManager.cs: GameManager [이 파일 326행 외 1개 위치]
+  - TileManager.cs: SpecialTileType [이 파일 269행 외 4개 위치]; TileManager [이 파일 264행 외 1개 위치]
+  - UIManager.cs: UIManager [이 파일 331행]
+다른 파일 → 이 파일:
+  - TilePath.cs, SplashAttackAction.cs, TowerAttackAction.cs, AxeDebuff.cs, BowDebuff.cs, DarknessDebuff.cs, DebuffBase.cs, EarthDebuff.cs, ElectricityDebuff.cs, FireDebuff.cs, HammerDebuff.cs, IceDebuff.cs, LightDebuff.cs, SpearDebuff.cs, SwordDebuff.cs, WindDebuff.cs, EnemyDebuffController.cs, EnemyHealthController.cs, EnemyObjectPool2D.cs, EnemyInfoPanelUI.cs, EnemyManager.cs
+직렬화된 직접 스크립트 연결: 5개 에셋
+  - Assets/2. Prefab/3. Enemy/1. Enemy_normal.prefab
+  - Assets/2. Prefab/3. Enemy/2. Enemy_speed.prefab
+  - Assets/2. Prefab/3. Enemy/3. Enemy_depend.prefab
+  - 그 외 2개. 전체 연결 경로는 8장 참고.
+
+[21/69] EnemyObjectPool2D.cs
+경로: Assets/3. Scripts/03. Enemy/EnemyObjectPool2D.cs
+결합 평가: 높음
+역할/연결: 적을 재사용하면서 상태·이동·체력 초기화와 전역 등록까지 수행합니다.
+검토 의견: 단순 풀 이상의 생성 절차 담당. 활성화 직후 OnEnable과 최종 Init 완료 사이 데이터 준비 상태 주의.
+직접 타입 참조: 나감 6파일 / 들어옴 2파일
+이 파일 → 다른 파일:
+  - TilePath.cs: TilePath [이 파일 106행]
+  - EnemyDataSO.cs: EnemyType [이 파일 10행]; EnemyData [이 파일 8행]
+  - EnemyDebuffController.cs: EnemyDebuffController [이 파일 122행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 9행 외 10개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 128행]
+  - EnemyManager.cs: EnemyManager [이 파일 132행]
+다른 파일 → 이 파일:
+  - EnemyHealthController.cs, WaveManager.cs
+직렬화된 직접 스크립트 연결: 2개 에셋
+  - Assets/1. Scenes/3. Stage1.unity
+  - Assets/2. Prefab/=====Pool=====.prefab
+
+[22/69] EnemyUIController.cs
+경로: Assets/3. Scripts/03. Enemy/EnemyUIController.cs
+결합 평가: 낮음~중간
+역할/연결: 적 HP 표시를 HPBarSlider에 전달하는 좁은 어댑터입니다.
+검토 의견: 체력 컨트롤러가 호출하는 표시 계약을 유지하면 타워/웨이브 변경 영향은 작습니다.
+직접 타입 참조: 나감 1파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - HPBarSlider.cs: HPBarSlider [이 파일 5행 외 1개 위치]
+다른 파일 → 이 파일:
+  - EnemyHealthController.cs
+직렬화된 직접 스크립트 연결: 5개 에셋
+  - Assets/2. Prefab/3. Enemy/1. Enemy_normal.prefab
+  - Assets/2. Prefab/3. Enemy/2. Enemy_speed.prefab
+  - Assets/2. Prefab/3. Enemy/3. Enemy_depend.prefab
+  - 그 외 2개. 전체 연결 경로는 8장 참고.
+
+[23/69] AxeDebuff.cs
+경로: Assets/3. Scripts/03. Enemy/Debuff/AxeDebuff.cs
+결합 평가: 중간 / 구형 상태 경로
+역할/연결: 구형 Axe 디버프 구현입니다. DebuffBase를 상속하고 적 체력/이동 및 DebuffTarget 정의에 연결됩니다.
+검토 의견: 현재 자체 C# 타입 검색에서 외부 참조가 발견되지 않았습니다. 구형 상태 API 이관 여부 확인 후 정리 후보이며, 검색 결과만으로 삭제 확정하지 않습니다.
+직접 타입 참조: 나감 4파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 9행]
+  - DebuffBase.cs: DebuffBase [이 파일 4행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 11행 외 3개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 11행 외 2개 위치]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[24/69] BowDebuff.cs
+경로: Assets/3. Scripts/03. Enemy/Debuff/BowDebuff.cs
+결합 평가: 중간 / 구형 상태 경로
+역할/연결: 구형 Bow 디버프 구현입니다. DebuffBase를 상속하고 적 체력/이동 및 DebuffTarget 정의에 연결됩니다.
+검토 의견: 현재 자체 C# 타입 검색에서 외부 참조가 발견되지 않았습니다. 구형 상태 API 이관 여부 확인 후 정리 후보이며, 검색 결과만으로 삭제 확정하지 않습니다.
+직접 타입 참조: 나감 4파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 5행]
+  - DebuffBase.cs: DebuffBase [이 파일 3행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 7행]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 7행]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[25/69] DarknessDebuff.cs
+경로: Assets/3. Scripts/03. Enemy/Debuff/DarknessDebuff.cs
+결합 평가: 중간 / 구형 상태 경로
+역할/연결: 구형 Darkness 디버프 구현입니다. DebuffBase를 상속하고 적 체력/이동 및 DebuffTarget 정의에 연결됩니다.
+검토 의견: 현재 자체 C# 타입 검색에서 외부 참조가 발견되지 않았습니다. 구형 상태 API 이관 여부 확인 후 정리 후보이며, 검색 결과만으로 삭제 확정하지 않습니다.
+직접 타입 참조: 나감 4파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 10행]
+  - DebuffBase.cs: DebuffBase [이 파일 4행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 15행]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 15행]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[26/69] DebuffBase.cs
+경로: Assets/3. Scripts/03. Enemy/Debuff/DebuffBase.cs
+결합 평가: 중간 / 구형 연결
+역할/연결: 구형 디버프의 적용·갱신·제거 계약이며 EnemyHealth/Move 구체 타입을 받습니다.
+검토 의견: 현재 상태 시스템과 별개입니다. 파생 클래스들의 사용 여부를 먼저 확인한 뒤 정리.
+직접 타입 참조: 나감 3파일 / 들어옴 14파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 5행 외 1개 위치]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 19행 외 3개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 19행 외 3개 위치]
+다른 파일 → 이 파일:
+  - ProjectileHit2D.cs, AxeDebuff.cs, BowDebuff.cs, DarknessDebuff.cs, EarthDebuff.cs, ElectricityDebuff.cs, FireDebuff.cs, HammerDebuff.cs, IceDebuff.cs, LightDebuff.cs, SpearDebuff.cs, SwordDebuff.cs, WindDebuff.cs, EnemyDebuffController.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[27/69] EarthDebuff.cs
+경로: Assets/3. Scripts/03. Enemy/Debuff/EarthDebuff.cs
+결합 평가: 중간 / 구형 상태 경로
+역할/연결: 구형 Earth 디버프 구현입니다. DebuffBase를 상속하고 적 체력/이동 및 DebuffTarget 정의에 연결됩니다.
+검토 의견: 현재 자체 C# 타입 검색에서 외부 참조가 발견되지 않았습니다. 구형 상태 API 이관 여부 확인 후 정리 후보이며, 검색 결과만으로 삭제 확정하지 않습니다.
+직접 타입 참조: 나감 4파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 7행]
+  - DebuffBase.cs: DebuffBase [이 파일 4행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 9행 외 1개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 9행 외 1개 위치]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[28/69] ElectricityDebuff.cs
+경로: Assets/3. Scripts/03. Enemy/Debuff/ElectricityDebuff.cs
+결합 평가: 중간 / 구형 상태 경로
+역할/연결: 구형 Electricity 디버프 구현입니다. DebuffBase를 상속하고 적 체력/이동 및 DebuffTarget 정의에 연결됩니다.
+검토 의견: 현재 자체 C# 타입 검색에서 외부 참조가 발견되지 않았습니다. 구형 상태 API 이관 여부 확인 후 정리 후보이며, 검색 결과만으로 삭제 확정하지 않습니다.
+직접 타입 참조: 나감 4파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 11행]
+  - DebuffBase.cs: DebuffBase [이 파일 4행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 13행 외 3개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 13행 외 3개 위치]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[29/69] FireDebuff.cs
+경로: Assets/3. Scripts/03. Enemy/Debuff/FireDebuff.cs
+결합 평가: 중간 / 구형 상태 경로
+역할/연결: 구형 Fire 디버프 구현입니다. DebuffBase를 상속하고 적 체력/이동 및 DebuffTarget 정의에 연결됩니다.
+검토 의견: ProjectileHit2D에서 생성하지만 전달받는 AddDebuff는 현재 빈 함수입니다. 해당 경로에서 효과가 적용된다고 볼 수 없습니다.
+직접 타입 참조: 나감 4파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 11행]
+  - DebuffBase.cs: DebuffBase [이 파일 5행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 13행]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 13행]
+다른 파일 → 이 파일:
+  - ProjectileHit2D.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[30/69] HammerDebuff.cs
+경로: Assets/3. Scripts/03. Enemy/Debuff/HammerDebuff.cs
+결합 평가: 중간 / 구형 상태 경로
+역할/연결: 구형 Hammer 디버프 구현입니다. DebuffBase를 상속하고 적 체력/이동 및 DebuffTarget 정의에 연결됩니다.
+검토 의견: 현재 자체 C# 타입 검색에서 외부 참조가 발견되지 않았습니다. 구형 상태 API 이관 여부 확인 후 정리 후보이며, 검색 결과만으로 삭제 확정하지 않습니다.
+직접 타입 참조: 나감 4파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 7행]
+  - DebuffBase.cs: DebuffBase [이 파일 4행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 9행 외 1개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 9행 외 1개 위치]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[31/69] IceDebuff.cs
+경로: Assets/3. Scripts/03. Enemy/Debuff/IceDebuff.cs
+결합 평가: 중간 / 구형 상태 경로
+역할/연결: 구형 Ice 디버프 구현입니다. DebuffBase를 상속하고 적 체력/이동 및 DebuffTarget 정의에 연결됩니다.
+검토 의견: ProjectileHit2D에서 생성하지만 전달받는 AddDebuff는 현재 빈 함수입니다. 해당 경로에서 효과가 적용된다고 볼 수 없습니다.
+직접 타입 참조: 나감 4파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 12행]
+  - DebuffBase.cs: DebuffBase [이 파일 4행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 14행 외 3개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 14행 외 4개 위치]
+다른 파일 → 이 파일:
+  - ProjectileHit2D.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[32/69] LightDebuff.cs
+경로: Assets/3. Scripts/03. Enemy/Debuff/LightDebuff.cs
+결합 평가: 중간 / 구형 상태 경로
+역할/연결: 구형 Light 디버프 구현입니다. DebuffBase를 상속하고 적 체력/이동 및 DebuffTarget 정의에 연결됩니다.
+검토 의견: 현재 자체 C# 타입 검색에서 외부 참조가 발견되지 않았습니다. 구형 상태 API 이관 여부 확인 후 정리 후보이며, 검색 결과만으로 삭제 확정하지 않습니다.
+직접 타입 참조: 나감 4파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 7행]
+  - DebuffBase.cs: DebuffBase [이 파일 4행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 9행]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 9행]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[33/69] SpearDebuff.cs
+경로: Assets/3. Scripts/03. Enemy/Debuff/SpearDebuff.cs
+결합 평가: 중간 / 구형 상태 경로
+역할/연결: 구형 Spear 디버프 구현입니다. DebuffBase를 상속하고 적 체력/이동 및 DebuffTarget 정의에 연결됩니다.
+검토 의견: 현재 자체 C# 타입 검색에서 외부 참조가 발견되지 않았습니다. 구형 상태 API 이관 여부 확인 후 정리 후보이며, 검색 결과만으로 삭제 확정하지 않습니다.
+직접 타입 참조: 나감 4파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 7행]
+  - DebuffBase.cs: DebuffBase [이 파일 4행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 9행 외 1개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 9행 외 1개 위치]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[34/69] SwordDebuff.cs
+경로: Assets/3. Scripts/03. Enemy/Debuff/SwordDebuff.cs
+결합 평가: 중간 / 구형 상태 경로
+역할/연결: 구형 Sword 디버프 구현입니다. DebuffBase를 상속하고 적 체력/이동 및 DebuffTarget 정의에 연결됩니다.
+검토 의견: 현재 자체 C# 타입 검색에서 외부 참조가 발견되지 않았습니다. 구형 상태 API 이관 여부 확인 후 정리 후보이며, 검색 결과만으로 삭제 확정하지 않습니다.
+직접 타입 참조: 나감 4파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 10행]
+  - DebuffBase.cs: DebuffBase [이 파일 4행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 12행 외 2개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 12행 외 1개 위치]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[35/69] WindDebuff.cs
+경로: Assets/3. Scripts/03. Enemy/Debuff/WindDebuff.cs
+결합 평가: 중간 / 구형 상태 경로
+역할/연결: 구형 Wind 디버프 구현입니다. DebuffBase를 상속하고 적 체력/이동 및 DebuffTarget 정의에 연결됩니다.
+검토 의견: ProjectileHit2D에서 생성하지만 전달받는 AddDebuff는 현재 빈 함수입니다. 해당 경로에서 효과가 적용된다고 볼 수 없습니다.
+직접 타입 참조: 나감 4파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 7행]
+  - DebuffBase.cs: DebuffBase [이 파일 4행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 9행]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 9행]
+다른 파일 → 이 파일:
+  - ProjectileHit2D.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[36/69] CurrencyManager.cs
+경로: Assets/3. Scripts/04. Manager/CurrencyManager.cs
+결합 평가: 중간 / 정상 서비스
+역할/연결: 골드/젬 원본과 변경 알림을 제공합니다. 다른 자체 클래스 타입을 거의 알지 않습니다.
+검토 의견: 호출자가 어떤 보상을 주는지 결정하므로 보상 기획은 이 파일만 봐서는 알 수 없습니다.
+직접 타입 참조: 나감 0파일 / 들어옴 3파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - TowerManager.cs, EnemyHealthController.cs, UIManager.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/2. Prefab/1. Manager/CurrencyManager.prefab
+
+[37/69] EnemyInfoPanelUI.cs
+경로: Assets/3. Scripts/04. Manager/EnemyInfoPanelUI.cs
+결합 평가: 높음
+역할/연결: 길 위 적 목록, 선택 적 스탯/상태와 타일 정보를 읽고 UI를 구성합니다.
+검토 의견: UIManager와 보조 UI 참조를 주고받고 이름 기반 계층/동적 생성에도 연결. 표시용 데이터 계약을 좁힐 후보.
+직접 타입 참조: 나감 8파일 / 들어옴 2파일
+이 파일 → 다른 파일:
+  - TilePath.cs: TilePath [이 파일 459행 외 1개 위치]
+  - EnemyDataSO.cs: EnemyData [이 파일 652행 외 2개 위치]
+  - EnemyDebuffController.cs: EnemyDebuffController [이 파일 760행]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 51행 외 6개 위치]
+  - EnemyListItemUI.cs: EnemyListItemUI [이 파일 533행 외 1개 위치]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 683행]
+  - TileManager.cs: SpecialTileType [이 파일 726행 외 3개 위치]; TileManager [이 파일 724행 외 1개 위치]
+  - UIManager.cs: UIManager [이 파일 117행 외 1개 위치]
+다른 파일 → 이 파일:
+  - UIManager.cs, EnemyInfoPanelSetupEditor.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[38/69] EnemyManager.cs
+경로: Assets/3. Scripts/04. Manager/EnemyManager.cs
+결합 평가: 높음
+역할/연결: 활성 적 목록과 이동·타일·디버프 처리 순회를 담당합니다.
+검토 의견: WaveManager에 소환을 요청하고 풀에서 다시 등록받습니다. 공개 목록과 실제 활성 상태/풀 반환의 동기화 중요.
+직접 타입 참조: 나감 4파일 / 들어옴 2파일
+이 파일 → 다른 파일:
+  - TilePath.cs: TilePath [이 파일 16행 외 1개 위치]
+  - EnemyDebuffController.cs: EnemyDebuffController [이 파일 107행]
+  - EnemyMoveController.cs: EnemyMoveController [이 파일 18행 외 5개 위치]
+  - WaveManager.cs: WaveManager [이 파일 54행 외 1개 위치]
+다른 파일 → 이 파일:
+  - EnemyObjectPool2D.cs, GameManager.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/1. Scenes/3. Stage1.unity
+
+[39/69] GameManager.cs
+경로: Assets/3. Scripts/04. Manager/GameManager.cs
+결합 평가: 높음
+역할/연결: 게임 상태와 큰 턴 순서, 생명/방패, 속도/일시정지, 종료를 담당합니다.
+검토 의견: 상위 흐름을 조정하는 직접 호출은 필요하지만 UI의 역방향 종료 판정과 중복 대기/초기화 책임을 줄일 후보.
+직접 타입 참조: 나감 7파일 / 들어옴 8파일
+이 파일 → 다른 파일:
+  - TowerManager.cs: TowerManager [이 파일 137행 외 5개 위치]
+  - EnemyManager.cs: EnemyManager [이 파일 194행 외 3개 위치]
+  - GameTurnState.cs: IGameTurnState [이 파일 53행 외 1개 위치]; IdleTurnState [이 파일 96행]; PlayerTurnState [이 파일 146행]; EnemyTurnState [이 파일 173행]; GameOverTurnState [이 파일 381행]; GameClearTurnState [이 파일 395행]
+  - GlobalProjectileManager.cs: GlobalProjectileManager [이 파일 238행 외 1개 위치]
+  - UIManager.cs: UIManager [이 파일 162행 외 4개 위치]
+  - WaveManager.cs: WaveManager [이 파일 128행 외 2개 위치]
+  - CameraController.cs: CameraController [이 파일 161행]
+다른 파일 → 이 파일:
+  - BuffAction.cs, DebuffZone.cs, DragObjectOnGround.cs, TowerManager.cs, EnemyMoveController.cs, GameTurnState.cs, UIManager.cs, WaveManager.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/2. Prefab/1. Manager/GameManager.prefab
+
+[40/69] GameTurnState.cs
+경로: Assets/3. Scripts/04. Manager/GameTurnState.cs
+결합 평가: 높음
+역할/연결: Idle/Player/Enemy/GameOver/GameClear 상태 진입/종료를 정의합니다.
+검토 의견: 상태가 구체 UI/입력/카메라를 직접 조작합니다. 추상 인터페이스가 있다고 의존이 자동으로 약해지는 것은 아닙니다.
+직접 타입 참조: 나감 5파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - DebuffZone.cs: DebuffZone [이 파일 54행 외 2개 위치]
+  - DragObjectOnGround.cs: DragObjectOnGround [이 파일 53행 외 2개 위치]
+  - GameManager.cs: TurnState [이 파일 6행 외 6개 위치]; GameManager [이 파일 9행 외 8개 위치]
+  - UIManager.cs: UIManager [이 파일 28행 외 4개 위치]
+  - CameraController.cs: CameraController [이 파일 39행]
+다른 파일 → 이 파일:
+  - GameManager.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[41/69] GlobalProjectileManager.cs
+경로: Assets/3. Scripts/04. Manager/GlobalProjectileManager.cs
+결합 평가: 높음
+역할/연결: 타워 데이터에서 투사체 풀을 준비하고 발사 및 활성 여부를 제공합니다.
+검토 의견: TowerManager 데이터 준비와 Start 순서, 씬 전체 활성 검색과 턴 대기가 연결되어 있습니다.
+직접 타입 참조: 나감 4파일 / 들어옴 3파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: TowerData [이 파일 57행]
+  - TowerManager.cs: TowerManager [이 파일 57행]
+  - ProjectileHit2D.cs: ProjectileHit2D [이 파일 75행 외 3개 위치]
+  - ProjectileObjectPool2D.cs: ProjectileObjectPool2D [이 파일 14행 외 2개 위치]
+다른 파일 → 이 파일:
+  - TowerAttackAction.cs, TowerManager.cs, GameManager.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/2. Prefab/1. Manager/GlobalProjectileManager.prefab
+
+[42/69] LoadingManager.cs
+경로: Assets/3. Scripts/04. Manager/LoadingManager.cs
+결합 평가: 중간 / 씬 규칙 높음
+역할/연결: SceneLoader.NextScene을 읽어 로딩 연출과 씬 이동을 처리합니다.
+검토 의견: static 전달 값, 로딩 씬 진입, 테스트/자동 로드 설정이 맞아야 동작합니다.
+직접 타입 참조: 나감 1파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - SceneLoader.cs: SceneLoader [이 파일 81행 외 3개 위치]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 2개 에셋
+  - Assets/1. Scenes/LoadingScene1.unity
+  - Assets/1. Scenes/LoadingScene2.unity
+
+[43/69] TileManager.cs
+경로: Assets/3. Scripts/04. Manager/TileManager.cs
+결합 평가: 높음
+역할/연결: 특수 타일과 타워/적 효과 기록, 소스 버전/시간, 시각 효과를 함께 관리합니다. 효과 데이터 타입도 선언합니다.
+검토 의견: 효과 저장과 범위/수명/연출 분리 후보. 여러 칸 장판 이동과 스탯 적용 순서의 중심입니다.
+직접 타입 참조: 나감 4파일 / 들어옴 8파일
+이 파일 → 다른 파일:
+  - TilePath.cs: TilePath [이 파일 76행 외 1개 위치]
+  - TowerDataSO.cs: BuffTarget [이 파일 32행 외 3개 위치]; DebuffTarget [이 파일 52행 외 5개 위치]
+  - TowerManager.cs: TowerManager [이 파일 174행 외 1개 위치]
+  - TileSatelliteOrbiter.cs: TileSatelliteOrbiter [이 파일 93행 외 6개 위치]
+다른 파일 → 이 파일:
+  - BuffAction.cs, DebuffAction.cs, TowerController.cs, TowerManager.cs, EnemyDebuffController.cs, EnemyMoveController.cs, EnemyInfoPanelUI.cs, UIManager.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/1. Scenes/3. Stage1.unity
+
+[44/69] UIManager.cs
+경로: Assets/3. Scripts/04. Manager/UIManager.cs
+결합 평가: 매우 높음
+역할/연결: 타워·적·타일·재화·생명·턴·결과 UI와 버튼 실행을 모은 허브입니다.
+검토 의견: 직접 참조 수 최다. 특히 표시와 생명/종료 정책을 분리하고, 나머지는 화면 단위로 점진 분리.
+직접 타입 참조: 나감 16파일 / 들어옴 5파일
+이 파일 → 다른 파일:
+  - TilePath.cs: TilePath [이 파일 1216행 외 0개 위치]
+  - TowerAttackAction.cs: TowerAttackAction [이 파일 711행]
+  - TowerDataSO.cs: AttackType [이 파일 717행 외 3개 위치]; BuffTarget [이 파일 767행 외 13개 위치]; DebuffTarget [이 파일 788행 외 13개 위치]; TargetPriority [이 파일 142행 외 12개 위치]; TowerData [이 파일 643행 외 1개 위치]
+  - DragObjectOnGround.cs: DragObjectOnGround [이 파일 259행 외 1개 위치]
+  - TowerController.cs: TowerStats [이 파일 587행 외 2개 위치]; TowerController [이 파일 128행 외 4개 위치]
+  - TowerManager.cs: CombineMode [이 파일 456행 외 6개 위치]; TowerManager [이 파일 371행 외 16개 위치]
+  - TowerVisual.cs: TowerVisual [이 파일 684행 외 1개 위치]
+  - EnemyHealthController.cs: EnemyHealthController [이 파일 1547행 외 0개 위치]
+  - CurrencyManager.cs: CurrencyManager [이 파일 273행 외 7개 위치]
+  - EnemyInfoPanelUI.cs: EnemyInfoPanelUI [이 파일 95행 외 4개 위치]
+  - GameManager.cs: GameManager [이 파일 279행 외 29개 위치]
+  - TileManager.cs: SpecialTileType [이 파일 1413행 외 3개 위치]; TowerTileBuffType [이 파일 1397행 외 3개 위치]; TowerTileBuffEffect [이 파일 1135행 외 1개 위치]; PathTileDebuffEffect [이 파일 1145행 외 1개 위치]; TileManager [이 파일 1089행 외 5개 위치]
+  - WaveManager.cs: WaveManager [이 파일 135행 외 5개 위치]
+  - GlobalClickDetector.cs: GlobalClickDetector [이 파일 260행 외 1개 위치]
+  - InGameDebugConsole.cs: InGameDebugConsole [이 파일 116행]
+  - SceneLoader.cs: SceneLoader [이 파일 536행 외 1개 위치]
+다른 파일 → 이 파일:
+  - EnemyMoveController.cs, EnemyInfoPanelUI.cs, GameManager.cs, GameTurnState.cs, EnemyInfoPanelSetupEditor.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/2. Prefab/1. Manager/UIManager.prefab
+
+[45/69] UIManager_Menu.cs
+경로: Assets/3. Scripts/04. Manager/UIManager_Menu.cs
+결합 평가: 낮음 / 씬 이름 중간
+역할/연결: 메뉴 화면에서 지정 씬으로 이동합니다.
+검토 의견: 프로젝트 타입 참조가 없어도 인스펙터 씬 이름과 빌드 씬 목록에 의존합니다.
+직접 타입 참조: 나감 0파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/1. Scenes/2. Menu.unity
+
+[46/69] UIManager_Start.cs
+경로: Assets/3. Scripts/04. Manager/UIManager_Start.cs
+결합 평가: 낮음 / 씬 이름 중간
+역할/연결: 시작 화면의 입력과 씬 전환을 처리합니다.
+검토 의견: SceneLoader 경로와 별도인 직접 SceneManager 호출을 사용합니다. 씬 전환 정책 변경 시 같이 확인.
+직접 타입 참조: 나감 0파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/1. Scenes/1. Start.unity
+
+[47/69] UIStageThemeController.cs
+경로: Assets/3. Scripts/04. Manager/UIStageThemeController.cs
+결합 평가: 에셋 결합 높음
+역할/연결: UI 색상/스프라이트/계층에 아스가르드 테마를 적용합니다.
+검토 의견: 자체 타입 참조가 적어도 이름·키워드·아틀라스와 강하게 연결. 에디터 설정 필드 문자열도 확인.
+직접 타입 참조: 나감 0파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - UIStageThemeControllerEditor.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[48/69] WaveManager.cs
+경로: Assets/3. Scripts/04. Manager/WaveManager.cs
+결합 평가: 높음
+역할/연결: 웨이브/사이클, 적 구성과 배율, 턴별 소환, 중간보스, 최종 클리어 통보를 관리합니다.
+검토 의견: 적 풀 enum 배열, GameManager의 소환 턴 상수, 적 사망의 보스 정보가 결합. UI에는 이벤트로 알림.
+직접 타입 참조: 나감 4파일 / 들어옴 4파일
+이 파일 → 다른 파일:
+  - TilePath.cs: TilePath [이 파일 17행]
+  - EnemyDataSO.cs: EnemyType [이 파일 76행 외 11개 위치]
+  - EnemyObjectPool2D.cs: EnemyObjectPool2D [이 파일 16행 외 1개 위치]
+  - GameManager.cs: GameManager [이 파일 291행 외 1개 위치]
+다른 파일 → 이 파일:
+  - EnemyHealthController.cs, EnemyManager.cs, GameManager.cs, UIManager.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/2. Prefab/1. Manager/SpawnManager.prefab
+
+[49/69] EffectController.cs
+경로: Assets/3. Scripts/06. Effect/EffectController.cs
+결합 평가: 낮음~중간 / 애니메이션 계약
+역할/연결: 애니메이션이 끝날 때 EffectPool2D에 반환을 요청합니다.
+검토 의견: C# 호출자가 없어도 DestroyEffect 애니메이션 이벤트가 연결됩니다. 이름 변경 시 클립 수정 필요.
+직접 타입 참조: 나감 1파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - EffectPool2D.cs: EffectPool2D [이 파일 5행 외 1개 위치]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 31개 에셋
+  - Assets/2. Prefab/4. Effect/E101.prefab
+  - Assets/2. Prefab/4. Effect/E102.prefab
+  - Assets/2. Prefab/4. Effect/E103.prefab
+  - 그 외 28개. 전체 연결 경로는 8장 참고.
+
+[50/69] EffectLibrary.cs
+경로: Assets/3. Scripts/06. Effect/EffectLibrary.cs
+결합 평가: 약함 / 에셋 계약
+역할/연결: 효과 ID와 프리팹 목록을 담는 라이브러리입니다.
+검토 의견: 효과 번호 중복·누락, 프리팹 구성은 데이터 검증 대상. 게임 흐름과 직접 결합은 적습니다.
+직접 타입 참조: 나감 0파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - EffectManager.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/2. Prefab/4. Effect/EffectLibrary.asset
+
+[51/69] EffectManager.cs
+경로: Assets/3. Scripts/06. Effect/EffectManager.cs
+결합 평가: 중간
+역할/연결: 라이브러리 ID로 풀과 효과 재생을 제공하는 서비스입니다.
+검토 의견: 개별 전투 규칙을 역참조하지 않는 방향은 비교적 좋습니다. 초기화와 프리팹 구성 계약은 유지 필요.
+직접 타입 참조: 나감 2파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - EffectLibrary.cs: EffectLibrary [이 파일 10행]
+  - EffectPool2D.cs: EffectPool2D [이 파일 149행]
+다른 파일 → 이 파일:
+  - ProjectileHit2D.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/2. Prefab/1. Manager/EffectManager.prefab
+
+[52/69] EffectPool2D.cs
+경로: Assets/3. Scripts/06. Effect/EffectPool2D.cs
+결합 평가: 낮음~중간
+역할/연결: IObjectPool<GameObject>를 받아 효과 수명과 반환을 관리합니다.
+검토 의견: 구체 EffectManager를 몰라도 반환할 수 있는 분리. 파티클/애니메이션/수동 반환 중 중복 종료를 막는 계약 중요.
+직접 타입 참조: 나감 0파일 / 들어옴 2파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - EffectController.cs, EffectManager.cs
+직렬화된 직접 스크립트 연결: 31개 에셋
+  - Assets/2. Prefab/4. Effect/E101.prefab
+  - Assets/2. Prefab/4. Effect/E102.prefab
+  - Assets/2. Prefab/4. Effect/E103.prefab
+  - 그 외 28개. 전체 연결 경로는 8장 참고.
+
+[53/69] TileSatelliteOrbiter.cs
+경로: Assets/3. Scripts/06. Effect/TileSatelliteOrbiter.cs
+결합 평가: 중간 / 연출·프리팹 높음
+역할/연결: 타일 주변 위성 궤도/색/트레일 등을 표현합니다.
+검토 의견: DebuffTarget enum 참조는 데이터 결합입니다. 효과 ID 및 프리팹/에디터 설정은 별도 숨은 의존.
+직접 타입 참조: 나감 1파일 / 들어옴 3파일
+이 파일 → 다른 파일:
+  - TowerDataSO.cs: DebuffTarget [이 파일 24행 외 6개 위치]
+다른 파일 → 이 파일:
+  - DebuffAction.cs, TileManager.cs, SatelliteTrailSetupEditor.cs
+직렬화된 직접 스크립트 연결: 2개 에셋
+  - Assets/2. Prefab/DebuffZone.prefab
+  - Assets/2. Prefab/MapBuff.prefab
+
+[54/69] CameraController.cs
+경로: Assets/3. Scripts/08.Common/CameraController.cs
+결합 평가: 낮음~중간 / 씬 의존
+역할/연결: Camera.main과 코루틴 실행 호스트를 사용해 카메라 크기 연출을 제공합니다.
+검토 의견: 게임매니저/상태가 호출하지만 반대로 그 타입을 직접 알지는 않습니다. 메인 카메라 태그와 수명 주의.
+직접 타입 참조: 나감 0파일 / 들어옴 2파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - GameManager.cs, GameTurnState.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/1. Scenes/3. Stage1.unity
+
+[55/69] CommonUtil.cs
+경로: Assets/3. Scripts/08.Common/CommonUtil.cs
+결합 평가: 낮음
+역할/연결: 레이어 마스크 포함 여부를 계산하는 순수 도우미입니다.
+검토 의견: 현재 자체 코드의 외부 타입 참조/호출자는 발견되지 않았습니다. 엔진 값만 받는 단순 유틸리티.
+직접 타입 참조: 나감 0파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[56/69] DamageText.cs
+경로: Assets/3. Scripts/08.Common/DamageText.cs
+결합 평가: 낮음
+역할/연결: 피해 숫자 연출을 표시하고 주입된 IObjectPool<DamageText>에 반환합니다.
+검토 의견: 구체 풀 관리자에 의존하지 않는 좋은 예. 폰트/연출/풀 수명은 컴포넌트 계약.
+직접 타입 참조: 나감 0파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - DamageTextPool.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/2. Prefab/Txt_Damage.prefab
+
+[57/69] DamageTextPool.cs
+경로: Assets/3. Scripts/08.Common/DamageTextPool.cs
+결합 평가: 중간
+역할/연결: DamageText를 생성·재사용하고 피해 표시 요청을 받습니다.
+검토 의견: EnemyHealthController가 singleton으로 호출. 체력→표시 방향의 연결이며 역방향 게임 규칙 호출은 적음.
+직접 타입 참조: 나감 1파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - DamageText.cs: DamageText [이 파일 8행 외 9개 위치]
+다른 파일 → 이 파일:
+  - EnemyHealthController.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/2. Prefab/=====Pool=====.prefab
+
+[58/69] GlobalClickDetector.cs
+경로: Assets/3. Scripts/08.Common/GlobalClickDetector.cs
+결합 평가: 낮음~중간 / 입력 계약
+역할/연결: UI와 물리 클릭을 구분해 전역 클릭 이벤트를 발행합니다.
+검토 의견: 구독자 타입은 모르지만 이벤트 타이밍, 레이어, EventSystem/Collider 구성과 연결됩니다.
+직접 타입 참조: 나감 0파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - UIManager.cs
+직렬화된 직접 스크립트 연결: 1개 에셋
+  - Assets/1. Scenes/3. Stage1.unity
+
+[59/69] HPBarSlider.cs
+경로: Assets/3. Scripts/08.Common/HPBarSlider.cs
+결합 평가: 낮음
+역할/연결: Unity UI로 HP바 수치를 표현합니다.
+검토 의견: 도메인 클래스 참조가 없는 표시 도구. 적 프리팹의 컴포넌트/슬라이더 참조가 주요 계약.
+직접 타입 참조: 나감 0파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - EnemyUIController.cs
+직렬화된 직접 스크립트 연결: 6개 에셋
+  - Assets/2. Prefab/3. Enemy/1. Enemy_normal.prefab
+  - Assets/2. Prefab/3. Enemy/2. Enemy_speed.prefab
+  - Assets/2. Prefab/3. Enemy/3. Enemy_depend.prefab
+  - 그 외 3개. 전체 연결 경로는 8장 참고.
+
+[60/69] InGameDebugConsole.cs
+경로: Assets/3. Scripts/08.Common/InGameDebugConsole.cs
+결합 평가: 낮음~중간
+역할/연결: Unity 로그 이벤트를 받아 인게임 콘솔에 표시합니다.
+검토 의견: 구독/해제 수명과 UI 구성에 의존. 핵심 전투 규칙과의 결합은 낮음.
+직접 타입 참조: 나감 0파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - UIManager.cs
+직렬화된 직접 스크립트 연결: 2개 에셋
+  - Assets/1. Scenes/3. Stage1.unity
+  - Assets/2. Prefab/Canvas.prefab
+
+[61/69] SceneLoader.cs
+경로: Assets/3. Scripts/08.Common/SceneLoader.cs
+결합 평가: 중간 / static 상태
+역할/연결: 다음 씬 이름을 보관해 LoadingManager에 전달합니다.
+검토 의견: 현재 StartLoad의 실제 LoadScene 호출은 주석입니다. 호출 이름만 보고 즉시 전환된다고 판단하면 안 됨.
+직접 타입 참조: 나감 0파일 / 들어옴 2파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - LoadingManager.cs, UIManager.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[62/69] AsgardAtlasGenerator.cs
+경로: Assets/Editor/AsgardAtlasGenerator.cs
+결합 평가: 에디터·에셋 결합 높음
+역할/연결: 지정 경로와 이름 규칙으로 UI 아틀라스를 생성/임포트하는 도구입니다.
+검토 의견: 실행 시 에셋을 바꾸므로 프리뷰/백업/스프라이트 이름 안정성 확인. 이번 조사에서 실행하지 않음.
+직접 타입 참조: 나감 0파일 / 들어옴 1파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - UIStageThemeControllerEditor.cs
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[63/69] CheckProjectileVisuals.cs
+경로: Assets/Editor/CheckProjectileVisuals.cs
+결합 평가: 중간 / 검사 도구
+역할/연결: 투사체 리소스와 시각 컴포넌트/애니메이션 구성을 검사합니다.
+검토 의견: 고정 ID/경로와 ProjectileHit2D 구성에 연결. 이름/파일 규칙 변경 시 검사 코드도 수정 후보.
+직접 타입 참조: 나감 1파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - ProjectileHit2D.cs: ProjectileHit2D [이 파일 27행 외 0개 위치]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[64/69] EnemyInfoPanelSetupEditor.cs
+경로: Assets/Editor/EnemyInfoPanelSetupEditor.cs
+결합 평가: 높음 / 자동 씬 변경
+역할/연결: 특정 씬에 적 정보 UI와 참조를 구성하는 자동 에디터 경로입니다.
+검토 의견: 에디터 초기화, 씬 경로, 오브젝트 이름, private 직렬화 필드 문자열에 결합. 자동 저장 동작 주의.
+직접 타입 참조: 나감 2파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - EnemyInfoPanelUI.cs: EnemyInfoPanelUI [이 파일 40행 외 1개 위치]
+  - UIManager.cs: UIManager [이 파일 48행 외 0개 위치]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[65/69] ProjectileAssetRefresher.cs
+경로: Assets/Editor/ProjectileAssetRefresher.cs
+결합 평가: 낮음~중간 / 에디터 수명
+역할/연결: 에디터 초기화와 AssetDatabase 갱신에 연결됩니다.
+검토 의견: 게임 타입 참조는 없지만 에디터 로드 시점 동작. 조사 중 수동 실행하지 않음.
+직접 타입 참조: 나감 0파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - 자체 C# 타입 참조 없음. Unity/패키지/이벤트/에셋 의존 없음이라는 뜻은 아님.
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[66/69] ProjectileTrailSetupEditor.cs
+경로: Assets/Editor/ProjectileTrailSetupEditor.cs
+결합 평가: 중간 / 프리팹 수정
+역할/연결: 투사체 리소스 프리팹의 시각/트레일 구성을 설정합니다.
+검토 의견: ProjectileHit2D 설정 API와 Resources 경로에 의존. 도구 실행으로 프리팹이 변경될 수 있음.
+직접 타입 참조: 나감 1파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - ProjectileHit2D.cs: ProjectileHit2D [이 파일 25행 외 0개 위치]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[67/69] SatelliteTrailSetupEditor.cs
+경로: Assets/Editor/SatelliteTrailSetupEditor.cs
+결합 평가: 중간 / 프리팹 수정
+역할/연결: MapBuff/DebuffZone 프리팹의 위성 연출을 설정합니다.
+검토 의견: TileSatelliteOrbiter의 설정 API와 고정 프리팹 경로에 연결. 플레이 규칙보다 에셋 수정 영향.
+직접 타입 참조: 나감 1파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - TileSatelliteOrbiter.cs: TileSatelliteOrbiter [이 파일 23행 외 0개 위치]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[68/69] TilePathEditor.cs
+경로: Assets/Editor/TilePathEditor.cs
+결합 평가: 높음 / 데이터 직접 수정
+역할/연결: TilePath의 경로 좌표 목록을 직접 편집하는 인스펙터 도구입니다.
+검토 의견: 공개 리스트 구조와 인덱스 의미에 강하게 결합. 경로 중간 삭제 시 이를 사용하는 데이터도 점검.
+직접 타입 참조: 나감 1파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - TilePath.cs: TilePath [이 파일 6행 외 2개 위치]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+[69/69] UIStageThemeControllerEditor.cs
+경로: Assets/Editor/UIStageThemeControllerEditor.cs
+결합 평가: 높음 / 필드명·에셋
+역할/연결: 테마 컨트롤러를 편집하며 아틀라스 생성 도구를 호출합니다.
+검토 의견: SerializedProperty 필드명 문자열, 컨트롤러 설정, 생성 결과 이름이 함께 맞아야 합니다.
+직접 타입 참조: 나감 2파일 / 들어옴 0파일
+이 파일 → 다른 파일:
+  - UIStageThemeController.cs: StageRealm [이 파일 69행]; UIStageThemeController [이 파일 5행 외 1개 위치]
+  - AsgardAtlasGenerator.cs: AsgardAtlasGenerator [이 파일 95행]
+다른 파일 → 이 파일:
+  - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
+직렬화된 직접 스크립트 연결: 0개 에셋
+
+======================================================================
+8. 직렬화된 연결 전체 목록
+======================================================================
+
+이 목록은 .unity/.prefab/.asset에 직접 기록된 스크립트 GUID를 찾은 결과입니다.
+플러그인 및 복구 폴더를 제외한 검사 범위 기준이며,
+스크립트→프리팹→씬의 모든 간접 참조를 풀어낸 의존성 목록은 아닙니다.
+연결이 0개여도 코드 생성, 에디터 AddComponent, 일반 C# 클래스일 수 있습니다.
+애니메이션 이벤트는 4장을 별도로 확인하세요.
+
+TilePath.cs (1)
+  - Assets/1. Scenes/3. Stage1.unity
+
+DragObjectOnGround.cs (1)
+  - Assets/2. Prefab/2. Tower/TowerBase.prefab
+
+TowerController.cs (1)
+  - Assets/2. Prefab/2. Tower/TowerBase.prefab
+
+TowerManager.cs (1)
+  - Assets/2. Prefab/1. Manager/TowerManager.prefab
+
+TowerVisual.cs (1)
+  - Assets/2. Prefab/2. Tower/TowerBase.prefab
+
+DebuffZone.cs (1)
+  - Assets/2. Prefab/DebuffZone.prefab
+
+ProjectileHit2D.cs (26)
+  - Assets/Resources/Projectiles/101.prefab
+  - Assets/Resources/Projectiles/102.prefab
+  - Assets/Resources/Projectiles/103.prefab
+  - Assets/Resources/Projectiles/104.prefab
+  - Assets/Resources/Projectiles/105.prefab
+  - Assets/Resources/Projectiles/106.prefab
+  - Assets/Resources/Projectiles/107.prefab
+  - Assets/Resources/Projectiles/108.prefab
+  - Assets/Resources/Projectiles/109.prefab
+  - Assets/Resources/Projectiles/110.prefab
+  - Assets/Resources/Projectiles/111.prefab
+  - Assets/Resources/Projectiles/112.prefab
+  - Assets/Resources/Projectiles/113.prefab
+  - Assets/Resources/Projectiles/201.prefab
+  - Assets/Resources/Projectiles/202.prefab
+  - Assets/Resources/Projectiles/203.prefab
+  - Assets/Resources/Projectiles/204.prefab
+  - Assets/Resources/Projectiles/205.prefab
+  - Assets/Resources/Projectiles/206.prefab
+  - Assets/Resources/Projectiles/207.prefab
+  - Assets/Resources/Projectiles/208.prefab
+  - Assets/Resources/Projectiles/209.prefab
+  - Assets/Resources/Projectiles/210.prefab
+  - Assets/Resources/Projectiles/211.prefab
+  - Assets/Resources/Projectiles/212.prefab
+  - Assets/Resources/Projectiles/213.prefab
+
+EnemyDataSO.cs (5)
+  - Assets/2. Prefab/3. Enemy/1. Enemy_normal.asset
+  - Assets/2. Prefab/3. Enemy/2. Enemy_speed.asset
+  - Assets/2. Prefab/3. Enemy/3. Enemy_depend.asset
+  - Assets/2. Prefab/3. Enemy/4. Enemy_middleBoss.asset
+  - Assets/2. Prefab/3. Enemy/5. Enemy_boss.asset
+
+EnemyDebuffController.cs (5)
+  - Assets/2. Prefab/3. Enemy/1. Enemy_normal.prefab
+  - Assets/2. Prefab/3. Enemy/2. Enemy_speed.prefab
+  - Assets/2. Prefab/3. Enemy/3. Enemy_depend.prefab
+  - Assets/2. Prefab/3. Enemy/4. Enemy_middleBoss.prefab
+  - Assets/2. Prefab/3. Enemy/5. Enemy_boss.prefab
+
+EnemyHealthController.cs (5)
+  - Assets/2. Prefab/3. Enemy/1. Enemy_normal.prefab
+  - Assets/2. Prefab/3. Enemy/2. Enemy_speed.prefab
+  - Assets/2. Prefab/3. Enemy/3. Enemy_depend.prefab
+  - Assets/2. Prefab/3. Enemy/4. Enemy_middleBoss.prefab
+  - Assets/2. Prefab/3. Enemy/5. Enemy_boss.prefab
+
+EnemyMoveController.cs (5)
+  - Assets/2. Prefab/3. Enemy/1. Enemy_normal.prefab
+  - Assets/2. Prefab/3. Enemy/2. Enemy_speed.prefab
+  - Assets/2. Prefab/3. Enemy/3. Enemy_depend.prefab
+  - Assets/2. Prefab/3. Enemy/4. Enemy_middleBoss.prefab
+  - Assets/2. Prefab/3. Enemy/5. Enemy_boss.prefab
+
+EnemyObjectPool2D.cs (2)
+  - Assets/1. Scenes/3. Stage1.unity
+  - Assets/2. Prefab/=====Pool=====.prefab
+
+EnemyUIController.cs (5)
+  - Assets/2. Prefab/3. Enemy/1. Enemy_normal.prefab
+  - Assets/2. Prefab/3. Enemy/2. Enemy_speed.prefab
+  - Assets/2. Prefab/3. Enemy/3. Enemy_depend.prefab
+  - Assets/2. Prefab/3. Enemy/4. Enemy_middleBoss.prefab
+  - Assets/2. Prefab/3. Enemy/5. Enemy_boss.prefab
+
+CurrencyManager.cs (1)
+  - Assets/2. Prefab/1. Manager/CurrencyManager.prefab
+
+EnemyManager.cs (1)
+  - Assets/1. Scenes/3. Stage1.unity
+
+GameManager.cs (1)
+  - Assets/2. Prefab/1. Manager/GameManager.prefab
+
+GlobalProjectileManager.cs (1)
+  - Assets/2. Prefab/1. Manager/GlobalProjectileManager.prefab
+
+LoadingManager.cs (2)
+  - Assets/1. Scenes/LoadingScene1.unity
+  - Assets/1. Scenes/LoadingScene2.unity
+
+TileManager.cs (1)
+  - Assets/1. Scenes/3. Stage1.unity
+
+UIManager.cs (1)
+  - Assets/2. Prefab/1. Manager/UIManager.prefab
+
+UIManager_Menu.cs (1)
+  - Assets/1. Scenes/2. Menu.unity
+
+UIManager_Start.cs (1)
+  - Assets/1. Scenes/1. Start.unity
+
+WaveManager.cs (1)
+  - Assets/2. Prefab/1. Manager/SpawnManager.prefab
+
+EffectController.cs (31)
+  - Assets/2. Prefab/4. Effect/E101.prefab
+  - Assets/2. Prefab/4. Effect/E102.prefab
+  - Assets/2. Prefab/4. Effect/E103.prefab
+  - Assets/2. Prefab/4. Effect/E104.prefab
+  - Assets/2. Prefab/4. Effect/E105.prefab
+  - Assets/2. Prefab/4. Effect/E106.prefab
+  - Assets/2. Prefab/4. Effect/E107.prefab
+  - Assets/2. Prefab/4. Effect/E108.prefab
+  - Assets/2. Prefab/4. Effect/E109.prefab
+  - Assets/2. Prefab/4. Effect/E110.prefab
+  - Assets/2. Prefab/4. Effect/E111.prefab
+  - Assets/2. Prefab/4. Effect/E112.prefab
+  - Assets/2. Prefab/4. Effect/E113.prefab
+  - Assets/2. Prefab/4. Effect/E201.prefab
+  - Assets/2. Prefab/4. Effect/E202.prefab
+  - Assets/2. Prefab/4. Effect/E203.prefab
+  - Assets/2. Prefab/4. Effect/E204.prefab
+  - Assets/2. Prefab/4. Effect/E205.prefab
+  - Assets/2. Prefab/4. Effect/E206.prefab
+  - Assets/2. Prefab/4. Effect/E207.prefab
+  - Assets/2. Prefab/4. Effect/E208.prefab
+  - Assets/2. Prefab/4. Effect/E209.prefab
+  - Assets/2. Prefab/4. Effect/E210.prefab
+  - Assets/2. Prefab/4. Effect/E211.prefab
+  - Assets/2. Prefab/4. Effect/E212.prefab
+  - Assets/2. Prefab/4. Effect/E213.prefab
+  - Assets/2. Prefab/4. Effect/E304.prefab
+  - Assets/2. Prefab/4. Effect/E306.prefab
+  - Assets/2. Prefab/4. Effect/E307.prefab
+  - Assets/2. Prefab/4. Effect/E308.prefab
+  - Assets/2. Prefab/4. Effect/E309.prefab
+
+EffectLibrary.cs (1)
+  - Assets/2. Prefab/4. Effect/EffectLibrary.asset
+
+EffectManager.cs (1)
+  - Assets/2. Prefab/1. Manager/EffectManager.prefab
+
+EffectPool2D.cs (31)
+  - Assets/2. Prefab/4. Effect/E101.prefab
+  - Assets/2. Prefab/4. Effect/E102.prefab
+  - Assets/2. Prefab/4. Effect/E103.prefab
+  - Assets/2. Prefab/4. Effect/E104.prefab
+  - Assets/2. Prefab/4. Effect/E105.prefab
+  - Assets/2. Prefab/4. Effect/E106.prefab
+  - Assets/2. Prefab/4. Effect/E107.prefab
+  - Assets/2. Prefab/4. Effect/E108.prefab
+  - Assets/2. Prefab/4. Effect/E109.prefab
+  - Assets/2. Prefab/4. Effect/E110.prefab
+  - Assets/2. Prefab/4. Effect/E111.prefab
+  - Assets/2. Prefab/4. Effect/E112.prefab
+  - Assets/2. Prefab/4. Effect/E113.prefab
+  - Assets/2. Prefab/4. Effect/E201.prefab
+  - Assets/2. Prefab/4. Effect/E202.prefab
+  - Assets/2. Prefab/4. Effect/E203.prefab
+  - Assets/2. Prefab/4. Effect/E204.prefab
+  - Assets/2. Prefab/4. Effect/E205.prefab
+  - Assets/2. Prefab/4. Effect/E206.prefab
+  - Assets/2. Prefab/4. Effect/E207.prefab
+  - Assets/2. Prefab/4. Effect/E208.prefab
+  - Assets/2. Prefab/4. Effect/E209.prefab
+  - Assets/2. Prefab/4. Effect/E210.prefab
+  - Assets/2. Prefab/4. Effect/E211.prefab
+  - Assets/2. Prefab/4. Effect/E212.prefab
+  - Assets/2. Prefab/4. Effect/E213.prefab
+  - Assets/2. Prefab/4. Effect/E304.prefab
+  - Assets/2. Prefab/4. Effect/E306.prefab
+  - Assets/2. Prefab/4. Effect/E307.prefab
+  - Assets/2. Prefab/4. Effect/E308.prefab
+  - Assets/2. Prefab/4. Effect/E309.prefab
+
+TileSatelliteOrbiter.cs (2)
+  - Assets/2. Prefab/DebuffZone.prefab
+  - Assets/2. Prefab/MapBuff.prefab
+
+CameraController.cs (1)
+  - Assets/1. Scenes/3. Stage1.unity
+
+DamageText.cs (1)
+  - Assets/2. Prefab/Txt_Damage.prefab
+
+DamageTextPool.cs (1)
+  - Assets/2. Prefab/=====Pool=====.prefab
+
+GlobalClickDetector.cs (1)
+  - Assets/1. Scenes/3. Stage1.unity
+
+HPBarSlider.cs (6)
+  - Assets/2. Prefab/3. Enemy/1. Enemy_normal.prefab
+  - Assets/2. Prefab/3. Enemy/2. Enemy_speed.prefab
+  - Assets/2. Prefab/3. Enemy/3. Enemy_depend.prefab
+  - Assets/2. Prefab/3. Enemy/4. Enemy_middleBoss.prefab
+  - Assets/2. Prefab/3. Enemy/5. Enemy_boss.prefab
+  - Assets/2. Prefab/HPBar.prefab
+
+InGameDebugConsole.cs (2)
+  - Assets/1. Scenes/3. Stage1.unity
+  - Assets/2. Prefab/Canvas.prefab
+
+======================================================================
+9. 참고 지표와 읽기 주의사항
+======================================================================
+
+나가는 직접 타입 참조가 많은 파일 (에디터 포함 전체 조사 기준):
+- UIManager.cs: 나감 16, 들어옴 5
+- TowerController.cs: 나감 11, 들어옴 11
+- ProjectileHit2D.cs: 나감 11, 들어옴 8
+- EnemyHealthController.cs: 나감 9, 들어옴 24
+- TowerAttackAction.cs: 나감 8, 들어옴 9
+- EnemyInfoPanelUI.cs: 나감 8, 들어옴 2
+- TowerManager.cs: 나감 7, 들어옴 8
+- DebuffAction.cs: 나감 7, 들어옴 1
+- SplashAttackAction.cs: 나감 7, 들어옴 1
+- EnemyMoveController.cs: 나감 7, 들어옴 21
+- GameManager.cs: 나감 7, 들어옴 8
+- BuffAction.cs: 나감 6, 들어옴 1
+
+이 수치는 상대 파일의 enum 하나만 사용해도 1로 셉니다.
+예: TowerDataSO.cs의 참조가 많은 것은 공용 enum이 함께 정의되어 있는 영향도 큽니다.
+따라서 수치가 큰 순서로 무조건 파일을 쪼개면 안 됩니다.
+
+타입 참조 그래프에서 32개 파일이 하나의 상호 도달 가능한 묶음으로 연결됩니다.
+즉 몇 단계를 거치면 시작 파일로 돌아오는 연결 경로가 많다는 뜻입니다.
+하지만 struct/enum/상속 참조까지 포함한 결과이므로
+'32개가 재귀 호출한다' 또는 '32개 전부를 동시에 고쳐야 한다'는 뜻은 아닙니다.
+실제 위험은 3장에 기록한 상태 소유권과 호출·실행 순서로 판단해야 합니다.
+
+리팩토링할 때 각 함수 옆에서 확인할 5가지:
+1. 누가 호출하는가?
+2. 어떤 값을 읽는가?
+3. 어떤 값을 바꾸는가? 그 값의 진짜 주인은 누구인가?
+4. 끝났다는 것은 어떻게 알리는가?
+5. 대상이 죽거나 씬이 바뀌면 누가 취소/해제하는가?
+
+호출이 여러 파일로 이어지는 것은 정상입니다.
+문제는 그 연결의 목적과 데이터 소유권이 보이지 않는 것입니다.
+첫 목표는 파일 수를 줄이거나 늘리는 것이 아니라,
+'이 기능은 여기서 시작해서 이 결과를 만들고 여기서 끝난다'를 명확히 하는 것입니다.
+
+작성 완료: 자체 스크립트 69개 모두 개별 항목 수록.
+코드 수정 없음. 실행 검증이 필요한 위험은 테스트 전 확정 버그로 단정하지 않았습니다.
+

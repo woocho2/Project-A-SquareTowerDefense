@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(EnemyHealthController))]
-[RequireComponent(typeof(EnemyMovementController))]
+[RequireComponent(typeof(EnemyMoveController))]
 public class EnemyDebuffController : MonoBehaviour
 {
     private sealed class DebuffState
@@ -15,6 +15,7 @@ public class EnemyDebuffController : MonoBehaviour
         public Vector3 ZonePosition;
         public float AbilityValue;
         public float PendingDamage;
+        public int StackThreshold = 1;
         public int RemainingDuration = -1;
         public bool RefreshedOnCurrentTile;
         public readonly Dictionary<int, int> AppliedVersionsBySource = new Dictionary<int, int>();
@@ -22,15 +23,15 @@ public class EnemyDebuffController : MonoBehaviour
 
     private readonly Dictionary<DebuffTarget, DebuffState> m_states = new Dictionary<DebuffTarget, DebuffState>();
     private EnemyHealthController m_health;
-    private EnemyMovementController m_movement;
+    private EnemyMoveController m_movement;
 
     private void Awake()
     {
         m_health = GetComponent<EnemyHealthController>();
-        m_movement = GetComponent<EnemyMovementController>();
+        m_movement = GetComponent<EnemyMoveController>();
     }
 
-    public void ApplyZoneStack(DebuffTarget target, int tier, float abilityValue, Vector3 zonePosition)
+    public void ApplyZoneStack(DebuffTarget target, int tier, float abilityValue, Vector3 zonePosition, int stackThreshold = 1)
     {
         if (target == DebuffTarget.None || m_health.CurrentHP <= 0f) return;
         if (!m_states.TryGetValue(target, out DebuffState state))
@@ -41,11 +42,21 @@ public class EnemyDebuffController : MonoBehaviour
 
         state.Tier = Mathf.Max(state.Tier, Mathf.Clamp(tier, 1, 5));
         state.AbilityValue = Mathf.Max(state.AbilityValue, abilityValue);
+        state.StackThreshold = Mathf.Max(state.StackThreshold, stackThreshold);
         state.ZonePosition = zonePosition;
         if (target == DebuffTarget.Spear) state.ExpireTurns = -1;
         switch (target)
         {
             case DebuffTarget.Fire:
+                if (!state.Triggered)
+                {
+                    state.Stack++;
+                    if (state.Stack >= state.StackThreshold)
+                    {
+                        state.Stack = 0;
+                        state.Triggered = true;
+                    }
+                }
                 // 불 장판의 첫 피해는 스택이 적용된 현재 행동 턴에 즉시 보여줍니다.
                 break;
             case DebuffTarget.Sword:
@@ -102,7 +113,12 @@ public class EnemyDebuffController : MonoBehaviour
 
             if (isNewApplication)
             {
-                ApplyZoneStack(effect.Target, effect.Tier, effect.AbilityValue, effect.ZoneWorldPosition);
+                ApplyZoneStack(
+                    effect.Target,
+                    effect.Tier,
+                    effect.AbilityValue,
+                    effect.ZoneWorldPosition,
+                    effect.StackThreshold);
                 state = m_states[effect.Target];
                 state.AppliedVersionsBySource[effect.SourceID] = effect.ApplicationVersion;
             }
@@ -111,10 +127,14 @@ public class EnemyDebuffController : MonoBehaviour
                 // 장판이 계속 유지되는 동안 더 높은 티어/수치 장판으로 교체되었을 때도 즉시 최신값을 사용합니다.
                 state.Tier = Mathf.Max(state.Tier, effect.Tier);
                 state.AbilityValue = Mathf.Max(state.AbilityValue, effect.AbilityValue);
+                state.StackThreshold = Mathf.Max(state.StackThreshold, effect.StackThreshold);
                 state.ZonePosition = effect.ZoneWorldPosition;
             }
 
-            state.RemainingDuration = Mathf.Max(state.RemainingDuration, effect.Duration);
+            if (effect.Target != DebuffTarget.Fire)
+            {
+                state.RemainingDuration = Mathf.Max(state.RemainingDuration, effect.Duration);
+            }
             state.RefreshedOnCurrentTile = true;
         }
     }
@@ -158,7 +178,7 @@ public class EnemyDebuffController : MonoBehaviour
 
             // 타일 위에 있으면 RefreshTileDebuffs가 매 적 턴 남은 시간을 다시 duration으로 맞춥니다.
             // 타일을 벗어난 뒤부터만 1턴씩 줄어듭니다.
-            if (!state.RefreshedOnCurrentTile && state.RemainingDuration > 0)
+            if (pair.Key != DebuffTarget.Fire && !state.RefreshedOnCurrentTile && state.RemainingDuration > 0)
             {
                 state.RemainingDuration--;
                 if (state.RemainingDuration <= 0)
@@ -187,7 +207,8 @@ public class EnemyDebuffController : MonoBehaviour
             switch (pair.Key)
             {
                 case DebuffTarget.Fire:
-                    m_health.ApplyDamage(m_health.MaxHP * TierValue(state.Tier, .5f, 1.5f, 4.5f, 13.5f, 40.5f) / 100f);
+                    float fireDamagePercent = state.AbilityValue * (state.Triggered ? 2f : Mathf.Max(1, state.Stack));
+                    m_health.ApplyDamage(m_health.MaxHP * fireDamagePercent / 100f);
                     break;
                 case DebuffTarget.Earth:
                     if (state.TurnCount % 5 == 0)
@@ -263,6 +284,9 @@ public class EnemyDebuffController : MonoBehaviour
         if (m_states.TryGetValue(DebuffTarget.Hammer, out DebuffState hammer)) defenseMultiplier -= TierValue(hammer.Tier, 5f, 10f, 15f, 20f, 25f) / 100f;
         m_health.SetDefendMultiplier(defenseMultiplier);
 
+        bool isIgnited = m_states.TryGetValue(DebuffTarget.Fire, out DebuffState fire) && fire.Triggered;
+        m_health.SetHealReceivedMultiplier(isIgnited ? .6f : 1f);
+
         if (m_states.TryGetValue(DebuffTarget.Ice, out ice) && ice.Triggered) m_movement.SetPermanentActionPenalty(2);
         if (m_states.TryGetValue(DebuffTarget.Electricity, out DebuffState electricity) && electricity.Triggered) m_movement.SetPermanentDiceMaxModifier(-2);
     }
@@ -281,6 +305,14 @@ public class EnemyDebuffController : MonoBehaviour
 
     public void AddDebuff(DebuffBase _) { }
 
+    /// <summary>Fire meteors deal extra damage to Burned and Ignited enemies.</summary>
+    public float GetFireMeteorDamageMultiplier()
+    {
+        if (!m_states.TryGetValue(DebuffTarget.Fire, out DebuffState fire)) return 1f;
+        if (fire.Triggered) return 4f;
+        return fire.Stack > 0 ? 2f : 1f;
+    }
+
     public void ClearAllDebuffs()
     {
         StopAllCoroutines();
@@ -296,6 +328,68 @@ public class EnemyDebuffController : MonoBehaviour
             m_health.SetMaxHealthReductionPercent(0f);
             m_health.SetVulnerability(1f);
             m_health.SetDefendMultiplier(1f);
+            m_health.SetHealReceivedMultiplier(1f);
         }
+    }
+
+    /// <summary>현재 적에게 적용 중인 모든 디버프의 상세 설명 목록을 반환합니다. (UI 표시용)</summary>
+    public List<string> GetActiveDebuffDescriptions()
+    {
+        List<string> result = new List<string>();
+        foreach (KeyValuePair<DebuffTarget, DebuffState> pair in m_states)
+        {
+            DebuffTarget target = pair.Key;
+            DebuffState state = pair.Value;
+            string targetName = GetDebuffTargetName(target);
+            string durationText = state.RemainingDuration > 0 ? $" · 지속 {state.RemainingDuration}턴" : "";
+
+            string detail = target switch
+            {
+                DebuffTarget.Fire => state.Triggered
+                    ? $"티어 {state.Tier} · [점화] 매 턴 폭발 피해, 받는 치유 40% 감소"
+                    : $"티어 {state.Tier} · 화상 {state.Stack}/{state.StackThreshold} 스택{durationText}",
+                DebuffTarget.Sword => $"티어 {state.Tier} · 저주 {state.Stack}스택 (최대 체력 감소){durationText}",
+                DebuffTarget.Axe => $"티어 {state.Tier} · 취약 {state.Stack}스택 (받는 피해 증가){durationText}",
+                DebuffTarget.Ice => state.Triggered
+                    ? $"티어 {state.Tier} · [빙결] 행동주기 +2, 받는 피해 +10%"
+                    : $"티어 {state.Tier} · 냉기 {state.Stack}/5 스택{durationText}",
+                DebuffTarget.Electricity => state.Triggered
+                    ? $"티어 {state.Tier} · [감전] 이동 주사위 -2"
+                    : $"티어 {state.Tier} · 전류 {state.Stack}/5 스택{durationText}",
+                DebuffTarget.Wind => state.Triggered
+                    ? $"티어 {state.Tier} · [돌풍] 다음 이동 역주행"
+                    : $"티어 {state.Tier} · 바람 {state.Stack}/10 스택{durationText}",
+                DebuffTarget.Shield => $"티어 {state.Tier} · [속박] 이동 불가{durationText}",
+                DebuffTarget.Spear => $"티어 {state.Tier} · 처형 표식 (누적 피해 {state.PendingDamage:0})",
+                DebuffTarget.Bow => $"티어 {state.Tier} · 약점 노출 (방어 무시 고정 피해 전환){durationText}",
+                DebuffTarget.Earth => $"티어 {state.Tier} · 지진 (5턴마다 행동 지연 및 피해){durationText}",
+                DebuffTarget.Light => $"티어 {state.Tier} · 섬광 (일정 체력 이하 즉사){durationText}",
+                DebuffTarget.Darkness => $"티어 {state.Tier} · 암흑 (이동력 변화){durationText}",
+                _ => $"티어 {state.Tier} · {state.Stack}스택{durationText}"
+            };
+
+            result.Add($"{targetName} 디버프\n{detail}");
+        }
+        return result;
+    }
+
+    private static string GetDebuffTargetName(DebuffTarget target)
+    {
+        return target switch
+        {
+            DebuffTarget.Fire => "불 (화상)",
+            DebuffTarget.Sword => "검 (저주)",
+            DebuffTarget.Axe => "도끼 (취약)",
+            DebuffTarget.Ice => "얼음 (빙결)",
+            DebuffTarget.Electricity => "전기 (감전)",
+            DebuffTarget.Wind => "바람 (돌풍)",
+            DebuffTarget.Shield => "방패 (속박)",
+            DebuffTarget.Spear => "창 (처형)",
+            DebuffTarget.Bow => "활 (약점)",
+            DebuffTarget.Earth => "대지 (지진)",
+            DebuffTarget.Light => "빛 (섬광)",
+            DebuffTarget.Darkness => "어둠 (암흑)",
+            _ => "특수"
+        };
     }
 }

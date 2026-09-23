@@ -16,20 +16,20 @@ public abstract class DebuffBase
     }
 
     // 디버프 적용 시점
-    public virtual void OnApply(EnemyHealthController health, EnemyMovementController movement) { }
+    public virtual void OnApply(EnemyHealthController health, EnemyMoveController movement) { }
 
     // 매 프레임 실행 (시간 차감 및 도트/변위 계산)
-    public virtual void OnUpdate(EnemyHealthController health, EnemyMovementController movement, float deltaTime)
+    public virtual void OnUpdate(EnemyHealthController health, EnemyMoveController movement, float deltaTime)
     {
         Duration -= deltaTime;
     }
 
     // 동일 디버프 중첩 시 갱신
-    public virtual void OnRefresh(EnemyHealthController health, EnemyMovementController movement, float newDuration, float newValue)
+    public virtual void OnRefresh(EnemyHealthController health, EnemyMoveController movement, float newDuration, float newValue)
     {
         if (newDuration > Duration) Duration = newDuration;
     }
 
     // 디버프 만료/제거 시점
-    public virtual void OnRemove(EnemyHealthController health, EnemyMovementController movement) { }
+    public virtual void OnRemove(EnemyHealthController health, EnemyMoveController movement) { }
 }

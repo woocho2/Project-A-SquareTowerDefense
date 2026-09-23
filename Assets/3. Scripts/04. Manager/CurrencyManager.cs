@@ -1,20 +1,30 @@
-using TMPro;
+using System;
 using UnityEngine;
 
+/// <summary>골드와 젬의 보유량을 관리하고, 값이 바뀌면 구독자에게 알립니다.</summary>
 public class CurrencyManager : MonoBehaviour
 {
+    #region Singleton and Inspector
+
     public static CurrencyManager Instance;
 
     [Header("Economy Settings")]
-    [SerializeField] private int startGold =300;
+    [SerializeField] private int startGold = 300;
     [SerializeField] private int startGem = 0;
 
-    [Header("UI Reference")]
-    [SerializeField] private TextMeshProUGUI Txt_gold;
-    [SerializeField] private TextMeshProUGUI Txt_gem;
+    #endregion
+
+    #region Runtime State
 
     private int currentGold;
-    private float currentGem;
+    private int currentGem;
+
+    /// <summary>골드 또는 젬이 변경되었을 때 발생합니다.</summary>
+    public event Action CurrencyChanged;
+
+    #endregion
+
+    #region Unity Lifecycle
 
     private void Awake()
     {
@@ -25,16 +35,8 @@ public class CurrencyManager : MonoBehaviour
         }
 
         Instance = this;
-
-        //DontDestroyOnLoad(gameObject);
-    }
-
-    void Start()
-    {
         currentGold = startGold;
         currentGem = startGem;
-        UpdateGoldUI();
-        UpdateGemUI();
     }
 
     private void OnDestroy()
@@ -45,12 +47,16 @@ public class CurrencyManager : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region Queries
+
     public int GetCurrentGold()
     {
         return currentGold;
     }
 
-    public float GetCurrentGem()
+    public int GetCurrentGem()
     {
         return currentGem;
     }
@@ -65,16 +71,20 @@ public class CurrencyManager : MonoBehaviour
         return currentGem >= amount;
     }
 
+    #endregion
+
+    #region Currency Changes
+
     public void AddGold(int amount)
     {
         currentGold += amount;
-        UpdateGoldUI();
+        NotifyCurrencyChanged();
     }
 
-    public void AddGem(float amount)
+    public void AddGem(int amount)
     {
         currentGem += amount;
-        UpdateGemUI();
+        NotifyCurrencyChanged();
     }
 
     public void SpendMoney(int amount)
@@ -82,7 +92,7 @@ public class CurrencyManager : MonoBehaviour
         if (HasEnoughMoney(amount))
         {
             currentGold -= amount;
-            UpdateGoldUI();
+            NotifyCurrencyChanged();
         }
         else
         {
@@ -90,12 +100,12 @@ public class CurrencyManager : MonoBehaviour
         }
     }
 
-    public void SpendGem(float amount)
+    public void SpendGem(int amount)
     {
         if (HasEnoughGem(amount))
         {
             currentGem -= amount;
-            UpdateGemUI();
+            NotifyCurrencyChanged();
         }
         else
         {
@@ -103,19 +113,14 @@ public class CurrencyManager : MonoBehaviour
         }
     }
 
-    private void UpdateGoldUI()
+    #endregion
+
+    #region Change Notification
+
+    private void NotifyCurrencyChanged()
     {
-        if (Txt_gold != null)
-        {
-            Txt_gold.text = $"{currentGold.ToString()}";
-        }
+        CurrencyChanged?.Invoke();
     }
 
-    private void UpdateGemUI()
-    {
-        if (Txt_gem != null)
-        {
-            Txt_gem.text = $"{currentGem.ToString()}";
-        }
-    }
+    #endregion
 }

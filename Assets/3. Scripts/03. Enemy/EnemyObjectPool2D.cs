@@ -125,7 +125,7 @@ public class EnemyObjectPool2D : MonoBehaviour
         }
 
         // 2. 턴제 이동 데이터 초기화 (EnemyData 및 TilePath 전달)[cite: 22]
-        if (health.TryGetComponent<EnemyMovementController>(out var movement))
+        if (health.TryGetComponent<EnemyMoveController>(out var movement))
         {
             movement.InitMovement(m_enemyData, tilePath);
             // 생성된 적을 EnemyManager에 등록[cite: 22]
@@ -135,7 +135,7 @@ public class EnemyObjectPool2D : MonoBehaviour
         // 3. 체력 초기화[cite: 22]
         float finalMaxHP = m_enemyData.MaxHP * hpMultiplier;
         float finalDefend = m_enemyData.Defend * defendMultiplier;
-        health.InitHealth(finalMaxHP, finalDefend, m_poolEnemyType);
+        health.InitHealth(m_enemyData, finalMaxHP, finalDefend, m_poolEnemyType);
 
         return health;
     }

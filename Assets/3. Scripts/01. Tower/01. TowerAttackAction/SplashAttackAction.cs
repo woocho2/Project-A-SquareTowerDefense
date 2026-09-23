@@ -46,7 +46,7 @@ public class SplashAttackAction : TowerAttackAction
     private static Vector3 GetTargetTileCenter(EnemyHealthController targetEnemy)
     {
         if (targetEnemy != null && TilePath.Instance != null &&
-            targetEnemy.TryGetComponent(out EnemyMovementController movement))
+            targetEnemy.TryGetComponent(out EnemyMoveController movement))
         {
             return TilePath.Instance.GetWorldPosition(movement.CurrentTileIndex);
         }
@@ -61,21 +61,52 @@ public class SplashAttackAction : TowerAttackAction
         return LaunchSatelliteProjectiles(towerTransform, finalStats, new[] { projectile });
     }
 
+    /// <summary>
+    /// Fire Splash skill 2: launches one visual meteor at every path tile inside
+    /// range.  Damage still resolves only on projectile impact.
+    /// </summary>
+    public bool LaunchFireMeteor(Transform towerTransform, TowerStats finalStats)
+    {
+        if (towerTransform == null || TilePath.Instance == null) return false;
+
+        List<Vector3> targetPositions = TilePath.Instance.GetPathWorldPositionsInRange(
+            towerTransform.position,
+            finalStats.Range);
+        bool launchedAny = false;
+
+        for (int i = 0; i < targetPositions.Count; i++)
+        {
+            ProjectileHit2D projectile = SpawnPreparedProjectile(towerTransform.position, 1f);
+            if (projectile == null) continue;
+
+            ConfigureAndLaunch(projectile, towerTransform, targetPositions[i], finalStats, true);
+            launchedAny = true;
+        }
+
+        return launchedAny;
+    }
+
     private void ConfigureAndLaunch(
         ProjectileHit2D projectile,
         Transform towerTransform,
         Vector3 targetPosition,
-        TowerStats finalStats)
+        TowerStats finalStats,
+        bool isFireMeteor = false)
     {
         Vector3 direction = (targetPosition - projectile.transform.position).normalized;
         if (direction.sqrMagnitude < 0.0001f) direction = Vector3.right;
 
-        bool isCritical = Random.Range(0f, 100f) <= finalStats.CriticalRate * 100f;
-        float calculatedDamage = finalStats.AttackPower;
+        bool isCritical = !isFireMeteor && Random.Range(0f, 100f) <= finalStats.CriticalRate * 100f;
+        float calculatedDamage = isFireMeteor
+            ? finalStats.AttackPower * finalStats.AbilityValue
+            : finalStats.AttackPower;
 
-        float distanceRatio = Mathf.Clamp01(
-            Vector2.Distance(towerTransform.position, targetPosition) / Mathf.Max(0.01f, finalStats.Range));
-        calculatedDamage *= 1f + finalStats.DistanceDamageBonusPercent / 100f * distanceRatio;
+        if (!isFireMeteor)
+        {
+            float distanceRatio = Mathf.Clamp01(
+                Vector2.Distance(towerTransform.position, targetPosition) / Mathf.Max(0.01f, finalStats.Range));
+            calculatedDamage *= 1f + finalStats.DistanceDamageBonusPercent / 100f * distanceRatio;
+        }
 
         if (isCritical)
         {
@@ -101,7 +132,8 @@ public class SplashAttackAction : TowerAttackAction
             duration = finalStats.Duration,
             abilityValue = finalStats.AbilityValue,
             debuffTarget = m_data.debuffTarget,
-            hitEffectID = m_data.hitEffectID
+            hitEffectID = m_data.hitEffectID,
+            isFireMeteor = isFireMeteor
         };
 
         projectile.Init(projectileStats);

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Collections.Generic;
 
 public class BuffAction : TowerAttackAction
 {
@@ -31,6 +32,7 @@ public class BuffAction : TowerAttackAction
         TileManager.Instance.RemoveTowerBuffEffectsBySource(sourceID);
         BoundsInt bounds = spawnTilemap.cellBounds;
         bool appliedAny = false;
+        List<Vector3Int> affectedCells = new List<Vector3Int>();
 
         for (int y = bounds.yMin; y < bounds.yMax; y++)
         {
@@ -42,6 +44,12 @@ public class BuffAction : TowerAttackAction
                 Vector3 cellCenter = spawnTilemap.GetCellCenterWorld(cell);
                 if (Vector2.Distance(towerTransform.position, cellCenter) > currentStats.Range) continue;
 
+                affectedCells.Add(cell);
+
+                // Fire is stack-based: one support action adds one Preheat stack.
+                // Duration is the stack threshold; AttackCount is the stack lifetime.
+                if (m_data.buffTarget == BuffTarget.Fire) continue;
+
                 TileManager.Instance.AddTowerBuffEffect(
                     cell,
                     sourceID,
@@ -51,6 +59,18 @@ public class BuffAction : TowerAttackAction
                     currentStats.Duration);
                 appliedAny = true;
             }
+        }
+
+        if (m_data.buffTarget == BuffTarget.Fire && affectedCells.Count > 0)
+        {
+            TileManager.Instance.SetFirePreheatEffects(
+                affectedCells,
+                sourceID,
+                sourceTier,
+                currentStats.AbilityValue,
+                Mathf.RoundToInt(currentStats.Duration),
+                currentStats.AttackCount);
+            appliedAny = true;
         }
 
         return appliedAny;

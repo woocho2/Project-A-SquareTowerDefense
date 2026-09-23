@@ -3,8 +3,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+/// <summary>메인 메뉴의 페이드 연출과 스테이지 선택 씬 이동을 처리합니다.</summary>
 public class UIManager_Menu : MonoBehaviour
 {
+    #region Inspector
 
     [SerializeField] CanvasGroup Canvas_Menu;
     [SerializeField] Button Btn_Stage;
@@ -13,8 +15,11 @@ public class UIManager_Menu : MonoBehaviour
 
     [SerializeField] string m_sceneName;
 
+    #endregion
 
-    IEnumerator Start()
+    #region Lifecycle and Actions
+
+    private IEnumerator Start()
     {
         if (Btn_Stage != null)
         {
@@ -30,7 +35,11 @@ public class UIManager_Menu : MonoBehaviour
         SceneManager.LoadScene(m_sceneName);
     }
 
-    IEnumerator CoFade(float from, float to, float duration)
+    #endregion
+
+    #region Fade
+
+    private IEnumerator CoFade(float from, float to, float duration)
     {
         // CanvasGroup이 없으면 페이드가 불가능하므로 종료
         if (!Canvas_Menu)
@@ -81,4 +90,6 @@ public class UIManager_Menu : MonoBehaviour
         // 최종 상태에 따라 입력 차단 여부 결정
         Canvas_Menu.blocksRaycasts = to > 0.00001f;
     }
+
+    #endregion
 }

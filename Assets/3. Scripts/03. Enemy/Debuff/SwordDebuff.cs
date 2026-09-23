@@ -9,12 +9,12 @@ public class SwordDebuff : DebuffBase
 
     public SwordDebuff(float duration, float value) : base(DebuffTarget.Sword, duration, value) { }
 
-    public override void OnApply(EnemyHealthController health, EnemyMovementController movement)
+    public override void OnApply(EnemyHealthController health, EnemyMoveController movement)
     {
         ApplyCurse(health);
     }
 
-    public override void OnRefresh(EnemyHealthController health, EnemyMovementController movement, float newDuration, float newValue)
+    public override void OnRefresh(EnemyHealthController health, EnemyMoveController movement, float newDuration, float newValue)
     {
         base.OnRefresh(health, movement, newDuration, newValue);
 

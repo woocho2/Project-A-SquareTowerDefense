@@ -6,13 +6,13 @@ public class SpearDebuff : DebuffBase
     public SpearDebuff(float duration, float damagePerStackPercent)
         : base(DebuffTarget.Spear, duration, damagePerStackPercent) { }
 
-    public override void OnRefresh(EnemyHealthController health, EnemyMovementController movement, float newDuration, float newValue)
+    public override void OnRefresh(EnemyHealthController health, EnemyMoveController movement, float newDuration, float newValue)
     {
         base.OnRefresh(health, movement, newDuration, newValue);
         Stack++;
     }
 
-    public override void OnRemove(EnemyHealthController health, EnemyMovementController movement)
+    public override void OnRemove(EnemyHealthController health, EnemyMoveController movement)
     {
         if (health != null && health.CurrentHP > 0f)
         {

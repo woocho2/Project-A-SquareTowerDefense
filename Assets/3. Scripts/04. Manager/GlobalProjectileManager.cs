@@ -1,11 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 타워 문양별로 공유하는 투사체 풀을 생성하고 투사체 인스턴스를 제공합니다.
+/// 활성 투사체 수는 GameManager가 공격 연출 종료를 기다릴 때 사용합니다.
+/// </summary>
 public class GlobalProjectileManager : MonoBehaviour
 {
+    #region Singleton and Pool Settings
+
     public static GlobalProjectileManager Instance { get; private set; }
 
-    private Dictionary<int, ProjectileObjectPool2D> m_poolDictionary = new Dictionary<int, ProjectileObjectPool2D>();
+    private readonly Dictionary<int, ProjectileObjectPool2D> m_poolDictionary = new Dictionary<int, ProjectileObjectPool2D>();
 
     [Header("Global Pool Settings")]
     [Tooltip("각 투사체 풀의 기본 사전 생성 개수")]
@@ -16,6 +22,10 @@ public class GlobalProjectileManager : MonoBehaviour
 
     [Tooltip("모든 투사체 프리팹의 원본 크기에 곱하는 전역 배율입니다.")]
     [SerializeField, Range(0.1f, 2f)] private float m_projectileScaleMultiplier = 0.5f;
+
+    #endregion
+
+    #region Unity Lifecycle
 
     private void Awake()
     {
@@ -29,27 +39,32 @@ public class GlobalProjectileManager : MonoBehaviour
 
     private void Start()
     {
-        // [핵심] TowerManager의 Start() (CSV 로드)가 끝난 직후에 풀을 생성해야 합니다.
-        // 스크립트 실행 순서(Script Execution Order)를 TowerManager보다 늦게 설정하거나 Start에서 호출하십시오.
+        // TowerManager가 CSV 데이터를 로드한 뒤 투사체 프리팹 목록으로 풀을 구성합니다.
         InitializeProjectileDatabase();
     }
 
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
+    #endregion
+
+    #region Pool Initialization
+
     public void InitializeProjectileDatabase()
     {
-        // TowerManager에 로드된 모든 타워 데이터를 가져옵니다.
-        TowerData[] allTowers = TowerManager.Instance.GetTowerDataArray(); // TowerManager에 이 함수(배열 반환)를 하나 만들어주셔야 합니다.
+        TowerData[] allTowers = TowerManager.Instance.GetTowerDataArray();
 
         if (allTowers == null || allTowers.Length == 0) return;
 
         foreach (var tower in allTowers)
         {
-            // 투사체가 없는 타워라면 건너뜁니다.
             if (tower.projectilePrefab == null) continue;
 
-            // 천의 자리를 자른 공유 ID 생성 (1101 -> 101)
+            // 티어 자리만 제거하여 같은 문양의 모든 티어가 하나의 풀을 공유합니다. (1101 -> 101)
             int sharedKey = tower.towerID % 1000;
 
-            // 공유 ID로 이미 풀(Pool)이 만들어져 있다면 중복 생성하지 않고 넘어갑니다.
             if (!m_poolDictionary.ContainsKey(sharedKey))
             {
                 GameObject poolObj = new GameObject($"Pool_{sharedKey}_Proj");
@@ -69,9 +84,12 @@ public class GlobalProjectileManager : MonoBehaviour
         Debug.Log($"[GlobalProjectileManager] 총 {m_poolDictionary.Count}개의 투사체 오브젝트 풀 생성 완료.");
     }
 
+    #endregion
+
+    #region Projectile Access
+
     public ProjectileHit2D SpawnProjectile(int towerID, Vector3 position, float speed, bool rotateProjectile)
     {
-        // 발사 요청이 들어왔을 때도 천의 자리를 떼어내고 공유 풀에서 투사체를 꺼냅니다.
         int sharedKey = towerID % 1000;
 
         if (m_poolDictionary.TryGetValue(sharedKey, out ProjectileObjectPool2D targetPool))
@@ -85,6 +103,10 @@ public class GlobalProjectileManager : MonoBehaviour
         return null;
     }
 
+    #endregion
+
+    #region Active Projectile Queries
+
     public bool HasActiveProjectiles()
     {
         return GetActiveProjectileCount() > 0;
@@ -94,4 +116,6 @@ public class GlobalProjectileManager : MonoBehaviour
     {
         return FindObjectsByType<ProjectileHit2D>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Length;
     }
+
+    #endregion
 }

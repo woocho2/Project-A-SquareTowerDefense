@@ -10,12 +10,12 @@ public class ElectricityDebuff : DebuffBase
     public ElectricityDebuff(float duration, float maxHPDamagePercent)
         : base(DebuffTarget.Electricity, duration, maxHPDamagePercent) { }
 
-    public override void OnApply(EnemyHealthController health, EnemyMovementController movement)
+    public override void OnApply(EnemyHealthController health, EnemyMoveController movement)
     {
         movement.SetSpeedMultiplier(1f - (0.04f * Stack));
     }
 
-    public override void OnRefresh(EnemyHealthController health, EnemyMovementController movement, float newDuration, float newValue)
+    public override void OnRefresh(EnemyHealthController health, EnemyMoveController movement, float newDuration, float newValue)
     {
         base.OnRefresh(health, movement, newDuration, newValue);
 
@@ -34,7 +34,7 @@ public class ElectricityDebuff : DebuffBase
         }
     }
 
-    public override void OnUpdate(EnemyHealthController health, EnemyMovementController movement, float deltaTime)
+    public override void OnUpdate(EnemyHealthController health, EnemyMoveController movement, float deltaTime)
     {
         base.OnUpdate(health, movement, deltaTime);
 
@@ -50,7 +50,7 @@ public class ElectricityDebuff : DebuffBase
         }
     }
 
-    public override void OnRemove(EnemyHealthController health, EnemyMovementController movement)
+    public override void OnRemove(EnemyHealthController health, EnemyMoveController movement)
     {
         movement.SetSpeedMultiplier(1f);
     }

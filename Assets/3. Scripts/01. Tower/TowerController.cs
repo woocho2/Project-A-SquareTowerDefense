@@ -90,6 +90,23 @@ public class TowerController : MonoBehaviour
     private readonly Dictionary<BuffTarget, Dictionary<int, ActiveBuff>> m_activeBuffs =
         new Dictionary<BuffTarget, Dictionary<int, ActiveBuff>>();
 
+    // Fire support is owned by the target tower, not by the tile.  This lets a
+    // synergy tower use exactly the same Preheat/Overheat rules as a normal tower.
+    private sealed class FirePreheatStack
+    {
+        public int RemainingTurns;
+        public float AbilityValue;
+    }
+
+    private readonly Dictionary<int, int> m_appliedFirePreheatVersions = new Dictionary<int, int>();
+    private readonly List<FirePreheatStack> m_firePreheatStacks = new List<FirePreheatStack>();
+    private int m_fireOverheatRemainingTurns;
+    private float m_fireOverheatAbilityValue;
+    private int m_fireTargetHitCount;
+    private float m_fireTargetCriticalRateBonus;
+    private float m_fireTargetCriticalDamageBonus;
+    private int m_fireSplashTurnCounter;
+
     private void Awake()
     {
         if (m_towerVisual == null)
@@ -194,6 +211,7 @@ public class TowerController : MonoBehaviour
         }
 
         ApplyCurrentTileBuffTowerEffects(ref finalStats);
+        ApplyFireStatusEffects(ref finalStats);
 
         if (finalStats.Range < TowerAttackAction.WorldUnitsPerTile)
         {
@@ -420,7 +438,8 @@ public class TowerController : MonoBehaviour
                     finalStats.Range += TowerAttackAction.WorldUnitsPerTile;
                     finalStats.DistanceDamageBonusPercent += GetBowDistanceDamageBonus(tier);
                     break;
-                case BuffTarget.Fire: finalStats.AttackCount += tier; break;
+                // Fire is stack-based and is applied below from the target-owned status.
+                case BuffTarget.Fire: break;
                 case BuffTarget.AttackCount: finalStats.AttackCount += Mathf.RoundToInt(effect.AbilityValue); break;
                 case BuffTarget.Spear: finalStats.CriticalRate += GetTierValue(tier, .01f, .025f, .05f, .10f, .20f); break;
                 case BuffTarget.Axe: finalStats.CriticalDamage += GetTierValue(tier, .25f, .50f, 1f, 2f, 4f); break;
@@ -434,6 +453,130 @@ public class TowerController : MonoBehaviour
                 case BuffTarget.Darkness: ApplyTileDarknessBuff(ref finalStats); break;
             }
         }
+    }
+
+    /// <summary>
+    /// Reads the Fire field on this tower's cell and applies each source action once.
+    /// It is called after all support towers act, so board order never changes which
+    /// attack tower receives the current turn's Preheat.
+    /// </summary>
+    public void RefreshFireTileStatus()
+    {
+        if (TileManager.Instance == null || TowerManager.Instance == null) return;
+
+        Vector3Int cell = TowerManager.Instance.WorldToCell(transform.position);
+        IReadOnlyList<TowerTileBuffEffect> effects = TileManager.Instance.GetTowerBuffEffectsAt(cell);
+        for (int i = 0; i < effects.Count; i++)
+        {
+            TowerTileBuffEffect effect = effects[i];
+            if (effect.Target != BuffTarget.Fire || effect.ApplicationVersion <= 0) continue;
+
+            if (m_appliedFirePreheatVersions.TryGetValue(effect.SourceID, out int appliedVersion) &&
+                appliedVersion == effect.ApplicationVersion)
+            {
+                continue;
+            }
+
+            m_appliedFirePreheatVersions[effect.SourceID] = effect.ApplicationVersion;
+            m_firePreheatStacks.Add(new FirePreheatStack
+            {
+                AbilityValue = Mathf.Max(0f, effect.AbilityValue),
+                RemainingTurns = Mathf.Max(1, effect.StackLifetime)
+            });
+
+            if (m_firePreheatStacks.Count >= Mathf.Max(1, effect.StackThreshold))
+            {
+                m_firePreheatStacks.Clear();
+                m_fireOverheatAbilityValue = Mathf.Max(m_fireOverheatAbilityValue, effect.AbilityValue * 2f);
+                m_fireOverheatRemainingTurns = Mathf.Max(
+                    m_fireOverheatRemainingTurns,
+                    Mathf.Max(1, effect.StackLifetime * 2));
+            }
+        }
+    }
+
+    /// <summary>Advances target-owned Fire state once at the start of every enemy turn.</summary>
+    public void AdvanceFireStatusTurn()
+    {
+        for (int i = m_firePreheatStacks.Count - 1; i >= 0; i--)
+        {
+            if (--m_firePreheatStacks[i].RemainingTurns <= 0)
+            {
+                m_firePreheatStacks.RemoveAt(i);
+            }
+        }
+
+        if (m_fireOverheatRemainingTurns > 0 && --m_fireOverheatRemainingTurns <= 0)
+        {
+            m_fireOverheatAbilityValue = 0f;
+        }
+    }
+
+    private void ApplyFireStatusEffects(ref TowerStats finalStats)
+    {
+        float preheatPercent = 0f;
+        for (int i = 0; i < m_firePreheatStacks.Count; i++)
+        {
+            preheatPercent += m_firePreheatStacks[i].AbilityValue;
+        }
+        finalStats.AttackPower *= 1f + preheatPercent / 100f;
+
+        if (m_fireOverheatRemainingTurns > 0)
+        {
+            finalStats.AttackPower *= 1f + m_fireOverheatAbilityValue / 100f;
+            finalStats.AttackCount += 1;
+        }
+
+        if (!IsFireTargetTower()) return;
+
+        finalStats.CriticalRate += m_fireTargetCriticalRateBonus;
+        finalStats.CriticalDamage += m_fireTargetCriticalDamageBonus;
+
+        if (m_fireOverheatRemainingTurns > 0)
+        {
+            finalStats.AttackCount += 2;
+        }
+        else if (m_firePreheatStacks.Count > 0)
+        {
+            finalStats.AttackCount += 1;
+        }
+    }
+
+    public void NotifyFireTargetHit()
+    {
+        if (!IsFireTargetTower()) return;
+
+        m_fireTargetHitCount++;
+        int threshold = Mathf.Max(1, Mathf.RoundToInt(m_baseStats.Duration));
+        if (m_fireTargetHitCount < threshold) return;
+
+        m_fireTargetHitCount = 0;
+        float bonus = Mathf.Max(0f, m_baseStats.AbilityValue) / 100f;
+        m_fireTargetCriticalRateBonus += bonus;
+        m_fireTargetCriticalDamageBonus += bonus;
+    }
+
+    public bool TryTriggerFireMeteor()
+    {
+        if (!IsFireSplashTower() || !(m_attackAction is SplashAttackAction splashAction)) return false;
+
+        m_fireSplashTurnCounter++;
+        int threshold = Mathf.Max(1, Mathf.RoundToInt(GetFinalStats().Duration));
+        if (m_fireSplashTurnCounter < threshold) return false;
+
+        m_fireSplashTurnCounter = 0;
+        TowerStats finalStats = GetFinalStats();
+        return splashAction.LaunchFireMeteor(transform, finalStats);
+    }
+
+    private bool IsFireTargetTower()
+    {
+        return m_towerData != null && m_towerData.attackType == AttackType.Target && m_towerData.towerID % 100 == TowerPattern.FIRE;
+    }
+
+    private bool IsFireSplashTower()
+    {
+        return m_towerData != null && m_towerData.attackType == AttackType.Splash && m_towerData.towerID % 100 == TowerPattern.FIRE;
     }
 
     private int GetCurrentTileBuffActionReduction()

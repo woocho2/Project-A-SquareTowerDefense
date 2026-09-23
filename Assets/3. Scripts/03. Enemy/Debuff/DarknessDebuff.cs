@@ -12,7 +12,7 @@ public class DarknessDebuff : DebuffBase
         m_centerPos = centerPos;
     }
 
-    public override void OnUpdate(EnemyHealthController health, EnemyMovementController movement, float deltaTime)
+    public override void OnUpdate(EnemyHealthController health, EnemyMoveController movement, float deltaTime)
     {
         base.OnUpdate(health, movement, deltaTime);
 

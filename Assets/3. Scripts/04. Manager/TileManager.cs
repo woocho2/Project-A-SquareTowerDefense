@@ -33,6 +33,13 @@ public sealed class TowerTileBuffEffect
     public int Tier;
     public float AbilityValue;
     public int RemainingTurns;
+    // A source action gets one shared version across every affected tower cell.
+    // Targets use this to add one stack only once per action, not once per frame.
+    public int ApplicationVersion;
+    // Fire uses Duration as the preheat -> overheat threshold, while the stack
+    // lifetime is explicitly supplied from AttackCount.
+    public int StackThreshold;
+    public int StackLifetime;
 }
 
 /// <summary>
@@ -46,13 +53,22 @@ public sealed class PathTileDebuffEffect
     public int Tier;
     public float AbilityValue;
     public int Duration;
+    // Fire uses Duration as the burn -> ignite threshold.  Keeping this value
+    // separate makes the meaning explicit to the enemy status owner.
+    public int StackThreshold;
     public int ApplicationVersion;
     public Vector3 ZoneWorldPosition;
 }
 
 [RequireComponent(typeof(Tilemap))]
+/// <summary>
+/// 고정 맵 타일 효과와 타워가 생성한 동적 버프·디버프 효과를 좌표별로 관리합니다.
+/// Dictionary의 데이터가 실제 판정 기준이며 TileSatelliteOrbiter는 시각 표현만 담당합니다.
+/// </summary>
 public class TileManager : MonoBehaviour
 {
+    #region Singleton and Inspector
+
     public static TileManager Instance { get; private set; }
 
     [Header("에너미 경로 컴포넌트 참조")]
@@ -79,6 +95,10 @@ public class TileManager : MonoBehaviour
     [FormerlySerializedAs("towerTileBuffEffectParent")]
     [SerializeField] private Transform mapTileBuffEffectParent;
 
+    #endregion
+
+    #region Runtime Data
+
     // 에너미 타일 정보 (좌표 -> 에너미 타일 속성)
     public Dictionary<Vector3Int, SpecialTileType> specialTileMap = new Dictionary<Vector3Int, SpecialTileType>();
 
@@ -90,6 +110,7 @@ public class TileManager : MonoBehaviour
     // 버프/디버프 타워가 남긴 동적 효과입니다. 특수 맵 타일(towerTileBuffMap, specialTileMap)과는 별개입니다.
     private readonly Dictionary<Vector3Int, List<TowerTileBuffEffect>> m_towerBuffEffectsByCell = new Dictionary<Vector3Int, List<TowerTileBuffEffect>>();
     private readonly Dictionary<Vector3Int, List<PathTileDebuffEffect>> m_pathDebuffEffectsByCell = new Dictionary<Vector3Int, List<PathTileDebuffEffect>>();
+    private readonly Dictionary<int, int> m_buffApplicationVersions = new Dictionary<int, int>();
     private readonly Dictionary<int, int> m_debuffApplicationVersions = new Dictionary<int, int>();
 
     // 현재 씬에 생성되어 있는 버프 이펙트 목록 (좌표 -> 이펙트 인스턴스)
@@ -110,7 +131,11 @@ public class TileManager : MonoBehaviour
     private readonly Color towerActionCountColor = HexToColor("57cfff"); // 행동력 증가 타일 색상
     private readonly Color towerAttackCountColor = HexToColor("ffc74f"); // 공격횟수 증가 타일 색상
 
-    void Awake()
+    #endregion
+
+    #region Unity Lifecycle
+
+    private void Awake()
     {
         if (Instance != null && Instance != this)
         {
@@ -125,12 +150,12 @@ public class TileManager : MonoBehaviour
         if (tilePath == null) tilePath = GetComponent<TilePath>();
     }
 
-    void OnDestroy()
+    private void OnDestroy()
     {
         if (Instance == this) Instance = null;
     }
 
-    void Start()
+    private void Start()
     {
         // 1. 에너미 경로 특수 타일 배치
         AssignRandomSpecialTiles();
@@ -139,9 +164,9 @@ public class TileManager : MonoBehaviour
         AssignRandomTowerTileBuffs();
     }
 
-    // ==========================================================================================================
-    // 타워 스폰 타일 버프 배정 로직 (지정 개수 방식)
-    // ==========================================================================================================
+    #endregion
+
+    #region Fixed Tower Tile Buffs
 
     [ContextMenu("타워 스폰 타일 버프 랜덤 생성")]
     public void AssignRandomTowerTileBuffs()
@@ -277,9 +302,9 @@ public class TileManager : MonoBehaviour
         return TowerTileBuffType.Normal;
     }
 
-    // ==========================================================================================================
-    // 타워/적이 읽는 동적 타일 효과
-    // ==========================================================================================================
+    #endregion
+
+    #region Dynamic Tower Buffs and Path Debuffs
 
     public IReadOnlyList<TowerTileBuffEffect> GetTowerBuffEffectsAt(Vector3Int cell)
     {
@@ -323,8 +348,53 @@ public class TileManager : MonoBehaviour
             Target = target,
             Tier = Mathf.Clamp(tier, 1, 5),
             AbilityValue = abilityValue,
-            RemainingTurns = Mathf.Max(1, Mathf.RoundToInt(duration))
+            RemainingTurns = Mathf.Max(1, Mathf.RoundToInt(duration)),
+            ApplicationVersion = 0,
+            StackThreshold = 0,
+            StackLifetime = 0
         });
+    }
+
+    /// <summary>
+    /// Records one Fire preheat application on all cells covered by a support tower.
+    /// The tile stores the application only; each tower owns its preheat/overheat state.
+    /// </summary>
+    public void SetFirePreheatEffects(
+        IReadOnlyList<Vector3Int> cells,
+        int sourceID,
+        int tier,
+        float abilityValue,
+        int stackThreshold,
+        int stackLifetime)
+    {
+        RemoveTowerBuffEffectsBySource(sourceID);
+        if (cells == null || cells.Count == 0) return;
+
+        int nextVersion = m_buffApplicationVersions.TryGetValue(sourceID, out int version) ? version + 1 : 1;
+        m_buffApplicationVersions[sourceID] = nextVersion;
+
+        for (int i = 0; i < cells.Count; i++)
+        {
+            Vector3Int cell = cells[i];
+            if (!m_towerBuffEffectsByCell.TryGetValue(cell, out List<TowerTileBuffEffect> effects))
+            {
+                effects = new List<TowerTileBuffEffect>();
+                m_towerBuffEffectsByCell.Add(cell, effects);
+            }
+
+            effects.Add(new TowerTileBuffEffect
+            {
+                SourceID = sourceID,
+                Target = BuffTarget.Fire,
+                Tier = Mathf.Clamp(tier, 1, 5),
+                AbilityValue = abilityValue,
+                // The field remains available until the next enemy turn starts.
+                RemainingTurns = 1,
+                ApplicationVersion = nextVersion,
+                StackThreshold = Mathf.Max(1, stackThreshold),
+                StackLifetime = Mathf.Max(1, stackLifetime)
+            });
+        }
     }
 
     /// <summary>버프 타워의 남은 지속시간을 한 에너미 턴 단위로 줄입니다.</summary>
@@ -343,28 +413,51 @@ public class TileManager : MonoBehaviour
     /// <summary>디버프 장판의 현재 패스 타일을 갱신합니다. 장판 하나는 한 패스 타일에만 존재하므로 이전 위치 기록을 제거합니다.</summary>
     public void SetPathDebuffEffect(Vector3Int cell, int sourceID, DebuffTarget target, int tier, float abilityValue, float duration, Vector3 zoneWorldPosition)
     {
+        SetPathDebuffEffects(new[] { cell }, sourceID, target, tier, abilityValue, duration, zoneWorldPosition);
+    }
+
+    /// <summary>
+    /// Registers one debuff application across multiple path cells.  Every cell gets
+    /// the same version so an enemy standing on an overlapping area receives one
+    /// stack per tower action.
+    /// </summary>
+    public void SetPathDebuffEffects(
+        IReadOnlyList<Vector3Int> cells,
+        int sourceID,
+        DebuffTarget target,
+        int tier,
+        float abilityValue,
+        float duration,
+        Vector3 zoneWorldPosition)
+    {
         if (target == DebuffTarget.None) return;
 
         RemovePathDebuffEffectsBySource(sourceID);
+        if (cells == null || cells.Count == 0) return;
         int nextVersion = m_debuffApplicationVersions.TryGetValue(sourceID, out int version) ? version + 1 : 1;
         m_debuffApplicationVersions[sourceID] = nextVersion;
 
-        if (!m_pathDebuffEffectsByCell.TryGetValue(cell, out List<PathTileDebuffEffect> effects))
+        for (int i = 0; i < cells.Count; i++)
         {
-            effects = new List<PathTileDebuffEffect>();
-            m_pathDebuffEffectsByCell.Add(cell, effects);
-        }
+            Vector3Int cell = cells[i];
+            if (!m_pathDebuffEffectsByCell.TryGetValue(cell, out List<PathTileDebuffEffect> effects))
+            {
+                effects = new List<PathTileDebuffEffect>();
+                m_pathDebuffEffectsByCell.Add(cell, effects);
+            }
 
-        effects.Add(new PathTileDebuffEffect
-        {
-            SourceID = sourceID,
-            Target = target,
-            Tier = Mathf.Clamp(tier, 1, 5),
-            AbilityValue = abilityValue,
-            Duration = Mathf.Max(1, Mathf.RoundToInt(duration)),
-            ApplicationVersion = nextVersion,
-            ZoneWorldPosition = zoneWorldPosition
-        });
+            effects.Add(new PathTileDebuffEffect
+            {
+                SourceID = sourceID,
+                Target = target,
+                Tier = Mathf.Clamp(tier, 1, 5),
+                AbilityValue = abilityValue,
+                Duration = Mathf.Max(1, Mathf.RoundToInt(duration)),
+                StackThreshold = Mathf.Max(1, Mathf.RoundToInt(duration)),
+                ApplicationVersion = nextVersion,
+                ZoneWorldPosition = zoneWorldPosition
+            });
+        }
     }
 
     /// <summary>
@@ -389,6 +482,7 @@ public class TileManager : MonoBehaviour
             Tier = Mathf.Clamp(tier, 1, 5),
             AbilityValue = abilityValue,
             Duration = Mathf.Max(1, Mathf.RoundToInt(duration)),
+            StackThreshold = Mathf.Max(1, Mathf.RoundToInt(duration)),
             ApplicationVersion = 0,
             ZoneWorldPosition = zoneWorldPosition
         });
@@ -446,12 +540,13 @@ public class TileManager : MonoBehaviour
     {
         RemoveTowerBuffEffectsBySource(sourceID);
         RemovePathDebuffEffectsBySource(sourceID);
+        m_buffApplicationVersions.Remove(sourceID);
         m_debuffApplicationVersions.Remove(sourceID);
     }
 
-    // ==========================================================================================================
-    // 기존 에너미 경로 로직
-    // ==========================================================================================================
+    #endregion
+
+    #region Fixed Path Tile Effects
 
     [ContextMenu("랜덤 특수 타일 생성")]
     public void AssignRandomSpecialTiles()
@@ -537,4 +632,6 @@ public class TileManager : MonoBehaviour
         cell = tilemap.WorldToCell(worldPosition);
         return tilemap.HasTile(cell);
     }
+
+    #endregion
 }

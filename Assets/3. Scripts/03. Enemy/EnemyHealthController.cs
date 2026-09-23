@@ -13,8 +13,9 @@ public class EnemyHealthController : MonoBehaviour
     private float m_baseDefend;
     private float m_defendMultiplier = 1f;
     private float m_vulnerabilityMultiplier = 1f;
+    private float m_healReceivedMultiplier = 1f;
 
-    private EnemyMovementController m_movement;
+    private EnemyMoveController m_movement;
     private EnemyDebuffController m_debuff;
     private EnemyObjectPool2D m_enemyPool;
     private Coroutine m_hpBarFadeRoutine;
@@ -22,16 +23,27 @@ public class EnemyHealthController : MonoBehaviour
     public float CurrentHP => m_currentHP;
     public float MaxHP => m_maxHP;
     public float FinalDefend => Mathf.Clamp(m_baseDefend * m_defendMultiplier, 0.1f, 500f);
+    public float BaseDefend => m_baseDefend;
+    public float DefendMultiplier => m_defendMultiplier;
+    public float VulnerabilityMultiplier => m_vulnerabilityMultiplier;
     public bool IsBoss => m_enemyType == EnemyType.Boss || m_enemyType == EnemyType.MiddleBoss;
+    public EnemyType EnemyType => m_enemyType;
+    public EnemyData EnemyData { get; private set; }
 
     private void Awake()
     {
-        m_movement = GetComponent<EnemyMovementController>();
+        m_movement = GetComponent<EnemyMoveController>();
         m_debuff = GetComponent<EnemyDebuffController>();
         if (m_uiController == null) TryGetComponent(out m_uiController);
     }
 
     public void SetPool(EnemyObjectPool2D pool) => m_enemyPool = pool;
+
+    public void InitHealth(EnemyData data, float maxHP, float defend, EnemyType enemyType = EnemyType.Normal)
+    {
+        EnemyData = data;
+        InitHealth(maxHP, defend, enemyType);
+    }
 
     public void InitHealth(float maxHP, float defend, EnemyType enemyType = EnemyType.Normal)
     {
@@ -42,6 +54,7 @@ public class EnemyHealthController : MonoBehaviour
         m_baseDefend = defend;
         m_defendMultiplier = 1f;
         m_vulnerabilityMultiplier = 1f;
+        m_healReceivedMultiplier = 1f;
 
 
         HideHPBar();
@@ -57,7 +70,7 @@ public class EnemyHealthController : MonoBehaviour
     {
         if (m_currentHP <= 0f) return;
 
-        float healAmount = m_maxHP * percent;
+        float healAmount = m_maxHP * percent * m_healReceivedMultiplier;
         m_currentHP = Mathf.Min(m_currentHP + healAmount, m_maxHP);
 
         ShowHPBar();
@@ -158,6 +171,7 @@ public class EnemyHealthController : MonoBehaviour
 
     public void SetDefendMultiplier(float multiplier) => m_defendMultiplier = multiplier;
     public void SetVulnerability(float multiplier) => m_vulnerabilityMultiplier = multiplier;
+    public void SetHealReceivedMultiplier(float multiplier) => m_healReceivedMultiplier = Mathf.Clamp01(multiplier);
 
     public void SetMaxHealthReductionPercent(float reductionPercent)
     {

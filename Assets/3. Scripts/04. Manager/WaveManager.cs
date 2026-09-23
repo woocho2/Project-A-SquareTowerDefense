@@ -2,8 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 웨이브 구성, 적 소환 순서, 웨이브별 능력치 배율과 중간 보스 소환 상태를 관리합니다.
+/// 실제 10턴 진행 순서는 GameManager가 담당합니다.
+/// </summary>
 public class WaveManager : MonoBehaviour
 {
+    #region Singleton and Inspector
+
     public static WaveManager Instance;
 
     [Header("Pool Reference")]
@@ -13,14 +19,23 @@ public class WaveManager : MonoBehaviour
     [Header("Wave Base Settings")]
     [SerializeField] private int m_currentWave = 1;
 
+    #endregion
 
-    private int m_activeEnemyCount = 0;
-    private int m_spawnedEnemyCountInWave = 0;
-    private bool m_hasSummonedMiddleBossInWindow;
+    #region Runtime State and Public Read-only State
 
-    public event Action MiddleBossSummonAvailabilityChanged;
+    private int m_waveSpawnedCount = 0;
+    private bool m_middleBossSpawned;
 
-    public bool CanSummonMiddleBoss => IsMiddleBossSummonWindow(m_currentWave) && !m_hasSummonedMiddleBossInWindow;
+    public event Action MiddleBossSummonableChanged;
+
+    public int CurrentWave => m_currentWave;
+    public int CurrentCycle => Mathf.Clamp(((m_currentWave - 1) / 10) + 1, 1, 4);
+    public int CurrentSubWave => ((m_currentWave - 1) % 10) + 1;
+    public bool CanSummonMiddleBoss => IsMiddleBossSummonWindow(m_currentWave) && !m_middleBossSpawned;
+
+    #endregion
+
+    #region Unity Lifecycle
 
     private void Awake()
     {
@@ -40,7 +55,7 @@ public class WaveManager : MonoBehaviour
             return;
         }
 
-        MiddleBossSummonAvailabilityChanged?.Invoke();
+        MiddleBossSummonableChanged?.Invoke();
     }
 
     private void OnDestroy()
@@ -48,28 +63,41 @@ public class WaveManager : MonoBehaviour
         if (Instance == this) Instance = null;
     }
 
-    // 턴제 에너미 턴에서 호출될 몬스터 스폰 함수
-    // 에너미 서브턴마다 호출됩니다. 현재 웨이브의 소환 대기열에서 적 1마리를 소환합니다.
-    public bool SpawnNextWaveEnemyForTurn()
+    #endregion
+
+    #region Wave Composition and Spawning
+
+    /// <summary>
+    /// 웨이브의 첫 5턴 동안 호출됩니다.
+    /// 현재 사이클에 맞는 수의 적을 소환 대기열에서 꺼내 반환합니다.
+    /// </summary>
+    public int SpawnWaveEnemiesForTurn()
     {
         List<EnemyType> waveEnemies = GetWaveEnemyComposition(m_currentWave);
-        if (m_spawnedEnemyCountInWave >= waveEnemies.Count) return false;
+        if (m_waveSpawnedCount >= waveEnemies.Count || m_enemyPool == null || m_tilePath == null) return 0;
 
-        EnemyType currentEnemyType = waveEnemies[m_spawnedEnemyCountInWave];
-        int poolIndex = (int)currentEnemyType;
+        int spawnCount = CurrentSubWave == 10 ? 1 : CurrentCycle * 2;
+        int spawnedCount = 0;
+        GetEnemyStatMultipliers(out float hpMulti, out float defendMulti);
 
-        if (poolIndex >= m_enemyPool.Length || m_enemyPool[poolIndex] == null)
+        for (int i = 0; i < spawnCount && m_waveSpawnedCount < waveEnemies.Count; i++)
         {
-            Debug.LogError($"[WaveManager] {currentEnemyType}에 해당하는 오브젝트 풀이 없습니다!");
-            return false;
+            EnemyType currentEnemyType = waveEnemies[m_waveSpawnedCount];
+            int poolIndex = (int)currentEnemyType;
+
+            if (poolIndex < 0 || poolIndex >= m_enemyPool.Length || m_enemyPool[poolIndex] == null)
+            {
+                Debug.LogError($"[WaveManager] {currentEnemyType}에 해당하는 오브젝트 풀이 없습니다!");
+                break;
+            }
+
+            m_enemyPool[poolIndex].Spawn(m_tilePath.GetWorldPosition(0), hpMulti, defendMulti, m_tilePath);
+
+            m_waveSpawnedCount++;
+            spawnedCount++;
         }
 
-        GetMultiplier(out float hpMulti, out float defendMulti);
-        m_enemyPool[poolIndex].Spawn(m_tilePath.GetWorldPosition(0), hpMulti, defendMulti, m_tilePath);
-
-        m_activeEnemyCount++;
-        m_spawnedEnemyCountInWave++;
-        return true;
+        return spawnedCount;
     }
 
     /// <summary>
@@ -82,7 +110,7 @@ public class WaveManager : MonoBehaviour
         if (wave < 1 || wave > 40) return enemies;
 
         int baseWave = wave % 10;
-        int cycleIndex = (wave - 1) / 10;
+        int cycle = ((wave - 1) / 10) + 1;
         
 
         if (baseWave == 0)
@@ -92,10 +120,10 @@ public class WaveManager : MonoBehaviour
         }
 
         int turnPerWave = 5;
-        int enemiesPerTurn = 2 * (cycleIndex + 1);
+        int enemiesPerTurn = 2 * cycle;
 
         int singleTypeCount = turnPerWave * enemiesPerTurn;
-        int mixedTypeCount = turnPerWave;
+        int mixedTypeCount = turnPerWave * cycle;
 
         switch (baseWave)
         {
@@ -107,20 +135,17 @@ public class WaveManager : MonoBehaviour
 
             case 4:
             case 5:
-                AddEnemies(enemies, EnemyType.Normal, mixedTypeCount);
-                AddEnemies(enemies, EnemyType.Speed, mixedTypeCount);
+                AddMixedEnemies(enemies, EnemyType.Normal, EnemyType.Speed, mixedTypeCount);
                 break;
 
             case 6:
             case 7:
-                AddEnemies(enemies, EnemyType.Normal, mixedTypeCount);
-                AddEnemies(enemies, EnemyType.Depend, mixedTypeCount);
+                AddMixedEnemies(enemies, EnemyType.Normal, EnemyType.Depend, mixedTypeCount);
                 break;
 
             case 8:
             case 9:
-                AddEnemies(enemies, EnemyType.Speed, mixedTypeCount);
-                AddEnemies(enemies, EnemyType.Depend, mixedTypeCount);
+                AddMixedEnemies(enemies, EnemyType.Speed, EnemyType.Depend, mixedTypeCount);
                 break;
         }
 
@@ -134,11 +159,27 @@ public class WaveManager : MonoBehaviour
             enemies.Add(type);
         }
     }
-    // 웨이브별 스탯 배율 계산 로직
-    public void GetMultiplier(out float hpMulti, out float defendMulti)
+
+    private static void AddMixedEnemies(List<EnemyType> enemies, EnemyType firstType, EnemyType secondType, int countPerType)
     {
-        int subWave = m_currentWave % 10;
-        if (subWave == 0) subWave = 10;
+        for (int i = 0; i < countPerType; i++)
+        {
+            enemies.Add(firstType);
+            enemies.Add(secondType);
+        }
+    }
+
+    #endregion
+
+    #region Enemy Stat Scaling
+
+    /// <summary>
+    /// 일반 적에게 적용할 최종 배율을 계산합니다.
+    /// 최종 배율은 사이클 내부 단계 배율과 10웨이브 단위 사이클 배율의 곱입니다.
+    /// </summary>
+    private void GetEnemyStatMultipliers(out float hpMulti, out float defendMulti)
+    {
+        int subWave = CurrentSubWave;
       
         float subWaveHp = subWave switch
         {
@@ -170,13 +211,13 @@ public class WaveManager : MonoBehaviour
             _ => 1.0f
         };
 
-        GetCycleMultiplier(m_currentWave, out float cycleHp, out float cycleDefend);
+        GetCycleMultipliers(m_currentWave, out float cycleHp, out float cycleDefend);
         
         hpMulti = subWaveHp * cycleHp;
         defendMulti = subWaveDefend * cycleDefend;
     }
 
-    public void GetCycleMultiplier(int wave, out float hpMulti, out float defendMulti)
+    private static void GetCycleMultipliers(int wave, out float hpMulti, out float defendMulti)
     {
         hpMulti = wave switch
         {
@@ -195,6 +236,10 @@ public class WaveManager : MonoBehaviour
         };
     }
 
+    #endregion
+
+    #region Middle Boss
+
     private static bool IsMiddleBossSummonWindow(int wave)
     {
         return (wave >= 5 && wave <= 7)
@@ -210,59 +255,46 @@ public class WaveManager : MonoBehaviour
         int poolIndex = (int)EnemyType.MiddleBoss;
         if (m_enemyPool == null || poolIndex >= m_enemyPool.Length || m_enemyPool[poolIndex] == null) return false;
 
-        float middleBossHPMulti = m_currentWave switch
-        {
-            >= 15 and <= 17 => 2.0f,
-            >= 25 and <= 27 => 4.0f,
-            >= 35 and <= 37 => 8.0f,
-            _ => 1.0f
-        };
-
-        float middleBossDefendMulti = m_currentWave switch
-        {
-            >= 15 and <= 17 => 2.0f,
-            >= 25 and <= 27 => 3.0f,
-            >= 35 and <= 37 => 4.0f,
-            _ => 1.0f
-        };
-
+        GetCycleMultipliers(m_currentWave, out float middleBossHPMulti, out float middleBossDefendMulti);
+        
         EnemyObjectPool2D targetPool = m_enemyPool[poolIndex];
         targetPool.Spawn(m_tilePath.GetWorldPosition(0), middleBossHPMulti, middleBossDefendMulti, m_tilePath);
-        m_activeEnemyCount++;
-        m_hasSummonedMiddleBossInWindow = true;
-        MiddleBossSummonAvailabilityChanged?.Invoke();
+        m_middleBossSpawned = true;
+        MiddleBossSummonableChanged?.Invoke();
         return true;
     }
 
+    #endregion
+
+    #region Wave Progression and Game Clear
+
+    /// <summary>
+    /// 10번째 적 턴이 끝난 뒤 다음 웨이브 상태로 전환합니다.
+    /// </summary>
     public void NextWave()
     {
         m_currentWave++;
-        m_spawnedEnemyCountInWave = 0;
-        CurrencyManager.Instance?.AddGold((m_currentWave - 1) * 100);
+        m_waveSpawnedCount = 0;
 
         if (m_currentWave == 5 || m_currentWave == 15 || m_currentWave == 25 || m_currentWave == 35)
         {
-            m_hasSummonedMiddleBossInWindow = false;
+            m_middleBossSpawned = false;
         }
 
-        MiddleBossSummonAvailabilityChanged?.Invoke();
+        MiddleBossSummonableChanged?.Invoke();
     }
-
-    public int GetEnemiesPerWave() => GetWaveEnemyComposition(m_currentWave).Count;
-    public int GetWave() => m_currentWave;
 
     public void OnEnemyDied(bool isBoss = false)
     {
-        m_activeEnemyCount--;
-        if (m_activeEnemyCount < 0) m_activeEnemyCount = 0;
-
         if (isBoss && m_currentWave >= 40)
         {
-            if (UIManager.Instance != null)
+            if (GameManager.Instance != null)
             {
-                UIManager.Instance.ShowGameClear();
+                GameManager.Instance.OnGameClear();
                 Debug.Log("최종 40웨이브 Boss 처치! 승리하셨습니다.");
             }
         }
     }
+
+    #endregion
 }

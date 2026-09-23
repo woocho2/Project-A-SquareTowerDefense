@@ -3,8 +3,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>시작 화면 버튼과 시작 문구의 반복 반짝임을 관리합니다.</summary>
 public class UIManager_Start : MonoBehaviour
 {
+    #region Inspector and Cached Style
+
     [SerializeField] Button Btn_GameStart;
     [SerializeField] string m_sceneName;
 
@@ -17,6 +20,10 @@ public class UIManager_Start : MonoBehaviour
 
     private Color m_gameStartBaseColor;
     private Vector3 m_gameStartBaseScale;
+
+    #endregion
+
+    #region Unity Lifecycle
 
     private void Start()
     {
@@ -33,6 +40,10 @@ public class UIManager_Start : MonoBehaviour
     {
         UpdateGameStartTextSparkle();
     }
+
+    #endregion
+
+    #region Text Effect
 
     private void CacheGameStartTextStyle()
     {
@@ -55,8 +66,14 @@ public class UIManager_Start : MonoBehaviour
         m_txtGameStart.transform.localScale = m_gameStartBaseScale * scale;
     }
 
+    #endregion
+
+    #region Navigation
+
     public void OnGameStartButtonClick()
     {
         SceneManager.LoadScene(m_sceneName);
     }
+
+    #endregion
 }

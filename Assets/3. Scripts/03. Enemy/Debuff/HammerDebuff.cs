@@ -6,13 +6,13 @@ public class HammerDebuff : DebuffBase
     public HammerDebuff(float duration, float defenseReductionPercent)
         : base(DebuffTarget.Hammer, duration, defenseReductionPercent) { }
 
-    public override void OnApply(EnemyHealthController health, EnemyMovementController movement)
+    public override void OnApply(EnemyHealthController health, EnemyMoveController movement)
     {
         float multiplier = Mathf.Clamp(1f - (Value / 100f), 0.1f, 1f);
         health.SetDefendMultiplier(multiplier);
     }
 
-    public override void OnRemove(EnemyHealthController health, EnemyMovementController movement)
+    public override void OnRemove(EnemyHealthController health, EnemyMoveController movement)
     {
         health.SetDefendMultiplier(1f);
     }

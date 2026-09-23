@@ -8,12 +8,12 @@ public class AxeDebuff : DebuffBase
     public AxeDebuff(float duration, float vulnerabilityPercent)
         : base(DebuffTarget.Axe, duration, vulnerabilityPercent) { }
 
-    public override void OnApply(EnemyHealthController health, EnemyMovementController movement)
+    public override void OnApply(EnemyHealthController health, EnemyMoveController movement)
     {
         UpdateVulnerability(health);
     }
 
-    public override void OnRefresh(EnemyHealthController health, EnemyMovementController movement, float newDuration, float newValue)
+    public override void OnRefresh(EnemyHealthController health, EnemyMoveController movement, float newDuration, float newValue)
     {
         base.OnRefresh(health, movement, newDuration, newValue);
         if (Stack < MAX_STACK) Stack++;
@@ -26,7 +26,7 @@ public class AxeDebuff : DebuffBase
         health.SetVulnerability(multiplier);
     }
 
-    public override void OnRemove(EnemyHealthController health, EnemyMovementController movement)
+    public override void OnRemove(EnemyHealthController health, EnemyMoveController movement)
     {
         health.SetVulnerability(1f);
     }

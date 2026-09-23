@@ -27,6 +27,7 @@ public struct ProjectileStats
     public float abilityValue;
     public int hitEffectID;
     public DebuffTarget debuffTarget;
+    public bool isFireMeteor;
 }
 
 /// <summary>
@@ -190,7 +191,7 @@ public class ProjectileHit2D : MonoBehaviour
                 {
                     if (health.CurrentHP <= 0f) break;
 
-                    DealDamage(health, m_stats.damage);
+                    DealDamage(health, m_stats.damage, true);
 
                     if (m_stats.debuffTarget != DebuffTarget.None && target.TryGetComponent<EnemyDebuffController>(out var debuff))
                     {
@@ -257,10 +258,18 @@ public class ProjectileHit2D : MonoBehaviour
         ReturnToPool();
     }
 
-    private void DealDamage(EnemyHealthController health, float damage)
+    private void DealDamage(EnemyHealthController health, float damage, bool countsAsPrimaryTargetHit = false)
     {
         if (health == null || health.CurrentHP <= 0f) return;
+        if (m_stats.isFireMeteor && health.TryGetComponent(out EnemyDebuffController debuff))
+        {
+            damage *= debuff.GetFireMeteorDamageMultiplier();
+        }
         health.ApplyDamage(damage, m_stats.isCritical, m_stats.armorPenetrationPercent, m_stats.ownerTower);
+        if (countsAsPrimaryTargetHit)
+        {
+            m_stats.ownerTower?.NotifyFireTargetHit();
+        }
     }
 
     // Ice 버프를 받은 단일 타겟 공격은 명중 적의 인접 적을 추가로 타격합니다.

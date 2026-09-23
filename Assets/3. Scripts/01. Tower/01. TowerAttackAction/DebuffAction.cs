@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -139,6 +140,22 @@ public class DebuffAction : TowerAttackAction
         if (TileManager.Instance == null || !m_activeZone.TryGetPlacedPathCell(out Vector3Int pathCell)) return false;
 
         int tier = Mathf.Clamp(m_data.towerID / 1000, 1, 5);
+        if (m_data.debuffTarget == DebuffTarget.Fire && TilePath.Instance != null)
+        {
+            List<Vector3Int> affectedCells = TilePath.Instance.GetPathCellsInSquare(
+                pathCell,
+                Mathf.Max(0, currentStats.ProjectileRadius - 1));
+
+            TileManager.Instance.SetPathDebuffEffects(
+                affectedCells,
+                towerTransform.GetInstanceID(),
+                m_data.debuffTarget,
+                tier,
+                currentStats.AbilityValue,
+                currentStats.Duration,
+                m_activeZone.transform.position);
+            return affectedCells.Count > 0;
+        }
         // 실제 적 탐색은 하지 않습니다. 장판의 패스 타일에 효과 데이터만 기록하고,
         // 적은 이동을 마친 뒤 자신이 서 있는 타일의 데이터를 읽습니다.
         TileManager.Instance.SetPathDebuffEffect(

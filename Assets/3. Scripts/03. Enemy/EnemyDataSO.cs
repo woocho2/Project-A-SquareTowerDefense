@@ -20,4 +20,14 @@ public class EnemyData : ScriptableObject
     public int Speed;
     public int Action;
     public float Resistance;
+
+    public string DisplayName => enemyType switch
+    {
+        EnemyType.Normal => "일반 몬스터",
+        EnemyType.Speed => "스피드 몬스터",
+        EnemyType.Depend => "방어형 몬스터",
+        EnemyType.MiddleBoss => "중간 보스",
+        EnemyType.Boss => "보스",
+        _ => "몬스터"
+    };
 }

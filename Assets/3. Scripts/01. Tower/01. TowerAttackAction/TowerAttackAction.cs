@@ -139,7 +139,7 @@ public abstract class TowerAttackAction
                 if (Mathf.Abs(offset.x) > range || Mathf.Abs(offset.y) > range) continue;
             }
 
-            health.TryGetComponent(out EnemyMovementController movement);
+            health.TryGetComponent(out EnemyMoveController movement);
 
             switch (priority)
             {

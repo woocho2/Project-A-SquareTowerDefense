@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class EnemyMovementController : MonoBehaviour
+public class EnemyMoveController : MonoBehaviour
 {
     [Header("이동 속도 설정")]
     [Tooltip("한 칸을 이동하는 속도 (인스펙터 조절)")]
@@ -14,7 +14,7 @@ public class EnemyMovementController : MonoBehaviour
     [SerializeField] private int m_baseActionInterval = 1;  // 원본 기본 행동력 캐싱용
     [SerializeField] private int m_currentActionCounter = 0; // 턴 누적 카운터
     [SerializeField] private int m_baseDiceMaxSpeed = 1;     // EnemyData에서 받아온 주사위 최댓값 (Speed)
-    [SerializeField] private int m_bonusSpeed = 0;          // 스피드 타일 등으로 더해지는 추가 칸 수
+    [SerializeField] private int m_tileBuffSpeed = 0;          // 스피드 타일 등으로 더해지는 추가 칸 수
     private int m_permanentActionPenalty;
     private int m_temporaryActionPenalty;
     private int m_temporaryActionPenaltyTurns;
@@ -23,8 +23,6 @@ public class EnemyMovementController : MonoBehaviour
     private int m_temporaryDiceMaxModifierTurns;
     private int m_forcedNoMoveTurns;
     private bool m_reverseNextDice;
-
-    private float m_speedMultiplier = 1f;
 
     private EnemyHealthController m_health;
     private SpriteRenderer m_spriteRenderer;
@@ -37,8 +35,18 @@ public class EnemyMovementController : MonoBehaviour
 
     public int CurrentTileIndex => m_currentTileIndex;
     public bool IsMoving => m_isMoving;
-    public float CurrentSpeed => FinalMoveSpeed;
-    public float FinalMoveSpeed => m_moveSpeed * Mathf.Clamp(m_speedMultiplier, 0.1f, 5f);
+    public int ActionInterval => m_actionInterval;
+    public int BaseActionInterval => m_baseActionInterval;
+    public int CurrentActionCounter => m_currentActionCounter;
+    public int BaseDiceMaxSpeed => m_baseDiceMaxSpeed;
+    public int TileBuffSpeed => m_tileBuffSpeed;
+    public int CurrentDiceMaxSpeed => Mathf.Max(0, m_baseDiceMaxSpeed + m_tileBuffSpeed + m_diceMaxModifier + m_temporaryDiceMaxModifier);
+
+    // Legacy DebuffBase assets are still present in the project but are no longer
+    // called by EnemyDebuffController.  Keep this compatibility surface inert until
+    // those obsolete classes are removed in the wider debuff refactor.
+    public float CurrentSpeed => m_moveSpeed;
+    public void SetSpeedMultiplier(float _) { }
 
     private void Awake()
     {
@@ -66,8 +74,7 @@ public class EnemyMovementController : MonoBehaviour
         m_tilePath = tilePath;
         m_currentTileIndex = 0;
         m_currentActionCounter = 0;
-        m_bonusSpeed = 0;
-        m_speedMultiplier = 1f;
+        m_tileBuffSpeed = 0;
         m_permanentActionPenalty = 0;
         m_temporaryActionPenalty = 0;
         m_temporaryActionPenaltyTurns = 0;
@@ -129,7 +136,7 @@ public class EnemyMovementController : MonoBehaviour
             m_currentActionCounter = 0;
 
             // 1부터 EnemyData에 설정된 Speed 값까지 랜덤 굴림 + 멈춰있는 타일의 보너스 Speed
-            int maxDice = Mathf.Max(0, m_baseDiceMaxSpeed + m_bonusSpeed + m_diceMaxModifier + m_temporaryDiceMaxModifier);
+            int maxDice = Mathf.Max(0, m_baseDiceMaxSpeed + m_tileBuffSpeed + m_diceMaxModifier + m_temporaryDiceMaxModifier);
             if (maxDice <= 0) yield break;
             int totalSteps = Random.Range(1, maxDice + 1);
             if (m_reverseNextDice)
@@ -154,7 +161,7 @@ public class EnemyMovementController : MonoBehaviour
             FaceMoveDirection(targetPos);
             while (Vector3.Distance(transform.position, targetPos) > 0.02f)
             {
-                transform.position = Vector3.MoveTowards(transform.position, targetPos, FinalMoveSpeed * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, targetPos, m_moveSpeed * Time.deltaTime);
                 yield return null;
             }
             transform.position = targetPos;
@@ -180,7 +187,7 @@ public class EnemyMovementController : MonoBehaviour
 
             while (Vector3.Distance(transform.position, targetPos) > 0.02f)
             {
-                transform.position = Vector3.MoveTowards(transform.position, targetPos, FinalMoveSpeed * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, targetPos, m_moveSpeed * Time.deltaTime);
                 yield return null;
             }
 
@@ -267,7 +274,7 @@ public class EnemyMovementController : MonoBehaviour
             case SpecialTileType.SpeedTile:
                 // 스피드 타일: 행동 주기 1 감소 (최소 1), 이동 주사위 최댓값 +2 증가
                 m_actionInterval = Mathf.Max(1, m_baseActionInterval + m_permanentActionPenalty + m_temporaryActionPenalty - 1);
-                m_bonusSpeed = 2;
+                m_tileBuffSpeed = 2;
                 break;
 
             case SpecialTileType.DefendTile:
@@ -305,7 +312,7 @@ public class EnemyMovementController : MonoBehaviour
     {
         // 이동/행동력 버프 원복
         m_actionInterval = Mathf.Max(1, m_baseActionInterval + m_permanentActionPenalty + m_temporaryActionPenalty);
-        m_bonusSpeed = 0;
+        m_tileBuffSpeed = 0;
 
         // 방어력 버프 원복
         if (m_health != null)
@@ -325,7 +332,6 @@ public class EnemyMovementController : MonoBehaviour
         m_health?.ReturnToPool();
     }
 
-    public void SetSpeedMultiplier(float multiplier) => m_speedMultiplier = multiplier;
     public void SetPermanentActionPenalty(int penalty)
     {
         m_permanentActionPenalty = Mathf.Max(0, penalty);
