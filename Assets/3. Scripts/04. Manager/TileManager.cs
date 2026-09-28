@@ -501,38 +501,44 @@ public class TileManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 드래그로 장판 위치만 바뀐 경우의 이동 처리입니다.
+    /// 드래그 또는 타워 이동으로 장판 위치가 바뀐 경우, 해당 소스의 효과 영역 전체를 옮깁니다.
     /// 공격 버전은 유지하므로, 이미 이 공격을 받은 적에게 스택이 중복되지 않습니다.
     /// </summary>
-    public void MovePathDebuffEffect(int sourceID, Vector3Int destinationCell, Vector3 zoneWorldPosition)
+    public bool MovePathDebuffEffect(int sourceID, IReadOnlyList<Vector3Int> destinationCells, Vector3 zoneWorldPosition)
     {
-        PathTileDebuffEffect movedEffect = null;
-        Vector3Int sourceCell = default;
-
+        PathTileDebuffEffect originalEffect = null;
         foreach (KeyValuePair<Vector3Int, List<PathTileDebuffEffect>> pair in m_pathDebuffEffectsByCell)
         {
-            int index = pair.Value.FindIndex(effect => effect.SourceID == sourceID);
-            if (index < 0) continue;
-
-            movedEffect = pair.Value[index];
-            sourceCell = pair.Key;
-            pair.Value.RemoveAt(index);
+            originalEffect = pair.Value.Find(effect => effect.SourceID == sourceID);
+            if (originalEffect == null) continue;
             break;
         }
 
-        if (movedEffect == null) return;
-        if (m_pathDebuffEffectsByCell.TryGetValue(sourceCell, out List<PathTileDebuffEffect> oldCellEffects) && oldCellEffects.Count == 0)
-        {
-            m_pathDebuffEffectsByCell.Remove(sourceCell);
-        }
+        if (originalEffect == null) return false;
+        RemovePathDebuffEffectsBySource(sourceID);
+        if (destinationCells == null || destinationCells.Count == 0) return false;
 
-        movedEffect.ZoneWorldPosition = zoneWorldPosition;
-        if (!m_pathDebuffEffectsByCell.TryGetValue(destinationCell, out List<PathTileDebuffEffect> destinationEffects))
+        foreach (Vector3Int cell in destinationCells)
         {
-            destinationEffects = new List<PathTileDebuffEffect>();
-            m_pathDebuffEffectsByCell.Add(destinationCell, destinationEffects);
+            if (!m_pathDebuffEffectsByCell.TryGetValue(cell, out List<PathTileDebuffEffect> destinationEffects))
+            {
+                destinationEffects = new List<PathTileDebuffEffect>();
+                m_pathDebuffEffectsByCell.Add(cell, destinationEffects);
+            }
+
+            destinationEffects.Add(new PathTileDebuffEffect
+            {
+                SourceID = originalEffect.SourceID,
+                Target = originalEffect.Target,
+                Tier = originalEffect.Tier,
+                AbilityValue = originalEffect.AbilityValue,
+                Duration = originalEffect.Duration,
+                StackThreshold = originalEffect.StackThreshold,
+                ApplicationVersion = originalEffect.ApplicationVersion,
+                ZoneWorldPosition = zoneWorldPosition
+            });
         }
-        destinationEffects.Add(movedEffect);
+        return true;
     }
 
     /// <summary>타워 판매/합성/파괴 시, 그 타워가 기록한 모든 동적 타일 효과를 즉시 정리합니다.</summary>

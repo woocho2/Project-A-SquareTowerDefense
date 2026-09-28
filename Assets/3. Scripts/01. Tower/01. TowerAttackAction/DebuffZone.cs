@@ -76,16 +76,29 @@ public class DebuffZone : MonoBehaviour
     /// <summary>
     /// 타워 이동 시 원점 및 사거리 갱신
     /// </summary>
-    public void UpdateTowerPosition(Vector3 newTowerPos, float maxRange)
+    public bool UpdateTowerPosition(Vector3 newTowerPos, float maxRange)
     {
         m_towerOriginPos = newTowerPos;
         m_maxRange = maxRange;
 
         float dist = Vector2.Distance(m_towerOriginPos, transform.position);
-        if (dist > m_maxRange)
+        if (gameObject.activeSelf && dist <= m_maxRange)
         {
-            SnapToClosestPathTile();
+            return true;
         }
+
+        // 타워가 멀리 이동했을 때는 장판의 옛 위치가 아니라 새 타워 주변에서 길을 찾습니다.
+        if (!TryGetClosestPathTilePosition(newTowerPos, out Vector3 snappedPosition))
+        {
+            m_hasNotifiedPathCell = false;
+            gameObject.SetActive(false);
+            return false;
+        }
+
+        transform.position = snappedPosition;
+        gameObject.SetActive(true);
+        NotifyPlacedPathCellChanged();
+        return true;
     }
 
     private void OnDisable()

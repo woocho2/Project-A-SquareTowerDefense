@@ -1,4 +1,4 @@
-fileFormatVersion: 2
+﻿fileFormatVersion: 2
 guid: a59a7d01000100010001000100010002
 TextureImporter:
   internalIDToNameTable: []
@@ -154,67 +154,23 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Asgard_Ivory_Capsule_512x128
+      name: Asgard_Ivory_Btn_256
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 384
-        width: 512
-        height: 128
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 30, y: 30, z: 30, w: 30}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d55c6bff878499050800000000000000
-      internalID: 5807752878994408797
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Asgard_Ivory_Capsule_384x128
-      rect:
-        serializedVersion: 2
-        x: 1024
-        y: 257
-        width: 384
-        height: 128
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 35, y: 35, z: 35, w: 35}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4c781529d760c86d0800000000000000
-      internalID: -2987005316457986108
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Asgard_Ivory_Capsule_256x128
-      rect:
-        serializedVersion: 2
-        x: 1023
-        y: 128
+        x: 1792
+        y: 0
         width: 256
-        height: 128
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 40, y: 40, z: 40, w: 40}
+      border: {x: 56, y: 56, z: 56, w: 56}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0d78d22fc0a410460800000000000000
-      internalID: 7206122298232637392
+      spriteID: 8047f3cea34265c4e694597972a63b47
+      internalID: -4294953398308747392
       vertices: []
       indices: 
       edges: []
@@ -223,8 +179,8 @@ TextureImporter:
       name: Asgard_Ivory_Btn_128
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 0
+        x: 1536
+        y: 384
         width: 128
         height: 128
       alignment: 0
@@ -237,6 +193,248 @@ TextureImporter:
       bones: []
       spriteID: 000ad6222a86b71c0800000000000000
       internalID: -4504891956682448896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asgard_Ivory_Btn_128_B
+      rect:
+        serializedVersion: 2
+        x: 1664
+        y: 256
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 48, y: 48, z: 48, w: 48}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a7535ccb2d34759af87deaa074abccf
+      internalID: 6433343357605737866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asgard_Ivory_MegaDock_768x128
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 0
+        width: 768
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 48, y: 48, z: 48, w: 48}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fb42281ce05985f825e81ed9c01047d
+      internalID: 6888262014551110735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asgard_Ivory_MegaRail_128x768
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 256
+        width: 128
+        height: 768
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 48, y: 48, z: 48, w: 48}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90d1f91269c92dce467e5046e4724f00
+      internalID: -3589991874817306224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asgard_Ivory_Capsule_512x128
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 384
+        width: 512
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 48, y: 48, z: 48, w: 48}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d55c6bff878499050800000000000000
+      internalID: 5807752878994408797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asgard_Ivory_TallBanner_128x512
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 512
+        width: 128
+        height: 512
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 48, y: 48, z: 48, w: 48}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 219d031cef383c278e75c1d2f323dde5
+      internalID: 2827197265700166945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asgard_Ivory_Capsule_384x128
+      rect:
+        serializedVersion: 2
+        x: 1408
+        y: 128
+        width: 384
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 48, y: 48, z: 48, w: 48}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c781529d760c86d0800000000000000
+      internalID: -2987005316457986108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asgard_Ivory_Gauge_128x384
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 256
+        width: 128
+        height: 384
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 48, y: 48, z: 48, w: 48}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc9b95c66cf8e824cc9c8259dfb114cd
+      internalID: 2659648726034127820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asgard_Ivory_Capsule_256x128
+      rect:
+        serializedVersion: 2
+        x: 1408
+        y: 256
+        width: 256
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 48, y: 48, z: 48, w: 48}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d78d22fc0a410460800000000000000
+      internalID: 7206122298232637392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asgard_Ivory_Capsule_128x256
+      rect:
+        serializedVersion: 2
+        x: 1664
+        y: 384
+        width: 128
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 48, y: 48, z: 48, w: 48}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40a803bac9c0b0307fcc2c7d40833e78
+      internalID: 3508516082363377728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asgard_Ivory_SkillCard_384x256
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 128
+        width: 384
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 48, y: 48, z: 48, w: 48}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 157ca79f9137ea449cc1e3a9715b48fb
+      internalID: 4965842637717732373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asgard_Ivory_CharCard_256x384
+      rect:
+        serializedVersion: 2
+        x: 1664
+        y: 640
+        width: 256
+        height: 384
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 48, y: 48, z: 48, w: 48}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8065ddae4dc3b08cbe6903bf59b22c7c
+      internalID: -8308926574084921984
       vertices: []
       indices: 
       edges: []
@@ -257,10 +455,19 @@ TextureImporter:
     nameFileIdTable:
       Asgard_Ivory_Btn_1024: -8219494058239746379
       Asgard_Ivory_Btn_128: -4504891956682448896
+      Asgard_Ivory_Btn_128_B: 6433343357605737866
+      Asgard_Ivory_Btn_256: -4294953398308747392
       Asgard_Ivory_Btn_512: 6818409733500586943
+      Asgard_Ivory_Capsule_128x256: 3508516082363377728
       Asgard_Ivory_Capsule_256x128: 7206122298232637392
       Asgard_Ivory_Capsule_384x128: -2987005316457986108
       Asgard_Ivory_Capsule_512x128: 5807752878994408797
+      Asgard_Ivory_CharCard_256x384: -8308926574084921984
+      Asgard_Ivory_Gauge_128x384: 2659648726034127820
+      Asgard_Ivory_MegaDock_768x128: 6888262014551110735
+      Asgard_Ivory_MegaRail_128x768: -3589991874817306224
+      Asgard_Ivory_SkillCard_384x256: 4965842637717732373
+      Asgard_Ivory_TallBanner_128x512: 2827197265700166945
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

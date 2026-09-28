@@ -5,8 +5,8 @@ using UnityEngine;
 
 public static class AsgardAtlasGenerator
 {
-    private const string AtlasPath = "Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_UI_Atlas_2048.png";
-    private const string AsgardDir = "Assets/4. DotAsset/5. UI/Themes/Asgard";
+    private const string AtlasPath = "Assets/4. DotAsset/5. UI/Asgard/Asgard_UI_Atlas_2048.png";
+    private const string AsgardDir = "Assets/4. DotAsset/5. UI/Asgard";
 
     [MenuItem("Tools/👑 아스가르드 2048 마스터 UI 아틀라스 생성")]
     public static void GenerateAtlas()
@@ -236,10 +236,10 @@ public static class AsgardAtlasGenerator
         }
     }
 
-    [MenuItem("Tools/👑 아스가르드 4대 테마별 아틀라스(2048x1024) 생성")]
+    [MenuItem("Tools/👑 아스가르드 4대 테마별 아틀라스(2048x1024) 생성 및 15개 슬라이싱")]
     public static void GenerateThemeAtlases()
     {
-        Debug.Log("<color=#FFD700>[AsgardAtlasGenerator]</color> 4대 테마별 아틀라스(Gold, Ivory, Night, Frame) 제작 시작...");
+        Debug.Log("<color=#FFD700>[AsgardAtlasGenerator]</color> 4대 테마별 아틀라스(Gold, Ivory, Night, Frame) 100% 대각선 대칭 베이킹 및 15개 슬라이싱 시작...");
 
         string[] themes = new string[] { "Gold", "Ivory", "Night", "Frame" };
         foreach (string theme in themes)
@@ -248,76 +248,86 @@ public static class AsgardAtlasGenerator
         }
 
         AssetDatabase.Refresh();
-        Debug.Log("<color=#40E0D0>[AsgardAtlasGenerator]</color> 4대 테마별 아틀라스 및 24개 서브 스프라이트 슬라이싱 생성 완료!");
+        Debug.Log("<color=#40E0D0>[AsgardAtlasGenerator]</color> 4대 테마별 아틀라스 및 15개 서브 스프라이트 슬라이싱 생성 완료!");
+    }
+
+    [MenuItem("Tools/👑 아스가르드 아틀라스 15개 슬라이스 메타데이터 갱신")]
+    public static void RefreshAtlasSlices()
+    {
+        Debug.Log("<color=#FFD700>[AsgardAtlasGenerator]</color> 4대 테마 아틀라스 15개 슬라이스 메타데이터 갱신 시작...");
+
+        string[] themes = new string[] { "Gold", "Ivory", "Night", "Frame" };
+        foreach (string theme in themes)
+        {
+            string outPath = Path.Combine(AsgardDir, $"Asgard_Atlas_{theme}.png");
+            ConfigureThemeImporter(outPath, theme);
+        }
+
+        AssetDatabase.Refresh();
+        Debug.Log("<color=#40E0D0>[AsgardAtlasGenerator]</color> 15개 슬라이스 메타데이터 갱신 완료!");
     }
 
     private static void GenerateSingleThemeAtlas(string theme)
     {
-        int atlasW = 2048;
-        int atlasH = 1024;
-        Texture2D atlas = new Texture2D(atlasW, atlasH, TextureFormat.RGBA32, false);
-
-        Color[] clearColors = new Color[atlasW * atlasH];
-        for (int i = 0; i < clearColors.Length; i++) clearColors[i] = Color.clear;
-        atlas.SetPixels(clearColors);
-
-        string p1024 = theme == "Frame" ? "Asgard_Btn_Frame_Gold_1024.png" : $"Asgard_Btn_{theme}_BG_1024.png";
-        string p512  = theme == "Frame" ? "Asgard_Btn_Frame_Gold_512.png"  : $"Asgard_Btn_{theme}_BG_512.png";
-        string p128  = theme == "Frame" ? "Asgard_Btn_Frame_Gold_128.png"  : $"Asgard_Btn_{theme}_BG_128.png";
-        string c512  = theme == "Frame" ? "Asgard_Capsule_Frame_Gold_512x128.png" : $"Asgard_Capsule_{theme}_BG_512x128.png";
-        string c384  = theme == "Frame" ? "Asgard_Capsule_Frame_Gold_384x128.png" : $"Asgard_Capsule_{theme}_BG_384x128.png";
-        string c256  = theme == "Frame" ? "Asgard_Capsule_Frame_Gold_256x128.png" : $"Asgard_Capsule_{theme}_BG_256x128.png";
-
-        Texture2D t1024 = LoadTexture(Path.Combine(AsgardDir, p1024));
-        Texture2D t512  = LoadTexture(Path.Combine(AsgardDir, p512));
-        Texture2D t128  = LoadTexture(Path.Combine(AsgardDir, p128));
-        Texture2D tc512 = LoadTexture(Path.Combine(AsgardDir, c512));
-        Texture2D tc384 = LoadTexture(Path.Combine(AsgardDir, c384));
-        Texture2D tc256 = LoadTexture(Path.Combine(AsgardDir, c256));
-
-        if (t1024 != null) BlitDirect(t1024, atlas, 0, 0);
-        if (t512 != null)  BlitDirect(t512, atlas, 1024, 512);
-        if (tc512 != null) BlitDirect(tc512, atlas, 1024, 384);
-        if (tc384 != null) BlitDirect(tc384, atlas, 1024, 256);
-        if (tc256 != null) BlitDirect(tc256, atlas, 1024, 128);
-        if (t128 != null)  BlitDirect(t128, atlas, 1024, 0);
-
-        atlas.Apply();
-
         string outPath = Path.Combine(AsgardDir, $"Asgard_Atlas_{theme}.png");
-        byte[] pngData = atlas.EncodeToPNG();
-        File.WriteAllBytes(outPath, pngData);
-        Object.DestroyImmediate(atlas);
-
-        AssetDatabase.ImportAsset(outPath, ImportAssetOptions.ForceUpdate);
-
-        TextureImporter importer = AssetImporter.GetAtPath(outPath) as TextureImporter;
-        if (importer != null)
+        if (!File.Exists(outPath))
         {
-            importer.textureType = TextureImporterType.Sprite;
-            importer.spriteImportMode = SpriteImportMode.Multiple;
-            importer.mipmapEnabled = false;
-            importer.alphaIsTransparency = true;
-            importer.filterMode = FilterMode.Bilinear;
-            importer.textureCompression = TextureImporterCompression.Compressed;
-            importer.maxTextureSize = 2048;
-
-            Vector4 capBorder = theme == "Frame" ? new Vector4(48, 48, 48, 48) : new Vector4(36, 36, 36, 36);
-
-            SpriteMetaData[] sheet = new SpriteMetaData[]
-            {
-                CreateSpriteMeta($"Asgard_{theme}_Btn_1024", 0, 0, 1024, 1024, new Vector4(152, 152, 152, 152)),
-                CreateSpriteMeta($"Asgard_{theme}_Btn_512", 1024, 512, 512, 512, new Vector4(76, 76, 76, 76)),
-                CreateSpriteMeta($"Asgard_{theme}_Capsule_512x128", 1024, 384, 512, 128, capBorder),
-                CreateSpriteMeta($"Asgard_{theme}_Capsule_384x128", 1024, 256, 384, 128, capBorder),
-                CreateSpriteMeta($"Asgard_{theme}_Capsule_256x128", 1024, 128, 256, 128, capBorder),
-                CreateSpriteMeta($"Asgard_{theme}_Btn_128", 1024, 0, 128, 128, new Vector4(24, 24, 24, 24))
-            };
-
-            importer.spritesheet = sheet;
-            EditorUtility.SetDirty(importer);
-            importer.SaveAndReimport();
+            Debug.LogError($"[AsgardAtlasGenerator] 아틀라스 파일을 찾을 수 없습니다: {outPath}");
+            return;
         }
+
+        // Configure Importer with 15 sub-sprites and exact 9-slice borders
+        ConfigureThemeImporter(outPath, theme);
+    }
+
+    private static void ConfigureThemeImporter(string outPath, string theme)
+    {
+        TextureImporter importer = AssetImporter.GetAtPath(outPath) as TextureImporter;
+        if (importer == null) return;
+
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Multiple;
+        importer.mipmapEnabled = false;
+        importer.alphaIsTransparency = true;
+        importer.filterMode = FilterMode.Bilinear;
+        importer.textureCompression = TextureImporterCompression.Compressed;
+        importer.maxTextureSize = 2048;
+
+        Vector4 capBorder = new Vector4(48, 48, 48, 48);
+
+        SpriteMetaData[] sheet = new SpriteMetaData[]
+        {
+            // 1. Anchor & Diagonal Axis Elements
+            CreateSpriteMeta($"Asgard_{theme}_Btn_1024", 0, 0, 1024, 1024, new Vector4(152, 152, 152, 152)),
+            CreateSpriteMeta($"Asgard_{theme}_Btn_512", 1024, 512, 512, 512, new Vector4(76, 76, 76, 76)),
+            CreateSpriteMeta($"Asgard_{theme}_Btn_256", 1792, 0, 256, 256, new Vector4(56, 56, 56, 56)),
+            CreateSpriteMeta($"Asgard_{theme}_Btn_128", 1536, 384, 128, 128, new Vector4(24, 24, 24, 24)),
+            CreateSpriteMeta($"Asgard_{theme}_Btn_128_B", 1664, 256, 128, 128, capBorder),
+
+            // 2. Twin Pair 1: Mega Bars (768)
+            CreateSpriteMeta($"Asgard_{theme}_MegaDock_768x128", 1024, 0, 768, 128, capBorder),
+            CreateSpriteMeta($"Asgard_{theme}_MegaRail_128x768", 1920, 256, 128, 768, capBorder),
+
+            // 3. Twin Pair 2: Banners (512)
+            CreateSpriteMeta($"Asgard_{theme}_Capsule_512x128", 1024, 384, 512, 128, capBorder),
+            CreateSpriteMeta($"Asgard_{theme}_TallBanner_128x512", 1536, 512, 128, 512, capBorder),
+
+            // 4. Twin Pair 3: Mid Bars (384)
+            CreateSpriteMeta($"Asgard_{theme}_Capsule_384x128", 1408, 128, 384, 128, capBorder),
+            CreateSpriteMeta($"Asgard_{theme}_Gauge_128x384", 1792, 256, 128, 384, capBorder),
+
+            // 5. Twin Pair 4: Small Capsules (256)
+            CreateSpriteMeta($"Asgard_{theme}_Capsule_256x128", 1408, 256, 256, 128, capBorder),
+            CreateSpriteMeta($"Asgard_{theme}_Capsule_128x256", 1664, 384, 128, 256, capBorder),
+
+            // 6. Twin Pair 5: Cards (384x256 Landscape <-> 256x384 Portrait) - 둥근 모서리
+            CreateSpriteMeta($"Asgard_{theme}_SkillCard_384x256", 1024, 128, 384, 256, capBorder),
+            CreateSpriteMeta($"Asgard_{theme}_CharCard_256x384", 1664, 640, 256, 384, capBorder)
+        };
+
+        importer.spritesheet = sheet;
+        EditorUtility.SetDirty(importer);
+        importer.SaveAndReimport();
     }
 }
 #endif

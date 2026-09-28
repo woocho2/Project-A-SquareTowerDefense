@@ -5,6 +5,7 @@ using UnityEngine.Tilemaps;
 public class DebuffAction : TowerAttackAction
 {
     private DebuffZone m_activeZone;
+    private TowerController m_ownerTower;
     private int m_sourceID;
 
     public DebuffAction(TowerData data) : base(data) { }
@@ -15,6 +16,7 @@ public class DebuffAction : TowerAttackAction
 
         if (m_activeZone != null) m_activeZone.OnPlacedPathCellChanged -= HandleZoneCellChanged;
         m_activeZone = zone;
+        m_ownerTower = towerTransform.GetComponent<TowerController>();
         m_sourceID = towerTransform.GetInstanceID();
         m_activeZone.OnPlacedPathCellChanged += HandleZoneCellChanged;
         // 존은 최초 배치 위치에 고정합니다. 타워를 드래그해도 장판은 따라가지 않습니다.
@@ -62,8 +64,25 @@ public class DebuffAction : TowerAttackAction
 
     private void HandleZoneCellChanged(Vector3Int cell, Vector3 worldPosition)
     {
-        // 아직 한 번도 행동하지 않은 장판은 데이터가 없습니다. 행동 후에는 드래그 즉시 기존 효과를 함께 이동합니다.
-        TileManager.Instance?.MovePathDebuffEffect(m_sourceID, cell, worldPosition);
+        if (TileManager.Instance == null || m_ownerTower == null) return;
+
+        TowerStats stats = m_ownerTower.GetFinalStats();
+        IReadOnlyList<Vector3Int> affectedCells = new[] { cell };
+        if (m_data.debuffTarget == DebuffTarget.Fire && TilePath.Instance != null)
+        {
+            affectedCells = TilePath.Instance.GetPathCellsInSquare(
+                cell,
+                Mathf.Max(0, stats.ProjectileRadius - 1));
+        }
+
+        // 위치만 옮길 때는 기존 공격 버전을 유지해 같은 스택이 다시 적용되지 않게 합니다.
+        if (TileManager.Instance.MovePathDebuffEffect(m_sourceID, affectedCells, worldPosition)) return;
+
+        // 유효한 길이 없는 곳에서 돌아온 장판은 다음 공격 전까지 대기 상태로 표시합니다.
+        int tier = Mathf.Clamp(m_data.towerID / 1000, 1, 5);
+        TileManager.Instance.RegisterPathDebuffZone(
+            cell, m_sourceID, m_data.debuffTarget, tier,
+            stats.AttackPower, stats.Duration, worldPosition);
     }
 
     // Tilemap_Path에서 타워 주변 유효한 길목 타일의 정중앙 좌표를 찾는 함수

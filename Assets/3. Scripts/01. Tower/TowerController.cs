@@ -374,7 +374,14 @@ public class TowerController : MonoBehaviour
 
     public void OnMovedToNewPosition()
     {
-        // 디버프 존은 최초로 배치된 길목에 남습니다.
+        if (m_debuffZoneChild != null && m_towerData != null && m_towerData.attackType == AttackType.Debuff)
+        {
+            bool hasValidPathTile = m_debuffZoneChild.UpdateTowerPosition(transform.position, GetFinalStats().Range);
+            if (!hasValidPathTile)
+            {
+                TileManager.Instance?.RemovePathDebuffEffectsBySource(transform.GetInstanceID());
+            }
+        }
 
         // 행동력 감소 타일로 이동한 경우, 이미 충전되어 있던 행동력도 새 최대치 안으로 맞춥니다.
         m_remainingAction = Mathf.Min(m_remainingAction, GetFinalAction());
