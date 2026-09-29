@@ -37,9 +37,9 @@ public static class EnemyInfoPanelSetupEditor
             return;
         }
 
-        if (!enemyPanel.TryGetComponent(out EnemyInfoPanelUI enemyUI))
+        if (!enemyPanel.TryGetComponent(out EnemyInfoPanel enemyUI))
         {
-            enemyUI = enemyPanel.AddComponent<EnemyInfoPanelUI>();
+            enemyUI = enemyPanel.AddComponent<EnemyInfoPanel>();
             Debug.Log("[EnemyInfoPanelSetup] EnemyInfoPanel에 EnemyInfoPanelUI 컴포넌트 추가 완료.");
         }
 

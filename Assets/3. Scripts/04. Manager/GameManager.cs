@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 /// <summary>게임 전체의 상위 턴 상태입니다.</summary>
@@ -27,8 +28,13 @@ public class GameManager : MonoBehaviour
     private const int EnemySpawnTurns = 5;
 
     [Header("게임 배속 및 라이프 설정")]
-    [SerializeField] private float m_gameSpeed = 1.0f;
-    [SerializeField] private int m_totalLife = 20;
+    private float m_currentgameSpeed = 1.0f;
+    public  float CurrentGameSpeed => m_currentgameSpeed;
+    private int m_currentLife;
+    public int CurrentLife => m_currentLife;
+    public int maxShield = 5;
+    private int m_currentShield;
+    public int CurrentShield => m_currentShield;
 
 
     [Header("에너미 턴 연출 속도")]
@@ -41,10 +47,12 @@ public class GameManager : MonoBehaviour
 
     public TurnState CurrentState { get; private set; } = TurnState.None;
     public bool CanPerformPlayerAction => m_currentTurnState != null && m_currentTurnState.CanPerformPlayerAction;
-    public int CurrentShield => m_currentShield;
 
     public event Action<TurnState> OnTurnStateChanged;
-    public event Action<int> OnShieldChanged;
+    public event Action<int> CurrentLifeChanged;
+    public event Action<int> CurrentShieldChanged;
+    public event Action<float> CurrentGameSpeedChanged;
+
 
     #endregion
 
@@ -55,15 +63,6 @@ public class GameManager : MonoBehaviour
     private Coroutine turnRoutine;
     private bool isPlayerTurnEnd = false;
 
-    private sealed class ShieldBuff
-    {
-        public int MaxShield;
-        public int RemainingShield;
-    }
-
-    private readonly Dictionary<int, ShieldBuff> m_shieldsBySource = new Dictionary<int, ShieldBuff>();
-    private int m_currentShield;
-    private int m_currentShieldSourceID;
 
     #endregion
 
@@ -78,12 +77,16 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
+
+        m_currentLife = GameModeSession.SelectedDifficulty == GameDifficulty.Hard ? 2 : 5;
+
         DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
         OnStartGame();
+
     }
 
     #endregion
@@ -92,7 +95,7 @@ public class GameManager : MonoBehaviour
 
     public void OnStartGame()
     {
-        Time.timeScale = m_gameSpeed;
+        Time.timeScale = m_currentgameSpeed;
         ChangeState(new IdleTurnState());
 
         if (turnRoutine != null) StopCoroutine(turnRoutine);
@@ -120,7 +123,7 @@ public class GameManager : MonoBehaviour
 
             bool shouldSpawn = turn < EnemySpawnTurns;
 
-            yield return StartCoroutine(EnemyTurnRoutine(shouldSpawn));            
+            yield return StartCoroutine(EnemyTurnRoutine(shouldSpawn));
         }
 
         if (CurrentState == TurnState.GameOver || CurrentState == TurnState.GameClear) yield break;
@@ -150,7 +153,7 @@ public class GameManager : MonoBehaviour
         while (!isPlayerTurnEnd && CurrentState != TurnState.GameOver && CurrentState != TurnState.GameClear)
         {
             yield return null;
-        }        
+        }
     }
 
     // 플레이어 턴 스킵 버튼 UI 이벤트 연결용 함수
@@ -264,9 +267,9 @@ public class GameManager : MonoBehaviour
 
     #region Game Speed and Pause
 
-    public void OnClickGameSpeed(float gamespeed)
+    public void OnClickGameSpeed()
     {
-        float nextSpeed = m_gameSpeed switch
+        float nextSpeed = m_currentgameSpeed switch
         {
             1.0f => 1.5f,
             1.5f => 2.0f,
@@ -279,9 +282,10 @@ public class GameManager : MonoBehaviour
 
     public void SetGameSpeed(float speed)
     {
-        m_gameSpeed = speed;
-        Time.timeScale = m_gameSpeed;
+        m_currentgameSpeed = speed;
+        Time.timeScale = m_currentgameSpeed;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        CurrentGameSpeedChanged?.Invoke(m_currentgameSpeed);
     }
 
     public void OnPauseGame()
@@ -296,7 +300,7 @@ public class GameManager : MonoBehaviour
 
     public float GetGameSpeed()
     {
-        return m_gameSpeed;
+        return m_currentgameSpeed;
     }
 
     #endregion
@@ -305,71 +309,37 @@ public class GameManager : MonoBehaviour
 
     public void DecreaseLife(int amount)
     {
+        if (amount <= 0) return;
+
         if (m_currentShield > 0)
         {
-            int absorbedAmount = Mathf.Min(m_currentShield, amount);
-            m_currentShield -= absorbedAmount;
-            amount -= absorbedAmount;
+            int remainingDamage = Mathf.Max(0, amount - m_currentShield);
+            m_currentShield = Mathf.Max(0, m_currentShield - amount);
 
-            if (m_shieldsBySource.TryGetValue(m_currentShieldSourceID, out ShieldBuff shieldEffect))
+            CurrentShieldChanged?.Invoke(m_currentShield);
+
+            amount = remainingDamage;
+
+            if (amount <= 0)
             {
-                shieldEffect.RemainingShield = m_currentShield;
+                return;
             }
-
-            // 현재 가장 높은 쉴드가 줄어들었을 수 있으므로 적용 대상을 다시 선택합니다.
-            RefreshShield();
-
-            if (amount <= 0) return;
         }
 
-        m_totalLife = Mathf.Max(0, m_totalLife - amount);
-        if (m_totalLife <= 0)
+        m_currentLife = Mathf.Max(0, m_currentLife - amount);
+
+        CurrentLifeChanged?.Invoke(m_currentLife);
+
+        if (m_currentLife == 0)
         {
             OnGameOver();
         }
     }
 
-    /// <summary>
-    /// 쉴드 타워가 행동할 때마다 쉴드 1을 충전합니다.
-    /// 각 타워는 자신의 티어만큼만 쉴드를 보유할 수 있습니다.
-    /// </summary>
-    public void AddShield(int sourceID, int tier)
+    public void AddShield(int shield)
     {
-        int maxShield = Mathf.Clamp(tier, 1, 5);
-
-        if (!m_shieldsBySource.TryGetValue(sourceID, out ShieldBuff shield))
-        {
-            shield = new ShieldBuff
-            {
-                MaxShield = maxShield,
-                RemainingShield = 0
-            };
-            m_shieldsBySource.Add(sourceID, shield);
-        }
-
-        // 티어 강화 등으로 같은 출처의 최대치가 달라질 가능성도 반영합니다.
-        shield.MaxShield = maxShield;
-        shield.RemainingShield = Mathf.Min(shield.RemainingShield + 1, shield.MaxShield);
-
-        RefreshShield();
-    }
-
-
-    private void RefreshShield()
-    {
-        int highestShield = 0;
-        int highestShieldSourceID = 0;
-        foreach (KeyValuePair<int, ShieldBuff> pair in m_shieldsBySource)
-        {
-            if (pair.Value.RemainingShield > highestShield)
-            {
-                highestShield = pair.Value.RemainingShield;
-                highestShieldSourceID = pair.Key;
-            }
-        }
-        m_currentShield = highestShield;
-        m_currentShieldSourceID = highestShieldSourceID;
-        OnShieldChanged?.Invoke(m_currentShield);
+        m_currentShield = Mathf.Min(m_currentShield + shield, maxShield);
+        CurrentShieldChanged?.Invoke(m_currentShield);
     }
 
     #endregion

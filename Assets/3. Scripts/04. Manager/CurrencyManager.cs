@@ -16,11 +16,14 @@ public class CurrencyManager : MonoBehaviour
 
     #region Runtime State
 
-    private int currentGold;
-    private int currentGem;
+    private int m_currentGold;
+    private int m_currentGem;
 
-    /// <summary>골드 또는 젬이 변경되었을 때 발생합니다.</summary>
-    public event Action CurrencyChanged;
+    public int CurrentGold => m_currentGold;
+    public int CurrentGem => m_currentGem;
+
+    public event Action<int> CurrentGoldChanged;
+    public event Action<int> CurrentGemChanged;
 
     #endregion
 
@@ -35,8 +38,8 @@ public class CurrencyManager : MonoBehaviour
         }
 
         Instance = this;
-        currentGold = startGold;
-        currentGem = startGem;
+        m_currentGold = startGold;
+        m_currentGem = startGem;
     }
 
     private void OnDestroy()
@@ -53,22 +56,22 @@ public class CurrencyManager : MonoBehaviour
 
     public int GetCurrentGold()
     {
-        return currentGold;
+        return m_currentGold;
     }
 
     public int GetCurrentGem()
     {
-        return currentGem;
+        return m_currentGem;
     }
 
-    public bool HasEnoughMoney(int amount)
+    public bool HasEnoughGold(int amount)
     {
-        return currentGold >= amount;
+        return m_currentGold >= amount;
     }
 
     public bool HasEnoughGem(float amount)
     {
-        return currentGem >= amount;
+        return m_currentGem >= amount;
     }
 
     #endregion
@@ -77,22 +80,22 @@ public class CurrencyManager : MonoBehaviour
 
     public void AddGold(int amount)
     {
-        currentGold += amount;
-        NotifyCurrencyChanged();
+        m_currentGold += amount;
+        CurrentGoldChanged?.Invoke(m_currentGold);
     }
 
     public void AddGem(int amount)
     {
-        currentGem += amount;
-        NotifyCurrencyChanged();
+        m_currentGem += amount;
+        CurrentGemChanged?.Invoke(m_currentGem);
     }
 
-    public void SpendMoney(int amount)
+    public void SpendGold(int amount)
     {
-        if (HasEnoughMoney(amount))
+        if (HasEnoughGold(amount))
         {
-            currentGold -= amount;
-            NotifyCurrencyChanged();
+            m_currentGold -= amount;
+            CurrentGoldChanged?.Invoke(m_currentGold);
         }
         else
         {
@@ -104,22 +107,13 @@ public class CurrencyManager : MonoBehaviour
     {
         if (HasEnoughGem(amount))
         {
-            currentGem -= amount;
-            NotifyCurrencyChanged();
+            m_currentGem -= amount;
+            CurrentGemChanged?.Invoke(m_currentGem);
         }
         else
         {
             Debug.LogWarning("보석이 부족합니다! 필요한 보석: " + amount);
         }
-    }
-
-    #endregion
-
-    #region Change Notification
-
-    private void NotifyCurrencyChanged()
-    {
-        CurrencyChanged?.Invoke();
     }
 
     #endregion

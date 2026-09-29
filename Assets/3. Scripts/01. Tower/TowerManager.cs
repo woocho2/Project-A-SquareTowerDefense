@@ -280,7 +280,7 @@ public class TowerManager : MonoBehaviour
     {
         if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
 
-        if (!CurrencyManager.Instance.HasEnoughMoney(BuildCost))
+        if (!CurrencyManager.Instance.HasEnoughGold(BuildCost))
         {
             Debug.Log("돈이 부족합니다.");
             return;
@@ -331,7 +331,7 @@ public class TowerManager : MonoBehaviour
 
             m_towersOnGrid.Add(emptyCell.Value, newInfo);
 
-            CurrencyManager.Instance.SpendMoney(BuildCost);
+            CurrencyManager.Instance.SpendGold(BuildCost);
             if (BuildCost < 300) BuildCost += 2;
             EvaluateSynergyTowers();
         }

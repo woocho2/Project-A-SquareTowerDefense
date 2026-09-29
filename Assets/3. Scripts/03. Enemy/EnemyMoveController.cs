@@ -328,7 +328,6 @@ public class EnemyMoveController : MonoBehaviour
             GameManager.Instance.DecreaseLife(1);
         }
 
-        UIManager.Instance?.OnPlayerHit(m_health != null && m_health.IsBoss);
         m_health?.ReturnToPool();
     }
 

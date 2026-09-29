@@ -18,6 +18,9 @@ public class WaveManager : MonoBehaviour
 
     [Header("Wave Base Settings")]
     [SerializeField] private int m_currentWave = 1;
+    public int CurrentWave => m_currentWave;
+
+    public event Action<int> CurrentWaveChanged;
 
     #endregion
 
@@ -28,7 +31,6 @@ public class WaveManager : MonoBehaviour
 
     public event Action MiddleBossSummonableChanged;
 
-    public int CurrentWave => m_currentWave;
     public int CurrentCycle => Mathf.Clamp(((m_currentWave - 1) / 10) + 1, 1, 4);
     public int CurrentSubWave => ((m_currentWave - 1) % 10) + 1;
     public bool CanSummonMiddleBoss => IsMiddleBossSummonWindow(m_currentWave) && !m_middleBossSpawned;
@@ -111,7 +113,7 @@ public class WaveManager : MonoBehaviour
 
         int baseWave = wave % 10;
         int cycle = ((wave - 1) / 10) + 1;
-        
+
 
         if (baseWave == 0)
         {
@@ -180,7 +182,7 @@ public class WaveManager : MonoBehaviour
     private void GetEnemyStatMultipliers(out float hpMulti, out float defendMulti)
     {
         int subWave = CurrentSubWave;
-      
+
         float subWaveHp = subWave switch
         {
             1 => 1.0f,
@@ -212,7 +214,7 @@ public class WaveManager : MonoBehaviour
         };
 
         GetCycleMultipliers(m_currentWave, out float cycleHp, out float cycleDefend);
-        
+
         hpMulti = subWaveHp * cycleHp;
         defendMulti = subWaveDefend * cycleDefend;
     }
@@ -221,17 +223,17 @@ public class WaveManager : MonoBehaviour
     {
         hpMulti = wave switch
         {
-            >30 => 8.0f,
-            >20 => 4.0f,
-            >10 => 2.0f,
+            > 30 => 8.0f,
+            > 20 => 4.0f,
+            > 10 => 2.0f,
             _ => 1.0f
         };
 
         defendMulti = wave switch
         {
-            >30 => 4.0f,
-            >20 => 3.0f,
-            >10 => 2.0f,
+            > 30 => 4.0f,
+            > 20 => 3.0f,
+            > 10 => 2.0f,
             _ => 1.0f
         };
     }
@@ -256,7 +258,7 @@ public class WaveManager : MonoBehaviour
         if (m_enemyPool == null || poolIndex >= m_enemyPool.Length || m_enemyPool[poolIndex] == null) return false;
 
         GetCycleMultipliers(m_currentWave, out float middleBossHPMulti, out float middleBossDefendMulti);
-        
+
         EnemyObjectPool2D targetPool = m_enemyPool[poolIndex];
         targetPool.Spawn(m_tilePath.GetWorldPosition(0), middleBossHPMulti, middleBossDefendMulti, m_tilePath);
         m_middleBossSpawned = true;
@@ -274,6 +276,7 @@ public class WaveManager : MonoBehaviour
     public void NextWave()
     {
         m_currentWave++;
+        CurrentWaveChanged?.Invoke(m_currentWave);
         m_waveSpawnedCount = 0;
 
         if (m_currentWave == 5 || m_currentWave == 15 || m_currentWave == 25 || m_currentWave == 35)
