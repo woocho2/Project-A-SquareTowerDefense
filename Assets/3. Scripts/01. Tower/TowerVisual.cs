@@ -43,18 +43,18 @@ public class TowerVisual : MonoBehaviour
     }
 
     /// <summary>
-    /// towerID ?뺤떇: [Tier][Type][Variant]
-    /// ?? 1203 = Tier 1, Color(Type) 2, Emblem(Variant) 3
+    /// towerID 형식: [Tier][Color][Emblem]
+    /// 예: 1203 = Tier 1, Color 2, Emblem 3
     /// </summary>
     public void Apply(int towerID)
     {
         int tier = towerID / 1000;
-        int type = (towerID % 1000) / 100;
-        int variant = towerID % 100;
+        int color = (towerID % 1000) / 100;
+        int emblem = towerID % 100;
 
         SetSprite(m_tierRenderer, m_tierSprites, tier, "Tier", towerID);
-        SetSprite(m_colorRenderer, m_colorSprites, type, "Color", towerID);
-        SetSprite(m_emblemRenderer, m_emblemSprites, variant, "Emblem", towerID);
+        SetSprite(m_colorRenderer, m_colorSprites, color, "Color", towerID);
+        SetSprite(m_emblemRenderer, m_emblemSprites, emblem, "Emblem", towerID);
     }
 
     public void Apply(TowerData towerData)
@@ -65,7 +65,9 @@ public class TowerVisual : MonoBehaviour
             return;
         }
 
-        Apply(towerData.towerID);
+        SetSprite(m_tierRenderer, m_tierSprites, towerData.VisualTier, "Tier", towerData.VisualTowerID);
+        SetSprite(m_colorRenderer, m_colorSprites, towerData.VisualColorId, "Color", towerData.VisualTowerID);
+        SetSprite(m_emblemRenderer, m_emblemSprites, towerData.VisualEmblemId, "Emblem", towerData.VisualTowerID);
     }
 
     private void Awake()

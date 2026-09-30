@@ -8,7 +8,7 @@ public class BuffAction : TowerAttackAction
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats currentStats)
     {
-        int sourceTier = Mathf.Clamp(m_data.towerID / 1000, 1, 5);
+        int sourceTier = Mathf.Clamp(m_data.Tier, 1, 5);
         if (m_data.buffTarget == BuffTarget.Shield)
         {
             GameManager.Instance?.AddShield(1);

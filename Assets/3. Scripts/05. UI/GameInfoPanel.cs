@@ -6,8 +6,8 @@ using TMPro;
 public class GameInfoPanel : MonoBehaviour
 {
     [Header("정보 표시")]
-    [SerializeField] TextMeshProUGUI m_stage;
-    [SerializeField] TextMeshProUGUI m_currentWave;
+    [SerializeField] TextMeshProUGUI txt_stage;
+    [SerializeField] TextMeshProUGUI txt_currentWave;
     [SerializeField] Image[] m_currentLifes;
     [SerializeField] Image[] m_currentShields;
     [SerializeField] TextMeshProUGUI txt_currentGold;
@@ -15,15 +15,13 @@ public class GameInfoPanel : MonoBehaviour
     [SerializeField] TextMeshProUGUI txt_currentGameSpeed;
 
 
-    [Header("각종 버튼")]
-    [SerializeField] Button btn_turnEnd;
     [SerializeField] Button btn_option;
     [SerializeField] Button btn_gameSpeed;
 
 
     private void Start()
     {
-        m_stage.text = SceneManager.GetActiveScene().name;
+        txt_stage.text = SceneManager.GetActiveScene().name;
         
         if (GameManager.Instance == null || WaveManager.Instance == null || CurrencyManager.Instance == null)
         {
@@ -45,7 +43,6 @@ public class GameInfoPanel : MonoBehaviour
         CurrencyManager.Instance.CurrentGemChanged += UpdateGemText;
         GameManager.Instance.CurrentGameSpeedChanged += UpdateGameSpeedText;
 
-        btn_turnEnd.onClick.AddListener(HandleTurnEndClick);
         //btn_option.onClick.AddListener(HandleOptionClick);
         btn_gameSpeed.onClick.AddListener(HandleGameSpeedClick);
     }
@@ -70,10 +67,6 @@ public class GameInfoPanel : MonoBehaviour
             CurrencyManager.Instance.CurrentGemChanged -= UpdateGemText;
         }
 
-        if (btn_turnEnd != null)
-        {
-            btn_turnEnd.onClick.RemoveListener(HandleTurnEndClick);
-        }
         if (btn_gameSpeed != null)
         {
             btn_gameSpeed.onClick.RemoveListener(HandleGameSpeedClick);
@@ -82,7 +75,7 @@ public class GameInfoPanel : MonoBehaviour
 
     private void UpdateWaveText(int wave)
     {
-        m_currentWave.text = $"Wave {wave}";
+        txt_currentWave.text = $"Wave {wave}";
     }
 
     private void UpdateLifeImage(int life)
@@ -120,11 +113,6 @@ public class GameInfoPanel : MonoBehaviour
     private void UpdateGameSpeedText(float amount)
     {
         txt_currentGameSpeed.text = $"{amount}";
-    }
-
-    private void HandleTurnEndClick()
-    {
-        GameManager.Instance?.OnClickSkipPlayerTurn();        
     }
 
     private void HandleGameSpeedClick()

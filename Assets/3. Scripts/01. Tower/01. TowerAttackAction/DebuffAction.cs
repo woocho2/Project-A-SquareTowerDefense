@@ -50,7 +50,7 @@ public class DebuffAction : TowerAttackAction
         // 실제 적 스택은 ExecuteAction에서 ApplicationVersion이 1 이상이 된 뒤부터 적용됩니다.
         if (TileManager.Instance != null && m_activeZone.TryGetPlacedPathCell(out Vector3Int pathCell))
         {
-            int tier = Mathf.Clamp(m_data.towerID / 1000, 1, 5);
+            int tier = Mathf.Clamp(m_data.Tier, 1, 5);
             TileManager.Instance.RegisterPathDebuffZone(
                 pathCell,
                 m_sourceID,
@@ -79,7 +79,7 @@ public class DebuffAction : TowerAttackAction
         if (TileManager.Instance.MovePathDebuffEffect(m_sourceID, affectedCells, worldPosition)) return;
 
         // 유효한 길이 없는 곳에서 돌아온 장판은 다음 공격 전까지 대기 상태로 표시합니다.
-        int tier = Mathf.Clamp(m_data.towerID / 1000, 1, 5);
+        int tier = Mathf.Clamp(m_data.Tier, 1, 5);
         TileManager.Instance.RegisterPathDebuffZone(
             cell, m_sourceID, m_data.debuffTarget, tier,
             stats.AttackPower, stats.Duration, worldPosition);
@@ -158,7 +158,7 @@ public class DebuffAction : TowerAttackAction
         if (m_activeZone == null) return false;
         if (TileManager.Instance == null || !m_activeZone.TryGetPlacedPathCell(out Vector3Int pathCell)) return false;
 
-        int tier = Mathf.Clamp(m_data.towerID / 1000, 1, 5);
+        int tier = Mathf.Clamp(m_data.Tier, 1, 5);
         if (m_data.debuffTarget == DebuffTarget.Fire && TilePath.Instance != null)
         {
             List<Vector3Int> affectedCells = TilePath.Instance.GetPathCellsInSquare(

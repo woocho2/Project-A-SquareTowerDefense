@@ -6,7 +6,7 @@ public enum DebuffTarget { None, Sword, Bow, Shield, Spear, Axe, Hammer, Fire, I
 public enum TargetPriority { Default, Closest, First, Last, Strongest, Weakest }
 public enum StatType { Armor }
 
-public static class TowerPattern
+public static class TowerEmblem
 {
     public const int SWORD = 1;
     public const int BOW = 2;
@@ -62,7 +62,36 @@ public class TowerData : ScriptableObject
 
     public DebuffZone debuffZonePrefab;
 
+    // CSV를 읽거나 시너지 데이터를 만들 때 한 번 계산합니다.
+    // 타워 인스턴스는 이 TowerData를 공유하므로 ID를 다시 분해할 필요가 없습니다.
+    public int Tier { get; private set; }
+    public int ColorId { get; private set; }
+    public int EmblemId { get; private set; }
+    public int NextTierTowerID { get; private set; }
+    public int VisualTier { get; private set; }
+    public int VisualColorId { get; private set; }
+    public int VisualEmblemId { get; private set; }
+
     public int VisualTowerID => visualTowerID > 0 ? visualTowerID : towerID;
+
+    public void InitializeIdentity()
+    {
+        Tier = towerID / 1000;
+        ColorId = (towerID % 1000) / 100;
+        EmblemId = towerID % 100;
+        NextTierTowerID = towerID + 1000;
+
+        int visualId = VisualTowerID;
+        VisualTier = visualId / 1000;
+        VisualColorId = (visualId % 1000) / 100;
+        VisualEmblemId = visualId % 100;
+    }
+
+    private void OnEnable() => InitializeIdentity();
+
+#if UNITY_EDITOR
+    private void OnValidate() => InitializeIdentity();
+#endif
 
     /// <summary>
     /// 기본 타워 데이터를 런타임에서 사용하는 TowerStats 구조체로 변환합니다.

@@ -129,7 +129,7 @@ public class TowerController : MonoBehaviour
         // 타워가 생성된 셀의 행동력 타일 효과까지 반영해 첫 행동력부터 맞춥니다.
         m_remainingAction = GetFinalAction();
 
-        m_towerVisual?.Apply(m_towerData.VisualTowerID);
+        m_towerVisual?.Apply(m_towerData);
 
         if (m_debuffZoneChild != null)
         {
@@ -578,12 +578,12 @@ public class TowerController : MonoBehaviour
 
     private bool IsFireTargetTower()
     {
-        return m_towerData != null && m_towerData.attackType == AttackType.Target && m_towerData.towerID % 100 == TowerPattern.FIRE;
+        return m_towerData != null && m_towerData.attackType == AttackType.Target && m_towerData.EmblemId == TowerEmblem.FIRE;
     }
 
     private bool IsFireSplashTower()
     {
-        return m_towerData != null && m_towerData.attackType == AttackType.Splash && m_towerData.towerID % 100 == TowerPattern.FIRE;
+        return m_towerData != null && m_towerData.attackType == AttackType.Splash && m_towerData.EmblemId == TowerEmblem.FIRE;
     }
 
     private int GetCurrentTileBuffActionReduction()

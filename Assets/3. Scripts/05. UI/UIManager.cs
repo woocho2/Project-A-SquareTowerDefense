@@ -401,8 +401,8 @@ public class UIManager : MonoBehaviour
             m_btnCombineExact.enabled = true;
         }
 
-        if (m_btnCombineColor != null) m_btnCombineColor.onClick.AddListener(() => OnCombineClick(CombineMode.TypeMatch));
-        if (m_btnCombineEmblem != null) m_btnCombineEmblem.onClick.AddListener(() => OnCombineClick(CombineMode.VariantMatch));
+        if (m_btnCombineColor != null) m_btnCombineColor.onClick.AddListener(() => OnCombineClick(CombineMode.ColorMatch));
+        if (m_btnCombineEmblem != null) m_btnCombineEmblem.onClick.AddListener(() => OnCombineClick(CombineMode.EmblemMatch));
         if (m_btnCombineExact != null) m_btnCombineExact.onClick.AddListener(() => OnCombineClick(CombineMode.ExactMatch));
     }
 
@@ -1317,8 +1317,8 @@ public class UIManager : MonoBehaviour
     {
         if (m_selectedTower == null) return;
 
-        m_btnCombineColor.interactable = TowerManager.Instance.CanCombine(m_selectedTowerInfo, CombineMode.TypeMatch);
-        m_btnCombineEmblem.interactable = TowerManager.Instance.CanCombine(m_selectedTowerInfo, CombineMode.VariantMatch);
+        m_btnCombineColor.interactable = TowerManager.Instance.CanCombine(m_selectedTowerInfo, CombineMode.ColorMatch);
+        m_btnCombineEmblem.interactable = TowerManager.Instance.CanCombine(m_selectedTowerInfo, CombineMode.EmblemMatch);
         m_btnCombineExact.interactable = TowerManager.Instance.CanCombine(m_selectedTowerInfo, CombineMode.ExactMatch);
     }
 

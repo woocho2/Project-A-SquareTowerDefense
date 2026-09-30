@@ -54,9 +54,9 @@ public class GlobalProjectileManager : MonoBehaviour
 
     public void InitializeProjectileDatabase()
     {
-        TowerData[] allTowers = TowerManager.Instance.GetTowerDataArray();
+        List<TowerData> allTowers = TowerManager.Instance.GetTowerDataList();
 
-        if (allTowers == null || allTowers.Length == 0) return;
+        if (allTowers == null || allTowers.Count == 0) return;
 
         foreach (var tower in allTowers)
         {
