@@ -19,6 +19,7 @@ public class EnemyHealthController : MonoBehaviour
     private EnemyDebuffController m_debuff;
     private EnemyObjectPool2D m_enemyPool;
     private Coroutine m_hpBarFadeRoutine;
+    private bool m_hasDied;
 
     public float CurrentHP => m_currentHP;
     public float MaxHP => m_maxHP;
@@ -47,6 +48,7 @@ public class EnemyHealthController : MonoBehaviour
 
     public void InitHealth(float maxHP, float defend, EnemyType enemyType = EnemyType.Normal)
     {
+        m_hasDied = false;
         m_enemyType = enemyType;
         m_originalMaxHP = maxHP;
         m_maxHP = maxHP;
@@ -89,9 +91,11 @@ public class EnemyHealthController : MonoBehaviour
 
     public void ApplyDamage(float rawDamage, bool isCritical = false, float armorPenetrationPercent = 0f, TowerController sourceTower = null)
     {
-        if (m_currentHP <= 0f) return;
+        if (m_hasDied || m_currentHP <= 0f || !gameObject.activeInHierarchy) return;
 
         if (isCritical) m_debuff?.RegisterCriticalHit();
+        // 치명타에 반응한 처형이 적을 즉시 풀로 반환했으면 일반 피해를 이어서 적용하지 않는다.
+        if (m_hasDied || m_currentHP <= 0f || !gameObject.activeInHierarchy) return;
 
         ShowHPBar();
 
@@ -121,12 +125,16 @@ public class EnemyHealthController : MonoBehaviour
 
     public void ExecuteInstantKill()
     {
+        if (m_hasDied || m_currentHP <= 0f || !gameObject.activeInHierarchy) return;
         m_currentHP = 0f;
         Die();
     }
 
     private void Die(TowerController sourceTower = null)
     {
+        if (m_hasDied) return;
+        m_hasDied = true;
+
         sourceTower?.NotifyEnemyKilled();
         if (IsBoss)
         {
@@ -144,6 +152,7 @@ public class EnemyHealthController : MonoBehaviour
 
     public void ReturnToPool()
     {
+        if (!gameObject.activeInHierarchy) return;
         StopAllCoroutines();
         HideHPBar();
 

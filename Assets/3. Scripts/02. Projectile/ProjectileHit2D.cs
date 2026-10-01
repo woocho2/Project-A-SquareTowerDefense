@@ -17,6 +17,7 @@ public struct ProjectileStats
     public float criticalRate;
     public float criticalDamage;
     public int SplashRadius;
+    public int targetPathIndex;
     public int additionalHitCount;
     public float armorPenetrationPercent;
     public int iceAdditionalTargetCount;
@@ -228,15 +229,21 @@ public class ProjectileHit2D : MonoBehaviour
         EffectManager.Instance?.PlayEffect(m_stats.hitEffectID, transform.position, splashEffectRot, splashEffectScale);
 
         TilePath path = TilePath.Instance;
-        if (path == null)
+        if (path == null || TileManager.Instance == null)
         {
-            Debug.LogWarning("[ProjectileHit2D] TilePath가 없어 스플래시 피해를 계산할 수 없습니다.");
+            Debug.LogWarning("[ProjectileHit2D] TilePath 또는 TileManager가 없어 스플래시 피해를 계산할 수 없습니다.");
             ReturnToPool();
             return;
         }
 
-        // 실제 피해 대상은 물리 탐색이 아니라 패스 타일별 적 목록에서만 결정합니다.
-        List<EnemyHealthController> damagedEnemies = path.GetEnemiesInSquare(transform.position, tileRadius);
+        // 실제 피해 대상은 투사체 위치가 아니라, 발사할 때 정한 착탄 타일 인덱스 주변의 적 목록에서만 결정합니다.
+        List<EnemyHealthController> damagedEnemies = new List<EnemyHealthController>();
+        List<int> splashPathIndices = TileManager.Instance.GetPathIndicesInSquare(m_stats.targetPathIndex, tileRadius);
+        for (int i = 0; i < splashPathIndices.Count; i++)
+        {
+            damagedEnemies.AddRange(path.GetEnemiesAtIndex(splashPathIndices[i]));
+        }
+
         for (int i = 0; i < damagedEnemies.Count; i++)
         {
             EnemyHealthController health = damagedEnemies[i];

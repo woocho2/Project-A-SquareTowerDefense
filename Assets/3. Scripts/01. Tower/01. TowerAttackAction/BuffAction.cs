@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 
 public class BuffAction : TowerAttackAction
@@ -18,50 +17,33 @@ public class BuffAction : TowerAttackAction
         // Earth는 TowerController의 100초 타이머에서 전역 강화하므로, 주변 타워에 일반 버프를 적용하지 않습니다.
         if (m_data.buffTarget == BuffTarget.Earth) return true;
 
-        if (TileManager.Instance == null || TowerManager.Instance == null) return false;
-
-        Tilemap spawnTilemap = TowerManager.Instance.GetSpawnPointTilemap();
-        if (spawnTilemap == null) return false;
+        if (TileManager.Instance == null || !towerTransform.TryGetComponent(out TowerController sourceTower) ||
+            sourceTower.SpawnIndex < 1) return false;
 
         // 버프의 대상은 콜라이더나 현재 설치된 타워가 아니라, 사거리 안의 모든 타워 스폰 타일입니다.
         // 타워가 나중에 그 타일로 이동/소환되어도 그 즉시 같은 효과를 읽습니다.
         int sourceID = towerTransform.GetInstanceID();
         TileManager.Instance.RemoveTowerBuffEffectsBySource(sourceID);
-        BoundsInt bounds = spawnTilemap.cellBounds;
         bool appliedAny = false;
-        List<Vector3Int> affectedCells = new List<Vector3Int>();
+        List<int> affectedIndices = TileManager.Instance.GetTowerSpawnIndicesInRange(
+            sourceTower.SpawnIndex, ToTileRange(currentStats.Range));
 
-        for (int y = bounds.yMin; y < bounds.yMax; y++)
+        for (int i = 0; i < affectedIndices.Count; i++)
         {
-            for (int x = bounds.xMin; x < bounds.xMax; x++)
-            {
-                Vector3Int cell = new Vector3Int(x, y, 0);
-                if (!spawnTilemap.HasTile(cell)) continue;
+            // Fire is stack-based: one support action adds one Preheat stack.
+            // Duration is the stack threshold; AttackCount is the stack lifetime.
+            if (m_data.buffTarget == BuffTarget.Fire) continue;
 
-                Vector3 cellCenter = spawnTilemap.GetCellCenterWorld(cell);
-                if (Vector2.Distance(towerTransform.position, cellCenter) > currentStats.Range) continue;
-
-                affectedCells.Add(cell);
-
-                // Fire is stack-based: one support action adds one Preheat stack.
-                // Duration is the stack threshold; AttackCount is the stack lifetime.
-                if (m_data.buffTarget == BuffTarget.Fire) continue;
-
-                TileManager.Instance.AddTowerBuffEffect(
-                    cell,
-                    sourceID,
-                    m_data.buffTarget,
-                    sourceTier,
-                    currentStats.AttackPower,
-                    currentStats.Duration);
-                appliedAny = true;
-            }
+            TileManager.Instance.AddTowerBuffEffect(
+                affectedIndices[i], sourceID, m_data.buffTarget, sourceTier,
+                currentStats.AttackPower, currentStats.Duration);
+            appliedAny = true;
         }
 
-        if (m_data.buffTarget == BuffTarget.Fire && affectedCells.Count > 0)
+        if (m_data.buffTarget == BuffTarget.Fire && affectedIndices.Count > 0)
         {
             TileManager.Instance.SetFirePreheatEffects(
-                affectedCells,
+                affectedIndices,
                 sourceID,
                 sourceTier,
                 currentStats.AbilityValue,

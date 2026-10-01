@@ -4,8 +4,8 @@ using UnityEngine.Serialization;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Tilemaps;
 
-// 1. 에너미 경로 타일의 역할을 구분하는 열거형
-public enum SpecialTileType
+
+public enum PathTileBuffType
 {
     Normal,
     DefendTile,
@@ -13,19 +13,14 @@ public enum SpecialTileType
     HealTile
 }
 
-// 2. 타워 배치 타일의 특수 버프 역할을 구분하는 열거형
 public enum TowerTileBuffType
 {
-    Normal,         // 기본 타일
+    Normal,         // 효과 없음
     AttackPowerUp,  // 공격력 증가
     ActionCountUp,  // 행동력 증가
     AttackCountUp   // 공격횟수 증가
 }
 
-/// <summary>
-/// 버프 타워가 타워 스폰 타일에 남기는 런타임 효과입니다.
-/// 이 데이터가 실제 판정의 기준이며, 타일 위 이펙트는 표현만 담당합니다.
-/// </summary>
 public sealed class TowerTileBuffEffect
 {
     public int SourceID;
@@ -33,47 +28,41 @@ public sealed class TowerTileBuffEffect
     public int Tier;
     public float AbilityValue;
     public int RemainingTurns;
-    // A source action gets one shared version across every affected tower cell.
-    // Targets use this to add one stack only once per action, not once per frame.
     public int ApplicationVersion;
-    // Fire uses Duration as the preheat -> overheat threshold, while the stack
-    // lifetime is explicitly supplied from AttackCount.
     public int StackThreshold;
     public int StackLifetime;
 }
 
-/// <summary>
-/// 디버프 타워가 패스 타일에 남기는 런타임 효과입니다.
-/// ApplicationVersion은 같은 장판을 밟고 있는 적에게 같은 공격이 중복 스택되는 것을 막습니다.
-/// </summary>
+
 public sealed class PathTileDebuffEffect
 {
     public int SourceID;
+    public int SourceCreationOrder;
     public DebuffTarget Target;
     public int Tier;
     public float AbilityValue;
     public int Duration;
-    // Fire uses Duration as the burn -> ignite threshold.  Keeping this value
-    // separate makes the meaning explicit to the enemy status owner.
     public int StackThreshold;
     public int ApplicationVersion;
-    public Vector3 ZoneWorldPosition;
+    public int ZonePathIndex;
 }
 
 [RequireComponent(typeof(Tilemap))]
-/// <summary>
-/// 고정 맵 타일 효과와 타워가 생성한 동적 버프·디버프 효과를 좌표별로 관리합니다.
-/// Dictionary의 데이터가 실제 판정 기준이며 TileSatelliteOrbiter는 시각 표현만 담당합니다.
-/// </summary>
 public class TileManager : MonoBehaviour
 {
-    #region Singleton and Inspector
+    #region 설정
 
     public static TileManager Instance { get; private set; }
 
-    [Header("에너미 경로 컴포넌트 참조")]
+    [Header("에너미 경로 타일맵과 이동 순서")]
     [SerializeField] private Tilemap tilemap;
-    [SerializeField] private TilePath tilePath;
+    [Header("타워 소환 타일맵")]
+    [SerializeField] private Tilemap m_towerSpawnTilemap;
+    [Tooltip("시작점부터 도착점까지의 경로 좌표. 목록 순서가 이동 순서입니다.")]
+    [SerializeField] private List<Vector3Int> m_pathGridPositions = new List<Vector3Int>();
+
+    public IReadOnlyList<Vector3Int> PathGridPositions => m_pathGridPositions;
+    public Tilemap TowerSpawnTilemap => m_towerSpawnTilemap;
 
     [Header("에너미 특수 타일 생성 개수 설정")]
     [SerializeField] private int defendTileCount = 5;
@@ -88,52 +77,73 @@ public class TileManager : MonoBehaviour
     [SerializeField] private int towerAttackCountTileCount = 2;
 
     [Header("맵 특수 타일 이펙트")]
-    [Tooltip("타워/에너미 특수 타일 위에 생성할 MapBuff 프리팹")]
+    [Tooltip("타워 소환 타일의 공전형 맵 버프 표시용 프리팹. 패스 전용 프리팹이 없을 때도 사용합니다.")]
     [FormerlySerializedAs("towerTileBuffEffectPrefab")]
     [SerializeField] private TileSatelliteOrbiter mapTileBuffEffectPrefab;
-    [Tooltip("생성된 특수 타일 이펙트를 정리할 부모 Transform (비워두면 TileManager 하위에 생성)")]
+    [Tooltip("패스 타일용 바닥 룬 프리팹. 룬 에셋 제작 후 연결하며, 비어 있으면 기존 위성을 유지합니다.")]
+    [SerializeField] private GameObject m_pathMapBuffVisualPrefab;
+    [Tooltip("이펙트 부모. 비우면 TileManager 하위에 생성합니다.")]
     [FormerlySerializedAs("towerTileBuffEffectParent")]
     [SerializeField] private Transform mapTileBuffEffectParent;
 
     #endregion
 
-    #region Runtime Data
+    #region 런타임 데이터
 
-    // 에너미 타일 정보 (좌표 -> 에너미 타일 속성)
-    public Dictionary<Vector3Int, SpecialTileType> specialTileMap = new Dictionary<Vector3Int, SpecialTileType>();
+    // 패스 타일: 좌표 ↔ 이동 순서
+    private readonly Dictionary<Vector3Int, int> m_pathIndexByCell = new Dictionary<Vector3Int, int>();
+    private readonly Dictionary<int, Vector3Int> m_pathCellsByIndex = new Dictionary<int, Vector3Int>();
+    private readonly Dictionary<Vector3Int, List<int>> m_pathIndicesByCell = new Dictionary<Vector3Int, List<int>>();
+    // 타워 소환 타일맵의 셀 좌표계로 옮긴 패스 칸 위치: 타워↔패스 거리 계산 전용
+    private readonly Dictionary<int, Vector3Int> m_pathBoardCellsByIndex = new Dictionary<int, Vector3Int>();
 
-    // 타워 타일 정보 (좌표 -> 타워 버프 속성)
-    // 실제 버프 판정은 이 Dictionary만 사용한다.
-    // 즉, MapBuff 이펙트가 꺼져 있거나 없어도 타워 버프 계산 자체는 영향을 받지 않는다.
-    public Dictionary<Vector3Int, TowerTileBuffType> towerTileBuffMap = new Dictionary<Vector3Int, TowerTileBuffType>();
+    // 타워 소환 타일: 왼쪽 위 1번부터 좌표 ↔ 번호
+    private readonly Dictionary<Vector3Int, int> m_towerSpawnIndexByCell = new Dictionary<Vector3Int, int>();
+    private readonly Dictionary<int, Vector3Int> m_towerSpawnCellsByIndex = new Dictionary<int, Vector3Int>();
+    private readonly Dictionary<int, Vector3> m_towerSpawnWorldByIndex = new Dictionary<int, Vector3>();
 
-    // 버프/디버프 타워가 남긴 동적 효과입니다. 특수 맵 타일(towerTileBuffMap, specialTileMap)과는 별개입니다.
-    private readonly Dictionary<Vector3Int, List<TowerTileBuffEffect>> m_towerBuffEffectsByCell = new Dictionary<Vector3Int, List<TowerTileBuffEffect>>();
-    private readonly Dictionary<Vector3Int, List<PathTileDebuffEffect>> m_pathDebuffEffectsByCell = new Dictionary<Vector3Int, List<PathTileDebuffEffect>>();
+    // 점유 정보의 원본: 경로는 0번부터, 타워 소환 칸은 1번부터 시작한다.
+    private readonly Dictionary<int, List<EnemyHealthController>> m_enemiesByPathIndex =
+        new Dictionary<int, List<EnemyHealthController>>();
+    private readonly Dictionary<EnemyHealthController, int> m_pathIndexByEnemy =
+        new Dictionary<EnemyHealthController, int>();
+    private readonly Dictionary<int, TowerController> m_towersBySpawnIndex =
+        new Dictionary<int, TowerController>();
+    private readonly SortedSet<int> m_emptyTowerSpawnIndices = new SortedSet<int>();
+
+
+    public int PathTileCount => m_pathCellsByIndex.Count;
+    public int TowerSpawnTileCount => m_towerSpawnCellsByIndex.Count;
+
+    // 스테이지 시작 시 배치되는 고정 맵 버프
+    private readonly Dictionary<int, PathTileBuffType> m_pathTileBuffByIndex = new Dictionary<int, PathTileBuffType>();
+    private readonly Dictionary<int, TowerTileBuffType> m_towerTileBuffByIndex = new Dictionary<int, TowerTileBuffType>();
+
+    // 버프 타워는 소환 타일에, 디버프 타워는 패스 타일에 효과를 남긴다.
+    private readonly Dictionary<int, List<TowerTileBuffEffect>> m_towerBuffEffectsByIndex = new Dictionary<int, List<TowerTileBuffEffect>>();
+    private readonly Dictionary<int, List<PathTileDebuffEffect>> m_pathDebuffEffectsByIndex = new Dictionary<int, List<PathTileDebuffEffect>>();
+
+    // 효과를 준 타워별 적용 번호: 같은 행동의 중복 적용 방지
     private readonly Dictionary<int, int> m_buffApplicationVersions = new Dictionary<int, int>();
     private readonly Dictionary<int, int> m_debuffApplicationVersions = new Dictionary<int, int>();
 
-    // 현재 씬에 생성되어 있는 버프 이펙트 목록 (좌표 -> 이펙트 인스턴스)
-    // 버프 타일을 다시 랜덤 배정할 때 이전 이펙트를 안전하게 제거하기 위해 관리한다.
-    private readonly Dictionary<Vector3Int, TileSatelliteOrbiter> towerTileBuffEffects = new Dictionary<Vector3Int, TileSatelliteOrbiter>();
-
-    // 에너미 경로 특수 타일의 시각 이펙트 목록이다.
-    // 타워 타일 이펙트와 별도로 관리해야 한쪽만 재배정해도 다른 쪽 이펙트가 지워지지 않는다.
-    private readonly Dictionary<Vector3Int, TileSatelliteOrbiter> specialTileEffects = new Dictionary<Vector3Int, TileSatelliteOrbiter>();
-
-    // 에너미 경로 16진수 컬러 코드
+    // 패스 맵 버프 이펙트 색상
     private readonly Color defendColor = HexToColor("ffc74f");
     private readonly Color speedColor = HexToColor("57cfff");
     private readonly Color healColor = HexToColor("60ff68");
 
-    // 타워 스폰 타일 16진수 컬러 코드    
-    private readonly Color towerAttackPowerColor = HexToColor("ff5d5d"); // 공격력 증가 타일 색상
-    private readonly Color towerActionCountColor = HexToColor("57cfff"); // 행동력 증가 타일 색상
-    private readonly Color towerAttackCountColor = HexToColor("ffc74f"); // 공격횟수 증가 타일 색상
+    // 타워 소환 맵 버프 이펙트 색상
+    private readonly Color towerAttackPowerColor = HexToColor("ff5d5d");
+    private readonly Color towerActionCountColor = HexToColor("57cfff");
+    private readonly Color towerAttackCountColor = HexToColor("ffc74f");
+
+    // 랜덤 배치를 다시 실행할 때 이전 표시 이펙트를 중복 생성하지 않기 위한 목록.
+    private readonly List<GameObject> m_pathMapBuffEffects = new List<GameObject>();
+    private readonly List<GameObject> m_towerMapBuffEffects = new List<GameObject>();
 
     #endregion
 
-    #region Unity Lifecycle
+    #region 초기화
 
     private void Awake()
     {
@@ -145,9 +155,6 @@ public class TileManager : MonoBehaviour
         }
 
         Instance = this;
-
-        if (tilemap == null) tilemap = GetComponent<Tilemap>();
-        if (tilePath == null) tilePath = GetComponent<TilePath>();
     }
 
     private void OnDestroy()
@@ -157,82 +164,529 @@ public class TileManager : MonoBehaviour
 
     private void Start()
     {
-        // 1. 에너미 경로 특수 타일 배치
+        if (tilemap == null) tilemap = GetComponent<Tilemap>();
+        InitializePathTileIndices();
+        InitializeTowerSpawnTileIndices();
+
         AssignRandomSpecialTiles();
 
-        // 2. 타워 스폰 타일 버프 지정 개수 배정 및 색상 적용
         AssignRandomTowerTileBuffs();
     }
 
     #endregion
 
-    #region Fixed Tower Tile Buffs
+    #region 타일 번호
+
+    private void InitializePathTileIndices()
+    {
+        m_pathCellsByIndex.Clear();
+        m_pathIndexByCell.Clear();
+        m_pathIndicesByCell.Clear();
+        m_pathBoardCellsByIndex.Clear();
+
+        for (int index = 0; index < m_pathGridPositions.Count; index++)
+        {
+            Vector3Int cell = m_pathGridPositions[index];
+            m_pathCellsByIndex.Add(index, cell);
+            m_pathBoardCellsByIndex.Add(index, tilemap != null && m_towerSpawnTilemap != null
+                ? m_towerSpawnTilemap.WorldToCell(tilemap.GetCellCenterWorld(cell))
+                : cell);
+            if (!m_pathIndicesByCell.TryGetValue(cell, out List<int> indices))
+            {
+                indices = new List<int>();
+                m_pathIndicesByCell.Add(cell, indices);
+            }
+            indices.Add(index);
+
+            // 같은 셀을 다시 지나면 좌표 조회에는 첫 방문 번호를 사용한다.
+            if (!m_pathIndexByCell.ContainsKey(cell))
+            {
+                m_pathIndexByCell.Add(cell, index);
+            }
+
+            if (tilemap != null && !tilemap.HasTile(cell))
+            {
+                Debug.LogWarning($"[TileManager] Path index {index} has no tile at {cell}.");
+            }
+        }
+    }
+
+    private void InitializeTowerSpawnTileIndices()
+    {
+        m_towerSpawnCellsByIndex.Clear();
+        m_towerSpawnIndexByCell.Clear();
+        m_towerSpawnWorldByIndex.Clear();
+        m_emptyTowerSpawnIndices.Clear();
+
+        if (m_towerSpawnTilemap == null)
+        {
+            Debug.LogError("[TileManager] Tower spawn tilemap is missing; tower spawn indices were not created.");
+            return;
+        }
+
+        BoundsInt bounds = m_towerSpawnTilemap.cellBounds;
+        for (int y = bounds.yMax - 1; y >= bounds.yMin; y--)
+        {
+            for (int x = bounds.xMin; x < bounds.xMax; x++)
+            {
+                Vector3Int cell = new Vector3Int(x, y, 0);
+                if (!m_towerSpawnTilemap.HasTile(cell)) continue;
+
+                int index = m_towerSpawnCellsByIndex.Count + 1;
+                m_towerSpawnCellsByIndex.Add(index, cell);
+                m_towerSpawnIndexByCell.Add(cell, index);
+                m_towerSpawnWorldByIndex.Add(index, m_towerSpawnTilemap.GetCellCenterWorld(cell));
+                if (!m_towersBySpawnIndex.TryGetValue(index, out TowerController tower) || tower == null)
+                    m_emptyTowerSpawnIndices.Add(index);
+            }
+        }
+    }
+
+    public bool TryGetPathTileCell(int index, out Vector3Int cell)
+    {
+        if (index >= 0 && index < m_pathCellsByIndex.Count)
+        {
+            cell = m_pathCellsByIndex[index];
+            return true;
+        }
+
+        cell = default;
+        return false;
+    }
+
+    public bool TryGetTowerSpawnTileCell(int index, out Vector3Int cell)
+    {
+        return m_towerSpawnCellsByIndex.TryGetValue(index, out cell);
+    }
+
+    public bool TryGetPathTileIndex(Vector3Int cell, out int index)
+    {
+        return m_pathIndexByCell.TryGetValue(cell, out index);
+    }
+
+    public bool TryGetTowerSpawnTileIndex(Vector3Int cell, out int index)
+    {
+        return m_towerSpawnIndexByCell.TryGetValue(cell, out index);
+    }
+
+    public bool TryGetTowerSpawnWorldPosition(int index, out Vector3 position)
+    {
+        return m_towerSpawnWorldByIndex.TryGetValue(index, out position);
+    }
+
+    public bool TryGetFirstEmptyTowerSpawnIndex(out int index)
+    {
+        if (m_emptyTowerSpawnIndices.Count > 0)
+        {
+            index = m_emptyTowerSpawnIndices.Min;
+            return true;
+        }
+
+        index = -1;
+        return false;
+    }
+
+    public bool AreTowerSpawnIndicesWithinRange(int firstIndex, int secondIndex, int range)
+    {
+        if (!m_towerSpawnCellsByIndex.TryGetValue(firstIndex, out Vector3Int firstCell) ||
+            !m_towerSpawnCellsByIndex.TryGetValue(secondIndex, out Vector3Int secondCell)) return false;
+
+        return GetCellDistance(firstCell, secondCell) <= range;
+    }
+
+    // 대각선도 1칸으로 세는 타일 거리입니다. Range 1 = 3x3, Range 2 = 5x5.
+    private static int GetCellDistance(Vector3Int first, Vector3Int second)
+    {
+        return Mathf.Max(Mathf.Abs(first.x - second.x), Mathf.Abs(first.y - second.y));
+    }
+
+    /// <summary>타워 소환 칸과 패스 칸 사이의 타일 거리입니다. 인덱스가 유효하지 않으면 -1을 반환합니다.</summary>
+    public int GetTileDistance(int towerSpawnIndex, int pathIndex)
+    {
+        if (!m_towerSpawnCellsByIndex.TryGetValue(towerSpawnIndex, out Vector3Int towerCell) ||
+            !m_pathBoardCellsByIndex.TryGetValue(pathIndex, out Vector3Int pathCell)) return -1;
+
+        return GetCellDistance(towerCell, pathCell);
+    }
+
+    public List<int> GetTowerSpawnIndicesInRange(int centerIndex, int tileRange)
+    {
+        List<int> indices = new List<int>();
+        if (!m_towerSpawnCellsByIndex.TryGetValue(centerIndex, out Vector3Int center)) return indices;
+
+        for (int index = 1; index <= TowerSpawnTileCount; index++)
+        {
+            if (m_towerSpawnCellsByIndex.TryGetValue(index, out Vector3Int cell) &&
+                GetCellDistance(center, cell) <= tileRange)
+                indices.Add(index);
+        }
+        return indices;
+    }
+
+    /// <summary>
+    /// 타워 사거리 안의 패스 인덱스를 이동 순서대로 반환합니다.
+    /// uniqueCells가 true면 경로가 같은 칸을 여러 번 지나도 첫 방문 인덱스만 포함합니다.
+    /// </summary>
+    public List<int> GetPathIndicesInTowerRange(int towerSpawnIndex, int tileRange, bool uniqueCells = false)
+    {
+        List<int> indices = new List<int>();
+        if (!m_towerSpawnCellsByIndex.TryGetValue(towerSpawnIndex, out Vector3Int towerCell)) return indices;
+
+        HashSet<Vector3Int> visitedCells = uniqueCells ? new HashSet<Vector3Int>() : null;
+        for (int index = 0; index < PathTileCount; index++)
+        {
+            Vector3Int pathCell = m_pathBoardCellsByIndex[index];
+            if (GetCellDistance(towerCell, pathCell) > tileRange) continue;
+            if (visitedCells != null && !visitedCells.Add(pathCell)) continue;
+            indices.Add(index);
+        }
+        return indices;
+    }
+
+    /// <summary>중심 패스 칸에서 정사각 반경 안의 패스 인덱스입니다. 반경 0은 같은 칸의 모든 방문 인덱스입니다.</summary>
+    public List<int> GetPathIndicesInSquare(int centerPathIndex, int tileRadius)
+    {
+        List<int> indices = new List<int>();
+        if (!m_pathBoardCellsByIndex.TryGetValue(centerPathIndex, out Vector3Int center)) return indices;
+
+        int radius = Mathf.Max(0, tileRadius);
+        for (int index = 0; index < PathTileCount; index++)
+        {
+            if (GetCellDistance(center, m_pathBoardCellsByIndex[index]) <= radius) indices.Add(index);
+        }
+        return indices;
+    }
+
+    /// <summary>타워에서 가장 가까운 패스 인덱스입니다. 타일 거리가 같으면 직선상 가까운 칸, 그다음 앞 번호를 고릅니다.</summary>
+    public bool TryGetClosestPathIndexToTower(int towerSpawnIndex, out int pathIndex)
+    {
+        pathIndex = -1;
+        if (!m_towerSpawnCellsByIndex.TryGetValue(towerSpawnIndex, out Vector3Int towerCell)) return false;
+
+        int bestTileDistance = int.MaxValue;
+        int bestSqrDistance = int.MaxValue;
+        for (int index = 0; index < PathTileCount; index++)
+        {
+            Vector3Int offset = m_pathBoardCellsByIndex[index] - towerCell;
+            int tileDistance = GetCellDistance(m_pathBoardCellsByIndex[index], towerCell);
+            int sqrDistance = offset.x * offset.x + offset.y * offset.y;
+            if (tileDistance > bestTileDistance ||
+                (tileDistance == bestTileDistance && sqrDistance >= bestSqrDistance)) continue;
+
+            bestTileDistance = tileDistance;
+            bestSqrDistance = sqrDistance;
+            pathIndex = index;
+        }
+        return pathIndex >= 0;
+    }
+
+    public bool TryGetPathWorldPosition(int index, out Vector3 position)
+    {
+        position = default;
+        if (tilemap == null || !m_pathCellsByIndex.TryGetValue(index, out Vector3Int cell)) return false;
+
+        position = tilemap.GetCellCenterWorld(cell);
+        return true;
+    }
+
+    public Vector3 GetPathCellCenterWorld(Vector3Int cell)
+    {
+        return tilemap.GetCellCenterWorld(cell);
+    }
+
+    public bool TryGetTowerSpawnIndexAtWorldPosition(Vector3 worldPosition, out int index)
+    {
+        index = -1;
+        return m_towerSpawnTilemap != null &&
+               m_towerSpawnIndexByCell.TryGetValue(m_towerSpawnTilemap.WorldToCell(worldPosition), out index);
+    }
+
+    public bool TryGetPathIndexAtWorldPosition(Vector3 worldPosition, out int index)
+    {
+        index = -1;
+        return tilemap != null &&
+               m_pathIndexByCell.TryGetValue(tilemap.WorldToCell(worldPosition), out index);
+    }
+
+    #region 타일 점유
+
+    public bool SetEnemyAtPathIndex(EnemyHealthController enemy, int index, out int previousIndex)
+    {
+        previousIndex = -1;
+        if (enemy == null || !m_pathCellsByIndex.ContainsKey(index)) return false;
+
+        RemoveEnemyFromPath(enemy, out previousIndex);
+        if (!m_enemiesByPathIndex.TryGetValue(index, out List<EnemyHealthController> occupants))
+        {
+            occupants = new List<EnemyHealthController>();
+            m_enemiesByPathIndex.Add(index, occupants);
+        }
+
+        occupants.Add(enemy);
+        m_pathIndexByEnemy[enemy] = index;
+        return true;
+    }
+
+    public bool RemoveEnemyFromPath(EnemyHealthController enemy, out int previousIndex)
+    {
+        previousIndex = -1;
+        if (ReferenceEquals(enemy, null) || !m_pathIndexByEnemy.TryGetValue(enemy, out previousIndex)) return false;
+
+        m_pathIndexByEnemy.Remove(enemy);
+        if (m_enemiesByPathIndex.TryGetValue(previousIndex, out List<EnemyHealthController> occupants))
+        {
+            occupants.Remove(enemy);
+            if (occupants.Count == 0) m_enemiesByPathIndex.Remove(previousIndex);
+        }
+        return true;
+    }
+
+    // 표현용 진형 배치에도 쓰이므로 여기서는 HP를 거르지 않는다.
+    public List<EnemyHealthController> GetEnemyOccupantsAtPathIndex(int index)
+    {
+        List<EnemyHealthController> result = new List<EnemyHealthController>();
+        if (!m_enemiesByPathIndex.TryGetValue(index, out List<EnemyHealthController> occupants)) return result;
+        foreach (EnemyHealthController enemy in occupants)
+        {
+            if (enemy != null && enemy.gameObject.activeInHierarchy) result.Add(enemy);
+        }
+        return result;
+    }
+
+    // 경로가 같은 좌표를 여러 번 지나도 그 좌표의 모든 방문 인덱스를 합친다.
+    public List<EnemyHealthController> GetEnemyOccupantsAtPathCell(Vector3Int cell)
+    {
+        List<EnemyHealthController> result = new List<EnemyHealthController>();
+        if (!m_pathIndicesByCell.TryGetValue(cell, out List<int> visits)) return result;
+        foreach (int index in visits)
+        {
+            result.AddRange(GetEnemyOccupantsAtPathIndex(index));
+        }
+        return result;
+    }
+
+    /// <summary>패스에 등록된 모든 적을 복사해 반환합니다. 순회 중 적이 죽거나 이동해도 안전합니다.</summary>
+    public List<EnemyHealthController> GetAllEnemiesOnPath()
+    {
+        List<EnemyHealthController> result = new List<EnemyHealthController>(m_pathIndexByEnemy.Count);
+        foreach (EnemyHealthController enemy in m_pathIndexByEnemy.Keys)
+        {
+            if (enemy != null && enemy.gameObject.activeInHierarchy) result.Add(enemy);
+        }
+        return result;
+    }
+
+    public List<KeyValuePair<int, List<EnemyHealthController>>> GetEnemyOccupancySnapshot()
+    {
+        List<KeyValuePair<int, List<EnemyHealthController>>> result =
+            new List<KeyValuePair<int, List<EnemyHealthController>>>();
+        foreach (int index in m_enemiesByPathIndex.Keys)
+        {
+            result.Add(new KeyValuePair<int, List<EnemyHealthController>>(
+                index, GetEnemyOccupantsAtPathIndex(index)));
+        }
+        return result;
+    }
+
+    public bool TryGetTowerAt(int index, out TowerController tower)
+    {
+        tower = null;
+        return m_towerSpawnCellsByIndex.ContainsKey(index) &&
+               m_towersBySpawnIndex.TryGetValue(index, out tower) && tower != null;
+    }
+
+    public bool TryGetTowerAt(Vector3Int cell, out TowerController tower)
+    {
+        tower = null;
+        return m_towerSpawnIndexByCell.TryGetValue(cell, out int index) && TryGetTowerAt(index, out tower);
+    }
+
+    public bool TryGetTowerData(int index, out TowerController tower, out TowerData data)
+    {
+        data = null;
+        if (!TryGetTowerAt(index, out tower)) return false;
+
+        data = tower.GetTowerData();
+        return data != null;
+    }
+
+    public bool TryGetTowerInfo(int index, out TowerController tower, out TowerData data, out TowerStats stats)
+    {
+        stats = default;
+        if (!TryGetTowerData(index, out tower, out data)) return false;
+        stats = tower.GetFinalStats();
+        return true;
+    }
+
+    public bool TryPlaceTowerAt(int index, TowerController tower)
+    {
+        if (tower == null || !m_towerSpawnCellsByIndex.ContainsKey(index) || TryGetTowerAt(index, out _)) return false;
+
+        m_towersBySpawnIndex[index] = tower;
+        m_emptyTowerSpawnIndices.Remove(index);
+        tower.SpawnIndex = index;
+        return true;
+    }
+
+    public bool TryPlaceTowerAt(Vector3Int cell, TowerController tower) =>
+        m_towerSpawnIndexByCell.TryGetValue(cell, out int index) && TryPlaceTowerAt(index, tower);
+
+    public bool SetTowerAt(int index, TowerController tower)
+    {
+        if (tower == null || !m_towerSpawnCellsByIndex.ContainsKey(index)) return false;
+        if (m_towersBySpawnIndex.TryGetValue(index, out TowerController previous) && previous != null && previous != tower)
+            previous.SpawnIndex = -1;
+        m_towersBySpawnIndex[index] = tower;
+        m_emptyTowerSpawnIndices.Remove(index);
+        tower.SpawnIndex = index;
+        return true;
+    }
+
+    public bool SetTowerAt(Vector3Int cell, TowerController tower) =>
+        m_towerSpawnIndexByCell.TryGetValue(cell, out int index) && SetTowerAt(index, tower);
+
+    public bool RemoveTowerAt(int index)
+    {
+        if (!m_towerSpawnCellsByIndex.ContainsKey(index) || !m_towersBySpawnIndex.TryGetValue(index, out TowerController tower) ||
+            !m_towersBySpawnIndex.Remove(index)) return false;
+        if (tower != null) tower.SpawnIndex = -1;
+        m_emptyTowerSpawnIndices.Add(index);
+        return true;
+    }
+
+    public void RemoveTowerIfMatches(int index, TowerController tower)
+    {
+        if (!ReferenceEquals(tower, null) && m_towersBySpawnIndex.TryGetValue(index, out TowerController occupant) &&
+            ReferenceEquals(occupant, tower))
+            RemoveTowerAt(index);
+    }
+
+    public bool RemoveTowerAt(Vector3Int cell) =>
+        m_towerSpawnIndexByCell.TryGetValue(cell, out int index) && RemoveTowerAt(index);
+
+    public bool TryMoveTower(int fromIndex, int toIndex)
+    {
+        if (fromIndex == toIndex || !m_towerSpawnCellsByIndex.ContainsKey(toIndex) ||
+            !TryGetTowerAt(fromIndex, out TowerController tower) || TryGetTowerAt(toIndex, out _)) return false;
+
+        m_towersBySpawnIndex.Remove(fromIndex);
+        m_towersBySpawnIndex[toIndex] = tower;
+        tower.SpawnIndex = toIndex;
+        m_emptyTowerSpawnIndices.Add(fromIndex);
+        m_emptyTowerSpawnIndices.Remove(toIndex);
+        return true;
+    }
+
+    public bool TryMoveTower(Vector3Int fromCell, Vector3Int toCell) =>
+        m_towerSpawnIndexByCell.TryGetValue(fromCell, out int fromIndex) &&
+        m_towerSpawnIndexByCell.TryGetValue(toCell, out int toIndex) &&
+        TryMoveTower(fromIndex, toIndex);
+
+    public bool TrySwapTowers(int firstIndex, int secondIndex)
+    {
+        if (firstIndex == secondIndex || !TryGetTowerAt(firstIndex, out TowerController firstTower) ||
+            !TryGetTowerAt(secondIndex, out TowerController secondTower)) return false;
+
+        m_towersBySpawnIndex[firstIndex] = secondTower;
+        m_towersBySpawnIndex[secondIndex] = firstTower;
+        firstTower.SpawnIndex = secondIndex;
+        secondTower.SpawnIndex = firstIndex;
+        return true;
+    }
+
+    public bool TrySwapTowers(Vector3Int firstCell, Vector3Int secondCell) =>
+        m_towerSpawnIndexByCell.TryGetValue(firstCell, out int firstIndex) &&
+        m_towerSpawnIndexByCell.TryGetValue(secondCell, out int secondIndex) &&
+        TrySwapTowers(firstIndex, secondIndex);
+
+    public List<KeyValuePair<int, TowerController>> GetTowerOccupancyByIndexSnapshot()
+    {
+        List<KeyValuePair<int, TowerController>> result = new List<KeyValuePair<int, TowerController>>();
+        for (int index = 1; index <= m_towerSpawnCellsByIndex.Count; index++)
+        {
+            if (TryGetTowerAt(index, out TowerController tower))
+                result.Add(new KeyValuePair<int, TowerController>(index, tower));
+        }
+        return result;
+    }
+
+    #endregion
+
+    private void OnDrawGizmos()
+    {
+#if UNITY_EDITOR
+        if (tilemap == null || m_pathGridPositions == null || m_pathGridPositions.Count == 0) return;
+
+        GUIStyle style = new GUIStyle();
+        style.normal.textColor = Color.white;
+        style.fontSize = 12;
+        style.fontStyle = FontStyle.Bold;
+
+        for (int i = 0; i < m_pathGridPositions.Count; i++)
+        {
+            Vector3 worldPos = tilemap.GetCellCenterWorld(m_pathGridPositions[i]);
+            UnityEditor.Handles.Label(worldPos + new Vector3(-0.1f, 0.1f, 0), i.ToString(), style);
+
+            if (i < m_pathGridPositions.Count - 1)
+            {
+                Vector3 nextWorldPos = tilemap.GetCellCenterWorld(m_pathGridPositions[i + 1]);
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawLine(worldPos, nextWorldPos);
+            }
+        }
+#endif
+    }
+
+    #endregion
+
+    #region 고정 타워 타일 버프
 
     [ContextMenu("타워 스폰 타일 버프 랜덤 생성")]
     public void AssignRandomTowerTileBuffs()
     {
-        if (TowerManager.Instance == null)
+        if (m_towerSpawnTilemap == null)
         {
-            Debug.LogError("[TileManager] TowerManager.Instance를 찾을 수 없습니다.");
+            Debug.LogError("[TileManager] 타워 소환 타일맵이 연결되지 않았습니다.");
             return;
         }
 
-        Tilemap spawnTilemap = TowerManager.Instance.GetSpawnPointTilemap();
-        if (spawnTilemap == null)
+        // 스테이지 시작 시 버프 데이터를 새로 만든다.
+        ClearMapTileEffects(m_towerMapBuffEffects);
+        m_towerTileBuffByIndex.Clear();
+
+        // 타워 소환 타일 번호를 한 번 섞고, 앞에서부터 종류별로 배정한다.
+        List<int> shuffledIndices = new List<int>(TowerSpawnTileCount);
+        for (int index = 1; index <= TowerSpawnTileCount; index++)
         {
-            Debug.LogError("[TileManager] TowerManager의 SpawnPoint Tilemap을 가져오지 못했습니다.");
-            return;
+            shuffledIndices.Add(index);
         }
 
-        // 기존 데이터와 시각 이펙트를 함께 초기화한다.
-        // 둘 중 하나만 남으면 실제 버프와 화면 표시가 서로 달라질 수 있다.
-        towerTileBuffMap.Clear();
-        ClearTowerTileBuffEffects();
-
-        BoundsInt bounds = spawnTilemap.cellBounds;
-        List<Vector3Int> availableTilePositions = new List<Vector3Int>();
-
-        // 1. 존재하는 모든 타워 스폰 타일 좌표 수집 및 초기화(기본 흰색)
-        for (int y = bounds.yMin; y < bounds.yMax; y++)
+        for (int i = shuffledIndices.Count - 1; i > 0; i--)
         {
-            for (int x = bounds.xMin; x < bounds.xMax; x++)
-            {
-                Vector3Int pos = new Vector3Int(x, y, 0);
-                if (spawnTilemap.HasTile(pos))
-                {
-                    availableTilePositions.Add(pos);
-                    spawnTilemap.SetTileFlags(pos, TileFlags.None);
-                    // 버프 색은 이제 타일 자체가 아닌 MapBuff 프리팹이 담당한다.
-                    // 이전 방식으로 칠해져 있던 타일 색이 남지 않도록 항상 흰색으로 되돌린다.
-                    spawnTilemap.SetColor(pos, Color.white);
-                }
-            }
+            int randomIndex = Random.Range(0, i + 1);
+            int temp = shuffledIndices[i];
+            shuffledIndices[i] = shuffledIndices[randomIndex];
+            shuffledIndices[randomIndex] = temp;
         }
 
-        // 2. 지정된 개수만큼 타일을 뽑아 버프 데이터와 시각 이펙트 배정
-        SetRandomTowerTiles(spawnTilemap, availableTilePositions, towerAttackPowerCount, TowerTileBuffType.AttackPowerUp, towerAttackPowerColor);
-        SetRandomTowerTiles(spawnTilemap, availableTilePositions, towerActionCount, TowerTileBuffType.ActionCountUp, towerActionCountColor);
-        SetRandomTowerTiles(spawnTilemap, availableTilePositions, towerAttackCountTileCount, TowerTileBuffType.AttackCountUp, towerAttackCountColor);
+        int nextIndex = 0;
+        SetRandomTowerTiles(m_towerSpawnTilemap, shuffledIndices, ref nextIndex, towerAttackPowerCount, TowerTileBuffType.AttackPowerUp, towerAttackPowerColor);
+        SetRandomTowerTiles(m_towerSpawnTilemap, shuffledIndices, ref nextIndex, towerActionCount, TowerTileBuffType.ActionCountUp, towerActionCountColor);
+        SetRandomTowerTiles(m_towerSpawnTilemap, shuffledIndices, ref nextIndex, towerAttackCountTileCount, TowerTileBuffType.AttackCountUp, towerAttackCountColor);
     }
 
-    // 타워 타일 풀에서 특정 개수만큼 랜덤 추출 후 배정하는 헬퍼 함수
-    private void SetRandomTowerTiles(Tilemap map, List<Vector3Int> pool, int count, TowerTileBuffType type, Color color)
+    private void SetRandomTowerTiles(Tilemap map, List<int> shuffledIndices, ref int nextIndex, int count, TowerTileBuffType type, Color color)
     {
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < count && nextIndex < shuffledIndices.Count; i++)
         {
-            if (pool.Count == 0) break;
+            int tileIndex = shuffledIndices[nextIndex++];
+            Vector3Int selectedPos = m_towerSpawnCellsByIndex[tileIndex];
 
-            int randomIndex = Random.Range(0, pool.Count);
-            Vector3Int selectedPos = pool[randomIndex];
+            // 실제 효과는 맵 버프 데이터에서 조회한다.
+            m_towerTileBuffByIndex[tileIndex] = type;
 
-            // 1) 게임 로직이 조회할 버프 타입을 좌표에 저장한다.
-            towerTileBuffMap[selectedPos] = type;
-
-            // 2) 같은 좌표에 시각 전용 이펙트를 생성하고, 버프 타입에 맞는 색상을 입힌다.
-            // 이펙트는 보기 위한 것이며 실제 버프 판정에는 관여하지 않는다.
-            SpawnMapTileEffect(map, selectedPos, color, towerTileBuffEffects, "TowerMapBuff");
-
-            pool.RemoveAt(randomIndex);
+            // 이펙트는 시각 표시만 담당한다.
+            SpawnMapTileEffect(map, selectedPos, color, "TowerMapBuff", m_towerMapBuffEffects, false);
         }
     }
 
@@ -240,106 +694,116 @@ public class TileManager : MonoBehaviour
         Tilemap map,
         Vector3Int cellPosition,
         Color color,
-        Dictionary<Vector3Int, TileSatelliteOrbiter> effectMap,
-        string effectNamePrefix)
+        string effectNamePrefix,
+        List<GameObject> createdEffects,
+        bool isPath)
     {
-        if (mapTileBuffEffectPrefab == null)
+        GameObject prefab = isPath && m_pathMapBuffVisualPrefab != null
+            ? m_pathMapBuffVisualPrefab
+            : mapTileBuffEffectPrefab != null ? mapTileBuffEffectPrefab.gameObject : null;
+        if (prefab == null)
         {
             Debug.LogWarning("[TileManager] Map Tile Buff Effect Prefab이 연결되지 않았습니다.");
             return;
         }
 
-        // 별도 부모를 지정하지 않았다면 TileManager 하위에 생성해
-        // Hierarchy에서 MapBuff 이펙트들을 한곳에 모아 볼 수 있게 한다.
+        // 부모를 지정하지 않으면 TileManager 하위에 생성한다.
         Transform parent = mapTileBuffEffectParent != null ? mapTileBuffEffectParent : transform;
 
-        // Tilemap의 셀 중심 좌표를 사용해야 Grid의 셀 크기가 바뀌어도
-        // 이펙트가 타일 정중앙에 생성된다.
+        // 타일맵의 셀 중심에 이펙트를 배치한다.
         Vector3 worldPosition = map.GetCellCenterWorld(cellPosition);
-        TileSatelliteOrbiter effect = Instantiate(mapTileBuffEffectPrefab, worldPosition, Quaternion.identity, parent);
+        GameObject effect = Instantiate(prefab, worldPosition, Quaternion.identity, parent);
         effect.name = $"{effectNamePrefix}_{cellPosition.x}_{cellPosition.y}";
 
-        // MapBuff 프리팹 내부 SpriteRenderer들의 색상을 한 번에 변경한다.
-        effect.SetColor(color);
-        effectMap[cellPosition] = effect;
-    }
-
-    private void ClearTowerTileBuffEffects()
-    {
-        // Dictionary에 기록해 둔 이전 이펙트들을 모두 파괴한다.
-        // Destroy는 프레임 종료 시 실행되므로, 이후 새 이펙트를 생성해도 충돌하지 않는다.
-        foreach (TileSatelliteOrbiter effect in towerTileBuffEffects.Values)
+        TileSatelliteOrbiter orbiter = effect.GetComponent<TileSatelliteOrbiter>();
+        if (orbiter != null) orbiter.SetColor(color);
+        else
         {
-            if (effect != null)
-            {
-                Destroy(effect.gameObject);
-            }
+            SpriteRenderer[] renderers = effect.GetComponentsInChildren<SpriteRenderer>(true);
+            for (int i = 0; i < renderers.Length; i++) renderers[i].color = color;
         }
-
-        towerTileBuffEffects.Clear();
+        createdEffects.Add(effect);
     }
 
-    private void ClearSpecialTileEffects()
+    private static void ClearMapTileEffects(List<GameObject> effects)
     {
-        foreach (TileSatelliteOrbiter effect in specialTileEffects.Values)
+        foreach (GameObject effect in effects)
         {
-            if (effect != null)
-            {
-                Destroy(effect.gameObject);
-            }
+            if (effect == null) continue;
+            if (Application.isPlaying) Destroy(effect);
+            else DestroyImmediate(effect);
         }
-
-        specialTileEffects.Clear();
+        effects.Clear();
     }
 
-    // 특정 좌표에 위치한 타워의 버프 타입 조회 함수
-    public TowerTileBuffType GetTowerTileBuffAt(Vector3Int gridPos)
+    public TowerTileBuffType GetTowerTileBuffAt(int index)
     {
-        if (towerTileBuffMap.TryGetValue(gridPos, out TowerTileBuffType buffType))
+        if (m_towerTileBuffByIndex.TryGetValue(index, out TowerTileBuffType buffType))
         {
             return buffType;
         }
         return TowerTileBuffType.Normal;
     }
 
+    public TowerTileBuffType GetTowerTileBuffAt(Vector3Int cell) =>
+        m_towerSpawnIndexByCell.TryGetValue(cell, out int index)
+            ? GetTowerTileBuffAt(index)
+            : TowerTileBuffType.Normal;
+
     #endregion
 
-    #region Dynamic Tower Buffs and Path Debuffs
+    #region 타워 버프와 패스 디버프
 
-    public IReadOnlyList<TowerTileBuffEffect> GetTowerBuffEffectsAt(Vector3Int cell)
+    public IReadOnlyList<TowerTileBuffEffect> GetTowerBuffEffectsAt(int index)
     {
-        return m_towerBuffEffectsByCell.TryGetValue(cell, out List<TowerTileBuffEffect> effects)
+        return m_towerBuffEffectsByIndex.TryGetValue(index, out List<TowerTileBuffEffect> effects)
             ? effects
             : System.Array.Empty<TowerTileBuffEffect>();
     }
 
-    public IReadOnlyList<PathTileDebuffEffect> GetPathDebuffEffectsAt(Vector3Int cell)
+    public IReadOnlyList<TowerTileBuffEffect> GetTowerBuffEffectsAt(Vector3Int cell) =>
+        m_towerSpawnIndexByCell.TryGetValue(cell, out int index)
+            ? GetTowerBuffEffectsAt(index)
+            : System.Array.Empty<TowerTileBuffEffect>();
+
+    public IReadOnlyList<PathTileDebuffEffect> GetPathDebuffEffectsAt(int index)
     {
-        return m_pathDebuffEffectsByCell.TryGetValue(cell, out List<PathTileDebuffEffect> effects)
+        return m_pathDebuffEffectsByIndex.TryGetValue(index, out List<PathTileDebuffEffect> effects)
             ? effects
             : System.Array.Empty<PathTileDebuffEffect>();
     }
 
-    /// <summary>한 버프 타워가 새로 행동할 때 기존 범위 기록을 지우고, 이번 행동의 타일 범위 기록을 새로 남깁니다.</summary>
+    public IReadOnlyList<PathTileDebuffEffect> GetPathDebuffEffectsAt(Vector3Int cell) =>
+        m_pathIndexByCell.TryGetValue(cell, out int index)
+            ? GetPathDebuffEffectsAt(index)
+            : System.Array.Empty<PathTileDebuffEffect>();
+
+    /// <summary>해당 타워가 남긴 버프 효과를 모든 소환 타일 인덱스에서 제거합니다.</summary>
     public void RemoveTowerBuffEffectsBySource(int sourceID)
     {
-        List<Vector3Int> emptyCells = new List<Vector3Int>();
-        foreach (KeyValuePair<Vector3Int, List<TowerTileBuffEffect>> pair in m_towerBuffEffectsByCell)
+        List<int> emptyIndices = new List<int>();
+        foreach (KeyValuePair<int, List<TowerTileBuffEffect>> pair in m_towerBuffEffectsByIndex)
         {
             pair.Value.RemoveAll(effect => effect.SourceID == sourceID);
-            if (pair.Value.Count == 0) emptyCells.Add(pair.Key);
+            if (pair.Value.Count == 0) emptyIndices.Add(pair.Key);
         }
 
-        foreach (Vector3Int cell in emptyCells) m_towerBuffEffectsByCell.Remove(cell);
+        foreach (int index in emptyIndices) m_towerBuffEffectsByIndex.Remove(index);
     }
 
     public void AddTowerBuffEffect(Vector3Int cell, int sourceID, BuffTarget target, int tier, float abilityValue, float duration)
     {
-        if (target == BuffTarget.None) return;
-        if (!m_towerBuffEffectsByCell.TryGetValue(cell, out List<TowerTileBuffEffect> effects))
+        if (m_towerSpawnIndexByCell.TryGetValue(cell, out int index))
+            AddTowerBuffEffect(index, sourceID, target, tier, abilityValue, duration);
+    }
+
+    public void AddTowerBuffEffect(int index, int sourceID, BuffTarget target, int tier, float abilityValue, float duration)
+    {
+        if (target == BuffTarget.None || !m_towerSpawnCellsByIndex.ContainsKey(index)) return;
+        if (!m_towerBuffEffectsByIndex.TryGetValue(index, out List<TowerTileBuffEffect> effects))
         {
             effects = new List<TowerTileBuffEffect>();
-            m_towerBuffEffectsByCell.Add(cell, effects);
+            m_towerBuffEffectsByIndex.Add(index, effects);
         }
 
         effects.Add(new TowerTileBuffEffect
@@ -355,10 +819,7 @@ public class TileManager : MonoBehaviour
         });
     }
 
-    /// <summary>
-    /// Records one Fire preheat application on all cells covered by a support tower.
-    /// The tile stores the application only; each tower owns its preheat/overheat state.
-    /// </summary>
+    /// <summary>범위 셀에 이번 예열 효과를 기록합니다. 스택은 각 타워가 관리합니다.</summary>
     public void SetFirePreheatEffects(
         IReadOnlyList<Vector3Int> cells,
         int sourceID,
@@ -367,19 +828,39 @@ public class TileManager : MonoBehaviour
         int stackThreshold,
         int stackLifetime)
     {
+        List<int> indices = new List<int>();
+        if (cells != null)
+        {
+            for (int i = 0; i < cells.Count; i++)
+            {
+                if (m_towerSpawnIndexByCell.TryGetValue(cells[i], out int index)) indices.Add(index);
+            }
+        }
+        SetFirePreheatEffects(indices, sourceID, tier, abilityValue, stackThreshold, stackLifetime);
+    }
+
+    public void SetFirePreheatEffects(
+        IReadOnlyList<int> indices,
+        int sourceID,
+        int tier,
+        float abilityValue,
+        int stackThreshold,
+        int stackLifetime)
+    {
         RemoveTowerBuffEffectsBySource(sourceID);
-        if (cells == null || cells.Count == 0) return;
+        if (indices == null || indices.Count == 0) return;
 
         int nextVersion = m_buffApplicationVersions.TryGetValue(sourceID, out int version) ? version + 1 : 1;
         m_buffApplicationVersions[sourceID] = nextVersion;
 
-        for (int i = 0; i < cells.Count; i++)
+        for (int i = 0; i < indices.Count; i++)
         {
-            Vector3Int cell = cells[i];
-            if (!m_towerBuffEffectsByCell.TryGetValue(cell, out List<TowerTileBuffEffect> effects))
+            int index = indices[i];
+            if (!m_towerSpawnCellsByIndex.ContainsKey(index)) continue;
+            if (!m_towerBuffEffectsByIndex.TryGetValue(index, out List<TowerTileBuffEffect> effects))
             {
                 effects = new List<TowerTileBuffEffect>();
-                m_towerBuffEffectsByCell.Add(cell, effects);
+                m_towerBuffEffectsByIndex.Add(index, effects);
             }
 
             effects.Add(new TowerTileBuffEffect
@@ -388,7 +869,7 @@ public class TileManager : MonoBehaviour
                 Target = BuffTarget.Fire,
                 Tier = Mathf.Clamp(tier, 1, 5),
                 AbilityValue = abilityValue,
-                // The field remains available until the next enemy turn starts.
+                // 다음 에너미 턴 시작 전까지 유지한다.
                 RemainingTurns = 1,
                 ApplicationVersion = nextVersion,
                 StackThreshold = Mathf.Max(1, stackThreshold),
@@ -397,151 +878,111 @@ public class TileManager : MonoBehaviour
         }
     }
 
-    /// <summary>버프 타워의 남은 지속시간을 한 에너미 턴 단위로 줄입니다.</summary>
+    /// <summary>타워 버프 효과의 남은 턴을 1 줄입니다.</summary>
     public void AdvanceTowerBuffEffectTurns()
     {
-        List<Vector3Int> emptyCells = new List<Vector3Int>();
-        foreach (KeyValuePair<Vector3Int, List<TowerTileBuffEffect>> pair in m_towerBuffEffectsByCell)
+        List<int> emptyIndices = new List<int>();
+        foreach (KeyValuePair<int, List<TowerTileBuffEffect>> pair in m_towerBuffEffectsByIndex)
         {
             pair.Value.RemoveAll(effect => --effect.RemainingTurns <= 0);
-            if (pair.Value.Count == 0) emptyCells.Add(pair.Key);
+            if (pair.Value.Count == 0) emptyIndices.Add(pair.Key);
         }
 
-        foreach (Vector3Int cell in emptyCells) m_towerBuffEffectsByCell.Remove(cell);
+        foreach (int index in emptyIndices) m_towerBuffEffectsByIndex.Remove(index);
     }
 
-    /// <summary>디버프 장판의 현재 패스 타일을 갱신합니다. 장판 하나는 한 패스 타일에만 존재하므로 이전 위치 기록을 제거합니다.</summary>
-    public void SetPathDebuffEffect(Vector3Int cell, int sourceID, DebuffTarget target, int tier, float abilityValue, float duration, Vector3 zoneWorldPosition)
-    {
-        SetPathDebuffEffects(new[] { cell }, sourceID, target, tier, abilityValue, duration, zoneWorldPosition);
-    }
-
-    /// <summary>
-    /// Registers one debuff application across multiple path cells.  Every cell gets
-    /// the same version so an enemy standing on an overlapping area receives one
-    /// stack per tower action.
-    /// </summary>
+    /// <summary>한 번의 디버프 적용을 여러 패스 타일에 같은 번호로 기록합니다.</summary>
     public void SetPathDebuffEffects(
-        IReadOnlyList<Vector3Int> cells,
+        IReadOnlyList<int> indices,
         int sourceID,
         DebuffTarget target,
         int tier,
         float abilityValue,
         float duration,
-        Vector3 zoneWorldPosition)
+        int zonePathIndex,
+        int sourceCreationOrder = int.MaxValue)
     {
         if (target == DebuffTarget.None) return;
 
         RemovePathDebuffEffectsBySource(sourceID);
-        if (cells == null || cells.Count == 0) return;
+        if (indices == null || indices.Count == 0) return;
         int nextVersion = m_debuffApplicationVersions.TryGetValue(sourceID, out int version) ? version + 1 : 1;
         m_debuffApplicationVersions[sourceID] = nextVersion;
 
-        for (int i = 0; i < cells.Count; i++)
+        for (int i = 0; i < indices.Count; i++)
         {
-            Vector3Int cell = cells[i];
-            if (!m_pathDebuffEffectsByCell.TryGetValue(cell, out List<PathTileDebuffEffect> effects))
+            int index = indices[i];
+            if (!m_pathCellsByIndex.ContainsKey(index)) continue;
+            if (!m_pathDebuffEffectsByIndex.TryGetValue(index, out List<PathTileDebuffEffect> effects))
             {
                 effects = new List<PathTileDebuffEffect>();
-                m_pathDebuffEffectsByCell.Add(cell, effects);
+                m_pathDebuffEffectsByIndex.Add(index, effects);
             }
 
             effects.Add(new PathTileDebuffEffect
             {
                 SourceID = sourceID,
+                SourceCreationOrder = sourceCreationOrder,
                 Target = target,
                 Tier = Mathf.Clamp(tier, 1, 5),
                 AbilityValue = abilityValue,
                 Duration = Mathf.Max(1, Mathf.RoundToInt(duration)),
                 StackThreshold = Mathf.Max(1, Mathf.RoundToInt(duration)),
                 ApplicationVersion = nextVersion,
-                ZoneWorldPosition = zoneWorldPosition
+                ZonePathIndex = zonePathIndex
             });
         }
     }
 
     /// <summary>
-    /// 장판이 처음 배치되었을 때 위치와 설명을 타일에 등록합니다.
-    /// ApplicationVersion 0은 아직 타워가 행동하지 않은 대기 상태이므로, UI에는 표시되지만 적에게는 적용되지 않습니다.
+    /// 장판 위치를 먼저 등록합니다. 적용 번호 0은 UI 표시용이며 적에게 적용되지 않습니다.
+    /// 미리보기와 실제 적용이 같은 범위 계산을 사용할 수 있도록 여러 칸을 등록합니다.
     /// </summary>
-    public void RegisterPathDebuffZone(Vector3Int cell, int sourceID, DebuffTarget target, int tier, float abilityValue, float duration, Vector3 zoneWorldPosition)
+    public void RegisterPathDebuffZone(IReadOnlyList<int> indices, int sourceID, DebuffTarget target, int tier, float abilityValue, float duration, int zonePathIndex, int sourceCreationOrder = int.MaxValue)
     {
         if (target == DebuffTarget.None) return;
 
         RemovePathDebuffEffectsBySource(sourceID);
-        if (!m_pathDebuffEffectsByCell.TryGetValue(cell, out List<PathTileDebuffEffect> effects))
-        {
-            effects = new List<PathTileDebuffEffect>();
-            m_pathDebuffEffectsByCell.Add(cell, effects);
-        }
+        if (indices == null) return;
 
-        effects.Add(new PathTileDebuffEffect
+        for (int i = 0; i < indices.Count; i++)
         {
-            SourceID = sourceID,
-            Target = target,
-            Tier = Mathf.Clamp(tier, 1, 5),
-            AbilityValue = abilityValue,
-            Duration = Mathf.Max(1, Mathf.RoundToInt(duration)),
-            StackThreshold = Mathf.Max(1, Mathf.RoundToInt(duration)),
-            ApplicationVersion = 0,
-            ZoneWorldPosition = zoneWorldPosition
-        });
+            int index = indices[i];
+            if (!m_pathCellsByIndex.ContainsKey(index)) continue;
+            if (!m_pathDebuffEffectsByIndex.TryGetValue(index, out List<PathTileDebuffEffect> effects))
+            {
+                effects = new List<PathTileDebuffEffect>();
+                m_pathDebuffEffectsByIndex.Add(index, effects);
+            }
+
+            effects.Add(new PathTileDebuffEffect
+            {
+                SourceID = sourceID,
+                SourceCreationOrder = sourceCreationOrder,
+                Target = target,
+                Tier = Mathf.Clamp(tier, 1, 5),
+                AbilityValue = abilityValue,
+                Duration = Mathf.Max(1, Mathf.RoundToInt(duration)),
+                StackThreshold = Mathf.Max(1, Mathf.RoundToInt(duration)),
+                ApplicationVersion = 0,
+                ZonePathIndex = zonePathIndex
+            });
+        }
     }
 
     public void RemovePathDebuffEffectsBySource(int sourceID)
     {
-        List<Vector3Int> emptyCells = new List<Vector3Int>();
-        foreach (KeyValuePair<Vector3Int, List<PathTileDebuffEffect>> pair in m_pathDebuffEffectsByCell)
+        List<int> emptyIndices = new List<int>();
+        foreach (KeyValuePair<int, List<PathTileDebuffEffect>> pair in m_pathDebuffEffectsByIndex)
         {
             pair.Value.RemoveAll(effect => effect.SourceID == sourceID);
-            if (pair.Value.Count == 0) emptyCells.Add(pair.Key);
+            if (pair.Value.Count == 0) emptyIndices.Add(pair.Key);
         }
 
-        foreach (Vector3Int cell in emptyCells) m_pathDebuffEffectsByCell.Remove(cell);
+        foreach (int index in emptyIndices) m_pathDebuffEffectsByIndex.Remove(index);
     }
 
-    /// <summary>
-    /// 드래그 또는 타워 이동으로 장판 위치가 바뀐 경우, 해당 소스의 효과 영역 전체를 옮깁니다.
-    /// 공격 버전은 유지하므로, 이미 이 공격을 받은 적에게 스택이 중복되지 않습니다.
-    /// </summary>
-    public bool MovePathDebuffEffect(int sourceID, IReadOnlyList<Vector3Int> destinationCells, Vector3 zoneWorldPosition)
-    {
-        PathTileDebuffEffect originalEffect = null;
-        foreach (KeyValuePair<Vector3Int, List<PathTileDebuffEffect>> pair in m_pathDebuffEffectsByCell)
-        {
-            originalEffect = pair.Value.Find(effect => effect.SourceID == sourceID);
-            if (originalEffect == null) continue;
-            break;
-        }
-
-        if (originalEffect == null) return false;
-        RemovePathDebuffEffectsBySource(sourceID);
-        if (destinationCells == null || destinationCells.Count == 0) return false;
-
-        foreach (Vector3Int cell in destinationCells)
-        {
-            if (!m_pathDebuffEffectsByCell.TryGetValue(cell, out List<PathTileDebuffEffect> destinationEffects))
-            {
-                destinationEffects = new List<PathTileDebuffEffect>();
-                m_pathDebuffEffectsByCell.Add(cell, destinationEffects);
-            }
-
-            destinationEffects.Add(new PathTileDebuffEffect
-            {
-                SourceID = originalEffect.SourceID,
-                Target = originalEffect.Target,
-                Tier = originalEffect.Tier,
-                AbilityValue = originalEffect.AbilityValue,
-                Duration = originalEffect.Duration,
-                StackThreshold = originalEffect.StackThreshold,
-                ApplicationVersion = originalEffect.ApplicationVersion,
-                ZoneWorldPosition = zoneWorldPosition
-            });
-        }
-        return true;
-    }
-
-    /// <summary>타워 판매/합성/파괴 시, 그 타워가 기록한 모든 동적 타일 효과를 즉시 정리합니다.</summary>
+    /// <summary>타워가 남긴 모든 동적 타일 효과와 적용 번호를 제거합니다.</summary>
     public void RemoveAllDynamicEffectsBySource(int sourceID)
     {
         RemoveTowerBuffEffectsBySource(sourceID);
@@ -552,33 +993,33 @@ public class TileManager : MonoBehaviour
 
     #endregion
 
-    #region Fixed Path Tile Effects
+    #region 고정 패스 타일 버프
 
     [ContextMenu("랜덤 특수 타일 생성")]
     public void AssignRandomSpecialTiles()
     {
-        if (tilePath == null || tilePath.pathGridPositions.Count < 3)
+        ClearMapTileEffects(m_pathMapBuffEffects);
+        m_pathTileBuffByIndex.Clear();
+
+        if (m_pathGridPositions.Count < 3)
         {
             Debug.LogWarning("[TileManager] 특수 타일을 배치하기 위한 경로 타일 개수가 부족합니다.");
             return;
         }
 
-        ResetAllTileColors();
-        specialTileMap.Clear();
-        ClearSpecialTileEffects();
-
         List<Vector3Int> availableTiles = new List<Vector3Int>();
-        for (int i = 1; i < tilePath.pathGridPositions.Count - 1; i++)
+        HashSet<Vector3Int> uniqueCells = new HashSet<Vector3Int>();
+        for (int i = 1; i < m_pathGridPositions.Count - 1; i++)
         {
-            availableTiles.Add(tilePath.pathGridPositions[i]);
+            if (uniqueCells.Add(m_pathGridPositions[i])) availableTiles.Add(m_pathGridPositions[i]);
         }
 
-        SetRandomTiles(availableTiles, defendTileCount, SpecialTileType.DefendTile, defendColor);
-        SetRandomTiles(availableTiles, speedTileCount, SpecialTileType.SpeedTile, speedColor);
-        SetRandomTiles(availableTiles, healTileCount, SpecialTileType.HealTile, healColor);
+        SetRandomTiles(availableTiles, defendTileCount, PathTileBuffType.DefendTile, defendColor);
+        SetRandomTiles(availableTiles, speedTileCount, PathTileBuffType.SpeedTile, speedColor);
+        SetRandomTiles(availableTiles, healTileCount, PathTileBuffType.HealTile, healColor);
     }
 
-    private void SetRandomTiles(List<Vector3Int> pool, int count, SpecialTileType type, Color color)
+    private void SetRandomTiles(List<Vector3Int> pool, int count, PathTileBuffType type, Color color)
     {
         for (int i = 0; i < count; i++)
         {
@@ -587,24 +1028,15 @@ public class TileManager : MonoBehaviour
             int randomIndex = Random.Range(0, pool.Count);
             Vector3Int selectedPos = pool[randomIndex];
 
-            specialTileMap[selectedPos] = type;
-            tilemap.SetTileFlags(selectedPos, TileFlags.None);
+            if (m_pathIndicesByCell.TryGetValue(selectedPos, out List<int> visits))
+            {
+                foreach (int index in visits) m_pathTileBuffByIndex[index] = type;
+            }
 
-            // 실제 적 효과는 specialTileMap을 통해 계산하고,
-            // 이펙트는 버프 타일이라는 사실과 종류를 색으로 보여주기만 한다.
-            SpawnMapTileEffect(tilemap, selectedPos, color, specialTileEffects, "PathMapBuff");
+            // 효과는 타일 인덱스에 저장하고, 좌표는 이펙트 배치에만 사용합니다.
+            SpawnMapTileEffect(tilemap, selectedPos, color, "PathMapBuff", m_pathMapBuffEffects, true);
 
             pool.RemoveAt(randomIndex);
-        }
-    }
-
-    private void ResetAllTileColors()
-    {
-        foreach (Vector3Int pos in tilePath.pathGridPositions)
-        {
-            tilemap.SetTileFlags(pos, TileFlags.None);
-            // 경로 타일은 기본 흰색으로 유지하고, 특수 타일의 색은 이펙트가 담당한다.
-            tilemap.SetColor(pos, Color.white);
         }
     }
 
@@ -617,19 +1049,21 @@ public class TileManager : MonoBehaviour
         return Color.white;
     }
 
-    public SpecialTileType GetTileTypeAt(Vector3Int gridPos)
+    public PathTileBuffType GetTileTypeAt(int index)
     {
-        if (specialTileMap.TryGetValue(gridPos, out SpecialTileType type))
+        if (m_pathTileBuffByIndex.TryGetValue(index, out PathTileBuffType type))
         {
             return type;
         }
-        return SpecialTileType.Normal;
+        return PathTileBuffType.Normal;
     }
 
-    /// <summary>
-    /// 월드 클릭 좌표가 실제 패스 타일인지 판별하고 해당 셀을 반환합니다.
-    /// UI는 Tilemap을 직접 찾지 않고 이 API만 사용합니다.
-    /// </summary>
+    public PathTileBuffType GetTileTypeAt(Vector3Int cell) =>
+        m_pathIndexByCell.TryGetValue(cell, out int index)
+            ? GetTileTypeAt(index)
+            : PathTileBuffType.Normal;
+
+    /// <summary>월드 위치의 패스 타일 존재 여부와 셀 좌표를 반환합니다.</summary>
     public bool TryGetPathCellAtWorldPosition(Vector3 worldPosition, out Vector3Int cell)
     {
         cell = default;

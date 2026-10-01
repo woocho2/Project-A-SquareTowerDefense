@@ -212,6 +212,7 @@ MonoBehaviour:
     ExtraHitChance: 0
   m_range: {fileID: 4429976449653166923}
   m_towerVisual: {fileID: 0}
+  m_selectionVisual: {fileID: 0}
   m_debuffZoneChild: {fileID: 0}
   m_projectileSatelliteInterval: 0.3
   m_projectileSatelliteLaunchDelay: 0.5
@@ -229,9 +230,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99ce9fbdceec7d945a77ec8ad46da5f2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DragObjectOnGround
-  m_camera: {fileID: 0}
-  m_dragThreshold: 0.5
+  m_EditorClassIdentifier: Assembly-CSharp::TowerSelectionVisual
   m_highlight: {fileID: 3477985226575053639}
 --- !u!114 &3374333988479624537
 MonoBehaviour:

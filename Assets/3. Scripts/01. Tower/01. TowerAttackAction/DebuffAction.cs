@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class DebuffAction : TowerAttackAction
 {
@@ -10,20 +9,17 @@ public class DebuffAction : TowerAttackAction
 
     public DebuffAction(TowerData data) : base(data) { }
 
-    public void BindZone(DebuffZone zone, Transform towerTransform, TowerStats currentStats)
+    public void BindZone(DebuffZone zone, Transform towerTransform)
     {
         if (zone == null || towerTransform == null) return;
 
-        if (m_activeZone != null) m_activeZone.OnPlacedPathCellChanged -= HandleZoneCellChanged;
+        if (m_activeZone != null) m_activeZone.OnPlacedPathIndexChanged -= HandleZoneIndexChanged;
         m_activeZone = zone;
         m_ownerTower = towerTransform.GetComponent<TowerController>();
         m_sourceID = towerTransform.GetInstanceID();
-        m_activeZone.OnPlacedPathCellChanged += HandleZoneCellChanged;
-        // 존은 최초 배치 위치에 고정합니다. 타워를 드래그해도 장판은 따라가지 않습니다.
+        m_activeZone.OnPlacedPathIndexChanged += HandleZoneIndexChanged;
+        // 장판은 타워와 소유 관계만 유지하고, 위치는 독립적으로 고정합니다.
         m_activeZone.transform.SetParent(null, true);
-
-        // 타워 위치 및 사거리 정보 전달 (드래그 제한용)
-        m_activeZone.SetupBoundary(towerTransform.position, currentStats.Range);
 
         // 장판의 시각 연출은 TileSatelliteOrbiter가 전담합니다.
         // DebuffZone은 오비터를 직접 보관하지 않고, 배치/드래그만 담당합니다.
@@ -34,157 +30,61 @@ public class DebuffAction : TowerAttackAction
             orbiter.SetDebuffType(m_data.debuffTarget);
         }
 
-        // 길 타일을 찾지 못한 경우에는 타워 위치에 존을 만들지 않습니다.
-        if (!TryFindClosestPathTilePosition(towerTransform.position, currentStats.Range, out Vector3 targetRoadPos))
+        // 최초에는 가장 가까운 패스 타일에 놓고, 이후에는 모든 패스 타일로 옮길 수 있습니다.
+        // 장판을 놓는 즉시 HandleZoneIndexChanged가 타일 정보 패널용 디버프 표시를 등록합니다.
+        // 실제 적 스택은 ExecuteAction에서 ApplicationVersion이 1 이상이 된 뒤부터 적용됩니다.
+        int towerSpawnIndex = m_ownerTower != null ? m_ownerTower.SpawnIndex : -1;
+        if (TileManager.Instance == null ||
+            !TileManager.Instance.TryGetClosestPathIndexToTower(towerSpawnIndex, out int pathIndex) ||
+            !m_activeZone.SetPlacedPathIndex(pathIndex))
         {
             m_activeZone.gameObject.SetActive(false);
-            Debug.LogWarning("[DebuffZone] 사거리 안의 패스 타일을 찾지 못했습니다. 디버프 존을 비활성화합니다.");
-            return;
-        }
-
-        // 월드 좌표는 패스 타일 정중앙으로만 설정합니다.
-        m_activeZone.transform.position = targetRoadPos;
-        m_activeZone.gameObject.SetActive(true);
-
-        // 장판을 놓는 즉시 타일 정보 패널에는 디버프가 보이게 등록합니다.
-        // 실제 적 스택은 ExecuteAction에서 ApplicationVersion이 1 이상이 된 뒤부터 적용됩니다.
-        if (TileManager.Instance != null && m_activeZone.TryGetPlacedPathCell(out Vector3Int pathCell))
-        {
-            int tier = Mathf.Clamp(m_data.Tier, 1, 5);
-            TileManager.Instance.RegisterPathDebuffZone(
-                pathCell,
-                m_sourceID,
-                m_data.debuffTarget,
-                tier,
-                currentStats.AttackPower,
-                currentStats.Duration,
-                m_activeZone.transform.position);
+            Debug.LogWarning("[DebuffZone] 배치할 패스 타일을 찾지 못했습니다. 디버프 존을 비활성화합니다.");
         }
     }
 
-    private void HandleZoneCellChanged(Vector3Int cell, Vector3 worldPosition)
+    private void HandleZoneIndexChanged(int pathIndex)
     {
         if (TileManager.Instance == null || m_ownerTower == null) return;
 
         TowerStats stats = m_ownerTower.GetFinalStats();
-        IReadOnlyList<Vector3Int> affectedCells = new[] { cell };
-        if (m_data.debuffTarget == DebuffTarget.Fire && TilePath.Instance != null)
-        {
-            affectedCells = TilePath.Instance.GetPathCellsInSquare(
-                cell,
-                Mathf.Max(0, stats.ProjectileRadius - 1));
-        }
-
-        // 위치만 옮길 때는 기존 공격 버전을 유지해 같은 스택이 다시 적용되지 않게 합니다.
-        if (TileManager.Instance.MovePathDebuffEffect(m_sourceID, affectedCells, worldPosition)) return;
-
-        // 유효한 길이 없는 곳에서 돌아온 장판은 다음 공격 전까지 대기 상태로 표시합니다.
-        int tier = Mathf.Clamp(m_data.Tier, 1, 5);
-        TileManager.Instance.RegisterPathDebuffZone(
-            cell, m_sourceID, m_data.debuffTarget, tier,
-            stats.AttackPower, stats.Duration, worldPosition);
+        // 플레이어 턴에는 위치와 UI 표시만 갱신합니다. 새 스택은 Action 완료 시 기록합니다.
+        RegisterZonePreview(pathIndex, stats);
     }
 
-    // Tilemap_Path에서 타워 주변 유효한 길목 타일의 정중앙 좌표를 찾는 함수
-    private bool TryFindClosestPathTilePosition(Vector3 towerPos, float range, out Vector3 bestWorldPos)
+    private void RegisterZonePreview(int centerPathIndex, TowerStats stats)
     {
-        bestWorldPos = towerPos;
-        // 씬 내의 Tilemap_Path 오브젝트 탐색
-        Tilemap pathTilemap = null;
-        GameObject pathObj = GameObject.Find("Tilemap_Path");
-
-        if (pathObj != null)
-        {
-            pathTilemap = pathObj.GetComponent<Tilemap>();
-        }
-
-        // 씬 오브젝트 이름이 달라도 실제 적 이동 경로(TilePath)의 타일맵을 우선 사용합니다.
-        if (pathTilemap == null)
-        {
-            TilePath tilePath = Object.FindFirstObjectByType<TilePath>();
-            if (tilePath != null)
-            {
-                pathTilemap = tilePath.GetComponent<Tilemap>();
-            }
-        }
-
-        if (pathTilemap == null)
-        {
-            Debug.LogError("[DebuffZone] Tilemap_Path를 찾을 수 없습니다!");
-            return false;
-        }
-
-        // 타워 위치를 타일맵 셀 그리드 좌표로 변환
-        Vector3Int centerCell = pathTilemap.WorldToCell(towerPos);
-        int cellRadius = TowerAttackAction.ToTileRange(range);
-
-        float minDistance = float.MaxValue;
-        bool found = false;
-
-        // 타워 주변 반경(cellRadius) 내 모든 그리드 셀 검사
-        for (int x = -cellRadius; x <= cellRadius; x++)
-        {
-            for (int y = -cellRadius; y <= cellRadius; y++)
-            {
-                Vector3Int checkCell = new Vector3Int(centerCell.x + x, centerCell.y + y, 0);
-
-                // 해당 셀에 길목 타일이 존재하는지 확인
-                if (pathTilemap.HasTile(checkCell))
-                {
-                    // 해당 타일 셀의 정확한 정중앙 월드 좌표 취득
-                    Vector3 cellWorldPos = pathTilemap.GetCellCenterWorld(checkCell);
-                    float dist = Vector2.Distance(towerPos, cellWorldPos);
-
-                    if (dist <= range && dist < minDistance)
-                    {
-                        minDistance = dist;
-                        bestWorldPos = cellWorldPos;
-                        found = true;
-                    }
-                }
-            }
-        }
-
-        if (found)
-        {
-            return true;
-        }
-
-        return false;
+        if (TileManager.Instance == null || m_activeZone == null) return;
+        TileManager.Instance.RegisterPathDebuffZone(
+            GetAffectedPathIndices(centerPathIndex, stats), m_sourceID, m_data.debuffTarget,
+            Mathf.Clamp(m_data.Tier, 1, 5), GetEffectAbilityValue(stats), stats.Duration,
+            centerPathIndex, m_ownerTower != null ? m_ownerTower.CreationOrder : int.MaxValue);
     }
+
+    // 추후 티어별 범위를 바꿀 때 미리보기와 실제 적용이 같은 인덱스 계산을 사용합니다.
+    private List<int> GetAffectedPathIndices(int centerPathIndex, TowerStats stats)
+    {
+        int tileRadius = m_data.debuffTarget == DebuffTarget.Fire ? Mathf.Max(0, stats.ProjectileRadius - 1) : 0;
+        return TileManager.Instance.GetPathIndicesInSquare(centerPathIndex, tileRadius);
+    }
+
+    private float GetEffectAbilityValue(TowerStats stats) =>
+        m_data.debuffTarget == DebuffTarget.Fire ? stats.AbilityValue : stats.AttackPower;
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats currentStats)
     {
         if (m_activeZone == null) return false;
-        if (TileManager.Instance == null || !m_activeZone.TryGetPlacedPathCell(out Vector3Int pathCell)) return false;
+        if (TileManager.Instance == null || !m_activeZone.TryGetPlacedPathIndex(out int pathIndex)) return false;
 
-        int tier = Mathf.Clamp(m_data.Tier, 1, 5);
-        if (m_data.debuffTarget == DebuffTarget.Fire && TilePath.Instance != null)
-        {
-            List<Vector3Int> affectedCells = TilePath.Instance.GetPathCellsInSquare(
-                pathCell,
-                Mathf.Max(0, currentStats.ProjectileRadius - 1));
+        List<int> affectedIndices = GetAffectedPathIndices(pathIndex, currentStats);
+        if (affectedIndices.Count == 0) return false;
 
-            TileManager.Instance.SetPathDebuffEffects(
-                affectedCells,
-                towerTransform.GetInstanceID(),
-                m_data.debuffTarget,
-                tier,
-                currentStats.AbilityValue,
-                currentStats.Duration,
-                m_activeZone.transform.position);
-            return affectedCells.Count > 0;
-        }
-        // 실제 적 탐색은 하지 않습니다. 장판의 패스 타일에 효과 데이터만 기록하고,
-        // 적은 이동을 마친 뒤 자신이 서 있는 타일의 데이터를 읽습니다.
-        TileManager.Instance.SetPathDebuffEffect(
-            pathCell,
-            towerTransform.GetInstanceID(),
-            m_data.debuffTarget,
-            tier,
-            currentStats.AttackPower,
-            currentStats.Duration,
-            m_activeZone.transform.position);
+        // Action이 끝날 때만 새 적용 버전을 기록합니다. 적은 이동 후 이 기록을 읽습니다.
+        TileManager.Instance.SetPathDebuffEffects(
+            affectedIndices, m_sourceID, m_data.debuffTarget,
+            Mathf.Clamp(m_data.Tier, 1, 5), GetEffectAbilityValue(currentStats),
+            currentStats.Duration, pathIndex,
+            m_ownerTower != null ? m_ownerTower.CreationOrder : int.MaxValue);
         return true;
     }
 }

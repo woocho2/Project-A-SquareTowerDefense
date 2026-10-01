@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 필드에 등록된 적을 관리하고, 한 번의 적 턴에서 소환과 이동을 순서대로 처리합니다.
+/// TileManager의 패스 인덱스에 등록된 적을 대상으로, 한 번의 적 턴에서 소환과 이동을 순서대로 처리합니다.
 /// 타일 효과와 디버프 턴 진행은 GameManager가 정한 단계에서 별도로 호출합니다.
 /// </summary>
 public class EnemyManager : MonoBehaviour
@@ -14,8 +14,6 @@ public class EnemyManager : MonoBehaviour
 
     [Header("참조")]
     [SerializeField] private TilePath m_tilePath;
-
-    public List<EnemyMoveController> activeEnemies = new List<EnemyMoveController>();
 
     #endregion
 
@@ -57,12 +55,13 @@ public class EnemyManager : MonoBehaviour
         }
 
         // 새로 소환된 적을 포함해 현재 필드의 모든 적이 동시에 이동을 시작합니다.
-        foreach (EnemyMoveController enemy in activeEnemies)
+        List<EnemyMoveController> movingEnemies = new List<EnemyMoveController>();
+        foreach (EnemyHealthController enemy in GetEnemiesOnPath())
         {
-            if (enemy != null && enemy.gameObject.activeInHierarchy)
-            {
-                StartCoroutine(enemy.ProcessTurnMoveRoutine());
-            }
+            if (!enemy.TryGetComponent(out EnemyMoveController movement)) continue;
+
+            movingEnemies.Add(movement);
+            StartCoroutine(movement.ProcessTurnMoveRoutine());
         }
 
         // 모든 적의 이동이 끝날 때까지 대기
@@ -70,7 +69,7 @@ public class EnemyManager : MonoBehaviour
         while (anyMoving)
         {
             anyMoving = false;
-            foreach (EnemyMoveController enemy in activeEnemies)
+            foreach (EnemyMoveController enemy in movingEnemies)
             {
                 if (enemy != null && enemy.IsMoving)
                 {
@@ -80,9 +79,6 @@ public class EnemyManager : MonoBehaviour
             }
             yield return null;
         }
-
-        // 파괴되거나 풀로 돌아간 적 목록 정리
-        activeEnemies.RemoveAll(e => e == null || !e.gameObject.activeInHierarchy);
     }
 
     #endregion
@@ -91,36 +87,32 @@ public class EnemyManager : MonoBehaviour
 
     public void ApplyAllTileBuffs()
     {
-        foreach (EnemyMoveController enemy in activeEnemies)
+        foreach (EnemyHealthController enemy in GetEnemiesOnPath())
         {
-            if (enemy != null && enemy.gameObject.activeInHierarchy)
+            if (enemy.gameObject.activeInHierarchy && enemy.TryGetComponent(out EnemyMoveController movement))
             {
-                enemy.CheckAndApplyTileBuff();
+                movement.CheckAndApplyTileBuff();
             }
         }
     }
 
     public void AdvanceAllDebuffTurns()
     {
-        foreach (EnemyMoveController enemy in activeEnemies)
+        foreach (EnemyHealthController enemy in GetEnemiesOnPath())
         {
-            if (enemy != null && enemy.gameObject.activeInHierarchy && enemy.TryGetComponent(out EnemyDebuffController debuff))
+            if (enemy.gameObject.activeInHierarchy && enemy.TryGetComponent(out EnemyDebuffController debuff))
             {
                 debuff.AdvanceDebuffTurn();
             }
         }
     }
 
-    #endregion
-
-    #region Registration
-
-    public void RegisterEnemy(EnemyMoveController enemy)
+    // 적 목록의 원본은 TileManager의 패스 인덱스별 점유 목록입니다.
+    private static List<EnemyHealthController> GetEnemiesOnPath()
     {
-        if (!activeEnemies.Contains(enemy))
-        {
-            activeEnemies.Add(enemy);
-        }
+        return TileManager.Instance != null
+            ? TileManager.Instance.GetAllEnemiesOnPath()
+            : new List<EnemyHealthController>();
     }
 
     #endregion

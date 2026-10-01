@@ -12,12 +12,13 @@ public class EnemyDebuffController : MonoBehaviour
         public int TurnCount;
         public int ExpireTurns = -1;
         public bool Triggered;
-        public Vector3 ZonePosition;
+        public int ZonePathIndex = -1;
         public float AbilityValue;
         public float PendingDamage;
         public int StackThreshold = 1;
         public int RemainingDuration = -1;
         public bool RefreshedOnCurrentTile;
+        public int? ActiveSourceID;
         public readonly Dictionary<int, int> AppliedVersionsBySource = new Dictionary<int, int>();
     }
 
@@ -31,7 +32,7 @@ public class EnemyDebuffController : MonoBehaviour
         m_movement = GetComponent<EnemyMoveController>();
     }
 
-    public void ApplyZoneStack(DebuffTarget target, int tier, float abilityValue, Vector3 zonePosition, int stackThreshold = 1)
+    public void ApplyZoneStack(DebuffTarget target, int tier, float abilityValue, int zonePathIndex, int stackThreshold = 1)
     {
         if (target == DebuffTarget.None || m_health.CurrentHP <= 0f) return;
         if (!m_states.TryGetValue(target, out DebuffState state))
@@ -43,7 +44,7 @@ public class EnemyDebuffController : MonoBehaviour
         state.Tier = Mathf.Max(state.Tier, Mathf.Clamp(tier, 1, 5));
         state.AbilityValue = Mathf.Max(state.AbilityValue, abilityValue);
         state.StackThreshold = Mathf.Max(state.StackThreshold, stackThreshold);
-        state.ZonePosition = zonePosition;
+        state.ZonePathIndex = zonePathIndex;
         if (target == DebuffTarget.Spear) state.ExpireTurns = -1;
         switch (target)
         {
@@ -93,19 +94,45 @@ public class EnemyDebuffController : MonoBehaviour
     /// 적이 현재 서 있는 패스 타일의 디버프 데이터를 읽습니다.
     /// 같은 장판의 같은 공격 버전은 한 번만 스택을 올리고, 그 뒤로는 타일 위에 있는 동안 지속시간만 새로 고칩니다.
     /// </summary>
-    public void RefreshTileDebuffs(Vector3Int currentCell)
+    public void RefreshTileDebuffs(int pathIndex)
     {
         if (TileManager.Instance == null || m_health == null || m_health.CurrentHP <= 0f) return;
 
-        IReadOnlyList<PathTileDebuffEffect> effects = TileManager.Instance.GetPathDebuffEffectsAt(currentCell);
+        IReadOnlyList<PathTileDebuffEffect> effects = TileManager.Instance.GetPathDebuffEffectsAt(pathIndex);
+        Dictionary<DebuffTarget, PathTileDebuffEffect> selectedByTarget = new Dictionary<DebuffTarget, PathTileDebuffEffect>();
         for (int i = 0; i < effects.Count; i++)
         {
-            PathTileDebuffEffect effect = effects[i];
-            if (effect.Target == DebuffTarget.None) continue;
+            PathTileDebuffEffect candidate = effects[i];
+            if (candidate.Target == DebuffTarget.None || candidate.ApplicationVersion <= 0) continue;
 
-            // 장판이 막 배치된 상태(ApplicationVersion 0)는 UI 표기용입니다.
-            // 디버프 타워가 실제 행동한 뒤에만 적 스택과 duration 갱신을 시작합니다.
-            if (effect.ApplicationVersion <= 0) continue;
+            if (!selectedByTarget.TryGetValue(candidate.Target, out PathTileDebuffEffect selected) ||
+                candidate.Tier > selected.Tier)
+            {
+                selectedByTarget[candidate.Target] = candidate;
+                continue;
+            }
+
+            if (candidate.Tier != selected.Tier) continue;
+
+            // 같은 티어면 이 적에게 이미 적용 중인 소스를 유지합니다.
+            bool candidateIsActive = m_states.TryGetValue(candidate.Target, out DebuffState currentState) &&
+                currentState.ActiveSourceID == candidate.SourceID;
+            bool selectedIsActive = currentState != null && currentState.ActiveSourceID == selected.SourceID;
+            if (candidateIsActive != selectedIsActive)
+            {
+                if (candidateIsActive) selectedByTarget[candidate.Target] = candidate;
+                continue;
+            }
+
+            // 처음 동시에 닿았다면 타워 생성 순서로 하나를 결정합니다.
+            if (candidate.SourceCreationOrder < selected.SourceCreationOrder)
+                selectedByTarget[candidate.Target] = candidate;
+        }
+
+        foreach (PathTileDebuffEffect effect in selectedByTarget.Values)
+        {
+            if (m_states.TryGetValue(effect.Target, out DebuffState existing) && existing.Tier > effect.Tier)
+                continue;
 
             bool isNewApplication = !m_states.TryGetValue(effect.Target, out DebuffState state) ||
                 !state.AppliedVersionsBySource.TryGetValue(effect.SourceID, out int appliedVersion) ||
@@ -117,19 +144,21 @@ public class EnemyDebuffController : MonoBehaviour
                     effect.Target,
                     effect.Tier,
                     effect.AbilityValue,
-                    effect.ZoneWorldPosition,
+                    effect.ZonePathIndex,
                     effect.StackThreshold);
                 state = m_states[effect.Target];
                 state.AppliedVersionsBySource[effect.SourceID] = effect.ApplicationVersion;
             }
             else
             {
-                // 장판이 계속 유지되는 동안 더 높은 티어/수치 장판으로 교체되었을 때도 즉시 최신값을 사용합니다.
-                state.Tier = Mathf.Max(state.Tier, effect.Tier);
-                state.AbilityValue = Mathf.Max(state.AbilityValue, effect.AbilityValue);
-                state.StackThreshold = Mathf.Max(state.StackThreshold, effect.StackThreshold);
-                state.ZonePosition = effect.ZoneWorldPosition;
+                // 같은 소스가 남아 있으면 지속시간만 갱신합니다.
             }
+
+            state.ActiveSourceID = effect.SourceID;
+            state.Tier = effect.Tier;
+            state.AbilityValue = effect.AbilityValue;
+            state.StackThreshold = effect.StackThreshold;
+            state.ZonePathIndex = effect.ZonePathIndex;
 
             if (effect.Target != DebuffTarget.Fire)
             {
@@ -190,7 +219,7 @@ public class EnemyDebuffController : MonoBehaviour
 
             // 아래 창 전용 2턴 처리는 레거시 직접 적용 경로(RemainingDuration < 0)와의 호환을 위해서만 유지합니다.
             if (pair.Key == DebuffTarget.Spear && state.RemainingDuration < 0 && state.ExpireTurns < 0 &&
-                m_movement.CurrentTileIndex != m_movement.GetPathIndexClosestTo(state.ZonePosition))
+                m_movement.CurrentTileIndex != state.ZonePathIndex)
             {
                 state.ExpireTurns = 2;
             }
@@ -234,8 +263,9 @@ public class EnemyDebuffController : MonoBehaviour
 
     private void ApplyDarknessMovementModifier(DebuffState state)
     {
-        int zoneIndex = m_movement.GetPathIndexClosestTo(state.ZonePosition);
-        int indexDifference = m_movement.CurrentTileIndex - zoneIndex;
+        if (state.ZonePathIndex < 0) return;
+
+        int indexDifference = m_movement.CurrentTileIndex - state.ZonePathIndex;
         int affectedRange = state.Tier switch
         {
             1 => 2,

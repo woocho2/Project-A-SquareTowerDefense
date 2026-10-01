@@ -723,16 +723,16 @@ public class EnemyInfoPanel : MonoBehaviour
         // 1. 현재 패스 타일 버프 확인
         if (TileManager.Instance != null)
         {
-            SpecialTileType tileType = TileManager.Instance.GetTileTypeAt(m_currentPathCell);
+            PathTileBuffType tileType = TileManager.Instance.GetTileTypeAt(m_currentPathCell);
             switch (tileType)
             {
-                case SpecialTileType.SpeedTile:
+                case PathTileBuffType.SpeedTile:
                     buffDescriptions.Add("스피드 타일 효과\n행동주기 1 감소, 이동 주사위 최댓값 +2 증가");
                     break;
-                case SpecialTileType.DefendTile:
+                case PathTileBuffType.DefendTile:
                     buffDescriptions.Add("방어 타일 효과\n방어력 20% 증가");
                     break;
-                case SpecialTileType.HealTile:
+                case PathTileBuffType.HealTile:
                     buffDescriptions.Add("치유 타일 효과\n체력 20% 즉시 회복");
                     break;
             }

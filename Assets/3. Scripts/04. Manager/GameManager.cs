@@ -309,7 +309,8 @@ public class GameManager : MonoBehaviour
 
     public void DecreaseLife(int amount)
     {
-        if (amount <= 0) return;
+        if (amount <= 0 || m_currentLife <= 0 ||
+            CurrentState == TurnState.GameOver || CurrentState == TurnState.GameClear) return;
 
         if (m_currentShield > 0)
         {
@@ -348,6 +349,8 @@ public class GameManager : MonoBehaviour
 
     public void OnGameOver()
     {
+        if (CurrentState == TurnState.GameOver || CurrentState == TurnState.GameClear) return;
+
         ChangeState(new GameOverTurnState());
         if (turnRoutine != null) StopCoroutine(turnRoutine);
         OnPauseGame();
@@ -360,7 +363,7 @@ public class GameManager : MonoBehaviour
 
     public void OnGameClear()
     {
-        if (CurrentState == TurnState.GameClear) return;
+        if (CurrentState == TurnState.GameClear || CurrentState == TurnState.GameOver) return;
 
         ChangeState(new GameClearTurnState());
         if (turnRoutine != null) StopCoroutine(turnRoutine);

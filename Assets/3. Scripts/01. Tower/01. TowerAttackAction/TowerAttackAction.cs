@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 
 public abstract class TowerAttackAction
@@ -77,123 +76,124 @@ public abstract class TowerAttackAction
         return Mathf.Max(1f, tileRange) * WorldUnitsPerTile;
     }
 
+    protected static int GetTowerSpawnIndex(Transform towerTransform)
+    {
+        return towerTransform != null && towerTransform.TryGetComponent(out TowerController tower)
+            ? tower.SpawnIndex
+            : -1;
+    }
+
+    /// <summary>거리 비례 보너스에 쓰는 비율입니다. 타일 거리 ÷ 사거리 칸 수로 계산합니다.</summary>
+    protected static float GetTileDistanceRatio(int towerSpawnIndex, int pathIndex, float range)
+    {
+        if (TileManager.Instance == null) return 0f;
+
+        int tileDistance = TileManager.Instance.GetTileDistance(towerSpawnIndex, pathIndex);
+        return tileDistance < 0 ? 0f : Mathf.Clamp01(tileDistance / (float)ToTileRange(range));
+    }
+
     public bool HasTargetInRange(Transform towerTransform, TowerStats finalStats)
     {
         return TryFindTarget(
-            towerTransform.position,
+            GetTowerSpawnIndex(towerTransform),
             finalStats.Range,
-            m_data.targetLayer,
+            out _,
             out _,
             m_targetPriority);
     }
 
-    // priority 매개변수에 기본값(= TargetPriority.Closest)을 지정하여 함수 1개로 통합
+    // 사거리와 거리는 TileManager의 타일 인덱스로만 판정합니다. 적의 화면상 위치는 사용하지 않습니다.
     protected virtual bool TryFindTarget(
-        Vector2 origin,
+        int towerSpawnIndex,
         float range,
-        LayerMask targetLayer,
         out EnemyHealthController targetEnemy,
+        out int targetPathIndex,
         TargetPriority priority = TargetPriority.Closest)
     {
         targetEnemy = null;
+        targetPathIndex = -1;
 
-        int tileRange = ToTileRange(range);
-        Tilemap towerTilemap = TowerManager.Instance?.GetSpawnPointTilemap();
-
-        Vector3Int towerCell = Vector3Int.zero;
-        if (towerTilemap != null)
-        {
-            towerCell = towerTilemap.WorldToCell(origin);
-        }
-
-        TilePath path = TilePath.Instance;
-        if (path == null)
+        TileManager tileManager = TileManager.Instance;
+        if (tileManager == null)
         {
             return false;
         }
 
-        var enemies = path.GetAllActiveEnemies();
+        // Range 1 = 3x3, Range 2 = 5x5인 타일 거리 판정입니다.
+        List<int> pathIndices = tileManager.GetPathIndicesInTowerRange(towerSpawnIndex, ToTileRange(range));
 
-        float minSqrDistance = Mathf.Infinity;
-        int maxTileIndex = -1;
-        int minTileIndex = int.MaxValue;
+        int minTileDistance = int.MaxValue;
         float maxHp = -1f;
         float minHp = Mathf.Infinity;
 
-        for (int i = 0; i < enemies.Count; i++)
+        for (int i = 0; i < pathIndices.Count; i++)
         {
-            EnemyHealthController health = enemies[i];
+            int pathIndex = pathIndices[i];
+            int tileDistance = tileManager.GetTileDistance(towerSpawnIndex, pathIndex);
+            List<EnemyHealthController> enemies = tileManager.GetEnemyOccupantsAtPathIndex(pathIndex);
 
-            if (towerTilemap != null)
+            for (int j = 0; j < enemies.Count; j++)
             {
-                Vector3Int enemyCell = towerTilemap.WorldToCell(health.transform.position);
-                int cellDistanceX = Mathf.Abs(enemyCell.x - towerCell.x);
-                int cellDistanceY = Mathf.Abs(enemyCell.y - towerCell.y);
+                EnemyHealthController health = enemies[j];
+                if (health.CurrentHP <= 0f) continue;
 
-                // Range 1 = 3x3, Range 2 = 5x5인 체비셰프 거리 판정입니다.
-                if (cellDistanceX > tileRange || cellDistanceY > tileRange) continue;
-            }
-            else
-            {
-                Vector2 offset = (Vector2)health.transform.position - origin;
-                if (Mathf.Abs(offset.x) > range || Mathf.Abs(offset.y) > range) continue;
-            }
+                switch (priority)
+                {
+                    case TargetPriority.Closest:
+                    case TargetPriority.Default:
+                        // 타일 거리가 같으면 결승점에 더 가까운 타일의 적을 고릅니다.
+                        if (tileDistance < minTileDistance ||
+                            (tileDistance == minTileDistance && pathIndex > targetPathIndex))
+                        {
+                            minTileDistance = tileDistance;
+                            targetEnemy = health;
+                            targetPathIndex = pathIndex;
+                        }
+                        break;
 
-            health.TryGetComponent(out EnemyMoveController movement);
+                    case TargetPriority.First:
+                        // 가장 앞서 나간 적(타일 인덱스가 가장 큰 적) 우선 타겟팅
+                        if (targetEnemy == null || pathIndex > targetPathIndex)
+                        {
+                            targetEnemy = health;
+                            targetPathIndex = pathIndex;
+                        }
+                        break;
 
-            switch (priority)
-            {
-                case TargetPriority.Closest:
-                case TargetPriority.Default:
-                    Vector2 direction = (Vector2)health.transform.position - origin;
-                    float sqrDistance = direction.sqrMagnitude;
+                    case TargetPriority.Last:
+                        // 가장 뒤처진 적(타일 인덱스가 가장 작은 적) 우선 타겟팅
+                        if (targetEnemy == null || pathIndex < targetPathIndex)
+                        {
+                            targetEnemy = health;
+                            targetPathIndex = pathIndex;
+                        }
+                        break;
 
-                    if (sqrDistance < minSqrDistance)
-                    {
-                        minSqrDistance = sqrDistance;
-                        targetEnemy = health;
-                    }
-                    break;
+                    case TargetPriority.Strongest:
+                        if (health.IsBoss)
+                        {
+                            targetEnemy = health;
+                            targetPathIndex = pathIndex;
+                            return true;
+                        }
 
-                case TargetPriority.First:
-                    // 가장 앞서 나간 적(타일 인덱스가 가장 큰 적) 우선 타겟팅
-                    if (movement != null && movement.CurrentTileIndex > maxTileIndex)
-                    {
-                        maxTileIndex = movement.CurrentTileIndex;
-                        targetEnemy = health;
-                    }
-                    break;
+                        if (health.CurrentHP > maxHp)
+                        {
+                            maxHp = health.CurrentHP;
+                            targetEnemy = health;
+                            targetPathIndex = pathIndex;
+                        }
+                        break;
 
-                case TargetPriority.Last:
-                    // 가장 뒤처진 적(타일 인덱스가 가장 작은 적) 우선 타겟팅
-                    if (movement != null && movement.CurrentTileIndex < minTileIndex)
-                    {
-                        minTileIndex = movement.CurrentTileIndex;
-                        targetEnemy = health;
-                    }
-                    break;
-
-                case TargetPriority.Strongest:
-                    if (health.IsBoss)
-                    {
-                        targetEnemy = health;
-                        return true;
-                    }
-
-                    if (health.CurrentHP > maxHp)
-                    {
-                        maxHp = health.CurrentHP;
-                        targetEnemy = health;
-                    }
-                    break;
-
-                case TargetPriority.Weakest:
-                    if (health.CurrentHP < minHp)
-                    {
-                        minHp = health.CurrentHP;
-                        targetEnemy = health;
-                    }
-                    break;
+                    case TargetPriority.Weakest:
+                        if (health.CurrentHP < minHp)
+                        {
+                            minHp = health.CurrentHP;
+                            targetEnemy = health;
+                            targetPathIndex = pathIndex;
+                        }
+                        break;
+                }
             }
         }
 

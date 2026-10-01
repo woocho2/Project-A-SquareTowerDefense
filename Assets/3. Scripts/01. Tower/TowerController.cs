@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
-using UnityEngine.Tilemaps;
 
 [System.Serializable]
 public struct TowerStats
@@ -31,10 +30,15 @@ public struct TowerStats
 
 public class TowerController : MonoBehaviour
 {
+    private static int s_nextCreationOrder;
+
+    public int CreationOrder { get; private set; }
+    public int SpawnIndex { get; internal set; } = -1;
     [SerializeField] private TowerData m_towerData;
     [SerializeField] private TowerStats m_baseStats;
     [SerializeField] private GameObject m_range;
     [SerializeField] private TowerVisual m_towerVisual;
+    [SerializeField] private TowerSelectionVisual m_selectionVisual;
 
     private TowerAttackAction m_attackAction;
     private int m_remainingAction;
@@ -109,9 +113,15 @@ public class TowerController : MonoBehaviour
 
     private void Awake()
     {
+        CreationOrder = ++s_nextCreationOrder;
         if (m_towerVisual == null)
         {
             m_towerVisual = GetComponentInChildren<TowerVisual>(true);
+        }
+
+        if (m_selectionVisual == null)
+        {
+            m_selectionVisual = GetComponent<TowerSelectionVisual>();
         }
 
         if (m_debuffZoneChild == null)
@@ -154,7 +164,7 @@ public class TowerController : MonoBehaviour
                 var debuffAction = new DebuffAction(m_towerData);
                 if (m_debuffZoneChild != null)
                 {
-                    debuffAction.BindZone(m_debuffZoneChild, transform, GetFinalStats());
+                    debuffAction.BindZone(m_debuffZoneChild, transform);
                 }
                 m_attackAction = debuffAction;
                 break;
@@ -225,7 +235,8 @@ public class TowerController : MonoBehaviour
 
     /// <summary>
     /// 에너미 턴에 한 번 호출됩니다. 행동력을 1 소모하고,
-    /// 0이 된 턴에 AttackCount만큼 공격한 뒤 행동력을 재충전합니다.
+    /// 0이 된 턴에 공격 타워는 AttackCount만큼 공격하고,
+    /// 버프·디버프 타워는 한 번만 행동한 뒤 행동력을 재충전합니다.
     /// </summary>
     public bool ExecuteTurnAction()
     {
@@ -250,7 +261,10 @@ public class TowerController : MonoBehaviour
         }
 
         bool didAttack = false;
-        for (int i = 0; i < finalStats.AttackCount; i++)
+        int actionCount = m_towerData.attackType == AttackType.Buff || m_towerData.attackType == AttackType.Debuff
+            ? 1
+            : finalStats.AttackCount;
+        for (int i = 0; i < actionCount; i++)
         {
             didAttack |= m_attackAction.ExecuteAction(transform, finalStats);
         }
@@ -333,6 +347,27 @@ public class TowerController : MonoBehaviour
         return orderedDirections[satelliteIndex % orderedDirections.Length] * radius;
     }
     public TowerData GetTowerData() => m_towerData;
+    public void InheritCreationOrder(int creationOrder) => CreationOrder = creationOrder;
+    public DebuffZone GetDebuffZone() => m_towerData != null && m_towerData.attackType == AttackType.Debuff
+        ? m_debuffZoneChild : null;
+
+    public bool TryGetDebuffZoneIndex(out int index)
+    {
+        index = -1;
+        return GetDebuffZone() != null && m_debuffZoneChild.TryGetPlacedPathIndex(out index);
+    }
+
+    public bool TrySetDebuffZoneIndex(int index)
+    {
+        return GetDebuffZone() != null && m_debuffZoneChild.SetPlacedPathIndex(index);
+    }
+
+    public void SetSelected(bool selected)
+    {
+        m_selectionVisual?.SetHighlighted(selected);
+        ShowRange(selected);
+        GetDebuffZone()?.SetHighlighted(selected);
+    }
     public int GetRemainingAction() => m_remainingAction;
     public int GetMaxAction() => GetFinalAction();
     public TargetPriority GetTargetPriority() => m_targetPriority;
@@ -374,21 +409,14 @@ public class TowerController : MonoBehaviour
 
     public void OnMovedToNewPosition()
     {
-        if (m_debuffZoneChild != null && m_towerData != null && m_towerData.attackType == AttackType.Debuff)
-        {
-            bool hasValidPathTile = m_debuffZoneChild.UpdateTowerPosition(transform.position, GetFinalStats().Range);
-            if (!hasValidPathTile)
-            {
-                TileManager.Instance?.RemovePathDebuffEffectsBySource(transform.GetInstanceID());
-            }
-        }
-
+        // 소유 타워가 이동해도 디버프 장판은 기존 패스 타일에 남습니다.
         // 행동력 감소 타일로 이동한 경우, 이미 충전되어 있던 행동력도 새 최대치 안으로 맞춥니다.
         m_remainingAction = Mathf.Min(m_remainingAction, GetFinalAction());
     }
 
     private void OnDestroy()
     {
+        TileManager.Instance?.RemoveTowerIfMatches(SpawnIndex, this);
         TileManager.Instance?.RemoveAllDynamicEffectsBySource(transform.GetInstanceID());
 
         // 디버프 존은 타워와 분리되어 있으므로, 타워가 판매·합성·파괴될 때 함께 정리합니다.
@@ -413,13 +441,12 @@ public class TowerController : MonoBehaviour
     /// </summary>
     private TowerTileBuffType GetCurrentTowerTileBuff()
     {
-        if (TileManager.Instance == null || TowerManager.Instance == null)
+        if (TileManager.Instance == null || SpawnIndex < 1)
         {
             return TowerTileBuffType.Normal;
         }
 
-        Vector3Int currentCell = TowerManager.Instance.WorldToCell(transform.position);
-        return TileManager.Instance.GetTowerTileBuffAt(currentCell);
+        return TileManager.Instance.GetTowerTileBuffAt(SpawnIndex);
     }
 
     /// <summary>
@@ -428,10 +455,9 @@ public class TowerController : MonoBehaviour
     /// </summary>
     private void ApplyCurrentTileBuffTowerEffects(ref TowerStats finalStats)
     {
-        if (TileManager.Instance == null || TowerManager.Instance == null) return;
+        if (TileManager.Instance == null || SpawnIndex < 1) return;
 
-        Vector3Int cell = TowerManager.Instance.WorldToCell(transform.position);
-        IReadOnlyList<TowerTileBuffEffect> effects = TileManager.Instance.GetTowerBuffEffectsAt(cell);
+        IReadOnlyList<TowerTileBuffEffect> effects = TileManager.Instance.GetTowerBuffEffectsAt(SpawnIndex);
         Dictionary<BuffTarget, TowerTileBuffEffect> strongestByTarget = GetStrongestTileBuffs(effects);
 
         foreach (KeyValuePair<BuffTarget, TowerTileBuffEffect> pair in strongestByTarget)
@@ -469,10 +495,9 @@ public class TowerController : MonoBehaviour
     /// </summary>
     public void RefreshFireTileStatus()
     {
-        if (TileManager.Instance == null || TowerManager.Instance == null) return;
+        if (TileManager.Instance == null || SpawnIndex < 1) return;
 
-        Vector3Int cell = TowerManager.Instance.WorldToCell(transform.position);
-        IReadOnlyList<TowerTileBuffEffect> effects = TileManager.Instance.GetTowerBuffEffectsAt(cell);
+        IReadOnlyList<TowerTileBuffEffect> effects = TileManager.Instance.GetTowerBuffEffectsAt(SpawnIndex);
         for (int i = 0; i < effects.Count; i++)
         {
             TowerTileBuffEffect effect = effects[i];
@@ -588,9 +613,8 @@ public class TowerController : MonoBehaviour
 
     private int GetCurrentTileBuffActionReduction()
     {
-        if (TileManager.Instance == null || TowerManager.Instance == null) return 0;
-        Vector3Int cell = TowerManager.Instance.WorldToCell(transform.position);
-        Dictionary<BuffTarget, TowerTileBuffEffect> strongestByTarget = GetStrongestTileBuffs(TileManager.Instance.GetTowerBuffEffectsAt(cell));
+        if (TileManager.Instance == null || SpawnIndex < 1) return 0;
+        Dictionary<BuffTarget, TowerTileBuffEffect> strongestByTarget = GetStrongestTileBuffs(TileManager.Instance.GetTowerBuffEffectsAt(SpawnIndex));
         return strongestByTarget.TryGetValue(BuffTarget.Wind, out TowerTileBuffEffect wind) ? wind.Tier : 0;
     }
 
@@ -690,9 +714,8 @@ public class TowerController : MonoBehaviour
         if (!m_activeBuffs.TryGetValue(BuffTarget.Darkness, out Dictionary<int, ActiveBuff> darknessBuffs) || darknessBuffs.Count == 0)
         {
             // 버프 타일 방식에서는 현재 타워가 선 타일에서 Darkness를 읽어 같은 성장치를 공유합니다.
-            if (TileManager.Instance == null || TowerManager.Instance == null) return;
-            Vector3Int cell = TowerManager.Instance.WorldToCell(transform.position);
-            Dictionary<BuffTarget, TowerTileBuffEffect> tileBuffs = GetStrongestTileBuffs(TileManager.Instance.GetTowerBuffEffectsAt(cell));
+            if (TileManager.Instance == null || SpawnIndex < 1 || TowerManager.Instance == null) return;
+            Dictionary<BuffTarget, TowerTileBuffEffect> tileBuffs = GetStrongestTileBuffs(TileManager.Instance.GetTowerBuffEffectsAt(SpawnIndex));
             if (!tileBuffs.TryGetValue(BuffTarget.Darkness, out TowerTileBuffEffect tileDarkness)) return;
 
             TowerManager.Instance?.AddSharedDarknessAbility(tileDarkness.Tier);

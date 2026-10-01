@@ -49,9 +49,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a368eb1c39487743b8fe3086e667b4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DebuffZone
-  m_camera: {fileID: 0}
-  m_obstacleCollider: {fileID: 0}
-  m_dragThreshold: 0.1
 --- !u!114 &9100000000000000001
 MonoBehaviour:
   m_ObjectHideFlags: 0

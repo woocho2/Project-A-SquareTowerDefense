@@ -127,9 +127,8 @@ public class EnemyObjectPool2D : MonoBehaviour
         // 2. 턴제 이동 데이터 초기화 (EnemyData 및 TilePath 전달)[cite: 22]
         if (health.TryGetComponent<EnemyMoveController>(out var movement))
         {
+            // InitMovement가 적을 TileManager의 패스 0번 인덱스에 등록합니다.
             movement.InitMovement(m_enemyData, tilePath);
-            // 생성된 적을 EnemyManager에 등록[cite: 22]
-            EnemyManager.Instance?.RegisterEnemy(movement);
         }
 
         // 3. 체력 초기화[cite: 22]

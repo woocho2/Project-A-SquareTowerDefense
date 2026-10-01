@@ -28,22 +28,24 @@ public class TargetAttackAction : TowerAttackAction
     {
         if (towerTransform == null || projectiles == null || projectiles.Count == 0) return false;
 
+        int towerSpawnIndex = GetTowerSpawnIndex(towerTransform);
         if (!TryFindTarget(
-                towerTransform.position,
+                towerSpawnIndex,
                 finalStats.Range,
-                m_data.targetLayer,
                 out EnemyHealthController targetEnemy,
+                out int targetPathIndex,
                 CurrentTargetPriority))
         {
             CancelProjectiles(projectiles);
             return false;
         }
 
+        float distanceRatio = GetTileDistanceRatio(towerSpawnIndex, targetPathIndex, finalStats.Range);
         for (int i = 0; i < projectiles.Count; i++)
         {
             ProjectileHit2D projectile = projectiles[i];
             if (projectile == null) continue;
-            ConfigureAndLaunch(projectile, towerTransform, targetEnemy.transform, finalStats);
+            ConfigureAndLaunch(projectile, towerTransform, targetEnemy.transform, finalStats, distanceRatio);
         }
 
         return true;
@@ -66,8 +68,10 @@ public class TargetAttackAction : TowerAttackAction
         ProjectileHit2D projectile,
         Transform towerTransform,
         Transform targetTransform,
-        TowerStats finalStats)
+        TowerStats finalStats,
+        float distanceRatio)
     {
+        // 투사체가 날아갈 방향은 연출이므로 적의 화면상 위치를 그대로 사용합니다.
         Vector3 targetPosition = targetTransform.position;
         Vector3 direction = (targetPosition - projectile.transform.position).normalized;
         if (direction.sqrMagnitude < 0.0001f) direction = Vector3.right;
@@ -75,8 +79,6 @@ public class TargetAttackAction : TowerAttackAction
         bool isCritical = Random.Range(0f, 100f) <= finalStats.CriticalRate * 100f;
         float calculatedDamage = finalStats.AttackPower;
 
-        float distanceRatio = Mathf.Clamp01(
-            Vector2.Distance(towerTransform.position, targetPosition) / Mathf.Max(0.01f, finalStats.Range));
         calculatedDamage *= 1f + finalStats.DistanceDamageBonusPercent / 100f * distanceRatio;
 
         if (isCritical)
@@ -94,6 +96,7 @@ public class TargetAttackAction : TowerAttackAction
             criticalRate = finalStats.CriticalRate,
             criticalDamage = finalStats.CriticalDamage,
             SplashRadius = 0,
+            targetPathIndex = -1,
             // 실제 투사체를 여러 개 만들었으므로 투사체 하나는 한 번만 타격합니다.
             additionalHitCount = 0,
             armorPenetrationPercent = finalStats.ArmorPenetrationPercent,

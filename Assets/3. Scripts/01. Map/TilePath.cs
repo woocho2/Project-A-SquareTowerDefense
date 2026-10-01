@@ -4,13 +4,11 @@ using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(Tilemap))]
 /// <summary>
-/// 보드 위 적 경로의 단일 진실 원본입니다.
+/// 적의 타일 내 시각적 배치를 관리합니다. 전투 점유 원본은 TileManager에 있습니다.
 ///
-/// <para>이 컴포넌트는 서로 다른 세 가지 정보를 분리해서 관리합니다.</para>
+/// <para>경로 타일의 순서와 인덱스 원본은 TileManager가 관리합니다.</para>
 /// <list type="number">
-/// <item><description><b>논리 경로</b>: <see cref="pathGridPositions"/>의 인덱스입니다. 적의 실제 진행도,
-/// 타겟 우선순위, 특수 타일 판정은 이 인덱스를 기준으로 합니다.</description></item>
-/// <item><description><b>전투 점유</b>: <c>m_enemiesByPathIndex</c>입니다. 물리 Collider 검색 대신
+/// <item><description><b>전투 점유</b>: TileManager의 패스 인덱스별 적 목록입니다. 물리 Collider 검색 대신
 /// 공격·스플래시·타일 효과가 이 목록을 읽습니다.</description></item>
 /// <item><description><b>표현 위치</b>: <c>m_enemyVisualTargets</c>입니다. 같은 타일에 여러 적이 있어도
 /// 겹쳐 보이지 않게 할 뿐이며, 논리적 타일 위치를 바꾸지 않습니다.</description></item>
@@ -23,16 +21,9 @@ public class TilePath : MonoBehaviour
     // 다른 시스템(에너미 이동, 타워 타겟팅, 디버프 등)이 현재 스테이지의 경로를 공통으로 참조할 때 사용합니다.
     /// <summary>현재 스테이지의 경로입니다. 경로 기반 전투 계산의 공용 진입점입니다.</summary>
     public static TilePath Instance { get; private set; }
-    [Tooltip("에디터에서 등록된 경로 타일 그리드 좌표 리스트")]
-    // 에너미가 이동할 패스 타일을 순서대로 저장합니다.
-    // 리스트의 인덱스 자체가 "경로 진행도"가 되므로, 숫자가 클수록 도착 지점에 가깝습니다.
-    /// <summary>
-    /// 적이 밟는 타일을 시작점부터 도착점까지 순서대로 저장합니다.
-    /// 리스트의 인덱스가 곧 적의 진행도입니다. 0은 시작 타일, <see cref="LastIndex"/>는 도착 타일입니다.
-    /// 같은 좌표를 중복 등록하지 않는 것을 원칙으로 하며, 지름길/순환 경로를 만들 때에도
-    /// "현재 인덱스에서 다음 인덱스로 어디로 갈지"를 이 순서 또는 별도 분기 데이터로 결정해야 합니다.
-    /// </summary>
-    public List<Vector3Int> pathGridPositions = new List<Vector3Int>();
+    // 경로의 원본은 TileManager가 관리합니다. 기존 호출처를 위해 경로 조회 API는 유지합니다.
+    private IReadOnlyList<Vector3Int> PathCells =>
+        TileManager.Instance?.PathGridPositions ?? System.Array.Empty<Vector3Int>();
 
     [Header("Enemy Visual Formation")]
     // 한 타일에 적이 여럿 있을 때, 서로 겹치지 않도록 벌릴 간격입니다. (타일 크기에 비례)
@@ -42,19 +33,9 @@ public class TilePath : MonoBehaviour
     // 적 수가 바뀌어 진형을 재정렬할 때, 새 자리까지 부드럽게 이동하는 시각 연출 속도입니다.
     [SerializeField, Min(0.1f)] private float m_enemyFormationMoveSpeed = 1.5f;
 
-    // pathGridPositions의 그리드 좌표를 실제 월드 좌표로 변환하기 위해 사용하는 패스 Tilemap입니다.
+    // TileManager의 경로 셀 좌표를 월드 좌표로 변환하기 위해 사용하는 패스 Tilemap입니다.
     /// <summary>경로 셀과 월드 좌표를 상호 변환하는 Tilemap입니다.</summary>
     private Tilemap tilemap;
-    // 핵심 전투 판정 데이터입니다.
-    // "패스 인덱스 -> 그 타일 위에 실제로 서 있는 적 목록"으로 관리합니다.
-    // 타겟 선택, 스플래시 피해, 디버프 장판 판정은 콜라이더 대신 이 목록을 기준으로 계산합니다.
-    /// <summary>
-    /// 논리 경로 인덱스별 현재 점유 적 목록입니다.
-    /// 적이 이동을 완료한 뒤에만 이 목록을 갱신합니다. 공격과 스플래시는 이 자료를 사용하므로,
-    /// 이동 연출 중인 적이 다음 타일의 공격 대상으로 미리 잡히지 않습니다.
-    /// </summary>
-    private readonly Dictionary<int, List<EnemyHealthController>> m_enemiesByPathIndex =
-        new Dictionary<int, List<EnemyHealthController>>();
     // 이동 중인 적이 도착할 타일의 진형 자리를 미리 예약하는 목록입니다.
     // 아직 도착하지 않은 적을 위 전투 목록에 넣으면 공격 대상이 되어버리므로 따로 보관합니다.
     // 덕분에 이동 시작부터 목표 진형 위치로 자연스럽게 이동할 수 있습니다.
@@ -76,7 +57,7 @@ public class TilePath : MonoBehaviour
     // 경로의 마지막 인덱스 (자동 계산: 등록된 타일 개수 - 1)
     // 유효한 마지막 패스 인덱스입니다. 경로가 비어 있으면 0으로 처리해 범위 오류를 막습니다.
     /// <summary>도착 타일의 논리 인덱스입니다. 경로가 비어 있으면 안전하게 0을 반환합니다.</summary>
-    public int LastIndex => pathGridPositions.Count > 0 ? pathGridPositions.Count - 1 : 0;
+    public int LastIndex => PathCells.Count > 0 ? PathCells.Count - 1 : 0;
 
     void Awake()
     {
@@ -135,11 +116,11 @@ public class TilePath : MonoBehaviour
     public Vector3 GetWorldPosition(int index)
     {
         if (tilemap == null) tilemap = GetComponent<Tilemap>();
-        if (pathGridPositions.Count == 0) return transform.position;
+        if (PathCells.Count == 0) return transform.position;
 
         // 인덱스가 범위를 벗어나지 않도록 클램프 처리
         int clampedIndex = Mathf.Clamp(index, 0, LastIndex);
-        return tilemap.GetCellCenterWorld(pathGridPositions[clampedIndex]);
+        return tilemap.GetCellCenterWorld(PathCells[clampedIndex]);
     }
     
     // 특정 인덱스의 그리드 좌표 반환 (타일 속성 체크용)
@@ -149,9 +130,9 @@ public class TilePath : MonoBehaviour
     /// </summary>
     public Vector3Int GetGridPosition(int index)
     {
-        if (pathGridPositions.Count == 0) return Vector3Int.zero;
+        if (PathCells.Count == 0) return Vector3Int.zero;
         int clampedIndex = Mathf.Clamp(index, 0, LastIndex);
-        return pathGridPositions[clampedIndex];
+        return PathCells[clampedIndex];
     }
 
     /// <summary>적을 현재 서 있는 패스 타일의 목록에 등록합니다.</summary>
@@ -162,16 +143,11 @@ public class TilePath : MonoBehaviour
     /// </summary>
     public void RegisterEnemyAtIndex(EnemyHealthController enemy, int index)
     {
-        if (enemy == null || index < 0 || index > LastIndex) return;
+        if (enemy == null || TileManager.Instance == null || index < 0 || index > LastIndex) return;
         RemovePendingArrival(enemy);
-        UnregisterEnemy(enemy);
-
-        if (!m_enemiesByPathIndex.TryGetValue(index, out List<EnemyHealthController> enemies))
-        {
-            enemies = new List<EnemyHealthController>();
-            m_enemiesByPathIndex.Add(index, enemies);
-        }
-        enemies.Add(enemy);
+        if (!TileManager.Instance.SetEnemyAtPathIndex(enemy, index, out int previousIndex)) return;
+        m_enemyVisualTargets.Remove(enemy);
+        if (previousIndex >= 0 && previousIndex != index) ArrangeEnemiesOnTile(previousIndex);
         ArrangeEnemiesOnTile(index);
     }
 
@@ -181,7 +157,7 @@ public class TilePath : MonoBehaviour
     /// </summary>
     /// <summary>
     /// 이동을 시작하기 전에 목적 타일에서 사용할 화면상 자리만 예약합니다.
-    /// 이 메서드는 <b>전투상 이동 완료</b>가 아니므로 <c>m_enemiesByPathIndex</c>를 변경하지 않습니다.
+    /// 이 메서드는 <b>전투상 이동 완료</b>가 아니므로 TileManager의 적 점유를 변경하지 않습니다.
     /// 도착 애니메이션 도중 적이 다음 타일의 공격·도트 대상으로 취급되는 문제를 막는 역할입니다.
     /// </summary>
     public Vector3 ReserveArrivalPosition(EnemyHealthController enemy, int index)
@@ -190,10 +166,9 @@ public class TilePath : MonoBehaviour
 
         RemovePendingArrival(enemy);
 
-        if (!m_enemiesByPathIndex.TryGetValue(index, out List<EnemyHealthController> enemies))
-        {
-            enemies = new List<EnemyHealthController>();
-        }
+        List<EnemyHealthController> enemies = TileManager.Instance != null
+            ? TileManager.Instance.GetEnemyOccupantsAtPathIndex(index)
+            : new List<EnemyHealthController>();
 
         if (!m_pendingArrivalsByPathIndex.TryGetValue(index, out List<EnemyHealthController> pendingEnemies))
         {
@@ -216,15 +191,12 @@ public class TilePath : MonoBehaviour
     /// </summary>
     public void UnregisterEnemy(EnemyHealthController enemy)
     {
-        if (enemy == null) return;
+        if (ReferenceEquals(enemy, null)) return;
         RemovePendingArrival(enemy);
 
-        foreach (KeyValuePair<int, List<EnemyHealthController>> pair in m_enemiesByPathIndex)
+        if (TileManager.Instance != null && TileManager.Instance.RemoveEnemyFromPath(enemy, out int previousIndex))
         {
-            if (pair.Value.Remove(enemy))
-            {
-                ArrangeEnemiesOnTile(pair.Key);
-            }
+            ArrangeEnemiesOnTile(previousIndex);
         }
 
         m_enemyVisualTargets.Remove(enemy);
@@ -241,9 +213,8 @@ public class TilePath : MonoBehaviour
     /// </summary>
     private void ArrangeEnemiesOnTile(int pathIndex)
     {
-        if (!m_enemiesByPathIndex.TryGetValue(pathIndex, out List<EnemyHealthController> enemies)) return;
-
-        enemies.RemoveAll(enemy => enemy == null || !enemy.gameObject.activeInHierarchy);
+        if (TileManager.Instance == null) return;
+        List<EnemyHealthController> enemies = TileManager.Instance.GetEnemyOccupantsAtPathIndex(pathIndex);
         if (enemies.Count == 0) return;
 
         for (int i = 0; i < enemies.Count; i++)
@@ -279,38 +250,6 @@ public class TilePath : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 투사체 착탄 지점을 중심으로 범위 안의 패스 타일 목록만 합쳐 반환합니다.
-    /// 물리 콜라이더 검색과 무관한 실제 스플래시 피해 대상입니다.
-    /// </summary>
-    /// <summary>
-    /// 충돌 지점을 중심으로 정사각 타일 반경 안에 있는 살아 있는 적만 반환합니다.
-    /// <paramref name="tileRadius"/>가 0이면 충돌 타일 하나, 1이면 3x3 타일입니다.
-    /// 물리 Collider가 아닌 경로 점유 자료를 사용하므로 같은 타일의 모든 적이 안정적으로 포함됩니다.
-    /// </summary>
-    public List<EnemyHealthController> GetEnemiesInSquare(Vector3 worldPosition, int tileRadius)
-    {
-        List<EnemyHealthController> result = new List<EnemyHealthController>();
-        if (tilemap == null) tilemap = GetComponent<Tilemap>();
-        if (tilemap == null) return result;
-
-        Vector3Int impactCell = tilemap.WorldToCell(worldPosition);
-        foreach (KeyValuePair<int, List<EnemyHealthController>> pair in m_enemiesByPathIndex)
-        {
-            Vector3Int pathCell = GetGridPosition(pair.Key);
-            if (Mathf.Abs(pathCell.x - impactCell.x) > tileRadius || Mathf.Abs(pathCell.y - impactCell.y) > tileRadius) continue;
-
-            foreach (EnemyHealthController enemy in pair.Value)
-            {
-                if (enemy != null && enemy.gameObject.activeInHierarchy && enemy.CurrentHP > 0f)
-                {
-                    result.Add(enemy);
-                }
-            }
-        }
-        return result;
-    }
-
     /// <summary>모든 패스 타일에 등록된 살아 있는 적을 반환합니다.</summary>
     /// <summary>
     /// 모든 경로 타일에서 살아 있고 활성화된 적을 평탄화하여 반환합니다.
@@ -320,9 +259,10 @@ public class TilePath : MonoBehaviour
     public List<EnemyHealthController> GetAllActiveEnemies()
     {
         List<EnemyHealthController> result = new List<EnemyHealthController>();
-        foreach (List<EnemyHealthController> enemies in m_enemiesByPathIndex.Values)
+        if (TileManager.Instance == null) return result;
+        foreach (KeyValuePair<int, List<EnemyHealthController>> pair in TileManager.Instance.GetEnemyOccupancySnapshot())
         {
-            foreach (EnemyHealthController enemy in enemies)
+            foreach (EnemyHealthController enemy in pair.Value)
             {
                 if (enemy != null && enemy.gameObject.activeInHierarchy && enemy.CurrentHP > 0f)
                 {
@@ -338,8 +278,9 @@ public class TilePath : MonoBehaviour
     public List<EnemyHealthController> GetEnemiesAtIndex(int index)
     {
         List<EnemyHealthController> result = new List<EnemyHealthController>();
-        if (m_enemiesByPathIndex.TryGetValue(index, out List<EnemyHealthController> list))
+        if (TileManager.Instance != null)
         {
+            List<EnemyHealthController> list = TileManager.Instance.GetEnemyOccupantsAtPathIndex(index);
             for (int i = 0; i < list.Count; i++)
             {
                 EnemyHealthController enemy = list[i];
@@ -359,90 +300,23 @@ public class TilePath : MonoBehaviour
     /// </summary>
     public int GetPathIndexAtGridPosition(Vector3Int gridPos)
     {
-        return pathGridPositions.IndexOf(gridPos);
+        return TileManager.Instance != null &&
+               TileManager.Instance.TryGetPathTileIndex(gridPos, out int index)
+            ? index
+            : -1;
     }
 
     /// <summary>특정 그리드 좌표의 패스 타일 위에 서 있는 적 목록을 반환합니다.</summary>
-    /// <summary>셀 좌표를 경로 인덱스로 바꾼 뒤 해당 타일 점유 적을 반환하는 편의 API입니다.</summary>
+    /// <summary>같은 셀을 경로가 여러 번 지나도 그 셀의 적을 모두 반환합니다.</summary>
     public List<EnemyHealthController> GetEnemiesAtGridPosition(Vector3Int gridPos)
     {
-        int index = GetPathIndexAtGridPosition(gridPos);
-        if (index < 0) return new List<EnemyHealthController>();
-        return GetEnemiesAtIndex(index);
-    }
-
-    /// <summary>
-    /// 중심 셀에서 정사각 타일 반경 안에 있는 고유한 경로 셀을 반환합니다.
-    /// 불 디버프존처럼 "경로 전체가 아닌 특정 구역의 모든 패스타일"에 효과를 기록할 때 사용합니다.
-    /// 경로가 순환하여 같은 셀을 여러 번 포함하더라도 <see cref="HashSet{T}"/>으로 한 번만 반환합니다.
-    /// </summary>
-    public List<Vector3Int> GetPathCellsInSquare(Vector3Int centerCell, int tileRadius)
-    {
-        List<Vector3Int> result = new List<Vector3Int>();
-        HashSet<Vector3Int> uniqueCells = new HashSet<Vector3Int>();
-        int radius = Mathf.Max(0, tileRadius);
-
-        for (int i = 0; i < pathGridPositions.Count; i++)
+        List<EnemyHealthController> result = new List<EnemyHealthController>();
+        if (TileManager.Instance == null) return result;
+        foreach (EnemyHealthController enemy in TileManager.Instance.GetEnemyOccupantsAtPathCell(gridPos))
         {
-            Vector3Int cell = pathGridPositions[i];
-            if (Mathf.Abs(cell.x - centerCell.x) > radius || Mathf.Abs(cell.y - centerCell.y) > radius) continue;
-            if (uniqueCells.Add(cell)) result.Add(cell);
+            if (enemy != null && enemy.CurrentHP > 0f) result.Add(enemy);
         }
-
         return result;
     }
 
-    /// <summary>
-    /// 타워의 정사각 사거리 안에 있는 각 경로 타일의 중심 월드 좌표를 반환합니다.
-    /// 불 스플래시의 메테오처럼 "적이 있는 타일"이 아니라 "사거리 안의 모든 패스타일"을 대상으로 하는
-    /// 연출에 사용합니다. 반환된 좌표에 적이 없어도 투사체는 정상적으로 도착할 수 있습니다.
-    /// </summary>
-    public List<Vector3> GetPathWorldPositionsInRange(Vector3 origin, float worldRange)
-    {
-        List<Vector3> result = new List<Vector3>();
-        if (tilemap == null) tilemap = GetComponent<Tilemap>();
-        if (tilemap == null) return result;
-
-        int tileRange = TowerAttackAction.ToTileRange(worldRange);
-        Vector3Int originCell = tilemap.WorldToCell(origin);
-        foreach (Vector3Int cell in GetPathCellsInSquare(originCell, tileRange))
-        {
-            result.Add(tilemap.GetCellCenterWorld(cell));
-        }
-
-        return result;
-    }
-
-    // 씬 뷰 시각화
-    /// <summary>
-    /// 에디터 전용 경로 점검 표시입니다. 노란 선은 인덱스 순서, 숫자는 논리 진행도입니다.
-    /// 런타임 전투 데이터에는 관여하지 않으므로 경로가 이상할 때만 이를 기준으로 리스트 순서를 검증합니다.
-    /// </summary>
-    private void OnDrawGizmos()
-    {
-        if (pathGridPositions == null || pathGridPositions.Count == 0) return;
-
-        Tilemap currentTilemap = GetComponent<Tilemap>();
-        if (currentTilemap == null) return;
-
-#if UNITY_EDITOR
-        GUIStyle style = new GUIStyle();
-        style.normal.textColor = Color.white;
-        style.fontSize = 12;
-        style.fontStyle = FontStyle.Bold;
-
-        for (int i = 0; i < pathGridPositions.Count; i++)
-        {
-            Vector3 worldPos = currentTilemap.GetCellCenterWorld(pathGridPositions[i]);
-            UnityEditor.Handles.Label(worldPos + new Vector3(-0.1f, 0.1f, 0), i.ToString(), style);
-
-            if (i < pathGridPositions.Count - 1)
-            {
-                Vector3 nextWorldPos = currentTilemap.GetCellCenterWorld(pathGridPositions[i + 1]);
-                Gizmos.color = Color.yellow;
-                Gizmos.DrawLine(worldPos, nextWorldPos);
-            }
-        }
-#endif
-    }
 }

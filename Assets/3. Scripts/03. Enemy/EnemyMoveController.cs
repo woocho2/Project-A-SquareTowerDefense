@@ -156,8 +156,8 @@ public class EnemyMoveController : MonoBehaviour
         m_isMoving = true;
         for (int i = 0; i < steps && m_currentTileIndex > 0; i++)
         {
-            m_currentTileIndex--;
-            Vector3 targetPos = m_tilePath.ReserveArrivalPosition(m_health, m_currentTileIndex);
+            int nextIndex = m_currentTileIndex - 1;
+            Vector3 targetPos = m_tilePath.ReserveArrivalPosition(m_health, nextIndex);
             FaceMoveDirection(targetPos);
             while (Vector3.Distance(transform.position, targetPos) > 0.02f)
             {
@@ -165,6 +165,8 @@ public class EnemyMoveController : MonoBehaviour
                 yield return null;
             }
             transform.position = targetPos;
+            // 도착한 순간에만 인덱스를 바꿔 TileManager의 점유 인덱스와 항상 일치시킵니다.
+            m_currentTileIndex = nextIndex;
             m_tilePath.RegisterEnemyAtIndex(m_health, m_currentTileIndex);
         }
         m_isMoving = false;
@@ -181,8 +183,8 @@ public class EnemyMoveController : MonoBehaviour
                 break;
             }
 
-            m_currentTileIndex++;
-            Vector3 targetPos = m_tilePath.ReserveArrivalPosition(m_health, m_currentTileIndex);
+            int nextIndex = m_currentTileIndex + 1;
+            Vector3 targetPos = m_tilePath.ReserveArrivalPosition(m_health, nextIndex);
             FaceMoveDirection(targetPos);
 
             while (Vector3.Distance(transform.position, targetPos) > 0.02f)
@@ -192,6 +194,8 @@ public class EnemyMoveController : MonoBehaviour
             }
 
             transform.position = targetPos;
+            // 도착한 순간에만 인덱스를 바꿔 TileManager의 점유 인덱스와 항상 일치시킵니다.
+            m_currentTileIndex = nextIndex;
             m_tilePath.RegisterEnemyAtIndex(m_health, m_currentTileIndex);
         }
 
@@ -265,19 +269,18 @@ public class EnemyMoveController : MonoBehaviour
         if (m_currentTileIndex <= 0 || m_currentTileIndex >= m_tilePath.LastIndex) return;
 
         // 2. 현재 멈춰있는 타일 타입 확인
-        Vector3Int gridPos = m_tilePath.GetGridPosition(m_currentTileIndex);
-        SpecialTileType tileType = TileManager.Instance.GetTileTypeAt(gridPos);
+        PathTileBuffType tileType = TileManager.Instance.GetTileTypeAt(m_currentTileIndex);
 
         // 3. 타일 타입별 버프 분기 처리
         switch (tileType)
         {
-            case SpecialTileType.SpeedTile:
+            case PathTileBuffType.SpeedTile:
                 // 스피드 타일: 행동 주기 1 감소 (최소 1), 이동 주사위 최댓값 +2 증가
                 m_actionInterval = Mathf.Max(1, m_baseActionInterval + m_permanentActionPenalty + m_temporaryActionPenalty - 1);
                 m_tileBuffSpeed = 2;
                 break;
 
-            case SpecialTileType.DefendTile:
+            case PathTileBuffType.DefendTile:
                 // 방어 타일: 방어력 20% 증가 (계수 1.2배)
                 if (m_health != null)
                 {
@@ -285,7 +288,7 @@ public class EnemyMoveController : MonoBehaviour
                 }
                 break;
 
-            case SpecialTileType.HealTile:
+            case PathTileBuffType.HealTile:
                 // 힐 타일: 현재 체력의 20% 즉시 회복
                 if (m_health != null)
                 {
@@ -293,7 +296,7 @@ public class EnemyMoveController : MonoBehaviour
                 }
                 break;
 
-            case SpecialTileType.Normal:
+            case PathTileBuffType.Normal:
             default:
                 // 일반 타일은 기본 스탯 유지
                 break;
@@ -303,7 +306,7 @@ public class EnemyMoveController : MonoBehaviour
         // 이 시점에는 적이 이동을 마치고 TilePath의 해당 인덱스 리스트에 등록된 상태입니다.
         if (TryGetComponent(out EnemyDebuffController debuffController))
         {
-            debuffController.RefreshTileDebuffs(gridPos);
+            debuffController.RefreshTileDebuffs(m_currentTileIndex);
         }
     }
 
@@ -368,21 +371,4 @@ public class EnemyMoveController : MonoBehaviour
         m_temporaryDiceMaxModifierTurns = Mathf.Max(1, turns);
     }
     public void ReverseNextDiceMove() => m_reverseNextDice = true;
-
-    public int GetPathIndexClosestTo(Vector3 worldPosition)
-    {
-        if (m_tilePath == null) return m_currentTileIndex;
-        int closestIndex = 0;
-        float closestDistance = float.MaxValue;
-        for (int i = 0; i <= m_tilePath.LastIndex; i++)
-        {
-            float distance = Vector2.SqrMagnitude(m_tilePath.GetWorldPosition(i) - worldPosition);
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestIndex = i;
-            }
-        }
-        return closestIndex;
-    }
 }

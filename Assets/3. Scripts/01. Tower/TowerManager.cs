@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Tilemaps;
 
 public enum CombineMode
 {
@@ -23,10 +22,6 @@ public class TowerManager : MonoBehaviour
     // ==========================================================================================================
     public static TowerManager Instance { get; private set; }
 
-    [Tooltip("타워를 생성할 수 있는 타일맵을 지정합니다.")]
-    [SerializeField] private Tilemap m_spawnPoint;
-
-
     [Tooltip("CSV에서 런타임으로 생성한 타워 데이터 목록입니다.")]
     [SerializeField] private List<TowerData> m_towerData = new List<TowerData>();
     private readonly Dictionary<int, TowerData> m_towerDataById = new Dictionary<int, TowerData>();
@@ -39,12 +34,19 @@ public class TowerManager : MonoBehaviour
     private int BuildCost = 50;
     private const int TierUpgradeBaseGemCost = 5;
 
+    public int CreateTowerGold => BuildCost;
+    //public int ColorUpgradeGem => GetColorUpgradeCost();
+    //public int TierUpgradeGem => GetTierUpgradeCost(int towerID);
+
     [Header("타워 순차 행동")]
     [Tooltip("공격 타워의 투사체가 명중해 이펙트가 발동한 뒤 다음 공격 타워가 행동하기까지의 간격입니다.")]
     [SerializeField, Min(0f)] private float m_nextAttackTowerDelay = 0.3f;
 
-    // 현재 보드판 내의 타워의 정보를 담는 딕셔너리구조
-    private Dictionary<Vector3Int, TowerController> m_towersOnGrid = new Dictionary<Vector3Int, TowerController>();
+    // 배치된 타워의 점유 원본은 TileManager의 소환 타일 인덱스에 있다.
+    private List<KeyValuePair<int, TowerController>> GetPlacedTowers() =>
+        TileManager.Instance != null
+            ? TileManager.Instance.GetTowerOccupancyByIndexSnapshot()
+            : new List<KeyValuePair<int, TowerController>>();
     // 소환된 타워의 스탯 정보를 담는 딕셔너리구조
     private Dictionary<int, TowerStats>      m_baseTowerStats  = new Dictionary<int, TowerStats>();
     private float m_sharedDarknessAbilityValue;
@@ -53,6 +55,10 @@ public class TowerManager : MonoBehaviour
     private Dictionary<int, List<TowerData>> m_towerEmblem       = new Dictionary<int, List<TowerData>>();
 
     public event Action<int> OnTowerTypeUpgrade;
+    public event Action<int> CurrentCreateTowerValueChanged;
+    public event Action<int> CurrentColorUpgradeValueChanged;
+    public event Action<int> CurrentTierUpgradeValueChanged;
+    public event Action<TowerController> TowerTierUpgraded;
 
     private sealed class SynergyDefinition
     {
@@ -83,7 +89,7 @@ public class TowerManager : MonoBehaviour
     {
         public TowerController Controller;
         public TowerData Data;
-        public Vector3Int Cell;
+        public int SpawnIndex;
     }
 
     // 시너지 기획.txt 순서. 각 항목은 4티어 이상 재료 문양을 모두 보유하면 생성된다.
@@ -295,9 +301,9 @@ public class TowerManager : MonoBehaviour
 
         List<TowerData> buildableTowers = m_towerTier[1];
 
-        Vector3Int? emptyCell = GetFirstEmptyCell();
-
-        if (emptyCell.HasValue)
+        TileManager tileManager = TileManager.Instance;
+        if (tileManager != null && tileManager.TryGetFirstEmptyTowerSpawnIndex(out int spawnIndex) &&
+            tileManager.TryGetTowerSpawnWorldPosition(spawnIndex, out Vector3 spawnPos))
         {
             int randomIndex = UnityEngine.Random.Range(0, buildableTowers.Count);
             TowerData selectedData = buildableTowers[randomIndex];
@@ -307,8 +313,6 @@ public class TowerManager : MonoBehaviour
                 Debug.LogError($"타워 데이터 {selectedData.towerName}에 할당된 프리팹이 없습니다.");
                 return;
             }
-
-            Vector3 spawnPos = CellToWorld(emptyCell.Value);
 
             GameObject spawnedTower = Instantiate(selectedData.towerPrefab, spawnPos, Quaternion.identity);
             TowerController towerController = spawnedTower.GetComponent<TowerController>();
@@ -320,11 +324,16 @@ public class TowerManager : MonoBehaviour
                 return;
             }
 
+            if (!tileManager.TryPlaceTowerAt(spawnIndex, towerController))
+            {
+                Destroy(spawnedTower);
+                return;
+            }
             towerController.Init(selectedData, GetGlobalStats(selectedData.towerID));
-            m_towersOnGrid.Add(emptyCell.Value, towerController);
 
             CurrencyManager.Instance.SpendGold(BuildCost);
             if (BuildCost < 300) BuildCost += 2;
+            CurrentCreateTowerValueChanged?.Invoke(BuildCost);
             EvaluateSynergyTowers();
         }
         else
@@ -333,36 +342,6 @@ public class TowerManager : MonoBehaviour
         }
     }
 
-    private Vector3Int? GetFirstEmptyCell()
-    {
-        BoundsInt bounds = m_spawnPoint.cellBounds;
-
-        // 위(Y 최대치)에서 아래로, 왼쪽(X 최소치)에서 오른쪽으로 순차 탐색
-        for (int y = bounds.yMax - 1; y >= bounds.yMin; y--)
-        {
-            for (int x = bounds.xMin; x < bounds.xMax; x++)
-            {
-                Vector3Int pos = new Vector3Int(x, y, 0);
-
-                // 타일맵에 타일이 존재하고, 현재 타워가 배치되어 있지 않은 첫 자리
-                if (m_spawnPoint.HasTile(pos) && !m_towersOnGrid.ContainsKey(pos))
-                {
-                    return pos; // 발견 즉시 반환 (조기 종료)
-                }
-            }
-        }
-
-        return null; // 모든 자리가 가득 찬 경우
-    }
-
-    private Vector3 CellToWorld(Vector3Int cell)
-    {
-        return m_spawnPoint.GetCellCenterWorld(cell);
-    }
-    public Vector3Int WorldToCell(Vector3 worldPos)
-    {
-        return m_spawnPoint.WorldToCell(worldPos);
-    }
 
     public int GetBuildCost()
     {
@@ -384,9 +363,9 @@ public class TowerManager : MonoBehaviour
     /// </summary>
     public void BeginEnemyTurnForTowers()
     {
-        List<KeyValuePair<Vector3Int, TowerController>> orderedTowers = GetOrderedTowers();
+        List<KeyValuePair<int, TowerController>> orderedTowers = GetOrderedTowers();
         TileManager.Instance?.AdvanceTowerBuffEffectTurns();
-        foreach (KeyValuePair<Vector3Int, TowerController> tower in orderedTowers)
+        foreach (KeyValuePair<int, TowerController> tower in orderedTowers)
         {
             tower.Value?.AdvanceBuffTurn();
             tower.Value?.AdvanceFireStatusTurn();
@@ -396,8 +375,8 @@ public class TowerManager : MonoBehaviour
     /// <summary>Support towers act before enemies read path effects this turn.</summary>
     public IEnumerator ExecuteSupportTowerActionTurnRoutine()
     {
-        List<KeyValuePair<Vector3Int, TowerController>> orderedTowers = GetOrderedTowers();
-        foreach (KeyValuePair<Vector3Int, TowerController> tower in orderedTowers)
+        List<KeyValuePair<int, TowerController>> orderedTowers = GetOrderedTowers();
+        foreach (KeyValuePair<int, TowerController> tower in orderedTowers)
         {
             TowerController controller = tower.Value;
             TowerData data = controller != null ? controller.GetTowerData() : null;
@@ -408,7 +387,7 @@ public class TowerManager : MonoBehaviour
 
         // A Fire field is only a delivery record.  Each target reads it once here,
         // after all support towers have placed their effects.
-        foreach (KeyValuePair<Vector3Int, TowerController> tower in orderedTowers)
+        foreach (KeyValuePair<int, TowerController> tower in orderedTowers)
         {
             tower.Value?.RefreshFireTileStatus();
         }
@@ -418,8 +397,8 @@ public class TowerManager : MonoBehaviour
     /// <summary>Damage towers act after support and tile effects have resolved.</summary>
     public IEnumerator ExecuteAttackTowerActionTurnRoutine()
     {
-        List<KeyValuePair<Vector3Int, TowerController>> orderedTowers = GetOrderedTowers();
-        foreach (KeyValuePair<Vector3Int, TowerController> tower in orderedTowers)
+        List<KeyValuePair<int, TowerController>> orderedTowers = GetOrderedTowers();
+        foreach (KeyValuePair<int, TowerController> tower in orderedTowers)
         {
             TowerController controller = tower.Value;
             TowerData data = controller != null ? controller.GetTowerData() : null;
@@ -443,15 +422,9 @@ public class TowerManager : MonoBehaviour
         }
     }
 
-    private List<KeyValuePair<Vector3Int, TowerController>> GetOrderedTowers()
+    private List<KeyValuePair<int, TowerController>> GetOrderedTowers()
     {
-        List<KeyValuePair<Vector3Int, TowerController>> orderedTowers = new List<KeyValuePair<Vector3Int, TowerController>>(m_towersOnGrid);
-        orderedTowers.Sort((left, right) =>
-        {
-            int rowComparison = right.Key.y.CompareTo(left.Key.y);
-            return rowComparison != 0 ? rowComparison : left.Key.x.CompareTo(right.Key.x);
-        });
-        return orderedTowers;
+        return GetPlacedTowers();
     }
 
     /// <summary>
@@ -460,17 +433,17 @@ public class TowerManager : MonoBehaviour
     /// </summary>
     public IEnumerator ExecuteTowerActionTurnRoutine()
     {
-        List<KeyValuePair<Vector3Int, TowerController>> orderedTowers = GetOrderedTowers();
+        List<KeyValuePair<int, TowerController>> orderedTowers = GetOrderedTowers();
 
         // 이번 에너미 턴이 시작되었으므로, 기존 버프의 남은 턴을 먼저 차감합니다.
         // 버프 타워가 기록한 타일 효과도 같은 턴 규칙으로 함께 갱신합니다.
         TileManager.Instance?.AdvanceTowerBuffEffectTurns();
-        foreach (KeyValuePair<Vector3Int, TowerController> tower in orderedTowers)
+        foreach (KeyValuePair<int, TowerController> tower in orderedTowers)
         {
             tower.Value?.AdvanceBuffTurn();
         }
 
-        foreach (KeyValuePair<Vector3Int, TowerController> tower in orderedTowers)
+        foreach (KeyValuePair<int, TowerController> tower in orderedTowers)
         {
             TowerController controller = tower.Value;
             if (controller == null) continue;
@@ -501,13 +474,13 @@ public class TowerManager : MonoBehaviour
     // ================================================ 타워판매 ================================================
     // ==========================================================================================================
 
-    public void SellTower(Vector3Int cell)
+    public void SellTower(int spawnIndex)
     {
         if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
+        if (TileManager.Instance == null) return;
 
-        if (m_towersOnGrid.TryGetValue(cell, out TowerController tower))
+        if (TileManager.Instance.TryGetTowerData(spawnIndex, out TowerController tower, out TowerData towerData))
         {
-            TowerData towerData = tower != null ? tower.GetTowerData() : null;
             int soldTier = towerData != null ? towerData.Tier : 0;
             if (tower != null)
             {
@@ -517,13 +490,14 @@ public class TowerManager : MonoBehaviour
                 }
                 else
                 {
-                    tower.transform.position = CellToWorld(cell);
+                    if (TileManager.Instance.TryGetTowerSpawnWorldPosition(spawnIndex, out Vector3 position))
+                        tower.transform.position = position;
                     Debug.Log("시너지 타워는 판매할 수 없습니다.");
                     return;
                 }
             }
 
-            m_towersOnGrid.Remove(cell);
+            TileManager.Instance.RemoveTowerAt(spawnIndex);
 
             if (soldTier > 0)
             {
@@ -532,12 +506,6 @@ public class TowerManager : MonoBehaviour
             }
             EvaluateSynergyTowers();
         }
-    }
-
-    /// <summary>UI가 타워 스폰 타일의 현재 타워를 안전하게 조회할 때 사용합니다.</summary>
-    public bool TryGetTowerAt(Vector3Int cell, out TowerController tower)
-    {
-        return m_towersOnGrid.TryGetValue(cell, out tower) && tower != null;
     }
 
     // ==========================================================================================================
@@ -561,20 +529,21 @@ public class TowerManager : MonoBehaviour
     /// 선택한 셀의 타워를 다음 티어의 같은 색상/문양 ID 타워로 교체합니다.
     /// 예: 1234 → 2234
     /// </summary>
-    public bool UpgradeTowerTier(Vector3Int targetCell, out TowerController upgradedTower)
+    public bool UpgradeTowerTier(int spawnIndex, out TowerController upgradedTower)
     {
         upgradedTower = null;
 
         if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return false;
+        if (TileManager.Instance == null) return false;
 
-        if (!m_towersOnGrid.TryGetValue(targetCell, out TowerController currentTower) || currentTower == null)
+        if (!TileManager.Instance.TryGetTowerData(spawnIndex, out TowerController currentTower, out TowerData currentData))
         {
             Debug.LogWarning("티어 강화할 타워를 찾을 수 없습니다.");
             return false;
         }
 
-        TowerData currentData = currentTower.GetTowerData();
         TargetPriority previousTargetPriority = currentTower.GetTargetPriority();
+        bool hadDebuffZone = currentTower.TryGetDebuffZoneIndex(out int previousZoneIndex);
         if (currentData == null)
         {
             Debug.LogWarning("티어 강화할 타워 데이터가 없습니다.");
@@ -603,7 +572,7 @@ public class TowerManager : MonoBehaviour
             return false;
         }
 
-        Vector3 spawnPosition = currentTower.transform.position;
+        if (!TileManager.Instance.TryGetTowerSpawnWorldPosition(spawnIndex, out Vector3 spawnPosition)) return false;
         GameObject spawnedTower = Instantiate(upgradedData.towerPrefab, spawnPosition, Quaternion.identity);
         upgradedTower = spawnedTower.GetComponent<TowerController>();
         if (upgradedTower == null)
@@ -613,14 +582,19 @@ public class TowerManager : MonoBehaviour
             return false;
         }
 
+        upgradedTower.InheritCreationOrder(currentTower.CreationOrder);
+        TileManager.Instance.SetTowerAt(spawnIndex, upgradedTower);
         upgradedTower.Init(upgradedData, GetGlobalStats(upgradedData.towerID));
         upgradedTower.SetTargetPriority(previousTargetPriority);
+        if (hadDebuffZone) upgradedTower.TrySetDebuffZoneIndex(previousZoneIndex);
 
         Destroy(currentTower.gameObject);
-        m_towersOnGrid[targetCell] = upgradedTower;
 
         CurrencyManager.Instance.SpendGem(upgradeCost);
         EvaluateSynergyTowers();
+        // 교체된 타워와 그 타워의 다음 강화 비용을 구독자에게 알립니다.
+        TowerTierUpgraded?.Invoke(upgradedTower);
+        CurrentTierUpgradeValueChanged?.Invoke(GetTierUpgradeCost(upgradedData.towerID));
         return true;
     }
 
@@ -632,8 +606,8 @@ public class TowerManager : MonoBehaviour
     {
         if (completedWave <= 0 || completedWave % 3 != 0) return;
 
-        List<KeyValuePair<Vector3Int, TowerController>> earthTowers = new List<KeyValuePair<Vector3Int, TowerController>>();
-        foreach (KeyValuePair<Vector3Int, TowerController> pair in m_towersOnGrid)
+        List<KeyValuePair<int, TowerController>> earthTowers = new List<KeyValuePair<int, TowerController>>();
+        foreach (KeyValuePair<int, TowerController> pair in GetPlacedTowers())
         {
             TowerData data = pair.Value != null ? pair.Value.GetTowerData() : null;
             if (data != null && data.attackType == AttackType.Buff && data.buffTarget == BuffTarget.Earth)
@@ -642,29 +616,29 @@ public class TowerManager : MonoBehaviour
             }
         }
 
-        foreach (KeyValuePair<Vector3Int, TowerController> earthTower in earthTowers)
+        bool upgradedAnyTower = false;
+        foreach (KeyValuePair<int, TowerController> earthTower in earthTowers)
         {
-            if (!m_towersOnGrid.TryGetValue(earthTower.Key, out TowerController liveTower) || liveTower == null) continue;
+            if (!TileManager.Instance.TryGetTowerInfo(earthTower.Key, out TowerController liveTower, out TowerData earthData, out TowerStats earthStats)) continue;
 
-            TowerData earthData = liveTower.GetTowerData();
+            if (earthData == null) continue;
             int earthTier = earthData.Tier;
             if (earthTier == 1)
             {
-                UpgradeTowerTierWithoutCost(earthTower.Key);
+                upgradedAnyTower |= UpgradeTowerTierWithoutCost(earthTower.Key);
                 continue;
             }
 
-            int tileRange = TowerAttackAction.ToTileRange(liveTower.GetFinalStats().Range);
-            List<Vector3Int> candidates = new List<Vector3Int>();
+            int tileRange = TowerAttackAction.ToTileRange(earthStats.Range);
+            List<int> candidates = new List<int>();
 
-            foreach (KeyValuePair<Vector3Int, TowerController> candidate in m_towersOnGrid)
+            foreach (KeyValuePair<int, TowerController> candidate in GetPlacedTowers())
             {
                 if (candidate.Key == earthTower.Key || candidate.Value == null) continue;
-                TowerData candidateData = candidate.Value.GetTowerData();
-                if (candidateData == null || candidateData.Tier >= earthTier || candidateData.Tier >= 5) continue;
+                if (!TileManager.Instance.TryGetTowerData(candidate.Key, out _, out TowerData candidateData)) continue;
+                if (candidateData.Tier >= earthTier || candidateData.Tier >= 5) continue;
 
-                if (Mathf.Abs(candidate.Key.x - earthTower.Key.x) <= tileRange &&
-                    Mathf.Abs(candidate.Key.y - earthTower.Key.y) <= tileRange)
+                if (TileManager.Instance.AreTowerSpawnIndicesWithinRange(earthTower.Key, candidate.Key, tileRange))
                 {
                     candidates.Add(candidate.Key);
                 }
@@ -672,24 +646,27 @@ public class TowerManager : MonoBehaviour
 
             if (candidates.Count > 0)
             {
-                UpgradeTowerTierWithoutCost(candidates[UnityEngine.Random.Range(0, candidates.Count)]);
+                upgradedAnyTower |= UpgradeTowerTierWithoutCost(candidates[UnityEngine.Random.Range(0, candidates.Count)]);
             }
         }
+
+        if (upgradedAnyTower) EvaluateSynergyTowers();
     }
 
-    private bool UpgradeTowerTierWithoutCost(Vector3Int targetCell)
+    private bool UpgradeTowerTierWithoutCost(int spawnIndex)
     {
-        if (!m_towersOnGrid.TryGetValue(targetCell, out TowerController currentTower) || currentTower == null) return false;
+        if (TileManager.Instance == null ||
+            !TileManager.Instance.TryGetTowerData(spawnIndex, out TowerController currentTower, out TowerData currentData)) return false;
 
-        TowerData currentData = currentTower.GetTowerData();
         TargetPriority previousTargetPriority = currentTower.GetTargetPriority();
+        bool hadDebuffZone = currentTower.TryGetDebuffZoneIndex(out int previousZoneIndex);
         if (currentData == null || currentData.Tier >= 5) return false;
 
         int upgradedTowerID = currentData.NextTierTowerID;
         m_towerDataById.TryGetValue(upgradedTowerID, out TowerData upgradedData);
         if (upgradedData == null || upgradedData.towerPrefab == null) return false;
 
-        Vector3 spawnPosition = currentTower.transform.position;
+        if (!TileManager.Instance.TryGetTowerSpawnWorldPosition(spawnIndex, out Vector3 spawnPosition)) return false;
         GameObject spawnedTower = Instantiate(upgradedData.towerPrefab, spawnPosition, Quaternion.identity);
         TowerController upgradedTower = spawnedTower.GetComponent<TowerController>();
         if (upgradedTower == null)
@@ -698,19 +675,20 @@ public class TowerManager : MonoBehaviour
             return false;
         }
 
+        upgradedTower.InheritCreationOrder(currentTower.CreationOrder);
+        TileManager.Instance.SetTowerAt(spawnIndex, upgradedTower);
         upgradedTower.Init(upgradedData, GetGlobalStats(upgradedData.towerID));
         upgradedTower.SetTargetPriority(previousTargetPriority);
+        if (hadDebuffZone) upgradedTower.TrySetDebuffZoneIndex(previousZoneIndex);
         Destroy(currentTower.gameObject);
-        m_towersOnGrid[targetCell] = upgradedTower;
-        EvaluateSynergyTowers();
         return true;
     }
 
     public void RefreshBuffOnAllTowers(BuffTarget target)
     {
-        foreach (TowerController tower in m_towersOnGrid.Values)
+        foreach (KeyValuePair<int, TowerController> placed in GetPlacedTowers())
         {
-            tower?.RefreshExternalBuff(target);
+            placed.Value?.RefreshExternalBuff(target);
         }
     }
 
@@ -751,7 +729,7 @@ public class TowerManager : MonoBehaviour
             return;
         }
 
-        int currentUpgradeGemCost = (int)Mathf.Pow(2, currentStats.Level);
+        int currentUpgradeGemCost = GetColorUpgradeCost(towerID);
 
         if (!CurrencyManager.Instance.HasEnoughGem(currentUpgradeGemCost))
         {
@@ -785,37 +763,50 @@ public class TowerManager : MonoBehaviour
             }
         }
         // 2. 필드에 배치된 해당 타입 타워들에게 최신 스탯 주입(Push)
-        foreach (TowerController tower in m_towersOnGrid.Values)
+        foreach (KeyValuePair<int, TowerController> placed in GetPlacedTowers())
         {
+            TowerController tower = placed.Value;
             TowerData towerData = tower != null ? tower.GetTowerData() : null;
             if (towerData != null && towerData.ColorId == targetColor)
             {
                 tower.UpdateBaseStats(m_baseTowerStats[towerData.towerID]);
             }
         }
+
+        // 레벨이 오른 뒤의 다음 강화 비용을 구독자에게 알립니다.
+        CurrentColorUpgradeValueChanged?.Invoke(GetColorUpgradeCost(towerID));
+    }
+
+    /// <summary>
+    /// 같은 색상 타워 전체의 레벨을 한 단계 올리는 데 필요한 젬 비용을 반환합니다.
+    /// 1→2: 2, 2→3: 4, 3→4: 8, 4→5: 16. 최대 레벨이거나 데이터가 없으면 0입니다.
+    /// </summary>
+    public int GetColorUpgradeCost(int towerID)
+    {
+        if (!m_baseTowerStats.TryGetValue(towerID, out TowerStats stats) || stats.Level >= 5) return 0;
+
+        return (int)Mathf.Pow(2, stats.Level);
     }
 
     // ==========================================================================================================
     // ================================================ 타워합성 =================================================
     // ==========================================================================================================
 
-    public bool CanCombine(Vector3Int targetCell, CombineMode mode)
+    public bool CanCombine(int targetIndex, CombineMode mode)
     {
-        if (!m_towersOnGrid.TryGetValue(targetCell, out TowerController targetTower) || targetTower == null) return false;
-        TowerData targetData = targetTower.GetTowerData();
-        if (targetData == null) return false;
+        if (TileManager.Instance == null) return false;
+        if (!TileManager.Instance.TryGetTowerData(targetIndex, out _, out TowerData targetData)) return false;
 
         if (targetData.Tier >= 5) return false;
 
         int matchCount = 0;
 
-        foreach (var kvp in m_towersOnGrid)
+        foreach (var kvp in GetPlacedTowers())
         {
-            if (kvp.Key == targetCell) continue;
+            if (kvp.Key == targetIndex) continue;
 
-            TowerController candidate = kvp.Value;
-            TowerData candidateData = candidate != null ? candidate.GetTowerData() : null;
-            if (candidateData == null || candidateData.Tier != targetData.Tier) continue;
+            if (!TileManager.Instance.TryGetTowerData(kvp.Key, out _, out TowerData candidateData) ||
+                candidateData.Tier != targetData.Tier) continue;
 
             if (mode == CombineMode.ExactMatch && candidateData.ColorId == targetData.ColorId && candidateData.EmblemId == targetData.EmblemId) matchCount++;
             else if (mode == CombineMode.ColorMatch && candidateData.ColorId == targetData.ColorId) matchCount++;
@@ -827,23 +818,22 @@ public class TowerManager : MonoBehaviour
         return false;
     }
 
-    public void ExecuteCombine(Vector3Int targetCell, CombineMode mode)
+    public void ExecuteCombine(int targetIndex, CombineMode mode)
     {
         if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
+        if (TileManager.Instance == null) return;
 
-        if (!CanCombine(targetCell, mode)) return;
+        if (!CanCombine(targetIndex, mode)) return;
 
-        TowerController targetTower = m_towersOnGrid[targetCell];
-        TowerData targetData = targetTower.GetTowerData();
-        List<Vector3Int> extraMaterialCells = new List<Vector3Int>(2);
+        if (!TileManager.Instance.TryGetTowerData(targetIndex, out TowerController targetTower, out TowerData targetData)) return;
+        List<int> extraMaterialIndices = new List<int>(2);
 
-        foreach (var kvp in m_towersOnGrid)
+        foreach (var kvp in GetPlacedTowers())
         {
-            if (kvp.Key == targetCell) continue;
+            if (kvp.Key == targetIndex) continue;
 
-            TowerController candidate = kvp.Value;
-            TowerData candidateData = candidate != null ? candidate.GetTowerData() : null;
-            if (candidateData == null || candidateData.Tier != targetData.Tier) continue;
+            if (!TileManager.Instance.TryGetTowerData(kvp.Key, out _, out TowerData candidateData) ||
+                candidateData.Tier != targetData.Tier) continue;
 
             bool isMatch = false;
             if (mode == CombineMode.ExactMatch && candidateData.ColorId == targetData.ColorId && candidateData.EmblemId == targetData.EmblemId) isMatch = true;
@@ -852,8 +842,8 @@ public class TowerManager : MonoBehaviour
 
             if (isMatch)
             {
-                extraMaterialCells.Add(kvp.Key);
-                if (extraMaterialCells.Count == 2) break;
+                extraMaterialIndices.Add(kvp.Key);
+                if (extraMaterialIndices.Count == 2) break;
             }
         }
 
@@ -865,25 +855,29 @@ public class TowerManager : MonoBehaviour
             return;
         }
 
-        Vector3 spawnPos = targetTower.transform.position;
-
-        m_towersOnGrid.Remove(targetCell);
-        Destroy(targetTower.gameObject);
-
-        for (int i = 0; i < extraMaterialCells.Count; i++)
-        {
-            Vector3Int matCell = extraMaterialCells[i];
-            TowerController materialTower = m_towersOnGrid[matCell];
-
-            m_towersOnGrid.Remove(matCell);
-            Destroy(materialTower.gameObject);
-        }
+        if (!TileManager.Instance.TryGetTowerSpawnWorldPosition(targetIndex, out Vector3 spawnPos)) return;
 
         GameObject spawnedTower = Instantiate(resultData.towerPrefab, spawnPos, Quaternion.identity);
         TowerController newTowerController = spawnedTower.GetComponent<TowerController>();
-        newTowerController.Init(resultData, GetGlobalStats(resultData.towerID));
+        if (newTowerController == null)
+        {
+            Debug.LogError($"[TowerManager] 합성 결과 프리팹에 TowerController가 없습니다: {resultData.towerName}");
+            Destroy(spawnedTower);
+            return;
+        }
 
-        m_towersOnGrid[targetCell] = newTowerController;
+        TileManager.Instance.RemoveTowerAt(targetIndex);
+        Destroy(targetTower.gameObject);
+        for (int i = 0; i < extraMaterialIndices.Count; i++)
+        {
+            int materialIndex = extraMaterialIndices[i];
+            if (!TileManager.Instance.TryGetTowerAt(materialIndex, out TowerController materialTower)) continue;
+
+            TileManager.Instance.RemoveTowerAt(materialIndex);
+            Destroy(materialTower.gameObject);
+        }
+        TileManager.Instance.SetTowerAt(targetIndex, newTowerController);
+        newTowerController.Init(resultData, GetGlobalStats(resultData.towerID));
         EvaluateSynergyTowers();
     }
 
@@ -931,7 +925,7 @@ public class TowerManager : MonoBehaviour
     private HashSet<int> GetSynergyMaterialEmblems()
     {
         HashSet<int> activeEmblems = new HashSet<int>();
-        foreach (KeyValuePair<Vector3Int, TowerController> pair in m_towersOnGrid)
+        foreach (KeyValuePair<int, TowerController> pair in GetPlacedTowers())
         {
             TowerController tower = pair.Value;
             TowerData towerData = tower != null ? tower.GetTowerData() : null;
@@ -949,7 +943,7 @@ public class TowerManager : MonoBehaviour
     /// </summary>
     private void EvaluateSynergyTowers()
     {
-        if (m_towerBasePrefab == null || m_spawnPoint == null) return;
+        if (m_towerBasePrefab == null || TileManager.Instance == null || TileManager.Instance.TowerSpawnTilemap == null) return;
 
         HashSet<int> activeEmblems = GetSynergyMaterialEmblems();
         for (int i = 0; i < s_synergyDefinitions.Length; i++)
@@ -972,15 +966,16 @@ public class TowerManager : MonoBehaviour
 
     private bool TrySpawnSynergyTower(SynergyDefinition definition)
     {
-        Vector3Int? cell = GetFirstEmptyCell();
-        if (!cell.HasValue)
+        TileManager tileManager = TileManager.Instance;
+        if (tileManager == null || !tileManager.TryGetFirstEmptyTowerSpawnIndex(out int spawnIndex) ||
+            !tileManager.TryGetTowerSpawnWorldPosition(spawnIndex, out Vector3 spawnPosition))
         {
             Debug.LogWarning($"[시너지] {definition.Name} 생성 공간이 없습니다.");
             return false;
         }
 
         TowerData data = CreateSynergyTowerData(definition);
-        GameObject spawnedTower = Instantiate(data.towerPrefab, CellToWorld(cell.Value), Quaternion.identity);
+        GameObject spawnedTower = Instantiate(data.towerPrefab, spawnPosition, Quaternion.identity);
         TowerController controller = spawnedTower.GetComponent<TowerController>();
         if (controller == null)
         {
@@ -990,13 +985,18 @@ public class TowerManager : MonoBehaviour
             return false;
         }
 
+        if (!tileManager.TryPlaceTowerAt(spawnIndex, controller))
+        {
+            Destroy(spawnedTower);
+            Destroy(data);
+            return false;
+        }
         controller.Init(data, data.ToTowerStats());
-        m_towersOnGrid[cell.Value] = controller;
         m_activeSynergyTowers[definition.TowerID] = new ActiveSynergyTower
         {
             Controller = controller,
             Data = data,
-            Cell = cell.Value
+            SpawnIndex = spawnIndex
         };
 
         Debug.Log($"[시너지] {definition.Name} 조건 달성: 생성 전용 시너지 타워를 배치했습니다.");
@@ -1030,9 +1030,10 @@ public class TowerManager : MonoBehaviour
     {
         if (active != null)
         {
-            if (m_towersOnGrid.TryGetValue(active.Cell, out TowerController tower) && tower == active.Controller)
+            if (TileManager.Instance != null &&
+                TileManager.Instance.TryGetTowerAt(active.SpawnIndex, out TowerController tower) && tower == active.Controller)
             {
-                m_towersOnGrid.Remove(active.Cell);
+                TileManager.Instance.RemoveTowerAt(active.SpawnIndex);
             }
 
             if (active.Controller != null) Destroy(active.Controller.gameObject);
@@ -1041,66 +1042,45 @@ public class TowerManager : MonoBehaviour
         m_activeSynergyTowers.Remove(towerID);
     }
 
-    public void MoveTowerOnGrid(Vector3Int fromCell, Vector3Int toCell)
+    public void MoveTowerOnGrid(int fromIndex, int toIndex)
     {
         if (GameManager.Instance != null && !GameManager.Instance.CanPerformPlayerAction) return;
+        TileManager tileManager = TileManager.Instance;
+        if (tileManager == null || !tileManager.TryGetTowerData(fromIndex, out TowerController movingTower, out TowerData movingData) ||
+            !tileManager.TryGetTowerSpawnWorldPosition(fromIndex, out Vector3 fromPosition)) return;
 
-        // 1. 이동시킬 타워가 딕셔너리에 존재하는지 확인
-        if (!m_towersOnGrid.TryGetValue(fromCell, out TowerController movingTower) || movingTower == null) return;
-
-        // 시너지 타워는 일반 타일에 있어도 드래그/교환 대상이 아니다.
-        TowerData movingData = movingTower.GetTowerData();
-        if (movingData == null) return;
-        if (movingData.Tier >= 6)
+        // 시너지 타워는 이동·교환하지 않습니다. 유효하지 않은 칸에 놓아도 원위치로 복구합니다.
+        if (movingData.Tier >= 6 || fromIndex == toIndex ||
+            !tileManager.TryGetTowerSpawnWorldPosition(toIndex, out Vector3 toPosition))
         {
-            movingTower.transform.position = CellToWorld(fromCell);
-            return;
-        }
-
-        // 2. 모든 타워는 일반 타워 타일맵을 사용한다.
-        Tilemap originTilemap = m_spawnPoint;
-
-        // 3. [핵심] 제자리 드롭이거나 목적지가 유효하지 않은 경우 원위치 복귀
-        if (fromCell == toCell || !originTilemap.HasTile(toCell))
-        {
-            movingTower.transform.position = originTilemap.GetCellCenterWorld(fromCell);
-
-            // 디버프존 기준 위치 원위치 동기화
+            movingTower.transform.position = fromPosition;
             movingTower.OnMovedToNewPosition();
             return;
         }
 
-        // 4. 타겟 위치에 다른 타워가 있다면 서로 자리 교환 (Swap)
-        if (m_towersOnGrid.TryGetValue(toCell, out TowerController targetTower))
+        if (tileManager.TryGetTowerData(toIndex, out TowerController targetTower, out TowerData targetData))
         {
-            // 시너지 타워가 있는 칸에는 일반 타워를 놓거나 교환할 수 없다.
-            TowerData targetData = targetTower != null ? targetTower.GetTowerData() : null;
-            if (targetData == null || targetData.Tier >= 6)
+            if (targetData.Tier >= 6 || !tileManager.TrySwapTowers(fromIndex, toIndex))
             {
-                movingTower.transform.position = originTilemap.GetCellCenterWorld(fromCell);
+                movingTower.transform.position = fromPosition;
                 movingTower.OnMovedToNewPosition();
                 return;
             }
 
-            m_towersOnGrid[fromCell] = targetTower;
-            m_towersOnGrid[toCell] = movingTower;
-
-            movingTower.transform.position = originTilemap.GetCellCenterWorld(toCell);
-            targetTower.transform.position = originTilemap.GetCellCenterWorld(fromCell);
-
-            // 두 타워 모두 디버프존 기준 위치 갱신
+            movingTower.transform.position = toPosition;
+            targetTower.transform.position = fromPosition;
             movingTower.OnMovedToNewPosition();
             targetTower.OnMovedToNewPosition();
             return;
         }
 
-        // 5. 빈 공간으로 이동
-        m_towersOnGrid.Remove(fromCell);
-        m_towersOnGrid[toCell] = movingTower;
+        if (!tileManager.TryMoveTower(fromIndex, toIndex))
+        {
+            movingTower.transform.position = fromPosition;
+            return;
+        }
 
-        movingTower.transform.position = originTilemap.GetCellCenterWorld(toCell);
-
-        // 이동 완료된 타워의 디버프존 기준 위치 갱신
+        movingTower.transform.position = toPosition;
         movingTower.OnMovedToNewPosition();
     }
     // ==========================================================================================================
@@ -1157,10 +1137,10 @@ public class TowerManager : MonoBehaviour
         }
 
         // 3. 빈 공간 찾아서 생성 (일반 스폰 포인트 사용)
-        Vector3Int? emptyCell = GetFirstEmptyCell();
-        if (emptyCell.HasValue)
+        TileManager tileManager = TileManager.Instance;
+        if (tileManager != null && tileManager.TryGetFirstEmptyTowerSpawnIndex(out int spawnIndex) &&
+            tileManager.TryGetTowerSpawnWorldPosition(spawnIndex, out Vector3 spawnPos))
         {
-            Vector3 spawnPos = CellToWorld(emptyCell.Value);
             GameObject spawnedTower = Instantiate(targetData.towerPrefab, spawnPos, Quaternion.identity);
             TowerController towerController = spawnedTower.GetComponent<TowerController>();
 
@@ -1171,8 +1151,12 @@ public class TowerManager : MonoBehaviour
                 return;
             }
 
+            if (!tileManager.TryPlaceTowerAt(spawnIndex, towerController))
+            {
+                Destroy(spawnedTower);
+                return;
+            }
             towerController.Init(targetData, GetGlobalStats(targetData.towerID));
-            m_towersOnGrid.Add(emptyCell.Value, towerController);
             Debug.Log($"[치트] 성공! {targetData.towerName} (ID: {towerID}) 타워가 소환되었습니다!");
             EvaluateSynergyTowers();
         }
@@ -1198,11 +1182,4 @@ public class TowerManager : MonoBehaviour
         return m_towerData;
     }
     
-    /// <summary>
-     /// TileManager가 타워 스폰 타일맵의 색상을 변경할 수 있도록 타일맵 참조를 반환합니다.
-     /// </summary>
-    public Tilemap GetSpawnPointTilemap()
-    {
-        return m_spawnPoint;
-    }
 }

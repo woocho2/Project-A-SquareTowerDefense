@@ -50,8 +50,7 @@ public sealed class EnemyTurnState : GameTurnStateBase
     public override void Enter(GameManager gameManager)
     {
         // 턴 전환 순간 진행 중이던 드래그를 취소해 적 턴에 행동이 이어지는 일을 막습니다.
-        DragObjectOnGround.CancelAllInteractions();
-        DebuffZone.CancelAllInteractions();
+        BoardInputController.CancelAllInteractions();
 
         // 정보 확인 UI는 숨기지 않습니다.
         UIManager.Instance?.SetPlayerActionUI(false);
@@ -64,8 +63,7 @@ public sealed class GameOverTurnState : GameTurnStateBase
 
     public override void Enter(GameManager gameManager)
     {
-        DragObjectOnGround.CancelAllInteractions();
-        DebuffZone.CancelAllInteractions();
+        BoardInputController.CancelAllInteractions();
         UIManager.Instance?.SetPlayerActionUI(false);
     }
 }
@@ -76,8 +74,7 @@ public sealed class GameClearTurnState : GameTurnStateBase
 
     public override void Enter(GameManager gameManager)
     {
-        DragObjectOnGround.CancelAllInteractions();
-        DebuffZone.CancelAllInteractions();
+        BoardInputController.CancelAllInteractions();
         UIManager.Instance?.SetPlayerActionUI(false);
     }
 }

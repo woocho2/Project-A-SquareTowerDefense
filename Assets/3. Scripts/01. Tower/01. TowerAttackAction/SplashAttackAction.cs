@@ -19,39 +19,28 @@ public class SplashAttackAction : TowerAttackAction
     {
         if (towerTransform == null || projectiles == null || projectiles.Count == 0) return false;
 
+        int towerSpawnIndex = GetTowerSpawnIndex(towerTransform);
         if (!TryFindTarget(
-                towerTransform.position,
+                towerSpawnIndex,
                 finalStats.Range,
-                m_data.targetLayer,
-                out EnemyHealthController targetEnemy,
+                out _,
+                out int targetPathIndex,
                 CurrentTargetPriority))
         {
             CancelProjectiles(projectiles);
             return false;
         }
 
-        // 에너미의 진형상 시각 위치가 아니라, 에너미가 등록된 패스 타일의 정중앙을 착탄점으로 사용합니다.
+        // 에너미의 진형상 시각 위치가 아니라, 에너미가 등록된 패스 타일 인덱스를 착탄점으로 사용합니다.
         // 따라서 같은 타일에 여러 적이 흩어져 있어도 광역 공격은 항상 해당 타일 중앙에 떨어집니다.
-        Vector3 targetPosition = GetTargetTileCenter(targetEnemy);
         for (int i = 0; i < projectiles.Count; i++)
         {
             ProjectileHit2D projectile = projectiles[i];
             if (projectile == null) continue;
-            ConfigureAndLaunch(projectile, towerTransform, targetPosition, finalStats);
+            ConfigureAndLaunch(projectile, towerTransform, towerSpawnIndex, targetPathIndex, finalStats);
         }
 
         return true;
-    }
-
-    private static Vector3 GetTargetTileCenter(EnemyHealthController targetEnemy)
-    {
-        if (targetEnemy != null && TilePath.Instance != null &&
-            targetEnemy.TryGetComponent(out EnemyMoveController movement))
-        {
-            return TilePath.Instance.GetWorldPosition(movement.CurrentTileIndex);
-        }
-
-        return targetEnemy != null ? targetEnemy.transform.position : Vector3.zero;
     }
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats finalStats)
@@ -67,19 +56,21 @@ public class SplashAttackAction : TowerAttackAction
     /// </summary>
     public bool LaunchFireMeteor(Transform towerTransform, TowerStats finalStats)
     {
-        if (towerTransform == null || TilePath.Instance == null) return false;
+        if (towerTransform == null || TileManager.Instance == null) return false;
 
-        List<Vector3> targetPositions = TilePath.Instance.GetPathWorldPositionsInRange(
-            towerTransform.position,
-            finalStats.Range);
+        int towerSpawnIndex = GetTowerSpawnIndex(towerTransform);
+        List<int> targetPathIndices = TileManager.Instance.GetPathIndicesInTowerRange(
+            towerSpawnIndex,
+            ToTileRange(finalStats.Range),
+            true);
         bool launchedAny = false;
 
-        for (int i = 0; i < targetPositions.Count; i++)
+        for (int i = 0; i < targetPathIndices.Count; i++)
         {
             ProjectileHit2D projectile = SpawnPreparedProjectile(towerTransform.position, 1f);
             if (projectile == null) continue;
 
-            ConfigureAndLaunch(projectile, towerTransform, targetPositions[i], finalStats, true);
+            ConfigureAndLaunch(projectile, towerTransform, towerSpawnIndex, targetPathIndices[i], finalStats, true);
             launchedAny = true;
         }
 
@@ -89,10 +80,18 @@ public class SplashAttackAction : TowerAttackAction
     private void ConfigureAndLaunch(
         ProjectileHit2D projectile,
         Transform towerTransform,
-        Vector3 targetPosition,
+        int towerSpawnIndex,
+        int targetPathIndex,
         TowerStats finalStats,
         bool isFireMeteor = false)
     {
+        if (TileManager.Instance == null ||
+            !TileManager.Instance.TryGetPathWorldPosition(targetPathIndex, out Vector3 targetPosition))
+        {
+            projectile.CancelPreparedProjectile();
+            return;
+        }
+
         Vector3 direction = (targetPosition - projectile.transform.position).normalized;
         if (direction.sqrMagnitude < 0.0001f) direction = Vector3.right;
 
@@ -103,8 +102,7 @@ public class SplashAttackAction : TowerAttackAction
 
         if (!isFireMeteor)
         {
-            float distanceRatio = Mathf.Clamp01(
-                Vector2.Distance(towerTransform.position, targetPosition) / Mathf.Max(0.01f, finalStats.Range));
+            float distanceRatio = GetTileDistanceRatio(towerSpawnIndex, targetPathIndex, finalStats.Range);
             calculatedDamage *= 1f + finalStats.DistanceDamageBonusPercent / 100f * distanceRatio;
         }
 
@@ -123,6 +121,7 @@ public class SplashAttackAction : TowerAttackAction
             criticalRate = finalStats.CriticalRate,
             criticalDamage = finalStats.CriticalDamage,
             SplashRadius = finalStats.ProjectileRadius,
+            targetPathIndex = targetPathIndex,
             additionalHitCount = 0,
             armorPenetrationPercent = finalStats.ArmorPenetrationPercent,
             iceAdditionalTargetCount = 0,

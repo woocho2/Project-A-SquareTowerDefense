@@ -1,8 +1,8 @@
 24. TowerDefense2 — 전체 스크립트 결합도와 호출 흐름 점검
 작성일: 2026-09-23
-대상: 현재 작업 폴더에 실제로 저장된 코드. 이전 대화의 계획이 아니라 현재 구현을 기준으로 함.
+대상: 2026-09-23 기준 정적 분석. 아래 완료 항목만 현재 코드와 대조해 정리함.
 목적: 코드를 어디서부터 읽어야 하는지, 무엇을 바꾸면 어디에 영향이 가는지 파악하기.
-작업 범위: 분석 및 이 문서 작성만 수행. C#·프리팹·씬·CSV는 수정하지 않음.
+작업 범위: 분석 문서. C#·프리팹·씬·CSV는 이 문서 정리 과정에서 수정하지 않음.
 
 ======================================================================
 0. 이 문서를 읽는 방법 / 조사 범위
@@ -30,6 +30,7 @@
 - 같은 파일의 enum/struct만 사용해도 그 파일을 참조한 것으로 집계됨.
   따라서 참조 수를 결합도의 점수나 버그 수로 읽으면 안 됨.
 - 본문 및 부록의 줄 번호는 작성 시점 기준. 코드 수정 후에는 메서드 이름으로 검색할 것.
+- 7~8장의 참조 수·파일 경로는 최초 조사 시점의 기록이며, 최근 리팩토링 후 재집계하지 않음.
 
 용어:
 - 나가는 참조: 이 파일이 알고 있는 다른 파일.
@@ -52,9 +53,8 @@ A. GameManager가 턴을 진행하지만, 종료 대기는 TowerManager와 투�
 B. 적의 체력 담당이 보상, 승리 판정 통보, 풀 반환, 이동 정리까지 담당.
 C. TileManager가 상태 전달 데이터를 관리하고, 타워/적이 읽지만,
    동시에 각 대상이 자기 스탯을 직접 덮어쓰는 예전 방식도 남아 있음.
-D. UI가 상태를 표시하는 동시에 생명 감소 표현과 게임오버 흐름도 일부 판단.
-E. TowerController에 공통 스탯, 구체 공격 생성, 불 스킬, 버프, 투사체 연출이 모임.
-F. 타입 참조가 거의 없는 파일도 씬 이름·리소스 경로·애니메이션 이벤트에는 강하게 연결됨.
+D. TowerController에 공통 스탯, 구체 공격 생성, 불 스킬, 버프, 투사체 연출이 모임.
+E. 타입 참조가 거의 없는 파일도 씬 이름·리소스 경로·애니메이션 이벤트에는 강하게 연결됨.
 
 우선 읽을 중심 파일:
 - GameManager: 한 턴의 큰 순서.
@@ -62,8 +62,8 @@ F. 타입 참조가 거의 없는 파일도 씬 이름·리소스 경로·애니
 - TowerController: 타워 1개의 실제 행동과 최종 스탯.
 - EnemyHealthController: 피해→사망→보상→클리어 통보→반환.
 - EnemyMoveController / EnemyDebuffController: 이동 규칙과 상태 변화.
-- TileManager / TilePath: '칸의 효과'와 '길/점유 정보'라는 서로 다른 책임.
-- UIManager: 화면 표시 외에도 게임 흐름으로 되돌아가는 연결이 많은 곳.
+- TileManager / TilePath: 타일 인덱스·점유·효과 원본과 적의 칸 안 시각적 배치.
+- UIManager: 패널 표시 외에도 다른 게임 기능을 직접 참조하는 곳.
 
 좋은 분리도 있습니다.
 - DamageText는 구체 DamageTextPool 대신 IObjectPool을 받아 반환함.
@@ -185,8 +185,8 @@ BuffAction / DebuffAction
       → EnemyDebuffController: 적이 받는 디버프/스택 적용
 
 소유권을 구분해서 읽어야 합니다.
-- TilePath: 길의 순서와 적의 위치/점유.
-- TileManager: 그 위치에 전달할 효과 데이터.
+- TileManager: 길과 소환 타일의 인덱스, 타워/적 점유, 타일 효과 데이터.
+- TilePath: TileManager의 경로/점유를 조회해 적의 칸 안 시각적 배치를 관리.
 - TowerController / EnemyDebuffController: 각 대상에게 이미 적용된 상태와 스택.
 
 방향 자체는 사용자가 원한 '타일에 기록하고 대상이 읽는 구조'입니다.
@@ -204,19 +204,15 @@ BuffAction / DebuffAction
 - GameManager가 구체 PlayerTurnState/EnemyTurnState 등을 생성.
 - 상태 클래스가 UIManager, 드래그 취소, DebuffZone 취소, 카메라를 직접 조작.
 - UIManager도 GameManager를 호출.
-- UIManager.OnPlayerHit()[1520]가 자체 생명 아이콘 인덱스로 게임오버 화면을 결정.
-- GameManager.DecreaseLife()[306]도 실제 생명과 게임오버 상태를 관리.
-- UIManager.ShowGameOver()[1544]는 적 HP바를 숨기고 OnPauseGame()을 호출.
-  GameManager의 GameOver 상태 전환과 같은 일은 아님.
+- GameManager.DecreaseLife()가 실제 생명을 계산하고 0일 때 OnGameOver()를 호출.
+- GameManager.OnGameOver()가 상태 전환·턴 중단·일시정지를 담당하고 UIManager.ShowGameOver()는 화면만 표시.
 
 영향:
-생명 판정과 화면 판정이 다른 경로로 움직일 수 있습니다.
-표시 코드 변경이 게임 흐름에 영향을 주며, 보스 도착 등의 예외를 따라가기 어렵습니다.
+턴 상태 클래스와 UIManager가 서로 직접 호출하므로 화면 전환·입력 취소 흐름은 여전히 함께 추적해야 합니다.
 
 권장:
-GameManager가 생명/종료의 원본 값을 소유하고, UI는 그 결과만 표시.
 상태 클래스는 턴의 허용 행동/진입·종료를 담당하되 화면 배치는 UI에 맡김.
-이때 모든 호출을 이벤트화할 필요는 없고 '표시 → 게임오버 재판정' 역방향부터 제거.
+이때 모든 호출을 이벤트화할 필요는 없고 화면 전환과 입력 취소의 책임 경계부터 점검.
 
 [3-2] TowerManager ↔ TowerController ↔ 공격 클래스
 강도: 매우 높음. 여러 기능이 한 연결망에 포함됨.
@@ -292,13 +288,8 @@ EnemyHealthController.Die()[128]가 타워 처치 반응, 재화, 웨이브 통�
 
 위험:
 체력 구현을 재사용하거나 사망 규칙을 바꾸면 보상·승리 조건까지 따라옴.
-ApplyDamage[94] → RegisterCriticalHit → ExecuteInstantKill 경로에서는
-중간에 사망한 뒤 원래 ApplyDamage가 이어질 가능성이 있음.
-Die/ExecuteInstantKill에 1회 처리 가드가 없어 중복 보상·중복 반환 위험이 있음.
-이 부분은 코드상 위험 경로이며 실제 발생 조건은 플레이 테스트로 확인 필요.
 
 권장:
-먼저 사망/반환 1회 보장부터 마련.
 다음으로 사망 결과에 적 종류, 생성 웨이브, 공격자, 종료 원인을 전달하고
 보상·클리어 담당이 해당 결과를 처리하도록 분리.
 사망 이벤트를 만들더라도 '누가 언제 구독하는지'를 문서에 명시할 것.
@@ -324,7 +315,7 @@ EnemyType / 생성 웨이브 / 최종보스 여부를 사망 정보에 명시.
 
 확인:
 - Move가 현재 인덱스·이동·도착·타일 적용·끝 도달을 처리.
-- TilePath는 실제 점유, 예약, 시각적 배치 목표를 별도로 관리.
+- TileManager는 적의 경로 인덱스별 논리 점유를 관리하고, TilePath는 도착 예약과 시각적 배치 목표를 관리.
 - TilePath.LateUpdate는 적 루트 transform 위치까지 조정.
 - 이동 시 현재 인덱스를 먼저 증가시키고, 실제 도착 후 점유 등록을 갱신.
   이동 중 이전 칸 목록에 남아 있는 시간과 다음 인덱스를 가진 시간이 겹칠 수 있음.
@@ -437,13 +428,13 @@ CSV를 원본으로 사용할지 명시하고 로더 하나에서 검증/변환.
 강도: 동작 또는 에셋 의존이 높음.
 
 확인:
-UIManager는 타워 데이터/스탯/강화/선택/적 정보/타일/재화/턴/게임 종료에 관여.
+UIManager는 타워 데이터/스탯/강화/선택/적 정보/타일/결과 패널에 관여.
 EnemyInfoPanelUI는 적 목록과 상세 상태를 직접 읽고, 누락 UI를 만드는 경로도 있음.
 UIStageThemeController는 게임 클래스 참조가 적어도 이름/계층/아틀라스에 의존.
 EnemyDebuffController 안에도 UI 표시 문자열을 만드는 코드가 있음.
 
 권장:
-먼저 화면 단위로 생명·재화 / 타워 정보 / 적 정보 / 턴 조작 책임을 구분.
+남은 타워 정보 / 적 정보 / 타일 정보 / 결과 패널 책임을 화면 단위로 구분.
 디버프 계산과 디버프 문구 생성을 분리할 것.
 이름으로 찾는 부분은 누락 경고와 명시적 참조를 우선 검토.
 게임 클래스 참조가 적다는 이유로 UI 테마 코드를 저위험으로 판단하면 안 됨.
@@ -471,8 +462,9 @@ EnemyDebuffController 안에도 UI 표시 문자열을 만드는 코드가 있�
 ======================================================================
 
 [이벤트 / 콜백]
-- CurrencyManager 변경 이벤트 → UIManager 재화 표시.
-- GameManager.ShieldChanged → UIManager 방패 표시.
+- CurrencyManager 변경 이벤트 → GameInfoPanel 재화 표시.
+- GameManager.CurrentLifeChanged / CurrentShieldChanged → GameInfoPanel 생명/방패 표시.
+- WaveManager.CurrentWaveChanged → GameInfoPanel 웨이브 표시.
 - WaveManager.MiddleBossSummonableChanged → UIManager 소환 버튼 갱신.
 - DragObjectOnGround 선택 이벤트 → UIManager 타워 선택 표시.
 - GlobalClickDetector.OnWorldClicked → UIManager 선택 해제 등.
@@ -505,7 +497,7 @@ SceneLoader.StartLoad()는 현재 다음 씬 이름 설정만 하고 실제 Load
 - DebuffAction / DebuffZone의 Tilemap_Path 이름 검색.
 - Resources 투사체 ID 파일명.
 - UIStageTheme의 자식 이름 및 스프라이트 이름.
-- TilePathEditor가 pathGridPositions를 직접 추가/삭제/초기화.
+- TileManagerEditor가 m_pathGridPositions를 직접 추가/삭제/초기화.
   경로 인덱스를 저장해 둔 데이터는 경로 편집과 함께 검토해야 함.
 - DOTween, TMP, Unity UI, Tilemap, Unity ObjectPool은 외부 계약.
   자체 코드 참조 수에는 포함하지 않았지만 패키지/컴포넌트 제거 시 영향이 있음.
@@ -545,8 +537,7 @@ TileManager 효과 기록의 읽기 계약을 확실히 하려면 값 스냅샷/
 이 단계에서도 사용 여부를 확인하기 전 삭제하지 않습니다.
 
 2단계: 게임 결과가 틀어질 수 있는 책임 정리
-- 사망 중복 방지와 최종보스 식별.
-- 생명/종료 판정의 단일 소유자.
+- 최종보스 식별.
 - 실제 투사체 완료 대기 위치의 안전성.
 - 타일/디버프 스탯의 합성 규칙.
 
@@ -558,7 +549,7 @@ TileManager 효과 기록의 읽기 계약을 확실히 하려면 값 스냅샷/
 
 4단계: 큰 관리자 책임을 순서대로 축소
 - TowerManager: 데이터 → 경제/강화 → 배치 → 턴 실행 순으로 경계 검토.
-- UIManager: 화면 단위로 분리. UI가 게임 결과를 다시 결정하지 않게 함.
+- UIManager: 남은 기능을 화면 단위로 분리.
 - EnemyObjectPool: 저장/반환과 적 초기화 절차를 구분.
 새 클래스 이름보다 '원본 데이터를 누가 가진다'를 먼저 결정합니다.
 
@@ -587,10 +578,10 @@ TileManager 효과 기록의 읽기 계약을 확실히 하려면 값 스냅샷/
 적 체력/사망                   EnemyHealthController           보상/승리까지 호출
 적 행동력/이동 인덱스          EnemyMoveController             타일 스탯도 변경
 적 디버프 상태                 EnemyDebuffController           구형 API와 공존
-길 순서/점유/예약              TilePath                        시각 루트 위치도 변경
-타일 효과 기록                 TileManager                     시각화도 함께 관리
+길 순서/타워·적 점유/타일 효과 TileManager                     시각화도 함께 관리
+적 도착 예약/칸 안 시각 배치   TilePath                        시각 루트 위치도 변경
 재화 원본                     CurrencyManager                 획득 정책은 외부
-생명 원본/생명 화면 인덱스      GameManager / UIManager         중복 판단 주의
+생명/게임오버 판정              GameManager                     UIManager는 결과 패널 표시
 타워 원본 데이터               Resources의 CSV 실행 로더       별도 SO 임포터 존재
 투사체 진행 여부               GlobalProjectileManager         씬의 활성 객체로 판정
 
@@ -610,15 +601,15 @@ TileManager 효과 기록의 읽기 계약을 확실히 하려면 값 스냅샷/
 [01/69] TilePath.cs
 경로: Assets/3. Scripts/01. Map/TilePath.cs
 결합 평가: 높음
-역할/연결: 길의 순서·적 점유·예약·칸 안 배치를 관리합니다. 적 체력/이동 컴포넌트와 공격 클래스의 범위 변환 함수까지 알아야 합니다.
-검토 의견: 경로 인덱스와 좌표를 구분하고, 논리 점유와 화면 위치의 책임을 분리할 후보입니다.
+역할/연결: TileManager의 길 순서·적 점유를 조회하고, 도착 예약·칸 안 시각 배치를 관리합니다. 적 체력/이동 컴포넌트와 공격 클래스의 범위 변환 함수까지 알아야 합니다.
+검토 의견: 논리 점유 원본은 TileManager로 옮겨졌습니다. 남은 시각 배치와 경로 조회 호환 API의 경계를 점검할 후보입니다.
 직접 타입 참조: 나감 3파일 / 들어옴 13파일
 이 파일 → 다른 파일:
   - TowerAttackAction.cs: TowerAttackAction [이 파일 406행]
   - EnemyHealthController.cs: EnemyHealthController [이 파일 56행 외 37개 위치]
   - EnemyMoveController.cs: EnemyMoveController [이 파일 111행]
 다른 파일 → 이 파일:
-  - DebuffAction.cs, DebuffZone.cs, SplashAttackAction.cs, TowerAttackAction.cs, ProjectileHit2D.cs, EnemyMoveController.cs, EnemyObjectPool2D.cs, EnemyInfoPanelUI.cs, EnemyManager.cs, TileManager.cs, UIManager.cs, WaveManager.cs, TilePathEditor.cs
+  - DebuffAction.cs, DebuffZone.cs, SplashAttackAction.cs, TowerAttackAction.cs, ProjectileHit2D.cs, EnemyMoveController.cs, EnemyObjectPool2D.cs, EnemyInfoPanelUI.cs, EnemyManager.cs, TileManager.cs, UIManager.cs, WaveManager.cs
 직렬화된 직접 스크립트 연결: 1개 에셋
   - Assets/1. Scenes/3. Stage1.unity
 
@@ -898,7 +889,7 @@ TileManager 효과 기록의 읽기 계약을 확실히 하려면 값 스냅샷/
 경로: Assets/3. Scripts/03. Enemy/EnemyHealthController.cs
 결합 평가: 매우 높음
 역할/연결: 적 체력과 피해 처리뿐 아니라 처치 반응·재화·클리어 통보·풀 반환까지 담당합니다.
-검토 의견: 사망 1회 보장과 사망 결과 전달을 우선. 전투 수치 수정도 여러 외부 기능으로 번지는 중심점.
+검토 의견: 사망 결과 전달 방식은 여전히 검토 대상이며, 전투 수치 수정도 여러 외부 기능으로 번지는 중심점입니다.
 직접 타입 참조: 나감 9파일 / 들어옴 24파일
 이 파일 → 다른 파일:
   - TowerController.cs: TowerController [이 파일 90행 외 1개 위치]
@@ -1234,7 +1225,7 @@ TileManager 효과 기록의 읽기 계약을 확실히 하려면 값 스냅샷/
 경로: Assets/3. Scripts/04. Manager/GameManager.cs
 결합 평가: 높음
 역할/연결: 게임 상태와 큰 턴 순서, 생명/방패, 속도/일시정지, 종료를 담당합니다.
-검토 의견: 상위 흐름을 조정하는 직접 호출은 필요하지만 UI의 역방향 종료 판정과 중복 대기/초기화 책임을 줄일 후보.
+검토 의견: 상위 흐름을 조정하는 직접 호출은 필요하지만, 중복 대기/초기화 책임은 줄일 후보입니다.
 직접 타입 참조: 나감 7파일 / 들어옴 8파일
 이 파일 → 다른 파일:
   - TowerManager.cs: TowerManager [이 파일 137행 외 5개 위치]
@@ -1298,7 +1289,7 @@ TileManager 효과 기록의 읽기 계약을 확실히 하려면 값 스냅샷/
 [43/69] TileManager.cs
 경로: Assets/3. Scripts/04. Manager/TileManager.cs
 결합 평가: 높음
-역할/연결: 특수 타일과 타워/적 효과 기록, 소스 버전/시간, 시각 효과를 함께 관리합니다. 효과 데이터 타입도 선언합니다.
+역할/연결: 경로·소환 타일 인덱스, 타워/적 점유, 특수 타일과 효과 기록, 소스 버전/시간, 시각 효과를 함께 관리합니다. 효과 데이터 타입도 선언합니다.
 검토 의견: 효과 저장과 범위/수명/연출 분리 후보. 여러 칸 장판 이동과 스탯 적용 순서의 중심입니다.
 직접 타입 참조: 나감 4파일 / 들어옴 8파일
 이 파일 → 다른 파일:
@@ -1314,8 +1305,8 @@ TileManager 효과 기록의 읽기 계약을 확실히 하려면 값 스냅샷/
 [44/69] UIManager.cs
 경로: Assets/3. Scripts/04. Manager/UIManager.cs
 결합 평가: 매우 높음
-역할/연결: 타워·적·타일·재화·생명·턴·결과 UI와 버튼 실행을 모은 허브입니다.
-검토 의견: 직접 참조 수 최다. 특히 표시와 생명/종료 정책을 분리하고, 나머지는 화면 단위로 점진 분리.
+역할/연결: 타워·적·타일·결과 UI와 관련 버튼 실행을 모은 허브입니다.
+검토 의견: 남은 기능은 화면 단위로 점진 분리할 후보입니다.
 직접 타입 참조: 나감 16파일 / 들어옴 5파일
 이 파일 → 다른 파일:
   - TilePath.cs: TilePath [이 파일 1216행 외 0개 위치]
@@ -1645,14 +1636,14 @@ TileManager 효과 기록의 읽기 계약을 확실히 하려면 값 스냅샷/
   - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
 직렬화된 직접 스크립트 연결: 0개 에셋
 
-[68/69] TilePathEditor.cs
-경로: Assets/Editor/TilePathEditor.cs
+[68/69] TileManagerEditor.cs
+경로: Assets/Editor/TileManagerEditor.cs
 결합 평가: 높음 / 데이터 직접 수정
-역할/연결: TilePath의 경로 좌표 목록을 직접 편집하는 인스펙터 도구입니다.
-검토 의견: 공개 리스트 구조와 인덱스 의미에 강하게 결합. 경로 중간 삭제 시 이를 사용하는 데이터도 점검.
+역할/연결: TileManager의 경로 좌표 목록을 직접 편집하는 인스펙터 도구입니다.
+검토 의견: 직렬화 필드명과 인덱스 의미에 강하게 결합. 경로 중간 삭제 시 이를 사용하는 데이터도 점검.
 직접 타입 참조: 나감 1파일 / 들어옴 0파일
 이 파일 → 다른 파일:
-  - TilePath.cs: TilePath [이 파일 6행 외 2개 위치]
+  - TileManager.cs: TileManager
 다른 파일 → 이 파일:
   - 자체 C#의 외부 타입 참조 발견되지 않음. 미사용 확정 아님.
 직렬화된 직접 스크립트 연결: 0개 에셋

@@ -135,6 +135,7 @@ public class TileSatelliteOrbiter : MonoBehaviour
     private ParticleSystemRenderer[] m_orbit2ParticleRenderers;
 
     private bool m_hasFirstPositioned = false;
+    private bool m_isHighlighted;
     private Vector3 m_lastParentPosition;
     private Dictionary<DebuffTarget, Sprite> m_symbolMapCache;
 
@@ -354,8 +355,9 @@ public class TileSatelliteOrbiter : MonoBehaviour
                     }
 
                     // 전면으로 올수록 순백색(White-Hot)으로 블렌딩하여 하얀 코어 형성
-                    Color baseC = Color.Lerp(m_buffColor, Color.white, whitenRatio * m_frontWhitenAmount);
-                    baseC.a = m_buffColor.a;
+                    Color effectiveColor = GetEffectiveBuffColor();
+                    Color baseC = Color.Lerp(effectiveColor, Color.white, whitenRatio * m_frontWhitenAmount);
+                    baseC.a = effectiveColor.a;
 
                     // HDR 배수를 곱해 RGB 전체가 Bloom 임계값을 넘어 눈부신 백색광 방출
                     sr.color = new Color(baseC.r * bloomMult, baseC.g * bloomMult, baseC.b * bloomMult, baseC.a);
@@ -425,7 +427,11 @@ public class TileSatelliteOrbiter : MonoBehaviour
 
     private Color GetEffectiveBuffColor()
     {
-        return m_buffColor;
+        if (!m_isHighlighted) return m_buffColor;
+
+        Color color = Color.Lerp(m_buffColor, Color.white, 0.35f) * 1.5f;
+        color.a = m_buffColor.a;
+        return color;
     }
 
     /// <summary>
@@ -667,7 +673,14 @@ public class TileSatelliteOrbiter : MonoBehaviour
     public void SetColor(Color color)
     {
         m_buffColor = color;
-        ApplyColor(color);
+        ApplyColor(GetEffectiveBuffColor());
+    }
+
+    public void SetHighlighted(bool highlighted)
+    {
+        if (m_isHighlighted == highlighted) return;
+        m_isHighlighted = highlighted;
+        ApplyColor(GetEffectiveBuffColor());
     }
 
     /// <summary>
