@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 /// <summary>게임 전체의 상위 턴 상태입니다.</summary>
@@ -26,6 +25,7 @@ public class GameManager : MonoBehaviour
 
     private const int TurnsPerWave = 10;
     private const int EnemySpawnTurns = 5;
+    private const int FinalWave = 40;
 
     [Header("게임 배속 및 라이프 설정")]
     private float m_currentgameSpeed = 1.0f;
@@ -48,7 +48,6 @@ public class GameManager : MonoBehaviour
     public TurnState CurrentState { get; private set; } = TurnState.None;
     public bool CanPerformPlayerAction => m_currentTurnState != null && m_currentTurnState.CanPerformPlayerAction;
 
-    public event Action<TurnState> OnTurnStateChanged;
     public event Action<int> CurrentLifeChanged;
     public event Action<int> CurrentShieldChanged;
     public event Action<float> CurrentGameSpeedChanged;
@@ -126,19 +125,41 @@ public class GameManager : MonoBehaviour
             yield return StartCoroutine(EnemyTurnRoutine(shouldSpawn));
         }
 
+        // 마지막 웨이브는 10턴 제한이 없습니다. 최종 보스가 처치되거나(클리어) 도착할 때까지(게임 오버)
+        // 플레이어 턴으로 돌아가지 않고 소환 없는 적 턴을 계속 진행합니다.
+        while (WaveManager.Instance != null && WaveManager.Instance.CurrentWave >= FinalWave && IsFinalBossAlive())
+        {
+            if (CurrentState == TurnState.GameOver || CurrentState == TurnState.GameClear) yield break;
+
+            yield return StartCoroutine(EnemyTurnRoutine(false));
+        }
+
         if (CurrentState == TurnState.GameOver || CurrentState == TurnState.GameClear) yield break;
 
         if (WaveManager.Instance != null)
         {
             int completedWave = WaveManager.Instance.CurrentWave;
 
-            if (completedWave < 40)
+            if (completedWave < FinalWave)
             {
                 WaveManager.Instance.NextWave();
             }
 
             TowerManager.Instance?.ProcessEarthTowerWave(completedWave);
         }
+    }
+
+    // 마지막 웨이브에 소환된 보스가 아직 길 위에 살아 있는지 확인합니다.
+    private static bool IsFinalBossAlive()
+    {
+        if (TileManager.Instance == null) return false;
+
+        List<EnemyHealthController> enemies = TileManager.Instance.GetAllLivingEnemies();
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            if (enemies[i].EnemyType == EnemyType.Boss && enemies[i].SpawnWave >= FinalWave) return true;
+        }
+        return false;
     }
     #endregion
 
@@ -177,17 +198,22 @@ public class GameManager : MonoBehaviour
 
         // 1) 필요 시 적 소환 후 모든 적 이동
         yield return StartCoroutine(ProcessEnemyMovement(shouldSpawn));
+        GameStateVersion.MarkChanged();
 
         // 2) 이동을 마친 타일의 즉시 효과 적용
         yield return StartCoroutine(ProcessTowerSupport());
+        GameStateVersion.MarkChanged();
         yield return StartCoroutine(ProcessTileBuffs());
+        GameStateVersion.MarkChanged();
 
         // 3) 타워 행동 및 투사체 명중 처리
         yield return StartCoroutine(ProcessTowerAttacks());
+        GameStateVersion.MarkChanged();
         // 4) 타워 공격 이후 지속 피해형 디버프 처리
         yield return StartCoroutine(ProcessDamageDebuffs());
+        GameStateVersion.MarkChanged();
 
-        // 몬스터 턴 종료 (다음 루프에서 자동으로 플레이어 턴 시작)
+        // 적 턴 하나 종료. 한 웨이브의 적 턴이 모두 끝나야 플레이어 턴으로 돌아갑니다.
         yield return new WaitForSeconds(0.3f);
     }
 
@@ -392,7 +418,7 @@ public class GameManager : MonoBehaviour
         m_currentTurnState = nextState;
         CurrentState = nextState.Type;
         m_currentTurnState.Enter(this);
-        OnTurnStateChanged?.Invoke(CurrentState);
+        GameStateVersion.MarkChanged();
     }
 
     #endregion

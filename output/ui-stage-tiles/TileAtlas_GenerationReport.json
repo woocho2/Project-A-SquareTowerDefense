@@ -1,0 +1,128 @@
+{
+  "master": "Tile_TowerSpawn_Atlas.png / Tile_TowerSpawn_Asgard original 256x256 slice",
+  "mode": "Existing cartoon silhouette retained; recolor background A/C and rim/circle Frame; use the same geometry for both tile types and all realms",
+  "atlasDimensions": [
+    1024,
+    768
+  ],
+  "spriteDimensions": [
+    256,
+    256
+  ],
+  "spriteCountPerAtlas": 10,
+  "backup": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/output/ui-stage-tiles/backups/before-atlas-color-00b6251a",
+  "metadataAndGuidsUnchanged": true,
+  "stageSceneUnchanged": true,
+  "pathOverlaysUnchanged": true,
+  "boardFrameUnchanged": true,
+  "unityEditorPlaytestPerformed": false,
+  "bodyReferenceLuma": 236.1846,
+  "frameReferenceLuma": 190.903,
+  "frameMask": {
+    "saturationStart": 0.16,
+    "saturationEnd": 0.24,
+    "transition": "smoothstep"
+  },
+  "validation": [
+    {
+      "realm": "Asgard",
+      "spawn": "#FFF8E7",
+      "path": "#20334F",
+      "frame": "#B58C3C",
+      "sameAlphaMask": true,
+      "identicalFramePixels": 25316,
+      "bodyPixels": 32437,
+      "centerColorsExact": true
+    },
+    {
+      "realm": "Vanaheim",
+      "spawn": "#F0F7DF",
+      "path": "#314C3D",
+      "frame": "#729655",
+      "sameAlphaMask": true,
+      "identicalFramePixels": 25316,
+      "bodyPixels": 32437,
+      "centerColorsExact": true
+    },
+    {
+      "realm": "Alfheim",
+      "spawn": "#F4F2DF",
+      "path": "#3F4939",
+      "frame": "#8B7550",
+      "sameAlphaMask": true,
+      "identicalFramePixels": 25316,
+      "bodyPixels": 32437,
+      "centerColorsExact": true
+    },
+    {
+      "realm": "Jotunheim",
+      "spawn": "#F3F7FC",
+      "path": "#314665",
+      "frame": "#829EB9",
+      "sameAlphaMask": true,
+      "identicalFramePixels": 25316,
+      "bodyPixels": 32437,
+      "centerColorsExact": true
+    },
+    {
+      "realm": "Midgard",
+      "spawn": "#EDF7F5",
+      "path": "#203E5A",
+      "frame": "#548BA3",
+      "sameAlphaMask": true,
+      "identicalFramePixels": 25316,
+      "bodyPixels": 32437,
+      "centerColorsExact": true
+    },
+    {
+      "realm": "Nidavellir",
+      "spawn": "#F6F0E7",
+      "path": "#43464E",
+      "frame": "#9E7950",
+      "sameAlphaMask": true,
+      "identicalFramePixels": 25316,
+      "bodyPixels": 32437,
+      "centerColorsExact": true
+    },
+    {
+      "realm": "Niflheim",
+      "spawn": "#F8FBFD",
+      "path": "#475C72",
+      "frame": "#A1BDC9",
+      "sameAlphaMask": true,
+      "identicalFramePixels": 25316,
+      "bodyPixels": 32437,
+      "centerColorsExact": true
+    },
+    {
+      "realm": "Hel",
+      "spawn": "#EDF3F0",
+      "path": "#293F42",
+      "frame": "#6D9992",
+      "sameAlphaMask": true,
+      "identicalFramePixels": 25316,
+      "bodyPixels": 32437,
+      "centerColorsExact": true
+    },
+    {
+      "realm": "Muspelheim",
+      "spawn": "#FFF2E6",
+      "path": "#613D40",
+      "frame": "#BD795E",
+      "sameAlphaMask": true,
+      "identicalFramePixels": 25316,
+      "bodyPixels": 32437,
+      "centerColorsExact": true
+    },
+    {
+      "realm": "Ragnarok",
+      "spawn": "#F2EEE4",
+      "path": "#44444F",
+      "frame": "#8D8470",
+      "sameAlphaMask": true,
+      "identicalFramePixels": 25316,
+      "bodyPixels": 32437,
+      "centerColorsExact": true
+    }
+  ]
+}

@@ -78,7 +78,8 @@ public class DebuffZone : MonoBehaviour
 
     private bool MoveToPathIndex(int index)
     {
-        if (TileManager.Instance == null ||
+        // 소환 입구(0번)와 도착 타일은 타일 효과가 적용되지 않으므로 장판을 놓을 수 없습니다.
+        if (TileManager.Instance == null || index <= 0 || index >= TileManager.Instance.LastPathIndex ||
             !TileManager.Instance.TryGetPathWorldPosition(index, out Vector3 center)) return false;
 
         center.z = transform.position.z;

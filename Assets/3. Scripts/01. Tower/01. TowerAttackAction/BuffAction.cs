@@ -14,7 +14,7 @@ public class BuffAction : TowerAttackAction
             return true;
         }
 
-        // Earth는 TowerController의 100초 타이머에서 전역 강화하므로, 주변 타워에 일반 버프를 적용하지 않습니다.
+        // Earth는 웨이브가 끝날 때 TowerManager가 따로 처리하므로(대지 타워의 티어 강화), 주변 타워에 일반 버프를 적용하지 않습니다.
         if (m_data.buffTarget == BuffTarget.Earth) return true;
 
         if (TileManager.Instance == null || !towerTransform.TryGetComponent(out TowerController sourceTower) ||
@@ -30,8 +30,7 @@ public class BuffAction : TowerAttackAction
 
         for (int i = 0; i < affectedIndices.Count; i++)
         {
-            // Fire is stack-based: one support action adds one Preheat stack.
-            // Duration is the stack threshold; AttackCount is the stack lifetime.
+            // 새 틀(스킬 1 + 스킬 2)로 옮긴 문양은 아래에서 스택형 버프로 따로 기록합니다.
             if (m_data.buffTarget == BuffTarget.Fire) continue;
 
             TileManager.Instance.AddTowerBuffEffect(
@@ -42,13 +41,17 @@ public class BuffAction : TowerAttackAction
 
         if (m_data.buffTarget == BuffTarget.Fire && affectedIndices.Count > 0)
         {
+            // 스킬 1(예열): Duration 턴 동안 Power 만큼의 버프, 한 번 행동에 AttackCount 만큼 스택.
+            // 스킬 2(과열): 스택이 60 ÷ 컬러 강화 레벨에 닿으면 Duration 턴 동안 Power × AbilityValue.
             TileManager.Instance.SetFirePreheatEffects(
                 affectedIndices,
                 sourceID,
                 sourceTier,
                 currentStats.AbilityValue,
+                GetStackSkillThreshold(currentStats.Level),
                 Mathf.RoundToInt(currentStats.Duration),
-                currentStats.AttackCount);
+                currentStats.AttackPower,
+                Mathf.Max(1, currentStats.AttackCount));
             appliedAny = true;
         }
 

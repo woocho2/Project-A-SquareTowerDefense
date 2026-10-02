@@ -1,0 +1,35 @@
+Built-in image_gen prompts for the applied whole-frame series.
+The user-selected Diamond is the original exec-00fa7aef-6641-4591-95d3-1f25f8d6d4da.png.
+Subsequent sheet re-extraction and separate-feather assembly were rejected and are not applied.
+
+Bronze
+Use case: precise-object-edit
+Asset type: production-ready single transparent 2D game tier frame sprite.
+Input image 1 is the APPROVED BRONZE DESIGN. Recreate ONLY its copper frame and TWO-feather wings. REMOVE the purple central swirl completely. REMOVE the ivory background inside the frame completely: the ENTIRE central square must be an empty TRANSPARENT HOLE. Outside the frame is also truly transparent. This asset will be layered over a separate color background and separate emblem; do NOT bake any center, emblem, circle, text or backdrop into this sprite.
+Style: exactly the approved soft rounded cartoon copper-metal border. Same rounded top corner caps, fine dark warm outlines, restrained smooth upper-left highlights, two broad rounded leaf-shaped feather lobes on each lower wing, slender curved root. Both lower wings have exactly TWO large primary feathers (not counting the thin root). Compact simple game icon, no grain, no pixelation, no tiny engraving.
+Geometry: upright front-facing square icon, not angled. Center of frame and central hole exactly centered. One consistent rail design. Wing roots fixed at lower-left and lower-right corners. Symmetric LEFT/RIGHT silhouette. ALL wing tips stay inside the same rounded square outside envelope as the frame, no flared protrusions beyond the left/right/bottom edges. Keep the center opening as a completely clear centered square: no wings or corner caps enter this opening. The visible outer envelope spans 95% of the square canvas. The protected transparent center is 63.28125% of canvas width and height (162 pixels in a 256-pixel delivery canvas). Reserve the perimeter area for rails and wings. The transparent square opening must remain exactly the same for all tiers. Two large feathers can follow the lower corner perimeter; no intrusion into the inner protected square.
+Palette: warm pastel bronze/copper, light peach copper highlights, muted reddish-brown shadows, very dark warm outline. Preserve the approved design rather than inventing another frame. A single frame centered on a square transparent canvas, enough padding to avoid clipping. No words, no backdrop, no ivory center, no emblem, no checkerboard, no glow, no drop shadow.
+
+Silver
+Use case: precise-object-edit
+Asset type: one production transparent 2D game tier frame sprite.
+Input image 1 is the BRONZE MASTER FRAME and should retain identical top border, corners, rail positions, outside width and height, and transparent central window. The outside and ENTIRE inside opening remain truly transparent. NO ivory fill, NO emblem, NO circles, NO words. Only metal frame and feather wings. Same pastel rounded cartoon rendering, very dark fine outline, consistent upper-left highlights. Wings stay within the common outside envelope and outside the protected central square. Keep lower wing roots at the same positions and mirror-symmetric wing silhouettes. A single centered square frame, no scene, no shadows.
+Change ONLY bronze/copper metal to soft silver: pale silver-gray base, near-white silver highlight, cool slate-gray shadow. Keep exactly TWO broad rounded primary feathers on EACH side, not counting the thin root. Do not add feathers or alter any structure.
+
+Gold
+Use case: precise-object-edit
+Asset type: one production transparent 2D game tier frame sprite.
+Input image 1 is the BRONZE MASTER FRAME and should retain identical top border, corners, rail positions, outside width and height, and transparent central window. The outside and ENTIRE inside opening remain truly transparent. NO ivory fill, NO emblem, NO circles, NO words. Only metal frame and feather wings. Same pastel rounded cartoon rendering, very dark fine outline, consistent upper-left highlights. Wings stay within the common outside envelope and outside the protected central square. Keep lower wing roots at the same positions and mirror-symmetric wing silhouettes. A single centered square frame, no scene, no shadows.
+Change metal to soft pastel buttery gold. Add ONE more same-sized broad rounded primary feather to EACH existing lower wing, so each side has exactly THREE clearly separated large leaf-like feather lobes, not counting the thin root. Keep previous feather sizes, the root and frame unchanged. Add the extra lobe outward/upward along the lower corner perimeter; NEVER into the transparent central window. Wings must remain inside the common rounded-square outer envelope.
+
+Diamond
+Use case: precise-object-edit
+Asset type: one production transparent 2D game tier frame sprite.
+Input image 1 is the BRONZE MASTER FRAME and should retain identical top border, corners, rail positions, outside width and height, and transparent central window. The outside and ENTIRE inside opening remain truly transparent. NO ivory fill, NO emblem, NO circles, NO words. Only metal frame and feather wings. Same pastel rounded cartoon rendering, very dark fine outline, consistent upper-left highlights. Wings stay within the common outside envelope and outside the protected central square. Keep lower wing roots at the same positions and mirror-symmetric wing silhouettes. A single centered square frame, no scene, no shadows.
+Change metal to pastel SKY BLUE, intermediate blue and light sky-blue: base #68AEDA, light #CBEFFF, shadow #3F6FA8, highlight #E8FAFF. Add TWO more same-sized broad rounded primary feathers to EACH existing lower wing, so each side has exactly FOUR clearly separated large leaf-like feather lobes, not counting the thin root. Count FOUR large leaves per side, not three. Keep previous feather sizes, root and frame unchanged. Add the lobes outward/upward along the lower corner perimeter; NEVER into the transparent central window. Wings must remain inside the common rounded-square outer envelope.
+
+Mithril
+Use case: precise-object-edit
+Asset type: one production transparent 2D game tier frame sprite.
+Input image 1 is the GOLD THREE-FEATHER MASTER. Change ONLY its gold palette into gentle PALE MINT-TEAL metal: base #9DDED9, brighter surface #D9FFF7, shadow #4D9799, highlight #E9FFFC, very dark warm/cool fine outline. Preserve every shape and contour, identical frame geometry, outside width and height, identical rail positions and corners, identical empty central square hole, and exactly THREE distinct broad rounded primary feather lobes on EACH lower wing (not counting the slender root). Do NOT add or remove feathers, do NOT change wing sizes or roots. Keep entire central opening TRANSPARENT, and outside background TRANSPARENT. NO ivory center, NO emblem, NO circles, NO text. Pastel smooth cartoon metal, upper-left soft highlights, no grain or noise, no drop shadow, no checkerboard. Single centered frame only.
+

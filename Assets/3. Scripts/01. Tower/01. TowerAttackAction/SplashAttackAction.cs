@@ -50,40 +50,12 @@ public class SplashAttackAction : TowerAttackAction
         return LaunchSatelliteProjectiles(towerTransform, finalStats, new[] { projectile });
     }
 
-    /// <summary>
-    /// Fire Splash skill 2: launches one visual meteor at every path tile inside
-    /// range.  Damage still resolves only on projectile impact.
-    /// </summary>
-    public bool LaunchFireMeteor(Transform towerTransform, TowerStats finalStats)
-    {
-        if (towerTransform == null || TileManager.Instance == null) return false;
-
-        int towerSpawnIndex = GetTowerSpawnIndex(towerTransform);
-        List<int> targetPathIndices = TileManager.Instance.GetPathIndicesInTowerRange(
-            towerSpawnIndex,
-            ToTileRange(finalStats.Range),
-            true);
-        bool launchedAny = false;
-
-        for (int i = 0; i < targetPathIndices.Count; i++)
-        {
-            ProjectileHit2D projectile = SpawnPreparedProjectile(towerTransform.position, 1f);
-            if (projectile == null) continue;
-
-            ConfigureAndLaunch(projectile, towerTransform, towerSpawnIndex, targetPathIndices[i], finalStats, true);
-            launchedAny = true;
-        }
-
-        return launchedAny;
-    }
-
     private void ConfigureAndLaunch(
         ProjectileHit2D projectile,
         Transform towerTransform,
         int towerSpawnIndex,
         int targetPathIndex,
-        TowerStats finalStats,
-        bool isFireMeteor = false)
+        TowerStats finalStats)
     {
         if (TileManager.Instance == null ||
             !TileManager.Instance.TryGetPathWorldPosition(targetPathIndex, out Vector3 targetPosition))
@@ -95,32 +67,45 @@ public class SplashAttackAction : TowerAttackAction
         Vector3 direction = (targetPosition - projectile.transform.position).normalized;
         if (direction.sqrMagnitude < 0.0001f) direction = Vector3.right;
 
-        bool isCritical = !isFireMeteor && Random.Range(0f, 100f) <= finalStats.CriticalRate * 100f;
-        float calculatedDamage = isFireMeteor
-            ? finalStats.AttackPower * finalStats.AbilityValue
-            : finalStats.AttackPower;
+        // 치명타는 발사 전에 탄마다 한 번 굴립니다. 치명타가 뜬 탄은 범위 안의 모든 적에게 치명타로 들어갑니다.
+        bool isCritical = Random.Range(0f, 100f) < finalStats.CriticalRate * 100f;
+        float calculatedDamage = finalStats.AttackPower;
 
-        if (!isFireMeteor)
-        {
-            float distanceRatio = GetTileDistanceRatio(towerSpawnIndex, targetPathIndex, finalStats.Range);
-            calculatedDamage *= 1f + finalStats.DistanceDamageBonusPercent / 100f * distanceRatio;
-        }
+        float distanceRatio = GetTileDistanceRatio(towerSpawnIndex, targetPathIndex, finalStats.Range);
+        calculatedDamage *= 1f + finalStats.DistanceDamageBonusPercent / 100f * distanceRatio;
 
+        // 치명타는 기본 2배에 치명타 피해를 합산합니다. 거리 비례 보너스 위에 곱해집니다.
         if (isCritical)
         {
-            calculatedDamage = finalStats.AttackPower * (2f + finalStats.CriticalDamage);
+            calculatedDamage *= 2f + finalStats.CriticalDamage;
         }
 
-        ProjectileStats projectileStats = new ProjectileStats
+        projectile.Init(CreateProjectileStats(
+            towerTransform, finalStats, calculatedDamage, isCritical,
+            finalStats.ProjectileRadius, targetPathIndex));
+        projectile.IsSplash = true;
+        projectile.SetTargetPosition(targetPosition);
+        projectile.Launch(direction, finalStats.ProjectileSpeed, true);
+    }
+
+    private ProjectileStats CreateProjectileStats(
+        Transform towerTransform,
+        TowerStats finalStats,
+        float damage,
+        bool isCritical,
+        int splashRadius,
+        int targetPathIndex)
+    {
+        return new ProjectileStats
         {
             projectileID = m_data.towerID,
             projectileName = m_data.towerName,
-            damage = calculatedDamage,
+            damage = damage,
             speed = finalStats.ProjectileSpeed,
             isCritical = isCritical,
             criticalRate = finalStats.CriticalRate,
             criticalDamage = finalStats.CriticalDamage,
-            SplashRadius = finalStats.ProjectileRadius,
+            SplashRadius = splashRadius,
             targetPathIndex = targetPathIndex,
             additionalHitCount = 0,
             armorPenetrationPercent = finalStats.ArmorPenetrationPercent,
@@ -131,14 +116,8 @@ public class SplashAttackAction : TowerAttackAction
             duration = finalStats.Duration,
             abilityValue = finalStats.AbilityValue,
             debuffTarget = m_data.debuffTarget,
-            hitEffectID = m_data.hitEffectID,
-            isFireMeteor = isFireMeteor
+            hitEffectID = m_data.hitEffectID
         };
-
-        projectile.Init(projectileStats);
-        projectile.IsSplash = true;
-        projectile.SetTargetPosition(targetPosition);
-        projectile.Launch(direction, finalStats.ProjectileSpeed, true);
     }
 
     private static void CancelProjectiles(IReadOnlyList<ProjectileHit2D> projectiles)

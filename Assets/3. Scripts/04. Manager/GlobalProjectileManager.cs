@@ -37,11 +37,7 @@ public class GlobalProjectileManager : MonoBehaviour
         Instance = this;
     }
 
-    private void Start()
-    {
-        // TowerManager가 CSV 데이터를 로드한 뒤 투사체 프리팹 목록으로 풀을 구성합니다.
-        InitializeProjectileDatabase();
-    }
+    // 풀은 TowerManager.Start가 CSV 데이터를 로드한 직후에 InitializeProjectileDatabase를 불러 구성합니다.
 
     private void OnDestroy()
     {
@@ -54,6 +50,8 @@ public class GlobalProjectileManager : MonoBehaviour
 
     public void InitializeProjectileDatabase()
     {
+        if (TowerManager.Instance == null) return;
+
         List<TowerData> allTowers = TowerManager.Instance.GetTowerDataList();
 
         if (allTowers == null || allTowers.Count == 0) return;
@@ -112,9 +110,10 @@ public class GlobalProjectileManager : MonoBehaviour
         return GetActiveProjectileCount() > 0;
     }
 
+    // 투사체가 켜지고 꺼질 때 스스로 등록하는 목록의 크기입니다. 씬을 검색하지 않습니다.
     public int GetActiveProjectileCount()
     {
-        return FindObjectsByType<ProjectileHit2D>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).Length;
+        return ProjectileHit2D.ActiveCount;
     }
 
     #endregion

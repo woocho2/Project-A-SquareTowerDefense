@@ -43,7 +43,7 @@ public class GameInfoPanel : MonoBehaviour
         CurrencyManager.Instance.CurrentGemChanged += UpdateGemText;
         GameManager.Instance.CurrentGameSpeedChanged += UpdateGameSpeedText;
 
-        //btn_option.onClick.AddListener(HandleOptionClick);
+        btn_option.onClick.AddListener(HandleOptionClick);
         btn_gameSpeed.onClick.AddListener(HandleGameSpeedClick);
     }
 
@@ -65,6 +65,11 @@ public class GameInfoPanel : MonoBehaviour
         {
             CurrencyManager.Instance.CurrentGoldChanged -= UpdateGoldText;
             CurrencyManager.Instance.CurrentGemChanged -= UpdateGemText;
+        }
+
+        if (btn_option != null)
+        {
+            btn_option.onClick.RemoveListener(HandleOptionClick);
         }
 
         if (btn_gameSpeed != null)
@@ -113,6 +118,17 @@ public class GameInfoPanel : MonoBehaviour
     private void UpdateGameSpeedText(float amount)
     {
         txt_currentGameSpeed.text = $"{amount}";
+    }
+
+    private void HandleOptionClick()
+    {
+        if (UIManager.Instance == null)
+        {
+            Debug.LogError("GameInfoPanel : UIManager가 없어 옵션 패널을 열 수 없습니다.");
+            return;
+        }
+
+        UIManager.Instance.ShowOptionPanel();
     }
 
     private void HandleGameSpeedClick()

@@ -1,0 +1,553 @@
+{
+  "method": "Deterministic RGB palette replacement; original alpha and shade positions preserved",
+  "output": "Assets/4. Asset/5. UI/Themes",
+  "palettes": [
+    {
+      "realm": "Asgard",
+      "A": "#FFF8E7",
+      "B": "#EBCB73",
+      "C": "#20334F",
+      "Frame": "#B58C3C"
+    },
+    {
+      "realm": "Vanaheim",
+      "A": "#F0F7DF",
+      "B": "#B9D985",
+      "C": "#314C3D",
+      "Frame": "#729655"
+    },
+    {
+      "realm": "Alfheim",
+      "A": "#F4F2DF",
+      "B": "#A8C58C",
+      "C": "#3F4939",
+      "Frame": "#8B7550"
+    },
+    {
+      "realm": "Jotunheim",
+      "A": "#F3F7FC",
+      "B": "#B9D5EC",
+      "C": "#314665",
+      "Frame": "#829EB9"
+    },
+    {
+      "realm": "Midgard",
+      "A": "#EDF7F5",
+      "B": "#81C8CD",
+      "C": "#203E5A",
+      "Frame": "#548BA3"
+    },
+    {
+      "realm": "Nidavellir",
+      "A": "#F6F0E7",
+      "B": "#D8BB87",
+      "C": "#43464E",
+      "Frame": "#9E7950"
+    },
+    {
+      "realm": "Niflheim",
+      "A": "#F8FBFD",
+      "B": "#D4ECF2",
+      "C": "#475C72",
+      "Frame": "#A1BDC9"
+    },
+    {
+      "realm": "Hel",
+      "A": "#EDF3F0",
+      "B": "#9BC8BC",
+      "C": "#293F42",
+      "Frame": "#6D9992"
+    },
+    {
+      "realm": "Muspelheim",
+      "A": "#FFF2E6",
+      "B": "#F1B283",
+      "C": "#613D40",
+      "Frame": "#BD795E"
+    },
+    {
+      "realm": "Ragnarok",
+      "A": "#F2EEE4",
+      "B": "#C6B78F",
+      "C": "#44444F",
+      "Frame": "#8D8470"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Asgard/Asgard_Atlas_Ivory.png",
+      "sha256": "4ba8af7c34aadd74df4014db5f98e2d22717ead985dedd9e253957412a69e201",
+      "metaSha256": "bf45231ff0ff65a2623e3ffc3f5920c8f5bec1c13690f0f0617ecad8ebbc3e64"
+    },
+    {
+      "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Asgard/Asgard_Atlas_Gold.png",
+      "sha256": "7c792a09587abfeb708ddd868e9b10e3ace6d416e07b8cadd838ca0141c9f747",
+      "metaSha256": "644ea8132250f5016b13c24e4fa2951bbaa9f64ca04c025ef05f23e9561639c7"
+    },
+    {
+      "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Asgard/Asgard_Atlas_Night.png",
+      "sha256": "f20ec93cad2ab0ab0daa8202616d2f4a940bdfb970e4e4122b44530339202e05",
+      "metaSha256": "f4b279c494a4e9ae46b1428a013e7c9c112579ed3210f7c0c5a85bcbd2388df2"
+    },
+    {
+      "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Asgard/Asgard_Atlas_Frame.png",
+      "sha256": "d4bbb3f767b6b97dc5f4a925fd613ffd8eae37e960ea9ffae947b905b0ef03d1",
+      "metaSha256": "9f86bea53469b3c710feb502f26e944ff4cfd66ce14ae9890b091eb0d9423f50"
+    }
+  ],
+  "verification": {
+    "pngCount": 40,
+    "spriteCount": 600,
+    "dimensionsPreserved": true,
+    "alphaPreserved": true,
+    "transparentPixelsPreserved": true,
+    "sliceSettingsPreserved": true,
+    "importSettingsPreserved": true,
+    "originalsUnchanged": true,
+    "uniqueGuids": true,
+    "sceneChanges": false,
+    "records": [
+      {
+        "realm": "Asgard",
+        "role": "A",
+        "color": "#FFF8E7",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Asgard/Asgard_Atlas_A.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "c35ad1d3ab5472ff7301394679109ee3",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Asgard",
+        "role": "B",
+        "color": "#EBCB73",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Asgard/Asgard_Atlas_B.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "3633201b48d7f7ddf69c3e9aa8c6063e",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Asgard",
+        "role": "C",
+        "color": "#20334F",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Asgard/Asgard_Atlas_C.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "5e49f9c87f79ff47653570532a649fbc",
+        "alphaSha256": "dd1d4803a8c7148367d8920de2b3b193c5f0c8547c8a04331b906010335d0d02",
+        "slices": 15
+      },
+      {
+        "realm": "Asgard",
+        "role": "Frame",
+        "color": "#B58C3C",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Asgard/Asgard_Atlas_Frame.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "6925e21edcd4e5b51c33c0d62fb405d2",
+        "alphaSha256": "430a0f86ae3c4b4df8692762a848707abaaf6d3dac2ff1d6c5478f5bcef7d908",
+        "slices": 15
+      },
+      {
+        "realm": "Vanaheim",
+        "role": "A",
+        "color": "#F0F7DF",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Vanaheim/Vanaheim_Atlas_A.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "0e28cda5115943e43630bfb9ce5c2e9f",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Vanaheim",
+        "role": "B",
+        "color": "#B9D985",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Vanaheim/Vanaheim_Atlas_B.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "e59b4aa045da5e92bbb70b473073c218",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Vanaheim",
+        "role": "C",
+        "color": "#314C3D",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Vanaheim/Vanaheim_Atlas_C.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "28e145742469e9aa4fc243f42897b444",
+        "alphaSha256": "dd1d4803a8c7148367d8920de2b3b193c5f0c8547c8a04331b906010335d0d02",
+        "slices": 15
+      },
+      {
+        "realm": "Vanaheim",
+        "role": "Frame",
+        "color": "#729655",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Vanaheim/Vanaheim_Atlas_Frame.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "098fdd4d220837d4394fb30f65b5c785",
+        "alphaSha256": "430a0f86ae3c4b4df8692762a848707abaaf6d3dac2ff1d6c5478f5bcef7d908",
+        "slices": 15
+      },
+      {
+        "realm": "Alfheim",
+        "role": "A",
+        "color": "#F4F2DF",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Alfheim/Alfheim_Atlas_A.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "6f98b950976cd431341cf87a3bc5a368",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Alfheim",
+        "role": "B",
+        "color": "#A8C58C",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Alfheim/Alfheim_Atlas_B.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "2a0f1147b56957a0924ab79ee354266f",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Alfheim",
+        "role": "C",
+        "color": "#3F4939",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Alfheim/Alfheim_Atlas_C.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "dd513277aecae3b06bc95e260eaa8c1b",
+        "alphaSha256": "dd1d4803a8c7148367d8920de2b3b193c5f0c8547c8a04331b906010335d0d02",
+        "slices": 15
+      },
+      {
+        "realm": "Alfheim",
+        "role": "Frame",
+        "color": "#8B7550",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Alfheim/Alfheim_Atlas_Frame.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "dfc7b3159fe8b8ef34e45499bab782d0",
+        "alphaSha256": "430a0f86ae3c4b4df8692762a848707abaaf6d3dac2ff1d6c5478f5bcef7d908",
+        "slices": 15
+      },
+      {
+        "realm": "Jotunheim",
+        "role": "A",
+        "color": "#F3F7FC",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Jotunheim/Jotunheim_Atlas_A.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "f8b8c77998219177be9be99dd8bbad08",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Jotunheim",
+        "role": "B",
+        "color": "#B9D5EC",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Jotunheim/Jotunheim_Atlas_B.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "74182baa85208a4594950c0e1ac9cb02",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Jotunheim",
+        "role": "C",
+        "color": "#314665",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Jotunheim/Jotunheim_Atlas_C.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "7a07ffba51580d866083fd17439147f7",
+        "alphaSha256": "dd1d4803a8c7148367d8920de2b3b193c5f0c8547c8a04331b906010335d0d02",
+        "slices": 15
+      },
+      {
+        "realm": "Jotunheim",
+        "role": "Frame",
+        "color": "#829EB9",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Jotunheim/Jotunheim_Atlas_Frame.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "d4961c6cdbfc717530dc6188e76d2d26",
+        "alphaSha256": "430a0f86ae3c4b4df8692762a848707abaaf6d3dac2ff1d6c5478f5bcef7d908",
+        "slices": 15
+      },
+      {
+        "realm": "Midgard",
+        "role": "A",
+        "color": "#EDF7F5",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Midgard/Midgard_Atlas_A.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "4aca7e04745e04bdc7366eb61c03a48f",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Midgard",
+        "role": "B",
+        "color": "#81C8CD",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Midgard/Midgard_Atlas_B.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "af97103cb557283022cdb8e52557a1c0",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Midgard",
+        "role": "C",
+        "color": "#203E5A",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Midgard/Midgard_Atlas_C.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "6c6f83ab47dc1ea1db826117f4d55be6",
+        "alphaSha256": "dd1d4803a8c7148367d8920de2b3b193c5f0c8547c8a04331b906010335d0d02",
+        "slices": 15
+      },
+      {
+        "realm": "Midgard",
+        "role": "Frame",
+        "color": "#548BA3",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Midgard/Midgard_Atlas_Frame.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "146648d03ef8d6fce4160ee4ab283d38",
+        "alphaSha256": "430a0f86ae3c4b4df8692762a848707abaaf6d3dac2ff1d6c5478f5bcef7d908",
+        "slices": 15
+      },
+      {
+        "realm": "Nidavellir",
+        "role": "A",
+        "color": "#F6F0E7",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Nidavellir/Nidavellir_Atlas_A.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "b253542105244676fc4dd3dbce6efa81",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Nidavellir",
+        "role": "B",
+        "color": "#D8BB87",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Nidavellir/Nidavellir_Atlas_B.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "e303079f5edc1cf349f5061a55af8f2a",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Nidavellir",
+        "role": "C",
+        "color": "#43464E",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Nidavellir/Nidavellir_Atlas_C.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "7147f61ee5c1f603fbe0deadd67ea3e4",
+        "alphaSha256": "dd1d4803a8c7148367d8920de2b3b193c5f0c8547c8a04331b906010335d0d02",
+        "slices": 15
+      },
+      {
+        "realm": "Nidavellir",
+        "role": "Frame",
+        "color": "#9E7950",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Nidavellir/Nidavellir_Atlas_Frame.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "ec4263963f2cc434866fb4d118409ffa",
+        "alphaSha256": "430a0f86ae3c4b4df8692762a848707abaaf6d3dac2ff1d6c5478f5bcef7d908",
+        "slices": 15
+      },
+      {
+        "realm": "Niflheim",
+        "role": "A",
+        "color": "#F8FBFD",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Niflheim/Niflheim_Atlas_A.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "e6211086f55d647b2f3ff7c69c8e8d5f",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Niflheim",
+        "role": "B",
+        "color": "#D4ECF2",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Niflheim/Niflheim_Atlas_B.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "6946942c65dc41d5b6b2cdd7a0cc0aee",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Niflheim",
+        "role": "C",
+        "color": "#475C72",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Niflheim/Niflheim_Atlas_C.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "2dde5f515b5473d212efd002f6ed5a45",
+        "alphaSha256": "dd1d4803a8c7148367d8920de2b3b193c5f0c8547c8a04331b906010335d0d02",
+        "slices": 15
+      },
+      {
+        "realm": "Niflheim",
+        "role": "Frame",
+        "color": "#A1BDC9",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Niflheim/Niflheim_Atlas_Frame.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "a1ddfe2c1276b3e4d4f12ab7bd7af349",
+        "alphaSha256": "430a0f86ae3c4b4df8692762a848707abaaf6d3dac2ff1d6c5478f5bcef7d908",
+        "slices": 15
+      },
+      {
+        "realm": "Hel",
+        "role": "A",
+        "color": "#EDF3F0",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Hel/Hel_Atlas_A.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "2563d3af9718b12151fd55feb089eb8c",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Hel",
+        "role": "B",
+        "color": "#9BC8BC",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Hel/Hel_Atlas_B.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "30709d3beb9204505c6dfc63c86971ba",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Hel",
+        "role": "C",
+        "color": "#293F42",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Hel/Hel_Atlas_C.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "afd5ccee5ba2059790c4598a32cb04a2",
+        "alphaSha256": "dd1d4803a8c7148367d8920de2b3b193c5f0c8547c8a04331b906010335d0d02",
+        "slices": 15
+      },
+      {
+        "realm": "Hel",
+        "role": "Frame",
+        "color": "#6D9992",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Hel/Hel_Atlas_Frame.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "677f981fd116bc87874fced0e88d76a6",
+        "alphaSha256": "430a0f86ae3c4b4df8692762a848707abaaf6d3dac2ff1d6c5478f5bcef7d908",
+        "slices": 15
+      },
+      {
+        "realm": "Muspelheim",
+        "role": "A",
+        "color": "#FFF2E6",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Muspelheim/Muspelheim_Atlas_A.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "e6c9fc814b29d21b678f05d5a2f37ccf",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Muspelheim",
+        "role": "B",
+        "color": "#F1B283",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Muspelheim/Muspelheim_Atlas_B.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "d8a4a988a3a83e977f650eff533d1753",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Muspelheim",
+        "role": "C",
+        "color": "#613D40",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Muspelheim/Muspelheim_Atlas_C.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "5ca27b18019b49159d76c0f431c44263",
+        "alphaSha256": "dd1d4803a8c7148367d8920de2b3b193c5f0c8547c8a04331b906010335d0d02",
+        "slices": 15
+      },
+      {
+        "realm": "Muspelheim",
+        "role": "Frame",
+        "color": "#BD795E",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Muspelheim/Muspelheim_Atlas_Frame.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "37a18b6f4aeec987824f9d2b8fb81170",
+        "alphaSha256": "430a0f86ae3c4b4df8692762a848707abaaf6d3dac2ff1d6c5478f5bcef7d908",
+        "slices": 15
+      },
+      {
+        "realm": "Ragnarok",
+        "role": "A",
+        "color": "#F2EEE4",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Ragnarok/Ragnarok_Atlas_A.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "f3bfe704506c1887c0e6265f72759247",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Ragnarok",
+        "role": "B",
+        "color": "#C6B78F",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Ragnarok/Ragnarok_Atlas_B.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "2b7eef203803a5b68debec050f7e8878",
+        "alphaSha256": "31e68b1d3c06b7b7cff67f1687f95b9eaa7d3f9d7e9787d415b4f444e1a17dbd",
+        "slices": 15
+      },
+      {
+        "realm": "Ragnarok",
+        "role": "C",
+        "color": "#44444F",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Ragnarok/Ragnarok_Atlas_C.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "0f9d7f32b45f520276cc043d73f8ab08",
+        "alphaSha256": "dd1d4803a8c7148367d8920de2b3b193c5f0c8547c8a04331b906010335d0d02",
+        "slices": 15
+      },
+      {
+        "realm": "Ragnarok",
+        "role": "Frame",
+        "color": "#8D8470",
+        "file": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/5. UI/Themes/Ragnarok/Ragnarok_Atlas_Frame.png",
+        "width": 2048,
+        "height": 1024,
+        "guid": "334680d3eaaebf8fbc18f5cb7467aa52",
+        "alphaSha256": "430a0f86ae3c4b4df8692762a848707abaaf6d3dac2ff1d6c5478f5bcef7d908",
+        "slices": 15
+      }
+    ]
+  },
+  "unityEditorImportChecked": false
+}

@@ -121,9 +121,17 @@ public class TowerInfoPanel : MonoBehaviour
         }
     }
 
+    // 놓친 변경이 있어도 이 시간(초) 안에는 화면이 따라오도록 하는 안전 장치입니다.
+    private const float FallbackRefreshInterval = 0.5f;
+
+    private int m_shownStateVersion = -1;
+    private float m_nextFallbackRefreshTime;
+
     private void Update()
     {
-        // 버프나 타일 효과로 스탯이 계속 바뀌므로 패널이 켜져 있는 동안 매 프레임 갱신합니다.
+        // 게임 상태가 바뀌었을 때만 다시 그립니다. 매 프레임 최종 스탯을 계산하고 글자를 새로 쓰지 않습니다.
+        if (m_shownStateVersion == GameStateVersion.Current && Time.unscaledTime < m_nextFallbackRefreshTime) return;
+
         UpdateTowerInfo();
     }
 
@@ -144,6 +152,9 @@ public class TowerInfoPanel : MonoBehaviour
 
     private void UpdateTowerInfo()
     {
+        m_shownStateVersion = GameStateVersion.Current;
+        m_nextFallbackRefreshTime = Time.unscaledTime + FallbackRefreshInterval;
+
         if (m_selectedTower == null) return;
 
         TowerStats stats = m_selectedTower.GetFinalStats();
@@ -235,12 +246,12 @@ public class TowerInfoPanel : MonoBehaviour
                 break;
 
             case AttackType.Buff:
-                txt_default.text = $"{tileRange}칸 범위 아군 타워의\n{UIManager.GetBuffTargetName(data.buffTarget)} 능력 {stats.AttackPower:0.##} 증가";
+                txt_default.text = $"{tileRange}칸 범위 아군 타워의\n{BuffTargetNames.GetBuffTargetName(data.buffTarget)} 능력 {stats.AttackPower:0.##} 증가";
                 txt_skill.text = "스킬 미구현";
                 break;
 
             case AttackType.Debuff:
-                txt_default.text = $"디버프존 위 모든 적에게\n{UIManager.GetDebuffTargetName(data.debuffTarget)} 디버프 {stats.AttackPower:0.##} 부여 ({stats.Duration:0.##}턴)";
+                txt_default.text = $"디버프존 위 모든 적에게\n{BuffTargetNames.GetDebuffTargetName(data.debuffTarget)} 디버프 {stats.AttackPower:0.##} 부여 ({stats.Duration:0.##}턴)";
                 txt_skill.text = "스킬 미구현";
                 break;
         }

@@ -41,6 +41,8 @@ public class TowerManager : MonoBehaviour
     [Header("타워 순차 행동")]
     [Tooltip("공격 타워의 투사체가 명중해 이펙트가 발동한 뒤 다음 공격 타워가 행동하기까지의 간격입니다.")]
     [SerializeField, Min(0f)] private float m_nextAttackTowerDelay = 0.3f;
+    [Tooltip("한 타워의 공격에서 투사체 수가 이 시간(초) 동안 변하지 않으면 멈춘 것으로 보고 다음 타워로 넘어갑니다.")]
+    [SerializeField, Min(0.5f)] private float m_attackStallTimeout = 5f;
 
     // 배치된 타워의 점유 원본은 TileManager의 소환 타일 인덱스에 있다.
     private List<KeyValuePair<int, TowerController>> GetPlacedTowers() =>
@@ -54,7 +56,6 @@ public class TowerManager : MonoBehaviour
     private Dictionary<int, List<TowerData>> m_towerColor        = new Dictionary<int, List<TowerData>>();
     private Dictionary<int, List<TowerData>> m_towerEmblem       = new Dictionary<int, List<TowerData>>();
 
-    public event Action<int> OnTowerTypeUpgrade;
     public event Action<int> CurrentCreateTowerValueChanged;
     public event Action<int> CurrentColorUpgradeValueChanged;
     public event Action<int> CurrentTierUpgradeValueChanged;
@@ -92,7 +93,7 @@ public class TowerManager : MonoBehaviour
         public int SpawnIndex;
     }
 
-    // 시너지 기획.txt 순서. 각 항목은 4티어 이상 재료 문양을 모두 보유하면 생성된다.
+    // 27. 기획 통합.txt 9장 순서. 각 항목은 4티어 이상 재료 문양을 모두 보유하면 생성된다.
     private static readonly SynergyDefinition[] s_synergyDefinitions =
     {
         new SynergyDefinition(6001, "오딘", 5104, TowerEmblem.SPEAR, TowerEmblem.LIGHT, TowerEmblem.DARKNESS),
@@ -165,6 +166,17 @@ public class TowerManager : MonoBehaviour
         }
     }
 
+    // CSV의 숫자는 실행 기기의 언어 설정과 무관하게 항상 같은 방식(소수점 '.')으로 읽습니다.
+    private static float ParseCsvFloat(string value)
+    {
+        return float.Parse(value.Trim(), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
+    }
+
+    private static int ParseCsvInt(string value)
+    {
+        return int.Parse(value.Trim(), System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture);
+    }
+
     private void LoadTowerDataFromCSV()
     {
         if (m_towerBasePrefab == null)
@@ -192,42 +204,52 @@ public class TowerManager : MonoBehaviour
         for (int i = 1; i < lines.Length; i++)
         {
             string[] values = lines[i].Split(',');
-            if (values.Length < 20 || string.IsNullOrWhiteSpace(values[0])) continue;
+            // 열 순서: ID, Name, attackDamage, attackRange, Action, attackCount, SplashRadius, AdditionalHitCount,
+            // criticalRate, criticalDamage, duration, abilityValue, attackType, buffTarget, debuffTarget,
+            // Speed, HitEffectID, TargetPriority
+            if (string.IsNullOrWhiteSpace(values[0])) continue;
+            if (values.Length < 17)
+            {
+                Debug.LogWarning($"[CSV 데이터 오류] {i + 1}번째 줄의 열이 {values.Length}개입니다 (17개 이상 필요). 내용: {lines[i]}");
+                continue;
+            }
 
             TowerData newData = ScriptableObject.CreateInstance<TowerData>();
 
             try
             {
-                newData.towerID = int.Parse(values[0].Trim());
+                newData.towerID = ParseCsvInt(values[0]);
                 newData.towerName = values[1].Replace("\"", "").Trim();
-                newData.towerLevel = int.Parse(values[2].Trim());
-                newData.power = float.Parse(values[3].Trim());
-                newData.range = float.Parse(values[4].Trim());
-                newData.action = Mathf.Max(1, int.Parse(values[5].Trim()));
-                newData.attackCount = Mathf.Max(1, Mathf.RoundToInt(float.Parse(values[6].Trim())));
-                newData.splashRadius = Mathf.Max(0, Mathf.RoundToInt(float.Parse(values[7].Trim())));
-                newData.additionalHitCount = Mathf.Max(0, int.Parse(values[8].Trim()));
-                newData.isCritical = bool.Parse(values[9].Trim());
-                newData.criticalRate = float.Parse(values[10].Trim());
-                newData.criticalDamage = float.Parse(values[11].Trim());
-                newData.duration = float.Parse(values[12].Trim());
-                newData.abilityValue = float.Parse(values[13].Trim());
+                newData.power = ParseCsvFloat(values[2]);
+                newData.range = ParseCsvFloat(values[3]);
+                newData.action = Mathf.Max(1, ParseCsvInt(values[4]));
+                newData.attackCount = Mathf.Max(1, Mathf.RoundToInt(ParseCsvFloat(values[5])));
+                newData.splashRadius = Mathf.Max(0, Mathf.RoundToInt(ParseCsvFloat(values[6])));
+                newData.additionalHitCount = Mathf.Max(0, ParseCsvInt(values[7]));
+                newData.criticalRate = ParseCsvFloat(values[8]);
+                newData.criticalDamage = ParseCsvFloat(values[9]);
+                newData.duration = ParseCsvFloat(values[10]);
+                newData.abilityValue = ParseCsvFloat(values[11]);
 
-                newData.attackType = ParseEnum<AttackType>(values[14]);
-                string layerName = values[15].Trim();
-                newData.targetLayer = !string.IsNullOrEmpty(layerName) ? LayerMask.GetMask(layerName) : 0;
-                newData.buffTarget = string.IsNullOrEmpty(values[16].Trim()) ? BuffTarget.None : ParseEnum<BuffTarget>(values[16]);
-                newData.debuffTarget = string.IsNullOrEmpty(values[17].Trim()) ? DebuffTarget.None : ParseEnum<DebuffTarget>(values[17]);
+                newData.attackType = ParseEnum<AttackType>(values[12]);
+                newData.buffTarget = string.IsNullOrEmpty(values[13].Trim()) ? BuffTarget.None : ParseEnum<BuffTarget>(values[13]);
+                newData.debuffTarget = string.IsNullOrEmpty(values[14].Trim()) ? DebuffTarget.None : ParseEnum<DebuffTarget>(values[14]);
 
-                newData.projectileSpeed = float.Parse(values[18].Trim());
-                newData.hitEffectID = int.Parse(values[19].Trim());
-                newData.targetPriority = values.Length > 20 && !string.IsNullOrWhiteSpace(values[20])
-                    ? ParseEnum<TargetPriority>(values[20])
+                newData.projectileSpeed = ParseCsvFloat(values[15]);
+                newData.hitEffectID = ParseCsvInt(values[16]);
+                newData.targetPriority = values.Length > 17 && !string.IsNullOrWhiteSpace(values[17])
+                    ? ParseEnum<TargetPriority>(values[17])
                     : TargetPriority.Closest;
             }
             catch (System.Exception)
             {
                 Debug.LogWarning($"[CSV 데이터 오류] 엑셀의 {i + 1}번째 줄 파싱 실패. 내용: {lines[i]}");
+                continue;
+            }
+
+            if (m_towerDataById.ContainsKey(newData.towerID))
+            {
+                Debug.LogWarning($"[CSV 데이터 오류] {i + 1}번째 줄의 ID {newData.towerID}가 중복입니다. 먼저 나온 줄을 사용합니다.");
                 continue;
             }
 
@@ -349,15 +371,6 @@ public class TowerManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 에너미 턴에 한 번 호출됩니다. 보드의 위쪽부터 아래쪽, 왼쪽부터 오른쪽 순서로 타워가 행동합니다.
-    /// 화면의 첫 번째 슬롯을 1번으로 보았을 때 1번부터 증가하는 순서입니다.
-    /// </summary>
-    public void ExecuteTowerActionTurn()
-    {
-        StartCoroutine(ExecuteTowerActionTurnRoutine());
-    }
-
-    /// <summary>
     /// Runs exactly once per enemy turn before support actions.  Status duration is
     /// target-owned, while tile records from the previous turn expire here.
     /// </summary>
@@ -367,8 +380,8 @@ public class TowerManager : MonoBehaviour
         TileManager.Instance?.AdvanceTowerBuffEffectTurns();
         foreach (KeyValuePair<int, TowerController> tower in orderedTowers)
         {
-            tower.Value?.AdvanceBuffTurn();
-            tower.Value?.AdvanceFireStatusTurn();
+            tower.Value?.AdvanceStackBuffTurn();
+            tower.Value?.AdvanceSkillTurn();
         }
     }
 
@@ -389,7 +402,7 @@ public class TowerManager : MonoBehaviour
         // after all support towers have placed their effects.
         foreach (KeyValuePair<int, TowerController> tower in orderedTowers)
         {
-            tower.Value?.RefreshFireTileStatus();
+            tower.Value?.RefreshStackBuffs();
         }
         yield return null;
     }
@@ -404,14 +417,39 @@ public class TowerManager : MonoBehaviour
             TowerData data = controller != null ? controller.GetTowerData() : null;
             if (data == null || (data.attackType != AttackType.Splash && data.attackType != AttackType.Target)) continue;
 
-            // Fire Splash skill 2 checks its own Duration counter independently of
-            // the basic action gauge, then the normal skill 1 attack follows.
-            controller.TryTriggerFireMeteor();
+            // 스킬은 행동력과 무관하게 매 적 턴 자기 발동 조건을 확인하고, 그 뒤에 기본 공격이 이어집니다.
+            controller.TryUseSkill();
             bool didAct = controller.ExecuteTurnAction();
+            GameStateVersion.MarkChanged();
             if (!didAct && (GlobalProjectileManager.Instance == null || !GlobalProjectileManager.Instance.HasActiveProjectiles())) continue;
 
-            while (GlobalProjectileManager.Instance != null && GlobalProjectileManager.Instance.HasActiveProjectiles())
+            // 이 타워의 공격이 끝날 때까지 기다립니다: 위성을 다 쏘았고, 남은 투사체가 없을 때.
+            // 투사체 수가 m_attackStallTimeout 동안 변하지 않으면 멈춘 것으로 보고 다음 타워로 넘어갑니다.
+            float stalledTime = 0f;
+            int previousProjectileCount = -1;
+            while (true)
             {
+                bool isAttacking = controller != null && controller.IsAttackInProgress;
+                int projectileCount = GlobalProjectileManager.Instance != null
+                    ? GlobalProjectileManager.Instance.GetActiveProjectileCount()
+                    : 0;
+                if (!isAttacking && projectileCount <= 0) break;
+
+                if (projectileCount != previousProjectileCount)
+                {
+                    previousProjectileCount = projectileCount;
+                    stalledTime = 0f;
+                }
+                else
+                {
+                    stalledTime += Time.deltaTime;
+                    if (stalledTime >= m_attackStallTimeout)
+                    {
+                        Debug.LogWarning($"[TowerManager] 타워 공격이 {m_attackStallTimeout}초 동안 끝나지 않아 다음 타워로 넘어갑니다. (남은 투사체 {projectileCount}개)");
+                        break;
+                    }
+                }
+
                 yield return null;
             }
 
@@ -427,49 +465,6 @@ public class TowerManager : MonoBehaviour
         return GetPlacedTowers();
     }
 
-    /// <summary>
-    /// 공격 타워는 자신의 투사체가 모두 명중하거나 회수된 뒤 지정된 간격만큼 기다리고 다음 공격 타워로 넘어갑니다.
-    /// 버프/디버프 타워는 이 대기 계산에서 제외하며 자기 순서에 즉시 행동합니다.
-    /// </summary>
-    public IEnumerator ExecuteTowerActionTurnRoutine()
-    {
-        List<KeyValuePair<int, TowerController>> orderedTowers = GetOrderedTowers();
-
-        // 이번 에너미 턴이 시작되었으므로, 기존 버프의 남은 턴을 먼저 차감합니다.
-        // 버프 타워가 기록한 타일 효과도 같은 턴 규칙으로 함께 갱신합니다.
-        TileManager.Instance?.AdvanceTowerBuffEffectTurns();
-        foreach (KeyValuePair<int, TowerController> tower in orderedTowers)
-        {
-            tower.Value?.AdvanceBuffTurn();
-        }
-
-        foreach (KeyValuePair<int, TowerController> tower in orderedTowers)
-        {
-            TowerController controller = tower.Value;
-            if (controller == null) continue;
-
-            bool didAct = controller.ExecuteTurnAction();
-            if (!didAct) continue;
-
-            TowerData towerData = controller.GetTowerData();
-            if (towerData == null || towerData.attackType == AttackType.Buff || towerData.attackType == AttackType.Debuff)
-            {
-                continue;
-            }
-
-            // 이 타워가 만든 위성 투사체의 생성·발사·명중이 끝날 때까지 기다립니다.
-            // 명중 순간 EffectManager가 이펙트를 재생하므로, 이 반복문을 벗어날 때는 공격 이펙트도 발동된 상태입니다.
-            while (GlobalProjectileManager.Instance != null && GlobalProjectileManager.Instance.HasActiveProjectiles())
-            {
-                yield return null;
-            }
-
-            if (m_nextAttackTowerDelay > 0f)
-            {
-                yield return new WaitForSeconds(m_nextAttackTowerDelay);
-            }
-        }
-    }
     // ==========================================================================================================
     // ================================================ 타워판매 ================================================
     // ==========================================================================================================
@@ -684,14 +679,6 @@ public class TowerManager : MonoBehaviour
         return true;
     }
 
-    public void RefreshBuffOnAllTowers(BuffTarget target)
-    {
-        foreach (KeyValuePair<int, TowerController> placed in GetPlacedTowers())
-        {
-            placed.Value?.RefreshExternalBuff(target);
-        }
-    }
-
     public float GetSharedDarknessAbility()
     {
         return m_sharedDarknessAbilityValue;
@@ -708,8 +695,9 @@ public class TowerManager : MonoBehaviour
             _ => 2f
         };
 
+        // 타워는 최종 스탯을 계산할 때마다 이 값을 다시 읽으므로 따로 알릴 필요가 없습니다.
         m_sharedDarknessAbilityValue += gainedValue;
-        RefreshBuffOnAllTowers(BuffTarget.Darkness);
+        GameStateVersion.MarkChanged();
     }
 
     public void UpgradeTower(int towerID)
@@ -754,14 +742,32 @@ public class TowerManager : MonoBehaviour
 
             if (UpgradeStats.Level <= 5)
             {
-                UpgradeStats.AttackPower      = towerData.power * multiplier;
-                UpgradeStats.Range       = TowerAttackAction.ToWorldRange(towerData.range * multiplier);
-                UpgradeStats.AttackCount = Mathf.Max(1, Mathf.RoundToInt(towerData.attackCount * multiplier));
+                // 컬러 강화는 스킬만 강화합니다. 공격력·사거리·공격 횟수 같은 기본 스탯은 티어(CSV)가 정합니다.
+                // 레벨은 UpgradeStats.Level로 함께 전달되어, 스킬이 발동 조건 등을 계산할 때 사용합니다.
+                UpgradeStats.AbilityValue = towerData.abilityValue * multiplier;
+
+                // 공격 타워는 스킬 발동 조건(Duration)이 레벨만큼 줄고, 레벨 3과 5에서 범위·추가 타격이 1씩 늘어납니다.
+                // 버프·디버프 타워는 Duration의 뜻이 달라서 따로 재설계할 때까지 AbilityValue만 올립니다.
+                if (towerData.attackType == AttackType.Splash || towerData.attackType == AttackType.Target)
+                {
+                    int levelBonus = UpgradeStats.Level >= 5 ? 2 : (UpgradeStats.Level >= 3 ? 1 : 0);
+                    UpgradeStats.Duration = towerData.duration / UpgradeStats.Level;
+
+                    if (towerData.attackType == AttackType.Splash)
+                    {
+                        UpgradeStats.ProjectileRadius = towerData.splashRadius + levelBonus;
+                    }
+                    else
+                    {
+                        UpgradeStats.AdditionalHitCount = towerData.additionalHitCount + levelBonus;
+                    }
+                }
 
                 m_baseTowerStats[key] = UpgradeStats;
-                OnTowerTypeUpgrade?.Invoke(key);
             }
         }
+        GameStateVersion.MarkChanged();
+
         // 2. 필드에 배치된 해당 타입 타워들에게 최신 스탯 주입(Push)
         foreach (KeyValuePair<int, TowerController> placed in GetPlacedTowers())
         {
@@ -1011,7 +1017,6 @@ public class TowerManager : MonoBehaviour
         data.visualTowerID = definition.VisualTowerID;
         data.InitializeIdentity();
         data.towerName = $"{definition.Name} 시너지 타워";
-        data.towerLevel = 1;
         data.power = 0f;
         data.range = 1f;
         data.action = 1;

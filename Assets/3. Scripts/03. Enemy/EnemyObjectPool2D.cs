@@ -103,7 +103,7 @@ public class EnemyObjectPool2D : MonoBehaviour
         Destroy(e.gameObject);
     }
 
-    public EnemyHealthController Spawn(Vector3 position, float hpMultiplier, float defendMultiplier, TilePath tilePath)
+    public EnemyHealthController Spawn(Vector3 position, float hpMultiplier, float defendMultiplier)
     {
         if (m_enemyData == null)
         {
@@ -124,11 +124,11 @@ public class EnemyObjectPool2D : MonoBehaviour
             debuff.ClearAllDebuffs();
         }
 
-        // 2. 턴제 이동 데이터 초기화 (EnemyData 및 TilePath 전달)[cite: 22]
+        // 2. 턴제 이동 데이터 초기화 (EnemyData 전달)[cite: 22]
         if (health.TryGetComponent<EnemyMoveController>(out var movement))
         {
             // InitMovement가 적을 TileManager의 패스 0번 인덱스에 등록합니다.
-            movement.InitMovement(m_enemyData, tilePath);
+            movement.InitMovement(m_enemyData);
         }
 
         // 3. 체력 초기화[cite: 22]

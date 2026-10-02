@@ -14,7 +14,6 @@ public class WaveManager : MonoBehaviour
 
     [Header("Pool Reference")]
     [SerializeField] private EnemyObjectPool2D[] m_enemyPool;  // 0=Normal, 1=Speed, 2=Depend, 3=MiddleBoss, 4=Boss
-    [SerializeField] private TilePath m_tilePath;                // 타일 경로 참조
 
     [Header("Wave Base Settings")]
     [SerializeField] private int m_currentWave = 1;
@@ -51,9 +50,9 @@ public class WaveManager : MonoBehaviour
 
     private void Start()
     {
-        if (m_enemyPool == null || m_tilePath == null)
+        if (m_enemyPool == null || TileManager.Instance == null)
         {
-            Debug.LogError("[WaveManager] 필수 컴포넌트(Pool 또는 TilePath)가 누락되었습니다.");
+            Debug.LogError("[WaveManager] 필수 컴포넌트(Pool 또는 TileManager)가 누락되었습니다.");
             return;
         }
 
@@ -76,7 +75,7 @@ public class WaveManager : MonoBehaviour
     public int SpawnWaveEnemiesForTurn()
     {
         List<EnemyType> waveEnemies = GetWaveEnemyComposition(m_currentWave);
-        if (m_waveSpawnedCount >= waveEnemies.Count || m_enemyPool == null || m_tilePath == null) return 0;
+        if (m_waveSpawnedCount >= waveEnemies.Count || m_enemyPool == null || TileManager.Instance == null) return 0;
 
         int spawnCount = CurrentSubWave == 10 ? 1 : CurrentCycle * 2;
         int spawnedCount = 0;
@@ -93,7 +92,12 @@ public class WaveManager : MonoBehaviour
                 break;
             }
 
-            m_enemyPool[poolIndex].Spawn(m_tilePath.GetWorldPosition(0), hpMulti, defendMulti, m_tilePath);
+            // 풀이 가득 차 소환에 실패하면 세지 않고 멈춥니다. 남은 적은 다음 소환 턴에 다시 시도합니다.
+            if (m_enemyPool[poolIndex].Spawn(TileManager.Instance.GetPathWorldPosition(0), hpMulti, defendMulti) == null)
+            {
+                Debug.LogWarning($"[WaveManager] {currentEnemyType} 소환에 실패했습니다. 오브젝트 풀의 최대 크기를 확인하세요.");
+                break;
+            }
 
             m_waveSpawnedCount++;
             spawnedCount++;
@@ -256,11 +260,17 @@ public class WaveManager : MonoBehaviour
 
         int poolIndex = (int)EnemyType.MiddleBoss;
         if (m_enemyPool == null || poolIndex >= m_enemyPool.Length || m_enemyPool[poolIndex] == null) return false;
+        if (TileManager.Instance == null) return false;
 
         GetCycleMultipliers(m_currentWave, out float middleBossHPMulti, out float middleBossDefendMulti);
 
         EnemyObjectPool2D targetPool = m_enemyPool[poolIndex];
-        targetPool.Spawn(m_tilePath.GetWorldPosition(0), middleBossHPMulti, middleBossDefendMulti, m_tilePath);
+        // 소환에 실패했으면 버튼을 다시 누를 수 있게 소환 상태를 바꾸지 않습니다.
+        if (targetPool.Spawn(TileManager.Instance.GetPathWorldPosition(0), middleBossHPMulti, middleBossDefendMulti) == null)
+        {
+            Debug.LogWarning("[WaveManager] 중간 보스 소환에 실패했습니다. 오브젝트 풀의 최대 크기를 확인하세요.");
+            return false;
+        }
         m_middleBossSpawned = true;
         MiddleBossSummonableChanged?.Invoke();
         return true;
@@ -287,9 +297,48 @@ public class WaveManager : MonoBehaviour
         MiddleBossSummonableChanged?.Invoke();
     }
 
-    public void OnEnemyDied(bool isBoss = false)
+    // 보상 기준표: Resources/WavePerEnemies&Gold&Gem.xlsx
+    private const int NormalGoldPerWave = 10;
+    private const int BossGoldPerWave = 100;
+    private const int BossGemPerWave = 2;
+    private const int MiddleBossGoldPerWave = 50;
+    private const int MiddleBossGemPerWave = 1;
+    private const int FinalWave = 40;
+
+    /// <summary>
+    /// 적 처치 보상을 계산합니다. 기준은 적이 죽은 웨이브가 아니라 소환된 웨이브입니다.
+    /// 일반 적은 웨이브에 비례하고, 보스 보상은 여기에 사이클(10웨이브 단위) 배율이 한 번 더 곱해집니다.
+    /// 중간 보스는 실제 소환 웨이브와 무관하게 그 사이클의 기준 웨이브(5/15/25/35)로 계산합니다.
+    /// </summary>
+    public static void GetKillReward(EnemyType enemyType, int spawnWave, out int gold, out int gem)
     {
-        if (isBoss && m_currentWave >= 40)
+        int wave = Mathf.Clamp(spawnWave, 1, FinalWave);
+        int cycle = ((wave - 1) / 10) + 1;
+
+        switch (enemyType)
+        {
+            case EnemyType.Boss:
+                gold = BossGoldPerWave * wave * cycle;
+                gem = BossGemPerWave * wave * cycle;
+                break;
+
+            case EnemyType.MiddleBoss:
+                int baseWave = ((cycle - 1) * 10) + 5;
+                gold = MiddleBossGoldPerWave * baseWave * cycle;
+                gem = MiddleBossGemPerWave * baseWave * cycle;
+                break;
+
+            default:
+                gold = NormalGoldPerWave * wave;
+                gem = 0;
+                break;
+        }
+    }
+
+    /// <summary>40웨이브에 소환된 최종 보스가 죽었을 때만 게임 클리어입니다. 중간 보스나 이전 웨이브 보스는 해당하지 않습니다.</summary>
+    public void OnEnemyDied(EnemyType enemyType, int spawnWave)
+    {
+        if (enemyType == EnemyType.Boss && spawnWave >= FinalWave)
         {
             if (GameManager.Instance != null)
             {

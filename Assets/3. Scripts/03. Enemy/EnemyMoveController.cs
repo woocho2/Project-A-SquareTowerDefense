@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyMoveController : MonoBehaviour
@@ -30,8 +31,11 @@ public class EnemyMoveController : MonoBehaviour
     private Transform[] m_uiTransforms;
     private Vector3[] m_uiLocalPositions;
     private Quaternion[] m_uiLocalRotations;
-    private TilePath m_tilePath;
     private bool m_isMoving = false;
+
+    // 같은 타일의 적과 겹치지 않도록 벌려 설 화면상 목표 위치입니다. 논리적 타일 위치(m_currentTileIndex)와는 무관합니다.
+    private Vector3 m_formationTarget;
+    private bool m_hasFormationTarget;
 
     public int CurrentTileIndex => m_currentTileIndex;
     public bool IsMoving => m_isMoving;
@@ -67,11 +71,27 @@ public class EnemyMoveController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 이동 코루틴이 끝난 뒤, 진형 자리까지 부드럽게 보간합니다.
+    /// 이동 중에는 코루틴이 Transform을 제어하므로 건드리지 않습니다.
+    /// </summary>
+    private void Update()
+    {
+        if (!m_hasFormationTarget || m_isMoving || TileManager.Instance == null) return;
+
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            m_formationTarget,
+            TileManager.Instance.EnemyFormationMoveSpeed * Time.deltaTime);
+
+        if (transform.position == m_formationTarget) m_hasFormationTarget = false;
+    }
+
     // ScriptableObject(EnemyData)의 Action과 Speed를 기반으로 초기화
-    public void InitMovement(EnemyData data, TilePath tilePath)
+    public void InitMovement(EnemyData data)
     {
         ResetFacingDirection();
-        m_tilePath = tilePath;
+        m_hasFormationTarget = false;
         m_currentTileIndex = 0;
         m_currentActionCounter = 0;
         m_tileBuffSpeed = 0;
@@ -99,16 +119,49 @@ public class EnemyMoveController : MonoBehaviour
             m_baseDiceMaxSpeed = 1;
         }
 
-        if (m_tilePath != null)
+        if (TileManager.Instance != null)
         {
-            transform.position = m_tilePath.GetWorldPosition(0);
-            m_tilePath.RegisterEnemyAtIndex(m_health, m_currentTileIndex);
+            transform.position = TileManager.Instance.GetPathWorldPosition(0);
+            RegisterAtTile(m_currentTileIndex);
+        }
+    }
+
+    /// <summary>
+    /// 이동이 완료된 순간 호출하여 전투 점유 타일을 확정하고, 떠난 타일과 도착한 타일의 진형을 다시 배치합니다.
+    /// </summary>
+    private void RegisterAtTile(int index)
+    {
+        TileManager tileManager = TileManager.Instance;
+        if (tileManager == null || !tileManager.SetEnemyAtPathIndex(m_health, index, out int previousIndex)) return;
+
+        if (previousIndex >= 0 && previousIndex != index) ArrangeFormation(previousIndex);
+        ArrangeFormation(index);
+    }
+
+    /// <summary>
+    /// 한 타일의 점유 목록을 기준으로 모든 적의 진형 자리를 다시 계산합니다.
+    /// Transform을 즉시 옮기지 않고 목표만 갱신하며, 각 적이 Update에서 스스로 이동합니다.
+    /// </summary>
+    private static void ArrangeFormation(int pathIndex)
+    {
+        TileManager tileManager = TileManager.Instance;
+        if (tileManager == null) return;
+
+        List<EnemyHealthController> enemies = tileManager.GetEnemyOccupantsAtPathIndex(pathIndex);
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            EnemyMoveController movement = enemies[i].Movement;
+            if (movement == null) continue;
+
+            movement.m_formationTarget = tileManager.GetEnemyFormationPosition(pathIndex, i, enemies.Count);
+            movement.m_hasFormationTarget = true;
         }
     }
 
     public IEnumerator ProcessTurnMoveRoutine()
     {
-        if (m_tilePath == null) yield break;
+        TileManager tileManager = TileManager.Instance;
+        if (tileManager == null) yield break;
 
         if (m_forcedNoMoveTurns > 0)
         {
@@ -116,7 +169,7 @@ public class EnemyMoveController : MonoBehaviour
             yield break;
         }
 
-        if (m_currentTileIndex >= m_tilePath.LastIndex)
+        if (m_currentTileIndex >= tileManager.LastPathIndex)
         {
             OnReachEnd();
             yield break;
@@ -157,7 +210,7 @@ public class EnemyMoveController : MonoBehaviour
         for (int i = 0; i < steps && m_currentTileIndex > 0; i++)
         {
             int nextIndex = m_currentTileIndex - 1;
-            Vector3 targetPos = m_tilePath.ReserveArrivalPosition(m_health, nextIndex);
+            Vector3 targetPos = TileManager.Instance.ReserveEnemyArrivalPosition(m_health, nextIndex);
             FaceMoveDirection(targetPos);
             while (Vector3.Distance(transform.position, targetPos) > 0.02f)
             {
@@ -167,7 +220,7 @@ public class EnemyMoveController : MonoBehaviour
             transform.position = targetPos;
             // 도착한 순간에만 인덱스를 바꿔 TileManager의 점유 인덱스와 항상 일치시킵니다.
             m_currentTileIndex = nextIndex;
-            m_tilePath.RegisterEnemyAtIndex(m_health, m_currentTileIndex);
+            RegisterAtTile(m_currentTileIndex);
         }
         m_isMoving = false;
     }
@@ -178,13 +231,13 @@ public class EnemyMoveController : MonoBehaviour
 
         for (int i = 0; i < steps; i++)
         {
-            if (m_currentTileIndex >= m_tilePath.LastIndex)
+            if (m_currentTileIndex >= TileManager.Instance.LastPathIndex)
             {
                 break;
             }
 
             int nextIndex = m_currentTileIndex + 1;
-            Vector3 targetPos = m_tilePath.ReserveArrivalPosition(m_health, nextIndex);
+            Vector3 targetPos = TileManager.Instance.ReserveEnemyArrivalPosition(m_health, nextIndex);
             FaceMoveDirection(targetPos);
 
             while (Vector3.Distance(transform.position, targetPos) > 0.02f)
@@ -196,13 +249,13 @@ public class EnemyMoveController : MonoBehaviour
             transform.position = targetPos;
             // 도착한 순간에만 인덱스를 바꿔 TileManager의 점유 인덱스와 항상 일치시킵니다.
             m_currentTileIndex = nextIndex;
-            m_tilePath.RegisterEnemyAtIndex(m_health, m_currentTileIndex);
+            RegisterAtTile(m_currentTileIndex);
         }
 
         m_isMoving = false;
 
         // 도착점 도달 확인
-        if (m_currentTileIndex >= m_tilePath.LastIndex)
+        if (m_currentTileIndex >= TileManager.Instance.LastPathIndex)
         {
             OnReachEnd();
             yield break;
@@ -215,7 +268,13 @@ public class EnemyMoveController : MonoBehaviour
     {
         m_isMoving = false;
         StopAllCoroutines();
-        m_tilePath?.UnregisterEnemy(m_health);
+        m_hasFormationTarget = false;
+
+        // 점유와 도착 예약을 함께 제거하므로, 풀에 들어간 적이 공격 대상에 남지 않습니다.
+        if (TileManager.Instance != null && TileManager.Instance.RemoveEnemyFromPath(m_health, out int previousIndex))
+        {
+            ArrangeFormation(previousIndex);
+        }
     }
 
     private void FaceMoveDirection(Vector3 targetPosition)
@@ -265,8 +324,8 @@ public class EnemyMoveController : MonoBehaviour
         // 1. 기존 버프 완전 초기화 (스피드 및 방어력 복구)
         ResetAllBuffs();
 
-        if (TileManager.Instance == null || m_tilePath == null) return;
-        if (m_currentTileIndex <= 0 || m_currentTileIndex >= m_tilePath.LastIndex) return;
+        if (TileManager.Instance == null) return;
+        if (m_currentTileIndex <= 0 || m_currentTileIndex >= TileManager.Instance.LastPathIndex) return;
 
         // 2. 현재 멈춰있는 타일 타입 확인
         PathTileBuffType tileType = TileManager.Instance.GetTileTypeAt(m_currentTileIndex);
@@ -281,18 +340,18 @@ public class EnemyMoveController : MonoBehaviour
                 break;
 
             case PathTileBuffType.DefendTile:
-                // 방어 타일: 방어력 20% 증가 (계수 1.2배)
+                // 방어 타일: 방어력 20% 증가 (해머 디버프의 감소와는 합연산)
                 if (m_health != null)
                 {
-                    m_health.SetDefendMultiplier(1.2f);
+                    m_health.SetTileDefendBonus(0.2f);
                 }
                 break;
 
             case PathTileBuffType.HealTile:
-                // 힐 타일: 현재 체력의 20% 즉시 회복
+                // 힐 타일: 이 타일에 멈춰 있는 동안 매 턴 최대 체력의 5% 회복
                 if (m_health != null)
                 {
-                    m_health.HealMaxHealthPercent(0.2f);
+                    m_health.HealMaxHealthPercent(0.05f);
                 }
                 break;
 
@@ -303,7 +362,7 @@ public class EnemyMoveController : MonoBehaviour
         }
 
         // 패스 타일의 디버프 데이터도 같은 좌표를 기준으로 읽습니다.
-        // 이 시점에는 적이 이동을 마치고 TilePath의 해당 인덱스 리스트에 등록된 상태입니다.
+        // 이 시점에는 적이 이동을 마치고 TileManager의 해당 인덱스 리스트에 등록된 상태입니다.
         if (TryGetComponent(out EnemyDebuffController debuffController))
         {
             debuffController.RefreshTileDebuffs(m_currentTileIndex);
@@ -324,11 +383,20 @@ public class EnemyMoveController : MonoBehaviour
         }
     }
 
+    private const int NormalLeakDamage = 1;
+    private const int BossLeakDamage = 3;
+    private const int FinalWave = 40;
+
+    // 도착점에 닿은 적은 즉시 사라지고 플레이어에게 피해를 줍니다. 40웨이브 보스를 놓치면 바로 게임 오버입니다.
     public void OnReachEnd()
     {
+        bool isBoss = m_health != null && m_health.EnemyType == EnemyType.Boss;
+
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.DecreaseLife(1);
+            bool isFinalBoss = isBoss && m_health.SpawnWave >= FinalWave;
+            if (isFinalBoss) GameManager.Instance.OnGameOver();
+            else GameManager.Instance.DecreaseLife(isBoss ? BossLeakDamage : NormalLeakDamage);
         }
 
         m_health?.ReturnToPool();

@@ -1,0 +1,122 @@
+{
+  "method": "RGB-only soft highlight adjustment within existing metal ornament pixels; preserve alpha and layout",
+  "files": [
+    "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/1. BackGround/Tile_TowerSpawn_Atlas.png",
+    "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Assets/4. Asset/1. BackGround/Tile_Path_Atlas.png"
+  ],
+  "backup": "D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/output/ui-stage-tiles/gloss/backups/before-gloss-03418bee",
+  "atlasDimensions": [
+    1024,
+    768
+  ],
+  "spriteDimensions": [
+    256,
+    256
+  ],
+  "spriteCount": 20,
+  "metadataUnchanged": true,
+  "maximumHighlightBlend": 0.26,
+  "unityPlaytestPerformed": false,
+  "validation": [
+    {
+      "realm": "Asgard",
+      "changedPixels": 20474,
+      "ringChangedPixels": 7010,
+      "cornerChangedPixels": 13464,
+      "maximumChannelIncrease": 41,
+      "backgroundUnchanged": true,
+      "alphaUnchanged": true,
+      "sharedFrameColorsPreserved": true
+    },
+    {
+      "realm": "Vanaheim",
+      "changedPixels": 20406,
+      "ringChangedPixels": 6984,
+      "cornerChangedPixels": 13422,
+      "maximumChannelIncrease": 36,
+      "backgroundUnchanged": true,
+      "alphaUnchanged": true,
+      "sharedFrameColorsPreserved": true
+    },
+    {
+      "realm": "Alfheim",
+      "changedPixels": 20440,
+      "ringChangedPixels": 7006,
+      "cornerChangedPixels": 13434,
+      "maximumChannelIncrease": 37,
+      "backgroundUnchanged": true,
+      "alphaUnchanged": true,
+      "sharedFrameColorsPreserved": true
+    },
+    {
+      "realm": "Jotunheim",
+      "changedPixels": 20242,
+      "ringChangedPixels": 6916,
+      "cornerChangedPixels": 13326,
+      "maximumChannelIncrease": 28,
+      "backgroundUnchanged": true,
+      "alphaUnchanged": true,
+      "sharedFrameColorsPreserved": true
+    },
+    {
+      "realm": "Midgard",
+      "changedPixels": 20410,
+      "ringChangedPixels": 6986,
+      "cornerChangedPixels": 13424,
+      "maximumChannelIncrease": 36,
+      "backgroundUnchanged": true,
+      "alphaUnchanged": true,
+      "sharedFrameColorsPreserved": true
+    },
+    {
+      "realm": "Nidavellir",
+      "changedPixels": 20440,
+      "ringChangedPixels": 7006,
+      "cornerChangedPixels": 13434,
+      "maximumChannelIncrease": 37,
+      "backgroundUnchanged": true,
+      "alphaUnchanged": true,
+      "sharedFrameColorsPreserved": true
+    },
+    {
+      "realm": "Niflheim",
+      "changedPixels": 20076,
+      "ringChangedPixels": 6840,
+      "cornerChangedPixels": 13236,
+      "maximumChannelIncrease": 23,
+      "backgroundUnchanged": true,
+      "alphaUnchanged": true,
+      "sharedFrameColorsPreserved": true
+    },
+    {
+      "realm": "Hel",
+      "changedPixels": 20336,
+      "ringChangedPixels": 6952,
+      "cornerChangedPixels": 13384,
+      "maximumChannelIncrease": 32,
+      "backgroundUnchanged": true,
+      "alphaUnchanged": true,
+      "sharedFrameColorsPreserved": true
+    },
+    {
+      "realm": "Muspelheim",
+      "changedPixels": 20380,
+      "ringChangedPixels": 6972,
+      "cornerChangedPixels": 13408,
+      "maximumChannelIncrease": 34,
+      "backgroundUnchanged": true,
+      "alphaUnchanged": true,
+      "sharedFrameColorsPreserved": true
+    },
+    {
+      "realm": "Ragnarok",
+      "changedPixels": 20314,
+      "ringChangedPixels": 6946,
+      "cornerChangedPixels": 13368,
+      "maximumChannelIncrease": 31,
+      "backgroundUnchanged": true,
+      "alphaUnchanged": true,
+      "sharedFrameColorsPreserved": true
+    }
+  ]
+}

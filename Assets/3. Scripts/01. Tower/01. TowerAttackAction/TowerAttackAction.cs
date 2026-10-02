@@ -1,6 +1,21 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>투사체를 타워 둘레에 띄웠다가 쏘는 연출의 설정값입니다. 값은 타워 프리팹(TowerController)에서 정합니다.</summary>
+public struct ProjectileSatelliteSettings
+{
+    public float Interval;              // 자리 하나를 만들고 다음 자리를 만들거나 쏘기까지의 간격
+    public float LaunchDelay;           // 전부 띄운 뒤 첫 발사까지의 대기
+    public float Radius;                // 타워 중심에서 투사체까지의 거리
+    public float GroupSpacing;          // 한 자리에 여러 발일 때 서로 벌리는 간격
+    public float PreparationSafetyTime; // 연출이 중단됐을 때 대기 중인 투사체를 회수하는 여유 시간
+}
+
+/// <summary>
+/// 타워의 기본 행동(스킬 1)을 정하는 공통 규약입니다. 광역·단일·버프·디버프가 이 클래스를 상속합니다.
+/// 타워(TowerController)는 최종 스탯을 넘기기만 하고, 대상 선택과 피해 계산은 각 행동 스크립트가 합니다.
+/// </summary>
 public abstract class TowerAttackAction
 {
     public const float WorldUnitsPerTile = 1.5f;
@@ -52,6 +67,82 @@ public abstract class TowerAttackAction
         return false;
     }
 
+    // 12시 → 6시 → 9시 → 3시 → 1시 → 7시 → 11시 → 5시 순으로 투사체를 띄웁니다.
+    private static readonly Vector2[] s_satelliteDirections =
+    {
+        Vector2.up,
+        Vector2.down,
+        Vector2.left,
+        Vector2.right,
+        new Vector2(0.70710678f, 0.70710678f),
+        new Vector2(-0.70710678f, -0.70710678f),
+        new Vector2(-0.70710678f, 0.70710678f),
+        new Vector2(0.70710678f, -0.70710678f)
+    };
+
+    /// <summary>
+    /// 투사체 공격 한 번의 전체 과정입니다. AttackCount만큼 타워 둘레에 투사체를 띄우고,
+    /// 잠시 보여준 뒤 한 자리씩 발사합니다. 대상 선택과 피해 계산은 LaunchSatelliteProjectiles가 합니다.
+    /// 타워가 코루틴으로 실행하며, 이 코루틴이 끝나면 발사가 모두 끝난 것입니다.
+    /// </summary>
+    public IEnumerator SatelliteAttackRoutine(Transform towerTransform, TowerStats finalStats, ProjectileSatelliteSettings settings)
+    {
+        int satelliteCount = Mathf.Max(1, finalStats.AttackCount);
+        int projectilesPerSatellite = Mathf.Max(1, GetProjectilesPerSatellite(finalStats));
+        float sequenceDuration = settings.Interval * Mathf.Max(0, (satelliteCount - 1) * 2) + settings.LaunchDelay;
+        float preparationLifetime = sequenceDuration + settings.PreparationSafetyTime;
+
+        List<List<ProjectileHit2D>> satelliteGroups = new List<List<ProjectileHit2D>>(satelliteCount);
+
+        for (int satelliteIndex = 0; satelliteIndex < satelliteCount; satelliteIndex++)
+        {
+            Vector3 satelliteOffset = GetSatelliteOffset(satelliteIndex, settings.Radius);
+            Vector3 satelliteCenter = towerTransform.position + satelliteOffset;
+            Vector3 tangentDirection = new Vector3(-satelliteOffset.y, satelliteOffset.x, 0f).normalized;
+            List<ProjectileHit2D> group = new List<ProjectileHit2D>(projectilesPerSatellite);
+
+            for (int projectileIndex = 0; projectileIndex < projectilesPerSatellite; projectileIndex++)
+            {
+                float centeredIndex = projectileIndex - (projectilesPerSatellite - 1) * 0.5f;
+                Vector3 spawnPosition = satelliteCenter + tangentDirection * (centeredIndex * settings.GroupSpacing);
+                ProjectileHit2D projectile = PrepareSatelliteProjectile(spawnPosition, preparationLifetime);
+                if (projectile != null) group.Add(projectile);
+            }
+
+            satelliteGroups.Add(group);
+
+            if (satelliteIndex < satelliteCount - 1 && settings.Interval > 0f)
+            {
+                yield return new WaitForSeconds(settings.Interval);
+            }
+        }
+
+        // 완성된 위성 배치를 잠시 보여준 뒤 발사를 시작해 전투 흐름을 읽기 쉽게 합니다.
+        if (settings.LaunchDelay > 0f)
+        {
+            yield return new WaitForSeconds(settings.LaunchDelay);
+        }
+
+        // 생성된 자리 순서대로 같은 위치의 투사체를 한 묶음씩 발사합니다.
+        for (int satelliteIndex = 0; satelliteIndex < satelliteGroups.Count; satelliteIndex++)
+        {
+            LaunchSatelliteProjectiles(towerTransform, finalStats, satelliteGroups[satelliteIndex]);
+
+            if (satelliteIndex < satelliteGroups.Count - 1 && settings.Interval > 0f)
+            {
+                yield return new WaitForSeconds(settings.Interval);
+            }
+        }
+    }
+
+    private static Vector3 GetSatelliteOffset(int satelliteIndex, float baseRadius)
+    {
+        // 8개를 넘는 공격횟수는 같은 방향의 다음 바깥 고리에 배치합니다.
+        int ring = satelliteIndex / s_satelliteDirections.Length;
+        float radius = baseRadius * (1f + ring * 0.5f);
+        return s_satelliteDirections[satelliteIndex % s_satelliteDirections.Length] * radius;
+    }
+
     protected ProjectileHit2D SpawnPreparedProjectile(Vector3 spawnPosition, float preparationLifetime)
     {
         if (m_data == null || GlobalProjectileManager.Instance == null) return null;
@@ -69,6 +160,15 @@ public abstract class TowerAttackAction
     public static int ToTileRange(float range)
     {
         return Mathf.Max(1, Mathf.RoundToInt(range / WorldUnitsPerTile));
+    }
+
+    /// <summary>
+    /// 버프·디버프 타워의 스킬 2가 발동하는 스택 수입니다. 60 ÷ 컬러 강화 레벨 (60 / 30 / 20 / 15 / 12).
+    /// 60은 1~5의 최소공배수라 어느 레벨에서도 정수로 떨어집니다.
+    /// </summary>
+    public static int GetStackSkillThreshold(int colorUpgradeLevel)
+    {
+        return 60 / Mathf.Clamp(colorUpgradeLevel, 1, 5);
     }
 
     public static float ToWorldRange(float tileRange)
@@ -108,7 +208,8 @@ public abstract class TowerAttackAction
         float range,
         out EnemyHealthController targetEnemy,
         out int targetPathIndex,
-        TargetPriority priority = TargetPriority.Closest)
+        TargetPriority priority = TargetPriority.Closest,
+        bool skipDoomedEnemies = false)
     {
         targetEnemy = null;
         targetPathIndex = -1;
@@ -136,6 +237,8 @@ public abstract class TowerAttackAction
             {
                 EnemyHealthController health = enemies[j];
                 if (health.CurrentHP <= 0f) continue;
+                // 이미 날아가는 탄만으로 죽을 적은 건너뛰어, 남는 탄이 다음 우선순위의 적에게 가게 합니다.
+                if (skipDoomedEnemies && health.HasLethalDamageReserved) continue;
 
                 switch (priority)
                 {

@@ -31,6 +31,9 @@ public sealed class TowerTileBuffEffect
     public int ApplicationVersion;
     public int StackThreshold;
     public int StackLifetime;
+    // 스택형 버프(스킬 1 + 스킬 2 틀)에서만 씁니다. Power = 스킬 1의 세기, StackGain = 한 번 행동에 쌓는 스택 수.
+    public float Power;
+    public int StackGain;
 }
 
 
@@ -45,6 +48,10 @@ public sealed class PathTileDebuffEffect
     public int StackThreshold;
     public int ApplicationVersion;
     public int ZonePathIndex;
+    // 스택형 디버프(스킬 1 + 스킬 2 틀)에서만 씁니다. Power = 스킬 1의 세기, StackGain = 한 번 행동에 쌓는 스택 수.
+    // StackGain이 0이면 예전 방식(티어별 스택 수)을 씁니다.
+    public float Power;
+    public int StackGain;
 }
 
 [RequireComponent(typeof(Tilemap))]
@@ -80,11 +87,21 @@ public class TileManager : MonoBehaviour
     [Tooltip("타워 소환 타일의 공전형 맵 버프 표시용 프리팹. 패스 전용 프리팹이 없을 때도 사용합니다.")]
     [FormerlySerializedAs("towerTileBuffEffectPrefab")]
     [SerializeField] private TileSatelliteOrbiter mapTileBuffEffectPrefab;
-    [Tooltip("패스 타일용 바닥 룬 프리팹. 룬 에셋 제작 후 연결하며, 비어 있으면 기존 위성을 유지합니다.")]
+    [Tooltip("패스 맵 버프용 상승 기포 프리팹. 비어 있으면 기존 위성을 사용합니다.")]
     [SerializeField] private GameObject m_pathMapBuffVisualPrefab;
     [Tooltip("이펙트 부모. 비우면 TileManager 하위에 생성합니다.")]
     [FormerlySerializedAs("towerTileBuffEffectParent")]
     [SerializeField] private Transform mapTileBuffEffectParent;
+
+    [Header("적 진형 배치")]
+    [Tooltip("한 타일에 적이 여럿 있을 때 서로 벌릴 간격 (타일 크기에 비례)")]
+    [SerializeField, Range(0.05f, 0.45f)] private float m_enemySlotSpacing = 0.28f;
+    [Tooltip("한 타일 안에서 적을 몇 열까지 배치할지. 초과한 적은 다음 행으로 내려갑니다.")]
+    [SerializeField, Range(1, 5)] private int m_enemyFormationMaxColumns = 3;
+    [Tooltip("적 수가 바뀌어 진형을 재정렬할 때 새 자리까지 이동하는 속도")]
+    [SerializeField, Min(0.1f)] private float m_enemyFormationMoveSpeed = 1.5f;
+
+    public float EnemyFormationMoveSpeed => m_enemyFormationMoveSpeed;
 
     #endregion
 
@@ -107,12 +124,18 @@ public class TileManager : MonoBehaviour
         new Dictionary<int, List<EnemyHealthController>>();
     private readonly Dictionary<EnemyHealthController, int> m_pathIndexByEnemy =
         new Dictionary<EnemyHealthController, int>();
+    // 이동 중인 적이 도착할 타일의 진형 자리 예약. 표현 전용이며 점유(공격 대상)에는 포함하지 않는다.
+    private readonly Dictionary<EnemyHealthController, int> m_arrivalPathIndexByEnemy =
+        new Dictionary<EnemyHealthController, int>();
+    private readonly Dictionary<int, int> m_arrivalCountByPathIndex = new Dictionary<int, int>();
     private readonly Dictionary<int, TowerController> m_towersBySpawnIndex =
         new Dictionary<int, TowerController>();
     private readonly SortedSet<int> m_emptyTowerSpawnIndices = new SortedSet<int>();
 
 
     public int PathTileCount => m_pathCellsByIndex.Count;
+    /// <summary>도착 타일의 패스 인덱스입니다. 경로가 비어 있으면 0을 반환합니다.</summary>
+    public int LastPathIndex => Mathf.Max(0, m_pathGridPositions.Count - 1);
     public int TowerSpawnTileCount => m_towerSpawnCellsByIndex.Count;
 
     // 스테이지 시작 시 배치되는 고정 맵 버프
@@ -242,18 +265,6 @@ public class TileManager : MonoBehaviour
         }
     }
 
-    public bool TryGetPathTileCell(int index, out Vector3Int cell)
-    {
-        if (index >= 0 && index < m_pathCellsByIndex.Count)
-        {
-            cell = m_pathCellsByIndex[index];
-            return true;
-        }
-
-        cell = default;
-        return false;
-    }
-
     public bool TryGetTowerSpawnTileCell(int index, out Vector3Int cell)
     {
         return m_towerSpawnCellsByIndex.TryGetValue(index, out cell);
@@ -357,7 +368,10 @@ public class TileManager : MonoBehaviour
         return indices;
     }
 
-    /// <summary>타워에서 가장 가까운 패스 인덱스입니다. 타일 거리가 같으면 직선상 가까운 칸, 그다음 앞 번호를 고릅니다.</summary>
+    /// <summary>
+    /// 타워에서 가장 가까운 패스 인덱스입니다. 타일 거리가 같으면 직선상 가까운 칸, 그다음 앞 번호를 고릅니다.
+    /// 디버프 장판의 첫 배치에 쓰므로, 장판을 놓을 수 없는 소환 입구(0번)와 도착 타일은 제외합니다.
+    /// </summary>
     public bool TryGetClosestPathIndexToTower(int towerSpawnIndex, out int pathIndex)
     {
         pathIndex = -1;
@@ -365,7 +379,7 @@ public class TileManager : MonoBehaviour
 
         int bestTileDistance = int.MaxValue;
         int bestSqrDistance = int.MaxValue;
-        for (int index = 0; index < PathTileCount; index++)
+        for (int index = 1; index < PathTileCount - 1; index++)
         {
             Vector3Int offset = m_pathBoardCellsByIndex[index] - towerCell;
             int tileDistance = GetCellDistance(m_pathBoardCellsByIndex[index], towerCell);
@@ -389,9 +403,16 @@ public class TileManager : MonoBehaviour
         return true;
     }
 
-    public Vector3 GetPathCellCenterWorld(Vector3Int cell)
+    /// <summary>
+    /// 패스 인덱스의 타일 중심 월드 좌표입니다.
+    /// 범위를 벗어난 인덱스는 가장 가까운 유효 인덱스로 보정합니다. (복귀·풀링 중 예외 방지용)
+    /// </summary>
+    public Vector3 GetPathWorldPosition(int index)
     {
-        return tilemap.GetCellCenterWorld(cell);
+        if (tilemap == null) tilemap = GetComponent<Tilemap>();
+        if (m_pathGridPositions.Count == 0) return transform.position;
+
+        return tilemap.GetCellCenterWorld(m_pathGridPositions[Mathf.Clamp(index, 0, LastPathIndex)]);
     }
 
     public bool TryGetTowerSpawnIndexAtWorldPosition(Vector3 worldPosition, out int index)
@@ -430,7 +451,10 @@ public class TileManager : MonoBehaviour
     public bool RemoveEnemyFromPath(EnemyHealthController enemy, out int previousIndex)
     {
         previousIndex = -1;
-        if (ReferenceEquals(enemy, null) || !m_pathIndexByEnemy.TryGetValue(enemy, out previousIndex)) return false;
+        if (ReferenceEquals(enemy, null)) return false;
+
+        CancelEnemyArrival(enemy);
+        if (!m_pathIndexByEnemy.TryGetValue(enemy, out previousIndex)) return false;
 
         m_pathIndexByEnemy.Remove(enemy);
         if (m_enemiesByPathIndex.TryGetValue(previousIndex, out List<EnemyHealthController> occupants))
@@ -476,17 +500,121 @@ public class TileManager : MonoBehaviour
         return result;
     }
 
-    public List<KeyValuePair<int, List<EnemyHealthController>>> GetEnemyOccupancySnapshot()
+    private static bool IsLivingEnemy(EnemyHealthController enemy)
     {
-        List<KeyValuePair<int, List<EnemyHealthController>>> result =
-            new List<KeyValuePair<int, List<EnemyHealthController>>>();
-        foreach (int index in m_enemiesByPathIndex.Keys)
+        return enemy != null && enemy.gameObject.activeInHierarchy && enemy.CurrentHP > 0f;
+    }
+
+    /// <summary>특정 패스 인덱스를 점유한 살아 있는 적 목록입니다. 공격·스플래시 대상 판정에 사용합니다.</summary>
+    public List<EnemyHealthController> GetLivingEnemiesAtPathIndex(int index)
+    {
+        List<EnemyHealthController> result = new List<EnemyHealthController>();
+        AddLivingEnemiesAtPathIndex(index, result);
+        return result;
+    }
+
+    /// <summary>경로가 같은 좌표를 여러 번 지나도 그 좌표의 살아 있는 적을 모두 반환합니다.</summary>
+    public List<EnemyHealthController> GetLivingEnemiesAtPathCell(Vector3Int cell)
+    {
+        List<EnemyHealthController> result = new List<EnemyHealthController>();
+        if (!m_pathIndicesByCell.TryGetValue(cell, out List<int> visits)) return result;
+        foreach (int index in visits)
         {
-            result.Add(new KeyValuePair<int, List<EnemyHealthController>>(
-                index, GetEnemyOccupantsAtPathIndex(index)));
+            AddLivingEnemiesAtPathIndex(index, result);
         }
         return result;
     }
+
+    /// <summary>
+    /// 모든 패스 타일의 살아 있는 적을 반환합니다. 체인 공격처럼 경로 전체 후보가 필요할 때 사용합니다.
+    /// 호출자는 반환 리스트를 장기 보관하지 않아야 합니다.
+    /// </summary>
+    public List<EnemyHealthController> GetAllLivingEnemies()
+    {
+        List<EnemyHealthController> result = new List<EnemyHealthController>(m_pathIndexByEnemy.Count);
+        foreach (List<EnemyHealthController> occupants in m_enemiesByPathIndex.Values)
+        {
+            foreach (EnemyHealthController enemy in occupants)
+            {
+                if (IsLivingEnemy(enemy)) result.Add(enemy);
+            }
+        }
+        return result;
+    }
+
+    private void AddLivingEnemiesAtPathIndex(int index, List<EnemyHealthController> result)
+    {
+        if (!m_enemiesByPathIndex.TryGetValue(index, out List<EnemyHealthController> occupants)) return;
+        foreach (EnemyHealthController enemy in occupants)
+        {
+            if (IsLivingEnemy(enemy)) result.Add(enemy);
+        }
+    }
+
+    #endregion
+
+    #region 적 진형 배치
+
+    /// <summary>
+    /// 이동을 시작하기 전에 목적 타일에서 사용할 화면상 자리만 예약하고 그 좌표를 반환합니다.
+    /// 점유는 바꾸지 않으므로 이동 중인 적이 다음 타일의 공격·디버프 대상이 되지 않습니다.
+    /// 예약은 도착(SetEnemyAtPathIndex)하거나 패스에서 제거될 때 함께 해제됩니다.
+    /// </summary>
+    public Vector3 ReserveEnemyArrivalPosition(EnemyHealthController enemy, int index)
+    {
+        if (enemy == null || index < 0 || index > LastPathIndex) return GetPathWorldPosition(index);
+
+        CancelEnemyArrival(enemy);
+
+        int occupantCount = 0;
+        if (m_enemiesByPathIndex.TryGetValue(index, out List<EnemyHealthController> occupants))
+        {
+            foreach (EnemyHealthController occupant in occupants)
+            {
+                if (occupant != null && occupant.gameObject.activeInHierarchy) occupantCount++;
+            }
+        }
+
+        m_arrivalCountByPathIndex.TryGetValue(index, out int arrivalCount);
+        int arrivalOrder = occupantCount + arrivalCount;
+
+        m_arrivalPathIndexByEnemy[enemy] = index;
+        m_arrivalCountByPathIndex[index] = arrivalCount + 1;
+
+        return GetEnemyFormationPosition(index, arrivalOrder, arrivalOrder + 1);
+    }
+
+    private void CancelEnemyArrival(EnemyHealthController enemy)
+    {
+        if (!m_arrivalPathIndexByEnemy.TryGetValue(enemy, out int index)) return;
+
+        m_arrivalPathIndexByEnemy.Remove(enemy);
+        if (!m_arrivalCountByPathIndex.TryGetValue(index, out int count)) return;
+
+        if (count <= 1) m_arrivalCountByPathIndex.Remove(index);
+        else m_arrivalCountByPathIndex[index] = count - 1;
+    }
+
+    /// <summary>
+    /// 같은 패스 타일 안에서 사용할 격자형 화면 위치를 계산합니다.
+    /// 행·열 중앙을 기준으로 오프셋을 잡아 적 수가 홀수·짝수여도 진형 전체가 타일 중심에 유지됩니다.
+    /// </summary>
+    public Vector3 GetEnemyFormationPosition(int pathIndex, int slotIndex, int totalEnemyCount)
+    {
+        int columns = Mathf.Max(1, Mathf.Min(m_enemyFormationMaxColumns, totalEnemyCount));
+        int rows = Mathf.CeilToInt(totalEnemyCount / (float)columns);
+        float tileSize = tilemap != null ? Mathf.Min(tilemap.cellSize.x, tilemap.cellSize.y) : 1f;
+        float spacing = tileSize * m_enemySlotSpacing;
+        int column = slotIndex % columns;
+        int row = slotIndex / columns;
+        float xOffset = (column - ((columns - 1) * 0.5f)) * spacing;
+        float yOffset = (((rows - 1) * 0.5f) - row) * spacing;
+        return GetPathWorldPosition(pathIndex) + new Vector3(xOffset, yOffset, 0f);
+    }
+
+    #endregion
+
+    #region 타워 점유
 
     public bool TryGetTowerAt(int index, out TowerController tower)
     {
@@ -525,6 +653,7 @@ public class TileManager : MonoBehaviour
         m_towersBySpawnIndex[index] = tower;
         m_emptyTowerSpawnIndices.Remove(index);
         tower.SpawnIndex = index;
+        GameStateVersion.MarkChanged();
         return true;
     }
 
@@ -539,6 +668,7 @@ public class TileManager : MonoBehaviour
         m_towersBySpawnIndex[index] = tower;
         m_emptyTowerSpawnIndices.Remove(index);
         tower.SpawnIndex = index;
+        GameStateVersion.MarkChanged();
         return true;
     }
 
@@ -551,6 +681,7 @@ public class TileManager : MonoBehaviour
             !m_towersBySpawnIndex.Remove(index)) return false;
         if (tower != null) tower.SpawnIndex = -1;
         m_emptyTowerSpawnIndices.Add(index);
+        GameStateVersion.MarkChanged();
         return true;
     }
 
@@ -574,6 +705,7 @@ public class TileManager : MonoBehaviour
         tower.SpawnIndex = toIndex;
         m_emptyTowerSpawnIndices.Add(fromIndex);
         m_emptyTowerSpawnIndices.Remove(toIndex);
+        GameStateVersion.MarkChanged();
         return true;
     }
 
@@ -591,6 +723,7 @@ public class TileManager : MonoBehaviour
         m_towersBySpawnIndex[secondIndex] = firstTower;
         firstTower.SpawnIndex = secondIndex;
         secondTower.SpawnIndex = firstIndex;
+        GameStateVersion.MarkChanged();
         return true;
     }
 
@@ -715,8 +848,24 @@ public class TileManager : MonoBehaviour
         GameObject effect = Instantiate(prefab, worldPosition, Quaternion.identity, parent);
         effect.name = $"{effectNamePrefix}_{cellPosition.x}_{cellPosition.y}";
 
+        PathTileBubbleEffect bubbles = effect.GetComponent<PathTileBubbleEffect>();
         TileSatelliteOrbiter orbiter = effect.GetComponent<TileSatelliteOrbiter>();
-        if (orbiter != null) orbiter.SetColor(color);
+        if (bubbles != null)
+        {
+            // 부모 배율을 감안한 타일 크기를 전달한다. 방향표시보다 뒤에 그린다.
+            Vector3 width = map.CellToWorld(cellPosition + Vector3Int.right) - map.CellToWorld(cellPosition);
+            Vector3 height = map.CellToWorld(cellPosition + Vector3Int.up) - map.CellToWorld(cellPosition);
+            Vector2 localSize = new Vector2(
+                effect.transform.InverseTransformVector(width).magnitude,
+                effect.transform.InverseTransformVector(height).magnitude);
+            TilemapRenderer tileRenderer = map.GetComponent<TilemapRenderer>();
+            bubbles.Configure(color, localSize,
+                tileRenderer != null ? tileRenderer.sortingLayerID : 0,
+                tileRenderer != null ? tileRenderer.sortingOrder : 0);
+            // 같은 정렬 순서의 바닥보다 카메라 쪽에 배치한다.
+            effect.transform.position += new Vector3(0f, 0f, -0.02f);
+        }
+        else if (orbiter != null) orbiter.SetColor(color);
         else
         {
             SpriteRenderer[] renderers = effect.GetComponentsInChildren<SpriteRenderer>(true);
@@ -826,7 +975,9 @@ public class TileManager : MonoBehaviour
         int tier,
         float abilityValue,
         int stackThreshold,
-        int stackLifetime)
+        int stackLifetime,
+        float power = 0f,
+        int stackGain = 1)
     {
         List<int> indices = new List<int>();
         if (cells != null)
@@ -836,16 +987,22 @@ public class TileManager : MonoBehaviour
                 if (m_towerSpawnIndexByCell.TryGetValue(cells[i], out int index)) indices.Add(index);
             }
         }
-        SetFirePreheatEffects(indices, sourceID, tier, abilityValue, stackThreshold, stackLifetime);
+        SetFirePreheatEffects(indices, sourceID, tier, abilityValue, stackThreshold, stackLifetime, power, stackGain);
     }
 
+    /// <summary>
+    /// stackLifetime은 스킬 1(예열)과 스킬 2(과열)의 효과가 유지되는 턴 수(Duration)입니다.
+    /// power는 스킬 1의 세기, stackGain은 한 번 행동에 쌓는 스택 수(AttackCount)입니다.
+    /// </summary>
     public void SetFirePreheatEffects(
         IReadOnlyList<int> indices,
         int sourceID,
         int tier,
         float abilityValue,
         int stackThreshold,
-        int stackLifetime)
+        int stackLifetime,
+        float power = 0f,
+        int stackGain = 1)
     {
         RemoveTowerBuffEffectsBySource(sourceID);
         if (indices == null || indices.Count == 0) return;
@@ -873,7 +1030,9 @@ public class TileManager : MonoBehaviour
                 RemainingTurns = 1,
                 ApplicationVersion = nextVersion,
                 StackThreshold = Mathf.Max(1, stackThreshold),
-                StackLifetime = Mathf.Max(1, stackLifetime)
+                StackLifetime = Mathf.Max(1, stackLifetime),
+                Power = power,
+                StackGain = Mathf.Max(1, stackGain)
             });
         }
     }
@@ -900,7 +1059,10 @@ public class TileManager : MonoBehaviour
         float abilityValue,
         float duration,
         int zonePathIndex,
-        int sourceCreationOrder = int.MaxValue)
+        int sourceCreationOrder = int.MaxValue,
+        float power = 0f,
+        int stackGain = 0,
+        int stackThreshold = 0)
     {
         if (target == DebuffTarget.None) return;
 
@@ -927,9 +1089,11 @@ public class TileManager : MonoBehaviour
                 Tier = Mathf.Clamp(tier, 1, 5),
                 AbilityValue = abilityValue,
                 Duration = Mathf.Max(1, Mathf.RoundToInt(duration)),
-                StackThreshold = Mathf.Max(1, Mathf.RoundToInt(duration)),
+                StackThreshold = stackThreshold > 0 ? stackThreshold : Mathf.Max(1, Mathf.RoundToInt(duration)),
                 ApplicationVersion = nextVersion,
-                ZonePathIndex = zonePathIndex
+                ZonePathIndex = zonePathIndex,
+                Power = power,
+                StackGain = stackGain
             });
         }
     }
@@ -938,7 +1102,7 @@ public class TileManager : MonoBehaviour
     /// 장판 위치를 먼저 등록합니다. 적용 번호 0은 UI 표시용이며 적에게 적용되지 않습니다.
     /// 미리보기와 실제 적용이 같은 범위 계산을 사용할 수 있도록 여러 칸을 등록합니다.
     /// </summary>
-    public void RegisterPathDebuffZone(IReadOnlyList<int> indices, int sourceID, DebuffTarget target, int tier, float abilityValue, float duration, int zonePathIndex, int sourceCreationOrder = int.MaxValue)
+    public void RegisterPathDebuffZone(IReadOnlyList<int> indices, int sourceID, DebuffTarget target, int tier, float abilityValue, float duration, int zonePathIndex, int sourceCreationOrder = int.MaxValue, float power = 0f, int stackGain = 0, int stackThreshold = 0)
     {
         if (target == DebuffTarget.None) return;
 
@@ -963,9 +1127,11 @@ public class TileManager : MonoBehaviour
                 Tier = Mathf.Clamp(tier, 1, 5),
                 AbilityValue = abilityValue,
                 Duration = Mathf.Max(1, Mathf.RoundToInt(duration)),
-                StackThreshold = Mathf.Max(1, Mathf.RoundToInt(duration)),
+                StackThreshold = stackThreshold > 0 ? stackThreshold : Mathf.Max(1, Mathf.RoundToInt(duration)),
                 ApplicationVersion = 0,
-                ZonePathIndex = zonePathIndex
+                ZonePathIndex = zonePathIndex,
+                Power = power,
+                StackGain = stackGain
             });
         }
     }

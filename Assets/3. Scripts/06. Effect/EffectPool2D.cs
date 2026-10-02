@@ -68,7 +68,7 @@ public class EffectPool2D : MonoBehaviour
         }
     }
 
-    public void SetDestoryOnFinish(bool destroyOnFinish)
+    public void SetDestroyOnFinish(bool destroyOnFinish)
     {
         m_destroyOnFinish = destroyOnFinish;
     }

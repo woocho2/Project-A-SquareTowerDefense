@@ -59,57 +59,31 @@ public class TowerController : MonoBehaviour
     [Tooltip("발사 연출이 중단됐을 때 대기 중인 투사체를 자동 회수하기 위한 여유 시간입니다.")]
     [SerializeField, Min(1f)] private float m_projectilePreparationSafetyTime = 5f;
 
-    // 런타임 보정치
-    private float m_bonusAttackPower = 1f;
-    private float m_bonusRange;
-    private int m_bonusAttackCount;
-    private int m_bonusActionReduction;
-    private float m_bonusDistanceDamagePercent;
-    private float m_bonusCriticalRate;
-    private float m_bonusCriticalDamage;
-    private float m_bonusDuration = 0f;
-    private float m_bonusAbilityValue = 1f;
-    private float m_bonusArmorPenetrationPercent;
-    private int m_bonusProjectileRadius;
-    private int m_bonusIceAdditionalTargetCount;
-    private int m_bonusChainCount;
-    private float m_bonusExtraHitChance;
+    // 위성을 만들고 쏘는 중이면 true. 턴 진행은 이 값과 남은 투사체 수로 공격이 끝났는지 판단합니다.
+    private bool m_isAttackInProgress;
+    public bool IsAttackInProgress => m_isAttackInProgress;
 
-    private float m_darknessBonusAttackPower;
-    private int m_darknessBonusAttackCount;
-    private float m_darknessBonusRange;
-    private float m_darknessBonusCriticalRate;
-    private float m_darknessBonusCriticalDamage;
+    // 버프는 타워에 직접 걸지 않습니다. 버프 타워가 TileManager의 타일에 기록하고, 타워는 자기 타일의 기록을 읽습니다.
+    // 스택형 버프(스킬 1 + 스킬 2 틀)의 상태입니다. 타일이 아니라 버프를 받는 타워가 문양별로 하나씩 가집니다.
+    private readonly Dictionary<BuffTarget, TowerBuffStatus> m_buffStatuses = new Dictionary<BuffTarget, TowerBuffStatus>();
+    // 버프 타워의 한 번 행동을 한 번만 받도록, 시전자별로 마지막에 받은 적용 번호를 기억합니다.
+    private readonly Dictionary<int, int> m_appliedBuffVersions = new Dictionary<int, int>();
 
-    private sealed class ActiveBuff
-    {
-        public int SourceID;
-        public TowerController SourceTower;
-        public int Tier;
-        public float AbilityValue;
-        public int RemainingTurns;
-    }
+    // 문양별 스킬입니다. 스킬이 없는 타워는 null입니다.
+    private TowerSkill m_skill;
 
-    // 버프 종류별로 시전자 효과를 따로 저장합니다. 같은 종류는 가장 높은 수치만 반영합니다.
-    private readonly Dictionary<BuffTarget, Dictionary<int, ActiveBuff>> m_activeBuffs =
-        new Dictionary<BuffTarget, Dictionary<int, ActiveBuff>>();
+    public TowerStats BaseStats => m_baseStats;
 
-    // Fire support is owned by the target tower, not by the tile.  This lets a
-    // synergy tower use exactly the same Preheat/Overheat rules as a normal tower.
-    private sealed class FirePreheatStack
-    {
-        public int RemainingTurns;
-        public float AbilityValue;
-    }
-
-    private readonly Dictionary<int, int> m_appliedFirePreheatVersions = new Dictionary<int, int>();
-    private readonly List<FirePreheatStack> m_firePreheatStacks = new List<FirePreheatStack>();
-    private int m_fireOverheatRemainingTurns;
-    private float m_fireOverheatAbilityValue;
-    private int m_fireTargetHitCount;
-    private float m_fireTargetCriticalRateBonus;
-    private float m_fireTargetCriticalDamageBonus;
-    private int m_fireSplashTurnCounter;
+    // 같은 문양의 타워끼리 시너지를 낼 수 있도록, 이 타워가 받고 있는 버프 상태를 문양과 무관한 형태로 알려줍니다.
+    /// <summary>해당 버프의 스킬 1(불이면 예열)이 켜져 있는지 여부입니다.</summary>
+    public bool IsBuffActive(BuffTarget target) =>
+        m_buffStatuses.TryGetValue(target, out TowerBuffStatus status) && status.IsSkill1Active;
+    /// <summary>해당 버프의 스킬 2(불이면 과열)가 발동 중인지 여부입니다.</summary>
+    public bool IsBuffTriggered(BuffTarget target) =>
+        m_buffStatuses.TryGetValue(target, out TowerBuffStatus status) && status.IsSkill2Active;
+    /// <summary>해당 버프의 누적 스택 수입니다.</summary>
+    public int GetBuffStack(BuffTarget target) =>
+        m_buffStatuses.TryGetValue(target, out TowerBuffStatus status) ? status.Stack : 0;
 
     private void Awake()
     {
@@ -176,6 +150,7 @@ public class TowerController : MonoBehaviour
         }
 
         m_attackAction?.SetTargetPriority(m_targetPriority);
+        m_skill = TowerSkill.Create(this, m_towerData, m_attackAction);
     }
 
     public void UpdateBaseStats(TowerStats newStats)
@@ -191,20 +166,18 @@ public class TowerController : MonoBehaviour
         // 1. 전역 기본 스탯을 복사합니다.
         TowerStats finalStats = m_baseStats;
 
-        // 2. 버프와 타일 보정치를 반영합니다.
-        finalStats.AttackPower *= Mathf.Clamp(m_bonusAttackPower * (1f + m_darknessBonusAttackPower), 0.01f, 10000f);
-        finalStats.AttackCount = Mathf.Max(1, finalStats.AttackCount + m_bonusAttackCount + m_darknessBonusAttackCount);
-        finalStats.Range += m_bonusRange + m_darknessBonusRange;
-        finalStats.CriticalRate += m_bonusCriticalRate + m_darknessBonusCriticalRate;
-        finalStats.CriticalDamage += m_bonusCriticalDamage + m_darknessBonusCriticalDamage;
-        finalStats.Duration += m_bonusDuration;
-        finalStats.AbilityValue *= Mathf.Clamp(m_bonusAbilityValue, 0.01f, 10000f);
-        finalStats.DistanceDamageBonusPercent += m_bonusDistanceDamagePercent;
-        finalStats.ArmorPenetrationPercent += m_bonusArmorPenetrationPercent;
-        finalStats.ProjectileRadius += m_bonusProjectileRadius;
-        finalStats.IceAdditionalTargetCount += m_bonusIceAdditionalTargetCount;
-        finalStats.ChainCount += m_bonusChainCount;
-        finalStats.ExtraHitChance += m_bonusExtraHitChance;
+        // 버프·디버프 타워는 어떤 버프와 맵 타일 효과도 받지 않고 기본 스탯 그대로 행동합니다.
+        if (IsSupportTower())
+        {
+            if (finalStats.Range < TowerAttackAction.WorldUnitsPerTile)
+            {
+                finalStats.Range = TowerAttackAction.WorldUnitsPerTile;
+            }
+            return finalStats;
+        }
+
+        // 2. 타일 효과와 버프를 반영합니다.
+        finalStats.AttackCount = Mathf.Max(1, finalStats.AttackCount);
 
         // 타워 스폰 타일 효과는 타워의 현재 월드 위치를 기준으로 매번 계산합니다.
         // 따라서 생성, 이동, 교체(티어/컬러 강화) 후에도 별도 버프 해제 과정 없이 즉시 반영됩니다.
@@ -221,7 +194,8 @@ public class TowerController : MonoBehaviour
         }
 
         ApplyCurrentTileBuffTowerEffects(ref finalStats);
-        ApplyFireStatusEffects(ref finalStats);
+        ApplyStackBuffEffects(ref finalStats);
+        m_skill?.ModifyFinalStats(ref finalStats);
 
         if (finalStats.Range < TowerAttackAction.WorldUnitsPerTile)
         {
@@ -234,15 +208,16 @@ public class TowerController : MonoBehaviour
     }
 
     /// <summary>
-    /// 에너미 턴에 한 번 호출됩니다. 행동력을 1 소모하고,
-    /// 0이 된 턴에 공격 타워는 AttackCount만큼 공격하고,
-    /// 버프·디버프 타워는 한 번만 행동한 뒤 행동력을 재충전합니다.
+    /// 에너미 턴에 한 번 호출됩니다. 행동력을 1 소모하고, 0이 된 턴에 행동한 뒤 행동력을 재충전합니다.
+    /// 타워는 최종 스탯을 만들어 행동(TowerAttackAction)에 넘기기만 합니다.
+    /// 누구를 어떻게 공격하고 피해를 얼마로 계산할지는 행동 스크립트가 정합니다.
+    /// 공격 타워는 사거리에 적이 없으면 행동력 0인 채로 대기하다가, 적이 들어온 턴에 바로 공격합니다.
     /// </summary>
     public bool ExecuteTurnAction()
     {
         if (m_attackAction == null || m_towerData == null) return false;
 
-        m_remainingAction--;
+        if (m_remainingAction > 0) m_remainingAction--;
         if (m_remainingAction > 0) return false;
 
         TowerStats finalStats = GetFinalStats();
@@ -251,101 +226,43 @@ public class TowerController : MonoBehaviour
         {
             if (!m_attackAction.HasTargetInRange(transform, finalStats))
             {
-                m_remainingAction = GetFinalAction();
                 return false;
             }
 
-            StartCoroutine(ExecuteProjectileSatelliteAttack(finalStats));
+            m_isAttackInProgress = true;
+            StartCoroutine(RunProjectileAttack(finalStats));
             m_remainingAction = GetFinalAction();
             return true;
         }
 
-        bool didAttack = false;
-        int actionCount = m_towerData.attackType == AttackType.Buff || m_towerData.attackType == AttackType.Debuff
-            ? 1
-            : finalStats.AttackCount;
-        for (int i = 0; i < actionCount; i++)
-        {
-            didAttack |= m_attackAction.ExecuteAction(transform, finalStats);
-        }
+        // 버프·디버프 타워는 한 번 행동할 때 한 번만 실행합니다.
+        bool didAct = m_attackAction.ExecuteAction(transform, finalStats);
 
         m_remainingAction = GetFinalAction();
-        return didAttack;
+        return didAct;
     }
 
-    private IEnumerator ExecuteProjectileSatelliteAttack(TowerStats finalStats)
+    // 투사체를 띄우고 쏘는 과정은 행동 스크립트가 진행합니다. 타워는 끝났는지만 기억합니다.
+    private IEnumerator RunProjectileAttack(TowerStats finalStats)
     {
-        int satelliteCount = Mathf.Max(1, finalStats.AttackCount);
-        int projectilesPerSatellite = Mathf.Max(1, m_attackAction.GetProjectilesPerSatellite(finalStats));
-        float sequenceDuration =
-            m_projectileSatelliteInterval * Mathf.Max(0, (satelliteCount - 1) * 2) +
-            m_projectileSatelliteLaunchDelay;
-        float preparationLifetime = sequenceDuration + m_projectilePreparationSafetyTime;
-
-        List<List<ProjectileHit2D>> satelliteGroups = new List<List<ProjectileHit2D>>(satelliteCount);
-
-        // 12시 → 6시 → 9시 → 3시 → 1시 → 7시 → 11시 → 5시 순으로 생성합니다.
-        for (int satelliteIndex = 0; satelliteIndex < satelliteCount; satelliteIndex++)
+        yield return m_attackAction.SatelliteAttackRoutine(transform, finalStats, new ProjectileSatelliteSettings
         {
-            Vector3 satelliteOffset = GetSatelliteOffset(satelliteIndex);
-            Vector3 satelliteCenter = transform.position + satelliteOffset;
-            Vector3 tangentDirection = new Vector3(-satelliteOffset.y, satelliteOffset.x, 0f).normalized;
-            List<ProjectileHit2D> group = new List<ProjectileHit2D>(projectilesPerSatellite);
+            Interval = m_projectileSatelliteInterval,
+            LaunchDelay = m_projectileSatelliteLaunchDelay,
+            Radius = m_projectileSatelliteRadius,
+            GroupSpacing = m_projectileGroupSpacing,
+            PreparationSafetyTime = m_projectilePreparationSafetyTime
+        });
 
-            for (int projectileIndex = 0; projectileIndex < projectilesPerSatellite; projectileIndex++)
-            {
-                float centeredIndex = projectileIndex - (projectilesPerSatellite - 1) * 0.5f;
-                Vector3 spawnPosition = satelliteCenter + tangentDirection * (centeredIndex * m_projectileGroupSpacing);
-                ProjectileHit2D projectile = m_attackAction.PrepareSatelliteProjectile(spawnPosition, preparationLifetime);
-                if (projectile != null) group.Add(projectile);
-            }
-
-            satelliteGroups.Add(group);
-
-            if (satelliteIndex < satelliteCount - 1 && m_projectileSatelliteInterval > 0f)
-            {
-                yield return new WaitForSeconds(m_projectileSatelliteInterval);
-            }
-        }
-
-        // 완성된 위성 배치를 잠시 보여준 뒤 발사를 시작해 전투 흐름을 읽기 쉽게 합니다.
-        if (m_projectileSatelliteLaunchDelay > 0f)
-        {
-            yield return new WaitForSeconds(m_projectileSatelliteLaunchDelay);
-        }
-
-        // 생성된 자리 순서대로 같은 위치의 투사체를 한 묶음씩 발사합니다.
-        for (int satelliteIndex = 0; satelliteIndex < satelliteGroups.Count; satelliteIndex++)
-        {
-            m_attackAction.LaunchSatelliteProjectiles(transform, finalStats, satelliteGroups[satelliteIndex]);
-
-            if (satelliteIndex < satelliteGroups.Count - 1 && m_projectileSatelliteInterval > 0f)
-            {
-                yield return new WaitForSeconds(m_projectileSatelliteInterval);
-            }
-        }
+        m_isAttackInProgress = false;
     }
 
-    private Vector3 GetSatelliteOffset(int satelliteIndex)
+    private void OnDisable()
     {
-        const float diagonal = 0.70710678f;
-        Vector2[] orderedDirections =
-        {
-            Vector2.up,                         // 12시
-            Vector2.down,                       // 6시
-            Vector2.left,                       // 9시
-            Vector2.right,                      // 3시
-            new Vector2(diagonal, diagonal),    // 1시
-            new Vector2(-diagonal, -diagonal),  // 7시
-            new Vector2(-diagonal, diagonal),   // 11시
-            new Vector2(diagonal, -diagonal)    // 5시
-        };
-
-        // 8개를 넘는 공격횟수는 같은 방향의 다음 바깥 고리에 배치합니다.
-        int ring = satelliteIndex / orderedDirections.Length;
-        float radius = m_projectileSatelliteRadius * (1f + ring * 0.5f);
-        return orderedDirections[satelliteIndex % orderedDirections.Length] * radius;
+        // 비활성화되면 발사 코루틴이 멈추므로, 턴 진행이 끝나지 않는 공격을 기다리지 않게 합니다.
+        m_isAttackInProgress = false;
     }
+
     public TowerData GetTowerData() => m_towerData;
     public void InheritCreationOrder(int creationOrder) => CreationOrder = creationOrder;
     public DebuffZone GetDebuffZone() => m_towerData != null && m_towerData.attackType == AttackType.Debuff
@@ -378,6 +295,7 @@ public class TowerController : MonoBehaviour
     {
         m_targetPriority = NormalizeTargetPriority(priority);
         m_attackAction?.SetTargetPriority(m_targetPriority);
+        GameStateVersion.MarkChanged();
     }
 
     private static TargetPriority NormalizeTargetPriority(TargetPriority priority)
@@ -429,10 +347,11 @@ public class TowerController : MonoBehaviour
     private int GetFinalAction()
     {
         if (m_towerData == null) return 1;
+        if (IsSupportTower()) return Mathf.Max(1, m_towerData.action);
 
         int tileActionReduction = GetCurrentTowerTileBuff() == TowerTileBuffType.ActionCountUp ? 1 : 0;
         tileActionReduction += GetCurrentTileBuffActionReduction();
-        return Mathf.Max(1, m_towerData.action - m_bonusActionReduction - tileActionReduction);
+        return Mathf.Max(1, m_towerData.action - tileActionReduction);
     }
 
     /// <summary>
@@ -489,126 +408,78 @@ public class TowerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Reads the Fire field on this tower's cell and applies each source action once.
-    /// It is called after all support towers act, so board order never changes which
-    /// attack tower receives the current turn's Preheat.
+    /// 이 타워의 타일에 기록된 스택형 버프를 읽어, 버프 타워의 행동 한 번마다 한 번씩만 적용합니다.
+    /// 모든 버프·디버프 타워가 행동한 뒤에 호출되므로, 보드 순서와 무관하게 같은 턴의 버프를 받습니다.
     /// </summary>
-    public void RefreshFireTileStatus()
+    public void RefreshStackBuffs()
     {
-        if (TileManager.Instance == null || SpawnIndex < 1) return;
+        if (TileManager.Instance == null || SpawnIndex < 1 || IsSupportTower()) return;
 
         IReadOnlyList<TowerTileBuffEffect> effects = TileManager.Instance.GetTowerBuffEffectsAt(SpawnIndex);
         for (int i = 0; i < effects.Count; i++)
         {
             TowerTileBuffEffect effect = effects[i];
-            if (effect.Target != BuffTarget.Fire || effect.ApplicationVersion <= 0) continue;
+            if (effect.ApplicationVersion <= 0) continue;
 
-            if (m_appliedFirePreheatVersions.TryGetValue(effect.SourceID, out int appliedVersion) &&
+            if (m_appliedBuffVersions.TryGetValue(effect.SourceID, out int appliedVersion) &&
                 appliedVersion == effect.ApplicationVersion)
             {
                 continue;
             }
 
-            m_appliedFirePreheatVersions[effect.SourceID] = effect.ApplicationVersion;
-            m_firePreheatStacks.Add(new FirePreheatStack
+            if (!m_buffStatuses.TryGetValue(effect.Target, out TowerBuffStatus status))
             {
-                AbilityValue = Mathf.Max(0f, effect.AbilityValue),
-                RemainingTurns = Mathf.Max(1, effect.StackLifetime)
-            });
-
-            if (m_firePreheatStacks.Count >= Mathf.Max(1, effect.StackThreshold))
-            {
-                m_firePreheatStacks.Clear();
-                m_fireOverheatAbilityValue = Mathf.Max(m_fireOverheatAbilityValue, effect.AbilityValue * 2f);
-                m_fireOverheatRemainingTurns = Mathf.Max(
-                    m_fireOverheatRemainingTurns,
-                    Mathf.Max(1, effect.StackLifetime * 2));
+                status = TowerBuffStatus.Create(effect.Target);
+                if (status == null) continue;
+                m_buffStatuses.Add(effect.Target, status);
             }
+
+            m_appliedBuffVersions[effect.SourceID] = effect.ApplicationVersion;
+            status.OnApplied(effect);
         }
     }
 
-    /// <summary>Advances target-owned Fire state once at the start of every enemy turn.</summary>
-    public void AdvanceFireStatusTurn()
+    /// <summary>적 턴이 시작될 때 한 번 호출됩니다. 스택형 버프의 남은 턴을 줄입니다.</summary>
+    public void AdvanceStackBuffTurn()
     {
-        for (int i = m_firePreheatStacks.Count - 1; i >= 0; i--)
+        foreach (TowerBuffStatus status in m_buffStatuses.Values)
         {
-            if (--m_firePreheatStacks[i].RemainingTurns <= 0)
-            {
-                m_firePreheatStacks.RemoveAt(i);
-            }
-        }
-
-        if (m_fireOverheatRemainingTurns > 0 && --m_fireOverheatRemainingTurns <= 0)
-        {
-            m_fireOverheatAbilityValue = 0f;
+            status.OnEnemyTurnStart();
         }
     }
 
-    private void ApplyFireStatusEffects(ref TowerStats finalStats)
+    private void ApplyStackBuffEffects(ref TowerStats finalStats)
     {
-        float preheatPercent = 0f;
-        for (int i = 0; i < m_firePreheatStacks.Count; i++)
+        foreach (TowerBuffStatus status in m_buffStatuses.Values)
         {
-            preheatPercent += m_firePreheatStacks[i].AbilityValue;
-        }
-        finalStats.AttackPower *= 1f + preheatPercent / 100f;
-
-        if (m_fireOverheatRemainingTurns > 0)
-        {
-            finalStats.AttackPower *= 1f + m_fireOverheatAbilityValue / 100f;
-            finalStats.AttackCount += 1;
-        }
-
-        if (!IsFireTargetTower()) return;
-
-        finalStats.CriticalRate += m_fireTargetCriticalRateBonus;
-        finalStats.CriticalDamage += m_fireTargetCriticalDamageBonus;
-
-        if (m_fireOverheatRemainingTurns > 0)
-        {
-            finalStats.AttackCount += 2;
-        }
-        else if (m_firePreheatStacks.Count > 0)
-        {
-            finalStats.AttackCount += 1;
+            status.ModifyFinalStats(ref finalStats);
         }
     }
 
-    public void NotifyFireTargetHit()
+    /// <summary>적 턴이 시작될 때 한 번 호출됩니다. 스킬이 가진 지속 턴을 줄입니다.</summary>
+    public void AdvanceSkillTurn()
     {
-        if (!IsFireTargetTower()) return;
-
-        m_fireTargetHitCount++;
-        int threshold = Mathf.Max(1, Mathf.RoundToInt(m_baseStats.Duration));
-        if (m_fireTargetHitCount < threshold) return;
-
-        m_fireTargetHitCount = 0;
-        float bonus = Mathf.Max(0f, m_baseStats.AbilityValue) / 100f;
-        m_fireTargetCriticalRateBonus += bonus;
-        m_fireTargetCriticalDamageBonus += bonus;
+        m_skill?.OnEnemyTurnStart();
     }
 
-    public bool TryTriggerFireMeteor()
+    /// <summary>
+    /// 적 턴마다 공격 타워의 기본 공격 직전에 한 번 호출됩니다. 스킬이 투사체를 발사했으면 true를 반환합니다.
+    /// </summary>
+    public bool TryUseSkill()
     {
-        if (!IsFireSplashTower() || !(m_attackAction is SplashAttackAction splashAction)) return false;
-
-        m_fireSplashTurnCounter++;
-        int threshold = Mathf.Max(1, Mathf.RoundToInt(GetFinalStats().Duration));
-        if (m_fireSplashTurnCounter < threshold) return false;
-
-        m_fireSplashTurnCounter = 0;
-        TowerStats finalStats = GetFinalStats();
-        return splashAction.LaunchFireMeteor(transform, finalStats);
+        return m_skill != null && m_skill.OnAttackPhase(GetFinalStats());
     }
 
-    private bool IsFireTargetTower()
+    /// <summary>이 타워의 기본 공격 투사체가 노린 대상에 명중했을 때 투사체가 호출합니다.</summary>
+    public void NotifyPrimaryTargetHit()
     {
-        return m_towerData != null && m_towerData.attackType == AttackType.Target && m_towerData.EmblemId == TowerEmblem.FIRE;
+        m_skill?.OnPrimaryTargetHit();
     }
 
-    private bool IsFireSplashTower()
+    private bool IsSupportTower()
     {
-        return m_towerData != null && m_towerData.attackType == AttackType.Splash && m_towerData.EmblemId == TowerEmblem.FIRE;
+        return m_towerData != null &&
+            (m_towerData.attackType == AttackType.Buff || m_towerData.attackType == AttackType.Debuff);
     }
 
     private int GetCurrentTileBuffActionReduction()
@@ -649,161 +520,17 @@ public class TowerController : MonoBehaviour
         }
     }
 
-    public void ApplyBuff(BuffTarget target, TowerController sourceTower, int sourceID, int sourceTier, float abilityValue, float duration)
-    {
-        if (target == BuffTarget.None) return;
-
-        if (!m_activeBuffs.TryGetValue(target, out Dictionary<int, ActiveBuff> buffsBySource))
-        {
-            buffsBySource = new Dictionary<int, ActiveBuff>();
-            m_activeBuffs.Add(target, buffsBySource);
-        }
-
-        buffsBySource[sourceID] = new ActiveBuff
-        {
-            SourceID = sourceID,
-            SourceTower = sourceTower,
-            Tier = Mathf.Clamp(sourceTier, 1, 5),
-            AbilityValue = abilityValue,
-            RemainingTurns = Mathf.Max(1, Mathf.RoundToInt(duration))
-        };
-
-        RefreshBuff(target);
-    }
-
     /// <summary>
-    /// 에너미 턴 시작 시 한 번 호출됩니다. 각 버프의 남은 턴을 줄이고 최고 수치를 다시 선택합니다.
-    /// </summary>
-    public void AdvanceBuffTurn()
-    {
-        List<BuffTarget> targetsToRefresh = new List<BuffTarget>(m_activeBuffs.Keys);
-
-        foreach (BuffTarget target in targetsToRefresh)
-        {
-            Dictionary<int, ActiveBuff> buffsBySource = m_activeBuffs[target];
-            List<int> expiredSources = new List<int>();
-
-            foreach (KeyValuePair<int, ActiveBuff> pair in buffsBySource)
-            {
-                pair.Value.RemainingTurns--;
-                if (pair.Value.RemainingTurns <= 0)
-                {
-                    expiredSources.Add(pair.Key);
-                }
-            }
-
-            foreach (int sourceID in expiredSources)
-            {
-                buffsBySource.Remove(sourceID);
-            }
-
-            if (buffsBySource.Count == 0)
-            {
-                m_activeBuffs.Remove(target);
-            }
-
-            RefreshBuff(target);
-        }
-    }
-
-    /// <summary>
-    /// 이 타워가 적을 처치했을 때, 적용 중인 최상위 Darkness 버프의 성장치를 누적합니다.
+    /// 이 타워가 적을 처치했을 때 호출됩니다. 어둠 버프가 기록된 타일 위에 서 있으면 모든 어둠 타워가 공유하는 성장치를 올립니다.
     /// </summary>
     public void NotifyEnemyKilled()
     {
-        if (!m_activeBuffs.TryGetValue(BuffTarget.Darkness, out Dictionary<int, ActiveBuff> darknessBuffs) || darknessBuffs.Count == 0)
-        {
-            // 버프 타일 방식에서는 현재 타워가 선 타일에서 Darkness를 읽어 같은 성장치를 공유합니다.
-            if (TileManager.Instance == null || SpawnIndex < 1 || TowerManager.Instance == null) return;
-            Dictionary<BuffTarget, TowerTileBuffEffect> tileBuffs = GetStrongestTileBuffs(TileManager.Instance.GetTowerBuffEffectsAt(SpawnIndex));
-            if (!tileBuffs.TryGetValue(BuffTarget.Darkness, out TowerTileBuffEffect tileDarkness)) return;
+        if (TileManager.Instance == null || SpawnIndex < 1 || TowerManager.Instance == null) return;
 
-            TowerManager.Instance?.AddSharedDarknessAbility(tileDarkness.Tier);
-            return;
-        }
+        Dictionary<BuffTarget, TowerTileBuffEffect> tileBuffs = GetStrongestTileBuffs(TileManager.Instance.GetTowerBuffEffectsAt(SpawnIndex));
+        if (!tileBuffs.TryGetValue(BuffTarget.Darkness, out TowerTileBuffEffect tileDarkness)) return;
 
-        ActiveBuff strongestDarkness = null;
-        foreach (ActiveBuff buff in darknessBuffs.Values)
-        {
-            if (strongestDarkness == null || GetBuffStrength(BuffTarget.Darkness, buff) > GetBuffStrength(BuffTarget.Darkness, strongestDarkness))
-            {
-                strongestDarkness = buff;
-            }
-        }
-
-        if (strongestDarkness != null)
-        {
-            TowerManager.Instance?.AddSharedDarknessAbility(strongestDarkness.Tier);
-        }
-    }
-
-    public void RefreshExternalBuff(BuffTarget target)
-    {
-        RefreshBuff(target);
-    }
-
-    private void RefreshBuff(BuffTarget target)
-    {
-        if (!m_activeBuffs.TryGetValue(target, out Dictionary<int, ActiveBuff> buffsBySource) || buffsBySource.Count == 0)
-        {
-            ResetBuff(target);
-            return;
-        }
-
-        ActiveBuff strongestBuff = null;
-        foreach (ActiveBuff buff in buffsBySource.Values)
-        {
-            if (strongestBuff == null || GetBuffStrength(target, buff) > GetBuffStrength(target, strongestBuff))
-            {
-                strongestBuff = buff;
-            }
-        }
-
-        ApplyStrongestBuff(target, strongestBuff);
-    }
-
-    private static float GetBuffStrength(BuffTarget target, ActiveBuff buff)
-    {
-        switch (target)
-        {
-            case BuffTarget.Darkness:
-                return TowerManager.Instance != null ? TowerManager.Instance.GetSharedDarknessAbility() : 0f;
-            default:
-                return buff.Tier;
-        }
-    }
-
-    private void ApplyStrongestBuff(BuffTarget target, ActiveBuff buff)
-    {
-        int tierValue = buff.Tier;
-
-        switch (target)
-        {
-            case BuffTarget.Sword: m_bonusAttackPower = 1f + (GetTierValue(tierValue, 10f, 20f, 40f, 100f, 200f) / 100f); break;
-            case BuffTarget.Bow:
-                m_bonusRange = TowerAttackAction.WorldUnitsPerTile;
-                m_bonusDistanceDamagePercent = GetBowDistanceDamageBonus(tierValue);
-                break;
-            case BuffTarget.Fire: m_bonusAttackCount = tierValue; break;
-            case BuffTarget.Wind: m_bonusActionReduction = tierValue; break;
-            case BuffTarget.AttackCount: m_bonusAttackCount = Mathf.RoundToInt(buff.AbilityValue); break;
-            case BuffTarget.Spear: m_bonusCriticalRate = GetTierValue(tierValue, .01f, .025f, .05f, .10f, .20f); break;
-            case BuffTarget.Axe: m_bonusCriticalDamage = GetTierValue(tierValue, .25f, .50f, 1f, 2f, 4f); break;
-            case BuffTarget.Hammer: m_bonusArmorPenetrationPercent = GetTierValue(tierValue, 2f, 7.5f, 15f, 25f, 50f); break;
-            case BuffTarget.Ice:
-                ApplyIceBuff(tierValue);
-                break;
-            case BuffTarget.Electricity: m_bonusExtraHitChance = GetTierValue(tierValue, 4f, 8f, 12.5f, 25f, 50f); break;
-            case BuffTarget.Light: m_bonusChainCount = tierValue; break;
-            case BuffTarget.Darkness: ApplyDarknessBuff(buff); break;
-        }
-
-        // Wind가 새로 적용된 경우, 이미 충전 중인 행동력도 새 최대치 안으로 맞춥니다.
-        if (target == BuffTarget.Wind)
-        {
-            m_remainingAction = Mathf.Min(m_remainingAction, GetFinalAction());
-        }
-
+        TowerManager.Instance.AddSharedDarknessAbility(tileDarkness.Tier);
     }
 
     private static float GetBowDistanceDamageBonus(int tier)
@@ -827,75 +554,6 @@ public class TowerController : MonoBehaviour
             case 3: return tier3;
             case 4: return tier4;
             default: return tier5;
-        }
-    }
-
-    private void ApplyIceBuff(int tier)
-    {
-        if (m_towerData == null) return;
-
-        if (m_towerData.attackType == AttackType.Splash)
-        {
-            m_bonusProjectileRadius = tier;
-        }
-        else if (m_towerData.attackType == AttackType.Target)
-        {
-            m_bonusIceAdditionalTargetCount = tier;
-        }
-    }
-
-    private void ApplyDarknessBuff(ActiveBuff buff)
-    {
-        float abilityValue = TowerManager.Instance != null ? TowerManager.Instance.GetSharedDarknessAbility() : 0f;
-        int milestones = Mathf.FloorToInt(abilityValue / 50f);
-
-        m_darknessBonusAttackPower = 0f;
-        m_darknessBonusAttackCount = 0;
-        m_darknessBonusRange = 0f;
-        m_darknessBonusCriticalRate = 0f;
-        m_darknessBonusCriticalDamage = 0f;
-
-        for (int i = 0; i < milestones; i++)
-        {
-            switch (i % 5)
-            {
-                case 0: m_darknessBonusAttackPower += .10f; break;
-                case 1: m_darknessBonusAttackCount += 1; break;
-                case 2: m_darknessBonusRange += TowerAttackAction.WorldUnitsPerTile; break;
-                case 3: m_darknessBonusCriticalRate += .10f; break;
-                case 4: m_darknessBonusCriticalDamage += .50f; break;
-            }
-        }
-    }
-
-    private void ResetBuff(BuffTarget target)
-    {
-        switch (target)
-        {
-            case BuffTarget.Sword: m_bonusAttackPower = 1f; break;
-            case BuffTarget.Bow:
-                m_bonusRange = 0f;
-                m_bonusDistanceDamagePercent = 0f;
-                break;
-            case BuffTarget.Fire:
-            case BuffTarget.AttackCount: m_bonusAttackCount = 0; break;
-            case BuffTarget.Wind: m_bonusActionReduction = 0; break;
-            case BuffTarget.Spear: m_bonusCriticalRate = 0f; break;
-            case BuffTarget.Axe: m_bonusCriticalDamage = 0f; break;
-            case BuffTarget.Hammer: m_bonusArmorPenetrationPercent = 0f; break;
-            case BuffTarget.Ice:
-                m_bonusProjectileRadius = 0;
-                m_bonusIceAdditionalTargetCount = 0;
-                break;
-            case BuffTarget.Electricity: m_bonusExtraHitChance = 0f; break;
-            case BuffTarget.Light: m_bonusChainCount = 0; break;
-            case BuffTarget.Darkness:
-                m_darknessBonusAttackPower = 0f;
-                m_darknessBonusAttackCount = 0;
-                m_darknessBonusRange = 0f;
-                m_darknessBonusCriticalRate = 0f;
-                m_darknessBonusCriticalDamage = 0f;
-                break;
         }
     }
 }

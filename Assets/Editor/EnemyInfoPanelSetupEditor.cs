@@ -6,18 +6,7 @@ using UnityEngine.SceneManagement;
 
 public static class EnemyInfoPanelSetupEditor
 {
-    [InitializeOnLoadMethod]
-    private static void OnEditorLoad()
-    {
-        EditorApplication.delayCall += () =>
-        {
-            if (!Application.isPlaying)
-            {
-                SetupEnemyInfoPanel();
-            }
-        };
-    }
-
+    // 메뉴에서 직접 실행할 때만 동작합니다. 에디터가 로드될 때마다 자동으로 씬을 열고 저장하지 않습니다.
     [MenuItem("Tools/Setup EnemyInfoPanel in Stage1")]
     public static void SetupEnemyInfoPanel()
     {

@@ -1,0 +1,1197 @@
+26. TowerDefense 통합 — 확정 규칙, 실행 흐름, 남은 작업
+작성일: 2026-10-02
+바탕: 23. TowerDefense(2026-09-21 리팩토링 점검서), 24. TowerDefense2(2026-09-23 결합도 점검),
+      25. TowerDefense3(2026-10-02 확정 규칙과 작업 목록)을 하나로 합친 문서.
+목적: 규칙, 코드 흐름, 풀린 문제, 남은 작업, 결정할 것을 한 곳에서 보기.
+
+합친 원칙:
+- 같은 내용은 한 번만 적음. 출처는 [23-2-5], [24-3-4], [25-A-1], [문답 18]처럼 표기.
+  [23-2-5] = 23번 문서 2장 5절, [문답 18] = 2026-10-02 규칙 문답의 18번 항목.
+- 문서끼리 다른 내용은 가장 최근 문서(25 > 24 > 23)를 따르고, 13장에 전부 기록.
+- 23번의 지적 중 뒤 문서에 언급이 없는 것은 2026-10-02 코드에서 해당 부분만 찾아 상태를 적음.
+  "코드 확인"이라고 적힌 것이 그 결과. Unity 컴파일과 플레이 테스트는 하지 않았음.
+- 줄 번호는 적지 않음. 세 문서의 줄 번호가 모두 리팩토링 이전 것이라 맞지 않음. 메서드 이름으로 검색할 것.
+
+======================================================================
+0. 읽는 순서 / 용어
+======================================================================
+
+1) 규칙은 「27. 기획 통합.txt」, 코드의 턴 흐름은 이 문서 2장을 먼저 읽습니다.
+2) 무엇을 할지는 5장(작업 목록), 무엇을 정해야 하는지는 10장.
+3) 특정 파일을 고치기 직전에는 6장과 부록 A에서 그 파일을 찾습니다.
+4) 2026-10-02에 코드를 고친 내용은 바로 아래 「2026-10-02 작업 기록」에 한 번에 모았습니다.
+
+======================================================================
+2026-10-02 작업 기록
+======================================================================
+
+컴파일은 전체 수정 뒤에 확인됨 (오류 없음, 플레이 진입까지 됨).
+동작은 아직 확인 전. 각 항목의 "Unity 실행 확인 전" 표시는 동작 확인을 뜻함 (11-1b).
+플레이 중 뜬 경고 하나: 'UICanvas' AnimationEvent 'DestroyEffect' on animation 'E201' has no receiver.
+  이번 수정과 무관. Canvas.prefab 최상위 오브젝트에 Animator(10.Animation/Effect/Canvas.controller,
+  기본 상태가 E201 클립)가 실수로 붙어 있음. Animator를 지우고 Canvas.controller와 쓰이지 않는
+  BackGround.controller를 삭제하면 됨. 아직 고치지 않았음.
+커밋하지 않았음 (문서 2개 추가, 원본 문서 5개 삭제, 코드 수정 전부).
+
+[문서]
+- 23·24·25번을 이 문서로, 20. 기획과 시너지 기획을 27번으로 합치고 원본 5개를 삭제.
+- 27번 = 규칙·기획, 26번 = 작업 목록·코드 상태. 서로 겹치지 않게 유지.
+
+[5장 작업 중 끝낸 것]
+A-3  버프·디버프 타워는 버프와 타일 효과를 받지 않음
+A-4  불 예열 스택 문제 → 버프 틀을 새로 만들면서 없어짐
+A-5  40웨이브 턴 연장
+B-1  장판 크기를 SplashRadius로 (CSV 값과 보이는 크기는 남음)
+D-2  구형 통합 턴 경로 삭제
+D-4  어긋난 주석 수정
+D-5  에디터 전용 using 삭제
+E-2  컬러 강화를 스킬 강화로 (공격 타워. 버프·디버프 타워는 남음)
+F-2  스킬 확장점 1·2·3단계 (불 문양만 옮김)
+A-1  탄 사전 분배, 투사체 검색 제거, 타워별 대기 타임아웃 (컴파일 확인 뒤에 추가로 고침. 컴파일 확인 전)
+D-3  구독자 없는 이벤트 삭제 · D-6 오타 하나 · E-4 CSV 로더 일부 · G-5 중복 초기화 · 8장 에디터 자동 실행
+     (위와 같이 컴파일 확인 전)
+G-1  장판 적용 중 Dictionary 재확인
+G-2  치명타 비교 <
+G-3  스폰 실패 처리
+
+[새로 만든 틀 — 문양마다 파일 하나]
+공격 스킬  01. Tower/03. TowerSkill/   TowerSkill(공용), FireSplashSkill, FireTargetSkill
+버프       01. Tower/04. TowerBuff/    TowerBuffStatus(공용), FireBuffStatus
+디버프     03. Enemy/DebuffRule/       EnemyDebuffRule(공용, EnemyDebuffState 포함), FireDebuffRule
+TowerController와 EnemyDebuffController는 문양을 모름. 틀에 등록된 문양이면 그 파일에 맡기고,
+아니면 예전 switch로 처리. 불만 옮겼고 나머지 12개 문양은 이전과 같음.
+
+[데이터]
+- TowerDataCSV.csv: 공격 타워 130줄 중 78줄 수정 (티어 규칙 반영). 버프·디버프 타워 130줄은 그대로.
+- TowerDataCSV_master.xlsx는 고치지 않았음. 엑셀에서 다시 내보내면 CSV 수정이 사라짐.
+
+[지금 알고 있어야 할 것]
+- 불 버프·디버프가 이전보다 많이 약함. 세기를 AbilityValue(10)에서 Power(2.4)로 옮겼는데
+  CSV는 옛 값 그대로라서 예열 +2.4%, 화상 매 턴 2.4%. 스킬 2(과열·연소)는 레벨 1에서 60스택이
+  필요해 사실상 발동하지 않음. 버프·디버프 타워를 재설계할 때 Power·AttackCount·Action을 다시 잡을 것.
+- 컬러 강화는 공격력·사거리·공격 횟수를 더 이상 올리지 않음. 스킬이 있는 불 문양 말고는
+  컬러 강화의 효과가 거의 없음 (광역 범위·추가 타격은 레벨 3과 5에서만).
+- 40웨이브에서 보스가 계속 속박된 채 죽지 않으면 턴이 끝없이 이어짐 (A-5 주의).
+- 06. Effect/PathTileBubbleEffect.cs는 같은 날 사용자가 Codex로 따로 만든 맵 버프 전용 이펙트.
+  이 문서의 작업과 별개이고, TileManager.cs도 그 작업에서 함께 수정됨 (부록 A).
+
+[다음에 할 것]
+1. 11-1b와 5장 각 항목의 "확인"을 플레이로 점검 (컴파일은 확인됨).
+2. 10장의 결정 (특히 17~22번: 오늘 새로 생긴 것).
+3. 버프·디버프 타워 재설계 (CSV 수치, 티어 규칙, 나머지 12개 문양을 새 틀로).
+4. 남은 5장 작업: A-1, A-2, B-2~B-4, C-1~C-3, D-1, D-3, D-6, E-1, E-3~E-6, F-1, F-3~F-7.
+
+용어:
+- 강한 결합: 상대의 구체 구현·전역 상태·내부 순서까지 알아야 제대로 동작.
+- 숨은 결합: 코드 호출 대신 오브젝트 이름, 배열 순서, CSV 열, 실행 시점 등에 의존.
+- 순환 참조: 서로의 타입을 알고 있는 구조. 무한 재귀를 뜻하는 것은 아님.
+- 지원 타워: 버프 타워와 디버프 타워.
+
+======================================================================
+1. 확정된 게임 규칙                                              [25-1]
+======================================================================
+
+규칙과 기획은 전부 「27. 기획 통합.txt」에만 적음. 이 문서에는 다시 적지 않음.
+- 턴과 웨이브, 타일, 적, 공격, 버프/디버프, 성장·경제: 27번 1~8장
+- 시너지 타워: 27번 9장
+- 밸런스 기준: 27번 10장
+규칙이 새로 확정되거나 바뀌면 27번을 고치고, 그에 따른 작업만 이 문서 5장에 추가.
+27번의 [변경 예정 A-5] 같은 표시는 이 문서 5장의 작업 번호.
+
+======================================================================
+2. 실제 실행 흐름                                       [24-2] + 25 반영
+======================================================================
+
+[2-1] 게임 시작과 한 웨이브
+
+GameManager.OnStartGame()
+  → Idle 상태, 기존 turnRoutine 중지
+  → TurnLoopRoutine()
+      → PlayerTurnRoutine(): Player 상태, 턴 종료 버튼 대기
+      → EnemyWaveRoutine(): EnemyTurnRoutine 10번, 처음 5번만 shouldSpawn=true
+          → 40웨이브면 최종 보스가 살아 있는 동안 EnemyTurnRoutine(false)를 계속 반복
+          → 종료 상태가 아니면 WaveManager.NextWave()
+          → 완료 웨이브 번호로 대지 타워 웨이브 처리
+      → 다시 플레이어 턴
+
+- turnRoutine은 '누구 턴인가'가 아니라 실행 중인 코루틴 핸들.
+- EnemyTurnRoutine 끝의 WaitForSeconds(0.3f)가 남아 있음 (코드 확인). 초 단위 대기가 전부 없어진 상태는 아님.
+- NextWave()는 완료한 웨이브가 40 미만일 때만 호출됨. 웨이브 번호는 40에서 멈춤.
+  40웨이브는 10턴 뒤에도 플레이어 턴으로 돌아가지 않고 보스가 죽거나 도착할 때까지 적 턴을 계속함 (A-5).
+
+[2-2] 적 1턴 — GameManager.EnemyTurnRoutine()
+
+  ① ProcessEnemyMovement()
+      → EnemyManager.ProcessEnemyTurnRoutine()
+          → 소환 턴이면 WaveManager.SpawnWaveEnemiesForTurn()
+          → 적마다 EnemyMoveController.ProcessTurnMoveRoutine(), 모든 이동 완료 대기
+  ② ProcessTowerSupport()
+      → TowerManager.BeginEnemyTurnForTowers(): 이전 타일 버프 기록, 타워 상태 시간 감소
+          (타워마다 AdvanceStackBuffTurn → AdvanceSkillTurn)
+      → ExecuteSupportTowerActionTurnRoutine(): 버프/디버프 타워 실행,
+          그 뒤 타워가 자기 타일의 스택형 버프 기록을 읽음 (RefreshStackBuffs)
+  ③ ProcessTileBuffs()
+      → EnemyManager.ApplyAllTileBuffs()
+          → 적마다 EnemyMoveController.CheckAndApplyTileBuff()
+              → 기존 타일 스탯 초기화 → 도착 타일의 속도/방어/회복 적용
+              → EnemyDebuffController.RefreshTileDebuffs()
+  ④ ProcessTowerAttacks()
+      → TowerManager.ExecuteAttackTowerActionTurnRoutine()
+          → 타워별 스킬 확인(TryUseSkill) → 타워 기본 행동 → 활성 투사체가 없어질 때까지 대기
+      → GameManager의 추가 투사체 완료 확인
+  ⑤ ProcessDamageDebuffs()
+      → EnemyManager.AdvanceAllDebuffTurns()
+          → 적마다 EnemyDebuffController.AdvanceDebuffTurn(): 상태 시간, 도트 피해, 조건부 즉사
+
+이 순서는 게임 규칙입니다. 메서드 위치만 옮겨도 같은 턴 적용 여부가 달라집니다.
+
+[2-3] 적 한 마리 생성
+
+EnemyManager → WaveManager(이번 턴에 무엇을 몇 마리) → EnemyObjectPool2D.Spawn()
+  → 풀에서 꺼내 활성화 → 이전 디버프 정리 → 이동 초기화와 점유 등록
+  → EnemyManager에 등록 → 체력 초기화
+
+- 풀 클래스가 이동·체력·상태 초기화와 전역 등록 순서까지 알고 있음.
+- 활성화가 초기화보다 먼저라, OnEnable에서 완성된 데이터를 가정하면 위험 [23-4-6][24-3-14].
+  권장 순서: 비활성 상태에서 디버프·체력·이동 초기화 → 위치 설정 → 활성화 → 점유와 EnemyManager 등록.
+
+[2-4] 타워 한 발의 공격과 사망
+
+TowerManager → TowerController.ExecuteTurnAction()
+  → TargetAttackAction / SplashAttackAction → TowerAttackAction의 투사체 준비·발사
+  → GlobalProjectileManager / ProjectileObjectPool2D
+  → ProjectileHit2D가 이동하여 명중 판정
+  → EnemyHealthController.ApplyDamage()
+      → 치명타 관련 디버프 반응 → 방어력 등을 반영한 피해 → HP 표시, 대미지 텍스트
+      → 사망 시 Die() (m_hasDied로 한 번만 실행)
+          → 공격 타워의 처치 반응 (NotifyEnemyKilled)
+          → WaveManager.GetKillReward로 보상 계산 → CurrencyManager에 지급
+          → WaveManager.OnEnemyDied(적 종류, 소환 웨이브)
+              → 40웨이브에 소환된 Boss면 GameManager.OnGameClear()
+          → ReturnToPool(): 디버프·이동·점유 정리, 풀 반환
+
+단일 공격은 ProjectileHit2D에서 TowerController.NotifyPrimaryTargetHit()로도 돌아옵니다 (스킬의 적중 집계).
+스킬이 쏜 투사체(ProjectileStats.skill)는 명중할 때 TowerSkill.OnSkillProjectileImpact만 호출합니다.
+'피해 처리 하나'를 따라가면 타워·재화·웨이브·게임 종료까지 보이는 구조입니다.
+
+[2-5] 타일 효과의 전달
+
+BuffAction / DebuffAction
+  → TileManager: SourceID, 적용 버전, 좌표, 수치 등의 효과 기록
+      → TowerController: 타워가 받는 버프/스택 적용 (새 틀의 문양은 TowerBuffStatus가 상태를 가짐)
+      → EnemyDebuffController: 적이 받는 디버프/스택 적용 (새 틀의 문양은 EnemyDebuffRule이 규칙을 가짐)
+타일 기록에는 Power와 StackGain(한 번에 쌓는 스택 수)도 들어 있습니다.
+
+'타일에 기록하고 대상이 읽는 구조'는 원한 방향입니다. 다만 중복 적용 방지, 소스 제거,
+지속 시간, 스택 갱신 시점이 함께 맞아야 해서 세 영역 사이의 실행 순서 결합이 큽니다.
+
+======================================================================
+3. 소유권 표 (수정 전에 옆에 놓고 볼 것)                 [24-6] + 25 반영
+======================================================================
+
+값/규칙                        현재 주요 소유자            주의점
+----------------------------------------------------------------------
+현재 턴/웨이브 내 진행 순서     GameManager                 다른 곳에도 대기 존재
+현재 웨이브/사이클/소환 구성    WaveManager                 5턴 상수 중복
+처치 보상 계산                 WaveManager.GetKillReward   지급 호출은 EnemyHealthController
+타워 배치/강화/합성/소환비      TowerManager                너무 많은 책임
+타워 1개 스탯                  TowerController             공유 강화도 조회
+타워 스킬 상태(턴·적중 카운터)  TowerSkill 파생 클래스       지금은 불만 (FireSplash/FireTarget)
+타워가 받은 스택형 버프 상태    TowerBuffStatus 파생 클래스  지금은 불만. 나머지는 TowerController의 switch
+적 체력/사망                   EnemyHealthController       재화 지급·웨이브 통보까지 호출
+적 행동력/이동 인덱스/진형 보간 EnemyMoveController         타일 스탯도 변경
+적 디버프 상태                 EnemyDebuffController       구형 API와 공존, UI 문구도 생성
+                                                            (불의 규칙과 문구는 FireDebuffRule)
+길 순서/점유/도착 예약/타일 효과 TileManager                 시각화도 함께 관리 (TilePath는 삭제됨)
+재화 원본                     CurrencyManager             획득 정책은 외부
+생명/방패/게임오버 판정         GameManager                 UI는 이벤트를 받아 표시만
+타워 원본 데이터               Resources의 CSV 실행 로더   별도 SO 임포터 존재
+투사체 진행 여부               GlobalProjectileManager     씬의 활성 객체 검색으로 판정
+입력(클릭/드래그)              BoardInputController        DragObjectOnGround, GlobalClickDetector는 삭제됨
+
+'현재'는 좋은 구조라는 뜻이 아니라 지금 확인한 소유 위치입니다.
+
+======================================================================
+4. 지적 사항의 현재 상태
+======================================================================
+
+[4-1] 23번 문서의 P0 18개
+
+상태        항목                                    근거
+----------------------------------------------------------------------
+해결        [23-2-1]  생명력·게임오버 이중 소유      GameManager만 계산, UI는 이벤트 표시 [24-3-1].
+                                                    UIManager의 currentLifeIndex/OnPlayerHit 없음 (코드 확인).
+해결        [23-2-2]  최종 보스 → GameClear          WaveManager가 GameManager.OnGameClear() 호출 [24-2-4].
+규칙 변경   [23-2-3]  웨이브 완료 조건               10턴 고정으로 확정 [25-1]. 13장 1번.
+                                                    40웨이브 턴 연장은 2026-10-02 수정 (A-5).
+해당 없음   [23-2-4]  탈출한 적의 활성 적 수         m_activeEnemyCount 자체가 없어짐 (코드 확인).
+해결        [23-2-5]  사망 재진입                    m_hasDied로 Die()가 한 번만 실행.
+                                                    치명타 처형 뒤 ApplyDamage 즉시 종료 (코드 확인).
+수정함      [23-2-6]  불 사망 뒤 Dictionary 읽기     2026-10-02: 스택 적용 뒤 TryGetValue로 다시 확인.
+                                                    지금도 ApplyZoneStack은 피해를 주지 않음. 5장 G-1.
+해결        [23-2-7]  힐 타일 2회 적용               CheckAndApplyTileBuff 호출처가 ApplyAllTileBuffs 한 곳 (코드 확인).
+해당 없음   [23-2-8]  불 첫 턴 2회 피해              지금 코드는 걸릴 때 따로 피해를 주지 않음. 걸린 턴부터
+                                                    턴당 1번 (코드 확인). 규칙은 10장 1번.
+해결        [23-2-9]  방어 타일과 해머 덮어쓰기      타일 보정과 디버프 배율을 따로 보관, 합연산 [25-2].
+남음        [23-2-10] 창 누적 피해 소실              5장 B-3. EndZoneDebuff는 여전히 호출자 없음 (코드 확인).
+해결        [23-2-11] 치명타에서 거리 보정 소실      거리 보정 뒤에 치명타 배율을 곱함 (코드 확인).
+                                                    치명타 비교 <= 는 2026-10-02에 < 로 수정 (G-2).
+해결        [23-2-12] 생성 실패 시 재화 차감         컴포넌트 검증 → 배치 → Init → 골드 차감 순서 (코드 확인).
+해결        [23-2-13] 합성 실패 시 재료 소실         결과 데이터와 프리팹을 검증한 뒤 재료 제거 (코드 확인).
+                                                    Init은 재료 제거 뒤에 실행됨.
+재확인      [23-2-14] 타워 이동 뒤 디버프 존 기준    UpdateTowerPosition이 없어짐 (코드 확인). 장판이 사거리와
+                                                    무관하게 설치되므로 [문답] 기준 위치가 필요 없어진 것으로 보임.
+해결        [23-2-15] targetLayer 미사용             필드와 CSV 열 삭제 [25-2].
+해결        [23-2-16] 버프 타워 행동 순서            지원 타워 phase가 공격 phase 앞에 분리됨 [24-2-2].
+수정함      [23-2-17] 스폰 실패를 성공으로 계산      2026-10-02: Spawn이 null이면 카운트와 중간 보스 소환
+                                                    상태를 바꾸지 않음. 5장 G-3.
+보류        [23-2-18] 구형 DebuffBase 시스템         사용자 지시로 보류 (9장).
+
+[4-2] 24번 문서의 결합 사례 14개                                   [25-2]
+
+상태        항목                                    근거
+----------------------------------------------------------------------
+해결        [24-3-6]  최종보스 식별                  사망 정보에 적 종류와 소환 웨이브 전달.
+                                                    40웨이브에 소환된 Boss만 클리어/게임오버 판정.
+해결        [24-3-7]  TilePath 관련                  TilePath 삭제. 점유·도착 예약·좌표는 TileManager,
+                                                    진형 보간은 EnemyMoveController. 코루틴 소유는 남음(F-5).
+해결        [24-3-8]  방어 타일과 디버프 덮어쓰기    위 [23-2-9]와 같은 문제. 회복·연소 순서는 남음(B-4).
+해결        [24-3-10] 여러 칸 장판 이동              MovePathDebuffEffect 없어짐. 소스 단위로 기존 영역
+                                                    전체를 지우고 새 영역을 다시 등록.
+부분 해결   [24-3-5]  사망 처리의 책임 과다          보상 계산은 GetKillReward로 이동. Die()가 재화 지급·
+                                                    웨이브 통보·풀 반환을 직접 호출하는 것은 그대로(F-4).
+부분 해결   [24-3-13] UI 결합                        UIManager는 패널 켜고 끄기만 담당하게 축소.
+                                                    남은 것은 F-6.
+남음        [24-3-1]  턴 상태 ↔ UI ↔ 입력
+남음        [24-3-2]  TowerManager/TowerController 책임 과다 (F-3)
+수정함      [24-3-3]  불 스킬이 공통 코드에 박힘     2026-10-02: 불의 스킬·버프·디버프를 문양별 파일로 옮김 (F-2).
+                                                    나머지 12개 문양의 버프·디버프 switch는 그대로.
+남음        [24-3-4]  턴 완료가 투사체 생존에 의존 (A-1)
+남음        [24-3-9]  구형 Debuff 클래스 공존 (보류, 9장)
+해당 없음   [24-3-11] 불 예열 스택 수명              2026-10-02: 스택이 사라지지 않는 틀로 바뀜 (A-4).
+남음        [24-3-12] CSV·파일명·enum 순서 결합 (E-4, E-5)
+남음        [24-3-14] 초기화·에디터 자동 실행 (8장)
+남음        [24-4]    구독자 없는 이벤트(D-3), 씬 이동 경로 2종(G-6)
+
+======================================================================
+5. 통합 작업 목록 (권장 순서)                          [25-3] + 23·24 보충
+======================================================================
+
+순서 기준: 게임 결과가 틀리는 것 → 확정 규칙과 다른 것 → 혼동을 주는 잔재 → 구조 분리.
+구조 분리를 뒤에 둔 이유는 규칙이 먼저 고정돼야 "무엇을 어디로 나눌지"가 정해지기 때문.
+
+----------------------------------------------------------------------
+A. 공격 판정 (결과가 틀어지는 것)
+----------------------------------------------------------------------
+
+A-1. 타겟 타워 탄 사전 분배 + 공격 단위 완료 추적     [문답 18][24-3-4][23-4-10]
+  [수정함 2026-10-02 · 컴파일·실행 확인 전]
+    - 탄 사전 분배: 단일 타워는 탄마다 대상을 다시 고름. 발사할 때 그 탄이 깎을 체력을 대상에
+      예약하고(EnemyHealthController.ReserveDamage), 예약만으로 죽을 적은 다음 탄이 건너뜀.
+      사거리의 적이 전부 죽을 예정이면 남는 탄은 원래 우선순위의 적에게 그대로 쏨.
+      예상 피해는 EstimateDamage(방어력·방어 관통·취약·고정 피해 전환). ApplyDamage도 같은 식을 씀.
+      치명타는 발사 전에 탄마다 굴림 (확정, 원래 코드도 그랬음).
+      예상에 들어가지 않는 것: 전기 추가 타격, 얼음 추가 타격, 빛 연쇄, 창 디버프의 치명타 즉사.
+    - 활성 투사체 수: 씬 전체 검색(FindObjectsByType)을 없앰. 투사체가 켜지고 꺼질 때 스스로
+      등록하는 목록(ProjectileHit2D.ActiveCount)을 셈.
+    - 타워별 대기: TowerController.IsAttackInProgress(위성을 만들고 쏘는 중)와 남은 투사체 수로 판단.
+      투사체 수가 5초(TowerManager의 m_attackStallTimeout) 동안 변하지 않으면 경고 로그를 남기고
+      다음 타워로 넘어감. 안쪽 대기에도 타임아웃이 생김.
+    - 투사체 수명: 기본 1.5초 고정에서 "날아갈 거리 ÷ 속도 + 0.5초"(최소 1.5초)로.
+    남은 것: 대기 완료·취소·타깃 소멸·풀 반환을 하나의 종료 약속으로 묶는 것 (지금은 여전히
+            전체 투사체 수 기준. 공격마다 자기 탄 목록을 드는 구조는 아님), 광역 타워의 분배.
+    확인: 체력이 낮은 적 여럿에게 탄 수가 많은 단일 타워를 쏘면 탄이 나뉘어 가는지.
+          턴이 멈추지 않는지, 경고 로그 "타워 공격이 … 끝나지 않아"가 뜨지 않는지.
+  내용: 발사 전에 "이 탄이 누구에게 가서 얼마를 깎는지"를 미리 계산.
+        A가 4발에 죽으면 5번째 탄부터는 다음 타겟팅 순서의 적에게 배정.
+  함께 하는 이유: 탄을 미리 배정하려면 "이번 공격이 쏜 탄 목록"을 들고 있어야 하고,
+        그 목록이 곧 "해결되지 않은 공격의 명시적 추적"이 됨.
+        지금은 GlobalProjectileManager.GetActiveProjectileCount()가 FindObjectsByType로 씬의
+        활성 투사체 전체를 매 프레임 검색해서 0이 될 때까지 무한 대기함 (코드 확인).
+        반환되지 않은 투사체 하나가 턴 전체를 멈출 수 있고, 준비된 위성형 투사체도 집계될 수 있음.
+  대상: TargetAttackAction, TowerController(위성 발사 코루틴), TowerManager(대기 루프),
+        GlobalProjectileManager, GameManager(바깥 타임아웃).
+  주의: 예상 피해 계산에 방어력·취약·치명타·고정 피해 전환이 들어가야 함.
+        치명타를 발사 전에 굴릴지 명중 때 굴릴지 정해야 함 (10장 5번).
+        가장 안쪽 대기에도 타임아웃이 필요 (지금은 바깥에만 있어서 도달하지 못할 수 있음).
+        대기 완료·취소·타깃 소멸·풀 반환을 같은 종료 약속으로 연결.
+        투사체 기본 lifeTime 1.5초는 거리/속도 기반으로 계산 [23-4-10].
+
+A-2. 얼음 추가 타격·빛 연쇄를 타일 기준으로                          [문답 16]
+  내용: 지금은 화면상 거리(1.5 / 2.0)로 찾아서 진형 위치에 따라 결과가 달라짐.
+        얼음: 이미 타격한 적에게 같은 피해를 다시, 티어별 계수만 다르게.
+        빛: 같은 타일의 적 먼저, 그 뒤 그 타워의 타겟팅 설정 순서대로.
+  대상: ProjectileHit2D(ApplyIceAdditionalHits, ApplyChainHits, FindClosestEnemy).
+  주의: A-1의 사전 분배와 같은 대상 선택 함수를 쓰게 하면 중복이 줄어듦.
+        얼음 계수 값이 필요 (10장 4번).
+
+A-3. 버프/디버프 타워는 버프를 받지 않음                             [문답 30]
+  [수정함 2026-10-02 · Unity 실행 확인 전] TowerController: 지원 타워는 GetFinalStats/GetFinalAction에서 기본 스탯만 반환.
+  내용: 지금은 버프 범위에 자기 타일이 포함되고, 맵 타일 버프(행동력 -1 등)도 받음.
+  대상: TowerController(GetFinalStats, GetFinalAction).
+
+A-4. 불 예열 스택이 실제로 쌓이는지 검증                             [24-3-11]
+  [해소 2026-10-02] F-2 3단계에서 버프 틀이 바뀌어 이 문제가 없어짐. 스택은 효과가 꺼져도 남고,
+    한 번 행동에 AttackCount 만큼 쌓이며, 문턱은 60 ÷ 컬러 강화 레벨. 타워 1기로도 과열에 도달함.
+    아래는 바뀌기 전의 기록.
+  내용: 예열 스택 수명 = 버프 타워의 AttackCount(CSV 전부 1), 과열 문턱 = Duration(1티어 3).
+        턴 시작에 수명 1짜리 스택이 먼저 지워지고(AdvanceFireStatusTurn) 그 뒤 새 스택이
+        들어오므로(RefreshFireTileStatus), 불 버프 타워 1기로는 스택이 1을 넘지 못함.
+        과열에는 3기가 같은 타일을 덮어야 함.
+  할 일: 의도인지 확인 (10장 6번). 아니라면 AttackCount와 수명을 다른 값으로 분리.
+        행동 횟수 / 버프 수명 / 스택 누적 단위 / 발동 문턱을 개별 규칙으로.
+        '1소스 3턴 누적', '2소스 동시 공급', '타워 이동/판매' 예제를 종이에 먼저 검증.
+
+A-5. 40웨이브는 보스가 죽거나 도착할 때까지 턴 연장            [2026-10-02 확정]
+  [수정함 2026-10-02 · Unity 실행 확인 전] GameManager.EnemyWaveRoutine: 40웨이브는 최종 보스가 살아 있는 동안 소환 없는 적 턴을 계속.
+  내용: 지금은 40웨이브에서도 10턴마다 플레이어 턴으로 돌아감. 웨이브 번호는 40에서 멈춤
+        (GameManager가 40 미만일 때만 NextWave를 호출). 41웨이브로 넘어가지는 않음.
+        40웨이브에서는 10턴이 지나도 플레이어 턴으로 돌아가지 않고, 40웨이브 보스가 처치되거나
+        (클리어) 마지막 타일에 도착할 때까지(게임 오버) 적 턴을 계속 실행.
+  대상: GameManager(EnemyWaveRoutine의 턴 반복 조건).
+  주의: 소환은 앞 5턴만. 연장된 턴은 이동·공격만.
+        보스가 속박 등으로 영원히 움직이지 못하는 경우가 있는지 확인 (무한 반복 방지).
+
+----------------------------------------------------------------------
+B. 디버프 규칙 (확정 규칙과 다른 것)
+----------------------------------------------------------------------
+
+B-1. 장판 크기를 SplashRadius로                                      [문답 33]
+  [수정함 2026-10-02 · Unity 실행 확인 전] DebuffAction: 모든 문양이 SplashRadius를 따름. 남은 것: CSV 값 입력, 장판의 보이는 크기.
+  내용: 지금은 불만 반경을 쓰고 나머지는 항상 1칸. CSV의 디버프 타워 SplashRadius는 전부 0.
+  대상: DebuffAction(GetAffectedPathIndices), CSV 값, 장판 시각 크기(TileSatelliteOrbiter).
+  주의: 0번·마지막 타일은 영역에 걸려도 효과가 없어야 함 (이미 적 쪽에서 걸러짐).
+
+B-2. 10스택 발동 효과 영구 처리                                      [문답 35]
+  내용: 지금은 장판을 벗어나 지속시간이 끝나면 스택과 발동 상태가 함께 사라짐.
+  대상: EnemyDebuffController(AdvanceDebuffTurn의 만료 처리).
+  주의: 불 이외 문양은 건드리지 말라는 지시가 있었음. 착수 전 범위 확인 (10장 7번).
+        불은 새 틀에서 이미 스킬 2(연소)가 영구이고 스택도 남음. 나머지 문양을 새 틀로 옮기면
+        이 항목은 함께 해결됨.
+
+B-3. 창 디버프 종료 시 누적 피해                           [문답 37][23-2-10]
+  내용: 즉사 판정은 동작. 종료 시 피해 정산은 RemainingDuration < 0인 구형 경로에만 있음.
+        타일이 만든 디버프는 duration이 양수라 0이 되면 먼저 제거되고 누적 피해가 들어가지 않음.
+  권장: 창 상태를 OnTile / GracePeriod / Resolve / Expired처럼 단계로 나누고,
+        일반 duration 만료와 누적 피해 정산 순서를 분리. 호출자 없는 EndZoneDebuff()는
+        타일 이탈에 연결하지 않을 것이라면 제거.
+  주의: B-2와 같은 범위 확인.
+
+B-4. 회복 타일과 새 연소의 순서                                 [24-3-8 잔여]
+  내용: 같은 함수 안에서 회복이 먼저, 디버프 적용이 나중. 연소가 새로 걸리는 턴에는
+        치유 감소가 적용되지 않음.
+  할 일: 규칙으로 확정 (10장 8번).
+
+----------------------------------------------------------------------
+C. 버프 규칙
+----------------------------------------------------------------------
+
+C-1. 버프 수치를 Power 기반으로                                      [문답 27]
+  내용: 지금은 티어 고정표(검 10/20/40/100/200% 등). Power와 컬러 강화가 수치에 영향 없음.
+  대상: TowerController(ApplyCurrentTileBuffTowerEffects), BuffAction, CSV의 버프 타워 Power.
+  주의: Power → 실제 %로 바꾸는 환산식이 필요 (10장 9번).
+  [불만 반영 2026-10-02] 불 버프는 Power를 그대로 %로 씀 (예열 +Power%, 과열 +Power × AbilityValue %).
+    나머지 12개 문양은 티어 고정표 그대로. 버프·디버프 타워 재설계 때 함께 옮길 것.
+
+C-2. 어둠 버프 재설계                                                [문답 31]
+  내용: "어둠 버프 타워가 설치된 동안 죽은 적 수"를 세고, 그 값만큼 주변 타워가 버프.
+        처치 주체(투사체/도트/즉사)를 가리지 않게 됨.
+  대상: TowerManager(공유 어빌리티 값), TowerController(NotifyEnemyKilled), EnemyHealthController.
+
+C-3. 직접 버프 방식 삭제                          [문답 26][23-4-2][24-5 1단계]
+  [수정함 2026-10-02 · 컴파일·실행 확인 전] TowerController에서 약 350줄 삭제 (885줄 → 535줄).
+    없앤 것: ApplyBuff, ActiveBuff, m_activeBuffs, AdvanceBuffTurn, RefreshBuff, RefreshExternalBuff,
+    ApplyStrongestBuff, ResetBuff, ApplyIceBuff, ApplyDarknessBuff, GetBuffStrength, m_bonus* 14개,
+    m_darknessBonus* 5개. TowerManager의 RefreshBuffOnAllTowers와 AdvanceBuffTurn 호출도 삭제.
+    C-2(어둠 재설계)를 기다리지 않고 지움: 어둠의 실제 동작은 타일 경로(ApplyTileDarknessBuff,
+    NotifyEnemyKilled의 타일 부분)에만 있었고, 그 부분은 그대로 남김. 동작 변화 없음.
+    확인: 어둠 버프 타일 위의 타워가 적을 처치하면 공유 값이 오르고 버프가 강해지는지 (이전과 같아야 함).
+  내용: ApplyBuff, ActiveBuff, m_activeBuffs, AdvanceBuffTurn, RefreshBuff, ApplyStrongestBuff,
+        ResetBuff, m_bonus* 필드. 호출처가 없어 동작하지 않음.
+  주의: C-2를 먼저 해야 함. 어둠의 처치 집계가 이 경로에 걸쳐 있음.
+
+----------------------------------------------------------------------
+D. 혼동을 주는 잔재 제거
+----------------------------------------------------------------------
+
+삭제 전 공통 원칙: 참조 수 0이라는 이유만으로 지우지 않음. 프리팹·애니메이션 이벤트·
+에디터 문자열까지 검색한 뒤 삭제 [24-3-9].
+
+D-1. 실시간 시절 코드                                      [문답 7, 25][24-3-9]
+  - EnemyMoveController.SetSpeedMultiplier, CurrentSpeed (빈 호환 메서드)
+    → 보류 범위인 Debuff/ 폴더의 구형 클래스가 부르고 있어 지금은 지울 수 없음. 구형 클래스 정리 때 함께.
+  - EnemyData.Resistance와 EnemyInfoPanel의 "저항력" 표시 (화면에 보이는 항목이라 손대지 않았음)
+  - BuffAction의 "Earth 100초 타이머" 주석 [수정함 2026-10-02]
+D-2. 구형 통합 턴 경로                                           [24-5 1단계]
+  [수정함 2026-10-02 · Unity 실행 확인 전] TowerManager에서 두 메서드 삭제.
+  - TowerManager.ExecuteTowerActionTurn / ExecuteTowerActionTurnRoutine (호출처가 없었음. 삭제함)
+D-3. 구독자가 없는 이벤트                                              [24-4]
+  [수정함 2026-10-02 · 컴파일·실행 확인 전] 두 이벤트와 호출을 삭제.
+  - GameManager.OnTurnStateChanged, TowerManager.OnTowerTypeUpgrade
+D-4. 흐름과 어긋난 주석
+  [수정함 2026-10-02 · Unity 실행 확인 전] 주석 수정.
+  - GameManager.EnemyTurnRoutine의 "다음 루프에서 자동으로 플레이어 턴 시작"
+D-5. GameManager.cs의 using UnityEditor.ShaderGraph.Internal
+  [수정함 2026-10-02 · Unity 실행 확인 전] using 삭제.
+  - 에디터 전용 네임스페이스라 빌드에서 컴파일 오류가 날 수 있음. 쓰이지 않으므로 삭제.
+D-6. 명명과 오타                                                 [23-8 9단계]
+  - EffectPool2D.SetDestoryOnFinish → SetDestroyOnFinish [수정함 2026-10-02]
+  - EnemyType.Depend (남아 있음)
+  - 일관되지 않은 singleton/SerializeField 명명
+  - WaveManager 스크립트가 붙은 프리팹 이름이 SpawnManager [24-4]
+
+----------------------------------------------------------------------
+E. 데이터·경제
+----------------------------------------------------------------------
+
+E-1. 문양 선택을 타워 생성에 반영                                    [문답 44]
+  내용: GameModeSession.SelectedEmblemIDs가 있지만 BuildTower는 1티어 전체(52종)에서 뽑음.
+  주의: 선택 UI는 스테이지 선택 씬에 추가 예정. 선택이 비어 있을 때의 기본 동작 필요.
+E-2. 컬러 강화를 스킬 강화로                                         [문답 48]
+  내용: 이전에는 공격력·사거리·공격 횟수에 1.1/1.2/1.4/1.8배였음. 티어 = 기본 스탯,
+        컬러 = 스킬 강화로 바꿈. 규칙과 수치표는 27번 10장.
+  [수정함 2026-10-02 · Unity 실행 확인 전] TowerManager.UpgradeTower: 컬러 강화가 AbilityValue만 올림
+    (배율은 기존 1.1/1.2/1.4/1.8 그대로). 공격력·사거리·공격 횟수는 더 이상 오르지 않음.
+    불 단일 스킬은 레벨로 발동 조건(Duration ÷ 레벨)과 스택 지속(티어 × 레벨)을 계산.
+  [추가 수정 2026-10-02 · Unity 실행 확인 전] 티어·컬러 강화 규칙 반영 (27번 10장):
+    - TowerDataCSV.csv: 공격 타워 130줄 중 78줄 수정. 골드부터 Range +1, 치명타 2배를 골드에서
+      미스릴로, 공격 횟수 증가를 미스릴에서 다이아로 옮김. SplashRadius·추가 타격·Duration·
+      AbilityValue는 전 티어 브론즈 값으로 통일. 버프·디버프 타워 130줄은 그대로.
+    - TowerManager.UpgradeTower: 공격 타워는 Duration ÷ 레벨, 레벨 3·5에서 광역 범위/추가 타격 +1.
+    - 불 광역 메테오의 발동 주기도 Duration ÷ 레벨을 따름.
+    - TowerDataCSV_master.xlsx는 고치지 않았음. CSV와 내용이 달라졌으니 엑셀에서 다시 내보내면 안 됨.
+  확인 추가: 골드 이상 공격 타워의 사거리 표시가 1칸 넓어졌는지. 레드 강화 레벨 3에서 광역 범위가,
+             블루 강화 레벨 3에서 단일 타워의 탄 수가 늘어나는지. CSV 로드 로그가 260개인지.
+  [추가 수정 2026-10-02 · Unity 실행 확인 전] 버프·디버프의 스킬 2 문턱이 60 ÷ 컬러 강화 레벨 (F-2 3단계).
+    지금은 불 버프·디버프만 이 문턱을 씀.
+  남은 것: - 버프·디버프 타워: 컬러 강화 때 AttackCount 증가(증가량 미정, 10장 19번),
+             티어 규칙(골드 → 미스릴 AttackCount +1·Action -1, 미스릴 → 다이아 +3·-3)과 CSV 재설계.
+             지금 버프·디버프 타워의 컬러 강화는 AbilityValue 배율과 문턱만 바꿈.
+           - 불 이외 문양은 스킬이 없어 컬러 강화의 효과가 거의 없음 (광역 범위·추가 타격만).
+           - 불·빛은 브론즈 Action이 이미 1이라 브론즈 → 실버에서 변하는 것이 없음 (10장 21번).
+           - 타워 정보 패널에 레벨과 AbilityValue가 보이는지 확인, 컬러 강화 버튼의 설명 문구.
+  확인: 컬러 강화 뒤 공격력·사거리·공격 횟수가 그대로이고 AbilityValue만 오르는지.
+        불 단일 타워가 레벨이 오를수록 더 적은 적중으로 스택을 얻는지.
+E-3. 시너지 타워 효과                                                [문답 51]
+  내용: 지금은 생성·표시만 됨. 세부 스탯과 효과 설명 대기.
+E-4. CSV 원본 일원화와 검증                                [24-3-12][23-3-6]
+  - 런타임 CSV 로드(Resources/TowerDataCSV)와 TowerCSVToSOImporter가 함께 존재.
+    임포터는 존재하지 않는 경로(Assets/12. DataCSV)를 읽음. 쓸지 지울지 결정 (10장 11번).
+  [일부 수정함 2026-10-02 · 컴파일·실행 확인 전] TowerManager 로더: 숫자를 InvariantCulture로 읽음,
+    열 수 부족과 ID 중복은 경고 로그를 남기고 그 줄을 건너뜀. 헤더·투사체 누락·enum 범위·쉼표는 남음.
+  - 로더에 헤더·열 수(현재 18열)·ID 중복·투사체 누락·enum 범위 검사 추가.
+  - 단순 Split(',')라서 이름이나 설명에 쉼표가 들어가면 열이 깨짐.
+  - float.Parse/int.Parse가 실행 환경의 문화권 설정에 영향받을 수 있음. InvariantCulture 사용.
+  - TowerDataCSV_master.xlsx에는 삭제한 3개 열(towerLevel, IsCritical, targetLayer)이 아직 있음.
+    다시 내보내면 열이 밀림.
+E-5. WaveManager 풀 배열이 (int)EnemyType 순서에 의존                [24-3-12]
+  - enum 순번 배열보다 타입-풀 매핑을 명시하는 편이 안전.
+E-6. CurrencyManager                                                 [23-4-16]
+  - Spend가 성공 여부를 반환하지 않고 음수 입력을 막지 않음. TrySpend 형태 권장.
+  - 보석이 float이어야 하는지 확인.
+
+----------------------------------------------------------------------
+F. 구조 분리 (규칙이 고정된 뒤)
+----------------------------------------------------------------------
+
+F-1. 순수 데이터 분리                                     [24-5 3단계][23-4-2]
+  - TowerStats를 TowerController.cs 밖으로, enum을 TowerDataSO.cs 밖으로.
+  - 타일 거리 변환(ToTileRange, ToWorldRange)을 TowerAttackAction 밖의 격자 계산 역할로.
+    사거리를 정수 칸으로만 저장하도록 바꾸면 변환 자체가 대부분 사라짐 [문답 15].
+  - TowerData와 TowerStats가 같은 스탯을 중복 보유하는 것 정리.
+F-2. 스킬 확장점                                             [24-3-3][문답 22]
+  내용: 다른 문양 스킬을 만들기 전에 해야 함. 지금 방식대로면 TowerManager·TowerController·
+        ProjectileHit2D·EnemyDebuffController에 문양별 if가 계속 늘어남.
+        "타일에 기록할 효과 / 대상이 가진 상태 / 명중 시 반응" 세 가지로 계약을 나누고
+        불을 그 계약으로 먼저 옮김. 투사체는 특정 원소 타워의 내부 카운터 이름을 모르게.
+        명중 순간 피해가 들어가는 연출은 유지.
+  [1단계 수정함 2026-10-02 · Unity 실행 확인 전] 공격 타워 스킬의 공용 틀을 만듦.
+    Assets/3. Scripts/01. Tower/03. TowerSkill/
+      TowerSkill.cs       스킬의 공통 규약 (TowerAttackAction이 공격 방식을 정하듯 스킬을 정함)
+      FireSplashSkill.cs  불 광역: 메테오
+      FireTargetSkill.cs  불 단일: 적중 누적 시 치명타 스택 (지속 = 티어 × 레벨 턴. 처음에는 영구였다가 같은 날 바꿈)
+    TowerController는 스킬 종류를 모르고 TryUseSkill / NotifyPrimaryTargetHit / ModifyFinalStats만 호출.
+    TowerManager와 ProjectileHit2D의 불 전용 호출(TryTriggerFireMeteor, NotifyFireTargetHit)은 없어짐.
+    새 스킬 추가: TowerSkill을 상속한 파일 하나 + TowerSkill.Create에 한 줄.
+  [2단계 수정함 2026-10-02 · Unity 실행 확인 전] 메테오를 스킬로 완전히 옮김.
+    - 발사, 폭발 피해, 빛 연쇄, 화상·연소 배율이 전부 FireSplashSkill.cs 안에 있음.
+    - 메테오의 모양도 바뀜: 사거리 안 길 타일마다 → 화면 중앙(카메라 기준)에 큰 메테오 하나,
+      명중 순간 맵의 모든 적이 한 번씩 피해. 스킬도 버프를 받음 (규칙은 27번 5장).
+      연출 상수: 메테오 크기 4배, 폭발 이펙트 8배, 연쇄 간격 0.12초, 연쇄 피해 20%.
+    - 공용 틀: 스킬이 ProjectileStats.skill에 자신을 넣어 투사체를 쏘면, 투사체는 명중할 때
+      TowerSkill.OnSkillProjectileImpact만 호출함. 후속 코루틴을 반환하면 끝날 때까지 투사체가 남음.
+    - 없어진 것: SplashAttackAction.LaunchFireMeteor, ProjectileStats.isFireMeteor,
+      ProjectileHit2D.ExplodeFireMeteor, EnemyDebuffController.GetFireMeteorDamageMultiplier.
+    - 문양 시너지용 조회: EnemyDebuffController.GetDebuffStack / IsDebuffTriggered (문양과 무관한 형태).
+  [3단계 수정함 2026-10-02 · Unity 실행 확인 전] 버프·디버프의 공용 틀을 만들고 불을 옮김 (규칙은 27번 4-1장).
+    - 디버프: 03. Enemy/DebuffRule/EnemyDebuffRule.cs(공용), FireDebuffRule.cs(화상·연소).
+      EnemyDebuffController는 규칙이 등록된 문양이면 규칙에 맡기고, 아니면 예전 switch로 처리.
+      상태 클래스는 EnemyDebuffState로 꺼냄.
+    - 버프: 01. Tower/04. TowerBuff/TowerBuffStatus.cs(공용), FireBuffStatus.cs(예열·과열).
+      TowerController의 예열·과열 필드와 함수가 없어지고 RefreshStackBuffs / AdvanceStackBuffTurn만 남음.
+    - 타일 기록(TowerTileBuffEffect, PathTileDebuffEffect)에 Power와 StackGain 추가.
+      문턱은 TowerAttackAction.GetStackSkillThreshold(레벨) = 60 ÷ 레벨.
+    - 동작이 바뀜: 예열·화상의 세기가 AbilityValue → Power, 스택에 비례하지 않는 고정 수치,
+      과열·연소의 세기가 AbilityValue × 2 → Power × AbilityValue, 문턱이 Duration → 60 ÷ 레벨,
+      화상에 Duration 만료가 생김, 스택은 효과가 꺼져도 남음.
+    확인: 불 버프 타워 옆 공격 타워의 공격력이 Power%만큼 오르는지 (타워 정보 패널).
+          불 디버프 장판 위의 적이 매 턴 Power% 피해를 받고, 벗어난 뒤 Duration 턴이 지나면 멈추는지.
+          적 정보 패널에 "화상 … 스택 n/60"이 보이는지. 다른 문양의 디버프가 이전과 같은지.
+    작업 중 임의로 정한 것 (확정받지 않음. 10장 22번):
+      - 과열의 공격 횟수 +1, 연소의 치유 40% 감소는 틀에 없지만 불의 고유 효과로 유지.
+      - 불 버프 타워가 겹치면 예열 수치는 가장 높은 Power 하나, 스택은 모두 쌓임.
+      - 메테오의 2배 조건을 "화상 스택이 있음"에서 "화상이 켜져 있음"으로 바꿈 (스택이 사라지지 않으므로).
+  남은 것:
+    - 나머지 12개 문양의 버프(TowerController의 switch)와 디버프(EnemyDebuffController의 switch)를
+      새 틀로 옮기는 것. 버프·디버프 타워 재설계와 함께. 디버프는 보류 범위(9장)라 착수 전 확인.
+    - 나머지 12개 문양의 공격 타워 스킬 (기획 미정).
+  확인: 불 광역 타워의 메테오가 이전과 같은 주기로 발동. 불 단일 타워가 적중을 채우면 치명타 수치가
+        오르고(타워 정보 패널), 예열·과열 때 공격 횟수가 +1 / +3.
+F-3. TowerManager 책임 축소                                 [24-3-2][23-4-1]
+  - CSV 데이터 조회 → 비용·강화·합성 계산 → 배치 → 턴 실행 순으로.
+  - 처음부터 모든 것을 새 매니저로 쪼개지 않음. '원본 데이터를 누가 가진다'를 먼저 결정.
+F-4. 사망 결과 전달                                                  [24-3-5]
+  - Die()가 재화·웨이브를 직접 부르지 않고 사망 결과(종류, 소환 웨이브, 공격자, 원인)를
+    한 번 알리는 형태로. C-2(어둠 처치 집계)가 같은 지점을 쓰므로 함께 설계.
+  - 이벤트로 만들면 '누가 언제 구독하는지'를 문서에 명시.
+F-5. 적 이동 코루틴의 소유                                      [24-3-7 잔여]
+  - EnemyManager가 바깥 코루틴을 돌리고 이동 컴포넌트가 안쪽 코루틴을 돌림.
+    이동 중 제거되면 바깥 코루틴은 끝나지 않고 남음.
+  - 이동은 현재 인덱스를 먼저 올리고 도착 후 점유를 갱신함. 논리 위치 / 이동 목적지 /
+    화면 보간 위치의 의미를 구분할 것.
+F-6. UI                                                    [24-3-13][23-4-11]
+  [일부 수정함 2026-10-02 · 컴파일·실행 확인 전] 타워 정보 패널과 적 상세 패널이 매 프레임 글자를
+    다시 쓰던 것을 "상태가 바뀌었을 때만"으로 바꿈.
+    - 08.Common/GameStateVersion.cs: 상태가 바뀔 때마다 1씩 오르는 번호. 패널은 번호가 달라졌을 때만 갱신.
+    - 번호를 올리는 곳: 턴 상태 전환, 적 1턴의 각 단계 끝, 공격 타워가 행동할 때, 적 체력 변화
+      (피해·회복·최대 체력 감소), 재화 변화, 타워 배치·제거·이동·교환, 컬러 강화, 타겟 우선순위 변경.
+    - 안전 장치: 번호를 올리는 것을 빠뜨린 변경이 있어도 0.5초 안에는 패널이 따라옴.
+    - 새로 화면에 보이는 값을 바꾸는 코드를 넣을 때는 GameStateVersion.MarkChanged()를 부를 것.
+    남은 것: 적 상세의 디버프 목록은 적을 선택한 순간에만 만들어지고 그 뒤 갱신되지 않음 (원래 그랬음).
+            TileinfoPanel의 항목 재사용과 Content 높이, 게임 오버 때의 적 전체 검색.
+    확인: 타워 정보 패널을 연 채로 턴을 넘기면 수치가 따라 바뀌는지. 적 상세의 체력이 맞을 때마다 줄어드는지.
+  - 디버프 문구 생성을 EnemyDebuffController에서 분리.
+  - EnemyInfoPanel이 누락 UI를 코드로 만드는 경로를 프리팹으로 대체.
+  - RemoveAllListeners()가 UIManager, EnemyInfoPanel, EnemyListItemUI, UIManager_Start/Menu에
+    남아 있음 (코드 확인). Inspector에서 건 이벤트까지 지울 수 있으므로 명명된 핸들러를
+    AddListener/RemoveListener로 대칭 관리.
+  - UIManager에 FindObjectsByType<EnemyHealthController> 검색이 있음 (코드 확인).
+F-7. 턴 상태 ↔ UI ↔ 입력                                             [24-3-1]
+  - 상태 클래스는 턴의 허용 행동과 진입·종료만, 화면 배치는 UI에.
+    모든 호출을 이벤트화할 필요는 없고 화면 전환과 입력 취소의 책임 경계부터.
+
+----------------------------------------------------------------------
+G. 23·24번에만 있고 아직 남은 것 (25번 목록에 없던 항목)
+----------------------------------------------------------------------
+
+게임 결과에 영향 (A~B와 같은 우선순위로 볼 것):
+G-1. 불 장판 즉시 피해로 죽은 뒤 Dictionary 읽기                     [23-2-6]
+  [수정함 2026-10-02 · Unity 실행 확인 전] EnemyDebuffController.RefreshTileDebuffs: 스택 적용 뒤
+    TryGetValue로 상태를 다시 확인. 피해 뒤 생존 여부 재검사는 넣지 않았음 (지금은 적용 중 피해가 없음).
+  - 지금은 장판 적용 중에 피해가 없어 실제로 터지지 않음. 장판 적용 시점에 피해를 넣는
+    변경을 할 때 함께 고칠 것.
+  - ApplyZoneStack이 결과 상태를 반환하게 하거나 TryGetValue 사용. 피해 뒤 생존 여부 재검사.
+G-2. 치명타 판정 비교 <= 를 < 로                                    [23-2-11]
+  [수정함 2026-10-02 · Unity 실행 확인 전] TargetAttackAction, SplashAttackAction.
+  - TargetAttackAction, SplashAttackAction 양쪽.
+G-3. 스폰 실패 처리                                                 [23-2-17]
+  [수정함 2026-10-02 · Unity 실행 확인 전] WaveManager: 소환 실패 시 카운트와 중간 보스 소환 상태를 바꾸지 않음.
+  - Spawn 결과가 null이면 m_waveSpawnedCount / m_middleBossSpawned를 바꾸지 않음. 재시도·스킵 정책.
+G-4. GameManager의 수명                                      [23-3-5][23-4-4]
+  - GameManager만 DontDestroyOnLoad이고 다른 매니저는 씬 객체 (코드 확인).
+    재시작 시 라이프·실드·코루틴이 남을 위험. 유지 여부 결정 (10장 12번).
+  - 실드 sourceID를 제거하는 API가 없어 타워가 사라진 뒤에도 실드가 남을 수 있음.
+  - OnClickGameSpeed(float gamespeed)가 인자를 쓰지 않음.
+
+구조·표현 (F와 같은 우선순위로 볼 것):
+G-5. 초기화 중복                                         [23-4-10][24-3-14]
+  [수정함 2026-10-02 · 컴파일·실행 확인 전] GlobalProjectileManager.Start의 호출을 없앰.
+    TowerManager.Start가 CSV를 읽은 직후에 한 번만 부름.
+  - InitializeProjectileDatabase()가 GlobalProjectileManager.Start()와 TowerManager.Start()
+    양쪽에서 호출됨. 한쪽으로 모을 것.
+G-6. 씬 이동과 로딩                                         [23-4-13][24-4]
+  - UIManager_Start/Menu는 SceneManager.LoadScene 직접 호출, 다른 경로는 SceneLoader.NextScene
+    + LoadingManager. 한 표준 경로로 정리.
+  - SceneLoader.StartLoad()의 LoadScene 줄이 주석 상태. 호출만으로 씬이 바뀌지 않음.
+  - LoadingManager: m_testMode 기본값 true (코드 확인), 로딩 루프에서 UpdateUI() 미호출,
+    m_percentText 미사용, m_LoadingImage1/2를 검사하지만 같은 m_fadeGroup만 조절,
+    CoFade(0, 0, 1.5)는 변화 없음, UIManager_Menu에 같은 페이드 코드 중복.
+G-7. UIStageThemeController                                         [23-4-12]
+  - _bg, _frame, TurnEnd, CTxt_ 같은 이름 문자열로 역할을 추론. 이름을 바꾸면 조용히 빠짐.
+  - 텍스트 대비색을 실제 배경이 아닌 스테이지 전역 bgColor 기준으로 계산.
+  - ExecuteAlways와 OnValidate가 씬/프리팹을 자동 변경. Editor 경로와 런타임 적용이 한 파일.
+  - 권장: ThemeTarget 컴포넌트로 역할 명시, Editor 연결 코드는 Editor 전용으로 분리.
+G-8. TileSatelliteOrbiter와 이펙트                                  [23-4-14]
+  - 공전·스케일·Sorting·색·Trail/Particle·심볼·Editor 자동 구성이 한 파일(약 813줄).
+  - 색 불일치: GetEffectiveBuffColor()는 m_buffColor 그대로, Trail과 Particle은 RGB가 모두
+    0.35 미만이면 보라색으로 치환. 검정 디버프의 본체와 꼬리 색이 다름.
+  - EffectManager/EffectPool2D: int effectID 대신 enum, 반복 파티클의 최대 수명,
+    Animator 클립 길이 추정 대신 Animation Event 또는 명시 duration.
+G-9. 작은 것들                                             [23-4-15][23-4-16]
+  - CameraController: 코루틴 핸들은 static인데 owner가 외부에서 전달됨. 새 owner가 이전
+    코루틴을 멈출 수 없음. 인스턴스가 자신의 코루틴을 소유해야 함.
+  - HPBarSlider: m_gauge null 검사 뒤 마지막 줄에서 다시 무조건 접근. 색상을 두 번 설정.
+  - DamageText: 데미지를 F2로 표시 (코드 확인). 정수 표시면 충분.
+G-10. 성능                                                             [23-5]
+  먼저: 투사체 FindObjectsByType(A-1에서 해결), 한 공격에서 반복되는 전체 적 타겟 탐색.
+  다음: TowerController.GetFinalStats()의 반복 Dictionary 생성, GetSatelliteOffset()의 배열 생성,
+        sourceID 제거 때 TileManager 전체 셀 순회, UI 타일 목록의 반복 Instantiate/Destroy,
+        Projectile VFX의 반복 Gradient/AnimationCurve 생성,
+        GetWaveEnemyComposition()이 적 소환 때마다 새 List를 만드는 것.
+  캐시 단위: 한 타워 행동(최종 스탯), 한 공격 묶음(선택된 타겟), 한 웨이브(적 종류 큐),
+        한 effect source(영향받는 타일 목록).
+  ※ 23번이 지적한 TilePath 조회 할당과 타워별 Update 입력 검사는 해당 파일
+    (TilePath, DragObjectOnGround)이 없어져 대상에서 뺌. 같은 문제가 TileManager와
+    BoardInputController로 옮겨 갔는지는 확인하지 않았음.
+
+======================================================================
+6. 시스템별 구조 메모                                   [23-4] + [24-3]
+======================================================================
+
+5장에 이미 적은 내용은 반복하지 않음. 여기는 "왜 엮여 있는가"와 분리 방향만.
+
+[읽기 어려운 이유]                                                    [24-1]
+파일이 나뉘어 있는 것 자체보다, 한 기능의 시작·종료·데이터 소유자가 흩어져 있기 때문.
+A. GameManager가 턴을 진행하지만 종료 대기는 TowerManager와 투사체 관리자에도 있음.
+B. 적의 체력 담당이 보상 지급, 승리 통보, 풀 반환, 이동 정리까지 담당.
+C. TileManager가 효과를 기록하고 타워/적이 읽지만, 구형 직접 방식의 잔재도 남아 있음.
+D. TowerController에 공통 스탯, 구체 공격 생성, 버프, 투사체 연출이 모임.
+   (불 스킬과 불 버프 상태는 2026-10-02에 TowerSkill / TowerBuffStatus로 나감)
+E. 타입 참조가 거의 없는 파일도 씬 이름·리소스 경로·애니메이션 이벤트에는 강하게 연결됨.
+
+[TowerManager]
+- CSV 읽기, 데이터 인덱싱, 글로벌 업그레이드, 생성·판매, 이동·교환, 티어/컬러 강화, 합성,
+  행동 순서, 대지 타워 웨이브 기능, Darkness 공유 수치, 시너지, 치트 입력을 모두 담당.
+- TowerController가 TowerManager의 공유 강화 상태를 읽거나 갱신하는 역방향도 있음.
+- 분리 순서는 F-1 → F-3.
+
+[TowerController와 공격 Action]
+- 역할 구분 (2026-10-02 확정):
+    TowerController  최종 스탯 구조체(TowerStats)를 만들고, 그 스탯으로 행동력을 계산하고,
+                     행동 스크립트(TowerAttackAction 계열)와 스킬 스크립트(TowerSkill 계열)를 부름.
+    행동·스킬 스크립트  대상 선택, 투사체 연출, 피해 계산을 각자 알아서 함.
+  [반영 2026-10-02 · 컴파일·실행 확인 전] 위성 투사체 연출(띄우기·발사 순서·배치 좌표)을
+    TowerController에서 TowerAttackAction.SatelliteAttackRoutine으로 옮김. 연출 설정값 5개는
+    타워 프리팹의 값을 지키려고 TowerController에 남기고 ProjectileSatelliteSettings로 넘김.
+    옛 직접 버프 삭제(C-3)와 합쳐 TowerController는 885줄 → 약 495줄.
+  아직 TowerController에 남은 "스탯 만들기 이외"의 것: 12개 문양의 타일 버프 switch(스탯 만들기의 일부),
+    선택·사거리 표시, 디버프 장판 연결, 어둠 처치 집계(NotifyEnemyKilled).
+- 구체 공격 클래스를 직접 new로 생성하고 최종 스탯을 관리.
+- Splash/Target/Buff/Debuff로 공격 방식(스킬 1)을 나눈 방향은 좋음.
+  스킬 2는 TowerSkill, 받은 스택형 버프는 TowerBuffStatus가 같은 방식으로 나눔 (지금은 불만).
+  TowerController는 TryUseSkill / NotifyPrimaryTargetHit / AdvanceSkillTurn /
+  RefreshStackBuffs / AdvanceStackBuffTurn 만 호출하고 문양을 모름.
+- bool ExecuteAction()만으로는 비동기 공격 완료를 표현할 수 없어 상위 매니저가 전역 투사체를
+  감시함. A-1에서 Action이 자기 공격의 완료를 알리게 되면 풀림.
+- BuffAction은 타워 한 개만 아는 구조가 아니라 GameManager, TowerManager, TileManager를 함께 사용.
+
+[GameManager]
+- 턴 상태, 턴 코루틴, 생명력, 실드, 게임 속도와 일시정지, 게임오버/클리어를 함께 가짐.
+- 상태 클래스(PlayerTurnState 등)가 UIManager, 드래그 취소, DebuffZone 취소, 카메라를 직접 조작.
+
+[WaveManager]
+- 웨이브 구성, 난이도 배율, 풀 선택, 소환, 중간 보스, 보상 계산, 최종 클리어 통보를 담당.
+- 소환 5턴 상수가 GameManager와 중복.
+
+[Enemy]
+- EnemyHealthController: 수명주기의 허브 (F-4).
+- EnemyMoveController: 행동 카운터, 주사위, 이동, 점유, 타일 스탯 적용, 끝 도달, 진형 보간.
+  타일 스탯 적용과 이동 자체는 구분할 후보.
+- EnemyDebuffController: 스택, 즉시 피해, 지속 피해, 처형, 이동/방어/취약 보정, 이탈 후 처리,
+  duration, UI 문구를 한 클래스가 처리. 새 문양을 넣으려면 ApplyZoneStack, AdvanceDebuffTurn,
+  RefreshPersistentStats 등 여러 switch를 동시에 고쳐야 함 (F-2).
+  2026-10-02부터는 EnemyDebuffRule을 상속한 파일 하나 + EnemyDebuffRule.Get에 한 줄이면 됨.
+  불만 그렇게 옮겼고, 나머지 12개 문양은 아직 switch.
+- EnemyManager: 활성 적 목록은 private + IReadOnlyList로, 등록/해제는 대칭 API로.
+
+[TileManager]
+- 경로·소환 타일 인덱스, 타워/적 점유, 도착 예약, 특수 타일 배치, 타워 버프와 경로 디버프 기록,
+  duration 감소, source별 삭제, 위성 이펙트 생성/삭제, 좌표 변환을 모두 담당.
+- 좌표 판정을 Dictionary로 하는 방향 자체는 기획과 잘 맞으므로 유지.
+- 효과 저장 / 턴 진행 / 연출을 나눌 후보. public Dictionary는 조회 API로.
+- IReadOnlyList로 반환해도 안의 효과 객체가 수정 가능한 참조형이면 내부 변경은 못 막음 [24-4].
+- sourceID → 영향받는 칸 역인덱스를 두면 전체 순회가 없어짐.
+
+[ProjectileHit2D]
+- 유도 이동과 회전, 수명과 풀 반환, 단일/스플래시 명중, 얼음 추가 대상, 전기 연쇄,
+  데미지 전달, 구형 디버프 생성, Trail/Particle 구성, 원소별 색상을 모두 담당.
+- 명중 시점 요구는 유지하되 시각 수명과 전투 결과 처리를 분리할 후보.
+- 공격자 콜백(NotifyPrimaryTargetHit, 스킬 투사체의 OnSkillProjectileImpact)과 대상 사망 재진입에 주의.
+- 메테오 전용 코드는 2026-10-02에 FireSplashSkill로 나감. 스킬 투사체는 명중 뒤 후속 코루틴이
+  끝날 때까지 보이지 않는 채로 남아 있음 (턴 대기가 투사체 수를 세기 때문).
+
+[UI]
+- UIManager는 패널 켜고 끄기로 축소됨. 화면별 파일: PlayerTurnPanel, GameInfoPanel,
+  TowerInfoPanel, TileinfoPanel, EnemyInfoPanel, OptionPanel, GameOverPanel, GameClearPanel.
+- 23번이 지적한 "타일 정보 목록의 클릭마다 Destroy/Instantiate, Content 높이가 줄지 않음,
+  열린 상태에서 자동 갱신 안 됨"은 TileinfoPanel로 옮겨진 뒤 다시 확인하지 않았음.
+
+[좋은 분리 — 그대로 둘 것]                                            [24-1]
+- DamageText는 구체 풀 대신 IObjectPool을 받아 반환.
+- EnemyListItemUI는 패널을 직접 알지 않고 선택 콜백을 받음.
+- CurrencyManager의 변경 이벤트로 UI가 갱신.
+- EnemyUIController → HPBarSlider는 목적이 좁은 연결.
+
+======================================================================
+7. 작지만 놓치면 안 되는 연결                                      [24-4]
+======================================================================
+
+[이벤트 / 콜백]
+- CurrencyManager 변경 이벤트 → GameInfoPanel 재화 표시.
+- GameManager.CurrentLifeChanged / CurrentShieldChanged → GameInfoPanel 생명/방패 표시.
+- WaveManager.CurrentWaveChanged → GameInfoPanel 웨이브 표시.
+- WaveManager.MiddleBossSummonableChanged → 소환 버튼 갱신.
+- TowerManager.CurrentCreateTowerValueChanged → 생성 비용 표시.
+- DebuffZone 배치 좌표 이벤트 → DebuffAction → TileManager 기록 이동.
+- EnemyListItemUI의 선택 콜백 → EnemyInfoPanel 선택 처리.
+이벤트도 결합입니다. 발행 시점·인자 의미·구독 수명이 계약입니다.
+※ 24번에 있던 DragObjectOnGround, GlobalClickDetector의 이벤트는 파일이 없어져서 뺌.
+
+[애니메이션]
+EffectController.DestroyEffect()는 C# 호출자가 0으로 보이지만 Assets/10.Animation/Effect의
+애니메이션 클립 이벤트 26개가 이름으로 호출합니다. 이름을 바꾸면 클립도 함께 바꿔야 합니다.
+
+[프리팹 / 이름 / 에디터]
+- DebuffAction / DebuffZone의 Tilemap_Path 이름 검색.
+- Resources/Projectiles/{타워 ID} 파일명 규칙.
+- UIStageTheme의 자식 이름과 스프라이트 이름.
+- TileManagerEditor가 m_pathGridPositions를 직접 추가/삭제/초기화. 경로 인덱스를 저장해 둔
+  데이터는 경로 편집과 함께 검토.
+- SerializedObject.FindProperty의 필드명 문자열은 변수명 변경에 자동 대응하지 않음.
+- DOTween, TMP, Unity UI, Tilemap, Unity ObjectPool은 외부 계약.
+
+[경로 인덱스와 좌표]
+길의 순서 인덱스와 Vector3Int 셀 좌표는 같은 개념이 아닙니다. 일부 범위 조회는 좌표 HashSet으로
+중복을 없애고, 좌표→인덱스 조회는 첫 위치를 찾습니다. 같은 좌표를 다시 지나는 순환/분기 경로를
+만들 때에는 별도 점검이 필요합니다.
+
+======================================================================
+8. 지금 조심해야 할 위험                                 [25-4][24-3-14]
+======================================================================
+
+- Assets/Editor/EnemyInfoPanelSetupEditor.cs는 에디터가 로드될 때마다 Stage1 씬을 열고,
+  UI를 생성하고, 씬을 저장함. 스크립트를 고칠 때마다 씬이 자동 저장될 수 있음.
+  UIManager에서 없앤 m_enemyInfoPanel 필드도 이름 문자열로 찾고 있음 (null 검사가 있어 오류는 없음).
+  메뉴 실행 전용으로 바꾸거나 삭제하는 것을 권장.
+  [수정함 2026-10-02] 자동 실행을 없앰. Tools 메뉴에서 직접 실행할 때만 동작.
+- TowerCSVToSOImporter.cs는 파일 상단의 using UnityEditor가 #if 밖에 있어 빌드에서 오류가 날 수 있음.
+  [수정함 2026-10-02] using을 #if UNITY_EDITOR 안으로 옮김.
+- CSV 열 순서는 코드의 숫자 인덱스와 묶여 있음. 열을 추가·삭제하면 TowerManager의 로더와
+  임포터를 함께 고쳐야 함.
+- AsgardAtlasGenerator, ProjectileTrailSetupEditor, SatelliteTrailSetupEditor는 실행하면
+  에셋/프리팹을 바꿈.
+
+======================================================================
+9. 보류 (사용자 지시로 건드리지 않음)                              [25-5]
+======================================================================
+
+- 불 이외 문양의 디버프 로직: 활(스택 없음), 어둠(도트 없음, 범위 규칙), 방패(재적용 시 영구 속박).
+- 보스의 즉사·도트 면역 여부.
+- 같은 종류 장판 중복 규칙.
+- Debuff/ 폴더의 구형 클래스 13개와 투사체의 직접 디버프 부여 경로.
+  ProjectileHit2D가 FireDebuff/IceDebuff/WindDebuff를 만들지만 받는 쪽
+  EnemyDebuffController.AddDebuff(DebuffBase _)가 빈 메서드라 효과가 없음.
+  SwordDebuff는 감소량만 계산하고 반영하지 않고, WindDebuff는 핵심 코드가 주석 처리.
+  나중에 정리할 때: 투사체가 디버프를 직접 줄지 먼저 정하고, 준다면 타일과 같은 신형 API로 이관.
+- 합성 재료 자동 선택 방식 (랜덤 합성의 유저 경험은 고민 중).
+
+======================================================================
+10. 결정이 필요한 것
+======================================================================
+
+25번의 9개에 23번의 미결 기획과 이번에 드러난 충돌을 더했음.
+
+ 1. 불 디버프 수치와 첫 턴.                                    [문답 36][23-3-4]
+    [틀은 확정 2026-10-02] 화상 = 매 턴 최대 체력의 Power%, 연소 = Power × AbilityValue % (27번 7장).
+    지금 CSV 값으로는 화상 2.4%, 연소 24%. ← 수치는 버프·디버프 타워 재설계 때 정함 (18번).
+    [확정 2026-10-02] 첫 턴 처리: 지금 코드대로. 디버프를 걸고, 그 턴의 디버프 피해 단계에서
+    1번 처리. 걸린 턴에 1번, 이후 매 턴 1번. 걸릴 때 따로 주는 즉시 피해는 없음.
+ 2. [확정 2026-10-02] 40웨이브는 보스가 처치되거나 끝까지 이동할 때까지 턴 수를 무한으로 늘림.
+    작업은 5장 A-5.
+ 3. 중간 보스의 도착 피해: 1인지 3인지. (지금은 1)                       [문답 5]
+ 4. 얼음 추가 타격의 티어별 계수.                                           [A-2]
+ 5. [확정 2026-10-02] 치명타는 발사 전에 굴림. 광역의 치명타는 범위 안의 모든 적에게 함께 터짐. [A-1]
+ 6. [해소 2026-10-02] 불 버프 타워 1기로는 과열에 도달하지 못하던 문제. 새 틀에서는 도달함. [A-4]
+ 7. 10스택 영구 처리와 창 종료 피해를 지금 진행할지, 문양 완성 때 함께 할지. [B-2, B-3]
+ 8. 회복 타일과 같은 턴에 새로 걸린 연소 중 무엇이 먼저인지.                [B-4]
+ 9. 버프 타워의 Power를 실제 %로 바꾸는 환산식. (불은 Power를 그대로 %로 씀)   [C-1]
+10. 시너지 타워의 세부 수치.                                                [E-3]
+    [확정 2026-10-02] 컬러 강화의 규칙과 수치표는 27번 10장. 배율 1.1/1.2/1.4/1.8은 이전 값을 그대로 씀.
+11. 타워 데이터 원본: CSV를 유일한 원본으로 둘지(임포터 삭제), SO를 런타임 원본으로 쓸지. [23-3-6]
+12. GameManager를 씬 사이에 유지할지. 전투마다 초기화면 DontDestroyOnLoad 제거,
+    유지하면 ResetSession과 씬 서비스 재연결 필요.                        [23-3-5]
+13. [확정 2026-10-02] 광역 공격의 SplashRadius도 장판과 같은 뜻 (1 → 1x1, 2 → 3x3, 3 → 5x5).
+14. '체력 많은 적 우선' 타겟팅에서 보스를 무조건 먼저 고를지.              [23-3-3]
+    당시 코드는 체력 1인 보스가 체력 1,000인 일반 적보다 우선. 지금 코드는 확인하지 않았음.
+15. [확정 2026-10-02] 자동화 테스트는 만든다. 만드는 방법을 몰라서 환경 설정부터 도움이 필요.
+    계산만 하는 부분(보상, 치명타, 방어 합산, 스택 수)부터 작게 시작. 후보는 11-3.
+16. [확정 2026-10-02] 12장의 목표 구조가 리팩토링의 최종 목표. 전부 새로 나눈다.
+    순서는 5장 그대로: 규칙을 먼저 고정(A~E)하고, F의 6가지를 거쳐 목표 구조까지 간다.
+
+2026-10-02 작업에서 새로 생긴 것:
+17. [확정 2026-10-02] 자동 테스트 환경을 만듦. asmdef 없이 Assets/Editor/Tests에 둠 (11-3).
+18. 버프·디버프 타워의 재설계 수치. 방향만 정해짐 (Action을 대폭 길게, 수치를 매우 높게. 27번 10장).
+    Power, Action, AttackCount, Duration, AbilityValue의 CSV 값과 방패의 Action ÷ Power 적용.
+    이것을 정하기 전까지 불 버프·디버프는 약한 상태.
+19. 버프·디버프 타워가 컬러 강화 때 올리는 AttackCount의 증가량.
+20. 메테오와 버프의 관계:
+    - 빛 연쇄의 세기. 지금은 맞은 적 전원에게 연쇄 횟수만큼 20%씩 (5티어면 합계 +100%).
+      횟수만큼 반복할지, 1회만 할지.
+    - 빛 연쇄에 쓸 이펙트. 지금은 메테오의 명중 이펙트를 적마다 다시 재생.
+    - 얼음 버프(범위 증가)를 메테오에 어떻게 반영할지. 지금은 적용하지 않음.
+21. 불·빛 공격 타워는 브론즈 Action이 이미 1이라 브론즈 → 실버에서 변하는 것이 없음. 다른 보상을 줄지.
+22. F-2 3단계에서 임의로 정한 세 가지를 그대로 둘지 (과열의 공격 횟수 +1과 연소의 치유 감소 유지,
+    예열이 겹칠 때 가장 높은 Power 하나, 메테오 2배 조건 = 화상이 켜져 있음).
+23. TowerDataCSV_master.xlsx를 지금 CSV에 맞춰 다시 만들지, 엑셀을 더 쓰지 않을지.              [E-4]
+
+======================================================================
+11. 수정 후 확인 목록
+======================================================================
+
+[11-1] 수동 확인 — 현재 규칙 기준                                    [25-7]
+
+- 한 웨이브 10턴, 첫 5턴만 소환.
+- 소환된 적이 그 턴에 1번 타일로 이동.
+- 이동 완료 → 지원/타일 → 공격 명중 완료 → 도트 순서.
+- 사거리에 적이 없던 타워가 적이 들어온 턴에 바로 공격.
+- 치명타에 활 버프의 거리 보너스가 반영.
+- 방어 타일 위에서 해머 디버프를 받으면 +20%와 감소가 합산.
+- 회복 타일에서 매 턴 최대 체력 5% 회복 (한 턴에 한 번만).
+- 0번·마지막 타일로 장판을 드래그하면 놓이지 않음. 새 디버프 타워의 첫 장판도 그 칸을 피함.
+- 3~4티어 장판은 행동당 2스택, 5티어는 5스택. (불 제외. 불은 AttackCount 만큼)
+- 일반 적 처치 골드가 웨이브에 비례 (1웨이브 10, 11웨이브 110).
+- 보스 처치 보상: 10웨이브 1000골드 20젬, 20웨이브 4000골드 80젬.
+- 중간 보스 처치 보상: 5~7웨이브 250골드 5젬.
+- 일반 적 도착 시 라이프 1, 보스 3. 40웨이브 보스 도착 시 게임 오버.
+- 39웨이브 이전에 소환된 보스나 중간 보스가 40웨이브에 죽어도 클리어되지 않음.
+- 사망 보상과 풀 반환은 1회.
+- 한 타일에 여러 적이 모이면 벌려 서고, 한 마리가 빠지면 다시 정렬.
+- 장판 이동·타워 판매·합성 후 기존 타일 효과가 정리.
+- CSV 로드 로그의 타워 수가 260개.
+
+[11-1b] 2026-10-02에 고친 작업의 확인
+
+컴파일 오류 없음은 확인됨 (2026-10-02). 먼저 볼 것: CSV 로드 로그의 타워 수가 260개인지.
+
+A-3, A-5, B-1, G-2, G-3:
+- 40웨이브: 10턴이 지나도 플레이어 턴으로 돌아가지 않고, 보스가 죽으면 클리어, 도착하면 게임 오버.
+  보스가 속박 등으로 계속 못 움직이고 죽지도 않으면 턴이 끝없이 이어짐. 그런 경우가 생기는지.
+- 1~39웨이브: 이전처럼 10턴 뒤 플레이어 턴으로 돌아옴.
+- 버프 타워와 디버프 타워: 검 버프 범위나 공격력·행동력 타일 위에 있어도 스탯과 행동 주기가 그대로.
+  타워 정보 패널의 수치도 기본값으로 보이는지.
+- 공격 타워: 버프와 타일 효과를 이전처럼 받음.
+- 디버프 타워의 장판: CSV의 SplashRadius를 2로 바꾼 타워는 3x3 범위의 적에게 걸림.
+  불 디버프 타워의 범위는 이전과 같음.
+- 치명타 확률이 0인 타워에서 치명타가 나오지 않음.
+- 적 풀이 가득 찼을 때 경고 로그가 뜨고 웨이브가 멈추지 않음.
+
+E-2 (티어·컬러 강화, CSV):
+- 골드 이상 공격 타워의 사거리가 실버보다 1칸 넓음.
+- 미스릴에서 치명타 확률·피해가 골드의 2배, 다이아에서 공격 횟수가 늘어남.
+- 컬러 강화 뒤 공격력·사거리·공격 횟수는 그대로이고 AbilityValue만 오름.
+- 레드 강화 레벨 3에서 광역 범위가, 블루 강화 레벨 3에서 단일 타워의 탄 수가 늘어남.
+
+F-2 (스킬·버프·디버프 틀):
+- 불 광역: 메테오가 Duration ÷ 레벨 턴마다 떨어짐. 세부는 11-2의 메테오 항목.
+- 불 단일: 적중을 채우면 치명타 수치가 오르고 (타워 정보 패널), 티어 × 레벨 턴 뒤에 다시 내려감.
+  예열 중 공격 횟수 +1, 과열 중 +3.
+- 불 버프: 옆 공격 타워의 공격력이 Power%만큼 오르고, 불 버프 타워를 치우면 Duration 턴 뒤에 꺼짐.
+  스택이 60 ÷ 레벨에 닿으면 과열 (지금 값으로는 레벨 1에서 60턴. 확인은 컬러 강화 레벨 5 = 12턴이 빠름).
+- 불 디버프: 장판 위의 적이 매 턴 Power% 피해, 벗어난 뒤 Duration 턴이 지나면 멈춤.
+  적 정보 패널에 "화상 … 스택 n/60"이 보이고, 문턱에 닿으면 "[연소]"로 바뀌어 영구.
+- 화상이 켜진 적은 메테오에 2배, 연소된 적은 4배.
+- 불 이외 문양의 버프·디버프가 이전과 같음.
+
+[11-2] 수동 확인 — 23·24번에서 가져온 것 (위와 겹치지 않는 것만)  [23-9-2][24-5 0단계]
+
+- 실드가 1 피해를 흡수하면 생명력과 표시가 모두 유지됨.
+- 40웨이브 보스 처치 시 GameClear 상태와 패널이 함께 변경됨.
+- 40웨이브 보스 도착 시 GameOver 상태와 패널이 함께 변경됨.
+- 불 장판 즉시 피해로 사망해도 예외와 중복 보상이 없음.
+- 창 즉사 후 풀에 한 번만 반환됨.
+- 풀 부족으로 적 Spawn이 실패해도 웨이브가 망가지지 않음.
+- 느린 투사체가 목표 도달 전에 임의 만료되지 않음.
+- 버프 타워 위치 순서가 달라도 공격 결과가 같음.
+- 소환 직후, 이동 중 사망, 공격 도중 대상 사망, 게임 종료 시 중단이 깨끗하게 끝남.
+- 불 버프 스택의 누적/소모 (2026-10-02부터 스택은 만료되지 않음. 과열이 발동할 때만 0이 됨).
+- 불 광역 타워의 메테오 (2026-10-02 수정. 코드는 FireSplashSkill.cs. 실행 확인은 아직):
+  · 화면 위쪽에서 화면 중앙으로 큰 메테오 하나가 떨어짐. 크기와 낙하 속도가 어색하지 않은지.
+  · 떨어지는 순간 타워 사거리와 무관하게 맵의 모든 적이 한 번씩만 피해를 받음.
+  · 버프를 받은 타워의 메테오가 공격력·방어 관통 버프만큼 강해짐. 활 버프면 거리 보너스 최대치.
+  · 전기 버프면 확률로 한 번 더 맞음.
+  · 빛 버프면 맞은 적 전원에게 연쇄 횟수만큼 20% 피해가 차례로 들어가고, 적마다 이펙트가 터짐.
+    연쇄가 끝난 뒤에 다음 타워가 행동하는지, 적이 많을 때 이펙트가 끊기지 않는지.
+  · 메테오 뒤에 같은 타워의 기본 공격 투사체가 정상 크기로 보이는지 (메테오 크기가 남지 않는지).
+- 재시작 후 이전 실드/웨이브/코루틴이 남지 않음.
+- 타일 정보 패널을 연 상태에서 효과가 바뀌면 갱신됨.
+
+[11-3] 자동화 테스트                                               [23-9-1]
+
+[만듦 2026-10-02 · Unity에서 실행 확인 전] Assets/Editor/Tests/GameRuleTests.cs
+  실행: Unity 메뉴 Window > General > Test Runner > EditMode 탭 > Run All. 전부 초록이면 통과.
+  지금 있는 테스트 (37개 경우): 스킬 2 문턱(60 ÷ 레벨), 사거리 칸 변환, 처치 보상(일반·보스·중간 보스).
+  방식: asmdef를 만들지 않고 Editor 폴더 안에 둠. 게임 코드가 asmdef 없이 기본 어셈블리에 있어서,
+        Editor 폴더의 테스트가 게임 코드를 그대로 볼 수 있음. 게임 코드 쪽은 아무것도 바꾸지 않았음.
+  한계: public이고 static인 계산만 바로 테스트할 수 있음. 치명타·방어 합산·스택 누적처럼
+        MonoBehaviour 안에 들어 있는 계산은 F-1(순수 데이터 분리)로 밖으로 꺼내야 테스트가 쉬워짐.
+  규칙을 바꾸면 이 파일의 기대값도 함께 바꿀 것.
+
+아래는 앞으로 추가할 후보:
+
+타워 계산: 거리 보정 후 치명타, CriticalRate 0에서 치명타 없음, AttackCount × (1 + AdditionalHitCount),
+           SplashRadius별 실제 타일 범위, targetPriority별 선택 결과, 버프 타일을 포함한 FinalStats.
+성장과 합성: TowerID 분석, 컬러/티어/문양 조합 결과, 합성 가능 여부,
+           결과 프리팹 누락 시 재료 유지, 생성 실패 시 재화 유지.
+적과 디버프: 기본/타일/디버프 방어 보정 조합, 타일 위 duration 갱신, 이탈 후 duration 감소,
+           창 PendingDamage가 정확히 한 번 적용, 불 첫 턴 피해 규칙, 처형과 즉사가 한 번만 사망 처리.
+2026-10-02에 생긴 규칙: 문턱 = 60 ÷ 레벨 (60/30/20/15/12), Duration ÷ 레벨의 올림,
+           불 단일 스택 지속 = 티어 × 레벨, 컬러 강화 레벨별 AbilityValue 배율과 범위·추가 타격 증가,
+           스택이 효과 만료 뒤에도 남는지, 스킬 2 발동 때 스택이 0이 되는지.
+웨이브와 재화: 1~40 웨이브 구성, GetKillReward 값, Spawn 실패 시 카운트 불변,
+           TrySpend 충분/부족/음수 입력.
+※ 현재 자동화 테스트와 자체 asmdef는 없음 [23-0].
+
+======================================================================
+12. 유지할 것 / 하지 않아도 되는 것 / 장기 목표 구조
+======================================================================
+
+[유지할 가치가 있는 현재 구조]                                         [23-6]
+- Splash/Target/Buff/Debuff Action 분리, TowerVisual 분리.
+- 적, 투사체, 데미지 텍스트, 이펙트 오브젝트 풀.
+- 타일 Dictionary 기반 실제 판정, 경로 인덱스 기반 타겟 판정 (지금은 TileManager).
+- 시각 효과와 타일 데이터의 분리.
+- 타워 행동을 코루틴으로 순차 연출하는 구조.
+- PlayerTurn/EnemyTurn/GameOver/GameClear 상태 클래스.
+전면 재작성은 권장하지 않음. 상태 소유권과 실행 순서를 명확하게 만드는 것이 핵심.
+
+[굳이 하지 않아도 되는 것]                                             [24-5]
+- 모든 메서드를 이벤트로 바꾸기.
+- 모든 클래스에 인터페이스 추가하기.
+- 직접 연결을 전부 금지하기.
+- GameManager에 모든 로직을 합치기.
+호출 순서는 명시적으로, 결과 알림은 필요할 때 이벤트로 나누는 편이 읽기 쉽습니다.
+
+[리팩토링할 때 각 함수 옆에서 확인할 5가지]                            [24-9]
+1. 누가 호출하는가?
+2. 어떤 값을 읽는가?
+3. 어떤 값을 바꾸는가? 그 값의 진짜 주인은 누구인가?
+4. 끝났다는 것은 어떻게 알리는가?
+5. 대상이 죽거나 씬이 바뀌면 누가 취소/해제하는가?
+
+[최종 목표 구조]                                    [23-7] 2026-10-02 확정
+리팩토링의 최종 목표. 전부 이 모양으로 나눈다 (10장 16번).
+한꺼번에 옮기지 않고, 5장 F의 6가지를 먼저 끝낸 뒤 시스템 하나씩 옮긴다.
+UI 부분은 이미 다른 이름의 패널들로 나뉘어 있어서 뺌. TilePath 관련 항목도 뺌.
+
+GameSession        생명력, 실드, 게임오버/클리어, 전투 시작/초기화
+TurnOrchestrator   PlayerTurn, 지원 phase, 공격 phase, 소환/이동 phase, 타일 해석 phase
+GameSpeedController 배속/일시정지
+WaveSystem         WaveCatalog, WaveRuntimeState, EnemySpawner, WaveProgression
+TowerSystem        TowerCatalog, TowerBoard, TowerFactory, TowerProgressionService,
+                   TowerTurnScheduler, TowerStatCalculator, TowerSynergyService, TowerCheatController
+  스탯 모델        TowerDefinition(원본) / TowerRuntimeState / TowerUpgradeState /
+                   TowerEffectSnapshot / TowerFinalStats(공격 직전 계산한 불변 결과)
+  Action 계약      CanExecute, Execute(코루틴 또는 실행 핸들), OnTowerMoved, Dispose
+EnemySystem        EnemyLifecycle, EnemyHealth, EnemyMovement, EnemyDebuffRuntime(DebuffState +
+                   DebuffRule: Apply/Tick/Exit/Remove), EnemyStatAggregator
+TileSystem         TileMapGenerator, TileEffectRepository, TileEffectTurnSystem,
+                   TileEffectPresenter, TileQueryService
+ProjectileSystem   ProjectilePool, ProjectileMotion, ProjectileLifetime, ProjectileHitResolver,
+                   ChainTargetSelector, ProjectileVfx
+기타               CurrencyWallet(TrySpend + 변경 이벤트), SceneTransitionService, CanvasGroupFader,
+                   TileSatelliteMotion/Appearance/Vfx
+
+중요한 것은 매니저 수가 아니라 데이터 소유자, 계산, 진행, 표현의 경계입니다.
+
+======================================================================
+13. 문서끼리 달랐던 내용 (충돌 기록)
+======================================================================
+
+"채택"은 이 통합 문서가 따른 쪽. 1~9, 11~13은 뒤 문서가 규칙 확정이나 코드 변경을 반영한 것이라
+최신을 따랐고, 10번은 2026-10-02에 사용자가 결정함.
+
+ 1. 웨이브 종료 조건
+    23: 소환이 끝나고 활성 적이 0이어야 웨이브 종료 (소환 횟수만으로 끝나는 것을 P0 버그로 봄).
+    25: 적이 남아도 10턴 뒤에는 플레이어 턴, 남은 적은 누적.
+    채택: 25. 단 40웨이브만은 보스가 죽거나 도착할 때까지 턴을 연장 (2026-10-02 확정).
+ 2. 적 턴 안의 순서
+    23: 지원 타워 → 공격 타워 → 적 이동 → 타일 효과·디버프 (권장안).
+    24·25: 소환·이동 → 지원 타워 → 적 타일 효과 → 공격 타워 → 디버프 경과.
+    채택: 25.
+ 3. 방어 타일과 해머 디버프의 합산 방식
+    23: 곱연산 (base × tile × debuff). 25: 합연산.
+    채택: 25.
+ 4. 회복 타일 수치
+    23: 최대 체력 20% 즉시 회복. 25: 멈춰 있는 동안 매 턴 5%.
+    채택: 25 (코드도 0.05).
+ 5. 도착 피해와 게임 오버
+    23: 도착 시 1 피해, 보스 도착은 게임 오버.
+    25: 일반 1, 보스 3, 40웨이브 보스만 게임 오버.
+    채택: 25.
+ 6. 구형 DebuffBase 계층
+    23: 제거. 24: 사용 여부 확인 뒤 제거. 25: 사용자 지시로 보류.
+    채택: 25.
+ 7. CSV 열 수
+    23: 최소 20/21열 검증. 25: 21열에서 18열로 줄었음.
+    채택: 25.
+ 8. 처치 보상
+    24: 보스 500골드/5젬, 일반 10골드가 코드에 직접 작성.
+    25: 웨이브 비례, xlsx 기준, GetKillReward.
+    채택: 25.
+ 9. TilePath
+    23: 유지하면서 개선 (NonAlloc 조회, 역인덱스). 24: TileManager를 조회하는 시각 배치 담당.
+    25: 삭제됨.
+    채택: 25. 23번의 TilePath 개선 항목은 전부 뺌.
+10. 리팩토링의 순서와 범위  ← 결정 필요
+    23: 테스트 고정 → P0 → 전투 계산 → 데이터 분리 → 수명 → 성능 → 큰 클래스 분리 → 죽은 코드.
+        최종적으로 40개 안팎의 새 클래스.
+    24: 거짓 연결 제거 → 결과가 틀어지는 책임 → 순수 데이터 → 큰 관리자 축소 → 불 기준 확장점.
+        새 매니저로 한꺼번에 쪼개지 말 것.
+    25: A 공격 판정 → B 디버프 → C 버프 → D 잔재 → E 데이터 → F 구조. 자동화 테스트 언급 없음.
+    채택: 순서는 25, 최종 목표는 23번의 목표 구조 (2026-10-02 확정). 자동화 테스트도 만든다.
+11. 자체 스크립트 수
+    23: 59개. 24: 69개 (Scripts 61 + Editor 8). 현재: 77개 (Scripts 68 + Editor 9).
+    채택: 현재 값. 부록 A 참고.
+12. UIManager의 상태
+    23: 약 1,396줄, HUD부터 디버그 콘솔까지 전부 담당. 24: 매우 높은 결합의 허브.
+    25: 패널 켜고 끄기만 담당하게 축소.
+    채택: 25. 23번의 UIManager 분리안은 뺌.
+13. 투사체와 피해 판정
+    23: 명중 때 피해(A)와 즉시 확정 후 연출만(B) 중 미정.
+    24·25: 명중 순간 피해가 들어가는 연출 유지 + 탄은 발사 전에 분배.
+    채택: 24·25.
+14. 타워 이동 뒤 디버프 존 위치
+    23: UpdateTowerPosition이 호출되지 않는 것이 버그.
+    25: 장판은 사거리와 무관하게 설치.
+    채택: 25. 메서드 자체가 없어졌으나 실제 동작은 확인하지 않았음.
+
+======================================================================
+부록 A. 스크립트별 메모                                  [24-7] 요약·갱신
+======================================================================
+
+24번 7장의 파일별 항목에서 역할과 주의점만 남김. 참조 수와 줄 번호는 24번 스스로 "리팩토링 뒤
+재집계하지 않음"이라고 밝힌 값이라 옮기지 않았음. 필요하면 24번 원본 참고.
+현재 파일: Assets/3. Scripts 76개 + Assets/Editor 9개 = 85개 (2026-10-02 작업 뒤).
+  68개에서 8개 늘어남: 스킬·버프·디버프 틀 7개 + PathTileBubbleEffect.
+
+[01. Tower]
+TowerManager          CSV 데이터, 배치, 소환비, 판매, 합성, 강화, 시너지, 전체 행동 순서.
+                      구형 통합 턴 API는 삭제됨. 컬러 강화 규칙(UpgradeTower)도 여기.
+TowerController       타워 1개 초기화·최종 스탯·행동·버프·위성 투사체. TowerStats도 이 파일에 있음.
+                      스킬과 스택형 버프는 아래 틀에 맡김.
+TowerSkill            (03. TowerSkill) 공격 타워 스킬 2의 공용 틀. Create에서 문양별 스킬을 고름.
+FireSplashSkill       불 광역의 메테오 전체 (발사, 전원 피해, 빛 연쇄, 화상·연소 배율).
+FireTargetSkill       불 단일의 치명타 스택 (적중 집계, 지속, 예열·과열 때 공격 횟수).
+TowerBuffStatus       (04. TowerBuff) 타워가 받은 스택형 버프의 공용 틀 (스택, 스킬 1·2의 남은 턴).
+FireBuffStatus        불 버프의 예열·과열이 최종 스탯에 주는 효과.
+TowerVisual           데이터에 따라 티어·컬러·문양 시각 요소 조합. 스프라이트/자식 오브젝트 이름 규칙에 의존.
+TowerSelectionVisual  24번 이후 추가. 문서 기록 없음.
+TowerAttackAction     공통 공격 계약, 대상 탐색, 격자 범위 변환, 투사체 준비. 계산 도우미부터 떼는 것이 쉬운 시작.
+                      버프·디버프의 스킬 2 문턱(GetStackSkillThreshold = 60 ÷ 레벨)도 여기.
+TargetAttackAction    사거리 내 대상 공격, 추가 공격, 투사체 피해 정보 구성. Splash와 중복 수식.
+SplashAttackAction    범위 공격. 메테오 코드는 FireSplashSkill로 나감.
+BuffAction            아군 범위 버프·불 예열 기록(Power, AttackCount, 문턱 전달), 방패 등 전역 효과에도 접근.
+DebuffAction          장판 생성/관리, 장판 이벤트를 타일 효과 기록에 연결. Tilemap 이름 검색.
+DebuffZone            장판 입력/배치 좌표/턴 제한/시각 효과와 좌표 변경 이벤트.
+TowerDataSO           TowerData와 전투 enum 정의, TowerStats로 변환. enum 때문에 참조가 많음.
+TowerCSVtoSOimporter  에디터용 CSV → SO 변환. 런타임 로더와 입력 경로가 다름 (E-4, 8장).
+
+[02. Projectile]
+ProjectileHit2D        이동·명중·연쇄/범위·피해·스킬 투사체 처리·구형 디버프·효과·반환. ProjectileStats도 선언.
+ProjectileObjectPool2D 투사체 풀. 초기화·반환·중복 반환 약속이 명확해야 함.
+
+[03. Enemy]
+EnemyDataSO            EnemyData와 EnemyType. enum 숫자가 WaveManager 풀 배열 순서와 연결 (E-5).
+EnemyHealthController  체력과 피해, 처치 반응·재화 지급·클리어 통보·풀 반환.
+EnemyMoveController    행동 카운터·주사위·이동·점유·타일 적용·끝 도달·진형 보간.
+EnemyDebuffController  상태 Dictionary, 스택, 지속 피해, 즉사, 이동/방어/치유 보정, UI 문구.
+                       규칙이 등록된 문양은 EnemyDebuffRule에 맡김. 문양 시너지용 조회
+                       (GetDebuffStack, HasActiveDebuff, IsDebuffTriggered)도 여기.
+EnemyDebuffRule        (DebuffRule) 디버프 규칙의 공용 틀과 상태 클래스 EnemyDebuffState. Get에서 문양별 규칙을 고름.
+FireDebuffRule         불 디버프의 화상·연소 (턴 피해, 치유 감소, 설명 문구).
+EnemyObjectPool2D      풀 + 상태·이동·체력 초기화와 전역 등록.
+EnemyUIController      HP 표시를 HPBarSlider에 전달하는 좁은 어댑터.
+EnemyListItemUI        적 한 마리의 목록 UI와 선택 콜백.
+Debuff/ 13개           DebuffBase + Axe, Bow, Darkness, Earth, Electricity, Fire, Hammer, Ice, Light,
+                       Spear, Sword, Wind. 구형 경로, 보류 (9장).
+
+[04. Manager]
+GameManager            게임 상태와 큰 턴 순서, 생명/방패, 속도/일시정지, 종료.
+GameTurnState          Idle/Player/Enemy/GameOver/GameClear 상태. 구체 UI/입력/카메라를 직접 조작.
+GameModeSession        24번 이후 추가. SelectedEmblemIDs 보유 (E-1).
+WaveManager            웨이브/사이클, 적 구성과 배율, 턴별 소환, 중간보스, 보상 계산, 최종 클리어 통보.
+EnemyManager           활성 적 목록과 이동·타일·디버프 처리 순회.
+TileManager            경로·점유·도착 예약·특수 타일·효과 기록·소스 버전/시간·시각 효과.
+GlobalProjectileManager 타워 데이터에서 투사체 풀 준비, 발사, 활성 여부 제공.
+CurrencyManager        골드/젬 원본과 변경 알림. 보상 기획은 이 파일만 봐서는 알 수 없음.
+LoadingManager         SceneLoader.NextScene을 읽어 로딩 연출과 씬 이동 (G-6).
+
+[05. UI]
+UIManager              패널 켜고 끄기.
+PlayerTurnPanel, GameInfoPanel, TowerInfoPanel, TileinfoPanel, OptionPanel, GameOverPanel, GameClearPanel
+                       24번 이후 UIManager에서 분리. 문서 기록 없음.
+EnemyInfoPanel         (구 EnemyInfoPanelUI) 길 위 적 목록, 선택 적 스탯/상태와 타일 정보. 누락 UI를 코드로 생성.
+UIManager_Start / UIManager_Menu  씬 이름으로 직접 이동. 인스펙터 씬 이름과 빌드 씬 목록에 의존.
+UIStageThemeController UI 색상/스프라이트/계층에 테마 적용. 이름·키워드·아틀라스에 강하게 연결 (G-7).
+
+[06. Effect]
+EffectController       애니메이션 종료 시 EffectPool2D에 반환 요청. DestroyEffect 애니메이션 이벤트 연결.
+EffectLibrary          효과 ID와 프리팹 목록. 번호 중복·누락은 데이터 검증 대상.
+EffectManager          라이브러리 ID로 풀과 효과 재생 제공.
+EffectPool2D           효과 수명과 반환. 파티클/애니메이션/수동 반환의 중복 종료 방지가 중요.
+TileSatelliteOrbiter   타일 주변 위성 궤도/색/트레일 (G-8).
+PathTileBubbleEffect   맵 버프(특수 타일) 전용 이펙트. 타일 위로 기포가 올라오는 시각 표시만 담당하고
+                       버프 계산은 TileManager가 함. TileManager가 이펙트 프리팹에서 이 컴포넌트를 찾아 설정.
+                       2026-10-02에 사용자가 Codex로 만든 파일 (이 문서의 작업과 별개).
+
+[08. Common]
+BoardInputController   24번 이후 추가. DragObjectOnGround와 GlobalClickDetector를 대체.
+BuffTargetNames        24번 이후 추가. 문서 기록 없음.
+CameraController       Camera.main과 외부 코루틴 호스트로 카메라 크기 연출 (G-9).
+CommonUtil             레이어 마스크 포함 여부 계산. 호출자 발견되지 않음.
+DamageText / DamageTextPool  피해 숫자 연출과 풀.
+HPBarSlider            HP바 표시 (G-9).
+GameStateVersion       2026-10-02 추가. 화면에 보이는 상태가 바뀔 때 오르는 번호. 정보 패널의 갱신 기준 (F-6).
+SceneLoader            다음 씬 이름을 static으로 보관. StartLoad의 LoadScene은 주석 (G-6).
+
+[Editor]
+AsgardAtlasGenerator          이름 규칙으로 UI 아틀라스 생성/임포트. 실행 시 에셋 변경.
+CheckProjectileVisuals        투사체 리소스와 시각 구성 검사.
+ClickDebugWindow              24번 이후 추가. 문서 기록 없음.
+EnemyInfoPanelSetupEditor     에디터 로드 시 Stage1 씬을 열고 구성하고 저장 (8장).
+ProjectileAssetRefresher      에디터 초기화와 AssetDatabase 갱신.
+ProjectileTrailSetupEditor    투사체 프리팹의 시각/트레일 구성. 실행 시 프리팹 변경.
+SatelliteTrailSetupEditor     MapBuff/DebuffZone 프리팹의 위성 연출 설정.
+TileManagerEditor             경로 좌표 목록을 직접 편집. 직렬화 필드명과 인덱스 의미에 결합.
+UIStageThemeControllerEditor  테마 컨트롤러 편집, 아틀라스 생성 도구 호출.
+
+[24번 목록에 있었으나 지금은 없는 파일]
+TilePath, DragObjectOnGround, GlobalClickDetector, InGameDebugConsole, EnemyInfoPanelUI(→ EnemyInfoPanel).
+
+======================================================================
+부록 B. 직렬화된 스크립트 연결                           [24-8] 요약
+======================================================================
+
+2026-09-23 기준. .unity/.prefab/.asset에 직접 기록된 스크립트 GUID만 찾은 결과이고,
+그 뒤의 파일 추가·삭제는 반영되지 않았음. 연결이 0개여도 코드 생성, AddComponent,
+일반 C# 클래스일 수 있음.
+
+Assets/2. Prefab/1. Manager/   TowerManager, CurrencyManager, GameManager, GlobalProjectileManager,
+                               UIManager, EffectManager 프리팹에 같은 이름의 스크립트.
+                               SpawnManager.prefab ← WaveManager.
+Assets/2. Prefab/2. Tower/TowerBase.prefab  ← TowerController, TowerVisual
+Assets/2. Prefab/3. Enemy/     1. Enemy_normal ~ 5. Enemy_boss
+                               .prefab 5개 ← EnemyHealth/Move/Debuff/UIController, HPBarSlider
+                               .asset 5개  ← EnemyDataSO
+Assets/2. Prefab/4. Effect/    E101~E113, E201~E213, E304, E306~E309 (31개) ← EffectController, EffectPool2D
+                               EffectLibrary.asset ← EffectLibrary
+Assets/2. Prefab/              DebuffZone.prefab ← DebuffZone, TileSatelliteOrbiter
+                               MapBuff.prefab ← TileSatelliteOrbiter
+                               =====Pool=====.prefab ← EnemyObjectPool2D, DamageTextPool
+                               Txt_Damage.prefab ← DamageText
+                               HPBar.prefab ← HPBarSlider
+Assets/Resources/Projectiles/  101~113, 201~213 (26개) ← ProjectileHit2D
+Assets/1. Scenes/3. Stage1.unity  ← EnemyObjectPool2D, EnemyManager, TileManager, CameraController
+Assets/1. Scenes/1. Start.unity   ← UIManager_Start
+Assets/1. Scenes/2. Menu.unity    ← UIManager_Menu
+Assets/1. Scenes/LoadingScene1, LoadingScene2 ← LoadingManager

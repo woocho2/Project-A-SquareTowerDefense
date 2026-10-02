@@ -1,0 +1,7 @@
+<Project>
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'Assembly-CSharp'">
+    <Compile Remove="$(MSBuildProjectDirectory)\Assets\3. Scripts\**\*.cs" />
+    <Compile Remove="Assets\3. Scripts\**\*.cs" />
+    <Compile Include="$(MSBuildProjectDirectory)\Assets\3. Scripts\**\*.cs" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,13 @@
+Applied whole-frame tier series
+
+User-selected Diamond: exec-00fa7aef-6641-4591-95d3-1f25f8d6d4da.png
+Use the original complete generated frame and wings for all five tiers. No separate feather assembly, no additional saturation change, no rectangular alpha cut through wings.
+Canvas: 256 x 256 transparent RGBA.
+Visible bounds (alpha >= 128): x=6..249, y=5..246 (244 x 242), matching the Asgard spawn tile.
+PPU: 192, matching the spawn atlas. Pivot: 0.5, 0.5. Bilinear filter for cartoon artwork.
+GUIDs and sprite references retained. Color and emblem assets unchanged.
+Complete artwork was resized as one object; no independent resizing of wings. Internal opening shapes are retained from the generated artwork; they are not guaranteed pixel-identical between tiers.
+Preview: Approved_Whole_Frames_Comparison.png, Approved_Whole_Frames_InGame_Layers.png.
+Before-change backups: backups/before-whole-frame-e7ee588d-77c1-4909-b144-0f0387cd58db (five PNGs and original metas).
+The in-game-layers preview is a static composite, not a Unity play-test screenshot.
+Generation mode: built-in image_gen.

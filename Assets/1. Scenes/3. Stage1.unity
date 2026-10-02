@@ -130,17 +130,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
---- !u!114 &182125526 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2021397959446235813, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
-  m_PrefabInstance: {fileID: 7833166977621882913}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &197116195 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7503588851756311437, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
@@ -320,8 +309,11 @@ MonoBehaviour:
   towerActionCount: 3
   towerAttackCountTileCount: 2
   mapTileBuffEffectPrefab: {fileID: 8006718689985283710, guid: 5139c00ca6ab24149b8532a3ad5f4ea0, type: 3}
-  m_pathMapBuffVisualPrefab: {fileID: 0}
+  m_pathMapBuffVisualPrefab: {fileID: 100000, guid: ff449bbf718644659eb42066d3d91291, type: 3}
   mapTileBuffEffectParent: {fileID: 1988861637}
+  m_enemySlotSpacing: 0.28
+  m_enemyFormationMaxColumns: 3
+  m_enemyFormationMoveSpeed: 1.5
 --- !u!1839735485 &296768363
 Tilemap:
   m_ObjectHideFlags: 0
@@ -2283,12 +2275,12 @@ Tilemap:
   m_TileMatrixArray:
   - m_RefCount: 34
     m_Data:
-      e00: 1
+      e00: 1.3333334
       e01: 0
       e02: 0
       e03: 0
       e10: 0
-      e11: 1
+      e11: 1.3333334
       e12: 0
       e13: 0
       e20: 0
@@ -2448,22 +2440,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!1 &726149706 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2974477302108896613, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
-  m_PrefabInstance: {fileID: 7833166977621882913}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &726149708 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3441376784006530531, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
-  m_PrefabInstance: {fileID: 7833166977621882913}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 726149706}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2a927f4ccb167a4f9dba26ae1a1b577, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InGameDebugConsole
 --- !u!114 &775661898 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7297826245231774740, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
@@ -2552,7 +2528,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15d15dd6ac03d134d850cd2f70b6226f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyManager
-  m_tilePath: {fileID: 2102427782}
 --- !u!114 &933058082 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5002346059038848128, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
@@ -2624,17 +2599,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7826455925408916949, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
   m_PrefabInstance: {fileID: 2396258518519232893}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1310943636 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3420897561956667272, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
-  m_PrefabInstance: {fileID: 7833166977621882913}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1 &1456558188
 GameObject:
   m_ObjectHideFlags: 0
@@ -2834,7 +2798,7 @@ TilemapRenderer:
   m_SortingOrder: 3
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
+  m_ChunkCullingBounds: {x: 0.16666669, y: 0.16666669, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0
@@ -3791,42 +3755,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2496719023786573408, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
   m_PrefabInstance: {fileID: 7833166977621882913}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1950536488
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1950536485}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5dc7d502c28fbe146a2689630afee139, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TowerInfoPanel
-  txt_level: {fileID: 1605401832}
-  txt_name: {fileID: 1605401831}
-  txt_tier: {fileID: 1605401830}
-  txt_color: {fileID: 1605401829}
-  txt_emblem: {fileID: 1605401828}
-  img_tier: {fileID: 1532939980}
-  img_color: {fileID: 447501095}
-  img_emblem: {fileID: 497159940}
-  txt_targetPriority: {fileID: 1605401827}
-  btn_previousTarget: {fileID: 483271408}
-  btn_nextTarget: {fileID: 313049063}
-  txt_power: {fileID: 1605401826}
-  txt_range: {fileID: 1605401825}
-  txt_action: {fileID: 1605401824}
-  txt_attackCount: {fileID: 1605401823}
-  txt_criticalRate: {fileID: 1605401822}
-  txt_criticalDamage: {fileID: 1605401821}
-  txt_default: {fileID: 1605401820}
-  txt_skill: {fileID: 1605401819}
-  btn_combineColor: {fileID: 1605401818}
-  btn_combineEmblem: {fileID: 1605401816}
-  btn_combineExact: {fileID: 1605401817}
-  btn_sellTower: {fileID: 814500372}
-  txt_sellTowerValue: {fileID: 1605401815}
 --- !u!1 &1950721429 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2227745460629661834, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
@@ -3963,7 +3891,7 @@ TilemapRenderer:
   m_SortingOrder: 3
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
+  m_ChunkCullingBounds: {x: 0.16666669, y: 0.16666669, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0
@@ -4407,9 +4335,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: add0411658ea2944b921def05cd20d97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TilePath
-  m_enemySlotSpacing: 0.28
-  m_enemyFormationMaxColumns: 3
-  m_enemyFormationMoveSpeed: 1.5
 --- !u!1 &2112983930
 GameObject:
   m_ObjectHideFlags: 0
@@ -4585,26 +4510,66 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2148479511033921467, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.00001141962
+      objectReference: {fileID: 0}
+    - target: {fileID: 2220092624062673839, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2220092624062673839, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2220092624062673839, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2241133695029543431, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2241133695029543431, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2241133695029543431, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2519520974583011991, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_Name
       value: UICanvas
       objectReference: {fileID: 0}
-    - target: {fileID: 3746128443932715295, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
-      propertyPath: btn_turnEnd
-      value: 
-      objectReference: {fileID: 7833166977621882914}
-    - target: {fileID: 3746128443932715295, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
-      propertyPath: txt_createTowerValue
-      value: 
-      objectReference: {fileID: 7833166977621882919}
-    - target: {fileID: 3746128443932715295, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
-      propertyPath: txt_tierUpgradeValue
-      value: 
-      objectReference: {fileID: 7833166977621882915}
-    - target: {fileID: 3746128443932715295, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
-      propertyPath: txt_colorUpgradeValue
-      value: 
-      objectReference: {fileID: 7833166977621882917}
+    - target: {fileID: 4228292206716214756, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_Size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4649794295154865034, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4649794295154865034, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6995016675193235437, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.000025123552
+      objectReference: {fileID: 0}
+    - target: {fileID: 8257166562869771707, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8257166562869771707, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8257166562869771707, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9019515539557091308, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -4688,10 +4653,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2496719023786573408, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1950536488}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
 --- !u!114 &7833166977621882914 stripped
 MonoBehaviour:
@@ -4929,7 +4891,7 @@ PrefabInstance:
     - target: {fileID: 8902031544456177409, guid: 1259c084bc3ec6d4d966ec8c71d6875c, type: 3}
       propertyPath: m_btnDebug
       value: 
-      objectReference: {fileID: 1310943636}
+      objectReference: {fileID: 0}
     - target: {fileID: 8902031544456177409, guid: 1259c084bc3ec6d4d966ec8c71d6875c, type: 3}
       propertyPath: m_btnRetry
       value: 
@@ -4937,7 +4899,7 @@ PrefabInstance:
     - target: {fileID: 8902031544456177409, guid: 1259c084bc3ec6d4d966ec8c71d6875c, type: 3}
       propertyPath: m_txtDebug
       value: 
-      objectReference: {fileID: 182125526}
+      objectReference: {fileID: 0}
     - target: {fileID: 8902031544456177409, guid: 1259c084bc3ec6d4d966ec8c71d6875c, type: 3}
       propertyPath: m_txtEnemy
       value: 
@@ -4957,7 +4919,7 @@ PrefabInstance:
     - target: {fileID: 8902031544456177409, guid: 1259c084bc3ec6d4d966ec8c71d6875c, type: 3}
       propertyPath: m_panelDebug
       value: 
-      objectReference: {fileID: 726149706}
+      objectReference: {fileID: 0}
     - target: {fileID: 8902031544456177409, guid: 1259c084bc3ec6d4d966ec8c71d6875c, type: 3}
       propertyPath: m_btnMainStop
       value: 
@@ -4981,7 +4943,7 @@ PrefabInstance:
     - target: {fileID: 8902031544456177409, guid: 1259c084bc3ec6d4d966ec8c71d6875c, type: 3}
       propertyPath: m_debugconsole
       value: 
-      objectReference: {fileID: 726149708}
+      objectReference: {fileID: 0}
     - target: {fileID: 8902031544456177409, guid: 1259c084bc3ec6d4d966ec8c71d6875c, type: 3}
       propertyPath: m_txtGameSpeed
       value: 

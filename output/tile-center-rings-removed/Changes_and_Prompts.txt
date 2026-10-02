@@ -1,0 +1,25 @@
+Tile center rings removed
+
+Applied assets:
+Assets/4. Asset/1. BackGround/Tile_TowerSpawn_Atlas.png
+Assets/4. Asset/1. BackGround/Tile_Path_Atlas.png
+
+All 10 stage variants in both atlases were edited (20 tiles).
+Large and small center rings removed. No replacement symbols.
+Generated face restoration was composited only within a 96px radius around (127.5,127.5) in each occupied 256x256 cell. Boundary color offset was matched to the original tile face. Pixels outside that area and alpha were preserved exactly.
+Dimensions 1024x768 retained; all .meta contents, GUIDs, slice rectangles, sprite IDs and PPU retained unchanged.
+No changes to tower tier sprites, direction/text overlay atlas, boards, VFX, scenes, prefabs, or scripts.
+Before_After_Asgard.png: old spawn, old path, new spawn, new path (left to right).
+Backup: backups/before-ff579d8e-88b1-4ad2-a5e2-04a8d64f27d7
+Validation: outside-area changed pixels 0; alpha changed pixels 0; metadata unchanged for both atlases.
+Visual QA: inspected both complete atlases and before/after sample. No Unity play-test performed.
+Mode: built-in image_gen editing, followed by source-border-preserving compositing.
+
+Image generation prompt:
+Use case: precise-object-edit
+Asset type: Unity tile texture atlas edit. Input image 1 is the edit target, not just a style reference.
+Primary request: REMOVE BOTH large and small concentric circular gold/metal rings from the center of ALL TEN square tiles. Restore the background under them to the same uninterrupted simple existing tile face. No circles, disks, rings, or replacement symbols anywhere in the center.
+Invariants: preserve exact 4-column by 3-row atlas layout, all existing occupied cells, empty transparent slots, square tile silhouette, exact original tile sizes, corner ornaments, border metal, color palette, highlights, and outside transparency. The empty fourth cells in rows two and three remain empty transparent. Do not add text, objects, textures, holes, extra light, shadows or new decorations. Do not re-color or redesign. Only erase the center rings and inpaint the smooth original face. Keep the face low-contrast and visually calm, with no circular gradient or ghost ring edges.
+
+Target suffixes: Tile_TowerSpawn_Atlas - keep light ivory/pastel faces; Tile_Path_Atlas - keep dark night/navy/forest faces.
+

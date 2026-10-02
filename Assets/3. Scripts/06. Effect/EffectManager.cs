@@ -150,7 +150,7 @@ public class EffectManager : MonoBehaviour
         if (autoOff != null)
         {
             autoOff.SetPool(pool);
-            autoOff.SetDestoryOnFinish(false);
+            autoOff.SetDestroyOnFinish(false);
         }
         return effect;
     }

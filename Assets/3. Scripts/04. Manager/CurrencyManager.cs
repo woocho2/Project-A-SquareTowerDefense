@@ -81,12 +81,14 @@ public class CurrencyManager : MonoBehaviour
     public void AddGold(int amount)
     {
         m_currentGold += amount;
+        GameStateVersion.MarkChanged();
         CurrentGoldChanged?.Invoke(m_currentGold);
     }
 
     public void AddGem(int amount)
     {
         m_currentGem += amount;
+        GameStateVersion.MarkChanged();
         CurrentGemChanged?.Invoke(m_currentGem);
     }
 
@@ -95,6 +97,7 @@ public class CurrencyManager : MonoBehaviour
         if (HasEnoughGold(amount))
         {
             m_currentGold -= amount;
+            GameStateVersion.MarkChanged();
             CurrentGoldChanged?.Invoke(m_currentGold);
         }
         else
@@ -108,6 +111,7 @@ public class CurrencyManager : MonoBehaviour
         if (HasEnoughGem(amount))
         {
             m_currentGem -= amount;
+            GameStateVersion.MarkChanged();
             CurrentGemChanged?.Invoke(m_currentGem);
         }
         else

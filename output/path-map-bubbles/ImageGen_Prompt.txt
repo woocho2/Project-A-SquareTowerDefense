@@ -1,0 +1,6 @@
+Mode: built-in image_gen; generated with true transparency.
+Use case: stylized-concept
+Asset type: single reusable Unity 2D bubble particle sprite, not a mockup.
+Final prompt: Create exactly ONE minimal smooth cartoon WHITE bubble icon, centered and occupying 75% of canvas. Thick clean SOLID OPAQUE WHITE circular rim: the rim thickness is 12% of the bubble's total diameter, thick enough for a bubble displayed at just 8 pixels across. Circular empty transparent hole inside, transparent outside. A small thicker curved highlight in the upper-left can be integrated seamlessly into the white rim. This is a flat graphic particle, NOT a photograph, NOT a realistic soap bubble, NOT an iridescent or textured ring. Uniform opaque white silhouette except edge antialiasing. Extremely clean continuous smooth edges. No gray shading, no color, no dusty speckles, no fragmented edges, no particles around it, no glow, no shadow, no checkerboard baked in, no text.
+
+Packaging: area-downsampled to 256x256; RGB normalized to white for runtime tint; generated alpha preserved during resampling.

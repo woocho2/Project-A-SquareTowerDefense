@@ -84,12 +84,19 @@ public class EnemyInfoPanel : MonoBehaviour
                 RefreshListEntries();
                 ShowListView();
             }
-            else
+            else if (m_shownStateVersion != GameStateVersion.Current || Time.unscaledTime >= m_nextFallbackRefreshTime)
             {
+                // 게임 상태가 바뀌었을 때만 글자를 다시 씁니다.
                 UpdateStatsText();
             }
         }
     }
+
+    // 놓친 변경이 있어도 이 시간(초) 안에는 화면이 따라오도록 하는 안전 장치입니다.
+    private const float FallbackRefreshInterval = 0.5f;
+
+    private int m_shownStateVersion = -1;
+    private float m_nextFallbackRefreshTime;
 
     #endregion
 
@@ -114,9 +121,10 @@ public class EnemyInfoPanel : MonoBehaviour
             if (m_buffEntryPrefab == null)
             {
                 // BuffPrefab이 Resources에 없으면 씬에서 TileInfoPanel 쪽 프리팹을 찾거나 복제
-                if (UIManager.Instance != null && UIManager.Instance.TileBuffEntryPrefab != null)
+                TileinfoPanel tileInfoPanel = FindFirstObjectByType<TileinfoPanel>(FindObjectsInactive.Include);
+                if (tileInfoPanel != null && tileInfoPanel.BuffEntryPrefab != null)
                 {
-                    m_buffEntryPrefab = UIManager.Instance.TileBuffEntryPrefab;
+                    m_buffEntryPrefab = tileInfoPanel.BuffEntryPrefab;
                 }
             }
         }
@@ -456,8 +464,9 @@ public class EnemyInfoPanel : MonoBehaviour
     {
         ClearEntries(m_spawnedListEntries);
 
-        List<EnemyHealthController> enemies = TilePath.Instance != null
-            ? TilePath.Instance.GetEnemiesAtIndex(m_currentPathIndex)
+        // 경로가 같은 칸을 여러 번 지나도 그 칸의 적을 모두 보여 주도록 인덱스가 아닌 셀 좌표로 조회합니다.
+        List<EnemyHealthController> enemies = TileManager.Instance != null
+            ? TileManager.Instance.GetLivingEnemiesAtPathCell(m_currentPathCell)
             : new List<EnemyHealthController>();
 
         if (m_txtListTitle != null)
@@ -647,6 +656,9 @@ public class EnemyInfoPanel : MonoBehaviour
 
     private void UpdateStatsText()
     {
+        m_shownStateVersion = GameStateVersion.Current;
+        m_nextFallbackRefreshTime = Time.unscaledTime + FallbackRefreshInterval;
+
         if (m_selectedEnemy == null) return;
 
         string enemyName = m_selectedEnemy.EnemyData != null
@@ -733,7 +745,7 @@ public class EnemyInfoPanel : MonoBehaviour
                     buffDescriptions.Add("방어 타일 효과\n방어력 20% 증가");
                     break;
                 case PathTileBuffType.HealTile:
-                    buffDescriptions.Add("치유 타일 효과\n체력 20% 즉시 회복");
+                    buffDescriptions.Add("치유 타일 효과\n매 턴 최대 체력 5% 회복");
                     break;
             }
         }

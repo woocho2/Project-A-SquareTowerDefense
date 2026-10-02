@@ -12,9 +12,6 @@ public class EnemyManager : MonoBehaviour
 
     public static EnemyManager Instance { get; private set; }
 
-    [Header("참조")]
-    [SerializeField] private TilePath m_tilePath;
-
     #endregion
 
     #region Unity Lifecycle
@@ -27,11 +24,6 @@ public class EnemyManager : MonoBehaviour
             return;
         }
         Instance = this;
-
-        if (m_tilePath == null)
-        {
-            m_tilePath = FindFirstObjectByType<TilePath>();
-        }
     }
 
     private void OnDestroy()

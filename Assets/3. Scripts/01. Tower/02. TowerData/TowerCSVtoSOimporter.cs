@@ -1,5 +1,7 @@
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System.IO;
 
 public class TowerCSVToSOImporter
@@ -33,8 +35,8 @@ public class TowerCSVToSOImporter
             // 각 줄을 쉼표(,)를 기준으로 분리하여 배열로 만듭니다.
             string[] values = lines[i].Split(',');
 
-            // 데이터 열이 부족한 빈 줄이나 잘못된 줄은 건너뜁니다. (현재 9개 열 기준)
-            if (values.Length < 9) continue;
+            // 데이터 열이 부족한 빈 줄이나 잘못된 줄은 건너뜁니다. (TargetPriority를 뺀 17개 열 기준)
+            if (values.Length < 17) continue;
 
             // 첫 번째 열(ID)의 값을 읽어 정수형으로 변환을 시도합니다.
             // Trim()을 사용하여 보이지 않는 공백을 제거합니다.
@@ -54,29 +56,25 @@ public class TowerCSVToSOImporter
                         so.towerName = values[1].Replace("\"", "").Trim();
 
                         // 문자열을 실수(float)로 변환하여 SO 변수에 대입합니다.
-                        so.towerLevel = int.Parse(values[2].Trim());
-                        so.power = float.Parse(values[3].Trim());
-                        so.range = float.Parse(values[4].Trim());
-                        so.action = values.Length > 5 ? Mathf.Max(1, int.Parse(values[5].Trim())) : 1;
-                        so.attackCount = Mathf.Max(1, Mathf.RoundToInt(float.Parse(values[6].Trim())));
-                        so.splashRadius = Mathf.Max(0, Mathf.RoundToInt(float.Parse(values[7].Trim())));
-                        so.additionalHitCount = values.Length > 8 ? Mathf.Max(0, int.Parse(values[8].Trim())) : 0;
-                        so.isCritical = bool.Parse(values[9].Trim());
-                        so.criticalRate = float.Parse(values[10].Trim());
-                        so.criticalDamage = float.Parse(values[11].Trim());
-                        so.duration = float.Parse(values[12].Trim());
-                        so.abilityValue = float.Parse(values[13].Trim());
-                        so.projectileSpeed = float.Parse(values[18].Trim());
-                        so.hitEffectID = values.Length > 19 ? int.Parse(values[19].Trim()) : 0;
-                        so.targetPriority = values.Length > 20 && !string.IsNullOrWhiteSpace(values[20])
-                            ? ParseEnum<TargetPriority>(values[20])
+                        so.power = float.Parse(values[2].Trim());
+                        so.range = float.Parse(values[3].Trim());
+                        so.action = Mathf.Max(1, int.Parse(values[4].Trim()));
+                        so.attackCount = Mathf.Max(1, Mathf.RoundToInt(float.Parse(values[5].Trim())));
+                        so.splashRadius = Mathf.Max(0, Mathf.RoundToInt(float.Parse(values[6].Trim())));
+                        so.additionalHitCount = Mathf.Max(0, int.Parse(values[7].Trim()));
+                        so.criticalRate = float.Parse(values[8].Trim());
+                        so.criticalDamage = float.Parse(values[9].Trim());
+                        so.duration = float.Parse(values[10].Trim());
+                        so.abilityValue = float.Parse(values[11].Trim());
+                        so.projectileSpeed = float.Parse(values[15].Trim());
+                        so.hitEffectID = int.Parse(values[16].Trim());
+                        so.targetPriority = values.Length > 17 && !string.IsNullOrWhiteSpace(values[17])
+                            ? ParseEnum<TargetPriority>(values[17])
                             : TargetPriority.Closest;
 
-                        so.attackType = ParseEnum<AttackType>(values[14]);
-                        string layerName = values[15].Trim();
-                        so.targetLayer = !string.IsNullOrEmpty(layerName) ? LayerMask.GetMask(layerName) : 0;
-                        so.buffTarget = string.IsNullOrEmpty(values[16].Trim()) ? BuffTarget.None : ParseEnum<BuffTarget>(values[16]);
-                        so.debuffTarget = string.IsNullOrEmpty(values[17].Trim()) ? DebuffTarget.None : ParseEnum<DebuffTarget>(values[17]);
+                        so.attackType = ParseEnum<AttackType>(values[12]);
+                        so.buffTarget = string.IsNullOrEmpty(values[13].Trim()) ? BuffTarget.None : ParseEnum<BuffTarget>(values[13]);
+                        so.debuffTarget = string.IsNullOrEmpty(values[14].Trim()) ? DebuffTarget.None : ParseEnum<DebuffTarget>(values[14]);
 
 
                         // 변경 사항이 있음을 유니티 에디터에 알려, 저장 시 파일에 반영되도록 마킹합니다.

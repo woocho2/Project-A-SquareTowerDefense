@@ -33,12 +33,10 @@ public class TowerData : ScriptableObject
     [Tooltip("0이면 towerID를 그대로 외형 ID로 사용합니다. 시너지 타워처럼 논리 ID와 외형 조합이 다른 경우에만 지정합니다.")]
     public int visualTowerID;
     public string towerName;
-    public int towerLevel;
     public float power;
     public float range;
     [Min(1)] public int action = 1;
     [Min(1)] public int attackCount = 1;
-    public bool isCritical;
     public float criticalRate;
     public float criticalDamage;
     public float abilityValue;
@@ -51,7 +49,6 @@ public class TowerData : ScriptableObject
     [Header("공격 및 타겟 설정")]
     public AttackType attackType;
     public TargetPriority targetPriority = TargetPriority.Closest;
-    public LayerMask targetLayer;
 
     [Header("버프/디버프 타워 전용 설정")]
     public BuffTarget buffTarget;

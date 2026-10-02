@@ -28,7 +28,8 @@ public struct ProjectileStats
     public float abilityValue;
     public int hitEffectID;
     public DebuffTarget debuffTarget;
-    public bool isFireMeteor;
+    // 스킬이 발사한 투사체일 때만 채웁니다. 값이 있으면 명중 처리를 이 스킬이 맡습니다.
+    public TowerSkill skill;
 }
 
 /// <summary>
@@ -56,7 +57,34 @@ public class ProjectileHit2D : MonoBehaviour
     private Vector2 m_targetPosition;
     private Vector3 m_lastDirection;
     private bool m_isLaunched;
+    private bool m_renderersHidden;
     private Vector3 m_originalLocalScale;
+
+    // 발사 전에 이 탄이 깎기로 예약해 둔 피해입니다. 명중하거나 회수될 때 반드시 풀어 줍니다.
+    private EnemyHealthController m_reservedTarget;
+    private float m_reservedDamage;
+
+    // 활성 투사체(대기 중인 위성 포함)의 목록입니다. 턴 진행이 "공격이 다 끝났는지" 물을 때 씁니다.
+    // 켜지고 꺼질 때 스스로 등록·해제하므로 씬 전체를 검색하지 않아도 됩니다.
+    private static readonly HashSet<ProjectileHit2D> s_activeProjectiles = new HashSet<ProjectileHit2D>();
+    public static int ActiveCount => s_activeProjectiles.Count;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetActiveProjectiles()
+    {
+        s_activeProjectiles.Clear();
+    }
+
+    private void OnEnable()
+    {
+        s_activeProjectiles.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        s_activeProjectiles.Remove(this);
+        ReleaseReservedDamage();
+    }
 
     private void Awake()
     {
@@ -109,6 +137,7 @@ public class ProjectileHit2D : MonoBehaviour
         SetupVisualEffects(stats.hitEffectID);
     }
 
+    public ProjectileStats Stats => m_stats;
     public void SetPool(ProjectileObjectPool2D pool) => m_ownerPool = pool;
     public void SetTargetPosition(Vector2 targetPos) => m_targetPosition = targetPos;
     public void SetVisualScale(float multiplier)
@@ -140,6 +169,24 @@ public class ProjectileHit2D : MonoBehaviour
         ReturnToPool();
     }
 
+    /// <summary>발사 전에 이 탄이 대상에게 줄 예상 피해를 예약합니다. 다음 탄의 대상 선택에 반영됩니다.</summary>
+    public void ReserveDamage(EnemyHealthController target, float expectedDamage)
+    {
+        ReleaseReservedDamage();
+        if (target == null || expectedDamage <= 0f) return;
+
+        m_reservedTarget = target;
+        m_reservedDamage = expectedDamage;
+        target.ReserveDamage(expectedDamage);
+    }
+
+    private void ReleaseReservedDamage()
+    {
+        if (m_reservedTarget != null) m_reservedTarget.ReleaseReservedDamage(m_reservedDamage);
+        m_reservedTarget = null;
+        m_reservedDamage = 0f;
+    }
+
     public void Launch(Vector3 dir, float speed, bool rotateProjectile, float lifeTimeOverride = -1f, Transform targetEnemy = null)
     {
         if (m_lifeCo != null) StopCoroutine(m_lifeCo);
@@ -156,8 +203,16 @@ public class ProjectileHit2D : MonoBehaviour
         // 발사 시점에 트레일 초기화 후 꼬리 및 파티클 방출 시작
         StartVisualEffects();
 
-        float lt = (lifeTimeOverride > 0f) ? lifeTimeOverride : lifeTime;
+        float lt = (lifeTimeOverride > 0f) ? lifeTimeOverride : GetTravelLifetime(speed, targetEnemy);
         m_lifeCo = StartCoroutine(CoLife(lt));
+    }
+
+    // 느린 탄이 목표에 닿기 전에 수명으로 사라지지 않도록, 날아갈 거리와 속도로 수명을 정합니다.
+    private float GetTravelLifetime(float speed, Transform targetEnemy)
+    {
+        Vector2 destination = targetEnemy != null ? (Vector2)targetEnemy.position : m_targetPosition;
+        float travelTime = Vector2.Distance(transform.position, destination) / Mathf.Max(0.01f, speed);
+        return Mathf.Max(lifeTime, travelTime + 0.5f);
     }
 
     private void RotateToDirection(Vector3 direction)
@@ -170,7 +225,11 @@ public class ProjectileHit2D : MonoBehaviour
     // 도달 시 타입에 따라 명중 처리 분기
     private void OnHit()
     {
-        if (IsSplash)
+        if (m_stats.skill != null)
+        {
+            HandleSkillImpact();
+        }
+        else if (IsSplash)
         {
             ExplodeSplash();
         }
@@ -183,6 +242,9 @@ public class ProjectileHit2D : MonoBehaviour
     // 단일 타겟 명중 시 처리
     private void HitSingleTarget(Transform target)
     {
+        // 예약은 "아직 날아가는 탄"만 세는 값이므로 실제 피해를 주기 직전에 풉니다.
+        ReleaseReservedDamage();
+
         if (target != null)
         {
             if (target.TryGetComponent<EnemyHealthController>(out var health))
@@ -228,10 +290,9 @@ public class ProjectileHit2D : MonoBehaviour
         float splashEffectScale = (m_stats.hitEffectID == 104 || m_stats.hitEffectID == 204) ? (tileWidth * 1.2f) : tileWidth;
         EffectManager.Instance?.PlayEffect(m_stats.hitEffectID, transform.position, splashEffectRot, splashEffectScale);
 
-        TilePath path = TilePath.Instance;
-        if (path == null || TileManager.Instance == null)
+        if (TileManager.Instance == null)
         {
-            Debug.LogWarning("[ProjectileHit2D] TilePath 또는 TileManager가 없어 스플래시 피해를 계산할 수 없습니다.");
+            Debug.LogWarning("[ProjectileHit2D] TileManager가 없어 스플래시 피해를 계산할 수 없습니다.");
             ReturnToPool();
             return;
         }
@@ -241,7 +302,7 @@ public class ProjectileHit2D : MonoBehaviour
         List<int> splashPathIndices = TileManager.Instance.GetPathIndicesInSquare(m_stats.targetPathIndex, tileRadius);
         for (int i = 0; i < splashPathIndices.Count; i++)
         {
-            damagedEnemies.AddRange(path.GetEnemiesAtIndex(splashPathIndices[i]));
+            damagedEnemies.AddRange(TileManager.Instance.GetLivingEnemiesAtPathIndex(splashPathIndices[i]));
         }
 
         for (int i = 0; i < damagedEnemies.Count; i++)
@@ -265,17 +326,50 @@ public class ProjectileHit2D : MonoBehaviour
         ReturnToPool();
     }
 
+    // 스킬이 발사한 투사체는 명중 처리를 스킬에 맡깁니다. 투사체는 어떤 스킬인지 알지 못합니다.
+    private void HandleSkillImpact()
+    {
+        IEnumerator followUp = m_stats.skill.OnSkillProjectileImpact(this);
+        if (followUp == null)
+        {
+            ReturnToPool();
+            return;
+        }
+
+        // 스킬의 후속 처리가 끝날 때까지 투사체를 보이지 않는 활성 상태로 두어, 다음 타워가 그 도중에 행동하지 않게 합니다.
+        if (m_lifeCo != null) StopCoroutine(m_lifeCo);
+        m_isLaunched = false;
+        ResetVisualEffects();
+        SetRenderersVisible(false);
+        m_lifeCo = StartCoroutine(CoSkillFollowUp(followUp));
+    }
+
+    private IEnumerator CoSkillFollowUp(IEnumerator followUp)
+    {
+        yield return followUp;
+
+        // ReturnToPool이 실행 중인 자신을 멈추지 않도록 핸들을 먼저 비웁니다.
+        m_lifeCo = null;
+        ReturnToPool();
+    }
+
+    private void SetRenderersVisible(bool visible)
+    {
+        m_renderersHidden = !visible;
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].enabled = visible;
+        }
+    }
+
     private void DealDamage(EnemyHealthController health, float damage, bool countsAsPrimaryTargetHit = false)
     {
         if (health == null || health.CurrentHP <= 0f) return;
-        if (m_stats.isFireMeteor && health.TryGetComponent(out EnemyDebuffController debuff))
-        {
-            damage *= debuff.GetFireMeteorDamageMultiplier();
-        }
         health.ApplyDamage(damage, m_stats.isCritical, m_stats.armorPenetrationPercent, m_stats.ownerTower);
         if (countsAsPrimaryTargetHit)
         {
-            m_stats.ownerTower?.NotifyFireTargetHit();
+            m_stats.ownerTower?.NotifyPrimaryTargetHit();
         }
     }
 
@@ -315,10 +409,9 @@ public class ProjectileHit2D : MonoBehaviour
 
     private EnemyHealthController FindClosestEnemy(Vector3 origin, float searchRadius, List<EnemyHealthController> excluded)
     {
-        TilePath path = TilePath.Instance;
-        if (path == null) return null;
+        if (TileManager.Instance == null) return null;
 
-        List<EnemyHealthController> candidates = path.GetAllActiveEnemies();
+        List<EnemyHealthController> candidates = TileManager.Instance.GetAllLivingEnemies();
         EnemyHealthController closest = null;
         float closestSqrDistance = float.MaxValue;
 
@@ -372,6 +465,10 @@ public class ProjectileHit2D : MonoBehaviour
         m_homingTarget = null;
         m_lastDirection = Vector3.zero;
         m_isLaunched = false;
+        ReleaseReservedDamage();
+
+        // 메테오 연쇄 도중에 회수되더라도 다음 사용 때 보이도록 되돌립니다.
+        if (m_renderersHidden) SetRenderersVisible(true);
 
         ResetVisualEffects();
 

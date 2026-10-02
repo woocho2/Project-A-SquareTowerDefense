@@ -29,26 +29,40 @@ public class TargetAttackAction : TowerAttackAction
         if (towerTransform == null || projectiles == null || projectiles.Count == 0) return false;
 
         int towerSpawnIndex = GetTowerSpawnIndex(towerTransform);
-        if (!TryFindTarget(
-                towerSpawnIndex,
-                finalStats.Range,
-                out EnemyHealthController targetEnemy,
-                out int targetPathIndex,
-                CurrentTargetPriority))
-        {
-            CancelProjectiles(projectiles);
-            return false;
-        }
+        bool launchedAny = false;
 
-        float distanceRatio = GetTileDistanceRatio(towerSpawnIndex, targetPathIndex, finalStats.Range);
+        // 탄마다 대상을 다시 고릅니다. 앞서 쏜 탄으로 이미 죽을 적은 건너뛰므로,
+        // A가 4발에 죽는데 6발을 쏘면 A에 4발, 다음 우선순위의 B에 2발이 갑니다.
         for (int i = 0; i < projectiles.Count; i++)
         {
             ProjectileHit2D projectile = projectiles[i];
             if (projectile == null) continue;
-            ConfigureAndLaunch(projectile, towerTransform, targetEnemy.transform, finalStats, distanceRatio);
+
+            if (!TryFindTarget(
+                    towerSpawnIndex,
+                    finalStats.Range,
+                    out EnemyHealthController targetEnemy,
+                    out int targetPathIndex,
+                    CurrentTargetPriority,
+                    true) &&
+                // 사거리의 적이 전부 죽을 예정이면 남는 탄은 원래 우선순위의 적에게 그대로 쏩니다.
+                !TryFindTarget(
+                    towerSpawnIndex,
+                    finalStats.Range,
+                    out targetEnemy,
+                    out targetPathIndex,
+                    CurrentTargetPriority))
+            {
+                projectile.CancelPreparedProjectile();
+                continue;
+            }
+
+            float distanceRatio = GetTileDistanceRatio(towerSpawnIndex, targetPathIndex, finalStats.Range);
+            ConfigureAndLaunch(projectile, towerTransform, targetEnemy, finalStats, distanceRatio);
+            launchedAny = true;
         }
 
-        return true;
+        return launchedAny;
     }
 
     // 위성 연출을 거치지 않는 외부 호출이 남아 있어도 즉시 공격할 수 있게 유지합니다.
@@ -67,23 +81,26 @@ public class TargetAttackAction : TowerAttackAction
     private void ConfigureAndLaunch(
         ProjectileHit2D projectile,
         Transform towerTransform,
-        Transform targetTransform,
+        EnemyHealthController targetEnemy,
         TowerStats finalStats,
         float distanceRatio)
     {
         // 투사체가 날아갈 방향은 연출이므로 적의 화면상 위치를 그대로 사용합니다.
+        Transform targetTransform = targetEnemy.transform;
         Vector3 targetPosition = targetTransform.position;
         Vector3 direction = (targetPosition - projectile.transform.position).normalized;
         if (direction.sqrMagnitude < 0.0001f) direction = Vector3.right;
 
-        bool isCritical = Random.Range(0f, 100f) <= finalStats.CriticalRate * 100f;
+        // 치명타는 발사 전에 탄마다 한 번 굴립니다.
+        bool isCritical = Random.Range(0f, 100f) < finalStats.CriticalRate * 100f;
         float calculatedDamage = finalStats.AttackPower;
 
         calculatedDamage *= 1f + finalStats.DistanceDamageBonusPercent / 100f * distanceRatio;
 
+        // 치명타는 기본 2배에 치명타 피해를 합산합니다. 거리 비례 보너스 위에 곱해집니다.
         if (isCritical)
         {
-            calculatedDamage = finalStats.AttackPower * (2f + finalStats.CriticalDamage);
+            calculatedDamage *= 2f + finalStats.CriticalDamage;
         }
 
         ProjectileStats projectileStats = new ProjectileStats
@@ -111,6 +128,10 @@ public class TargetAttackAction : TowerAttackAction
         };
 
         projectile.Init(projectileStats);
+        // 치명타는 위에서 발사 전에 굴렸으므로, 이 탄이 깎을 체력을 지금 알 수 있습니다.
+        projectile.ReserveDamage(
+            targetEnemy,
+            targetEnemy.EstimateDamage(calculatedDamage, finalStats.ArmorPenetrationPercent));
         projectile.IsSplash = false;
         projectile.SetTargetPosition(targetPosition);
         projectile.Launch(direction, finalStats.ProjectileSpeed, true, -1f, targetTransform);

@@ -58,18 +58,27 @@ public class DebuffAction : TowerAttackAction
         TileManager.Instance.RegisterPathDebuffZone(
             GetAffectedPathIndices(centerPathIndex, stats), m_sourceID, m_data.debuffTarget,
             Mathf.Clamp(m_data.Tier, 1, 5), GetEffectAbilityValue(stats), stats.Duration,
-            centerPathIndex, m_ownerTower != null ? m_ownerTower.CreationOrder : int.MaxValue);
+            centerPathIndex, m_ownerTower != null ? m_ownerTower.CreationOrder : int.MaxValue,
+            GetEffectPower(stats), GetEffectStackGain(stats), GetEffectStackThreshold(stats));
     }
 
-    // 추후 티어별 범위를 바꿀 때 미리보기와 실제 적용이 같은 인덱스 계산을 사용합니다.
+    // 미리보기와 실제 적용이 같은 인덱스 계산을 사용합니다.
+    // 장판 크기는 SplashRadius를 따릅니다: 1 → 1x1, 2 → 3x3, 3 → 5x5. (0도 1x1)
     private List<int> GetAffectedPathIndices(int centerPathIndex, TowerStats stats)
     {
-        int tileRadius = m_data.debuffTarget == DebuffTarget.Fire ? Mathf.Max(0, stats.ProjectileRadius - 1) : 0;
+        int tileRadius = Mathf.Max(0, stats.ProjectileRadius - 1);
         return TileManager.Instance.GetPathIndicesInSquare(centerPathIndex, tileRadius);
     }
 
     private float GetEffectAbilityValue(TowerStats stats) =>
         m_data.debuffTarget == DebuffTarget.Fire ? stats.AbilityValue : stats.AttackPower;
+
+    // 새 틀(스킬 1 + 스킬 2)로 옮긴 문양만 아래 값을 넘깁니다. 나머지 문양은 0을 넘겨 예전 방식을 유지합니다.
+    // Power = 스킬 1의 세기, AttackCount = 한 번 행동에 쌓는 스택 수, 문턱 = 60 ÷ 컬러 강화 레벨.
+    private bool UsesStackSkillRule => EnemyDebuffRule.Get(m_data.debuffTarget) != null;
+    private float GetEffectPower(TowerStats stats) => UsesStackSkillRule ? stats.AttackPower : 0f;
+    private int GetEffectStackGain(TowerStats stats) => UsesStackSkillRule ? Mathf.Max(1, stats.AttackCount) : 0;
+    private int GetEffectStackThreshold(TowerStats stats) => UsesStackSkillRule ? GetStackSkillThreshold(stats.Level) : 0;
 
     public override bool ExecuteAction(Transform towerTransform, TowerStats currentStats)
     {
@@ -84,7 +93,8 @@ public class DebuffAction : TowerAttackAction
             affectedIndices, m_sourceID, m_data.debuffTarget,
             Mathf.Clamp(m_data.Tier, 1, 5), GetEffectAbilityValue(currentStats),
             currentStats.Duration, pathIndex,
-            m_ownerTower != null ? m_ownerTower.CreationOrder : int.MaxValue);
+            m_ownerTower != null ? m_ownerTower.CreationOrder : int.MaxValue,
+            GetEffectPower(currentStats), GetEffectStackGain(currentStats), GetEffectStackThreshold(currentStats));
         return true;
     }
 }
