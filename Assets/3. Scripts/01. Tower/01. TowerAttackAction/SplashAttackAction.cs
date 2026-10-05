@@ -7,6 +7,12 @@ public class SplashAttackAction : TowerAttackAction
 
     public override bool UsesProjectileSatellites => true;
 
+    // 추가 타격은 광역 타워에도 적용됩니다. 위성 자리마다 (1 + AdditionalHitCount)발이 같은 착탄점으로 나갑니다.
+    public override int GetProjectilesPerSatellite(TowerStats finalStats)
+    {
+        return 1 + Mathf.Max(0, finalStats.AdditionalHitCount);
+    }
+
     public override ProjectileHit2D PrepareSatelliteProjectile(Vector3 spawnPosition, float preparationLifetime)
     {
         return SpawnPreparedProjectile(spawnPosition, preparationLifetime);

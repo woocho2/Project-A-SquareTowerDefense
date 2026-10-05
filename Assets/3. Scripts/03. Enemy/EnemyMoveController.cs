@@ -39,12 +39,17 @@ public class EnemyMoveController : MonoBehaviour
 
     public int CurrentTileIndex => m_currentTileIndex;
     public bool IsMoving => m_isMoving;
-    public int ActionInterval => m_actionInterval;
+    // 이동 주사위 최댓값은 어떤 경우에도 1 아래로 내려가지 않습니다.
+    // 1 아래로 깎이려던 만큼은 버리지 않고 행동 주기를 그만큼 늘립니다.
+    private int RawDiceMaxSpeed => m_baseDiceMaxSpeed + m_tileBuffSpeed + m_diceMaxModifier + m_temporaryDiceMaxModifier;
+    private int IgnoredDiceReduction => Mathf.Max(0, 1 - RawDiceMaxSpeed);
+
+    public int ActionInterval => m_actionInterval + IgnoredDiceReduction;
     public int BaseActionInterval => m_baseActionInterval;
     public int CurrentActionCounter => m_currentActionCounter;
     public int BaseDiceMaxSpeed => m_baseDiceMaxSpeed;
     public int TileBuffSpeed => m_tileBuffSpeed;
-    public int CurrentDiceMaxSpeed => Mathf.Max(0, m_baseDiceMaxSpeed + m_tileBuffSpeed + m_diceMaxModifier + m_temporaryDiceMaxModifier);
+    public int CurrentDiceMaxSpeed => Mathf.Max(1, RawDiceMaxSpeed);
 
     // Legacy DebuffBase assets are still present in the project but are no longer
     // called by EnemyDebuffController.  Keep this compatibility surface inert until
@@ -184,14 +189,12 @@ public class EnemyMoveController : MonoBehaviour
 
         // 행동 주기 도달 검사
         m_currentActionCounter++;
-        if (m_currentActionCounter >= m_actionInterval)
+        if (m_currentActionCounter >= ActionInterval)
         {
             m_currentActionCounter = 0;
 
             // 1부터 EnemyData에 설정된 Speed 값까지 랜덤 굴림 + 멈춰있는 타일의 보너스 Speed
-            int maxDice = Mathf.Max(0, m_baseDiceMaxSpeed + m_tileBuffSpeed + m_diceMaxModifier + m_temporaryDiceMaxModifier);
-            if (maxDice <= 0) yield break;
-            int totalSteps = Random.Range(1, maxDice + 1);
+            int totalSteps = Random.Range(1, CurrentDiceMaxSpeed + 1);
             if (m_reverseNextDice)
             {
                 m_reverseNextDice = false;
