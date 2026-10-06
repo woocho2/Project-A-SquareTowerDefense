@@ -1,0 +1,19 @@
+Built-in image_gen edit mode used (no CLI/API generation).
+
+Change: removed four corner ornaments from each START, END, JUMP, RETURN badge.
+Kept navy background, ivory text, simple gold rounded border, four equal 226x80 badges at local x=15,y=88.
+Atlas canvas: 1024x768. All 8 arrow sprites retained pixel-for-pixel (changed pixels: 0).
+Existing .meta, GUID, slice rectangles and consumers unchanged.
+Final asset: Assets/4. Asset/1. BackGround/Tile_Path_Overlay_Asgard_Atlas.png
+Preview: output/asgard-simple-labels/Asgard_12Sprites_Composite.png
+Backup: D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\output\asgard-simple-labels\backups\before-93dc7a6e-f427-45c1-9c9a-90307ed555ed
+Generated source: exec-3abcbf20-d9a5-42b0-84d0-095fdaba1615.png
+Generated strip cropped by visible bounds per quarter, resized and packed into existing label cells; no arrow re-rendering.
+
+Prompt:
+Use case: precise-object-edit.
+Asset type: Unity game sprite atlas bottom row, four text badges.
+Input image is the EDIT TARGET. Remove ONLY the four ornamental chunky gold corner caps from EACH badge. Replace these ornamental corners with uninterrupted simple thin softly rounded gold outline. Retain dark navy background, ivory uppercase lettering, clean cartoon UI treatment, same restrained gold palette, same badge sizes, same single horizontal row of four badges and generous transparent margins.
+Text verbatim left to right: "START", "END", "JUMP", "RETURN".
+Keep all four boxes equal width and equal height. Preserve bold sans-serif lettering and current text scale. No decorative caps, no corner flourishes, no icons, no arrows, no new ornaments. Simple smooth thin gold rounded rectangle border only. True transparent background outside badges.
+

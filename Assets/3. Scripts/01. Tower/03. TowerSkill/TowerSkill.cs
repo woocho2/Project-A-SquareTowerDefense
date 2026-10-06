@@ -51,6 +51,12 @@ public abstract class TowerSkill
     public virtual void OnEnemyTurnStart() { }
 
     /// <summary>
+    /// 이 타워가 기본 공격으로 한 번 행동했을 때 호출됩니다.
+    /// 스킬이 준 버프의 유지는 턴이 아니라 행동 횟수로 세므로, 남은 횟수를 줄일 때 사용합니다.
+    /// </summary>
+    public virtual void OnOwnerActed() { }
+
+    /// <summary>
     /// 적 턴마다 공격 타워의 기본 공격 직전에 한 번 호출됩니다. 행동력과 무관합니다.
     /// 턴을 세다가 발동하는 스킬은 여기서 처리합니다. 스킬이 투사체를 발사했으면 true를 반환합니다.
     /// finalStats는 버프가 반영된 최종 스탯입니다 (스킬도 기본 공격처럼 버프를 받습니다).

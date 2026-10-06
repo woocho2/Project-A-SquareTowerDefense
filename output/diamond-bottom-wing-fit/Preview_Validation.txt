@@ -1,0 +1,11 @@
+Status: User explicitly approved replacement (교체하셈). Approved Diamond_After.png applied to the original Diamond.png path on 2026-10-06.
+Target: Assets/4. Asset/2. Tower/1. Tier/Diamond.png
+Edited file: Diamond_After.png, 256x256 RGBA.
+Original backup: Diamond_Before.png; original meta reference: Diamond_Before.png.meta.reference.
+Protected original frame, upper artwork and central rail pixels: unchanged (0 changes outside lower wing region).
+Edited pixels: 5299 in y>=205 and x<81 or x>174.
+Offline corner-exposure diagnostic at existing prefab scale: left 60 -> 0, right 122 -> 3 clearly exposed samples. This is a nearest-sample, alpha-threshold diagnostic, not live Unity verification.
+Only original Diamond.png changed. Diamond .meta/GUID, the other four tier PNG/meta files, TowerBase prefab/meta and spawn atlas remained unchanged (SHA256 verified). No scene changes.
+Applied SHA256: 0F7293BAD6CBE544309436E886106335DF915CEED8153F5B6613238609D3AA2B. Original PNG backup retained as Diamond_Before.png.
+Source and exact built-in image_gen prompt: AI_Source.png and Prompt_and_Method.txt.
+Comparison: Before_After_On_Spawn.png (left original, right staged edit).

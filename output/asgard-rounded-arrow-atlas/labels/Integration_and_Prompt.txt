@@ -1,0 +1,22 @@
+Applied labels and atlas integration
+
+Final asset: Assets/4. Asset/1. BackGround/Tile_Path_Overlay_Asgard_Atlas.png
+Canvas: 1024x768. Twelve 256x256 sprites; top N NE E SE, middle S SW W NW, bottom START END JUMP RETURN.
+Labels: uniform 226x80 badge rectangles at local x=15,y=88; navy interior, warm gold border, ivory uppercase letters. Labels contain no arrows.
+All original 1024x512 arrow RGBA pixels preserved exactly. Existing atlas GUID and eight sprite IDs retained. Coordinates adjusted for expanded PNG height; four labels appended as IDs 1009..1012.
+Overlay Tile assets, Stage1 sprite cache and Tiles.prefab palette cache rebound by direction/label mapping. Original Tile GUIDs and transforms retained. Scene/palette transform caches and tile placements unchanged.
+Reference remap checked for all 14 files; unexpected non-reference changes=0. Old GUID usage in .unity/.prefab/.asset/.cs=0. Metadata slices=12, names/rectangles/IDs verified.
+Backup: D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\output\asgard-rounded-arrow-atlas\backups\before-labels-and-connection-e1951167-75cf-468e-a724-e4536a36f238
+Preview: Asgard_12Sprites_Composite.png (static composite, label scale accounts for existing label PPU/transform, not a Unity play-test).
+No Unity runtime test performed.
+Mode: built-in image_gen edit for labels, then precise crop/resize/packing and reference remapping.
+
+Label generation prompt:
+Use case: precise-object-edit
+Asset type: Asgard themed game path special-function text badge strip.
+Input image 1 is the edit target: the existing four equal-size text-only badges START END JUMP RETURN in that exact left-to-right order. Input image 2 is palette/style reference only: Asgard path tile warm decorative gold frame and deep navy face.
+Primary request: restyle ONLY these four badge backgrounds and borders to the Asgard gold/navy cartoon theme, preserving the exact wording, bold upright rounded sans-serif lettering, equal font height, and equal rectangular badge sizes. Clean rounded rectangle badges, restrained slim metallic warm-gold border, opaque dark navy interior, solid high-contrast ivory letters. No white border, no pure black fill. Outer gold palette #D7AF54 with subtle highlights #F3D589, dark navy face #101D32, ivory letters #FFF7DF.
+Text verbatim: first START, second END, third JUMP, fourth RETURN. Spell S T A R T; E N D; J U M P; R E T U R N. All uppercase.
+Composition: a SINGLE horizontal row with FOUR equally spaced same-size badges centered in four equal square transparent cells, no labels outside badges. Preserve the original width-to-height of each badge, approximately 226:80. RETURN fits within the same box and uses the same capital letter height as the other words. Leave simple consistent padding. The badge boxes must all have identical dimensions; shorter words are centered, not smaller boxes. Genuinely transparent background everywhere outside the four badge rectangles.
+Style: smooth clean pastel cartoon UI, subtle bevel only on border, flat navy fill, plain bold ivory letters, no shiny gradients on letters, no pixel art.
+Avoid: arrows, triangular icons, additional ornaments, glowing halos, circles, symbols, text typos, serif/calligraphy fonts, different panel sizes, tile frames, filled full-image background, checkerboard, shadows outside badges.

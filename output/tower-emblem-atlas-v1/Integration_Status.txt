@@ -1,0 +1,36 @@
+게임 적용 완료 (실제 플레이 테스트는 미실행)
+
+추가 에셋:
+Assets/4. Asset/2. Tower/3. Emblem/Tower_Emblem_White_Atlas.png
+  GUID: 7e3f1605aca04ab5b6e525a542b6b7b3
+  1024×1024 RGBA / 256×256 슬라이스 13종 / PPU256 / 중심 피벗 / 압축 없음 / Mipmap 없음.
+Assets/4. Asset/2. Tower/2. Color/Tower_White_Background.png
+  GUID: a93186459eaa4cc6923ea0df25f7a3e3
+  256×256 RGBA / PPU192. 기존 룬 배경의 알파를 리사이즈하고 RGB를 #FFFFFF로 통일.
+
+수정:
+TowerBase.prefab: 문양 배열 13개를 아틀라스 Sprite 1001~1013에 연결.
+컬러 룬 4개 대신 흰 배경 한 개 참조. 배경 < 문양 < 티어 순서로 렌더링.
+티어 이미지, 티어 위치 및 스케일, 나머지 컴포넌트/오브젝트는 유지.
+TowerVisual.cs: 문양 SpriteRenderer.color로 공격방식 색 적용.
+빨강 #E25D62 / 파랑 #538ACD / 노랑 #D5AD28 / 검정 #202027.
+Apply(int)와 Apply(TowerData)가 같은 함수 사용; TowerData.VisualColorId를 통해 시너지 외형 ID도 유지.
+TowerInfoPanel.cs: 문양 이미지에도 실제 타워 문양 색 적용.
+
+보존:
+기존 개별 PNG와 기존 .meta/GUID는 삭제/변경하지 않음.
+TowerBase.prefab 기존 GUID 유지.
+적/스탯/공격/합성 등의 게임 로직은 변경하지 않음.
+수정 전 코드와 프리팹은 integration-backup 폴더에 보관.
+
+검증:
+기존 Unity 참조로 Assembly-CSharp 77개 게임 소스 컴파일 통과 (C# 오류 0).
+에디터 소스도 컴파일 통과; 기존 TextureImporter.spritesheet obsolete 경고는 이번 작업과 무관.
+아틀라스 원본과 Assets 사본 SHA256 동일, 프리팹 .meta 기존 SHA256 동일.
+개별 문양과 아틀라스 각 셀 픽셀 동일 / 빈 3칸 투명: Validation.txt 참조.
+아틀라스 13개 슬라이스 ID와 프리팹 배열 일치.
+13개 문양 × 5개 티어의 겹침 없음: Validation.txt 참조.
+Applied_Emblems_Preview.png는 실제 Assets와 PPU/프리팹 스케일을 사용한 오프라인 합성 이미지, 인게임 캡처 아님.
+Unity editor import 로그에서 신규 텍스처 임포트 확인.
+실제 플레이와 에디터 런타임 통합 검사 실행은 확인하지 못함.
+임시 검사 코드(EmblemAtlasIntegrationCheck.cs)는 Assets에서 제거했고 output에 참고용으로 보관.

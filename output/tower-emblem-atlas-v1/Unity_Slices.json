@@ -1,0 +1,225 @@
+{
+  "texture": "Tower_Emblem_White_Atlas_1024.png",
+  "width": 1024,
+  "height": 1024,
+  "cellWidth": 256,
+  "cellHeight": 256,
+  "unityImport": {
+    "textureType": "Sprite",
+    "spriteMode": "Multiple",
+    "pixelsPerUnit": 256,
+    "pivot": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "meshType": "Full Rect",
+    "filterMode": "Bilinear",
+    "generateMipmaps": false,
+    "compression": "None",
+    "wrapMode": "Clamp"
+  },
+  "coordinateConvention": "sprite.rect uses Unity bottom-left origin; sourceCell uses image top-left origin",
+  "sprites": [
+    {
+      "emblemId": 1,
+      "name": "Emblem_01_Sword",
+      "rect": {
+        "x": 0,
+        "y": 768,
+        "width": 256,
+        "height": 256
+      },
+      "sourceCell": {
+        "x": 0,
+        "y": 0
+      },
+      "file": "individual/01_Sword_White_256.png"
+    },
+    {
+      "emblemId": 2,
+      "name": "Emblem_02_Bow",
+      "rect": {
+        "x": 256,
+        "y": 768,
+        "width": 256,
+        "height": 256
+      },
+      "sourceCell": {
+        "x": 256,
+        "y": 0
+      },
+      "file": "individual/02_Bow_White_256.png"
+    },
+    {
+      "emblemId": 3,
+      "name": "Emblem_03_Shield",
+      "rect": {
+        "x": 512,
+        "y": 768,
+        "width": 256,
+        "height": 256
+      },
+      "sourceCell": {
+        "x": 512,
+        "y": 0
+      },
+      "file": "individual/03_Shield_White_256.png"
+    },
+    {
+      "emblemId": 4,
+      "name": "Emblem_04_Spear",
+      "rect": {
+        "x": 768,
+        "y": 768,
+        "width": 256,
+        "height": 256
+      },
+      "sourceCell": {
+        "x": 768,
+        "y": 0
+      },
+      "file": "individual/04_Spear_White_256.png"
+    },
+    {
+      "emblemId": 5,
+      "name": "Emblem_05_Axe",
+      "rect": {
+        "x": 0,
+        "y": 512,
+        "width": 256,
+        "height": 256
+      },
+      "sourceCell": {
+        "x": 0,
+        "y": 256
+      },
+      "file": "individual/05_Axe_White_256.png"
+    },
+    {
+      "emblemId": 6,
+      "name": "Emblem_06_Hammer",
+      "rect": {
+        "x": 256,
+        "y": 512,
+        "width": 256,
+        "height": 256
+      },
+      "sourceCell": {
+        "x": 256,
+        "y": 256
+      },
+      "file": "individual/06_Hammer_White_256.png"
+    },
+    {
+      "emblemId": 7,
+      "name": "Emblem_07_Fire",
+      "rect": {
+        "x": 512,
+        "y": 512,
+        "width": 256,
+        "height": 256
+      },
+      "sourceCell": {
+        "x": 512,
+        "y": 256
+      },
+      "file": "individual/07_Fire_White_256.png"
+    },
+    {
+      "emblemId": 8,
+      "name": "Emblem_08_Ice",
+      "rect": {
+        "x": 768,
+        "y": 512,
+        "width": 256,
+        "height": 256
+      },
+      "sourceCell": {
+        "x": 768,
+        "y": 256
+      },
+      "file": "individual/08_Ice_White_256.png"
+    },
+    {
+      "emblemId": 9,
+      "name": "Emblem_09_Electricity",
+      "rect": {
+        "x": 0,
+        "y": 256,
+        "width": 256,
+        "height": 256
+      },
+      "sourceCell": {
+        "x": 0,
+        "y": 512
+      },
+      "file": "individual/09_Electricity_White_256.png"
+    },
+    {
+      "emblemId": 10,
+      "name": "Emblem_10_Wind",
+      "rect": {
+        "x": 256,
+        "y": 256,
+        "width": 256,
+        "height": 256
+      },
+      "sourceCell": {
+        "x": 256,
+        "y": 512
+      },
+      "file": "individual/10_Wind_White_256.png"
+    },
+    {
+      "emblemId": 11,
+      "name": "Emblem_11_Earth",
+      "rect": {
+        "x": 512,
+        "y": 256,
+        "width": 256,
+        "height": 256
+      },
+      "sourceCell": {
+        "x": 512,
+        "y": 512
+      },
+      "file": "individual/11_Earth_White_256.png"
+    },
+    {
+      "emblemId": 12,
+      "name": "Emblem_12_Light",
+      "rect": {
+        "x": 768,
+        "y": 256,
+        "width": 256,
+        "height": 256
+      },
+      "sourceCell": {
+        "x": 768,
+        "y": 512
+      },
+      "file": "individual/12_Light_White_256.png"
+    },
+    {
+      "emblemId": 13,
+      "name": "Emblem_13_Dark",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 256,
+        "height": 256
+      },
+      "sourceCell": {
+        "x": 0,
+        "y": 768
+      },
+      "file": "individual/13_Dark_White_256.png"
+    }
+  ],
+  "unusedCellIndices": [
+    13,
+    14,
+    15
+  ],
+  "integratedIntoGame": true
+}

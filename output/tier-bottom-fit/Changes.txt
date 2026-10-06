@@ -1,0 +1,10 @@
+Request: keep the aligned upper edge and correct the lower edge of the tier against its spawn tile.
+Native prefab display correction; no new image generation or PNG edits.
+TowerBase.prefab Tier Transform only: scale.y 1.025 -> 1.045, position.y 0 -> -0.0128125; scale.x remains 1.06.
+Top anchoring: source nominal upper edge y=5 in a 256px centered sprite, PPU=192; top offset=(128-5)/192. Position compensation=-(1.045-1.025)*(128-5)/192=-0.0128125 world units.
+Result: nominal top edge unchanged; nominal bottom edge moves down (247-5)*0.02=4.84 source-equivalent pixels. Width unchanged. Intermediate points move progressively, so this is a top-anchored vertical display stretch, not just a translated bottom rail.
+Shared setting applies consistently to Bronze/Silver/Gold/Mithril/Diamond.
+Preserved: approved artwork and feather counts, all PNG/meta/GUID/PPU, Color and Emblem transforms, tower root, scripts and scenes.
+Before_After_Bottom_Fit.png is an offline composite of the real sprites; top row previous setting, bottom row new setting. No live Unity verification claimed.
+Original prefab backup: TowerBase.before-*.prefab alongside this record.
+Stage restart required for objects already instantiated before the prefab update.

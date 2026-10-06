@@ -162,6 +162,9 @@ public class EnemyDebuffController : MonoBehaviour
             state.RemainingDuration = Mathf.Max(state.RemainingDuration, effect.Duration);
             state.RefreshedOnCurrentTile = true;
         }
+
+        // 스킬 1이 켜져 있는지에 따라 달라지는 보정(화상의 치유 감소 등)이 있으므로, 지속시간을 채운 뒤에 다시 계산합니다.
+        if (selectedByTarget.Count > 0) RefreshPersistentStats();
     }
 
     public void RegisterCriticalHit()

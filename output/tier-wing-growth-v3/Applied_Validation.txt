@@ -1,0 +1,10 @@
+Applied: 2026-10-06
+Assets: Assets/4. Asset/2. Tower/1. Tier/{Bronze,Silver,Gold,Mithril,Diamond}.png
+Source: Wing_XSpread_5Tiers_AI_Preview.png (approved built-in image_gen edit)
+Packing: Pack_Approved_Tiers.ps1; whole-image affine placement and premultiplied-alpha downsampling. No isolated wing replacements, local rail warps or recoloring.
+Nominal basic frame placement: x=11..244, y=5..246 in every 256x256 canvas. This is placement of the approved painted artwork, not replacement with a new geometric frame; painted inner contours retain minor 1px raster differences.
+Validation: all five PNGs 256x256 RGBA; center alpha=0; zero clipped source pixels with alpha >=128; no opaque pixels touching canvas edge; applied PNG hashes match staged PNGs.
+All five .meta SHA256 hashes unchanged; existing GUID, PPU=192, pivot and import settings retained.
+Backup: output/tier-wing-growth-v3/backups/before-apply-bd177a29-f6b7-469e-bda0-060eadd2d926 (five original PNGs and their .meta files)
+Comparison: Applied_5Tiers_Comparison.png (ivory background for viewing only; actual asset centers remain transparent).
+No scripts, scenes, prefabs or unrelated assets changed. Unity in-game playback was not verified in this session.

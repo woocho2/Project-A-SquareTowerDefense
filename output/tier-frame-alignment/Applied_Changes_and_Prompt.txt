@@ -1,0 +1,30 @@
+프레임 규격 정렬 완료. 디자인 재생성/팔레트 변경/날개 분리 없음.
+
+적용 경로: Assets/4. Asset/2. Tower/1. Tier/{Bronze,Silver,Gold,Mithril,Diamond}.png
+Bronze 원본은 변경하지 않고 기준으로 사용. Silver/Gold/Mithril/Diamond의 프레임 좌표만 1~2px 수준 보정.
+256x256 캔버스, 투명 배경, PPU192, Pivot0.5,0.5, 기존 .meta/GUID 전부 유지.
+
+기본 직선 레일 (alpha>=128 기준):
+왼쪽 x=11..22 / 오른쪽 x=233..244 (모두 12px)
+상단 y=5..16 / 하단 y=235..246 (모두 12px)
+좌우 검증 y=80/100/128, 상하 검증 x=128: 모든 티어 동일.
+레일 사이 기준 간격: x=23..232, y=17..234. 장식과 날개를 포함한 실제 투명창 전체를 새로운 사각형으로 잘라낸 것은 아님.
+
+원본 부분 좌표 리매핑과 premultiplied-alpha 보간으로 기존 명암/색상 유지.
+하단 날개 보호 영역: 좌측 x<80 또는 우측 x>175, 각 티어별 y 시작(Silver147,Gold139,Mithril138,Diamond137).
+해당 영역 RGBA 변경: 모두 0픽셀. 원본 날개와 장식은 유지하고 중앙 하단 레일만 별도 정렬.
+변경 픽셀 Silver8412 / Gold10339 / Mithril11429 / Diamond9599 (대부분 1~2px 위치 조정에 따른 변화).
+각 PNG 적용 후 staged PNG와 파일 해시 일치, 모든 .meta는 backup 해시와 일치 확인.
+
+Before_After_Frame_Alignment.png: 위 원본 / 아래 정렬 후.
+Aligned_5Tiers.png: 최종 5개 티어.
+백업: backups/before-0e5d0a23-9f0b-4752-b06c-033175dd149a (PNG 및 .meta).
+게임 코드, 컬러/문양 에셋, 씬/프리팹은 변경하지 않음. Unity 플레이 테스트는 수행하지 않음.
+
+AI 모드: built-in image_gen 편집으로 정렬 가이드만 생성.
+AI_Alignment_Guide_Only.png는 최종 에셋으로 사용하지 않음. 최종은 승인된 기존 PNG에서 좌표만 조정함.
+프롬프트:
+Use case: precise-object-edit.
+Asset type: five-tier Unity frame alignment reference sheet.
+Input image is edit target: Bronze, Silver, Gold, Mithril, Diamond in a horizontal row. User LOVES these exact designs. Change only the rectangular base frame alignment, not design. Match all five base frame outer rail positions and inner straight rail thickness to the first Bronze frame. Differences are only 1-2 original pixels. Keep each tier's ORIGINAL color, shading, corner motif, wing feathers, wing sizes, bottom ornaments and placement. Bronze untouched. All images still 256x256 individual cells in same row. No recoloring, no stronger saturation, no new shape, no added decoration. Transparent background. The framing rails should look identical in size and alignment across tiers; wings retain their original tier progression. Do not enlarge whole frame or wings.
+

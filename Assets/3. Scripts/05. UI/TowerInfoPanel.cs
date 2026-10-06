@@ -191,10 +191,14 @@ public class TowerInfoPanel : MonoBehaviour
         UpdateImage(img_tier, towerVisual != null ? towerVisual.TierSprite : null);
         UpdateImage(img_color, towerVisual != null ? towerVisual.ColorSprite : null);
         UpdateImage(img_emblem, towerVisual != null ? towerVisual.EmblemSprite : null);
+        if (towerVisual != null && img_emblem != null)
+            img_emblem.color = towerVisual.EmblemColor;
     }
 
     private void UpdateImage(Image image, Sprite sprite)
     {
+        if (image == null) return;
+
         image.sprite = sprite;
         image.color = Color.white;
         image.enabled = sprite != null;

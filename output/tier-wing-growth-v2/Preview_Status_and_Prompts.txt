@@ -1,0 +1,25 @@
+새 날개 성장 비교 시안. 생성 방식: built-in image_gen 편집.
+프레임 구조와 루트 고정, Bronze/Silver 2깃털, Gold/Mithril 3깃털, Diamond 4깃털.
+추가 깃털마다 가로 바깥쪽 / 세로 위쪽으로 성장하는 방향. Diamond의 높이를 별도 보완.
+저장: output/tier-wing-growth-v2/Wing_Growth_5Tiers_AI_Preview.png
+생성 결과는 비교 시안이며 아직 256x256 제작 PNG나 동일 픽셀 규격으로 승인/적용한 최종본이 아님.
+게임 PNG에 새 AI 시안을 덮어쓰지 않음. 기존 .meta/GUID 유지.
+직전 tier-frame-alignment의 부분 좌표 보정만 원복: Bronze 변경 없음, Silver/Gold/Mithril/Diamond는 정렬 전 원본 복원.
+복원 전 현재 PNG와 aligned PNG의 해시 일치 확인 후 실행. 복원 후 원본 백업 해시 일치 확인.
+복원 전 파일 별도 백업: backups/before-undo-rail-warp-*.
+
+1차 시안 프롬프트:
+Use case: precise-object-edit.
+Asset type: transparent comparison sprite sheet of five tower tier frames, cartoon UI game artwork.
+Image 1 is EDIT TARGET: original five approved whole-frame designs, left to right Bronze, Silver, Gold, Mithril, Diamond. Image 2 is IMMUTABLE GEOMETRY MASTER: the Bronze whole frame.
+Primary change: all five rectangular framing rails must share exactly the Bronze master structure, rectangular proportions, rounded top corner caps, thickness, center and position. Rails are perfectly straight, no taper, pinched rails, skew, bends or local stretching. DO NOT enlarge/shrink base frames across tiers. Keep Bronze's design intact. Preserve the approved colors and restrained shading for each original tier.
+Wing growth: roots stay fixed at the original Bronze lower corners. Grow the wings BOTH horizontally OUTWARD and vertically UPWARD as feather count rises. Bronze and Silver: 2 feathers per wing, Bronze baseline width and height. Gold and Mithril: 3 feathers per wing, visibly wider AND taller than 2-feather wings. Diamond: 4 feathers per wing, visibly wider AND taller than 3-feather wings. Preserve the same soft rounded leaf-feather style and thickness, seamless whole-frame integration. All individual feather forms remain consistent and harmoniously arranged. Mirrored left/right wing geometry.
+At final 256px sprite scale, make growth restrained: roughly 2px extra outward reach and 14px extra upward reach for each added feather compared with Bronze. This uses the small outer padding without cropping or intruding farther into the inner window. Do not merely cram extra feathers into the same silhouette. No giant wings, no detached pasted-on feathers, no new ornaments, no increased saturation, no hard rectangular alpha cuts.
+Composition: a single horizontal row of five identical-size, equally spaced sprite cells with clear transparent margins. Same base frame dimensions in every cell; wing silhouettes alone grow. Empty fully transparent inner windows and outer background, no filled panels, no text, no labels, no shadows cast outside sprites, no watermark. Preserve exact color palettes: warm soft bronze, cool pearl silver, pastel golden yellow, light mint turquoise mithril, pale sky-blue diamond.
+
+Diamond 성장 보완 프롬프트:
+Use case: precise-object-edit.
+Input image: EDIT TARGET five-tier comparison sheet.
+Make ONE targeted correction to the FIFTH (rightmost blue Diamond) frame only. Its 4-feather wings currently have almost the same top height as the Gold/Mithril 3-feather wings. Make both Diamond wings visibly TALLER: raise their top feather tips by approximately 45 image pixels (about 26 percent of the wing height), while keeping the bottom roots fixed exactly where they are. Make their outer reach slightly wider as well, about 3 image pixels each. Still EXACTLY FOUR smooth rounded feathers on each wing. Redistribute the same 4 feathers organically across the increased height; do not add a fifth feather, do not move roots into the center. Left/right mirrored.
+Keep all straight frame rails unchanged, same top corner caps, frame box dimensions, inner window and blue palette. Keep the entire first FOUR frames completely unchanged including their wings and colors. Keep transparent background and original sheet composition. All other artwork must remain the same. Diamond wings need to read as a clear larger final upgrade than Gold and Mithril, growing upward AND outward, not just cramming four feathers into the same height.
+

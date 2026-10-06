@@ -1,0 +1,10 @@
+Concept preview only; no original Assets files overwritten.
+The four 256x256 transparent color variants are all tints of the same AI-generated alpha geometry: red #E25D62, blue #538ACD, yellow #D5AD28, black #000000.
+Each emblem was composited BELOW the current actual Bronze/Silver/Gold/Mithril/Diamond sprites, including the corrected Diamond lower wings.
+Scale assumptions match existing prefab/importers: emblem PPU256 scale1, tier PPU192 scale(1.06,1.045), localY=-0.0128125.
+All 20 color/tier combinations: 3567 opaque emblem samples (alpha>=128), 0 samples obscured by tier alpha>32.
+The primary preview uses Diamond, the most restrictive wing silhouette, plus 56px thumbnails. The all-tier sheet additionally checks the other four tiers.
+Tier artwork is unchanged and retains its full outer wings in previews; no 256px viewport clipping of the scaled frame in the shown comparison.
+Near-white conceptual base uses the actual Asgard spawn alpha silhouette, not a hard square background. Existing rune/color art is intentionally absent only in the conceptual preview.
+No Unity sorting orders or TowerVisual code modified. No live in-game test claimed.
+Prompt, mode and saved asset filenames recorded in Prompts_and_Status.txt.

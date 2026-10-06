@@ -1,0 +1,19 @@
+Asgard active arrow gold matched to path ornaments
+
+Applied file: Assets/4. Asset/1. BackGround/Tile_Path_Overlay_Asgard_Atlas.png
+Mode: built-in image_gen color-edit candidate, followed by palette transfer to the original active arrow pixels.
+Only eight active warm-gold arrowheads in the top two rows changed. The color transfer uses luminance-ranked gold anchors sampled from the generated color-edit candidate, preserving the original shading locations and RGBA silhouettes.
+All alpha pixels, inactive navy arrows, label rows, coordinates, rounded shapes and complete .meta contents are unchanged. Path tile atlas is unchanged. Existing scene/Tile/palette references continue using the same atlas GUID/fileIDs.
+Validation: changedGoldPixels=10251; perCell=1210,1238,1226,1363,1333,1306,1289,1286; alphaChanges=0; navyAndLabelChanges=0; meanLuminance=154.5 -> 142.4; meanSaturation=0.736 -> 0.572
+Metadata SHA256 unchanged: F6CA1742AB71DA6C6848A2C68E02A9C2C81854B6CA78A33AFA0A542D16266433
+Path atlas SHA256 unchanged: 33AF434EC5709D170F519B41EE284EF34D01AADDC73FED94622531C8A5CCD0E8
+Backup: D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\output\asgard-arrow-gold-match\backups\before-16a7a90f-201c-4d2d-af20-ba912680d066
+Before_After_Gold_Match.png: left before, right after, on the actual Asgard tile.
+Visual verification performed on the static composite; no Unity play-test.
+
+Generation prompt:
+Use case: precise-object-edit
+Asset type: palette-matching edit of the existing Asgard arrow-and-label atlas.
+Input image 1 is the edit target: 4x3 atlas, first two rows eight compass arrow overlays and bottom row START END JUMP RETURN labels. Input image 2 is authoritative COLOR reference: the existing Asgard path tile (top-left tile in this reference atlas). Match the arrows to THIS tile's gold corner ornaments, not to generic shiny yellow gold.
+Change ONLY the colors of the eight active gold triangular arrowheads in the first two rows. The current arrows are too bright, too saturated yellow and too glossy compared with the Asgard corner decorations. Recolor those eight triangles to the same softer muted honey/champagne gold as the reference corner ornaments: lower peak brightness, less yellow saturation, subtle warm tan/bronze shadows, soft beige-gold highlights. Approximate main #C8AA69, lit gold #DFC78E, shadow #947539. Retain clean rounded triangular silhouettes and original shading locations.
+All seven inactive navy triangles in each cell, all four text labels, all label borders/letters, original positions, dimensions, layout, arrows' relative sizes, and alpha silhouettes MUST remain identical. Only eight warm gold arrowheads are recolored. No changes to their number or direction. Active order remains N NE E SE in top row, S SW W NW in second row. Third row remains START END JUMP RETURN unchanged. Do not add any frame, background, glow, circles, new lines, white tips or extra decoration. No red/yellow fringe. True transparent background identical to input. This is color-only retouch, NOT a redraw or rearrangement.

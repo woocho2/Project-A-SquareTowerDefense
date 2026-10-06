@@ -1,0 +1,18 @@
+Built-in image_gen edit mode; generated source exec-58ac6749-4bdd-4f01-887a-bef9d5c7b4ec.png.
+User clarified: keep ivory lettering; change saturated gold borders to match Asgard directional overlays.
+Applied only border gold palette to original PNG; AI geometry/text were not copied.
+Final asset: Assets/4. Asset/1. BackGround/Tile_Path_Overlay_Asgard_Atlas.png
+Canvas 1024x768 and badge positions, sizes, alpha, font, navy fill, all eight arrows unchanged.
+Changed border pixels by badge: 4905,4939,4924,4897.
+Validation: arrow changes 0; alpha changes 0; lettering/navy interior changes 0; all other pixel changes 0; .meta hash unchanged.
+Gold lettering trial was discarded and never applied to Assets.
+Original PNG and meta backup: output/asgard-label-border-match/backups (before-*).
+Preview: output/asgard-label-border-match/Asgard_12Sprites_Composite.png
+Before/after: output/asgard-label-border-match/Before_After_Border.png
+
+Final prompt:
+Use case: precise-object-edit.
+Input image 1: EDIT TARGET, four navy text badges with ivory letters and overly saturated orange-gold borders.
+Input image 2: PALETTE REFERENCE ONLY, Asgard directional overlay atlas. Match border color to the muted champagne/honey gold ACTIVE ARROWS in its upper rows, not the saturated bottom badge borders.
+Change ONLY the gold rectangle borders of all four badges: desaturate their strong orange-yellow gold to soft, restrained light champagne gold / beige gold. Midtone near #C3A769, highlight near #E3D19F, shadow near #80683F. Keep same border width and subtly beveled style, transparent outer pixels, identical badge positions and dimensions. Retain exact ivory-white text "START", "END", "JUMP", "RETURN", unchanged lettering font, scale and position. Retain exact dark navy fill. No gold lettering, no corner ornaments, no arrows. Only output edited four-badge horizontal strip.
+

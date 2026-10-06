@@ -2265,13 +2265,13 @@ Tilemap:
   - m_RefCount: 0
     m_Data: {fileID: 0}
   - m_RefCount: 8
-    m_Data: {fileID: 1010, guid: 8ace9c171b894b7f9dc7e6245a86fd15, type: 3}
+    m_Data: {fileID: 1005, guid: 89ee2d624969b56421468bac0c8f9d83, type: 3}
   - m_RefCount: 9
-    m_Data: {fileID: 1005, guid: 8ace9c171b894b7f9dc7e6245a86fd15, type: 3}
+    m_Data: {fileID: 1007, guid: 89ee2d624969b56421468bac0c8f9d83, type: 3}
   - m_RefCount: 8
-    m_Data: {fileID: 1002, guid: 8ace9c171b894b7f9dc7e6245a86fd15, type: 3}
+    m_Data: {fileID: 1001, guid: 89ee2d624969b56421468bac0c8f9d83, type: 3}
   - m_RefCount: 9
-    m_Data: {fileID: 1007, guid: 8ace9c171b894b7f9dc7e6245a86fd15, type: 3}
+    m_Data: {fileID: 1003, guid: 89ee2d624969b56421468bac0c8f9d83, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 34
     m_Data:
@@ -3572,9 +3572,9 @@ Tilemap:
   - m_RefCount: 0
     m_Data: {fileID: 0}
   - m_RefCount: 1
-    m_Data: {fileID: 1008, guid: 8ace9c171b894b7f9dc7e6245a86fd15, type: 3}
+    m_Data: {fileID: 1010, guid: 89ee2d624969b56421468bac0c8f9d83, type: 3}
   - m_RefCount: 1
-    m_Data: {fileID: 1004, guid: 8ace9c171b894b7f9dc7e6245a86fd15, type: 3}
+    m_Data: {fileID: 1009, guid: 89ee2d624969b56421468bac0c8f9d83, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 2
     m_Data:
@@ -4445,6 +4445,10 @@ PrefabInstance:
       propertyPath: m_enemyData
       value: 
       objectReference: {fileID: 11400000, guid: 6aaa53e87325d014cacb08571783b02d, type: 2}
+    - target: {fileID: 789117182362090262, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
+      propertyPath: m_poolEnemyType
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 2714449143849703359, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
       propertyPath: spawnPoint
       value: 
@@ -4469,6 +4473,10 @@ PrefabInstance:
       propertyPath: m_enemyData
       value: 
       objectReference: {fileID: 11400000, guid: fb027507efe6ced45b5a0ff06d4ddf46, type: 2}
+    - target: {fileID: 5954208249013597334, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
+      propertyPath: m_poolEnemyType
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7503588851756311437, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
       propertyPath: spawnPoint
       value: 
@@ -4481,6 +4489,10 @@ PrefabInstance:
       propertyPath: m_enemyData
       value: 
       objectReference: {fileID: 11400000, guid: a7f97c2ce48afde47b934739b24d9111, type: 2}
+    - target: {fileID: 7503588851756311437, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
+      propertyPath: m_poolEnemyType
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7537974313177265303, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
       propertyPath: m_Name
       value: Pool
@@ -4497,6 +4509,10 @@ PrefabInstance:
       propertyPath: m_enemyData
       value: 
       objectReference: {fileID: 11400000, guid: d359c7964242f4c418f6b8c3247704c8, type: 2}
+    - target: {fileID: 9141810548019818990, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
+      propertyPath: m_poolEnemyType
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4556,7 +4572,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6995016675193235437, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000025123552
+      value: 0.00007887248
       objectReference: {fileID: 0}
     - target: {fileID: 8257166562869771707, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_AnchorMax.x

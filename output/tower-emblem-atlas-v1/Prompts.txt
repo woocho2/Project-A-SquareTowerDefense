@@ -1,0 +1,9 @@
+Mode: built-in image_gen. Final sword source: C:\Users\user\.codex\generated_images\01a064d2-c8d9-7780-93e6-a51a25095313\exec-eb4ce835-732e-4040-aeeb-2c6e227bacb5.png
+
+Sword extraction prompt:
+Use case: background-extraction. Input image is the approved sword tower concept sheet. Extract/recreate exactly ONE of its upright straight sword emblems as an isolated pure BLACK silhouette on a genuinely TRANSPARENT background. Discard the entire gold rim, wings, white tile face, page and other three duplicates. Preserve the approved simple sword design: a broad upright blade, centered pointed tip, straight tapered blade edges mirrored left/right, one clean narrow transparent center slit in the blade, simple straight horizontal short guard with softly rounded ends, short straight grip, small symmetric diamond-shaped pommel. Tip, guard, grip and pommel aligned on one perfectly straight vertical axis. Use the same proportions as the reference emblem, not a newly ornate sword.
+Only solid opaque #000000 visible shape and transparent cutouts. Black is a temporary neutral alpha source that will be stored as white for tinting. No white/gray visible paint, no color, metallic shading, glow, shadow, gradients, texture, noisy alpha residue, speckles, tiny etching or other decorations. Clean flat cartoon pictogram, very legible at 50px. Single sword centered fully visible upright on a square transparent canvas, occupying about 70 percent height, generous margin. No diagonal rotation or perspective, no frame, no labels, no background.
+
+Other approved sources and prompts:
+../weapon-emblems-white-v1/Prompts_and_Status.txt
+../element-emblems-white-v1/Prompts_and_Status.txt

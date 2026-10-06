@@ -1,0 +1,10 @@
+Request: make the tower tier frame nearly the same size as the tower-spawn tile, reducing the visible underlying tile edge.
+Change: TowerBase.prefab Tier child Transform (fileID 4911461941969686337), localScale (1,1,1) -> (1.06,1.025,1).
+Measured baseline: tier nominal basic frame 234x242px; Asgard spawn artwork approximately 244x242px. Both use PPU 192 and centered pivots.
+New nominal displayed basic frame approximately 248x248px. Small overhang covers most of the underlying rim while wings remain uncut outside the PNG canvas in world space.
+All five tiers use this one shared Transform. No PNG resampling, image generation, local wing warping or palette changes performed.
+The imagegen skill was inspected; native prefab scaling was selected because this is a display-size correction, not new bitmap art.
+Unchanged: tier PNGs and .meta/GUID/PPU, spawn atlas, tower root transform, Color/Emblem/Range/Highlight transforms, gameplay scripts and scene files.
+Preview: Before_After_On_SpawnTile.png, top row before, bottom row after; same Asgard spawn sprite under each tier. This is an offline composite, not a live Unity screenshot.
+Original prefab backup is alongside this record, named TowerBase.before-*.prefab.
+Already spawned objects in a running game may need a stage restart to use the updated prefab. Live Unity playtest not performed.

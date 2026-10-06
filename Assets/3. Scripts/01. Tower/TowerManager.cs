@@ -380,7 +380,6 @@ public class TowerManager : MonoBehaviour
         TileManager.Instance?.AdvanceTowerBuffEffectTurns();
         foreach (KeyValuePair<int, TowerController> tower in orderedTowers)
         {
-            tower.Value?.AdvanceStackBuffTurn();
             tower.Value?.AdvanceSkillTurn();
         }
     }
@@ -578,6 +577,7 @@ public class TowerManager : MonoBehaviour
         }
 
         upgradedTower.InheritCreationOrder(currentTower.CreationOrder);
+        upgradedTower.InheritBuffStatuses(currentTower);
         TileManager.Instance.SetTowerAt(spawnIndex, upgradedTower);
         upgradedTower.Init(upgradedData, GetGlobalStats(upgradedData.towerID));
         upgradedTower.SetTargetPriority(previousTargetPriority);
@@ -671,6 +671,7 @@ public class TowerManager : MonoBehaviour
         }
 
         upgradedTower.InheritCreationOrder(currentTower.CreationOrder);
+        upgradedTower.InheritBuffStatuses(currentTower);
         TileManager.Instance.SetTowerAt(spawnIndex, upgradedTower);
         upgradedTower.Init(upgradedData, GetGlobalStats(upgradedData.towerID));
         upgradedTower.SetTargetPriority(previousTargetPriority);

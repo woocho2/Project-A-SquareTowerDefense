@@ -1,0 +1,22 @@
+Status: sword-emblem CONCEPT ONLY. No original Assets PNG, prefab, script or meta changed.
+Mode: built-in image_gen edit/redesign of the old sword, with Diamond tier as sizing/style reference; follow-up clean-silhouette edit. All color variants share one AI-generated geometry; palette tinting is deterministic like Unity SpriteRenderer.color.
+Outputs: Sword_Tint_Master_256.png (white tintable master), Sword_Red/Blue/Yellow/Black.png (256x256 transparent symbol cutouts), Sword_4Colors_Concept.png, Sword_Under_All_5Tiers_Preview.png.
+Roles: red splash, blue target, yellow buff, black debuff.
+Palette: #E25D62, #538ACD, #D5AD28, #000000. Single color per glyph, no shading.
+Preview layering: plain near-white base (#FFFDF7), then sword, then current tier. Original colored rune layer omitted only in this conceptual composite. Existing actual code/render sorting unchanged.
+Sizing: retains existing emblem PPU256 at scale1; tier PPU192 at scale(1.06,1.045), localY=-0.0128125. Emblem canvas occupies 192x192 in a 256px tier-scale reference. Exact solid-pixel overlap tested against all five current tier images; no live Unity verification.
+
+Initial prompt:
+Use case: precise-object-edit.
+Asset type: a tintable sword emblem sprite for a pastel cartoon tower-defense game.
+Input 1 is the edit target: the old thin gray sword emblem. Redesign only that emblem, as one clean bold cartoon sword. Input 2 is a sizing and style REFERENCE ONLY: the current Diamond tier frame and its lower corner wings. Do NOT draw any frame, wings or background into the new emblem.
+Primary design: one stout readable short sword, NOT crossed swords. Blade points upward and slightly left, about 18–22 degrees from vertical; handle points downward and slightly right but stays near the center. Broad pointed blade with softened cartoon shoulders, short compact crossguard, chunky simple grip and small round pommel. One or two broad transparent negative-space cuts, such as a blade bevel slit and a single grip separation, are allowed to make the silhouette read as a sword. No fine engraving or tiny texture.
+Color: pure flat WHITE silhouette with true alpha, intended as a neutral Unity SpriteRenderer tint master; all four red/blue/yellow/black variants will use this SAME geometry. No gray shading, metallic gradients, colored gems, dark outline, sparkles, glow, drop shadow or backing disc. Large coherent filled shapes rather than thin line art. Cartoon silhouette, not realistic longsword or pixel art.
+Composition: a single sword centered on a square transparent canvas representing 256x256 coordinates. Approximate overall silhouette bounds x=65..191, y=24..230. Tip near (88,28), pommel near (145,224), crossguard near y=159 and spanning x=107..178. Keep the bottom grip and pommel in the central corridor x=112..157, especially below y=190, because the tier's bottom wings will be rendered on top. The top tip, crossguard and pommel must remain clearly separated from the reference frame's opaque silhouette when layered underneath it. No cropping. No opaque background; no letters, no UI elements. Return only the tintable sword cutout.
+
+Final follow-up prompt:
+Use case: precise-object-edit.
+Edit this generated sword cutout. Keep a single sword, but correct two issues ONLY:
+1. Clean the silhouette into a crisp SOLID PURE BLACK cartoon icon. Remove ALL scattered dots, ragged alpha speckles, scratches, grain and broken interior holes. Smooth continuous softly rounded contours. One simple clean long broad transparent inset in the blade is enough; it must not be fragmented or distressed. One clean grip separation. Every visible filled surface is the same flat #000000. No shading, no highlights, no outline of a different color.
+2. Reduce its diagonal angle: point the sword almost upward, only 15 degrees tilted left from vertical. The pommel and grip need to be close to the lower CENTER so Diamond frame wings cannot cover them. On a 256x256 conceptual canvas: silhouette bounds about x=77..180, y=26..228; pommel centered near (143,215), entire grip/pommel below y190 stays in x=124..158. Blade tip near (92,30). Short chunky crossguard. Preserve a broad pointed blade and simple stout cartoon proportions.
+Output only ONE clean sword, not a sheet. Exact same square canvas and genuinely transparent background. No white or ivory backing, frame, wing, circle, decorative objects, text or shadow. This is a small game emblem that should still read clearly at 32 pixels. Do not create fine detailing.

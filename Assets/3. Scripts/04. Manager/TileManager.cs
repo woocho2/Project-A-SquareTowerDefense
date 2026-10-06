@@ -320,6 +320,38 @@ public class TileManager : MonoBehaviour
         return GetCellDistance(towerCell, pathCell);
     }
 
+    /// <summary>
+    /// 해당 타워 스폰 타일을 지금 사거리 안에 두고 있는 그 문양의 버프 타워 중 Power가 가장 높은 것의 스탯을 반환합니다.
+    /// 스택형 버프는 버프 타워가 존재하고 사거리 안에 있을 때만 유지되고, 버프의 세기는 그 버프 타워의 지금 스탯을 따릅니다.
+    /// 사거리 안에 그런 버프 타워가 없으면 false를 반환합니다.
+    /// </summary>
+    public bool TryGetStrongestBuffTowerStatsInRange(int index, BuffTarget target, out TowerStats strongestStats)
+    {
+        strongestStats = default;
+        if (!m_towerSpawnCellsByIndex.TryGetValue(index, out Vector3Int cell)) return false;
+
+        bool found = false;
+        foreach (KeyValuePair<int, TowerController> pair in m_towersBySpawnIndex)
+        {
+            TowerController source = pair.Value;
+            if (source == null) continue;
+
+            TowerData data = source.GetTowerData();
+            if (data == null || data.attackType != AttackType.Buff || data.buffTarget != target) continue;
+            if (!m_towerSpawnCellsByIndex.TryGetValue(pair.Key, out Vector3Int sourceCell)) continue;
+
+            TowerStats sourceStats = source.GetFinalStats();
+            if (GetCellDistance(sourceCell, cell) > TowerAttackAction.ToTileRange(sourceStats.Range)) continue;
+
+            if (!found || sourceStats.AttackPower > strongestStats.AttackPower)
+            {
+                strongestStats = sourceStats;
+                found = true;
+            }
+        }
+        return found;
+    }
+
     public List<int> GetTowerSpawnIndicesInRange(int centerIndex, int tileRange)
     {
         List<int> indices = new List<int>();

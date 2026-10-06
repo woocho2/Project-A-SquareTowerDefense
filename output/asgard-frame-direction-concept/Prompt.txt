@@ -1,0 +1,12 @@
+Preview only. No production PNG, atlas, prefab or metadata is changed.
+Mode: built-in image_gen edit.
+Reference: Asgard_Path_Reference.png extracted from the current Tile_Path_Atlas.png.
+
+Use case: precise-object-edit
+Asset type: single Asgard path tile concept, east/right direction active.
+Input image 1 is the exact current tile to edit. Preserve its square proportions, navy blue empty face, warm gold metallic outer frame, rounded corners, pastel cartoon rendering and gentle bevel shading. Keep its center completely empty, no circles.
+Primary request: the frame ornaments themselves are eight direction indicator lights. Keep the four existing L-shaped corner ornaments (NW NE SW SE). Add one matching compact gold beveled ornament centered on each of the four sides (N E S W), integrated into the rim; simple rounded rectangular metal tabs echoing the same design language, NOT arrows, NOT triangles, NOT gems, NOT separate icons. Exactly eight ornaments total. Side ornaments slightly smaller than the existing corner caps. All ornaments stay within the original square tile footprint.
+Activation: ONLY the ornament at the center of the RIGHT edge (3 o'clock, east) has a crisp bright ivory-white perimeter highlight. The outline wraps just that right-hand tab, not the whole frame; no giant glow, no rays. All seven other ornaments use the SAME outline style but substantially reduced border brightness, muted and unlit. Keep all eight ornament bodies in the same gold palette: do NOT recolor the active body red, do NOT desaturate inactive bodies gray, do NOT change body hue. Directional contrast is primarily border brightness, with the right ornament distinctly lit and the other seven subdued. Suppress bright specular border lines on the inactive caps so they cannot look active accidentally. Outer continuous rail should not be luminous.
+Style: clean compact cartoon game UI sprite, top-down orthographic, no pixel art, restrained gloss, no noisy texture.
+Composition: one single tile centered and filling most of a square canvas, identical framing to the reference. Genuine transparent outside background; navy opaque face inside.
+Avoid: text, labels, captions, compass hands, arrow symbols, arrows in the center, circular patterns, extra ornaments, scene backgrounds, multiple tiles, checkerboards, excessive bloom, neon frame.

@@ -4,14 +4,14 @@ using UnityEngine;
 /// <summary>
 /// 불 단일 타워의 스킬.
 /// 적중을 Duration 회(컬러 강화가 레벨만큼 줄여 둔 값) 채울 때마다 치명타 확률과 치명타 피해가 AbilityValue%p 만큼 오르는 스택을 하나 얻습니다.
-/// 스택은 (티어 × 컬러 강화 레벨) 적 턴 동안 유지됩니다. 예: 골드(3) × 레벨 2 = 6턴. 범위는 1~25턴.
+/// 스택은 이 타워가 (티어 × 컬러 강화 레벨) 번 행동하는 동안 유지됩니다. 예: 골드(3) × 레벨 2 = 6번. 범위는 1~25번.
 /// 불 버프의 예열을 받으면 공격 횟수 +1, 과열이면 +2를 추가로 받습니다.
 /// </summary>
 public class FireTargetSkill : TowerSkill
 {
     private sealed class CriticalStack
     {
-        public int RemainingTurns;
+        public int RemainingActions;
         public float Bonus;
     }
 
@@ -20,11 +20,11 @@ public class FireTargetSkill : TowerSkill
 
     public FireTargetSkill(TowerController owner, TowerData data) : base(owner, data) { }
 
-    public override void OnEnemyTurnStart()
+    public override void OnOwnerActed()
     {
         for (int i = m_stacks.Count - 1; i >= 0; i--)
         {
-            if (--m_stacks[i].RemainingTurns <= 0)
+            if (--m_stacks[i].RemainingActions <= 0)
             {
                 m_stacks.RemoveAt(i);
             }
@@ -41,11 +41,12 @@ public class FireTargetSkill : TowerSkill
 
         m_hitCount = 0;
 
-        // 스택은 공격 도중에 생기므로, 얻은 턴은 세지 않고 그 다음 턴부터 (티어 × 레벨) 턴 동안 유지합니다.
-        int durationTurns = Mathf.Clamp(m_data.Tier, 1, 5) * level;
+        // 스택은 공격 도중에 생기므로, 얻은 행동은 세지 않고 그 다음 행동부터 (티어 × 레벨) 번의 행동 동안 유지합니다.
+        // 행동 횟수는 발사할 때 줄이므로, 이번 행동의 발사 뒤에 생긴 스택은 다음 행동부터 셉니다.
+        int durationActions = Mathf.Clamp(m_data.Tier, 1, 5) * level;
         m_stacks.Add(new CriticalStack
         {
-            RemainingTurns = durationTurns + 1,
+            RemainingActions = durationActions,
             Bonus = Mathf.Max(0f, m_owner.BaseStats.AbilityValue) / 100f
         });
     }

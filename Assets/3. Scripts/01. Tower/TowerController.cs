@@ -231,6 +231,7 @@ public class TowerController : MonoBehaviour
 
             m_isAttackInProgress = true;
             StartCoroutine(RunProjectileAttack(finalStats));
+            ConsumeBuffAction();
             m_remainingAction = GetFinalAction();
             return true;
         }
@@ -265,6 +266,21 @@ public class TowerController : MonoBehaviour
 
     public TowerData GetTowerData() => m_towerData;
     public void InheritCreationOrder(int creationOrder) => CreationOrder = creationOrder;
+
+    /// <summary>티어 강화로 교체될 때, 이전 타워가 받고 있던 스택형 버프(스킬 1·스킬 2, 스택)를 그대로 이어받습니다.</summary>
+    public void InheritBuffStatuses(TowerController previous)
+    {
+        if (previous == null) return;
+
+        foreach (KeyValuePair<BuffTarget, TowerBuffStatus> pair in previous.m_buffStatuses)
+        {
+            m_buffStatuses[pair.Key] = pair.Value;
+        }
+        foreach (KeyValuePair<int, int> pair in previous.m_appliedBuffVersions)
+        {
+            m_appliedBuffVersions[pair.Key] = pair.Value;
+        }
+    }
     public DebuffZone GetDebuffZone() => m_towerData != null && m_towerData.attackType == AttackType.Debuff
         ? m_debuffZoneChild : null;
 
@@ -415,6 +431,8 @@ public class TowerController : MonoBehaviour
     {
         if (TileManager.Instance == null || SpawnIndex < 1 || IsSupportTower()) return;
 
+        DropBuffStatusesOutOfRange();
+
         IReadOnlyList<TowerTileBuffEffect> effects = TileManager.Instance.GetTowerBuffEffectsAt(SpawnIndex);
         for (int i = 0; i < effects.Count; i++)
         {
@@ -439,12 +457,47 @@ public class TowerController : MonoBehaviour
         }
     }
 
-    /// <summary>적 턴이 시작될 때 한 번 호출됩니다. 스택형 버프의 남은 턴을 줄입니다.</summary>
-    public void AdvanceStackBuffTurn()
+    /// <summary>
+    /// 이 타워가 한 번 행동했을 때 호출합니다. 버프와 스킬 버프의 유지는 턴이 아니라 행동 횟수로 세므로,
+    /// 이번 행동에 쓴 최종 스탯을 만든 뒤에 남은 횟수를 하나 줄입니다.
+    /// </summary>
+    private void ConsumeBuffAction()
     {
         foreach (TowerBuffStatus status in m_buffStatuses.Values)
         {
-            status.OnEnemyTurnStart();
+            status.OnOwnerActed();
+        }
+        m_skill?.OnOwnerActed();
+    }
+
+    /// <summary>
+    /// 스택형 버프는 그 문양의 버프 타워가 존재하고 이 타워가 사거리 안에 있을 때만 유지됩니다.
+    /// 사거리를 벗어나거나 버프 타워가 사라지면 스킬 1·스킬 2와 스택을 모두 지우고, 다시 받을 때 처음부터 쌓습니다.
+    /// 유지되는 버프의 세기는 사거리 안의 버프 타워가 지금 가진 스탯에 맞춥니다 (버프 타워를 강화하면 함께 오릅니다).
+    /// 적 턴마다 타워가 자기 타일의 버프를 읽는 시점(RefreshStackBuffs)에만 판정합니다.
+    /// 플레이어 턴에 타워를 잠깐 사거리 밖으로 옮겼다가 되돌려도 버프가 지워지지 않습니다.
+    /// </summary>
+    private void DropBuffStatusesOutOfRange()
+    {
+        if (m_buffStatuses.Count == 0 || TileManager.Instance == null || SpawnIndex < 1) return;
+
+        List<BuffTarget> lostTargets = null;
+        foreach (KeyValuePair<BuffTarget, TowerBuffStatus> pair in m_buffStatuses)
+        {
+            if (TileManager.Instance.TryGetStrongestBuffTowerStatsInRange(SpawnIndex, pair.Key, out TowerStats sourceStats))
+            {
+                pair.Value.SyncWithSource(sourceStats.AttackPower, sourceStats.AbilityValue);
+                continue;
+            }
+
+            if (lostTargets == null) lostTargets = new List<BuffTarget>();
+            lostTargets.Add(pair.Key);
+        }
+
+        if (lostTargets == null) return;
+        for (int i = 0; i < lostTargets.Count; i++)
+        {
+            m_buffStatuses.Remove(lostTargets[i]);
         }
     }
 
