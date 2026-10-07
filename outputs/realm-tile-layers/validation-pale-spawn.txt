@@ -1,0 +1,5 @@
+PASS: only Alfheim, Vanaheim, Midgard, Nidavellir, Muspelheim spawn floor RGB values changed to near-white theme tints.
+PASS: all path floors, remaining spawn floors, alpha footprints and atlas dimensions unchanged.
+PASS: ten decoration atlases unchanged; scene, Tile assets and importers untouched.
+PREVIEW: decorated-floor-pairs.png composites spawn/path floors with FRAME only (no arrows or labels).
+NOT RUN: Unity play mode.

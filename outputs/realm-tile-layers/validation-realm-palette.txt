@@ -1,0 +1,5 @@
+PASS: light spawn / dark path palettes applied to Alfheim, Vanaheim, Midgard, Jotunheim, Muspelheim.
+PASS: Asgard, Nidavellir, Niflheim, Hel and Ragnarok floor pixels unchanged.
+PASS: floor alpha and dimensions preserved; ten decoration/direction textures unchanged.
+PASS: no metadata, Tile assets or scene settings changed.
+NOT RUN: Unity play mode.

@@ -1,0 +1,136 @@
+{
+  "generator": "built-in image_gen",
+  "status": "26 sprites imported to Unity; 13 bullet sprites connected to prefabs 201-213; splash sprites not yet connected",
+  "assets": [
+    {
+      "emblemId": 1,
+      "name": "Sword",
+      "label": "검",
+      "splashId": 101,
+      "bulletId": 201,
+      "splash": "png/Splash_Sword.png",
+      "bullet": "png/Bullet_Sword.png",
+      "bulletConcept": "매화 꽃잎 검기"
+    },
+    {
+      "emblemId": 2,
+      "name": "Axe",
+      "label": "도끼",
+      "splashId": 102,
+      "bulletId": 202,
+      "splash": "png/Splash_Axe.png",
+      "bullet": "png/Bullet_Axe.png",
+      "bulletConcept": "투척 손도끼"
+    },
+    {
+      "emblemId": 3,
+      "name": "Bow",
+      "label": "활",
+      "splashId": 103,
+      "bulletId": 203,
+      "splash": "png/Splash_Bow.png",
+      "bullet": "png/Bullet_Bow.png",
+      "bulletConcept": "화살"
+    },
+    {
+      "emblemId": 4,
+      "name": "Spear",
+      "label": "창",
+      "splashId": 104,
+      "bulletId": 204,
+      "splash": "png/Splash_Spear.png",
+      "bullet": "png/Bullet_Spear.png",
+      "bulletConcept": "긴 자루의 투척 창"
+    },
+    {
+      "emblemId": 5,
+      "name": "Shield",
+      "label": "방패",
+      "splashId": 105,
+      "bulletId": 205,
+      "splash": "png/Splash_Shield.png",
+      "bullet": "png/Bullet_Shield.png",
+      "bulletConcept": "원형 투척 방패"
+    },
+    {
+      "emblemId": 6,
+      "name": "Hammer",
+      "label": "해머",
+      "splashId": 106,
+      "bulletId": 206,
+      "splash": "png/Splash_Hammer.png",
+      "bullet": "png/Bullet_Hammer.png",
+      "bulletConcept": "짧은 자루의 투척 망치"
+    },
+    {
+      "emblemId": 7,
+      "name": "Fire",
+      "label": "불",
+      "splashId": 107,
+      "bulletId": 207,
+      "splash": "png/Splash_Fire.png",
+      "bullet": "png/Bullet_Fire.png",
+      "bulletConcept": "불 원소 탄"
+    },
+    {
+      "emblemId": 8,
+      "name": "Ice",
+      "label": "얼음",
+      "splashId": 108,
+      "bulletId": 208,
+      "splash": "png/Splash_Ice.png",
+      "bullet": "png/Bullet_Ice.png",
+      "bulletConcept": "얼음 원소 탄"
+    },
+    {
+      "emblemId": 9,
+      "name": "Electric",
+      "label": "번개",
+      "splashId": 109,
+      "bulletId": 209,
+      "splash": "png/Splash_Electric.png",
+      "bullet": "png/Bullet_Electric.png",
+      "bulletConcept": "번개 원소 탄"
+    },
+    {
+      "emblemId": 10,
+      "name": "Wind",
+      "label": "바람",
+      "splashId": 110,
+      "bulletId": 210,
+      "splash": "png/Splash_Wind.png",
+      "bullet": "png/Bullet_Wind.png",
+      "bulletConcept": "바람 원소 탄"
+    },
+    {
+      "emblemId": 11,
+      "name": "Earth",
+      "label": "대지",
+      "splashId": 111,
+      "bulletId": 211,
+      "splash": "png/Splash_Earth.png",
+      "bullet": "png/Bullet_Earth.png",
+      "bulletConcept": "대지 원소 탄"
+    },
+    {
+      "emblemId": 12,
+      "name": "Light",
+      "label": "빛",
+      "splashId": 112,
+      "bulletId": 212,
+      "splash": "png/Splash_Light.png",
+      "bullet": "png/Bullet_Light.png",
+      "bulletConcept": "빛 원소 탄"
+    },
+    {
+      "emblemId": 13,
+      "name": "Dark",
+      "label": "어둠",
+      "splashId": 113,
+      "bulletId": 213,
+      "splash": "png/Splash_Dark.png",
+      "bullet": "png/Bullet_Dark.png",
+      "bulletConcept": "블랙홀 중심과 보라색 고리"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+PASS: only Nidavellir floor colors and ten START sprites changed; atlas dimensions and alpha footprints preserved.
+PASS: Nidavellir path/spawn floors have no generated facets, stripes, or mineral veins.
+PASS: original START white lettering restored; word-plate rendering matches END/JUMP/RETURN; thin long east arrow below.
+PASS: original metadata, sprite IDs, Tile assets, and scene settings unchanged by this revision.
+NOT RUN: Unity editor import and play mode.

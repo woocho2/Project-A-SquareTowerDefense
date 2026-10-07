@@ -1,0 +1,7 @@
+PASS: ten realm JUMP slots replaced with transparent-centre ornament-only FRAME sprites.
+PASS: atlas dimensions/slices, texture GUIDs, fileIDs and spriteIDs preserved.
+PASS: ten themed FRAME Tile assets valid; original JUMP Tile GUID kept for Asgard palette references.
+PASS: TowerSpawn Decoration covers exactly 26 spawn cells; path direction keeps all 34 original cells.
+PASS: only former Path Special GameObject and Tilemap scene blocks changed; gameplay and pulse tuning preserved.
+PASS: complete atlas rebuild succeeds and leaves the decorated scene unchanged.
+NOT RUN: Unity editor import and play mode.

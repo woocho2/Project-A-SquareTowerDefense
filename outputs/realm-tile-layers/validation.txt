@@ -1,0 +1,7 @@
+PASS: 20 floor slices, unique fileIDs, valid rects, dimensions 2048x768.
+PASS: 10 overlay atlases keep original 256px slices/importers; center arrows and lower long START arrow.
+PASS: all 19 existing floor Tile assets reference the shared atlas (10 path, 9 spawn).
+PASS: Stage1 keeps 34 direction cells and includes START/END; duplicate endpoint layer empty.
+PASS: user scene settings preserved outside the two endpoint/direction Tilemap blocks.
+PASS: runtime C# compilation completed without errors (existing serialized-field warnings).
+NOT RUN: Unity editor import and play mode.

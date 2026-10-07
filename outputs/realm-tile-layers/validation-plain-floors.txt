@@ -1,0 +1,5 @@
+PASS: all 20 path/spawn floors contain only a uniform base hue with a single weak diagonal shade.
+PASS: at most five RGB colors / four channel levels per tile; no irregular texture or symbols.
+PASS: floor atlas dimensions and every alpha pixel unchanged.
+PASS: all ten decoration/direction atlases are byte-identical; metadata and scene untouched.
+NOT RUN: Unity play mode.
