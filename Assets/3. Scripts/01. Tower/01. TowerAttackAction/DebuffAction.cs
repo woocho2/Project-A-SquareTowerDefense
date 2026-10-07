@@ -27,7 +27,8 @@ public class DebuffAction : TowerAttackAction
         if (orbiter != null)
         {
             orbiter.SetEffectType(TileSatelliteEffectType.Debuff);
-            orbiter.SetDebuffType(m_data.debuffTarget);
+            // 장판 심볼도 타워 외형 ID의 뒤 두 자리와 같은 문양을 사용합니다.
+            orbiter.SetDebuffType((DebuffTarget)(m_data.VisualTowerID % 100));
         }
 
         // 최초에는 가장 가까운 패스 타일에 놓고, 이후에는 모든 패스 타일로 옮길 수 있습니다.

@@ -71,6 +71,21 @@ public class TileManager : MonoBehaviour
     public IReadOnlyList<Vector3Int> PathGridPositions => m_pathGridPositions;
     public Tilemap TowerSpawnTilemap => m_towerSpawnTilemap;
 
+    [Header("패스 장식과 화살표 순차 발광")]
+    [Tooltip("테두리 장식, 중앙 방향 화살표와 END 표시가 있는 Path Direction 타일맵입니다.")]
+    [SerializeField] private Tilemap m_pathDirectionTilemap;
+    [SerializeField] private bool m_enablePathArrowPulse = true;
+    [Tooltip("다음 경로 인덱스가 빛나기까지 걸리는 실제 시간(초)입니다.")]
+    [SerializeField, Min(0.02f)] private float m_pathArrowStepSeconds = 0.12f;
+    [Tooltip("한 타일의 테두리와 화살표가 함께 밝아졌다가 서서히 사라지는 시간입니다.")]
+    [SerializeField, Min(0.05f)] private float m_pathArrowFadeSeconds = 0.38f;
+    [Tooltip("END의 잔광이 사라진 뒤 START에서 다시 시작하기까지의 시간입니다.")]
+    [SerializeField, Min(0f)] private float m_pathArrowLoopPause = 0.8f;
+    [SerializeField, Range(0.1f, 1f)] private float m_pathArrowIdleOpacity = 0.65f;
+    [SerializeField, Range(1f, 10f)] private float m_pathArrowGlowMultiplier = 1.8f;
+    [Tooltip("적 턴에는 발광을 줄여 적과 투사체가 잘 보이게 합니다.")]
+    [SerializeField, Range(0f, 1f)] private float m_pathArrowCombatStrength = 0.55f;
+
     [Header("에너미 특수 타일 생성 개수 설정")]
     [SerializeField] private int defendTileCount = 5;
     [SerializeField] private int speedTileCount = 5;
@@ -164,6 +179,20 @@ public class TileManager : MonoBehaviour
     private readonly List<GameObject> m_pathMapBuffEffects = new List<GameObject>();
     private readonly List<GameObject> m_towerMapBuffEffects = new List<GameObject>();
 
+    private sealed class PathArrowCell
+    {
+        public Vector3Int Cell;
+        public Color OriginalColor;
+        public TileFlags OriginalFlags;
+        public Color LastColor;
+        public float Intensity;
+    }
+
+    private readonly List<PathArrowCell> m_pathArrowCells = new List<PathArrowCell>();
+    private int[] m_pathArrowCellIndices;
+    private float m_pathArrowElapsed;
+    private bool m_pathArrowColorsOverridden;
+
     #endregion
 
     #region 초기화
@@ -182,7 +211,23 @@ public class TileManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        RestorePathArrowColors();
         if (Instance == this) Instance = null;
+    }
+
+    private void OnEnable()
+    {
+        m_pathArrowElapsed = 0f;
+    }
+
+    private void OnDisable()
+    {
+        RestorePathArrowColors();
+    }
+
+    private void Update()
+    {
+        UpdatePathArrowPulse();
     }
 
     private void Start()
@@ -190,10 +235,115 @@ public class TileManager : MonoBehaviour
         if (tilemap == null) tilemap = GetComponent<Tilemap>();
         InitializePathTileIndices();
         InitializeTowerSpawnTileIndices();
+        InitializePathArrowPulse();
 
         AssignRandomSpecialTiles();
 
         AssignRandomTowerTileBuffs();
+    }
+
+    #endregion
+
+    #region 패스 장식과 화살표 순차 발광
+
+    private void InitializePathArrowPulse()
+    {
+        if (m_pathDirectionTilemap == null) return;
+
+        // 표시 타일맵의 좌표계가 달라도 경로의 월드 위치를 기준으로 연결합니다.
+        Dictionary<Vector3Int, int> cellIndices = new Dictionary<Vector3Int, int>();
+        m_pathArrowCellIndices = new int[m_pathGridPositions.Count];
+        for (int index = 0; index < m_pathGridPositions.Count; index++)
+        {
+            Vector3Int cell = m_pathDirectionTilemap.WorldToCell(
+                tilemap.GetCellCenterWorld(m_pathGridPositions[index]));
+            m_pathArrowCellIndices[index] = -1;
+            if (!m_pathDirectionTilemap.HasTile(cell)) continue;
+
+            if (!cellIndices.TryGetValue(cell, out int cellIndex))
+            {
+                cellIndex = m_pathArrowCells.Count;
+                Color color = m_pathDirectionTilemap.GetColor(cell);
+                m_pathArrowCells.Add(new PathArrowCell
+                {
+                    Cell = cell,
+                    OriginalColor = color,
+                    OriginalFlags = m_pathDirectionTilemap.GetTileFlags(cell),
+                    LastColor = color
+                });
+                cellIndices.Add(cell, cellIndex);
+            }
+            m_pathArrowCellIndices[index] = cellIndex;
+        }
+    }
+
+    private void UpdatePathArrowPulse()
+    {
+        if (!m_enablePathArrowPulse)
+        {
+            RestorePathArrowColors();
+            return;
+        }
+        if (m_pathDirectionTilemap == null || m_pathArrowCells.Count == 0 ||
+            m_pathArrowCellIndices == null || m_pathArrowCellIndices.Length == 0) return;
+
+        if (!m_pathArrowColorsOverridden)
+        {
+            foreach (PathArrowCell entry in m_pathArrowCells)
+                m_pathDirectionTilemap.SetTileFlags(entry.Cell, entry.OriginalFlags & ~TileFlags.LockColor);
+            m_pathArrowColorsOverridden = true;
+        }
+
+        float step = Mathf.Max(0.02f, m_pathArrowStepSeconds);
+        float fade = Mathf.Max(0.05f, m_pathArrowFadeSeconds);
+        float cycle = (m_pathArrowCellIndices.Length - 1) * step + fade + Mathf.Max(0f, m_pathArrowLoopPause);
+        // 게임 배속과 독립적으로 읽기 쉬운 속도를 유지합니다.
+        m_pathArrowElapsed = Mathf.Repeat(m_pathArrowElapsed + Time.unscaledDeltaTime, cycle);
+        foreach (PathArrowCell entry in m_pathArrowCells) entry.Intensity = 0f;
+
+        for (int index = 0; index < m_pathArrowCellIndices.Length; index++)
+        {
+            int cellIndex = m_pathArrowCellIndices[index];
+            if (cellIndex < 0) continue;
+            float age = m_pathArrowElapsed - index * step;
+            if (age < 0f || age >= fade) continue;
+
+            float rise = Mathf.Min(0.04f, fade * 0.25f);
+            float intensity = age < rise
+                ? Mathf.SmoothStep(0f, 1f, age / rise)
+                : 1f - Mathf.SmoothStep(0f, 1f, (age - rise) / (fade - rise));
+            // 같은 칸을 다시 지나는 경로도 각 방문 순서에 맞춰 빛납니다.
+            PathArrowCell entry = m_pathArrowCells[cellIndex];
+            entry.Intensity = Mathf.Max(entry.Intensity, intensity);
+        }
+
+        float strength = GameManager.Instance != null && GameManager.Instance.CurrentState == TurnState.EnemyTurn
+            ? Mathf.Clamp01(m_pathArrowCombatStrength) : 1f;
+        foreach (PathArrowCell entry in m_pathArrowCells)
+        {
+            float intensity = entry.Intensity * strength;
+            float brightness = Mathf.Lerp(1f, Mathf.Max(1f, m_pathArrowGlowMultiplier), intensity);
+            Color color = entry.OriginalColor;
+            color.r *= brightness;
+            color.g *= brightness;
+            color.b *= brightness;
+            color.a *= Mathf.Lerp(Mathf.Clamp01(m_pathArrowIdleOpacity), 1f, intensity);
+            if (color == entry.LastColor) continue;
+            m_pathDirectionTilemap.SetColor(entry.Cell, color);
+            entry.LastColor = color;
+        }
+    }
+
+    private void RestorePathArrowColors()
+    {
+        if (!m_pathArrowColorsOverridden || m_pathDirectionTilemap == null) return;
+        foreach (PathArrowCell entry in m_pathArrowCells)
+        {
+            m_pathDirectionTilemap.SetColor(entry.Cell, entry.OriginalColor);
+            m_pathDirectionTilemap.SetTileFlags(entry.Cell, entry.OriginalFlags);
+            entry.LastColor = entry.OriginalColor;
+        }
+        m_pathArrowColorsOverridden = false;
     }
 
     #endregion

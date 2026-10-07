@@ -22,7 +22,7 @@ $items = @(
     @{ Name='START';  X=-4; Y=-3; Path='PathOverlay/Tile_Path_Overlay_START.asset'; Flags=1073741825 },
     @{ Name='END';    X=-3; Y=-3; Path='PathOverlay/Tile_Path_Overlay_END.asset'; Flags=1073741825 },
     @{ Name='RETURN'; X=-2; Y=-3; Path='PathOverlay/Tile_Path_Overlay_RETURN.asset'; Flags=1073741825 },
-    @{ Name='JUMP';   X=-1; Y=-3; Path='PathOverlay/Tile_Path_Overlay_JUMP.asset'; Flags=1073741825 }
+    @{ Name='FRAME';  X=-1; Y=-3; Path='PathOverlay/Tile_Path_Overlay_FRAME.asset'; Flags=1073741825 }
 )
 
 $source = [System.IO.File]::ReadAllText($palettePath)

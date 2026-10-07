@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!74 &7400000
 AnimationClip:
@@ -21,23 +21,23 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 202000, guid: e202a921dbfc447d807df3a428980202, type: 3}
+      value: {fileID: 205000, guid: e205a921dbfc447d807df3a428980205, type: 3}
     - time: 0.0625
-      value: {fileID: 202001, guid: e202a921dbfc447d807df3a428980202, type: 3}
+      value: {fileID: 205001, guid: e205a921dbfc447d807df3a428980205, type: 3}
     - time: 0.125
-      value: {fileID: 202002, guid: e202a921dbfc447d807df3a428980202, type: 3}
+      value: {fileID: 205002, guid: e205a921dbfc447d807df3a428980205, type: 3}
     - time: 0.1875
-      value: {fileID: 202003, guid: e202a921dbfc447d807df3a428980202, type: 3}
+      value: {fileID: 205003, guid: e205a921dbfc447d807df3a428980205, type: 3}
     - time: 0.25
-      value: {fileID: 202004, guid: e202a921dbfc447d807df3a428980202, type: 3}
+      value: {fileID: 205004, guid: e205a921dbfc447d807df3a428980205, type: 3}
     - time: 0.3125
-      value: {fileID: 202005, guid: e202a921dbfc447d807df3a428980202, type: 3}
+      value: {fileID: 205005, guid: e205a921dbfc447d807df3a428980205, type: 3}
     - time: 0.375
-      value: {fileID: 202006, guid: e202a921dbfc447d807df3a428980202, type: 3}
+      value: {fileID: 205006, guid: e205a921dbfc447d807df3a428980205, type: 3}
     - time: 0.4375
-      value: {fileID: 202007, guid: e202a921dbfc447d807df3a428980202, type: 3}
+      value: {fileID: 205007, guid: e205a921dbfc447d807df3a428980205, type: 3}
     - time: 0.5
-      value: {fileID: 202008, guid: e202a921dbfc447d807df3a428980202, type: 3}
+      value: {fileID: 205008, guid: e205a921dbfc447d807df3a428980205, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -60,15 +60,15 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 202000, guid: e202a921dbfc447d807df3a428980202, type: 3}
-    - {fileID: 202001, guid: e202a921dbfc447d807df3a428980202, type: 3}
-    - {fileID: 202002, guid: e202a921dbfc447d807df3a428980202, type: 3}
-    - {fileID: 202003, guid: e202a921dbfc447d807df3a428980202, type: 3}
-    - {fileID: 202004, guid: e202a921dbfc447d807df3a428980202, type: 3}
-    - {fileID: 202005, guid: e202a921dbfc447d807df3a428980202, type: 3}
-    - {fileID: 202006, guid: e202a921dbfc447d807df3a428980202, type: 3}
-    - {fileID: 202007, guid: e202a921dbfc447d807df3a428980202, type: 3}
-    - {fileID: 202008, guid: e202a921dbfc447d807df3a428980202, type: 3}
+    - {fileID: 205000, guid: e205a921dbfc447d807df3a428980205, type: 3}
+    - {fileID: 205001, guid: e205a921dbfc447d807df3a428980205, type: 3}
+    - {fileID: 205002, guid: e205a921dbfc447d807df3a428980205, type: 3}
+    - {fileID: 205003, guid: e205a921dbfc447d807df3a428980205, type: 3}
+    - {fileID: 205004, guid: e205a921dbfc447d807df3a428980205, type: 3}
+    - {fileID: 205005, guid: e205a921dbfc447d807df3a428980205, type: 3}
+    - {fileID: 205006, guid: e205a921dbfc447d807df3a428980205, type: 3}
+    - {fileID: 205007, guid: e205a921dbfc447d807df3a428980205, type: 3}
+    - {fileID: 205008, guid: e205a921dbfc447d807df3a428980205, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}

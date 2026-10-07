@@ -12,10 +12,10 @@ public class TowerVisual : MonoBehaviour
     [SerializeField] private Sprite[] m_tierSprites;
     [Tooltip("문양 뒤에 표시하는 순백색 배경입니다. 공격방식의 색은 문양에만 적용합니다.")]
     [SerializeField] private Sprite m_backgroundSprite;
-    [Tooltip("Index 0 = Sword(1), index 1 = Bow(2), ...")]
+    [Tooltip("문양 ID 순서입니다. 01 검, 02 도끼, 03 활, 04 창, 05 방패, 06 해머, 07 불, 08 얼음, 09 전기, 10 바람, 11 대지, 12 빛, 13 어둠.")]
     [SerializeField] private Sprite[] m_emblemSprites;
 
-    [Header("문양 색상 (공격방식)")]
+    [Header("문양 색상 (ID의 백의 자리: 1 광역, 2 단일, 3 버프, 4 디버프)")]
     [SerializeField] private Color m_splashColor = new Color32(226, 93, 98, 255);
     [SerializeField] private Color m_targetColor = new Color32(83, 138, 205, 255);
     [SerializeField] private Color m_buffColor = new Color32(213, 173, 40, 255);
@@ -58,8 +58,8 @@ public class TowerVisual : MonoBehaviour
     }
 
     /// <summary>
-    /// towerID 형식: [Tier][Color][Emblem]
-    /// 예: 1203 = Tier 1, Color 2, Emblem 3
+    /// towerID 형식: [천의 자리: 티어][백의 자리: 색깔][뒤 두 자리: 문양]
+    /// 예: 1202 = 1티어 테두리 + 파란색(단일 타워) + 도끼 문양(02).
     /// </summary>
     public void Apply(int towerID)
     {
@@ -74,11 +74,13 @@ public class TowerVisual : MonoBehaviour
     {
         if (towerData == null)
         {
-            Debug.LogWarning("[TowerVisual] TowerData媛 ?놁뒿?덈떎.", this);
+            Debug.LogWarning("[TowerVisual] 타워 데이터가 없습니다.", this);
             return;
         }
 
-        ApplyVisual(towerData.VisualTier, towerData.VisualColorId, towerData.VisualEmblemId, towerData.VisualTowerID);
+        // 실제 소환도 정수 ID를 적용할 때와 같은 방식으로 문양과 색깔을 결정합니다.
+        // 시너지 타워는 기존 외형 ID(VisualTowerID)를 사용합니다.
+        Apply(towerData.VisualTowerID);
     }
 
     private void ApplyVisual(int tier, int color, int emblem, int towerID)
@@ -147,14 +149,14 @@ public class TowerVisual : MonoBehaviour
     {
         if (renderer == null)
         {
-            Debug.LogWarning($"[TowerVisual] {visualName} SpriteRenderer媛 ?곌껐?섏? ?딆븯?듬땲??", this);
+            Debug.LogWarning($"[TowerVisual] {visualName} SpriteRenderer가 연결되지 않았습니다.", this);
             return;
         }
 
         int index = visualID - 1;
         if (index < 0 || sprites == null || index >= sprites.Length || sprites[index] == null)
         {
-            Debug.LogWarning($"[TowerVisual] TowerID {towerID}??{visualName} ID {visualID}???대떦?섎뒗 ?ㅽ봽?쇱씠?멸? ?놁뒿?덈떎.", this);
+            Debug.LogWarning($"[TowerVisual] TowerID {towerID}의 {visualName} ID {visualID}에 해당하는 스프라이트가 없습니다.", this);
             renderer.sprite = null;
             return;
         }

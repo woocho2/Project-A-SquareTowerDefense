@@ -557,28 +557,5 @@ public class UIStageThemeController : MonoBehaviour
         };
     }
 
-    [ContextMenu("아스가르드 기본 스프라이트 세트 등록 및 적용")]
-    public void LoadDefaultAsgardSprites()
-    {
-        if (realmSprites == null) realmSprites = new List<RealmThemeSprites>();
-        var asgard = realmSprites.Find(r => r.realm == StageRealm.Asgard);
-        if (asgard == null)
-        {
-            asgard = new RealmThemeSprites { realm = StageRealm.Asgard, displayName = "아스가르드 (Asgard)" };
-            realmSprites.Add(asgard);
-        }
-
-        asgard.panelMainFrame = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Panel_Main_Frame.png");
-        asgard.panelMainBG = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Panel_Main_BG.png");
-        asgard.btnHighFrame = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_High_Frame.png");
-        asgard.btnHighBG = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_High_BG.png");
-        asgard.btnMiddleFrame = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_Middle_Frame.png");
-        asgard.btnMiddleBG = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_Middle_BG.png");
-
-        CurrentRealm = StageRealm.Asgard;
-        EditorUtility.SetDirty(this);
-        ApplyTheme();
-        Debug.Log("[UIStageThemeController] 아스가르드 전용 UI 스프라이트가 성공적으로 등록 및 적용되었습니다!");
-    }
 #endif
 }

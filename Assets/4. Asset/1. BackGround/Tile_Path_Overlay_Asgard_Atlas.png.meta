@@ -34,7 +34,7 @@ TextureImporter:
     second: Tile_Path_Overlay_Asgard_END
   - first:
       213: 1011
-    second: Tile_Path_Overlay_Asgard_JUMP
+    second: Tile_Path_Overlay_Asgard_FRAME
   - first:
       213: 1012
     second: Tile_Path_Overlay_Asgard_RETURN
@@ -379,7 +379,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tile_Path_Overlay_Asgard_JUMP
+      name: Tile_Path_Overlay_Asgard_FRAME
       rect:
         serializedVersion: 2
         x: 512
@@ -446,7 +446,7 @@ TextureImporter:
       Tile_Path_Overlay_Asgard_NW: 1008
       Tile_Path_Overlay_Asgard_START: 1009
       Tile_Path_Overlay_Asgard_END: 1010
-      Tile_Path_Overlay_Asgard_JUMP: 1011
+      Tile_Path_Overlay_Asgard_FRAME: 1011
       Tile_Path_Overlay_Asgard_RETURN: 1012
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0

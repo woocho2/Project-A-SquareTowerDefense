@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!74 &7400000
 AnimationClip:
@@ -20,26 +20,26 @@ AnimationClip:
   m_PPtrCurves:
   - serializedVersion: 2
     curve:
-    - time: 0.0000
-      value: {fileID: 105000, guid: e105a921dbfc447d807df3a428980105, type: 3}
+    - time: 0
+      value: {fileID: 103000, guid: e103a921dbfc447d807df3a428980103, type: 3}
     - time: 0.0625
-      value: {fileID: 105001, guid: e105a921dbfc447d807df3a428980105, type: 3}
-    - time: 0.1250
-      value: {fileID: 105002, guid: e105a921dbfc447d807df3a428980105, type: 3}
+      value: {fileID: 103001, guid: e103a921dbfc447d807df3a428980103, type: 3}
+    - time: 0.125
+      value: {fileID: 103002, guid: e103a921dbfc447d807df3a428980103, type: 3}
     - time: 0.1875
-      value: {fileID: 105003, guid: e105a921dbfc447d807df3a428980105, type: 3}
-    - time: 0.2500
-      value: {fileID: 105004, guid: e105a921dbfc447d807df3a428980105, type: 3}
+      value: {fileID: 103003, guid: e103a921dbfc447d807df3a428980103, type: 3}
+    - time: 0.25
+      value: {fileID: 103004, guid: e103a921dbfc447d807df3a428980103, type: 3}
     - time: 0.3125
-      value: {fileID: 105005, guid: e105a921dbfc447d807df3a428980105, type: 3}
-    - time: 0.3750
-      value: {fileID: 105006, guid: e105a921dbfc447d807df3a428980105, type: 3}
+      value: {fileID: 103005, guid: e103a921dbfc447d807df3a428980103, type: 3}
+    - time: 0.375
+      value: {fileID: 103006, guid: e103a921dbfc447d807df3a428980103, type: 3}
     - time: 0.4375
-      value: {fileID: 105007, guid: e105a921dbfc447d807df3a428980105, type: 3}
-    - time: 0.5000
-      value: {fileID: 105008, guid: e105a921dbfc447d807df3a428980105, type: 3}
+      value: {fileID: 103007, guid: e103a921dbfc447d807df3a428980103, type: 3}
+    - time: 0.5
+      value: {fileID: 103008, guid: e103a921dbfc447d807df3a428980103, type: 3}
     - time: 0.5625
-      value: {fileID: 105009, guid: e105a921dbfc447d807df3a428980105, type: 3}
+      value: {fileID: 103009, guid: e103a921dbfc447d807df3a428980103, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -62,16 +62,16 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 105000, guid: e105a921dbfc447d807df3a428980105, type: 3}
-    - {fileID: 105001, guid: e105a921dbfc447d807df3a428980105, type: 3}
-    - {fileID: 105002, guid: e105a921dbfc447d807df3a428980105, type: 3}
-    - {fileID: 105003, guid: e105a921dbfc447d807df3a428980105, type: 3}
-    - {fileID: 105004, guid: e105a921dbfc447d807df3a428980105, type: 3}
-    - {fileID: 105005, guid: e105a921dbfc447d807df3a428980105, type: 3}
-    - {fileID: 105006, guid: e105a921dbfc447d807df3a428980105, type: 3}
-    - {fileID: 105007, guid: e105a921dbfc447d807df3a428980105, type: 3}
-    - {fileID: 105008, guid: e105a921dbfc447d807df3a428980105, type: 3}
-    - {fileID: 105009, guid: e105a921dbfc447d807df3a428980105, type: 3}
+    - {fileID: 103000, guid: e103a921dbfc447d807df3a428980103, type: 3}
+    - {fileID: 103001, guid: e103a921dbfc447d807df3a428980103, type: 3}
+    - {fileID: 103002, guid: e103a921dbfc447d807df3a428980103, type: 3}
+    - {fileID: 103003, guid: e103a921dbfc447d807df3a428980103, type: 3}
+    - {fileID: 103004, guid: e103a921dbfc447d807df3a428980103, type: 3}
+    - {fileID: 103005, guid: e103a921dbfc447d807df3a428980103, type: 3}
+    - {fileID: 103006, guid: e103a921dbfc447d807df3a428980103, type: 3}
+    - {fileID: 103007, guid: e103a921dbfc447d807df3a428980103, type: 3}
+    - {fileID: 103008, guid: e103a921dbfc447d807df3a428980103, type: 3}
+    - {fileID: 103009, guid: e103a921dbfc447d807df3a428980103, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}

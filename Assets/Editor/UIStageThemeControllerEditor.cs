@@ -83,18 +83,6 @@ public class UIStageThemeControllerEditor : Editor
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.Space(6);
-        GUI.backgroundColor = new Color(1f, 0.82f, 0.25f);
-        if (GUILayout.Button("👑 아스가르드 전용 UI 세트 자동 연결 & 즉시 적용", GUILayout.Height(36)))
-        {
-            controller.LoadDefaultAsgardSprites();
-        }
-
-        GUI.backgroundColor = new Color(0.35f, 0.75f, 1f);
-        if (GUILayout.Button("🎨 2048x2048 마스터 UI 아틀라스 생성 & 자동 슬라이싱", GUILayout.Height(30)))
-        {
-            AsgardAtlasGenerator.GenerateAtlas();
-        }
-
         GUI.backgroundColor = new Color(0.2f, 0.75f, 0.35f);
         if (GUILayout.Button("Canvas UI 테마/색상 즉시 적용", GUILayout.Height(30)))
         {

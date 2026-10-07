@@ -375,10 +375,10 @@ public class TowerInfoPanel : MonoBehaviour
         return emblem switch
         {
             1 => "검",
-            2 => "활",
-            3 => "방패",
+            2 => "도끼",
+            3 => "활",
             4 => "창",
-            5 => "도끼",
+            5 => "방패",
             6 => "해머",
             7 => "불",
             8 => "얼음",

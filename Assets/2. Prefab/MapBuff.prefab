@@ -143,6 +143,7 @@ MonoBehaviour:
   m_currentDebuffTarget: 0
   m_defaultSymbolSprite: {fileID: 0}
   m_symbolMappings: []
+  m_debuffTrackAlpha: 0.3
   m_buffColor: {r: 1, g: 1, b: 1, a: 1}
   m_renderers:
   - {fileID: 7262885272156677602}

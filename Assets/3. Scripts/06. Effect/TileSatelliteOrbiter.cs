@@ -35,6 +35,9 @@ public class TileSatelliteOrbiter : MonoBehaviour
     [Tooltip("지정된 디버프 심볼이 없을 때 사용할 기본 심볼")]
     [SerializeField] private Sprite m_defaultSymbolSprite;
     [SerializeField] private List<DebuffSymbolMapping> m_symbolMappings = new List<DebuffSymbolMapping>();
+    [Tooltip("디버프 궤도선의 불투명도입니다. 배경 배지와 흰 심볼의 색은 유지합니다.")]
+    [Range(0f, 1f)]
+    [SerializeField] private float m_debuffTrackAlpha = 0.3f;
 
     [Header("Color & Tint Settings")]
     [Tooltip("적용할 버프/디버프 색상 (기본값: 흰색, HDR 지원)")]
@@ -127,6 +130,8 @@ public class TileSatelliteOrbiter : MonoBehaviour
     private float m_currentAngle = 0f;
     private SpriteRenderer[] m_orbit1Renderers;
     private SpriteRenderer[] m_orbit2Renderers;
+    private SpriteRenderer[] m_orbit1BackgroundRenderers;
+    private SpriteRenderer[] m_orbit2BackgroundRenderers;
     private TrailRenderer[] m_orbit1Trails;
     private TrailRenderer[] m_orbit2Trails;
     private ParticleSystem[] m_orbit1Particles;
@@ -210,11 +215,14 @@ public class TileSatelliteOrbiter : MonoBehaviour
         if (m_orbit1Satellites != null)
         {
             m_orbit1Renderers = new SpriteRenderer[m_orbit1Satellites.Length];
+            m_orbit1BackgroundRenderers = new SpriteRenderer[m_orbit1Satellites.Length];
             for (int i = 0; i < m_orbit1Satellites.Length; i++)
             {
                 if (m_orbit1Satellites[i] != null)
                 {
-                    m_orbit1Renderers[i] = m_orbit1Satellites[i].GetComponentInChildren<SpriteRenderer>(true);
+                    m_orbit1Renderers[i] = GetSatelliteRenderer(m_orbit1Satellites[i]);
+                    Transform background = m_orbit1Satellites[i].Find("Background");
+                    if (background != null) m_orbit1BackgroundRenderers[i] = background.GetComponent<SpriteRenderer>();
                 }
             }
         }
@@ -222,14 +230,26 @@ public class TileSatelliteOrbiter : MonoBehaviour
         if (m_orbit2Satellites != null)
         {
             m_orbit2Renderers = new SpriteRenderer[m_orbit2Satellites.Length];
+            m_orbit2BackgroundRenderers = new SpriteRenderer[m_orbit2Satellites.Length];
             for (int i = 0; i < m_orbit2Satellites.Length; i++)
             {
                 if (m_orbit2Satellites[i] != null)
                 {
-                    m_orbit2Renderers[i] = m_orbit2Satellites[i].GetComponentInChildren<SpriteRenderer>(true);
+                    m_orbit2Renderers[i] = GetSatelliteRenderer(m_orbit2Satellites[i]);
+                    Transform background = m_orbit2Satellites[i].Find("Background");
+                    if (background != null) m_orbit2BackgroundRenderers[i] = background.GetComponent<SpriteRenderer>();
                 }
             }
         }
+    }
+
+    private static SpriteRenderer GetSatelliteRenderer(Transform satellite)
+    {
+        // 배경 렌더러가 있어도 문양을 공전 심볼로 선택합니다.
+        Transform emblem = satellite.Find("Emblem");
+        return emblem != null
+            ? emblem.GetComponent<SpriteRenderer>()
+            : satellite.GetComponentInChildren<SpriteRenderer>(true);
     }
 
     private void Update()
@@ -253,8 +273,8 @@ public class TileSatelliteOrbiter : MonoBehaviour
         float firstOrbitAngle = m_effectType == TileSatelliteEffectType.Buff ? 45f : 0f;
         float secondOrbitAngle = m_effectType == TileSatelliteEffectType.Buff ? -45f : 90f;
 
-        UpdateOrbitSatellites(m_orbit1Satellites, m_orbit1Renderers, m_orbit1Trails, m_orbit1ParticleRenderers, firstOrbitAngle, 0f);
-        UpdateOrbitSatellites(m_orbit2Satellites, m_orbit2Renderers, m_orbit2Trails, m_orbit2ParticleRenderers, secondOrbitAngle, Mathf.PI * 0.5f);
+        UpdateOrbitSatellites(m_orbit1Satellites, m_orbit1Renderers, m_orbit1BackgroundRenderers, m_orbit1Trails, m_orbit1ParticleRenderers, firstOrbitAngle, 0f);
+        UpdateOrbitSatellites(m_orbit2Satellites, m_orbit2Renderers, m_orbit2BackgroundRenderers, m_orbit2Trails, m_orbit2ParticleRenderers, secondOrbitAngle, Mathf.PI * 0.5f);
 
         if (!m_hasFirstPositioned)
         {
@@ -266,6 +286,7 @@ public class TileSatelliteOrbiter : MonoBehaviour
     private void UpdateOrbitSatellites(
         Transform[] satellites,
         SpriteRenderer[] renderers,
+        SpriteRenderer[] backgroundRenderers,
         TrailRenderer[] trails,
         ParticleSystemRenderer[] particleRenderers,
         float rotAngleDeg,
@@ -312,11 +333,20 @@ public class TileSatelliteOrbiter : MonoBehaviour
             // 2. Sorting Layer 및 Sorting Order 동기화
             SpriteRenderer sr = (renderers != null && i < renderers.Length && renderers[i] != null)
                 ? renderers[i]
-                : satellites[i].GetComponent<SpriteRenderer>();
+                : GetSatelliteRenderer(satellites[i]);
 
             if (sr != null)
             {
                 SyncSorting(sr, depth);
+                SpriteRenderer background = backgroundRenderers != null && i < backgroundRenderers.Length
+                    ? backgroundRenderers[i] : null;
+                if (background != null)
+                {
+                    background.enabled = m_effectType == TileSatelliteEffectType.Debuff;
+                    background.sortingLayerID = sr.sortingLayerID;
+                    background.sortingOrder = sr.sortingOrder - 1;
+                    background.color = Color.black;
+                }
 
                 // 트레일 정렬 및 원근 굵기 동기화
                 TrailRenderer tr = (trails != null && i < trails.Length) ? trails[i] : null;
@@ -336,7 +366,12 @@ public class TileSatelliteOrbiter : MonoBehaviour
                 }
 
                 // 3. Bloom & White-Hot 발광 동적 조절 (앞으로 올 때 눈부신 하얀 빛 발광)
-                if (m_enableBloomEffect)
+                if (m_effectType == TileSatelliteEffectType.Debuff)
+                {
+                    // 검은 배경과 흰 심볼은 원근, 발광, 선택 강조의 색상 보정에서 제외합니다.
+                    sr.color = Color.white;
+                }
+                else if (m_enableBloomEffect)
                 {
                     float bloomMult;
                     float whitenRatio;
@@ -427,6 +462,7 @@ public class TileSatelliteOrbiter : MonoBehaviour
 
     private Color GetEffectiveBuffColor()
     {
+        if (m_effectType == TileSatelliteEffectType.Debuff) return Color.black;
         if (!m_isHighlighted) return m_buffColor;
 
         Color color = Color.Lerp(m_buffColor, Color.white, 0.35f) * 1.5f;
@@ -458,7 +494,8 @@ public class TileSatelliteOrbiter : MonoBehaviour
         particles = new ParticleSystem[count];
         particleRenderers = new ParticleSystemRenderer[count];
 
-        Color effColor = GetEffectiveBuffColor();
+        Color effColor = m_effectType == TileSatelliteEffectType.Debuff
+            ? Color.white : GetEffectiveBuffColor();
 
         for (int i = 0; i < count; i++)
         {
@@ -584,15 +621,18 @@ public class TileSatelliteOrbiter : MonoBehaviour
                     Debug.LogWarning($"[TileSatelliteOrbiter] ParticleSystem setup failed on {sat.name}: {ex.Message}");
                 }
             }
+            else
+            {
+                // 이미 프리팹에 저장된 파티클도 비활성 설정을 따릅니다.
+                ParticleSystem ps = sat.GetComponent<ParticleSystem>();
+                if (ps != null) ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            }
         }
     }
 
     private Gradient CreateSatelliteTrailGradient(Color baseColor)
     {
-        if (baseColor.r < 0.35f && baseColor.g < 0.35f && baseColor.b < 0.35f)
-        {
-            baseColor = new Color(0.75f, 0.45f, 1.0f, 1f);
-        }
+        baseColor = GetSatelliteEffectColor(baseColor);
 
         Gradient gradient = new Gradient();
         Color brightColor = Color.Lerp(baseColor, Color.white, 0.55f);
@@ -600,6 +640,7 @@ public class TileSatelliteOrbiter : MonoBehaviour
 
         Color midColor = baseColor;
         midColor.a = 1f;
+        float opacity = m_effectType == TileSatelliteEffectType.Debuff ? 0.35f : 1f;
 
         gradient.SetKeys(
             new GradientColorKey[]
@@ -610,8 +651,8 @@ public class TileSatelliteOrbiter : MonoBehaviour
             },
             new GradientAlphaKey[]
             {
-                new GradientAlphaKey(0.95f, 0f),
-                new GradientAlphaKey(0.60f, 0.4f),
+                new GradientAlphaKey(0.95f * opacity, 0f),
+                new GradientAlphaKey(0.60f * opacity, 0.4f),
                 new GradientAlphaKey(0.0f, 1f)
             }
         );
@@ -621,15 +662,22 @@ public class TileSatelliteOrbiter : MonoBehaviour
     private void UpdateParticleColor(ParticleSystem ps, Color baseColor)
     {
         if (ps == null) return;
-        if (baseColor.r < 0.35f && baseColor.g < 0.35f && baseColor.b < 0.35f)
-        {
-            baseColor = new Color(0.75f, 0.45f, 1.0f, 1f);
-        }
+        baseColor = GetSatelliteEffectColor(baseColor);
         var main = ps.main;
         main.startColor = new ParticleSystem.MinMaxGradient(
             Color.Lerp(baseColor, Color.white, 0.4f),
             baseColor
         );
+    }
+
+    private Color GetSatelliteEffectColor(Color baseColor)
+    {
+        if (m_effectType == TileSatelliteEffectType.Debuff) return Color.white;
+        if (baseColor.r < 0.35f && baseColor.g < 0.35f && baseColor.b < 0.35f)
+        {
+            baseColor = new Color(0.75f, 0.45f, 1.0f, 1f);
+        }
+        return baseColor;
     }
 
     private void UpdateAllTrailsAndParticlesColor(Color color)
@@ -697,7 +745,7 @@ public class TileSatelliteOrbiter : MonoBehaviour
             ApplyDebuffSymbol(m_currentDebuffTarget);
         }
 
-        UpdateAllTrailsAndParticlesColor(GetEffectiveBuffColor());
+        ApplyColor(GetEffectiveBuffColor());
     }
 
     /// <summary>
@@ -713,6 +761,7 @@ public class TileSatelliteOrbiter : MonoBehaviour
 
     private void ApplyDebuffSymbol(DebuffTarget target)
     {
+        if (m_effectType != TileSatelliteEffectType.Debuff) return;
         Sprite symbol = GetDebuffSymbolSprite(target);
         if (symbol != null)
         {
@@ -720,9 +769,8 @@ public class TileSatelliteOrbiter : MonoBehaviour
             SetSatelliteSprites(m_orbit2Renderers, symbol);
         }
 
-        Color effColor = GetEffectiveBuffColor();
-        SetSatelliteColor(m_orbit1Renderers, effColor);
-        SetSatelliteColor(m_orbit2Renderers, effColor);
+        SetSatelliteColor(m_orbit1Renderers, Color.white);
+        SetSatelliteColor(m_orbit2Renderers, Color.white);
     }
 
     private static void SetSatelliteColor(SpriteRenderer[] renderers, Color color)
@@ -764,12 +812,24 @@ public class TileSatelliteOrbiter : MonoBehaviour
 
     private void ApplyColor(Color color)
     {
+        if (m_effectType == TileSatelliteEffectType.Debuff) color = Color.black;
         for (int i = 0; i < m_renderers.Count; i++)
         {
             if (m_renderers[i] != null)
             {
                 m_renderers[i].color = color;
             }
+        }
+
+        if (m_effectType == TileSatelliteEffectType.Debuff)
+        {
+            Color trackColor = new Color(0f, 0f, 0f, m_debuffTrackAlpha);
+            if (m_frontTrackRenderer != null) m_frontTrackRenderer.color = trackColor;
+            if (m_backTrackRenderer != null) m_backTrackRenderer.color = trackColor;
+            SetSatelliteColor(m_orbit1Renderers, Color.white);
+            SetSatelliteColor(m_orbit2Renderers, Color.white);
+            SetSatelliteColor(m_orbit1BackgroundRenderers, Color.black);
+            SetSatelliteColor(m_orbit2BackgroundRenderers, Color.black);
         }
 
         UpdateAllTrailsAndParticlesColor(color);

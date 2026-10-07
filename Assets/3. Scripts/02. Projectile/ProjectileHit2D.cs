@@ -40,6 +40,12 @@ public class ProjectileHit2D : MonoBehaviour
     [Header("Target Layers")]
     [SerializeField] public LayerMask m_enemyLayer;
 
+    [Header("Projectile Artwork")]
+    [Tooltip("프리팹의 전용 이미지를 사용하고 타워 문양과 색으로 덮어쓰지 않습니다.")]
+    [SerializeField] private bool m_usePrefabVisual;
+    [Tooltip("전용 이미지의 원래 색을 유지하면서 잔상과 파티클에 적용할 색입니다.")]
+    [SerializeField] private Color m_prefabEffectColor = Color.white;
+
     [Header("Visual Effects (Trail & Particle)")]
     [SerializeField] private bool m_enableTrail = true;
     [SerializeField] private bool m_enableParticles = true;
@@ -59,6 +65,9 @@ public class ProjectileHit2D : MonoBehaviour
     private bool m_isLaunched;
     private bool m_renderersHidden;
     private Vector3 m_originalLocalScale;
+    private SpriteRenderer m_spriteRenderer;
+    private Sprite m_originalSprite;
+    private Color m_originalColor;
 
     // 발사 전에 이 탄이 깎기로 예약해 둔 피해입니다. 명중하거나 회수될 때 반드시 풀어 줍니다.
     private EnemyHealthController m_reservedTarget;
@@ -90,6 +99,12 @@ public class ProjectileHit2D : MonoBehaviour
     {
         // 프리팹마다 원래 크기가 다를 수 있으므로 각자의 기준 크기를 보관합니다.
         m_originalLocalScale = transform.localScale;
+        SpriteRenderer renderer = GetSpriteRenderer();
+        if (renderer != null)
+        {
+            m_originalSprite = renderer.sprite;
+            m_originalColor = renderer.color;
+        }
 
         if (m_trailRenderer == null) m_trailRenderer = GetComponent<TrailRenderer>();
         if (m_particleSystem == null) m_particleSystem = GetComponent<ParticleSystem>();
@@ -119,7 +134,7 @@ public class ProjectileHit2D : MonoBehaviour
 
         // 3. 목적지를 향해 회전 및 이동
         m_lastDirection = ((Vector3)destination - transform.position).normalized;
-        if (m_stats.hitEffectID == 203 || m_stats.hitEffectID == 205)
+        if (m_stats.hitEffectID == 205 || m_stats.hitEffectID == 202)
         {
             // 캡틴 아메리카 방패 및 올라프 투척 도끼 고속 회전 투척 (초당 3바퀴 회전)
             transform.Rotate(0, 0, -1080f * Time.deltaTime);
@@ -134,7 +149,41 @@ public class ProjectileHit2D : MonoBehaviour
     public void Init(ProjectileStats stats)
     {
         m_stats = stats;
+        ApplyTowerVisual(stats.ownerTower);
         SetupVisualEffects(stats.hitEffectID);
+    }
+
+    private void ApplyTowerVisual(TowerController ownerTower)
+    {
+        if (m_usePrefabVisual)
+        {
+            RestorePrefabVisual();
+            return;
+        }
+
+        if (ownerTower == null) return;
+
+        TowerVisual visual = ownerTower.GetComponentInChildren<TowerVisual>(true);
+        SpriteRenderer renderer = GetSpriteRenderer();
+        if (visual == null || renderer == null) return;
+
+        // 풀에서 재사용할 때도 소유 타워의 현재 문양과 색을 다시 적용합니다.
+        if (visual.EmblemSprite != null) renderer.sprite = visual.EmblemSprite;
+        renderer.color = visual.EmblemColor;
+    }
+
+    private SpriteRenderer GetSpriteRenderer()
+    {
+        if (m_spriteRenderer == null) m_spriteRenderer = GetComponent<SpriteRenderer>();
+        return m_spriteRenderer;
+    }
+
+    private void RestorePrefabVisual()
+    {
+        SpriteRenderer renderer = GetSpriteRenderer();
+        if (renderer == null) return;
+        renderer.sprite = m_originalSprite;
+        renderer.color = m_originalColor;
     }
 
     public ProjectileStats Stats => m_stats;
@@ -152,6 +201,8 @@ public class ProjectileHit2D : MonoBehaviour
     public void PrepareAsSatellite(float preparationLifetime)
     {
         if (m_lifeCo != null) StopCoroutine(m_lifeCo);
+        // 풀에서 꺼낸 직후부터 전용 총알 이미지로 위성을 표시합니다.
+        if (m_usePrefabVisual) RestorePrefabVisual();
 
         m_isLaunched = false;
         m_homingTarget = null;
@@ -198,7 +249,7 @@ public class ProjectileHit2D : MonoBehaviour
 
         // 타겟이 없거나 사망했을 때를 대비한 기본 방향 설정
         m_lastDirection = dir.sqrMagnitude > 0.0001f ? dir.normalized : Vector3.right;
-        if (rotateProjectile && m_stats.hitEffectID != 203 && m_stats.hitEffectID != 205) RotateToDirection(m_lastDirection);
+        if (rotateProjectile && m_stats.hitEffectID != 205 && m_stats.hitEffectID != 202) RotateToDirection(m_lastDirection);
 
         // 발사 시점에 트레일 초기화 후 꼬리 및 파티클 방출 시작
         StartVisualEffects();
@@ -274,7 +325,7 @@ public class ProjectileHit2D : MonoBehaviour
 
         Quaternion effectRot = (m_stats.hitEffectID == 104 || m_stats.hitEffectID == 204) ? transform.rotation : Quaternion.identity;
         float effectScale = (m_stats.hitEffectID == 104 || m_stats.hitEffectID == 204) ? 1.0f :
-                            (m_stats.hitEffectID == 205) ? 1.5f : 3.0f;
+                            (m_stats.hitEffectID == 202) ? 1.5f : 3.0f;
         EffectManager.Instance?.PlayEffect(m_stats.hitEffectID, transform.position, effectRot, effectScale);
         ReturnToPool();
     }
@@ -546,7 +597,7 @@ public class ProjectileHit2D : MonoBehaviour
         m_trailRenderer.widthCurve = widthCurve;
         m_trailRenderer.widthMultiplier = 1f;
 
-        m_trailRenderer.colorGradient = GetElementalGradient(effectId);
+        m_trailRenderer.colorGradient = GetProjectileTrailGradient();
     }
 
     private void SetupParticleSystem(int effectId)
@@ -579,7 +630,7 @@ public class ProjectileHit2D : MonoBehaviour
 
         var colorOverLifetime = m_particleSystem.colorOverLifetime;
         colorOverLifetime.enabled = true;
-        colorOverLifetime.color = GetElementalParticleGradient(effectId);
+        colorOverLifetime.color = GetProjectileParticleGradient();
 
         var sizeOverLifetime = m_particleSystem.sizeOverLifetime;
         sizeOverLifetime.enabled = true;
@@ -606,55 +657,19 @@ public class ProjectileHit2D : MonoBehaviour
         m_particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
     }
 
-    private Gradient GetElementalGradient(int effectId)
+    private Color GetProjectileColor()
     {
-        int element = effectId % 100;
-        Gradient g = new Gradient();
-        Color headColor, midColor, tailColor;
+        if (m_usePrefabVisual) return m_prefabEffectColor;
+        SpriteRenderer renderer = GetSpriteRenderer();
+        return renderer != null ? renderer.color : Color.white;
+    }
 
-        switch (element)
-        {
-            case 7: // Fire
-                headColor = new Color(1f, 1f, 1f, 1f);
-                midColor  = new Color(0.98f, 0.45f, 0.08f, 1f); // #f97316
-                tailColor = new Color(0.86f, 0.15f, 0.15f, 1f); // #dc2626
-                break;
-            case 8: // Ice
-                headColor = new Color(1f, 1f, 1f, 1f);
-                midColor  = new Color(0.22f, 0.74f, 0.97f, 1f); // #38bdf8
-                tailColor = new Color(0.01f, 0.52f, 0.78f, 1f); // #0284c7
-                break;
-            case 9: // Electric
-                headColor = new Color(1f, 1f, 1f, 1f);
-                midColor  = new Color(0.99f, 0.88f, 0.28f, 1f); // #fde047
-                tailColor = new Color(0.79f, 0.54f, 0.02f, 1f); // #ca8a04
-                break;
-            case 10: // Wind
-                headColor = new Color(0.80f, 0.98f, 0.95f, 1f); // #ccfbf1
-                midColor  = new Color(0.18f, 0.83f, 0.75f, 1f); // #2dd4bf
-                tailColor = new Color(0.02f, 0.59f, 0.41f, 1f); // #059669
-                break;
-            case 11: // Earth
-                headColor = new Color(1f, 0.95f, 0.78f, 1f);    // #fef3c7
-                midColor  = new Color(0.96f, 0.62f, 0.04f, 1f); // #f59e0b
-                tailColor = new Color(0.57f, 0.25f, 0.05f, 1f); // #92400e
-                break;
-            case 12: // Light
-                headColor = new Color(1f, 1f, 1f, 1f);
-                midColor  = new Color(1f, 0.94f, 0.54f, 1f);    // #fef08a
-                tailColor = new Color(0.98f, 0.80f, 0.08f, 1f); // #facc15
-                break;
-            case 13: // Darkness
-                headColor = new Color(0.95f, 0.91f, 1f, 1f);    // #f3e8ff
-                midColor  = new Color(0.75f, 0.52f, 0.99f, 1f); // #c084fc
-                tailColor = new Color(0.35f, 0.11f, 0.53f, 1f); // #581c87
-                break;
-            default: // Physical
-                headColor = new Color(1f, 1f, 1f, 1f);
-                midColor  = new Color(0.89f, 0.91f, 0.94f, 1f);
-                tailColor = new Color(0.58f, 0.64f, 0.72f, 1f);
-                break;
-        }
+    private Gradient GetProjectileTrailGradient()
+    {
+        Gradient g = new Gradient();
+        Color midColor = GetProjectileColor();
+        Color headColor = Color.Lerp(midColor, Color.white, 0.55f);
+        Color tailColor = midColor * 0.65f;
 
         g.SetKeys(
             new GradientColorKey[]
@@ -675,23 +690,10 @@ public class ProjectileHit2D : MonoBehaviour
         return g;
     }
 
-    private ParticleSystem.MinMaxGradient GetElementalParticleGradient(int effectId)
+    private ParticleSystem.MinMaxGradient GetProjectileParticleGradient()
     {
-        int element = effectId % 100;
         Gradient g = new Gradient();
-        Color pColor;
-
-        switch (element)
-        {
-            case 7:  pColor = new Color(0.98f, 0.45f, 0.08f); break; // Fire
-            case 8:  pColor = new Color(0.22f, 0.74f, 0.97f); break; // Ice
-            case 9:  pColor = new Color(0.99f, 0.88f, 0.28f); break; // Electric
-            case 10: pColor = new Color(0.18f, 0.83f, 0.75f); break; // Wind
-            case 11: pColor = new Color(0.96f, 0.62f, 0.04f); break; // Earth
-            case 12: pColor = new Color(1f, 0.95f, 0.6f);     break; // Light
-            case 13: pColor = new Color(0.75f, 0.52f, 0.99f); break; // Darkness
-            default: pColor = new Color(0.82f, 0.88f, 0.95f); break; // Physical (Metallic Silver)
-        }
+        Color pColor = GetProjectileColor();
 
         g.SetKeys(
             new GradientColorKey[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(pColor, 0.4f) },
