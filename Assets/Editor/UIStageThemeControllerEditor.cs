@@ -15,7 +15,8 @@ public class UIStageThemeControllerEditor : Editor
         "니다벨리르\nNidavellir",
         "니플하임\nNiflheim",
         "무스펠하임\nMuspelheim",
-        "헬\nHel"
+        "헬\nHel",
+        "라그나로크\nRagnarok"
     };
 
     public override void OnInspectorGUI()

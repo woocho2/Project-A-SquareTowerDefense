@@ -21,7 +21,8 @@ public enum StageRealm
     Nidavellir,
     Niflheim,
     Muspelheim,
-    Hel
+    Hel,
+    Ragnarok
 }
 
 /// <summary>
@@ -52,6 +53,13 @@ public struct RealmThemeColor
 /// 각 스테이지 렐름에 적용할 전용 UI 스프라이트 세트입니다.
 /// </summary>
 [Serializable]
+public class RealmRatioSprite
+{
+    public string key;
+    public Sprite sprite;
+}
+
+[Serializable]
 public class RealmThemeSprites
 {
     public StageRealm realm;
@@ -80,6 +88,9 @@ public class RealmThemeSprites
     public Sprite btnLowFrame;
     [Tooltip("기능/옵션/스탯 슬롯 배경")]
     public Sprite btnLowBG;
+
+    [Header("128px 기준 비율별 UI")]
+    public List<RealmRatioSprite> ratioSprites = new List<RealmRatioSprite>();
 }
 
 /// <summary>
@@ -149,15 +160,16 @@ public class UIStageThemeController : MonoBehaviour
     private static readonly Dictionary<StageRealm, (Color bg, Color frame, string name)> s_defaultPresets =
         new Dictionary<StageRealm, (Color, Color, string)>
         {
-            { StageRealm.Asgard,     (HexToColor("F5F5F7"), HexToColor("E5AC1C"), "아스가르드 (Asgard)") },
-            { StageRealm.Alfheim,    (HexToColor("C8A882"), HexToColor("7BC728"), "알프헤임 (Alfheim)") },
-            { StageRealm.Vanaheim,   (HexToColor("1B3D23"), HexToColor("2EBF5E"), "바나헤임 (Vanaheim)") },
-            { StageRealm.Midgard,    (HexToColor("E6D5B5"), HexToColor("26A3BF"), "미드가르드 (Midgard)") },
-            { StageRealm.Jotunheim,  (HexToColor("78808B"), HexToColor("587896"), "요툰헤임 (Jotunheim)") },
-            { StageRealm.Nidavellir, (HexToColor("1E1C21"), HexToColor("E6A817"), "니다벨리르 (Nidavellir)") },
-            { StageRealm.Niflheim,   (HexToColor("EAF2FA"), HexToColor("1B5299"), "니플헤임 (Niflheim)") },
-            { StageRealm.Muspelheim, (HexToColor("8C1B1B"), HexToColor("FF6D0A"), "무스펠헤임 (Muspelheim)") },
-            { StageRealm.Hel,        (HexToColor("16191D"), HexToColor("1FE0C3"), "헬 (Hel)") }
+            { StageRealm.Asgard,     (HexToColor("FFFCEC"), HexToColor("ECBB41"), "아스가르드 (Asgard)") },
+            { StageRealm.Alfheim,    (HexToColor("F4F8EB"), HexToColor("A56E37"), "알프헤임 (Alfheim)") },
+            { StageRealm.Vanaheim,   (HexToColor("EFF7F0"), HexToColor("A4BE8F"), "바나헤임 (Vanaheim)") },
+            { StageRealm.Midgard,    (HexToColor("EDF8F5"), HexToColor("8FB6C8"), "미드가르드 (Midgard)") },
+            { StageRealm.Jotunheim,  (HexToColor("F3F5F5"), HexToColor("9DA6B0"), "요툰헤임 (Jotunheim)") },
+            { StageRealm.Nidavellir, (HexToColor("F4EFF9"), HexToColor("AB71D9"), "니다벨리르 (Nidavellir)") },
+            { StageRealm.Niflheim,   (HexToColor("F7FBFF"), HexToColor("AEC2D4"), "니플헤임 (Niflheim)") },
+            { StageRealm.Muspelheim, (HexToColor("FFF5EC"), HexToColor("D9A996"), "무스펠헤임 (Muspelheim)") },
+            { StageRealm.Hel,        (HexToColor("F1F8F4"), HexToColor("43BEAE"), "헬 (Hel)") },
+            { StageRealm.Ragnarok,   (HexToColor("DCD8CA"), HexToColor("B6A681"), "라그나로크 (Ragnarok)") }
         };
 
     public StageRealm CurrentRealm
@@ -176,7 +188,7 @@ public class UIStageThemeController : MonoBehaviour
     {
         EnsureCanvasReference();
 #if UNITY_EDITOR
-        EnsureDefaultAsgardSprites();
+        EnsureDefaultThemeSprites();
 #endif
         ApplyTheme();
     }
@@ -198,7 +210,7 @@ public class UIStageThemeController : MonoBehaviour
 #if UNITY_EDITOR
         if (!Application.isPlaying)
         {
-            EnsureDefaultAsgardSprites();
+            EnsureDefaultThemeSprites();
         }
 #endif
     }
@@ -208,35 +220,45 @@ public class UIStageThemeController : MonoBehaviour
 #if UNITY_EDITOR
         if (!Application.isPlaying)
         {
-            EnsureDefaultAsgardSprites();
+            EnsureDefaultThemeSprites();
         }
 #endif
         ApplyTheme();
     }
 
 #if UNITY_EDITOR
-    public void EnsureDefaultAsgardSprites()
+    public void EnsureDefaultThemeSprites()
     {
         if (realmSprites == null) realmSprites = new List<RealmThemeSprites>();
-        var asgard = realmSprites.Find(r => r.realm == StageRealm.Asgard);
-        if (asgard == null)
+        string[] shapes = { "1x1", "1x2", "1x3", "1x4", "2x3", "2x1", "3x1", "4x1", "3x2", "1x1_Sliced" };
+        string[] layers = { "A", "B", "C", "Frame" };
+        foreach (StageRealm realm in Enum.GetValues(typeof(StageRealm)))
         {
-            asgard = new RealmThemeSprites { realm = StageRealm.Asgard, displayName = "아스가르드 (Asgard)" };
-            realmSprites.Add(asgard);
+            RealmThemeSprites sprites = realmSprites.Find(r => r.realm == realm);
+            if (sprites == null)
+            {
+                sprites = new RealmThemeSprites { realm = realm, displayName = GetThemeColors(realm).name };
+                realmSprites.Add(sprites);
+            }
+            if (sprites.ratioSprites == null) sprites.ratioSprites = new List<RealmRatioSprite>();
+            foreach (string shape in shapes)
+            foreach (string layer in layers)
+            {
+                string key = layer + "_" + shape;
+                RealmRatioSprite entry = sprites.ratioSprites.Find(item => item != null && item.key == key);
+                if (entry != null && entry.sprite != null) continue;
+                string folder = shape.EndsWith("_Sliced", StringComparison.Ordinal) ? "Sliced" : "Simple";
+                string path = $"Assets/4. Asset/5. UI/Themes/{realm}/{folder}/{realm}_{key}.png";
+                Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+                if (sprite == null) continue;
+                if (entry == null)
+                {
+                    entry = new RealmRatioSprite { key = key };
+                    sprites.ratioSprites.Add(entry);
+                }
+                entry.sprite = sprite;
+            }
         }
-
-        if (asgard.panelMainFrame == null)
-            asgard.panelMainFrame = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Panel_Main_Frame.png");
-        if (asgard.panelMainBG == null)
-            asgard.panelMainBG = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Panel_Main_BG.png");
-        if (asgard.btnHighFrame == null)
-            asgard.btnHighFrame = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_High_Frame.png");
-        if (asgard.btnHighBG == null)
-            asgard.btnHighBG = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_High_BG.png");
-        if (asgard.btnMiddleFrame == null)
-            asgard.btnMiddleFrame = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_Middle_Frame.png");
-        if (asgard.btnMiddleBG == null)
-            asgard.btnMiddleBG = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/4. DotAsset/5. UI/Themes/Asgard/Asgard_Btn_Middle_BG.png");
     }
 #endif
 
@@ -345,6 +367,23 @@ public class UIStageThemeController : MonoBehaviour
         return null;
     }
 
+    private Sprite GetThemeSpriteForImage(Image image, RealmThemeSprites sprites)
+    {
+        // 프리팹에 지정된 A/B/C/Frame과 비율을 유지한 채 월드만 교체합니다.
+        if (image.sprite != null && sprites.ratioSprites != null)
+        {
+            string spriteName = image.sprite.name;
+            int separator = spriteName.IndexOf('_');
+            if (separator >= 0)
+            {
+                string key = spriteName.Substring(separator + 1);
+                RealmRatioSprite entry = sprites.ratioSprites.Find(item => item != null && item.key == key);
+                if (entry != null && entry.sprite != null) return entry.sprite;
+            }
+        }
+        return GetThemeSpriteForObject(image.gameObject.name, sprites);
+    }
+
     /// <summary>
     /// Canvas 하위의 _bg, _frame Graphic에 현재 테마를 적용합니다.
     /// 전용 스프라이트가 등록된 경우 스프라이트를 교체하고 원본 색감을 보존합니다.
@@ -374,11 +413,12 @@ public class UIStageThemeController : MonoBehaviour
             // 1) 전용 테마 스프라이트 스왑
             if (img != null && spriteTheme != null)
             {
-                Sprite customSprite = GetThemeSpriteForObject(objectName, spriteTheme);
+                Sprite customSprite = GetThemeSpriteForImage(img, spriteTheme);
                 if (customSprite != null)
                 {
                     img.sprite = customSprite;
-                    img.type = Image.Type.Sliced;
+                    if (img.type != Image.Type.Filled)
+                        img.type = customSprite.border.sqrMagnitude > 0f ? Image.Type.Sliced : Image.Type.Simple;
                     ApplyColor(graphic, Color.white);
                     continue;
                 }

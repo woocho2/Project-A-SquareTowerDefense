@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>월드별 보드와 UI</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:30px;color:#edf1f7;background:#19212c;font:15px system-ui,sans-serif}h1{font-size:24px;margin:0 0 14px}p{color:#acbbc9}select,input{margin:0 20px 0 8px;padding:8px;background:#273442;color:inherit;border:1px solid #536374;border-radius:6px}header{position:sticky;top:0;background:#19212c;padding:16px 0;z-index:2}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(285px,1fr));gap:16px;margin-top:20px}.card{background:#23303d;padding:18px;border:1px solid #3b4c5d;border-radius:10px}.canvas{display:grid;place-items:center;min-height:300px;background:#17212a;border-radius:8px;margin-top:14px}.art{position:relative}.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.detail{color:#a6b6c6;font-size:13px;margin-top:8px}.label{font-weight:600}.comparison{width:100%;max-width:1100px;display:block;margin:30px auto}a{color:#9ad9ee}
+</style>
+<h1>월드별 보드와 UI</h1>
+<p>기존 장식을 유지하고 타일의 색상에 맞췄습니다. 각 카드는 배경과 빈 프레임을 합성한 모습입니다.</p>
+<header><label>월드<select id="realm"></select></label><label>바탕<select id="layer"><option value="A">밝은 바탕 (A)</option><option value="B">강조색 (B)</option><option value="C">짙은 바탕 (C)</option></select></label><label>미리보기 배경<input id="backdrop" type="color" value="#17212a"></label></header>
+<main class="grid" id="grid"></main>
+<img class="comparison" src="preview.png" alt="열 월드의 보드 및 UI 색상 비교">
+<script>
+const realms=['Asgard','Alfheim','Vanaheim','Midgard','Jotunheim','Nidavellir','Niflheim','Muspelheim','Hel','Ragnarok'];
+const labels=['아스가르드','알프헤임','바나헤임','미드가르드','요툰헤임','니다벨리르','니플헤임','무스펠헤임','헬','라그나로크'];
+const shapes=[[1,1],[1,2],[1,3],[1,4],[2,3],[2,1],[3,1],[4,1],[3,2],[1,1,'Sliced']];
+const realm=document.querySelector('#realm'),layer=document.querySelector('#layer'),grid=document.querySelector('#grid'),backdrop=document.querySelector('#backdrop');
+realms.forEach((name,i)=>realm.add(new Option(labels[i]+' · '+name,name)));
+function path(r,l,key,kind){return '../../Assets/4.%20Asset/5.%20UI/Themes/'+r+'/'+kind+'/'+r+'_'+l+'_'+key+'.png'}
+function draw(){grid.replaceChildren();shapes.forEach(([w,h,kind='Simple'])=>{const key=w+'x'+h+(kind==='Sliced'?'_Sliced':''),bg=path(realm.value,layer.value,key,kind),frame=path(realm.value,'Frame',key,kind),scale=Math.min(1,260/(128*Math.max(w,h))),card=document.createElement('article');card.className='card';card.innerHTML='<div class="label">'+w+':'+h+' · '+kind+'</div><div class="detail">'+(w*128)+' × '+(h*128)+' px</div><div class="canvas" style="background:'+backdrop.value+'"><div class="art" style="width:'+(w*128*scale)+'px;height:'+(h*128*scale)+'px"><img src="'+bg+'" alt="'+layer.value+' 배경"><img src="'+frame+'" alt="빈 프레임"></div></div><div class="detail"><a href="'+bg+'" target="_blank">배경 PNG</a> · <a href="'+frame+'" target="_blank">빈 프레임 PNG</a></div>';grid.append(card)})}
+realm.addEventListener('change',draw);layer.addEventListener('change',draw);backdrop.addEventListener('input',draw);draw();
+</script>
+</html>

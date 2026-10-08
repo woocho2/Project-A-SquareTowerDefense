@@ -1,0 +1,7 @@
+﻿PASS: 400 unique single-sprite RGBA PNGs across ten realms.
+PASS: all nine aspect ratios use exact 128px units; Simple border 0 and Sliced border 48.
+PASS: all 400 texture GUIDs serialized into Canvas for player builds.
+PASS: prefab component IDs unique; UI positions, anchors, colors, text and gameplay fields unchanged.
+PASS: legacy board and UI atlas metadata preserved.
+NOT RUN: Unity play mode.
+PASS: alpha and dimensions preserved for board plus all 44 legacy UI atlases.
