@@ -40,12 +40,19 @@ public struct RealmThemeColor
     [Tooltip("이름에 _frame이 포함된 UI 이미지에 적용할 프레임 색상")]
     public Color frameColor;
 
+    [Tooltip("공통 아틀라스 B 레이어의 강조색. 알파가 0이면 기본 강조색을 사용합니다.")]
+    public Color colorB;
+    [Tooltip("공통 아틀라스 C 레이어의 짙은 배경색. 알파가 0이면 기본 테마 색을 사용합니다.")]
+    public Color colorC;
+
     public RealmThemeColor(StageRealm realm, string displayName, Color bgColor, Color frameColor)
     {
         this.realm = realm;
         this.displayName = displayName;
         this.bgColor = bgColor;
         this.frameColor = frameColor;
+        colorB = frameColor;
+        colorC = default;
     }
 }
 
@@ -104,6 +111,13 @@ public class RealmThemeSprites
 [DisallowMultipleComponent]
 public class UIStageThemeController : MonoBehaviour
 {
+    [Serializable]
+    public class ImageColorOverride
+    {
+        public Image image;
+        public Color color;
+    }
+
     public static UIStageThemeController Instance { get; private set; }
 
     // CTxt_는 Custom Text의 약자입니다. 디자이너가 지정한 색을 유지하므로 자동 대비 처리에서 제외합니다.
@@ -116,6 +130,15 @@ public class UIStageThemeController : MonoBehaviour
     [Header("대상 Canvas")]
     [Tooltip("색상을 변경할 Canvas입니다. 비워두면 이 오브젝트 또는 하위 Canvas를 자동으로 찾습니다.")]
     [SerializeField] private Canvas targetCanvas;
+
+    [Tooltip("공통 무채색 UI 아틀라스에 A/B/C/Frame 테마 색상을 적용합니다.")]
+    [SerializeField] private bool useSharedAtlas = true;
+
+    [Tooltip("Image의 Color를 직접 편집한 UI입니다. 자동 테마 적용과 저장 시 이 색상을 유지합니다.")]
+    [SerializeField] private List<ImageColorOverride> imageColorOverrides = new List<ImageColorOverride>();
+
+    private readonly Dictionary<Image, Color> lastAppliedColors = new Dictionary<Image, Color>();
+    public int ManualColorCount => imageColorOverrides.Count;
 
     [Header("이름 매칭 규칙")]
     [Tooltip("이 문자열이 이름에 포함된 Graphic은 배경으로 처리합니다. 대소문자를 구분하지 않습니다.")]
@@ -229,6 +252,7 @@ public class UIStageThemeController : MonoBehaviour
 #if UNITY_EDITOR
     public void EnsureDefaultThemeSprites()
     {
+        if (useSharedAtlas) return;
         if (realmSprites == null) realmSprites = new List<RealmThemeSprites>();
         string[] shapes = { "1x1", "1x2", "1x3", "1x4", "2x3", "2x1", "3x1", "4x1", "3x2", "1x1_Sliced" };
         string[] layers = { "A", "B", "C", "Frame" };
@@ -323,8 +347,60 @@ public class UIStageThemeController : MonoBehaviour
 
     public RealmThemeSprites GetThemeSprites(StageRealm realm)
     {
+        if (useSharedAtlas) return null;
         if (!useThemeSprites || realmSprites == null) return null;
         return realmSprites.Find(s => s.realm == realm);
+    }
+
+    public static string GetSharedLayer(Sprite sprite)
+    {
+        if (sprite == null || !sprite.name.StartsWith("Shared_", StringComparison.Ordinal)) return null;
+        int end = sprite.name.IndexOf('_', 7);
+        return end > 7 ? sprite.name.Substring(7, end - 7) : null;
+    }
+
+    public Color GetLayerColor(string layer)
+    {
+        var theme = GetCurrentThemeColors();
+        RealmThemeColor custom = useCustomColors && customThemes != null
+            ? customThemes.Find(item => item.realm == currentRealm) : default;
+        if (layer == "A") return theme.bg;
+        if (layer == "B") return !string.IsNullOrEmpty(custom.displayName) && custom.colorB.a > 0f ? custom.colorB :
+            currentRealm == StageRealm.Asgard ? HexToColor("FFDF7D") : theme.frame;
+        if (layer == "C")
+        {
+            if (!string.IsNullOrEmpty(custom.displayName) && custom.colorC.a > 0f) return custom.colorC;
+            string[] dark = { "263855", "6B4933", "254B35", "15364F", "35383C", "502F6D", "364B6A", "88421F", "101417", "424B58" };
+            return HexToColor(dark[(int)currentRealm]);
+        }
+        return theme.frame;
+    }
+
+    public bool ManagesImage(Image image)
+    {
+        EnsureCanvasReference();
+        return image != null && targetCanvas != null && image.transform.IsChildOf(targetCanvas.transform) &&
+               (GetSharedLayer(image.sprite) != null || IsBgName(image.name) || IsFrameName(image.name));
+    }
+
+    public bool IsAutomaticColor(Image image) => lastAppliedColors.TryGetValue(image, out Color color) && color == image.color;
+
+    public void RememberImageColor(Image image)
+    {
+        if (!ManagesImage(image)) return;
+        ImageColorOverride entry = imageColorOverrides.Find(item => item.image == image);
+        if (entry == null)
+        {
+            entry = new ImageColorOverride { image = image };
+            imageColorOverrides.Add(entry);
+        }
+        entry.color = image.color;
+    }
+
+    public void ClearManualColors()
+    {
+        imageColorOverrides.Clear();
+        ApplyTheme();
     }
 
     private Sprite GetThemeSpriteForObject(string objectName, RealmThemeSprites sprites)
@@ -409,6 +485,30 @@ public class UIStageThemeController : MonoBehaviour
 
             string objectName = graphic.gameObject.name;
             Image img = graphic as Image;
+
+            if (useSharedAtlas && img != null && GetSharedLayer(img.sprite) is string layer)
+            {
+                if (img.type != Image.Type.Filled)
+                {
+                    Image.Type type = img.sprite.border.sqrMagnitude > 0f ? Image.Type.Sliced : Image.Type.Simple;
+                    if (img.type != type)
+                    {
+#if UNITY_EDITOR
+                        if (!Application.isPlaying) Undo.RecordObject(img, "UI 표시 방식 적용");
+#endif
+                        img.type = type;
+#if UNITY_EDITOR
+                        if (!Application.isPlaying)
+                        {
+                            EditorUtility.SetDirty(img);
+                            PrefabUtility.RecordPrefabInstancePropertyModifications(img);
+                        }
+#endif
+                    }
+                }
+                ApplyColor(graphic, GetLayerColor(layer));
+                continue;
+            }
 
             // 1) 전용 테마 스프라이트 스왑
             if (img != null && spriteTheme != null)
@@ -516,6 +616,12 @@ public class UIStageThemeController : MonoBehaviour
 
     private void ApplyColor(Graphic graphic, Color themeColor)
     {
+        Image image = graphic as Image;
+        ImageColorOverride manual = image != null ? imageColorOverrides.Find(item => item.image == image) : null;
+        Color desired = manual != null ? manual.color : preserveOriginalAlpha
+            ? new Color(themeColor.r, themeColor.g, themeColor.b, graphic.color.a) : themeColor;
+        if (image != null) lastAppliedColors[image] = desired;
+        if (graphic.color == desired) return;
 #if UNITY_EDITOR
         if (!Application.isPlaying)
         {
@@ -523,25 +629,13 @@ public class UIStageThemeController : MonoBehaviour
         }
 #endif
 
-        if (preserveOriginalAlpha)
-        {
-            float alpha = graphic.color.a;
-            if (alpha <= 0.001f)
-            {
-                alpha = themeColor.a > 0.001f ? themeColor.a : 1f;
-            }
-
-            graphic.color = new Color(themeColor.r, themeColor.g, themeColor.b, alpha);
-        }
-        else
-        {
-            graphic.color = themeColor;
-        }
+        graphic.color = desired;
 
 #if UNITY_EDITOR
         if (!Application.isPlaying)
         {
             EditorUtility.SetDirty(graphic);
+            PrefabUtility.RecordPrefabInstancePropertyModifications(graphic);
         }
 #endif
     }

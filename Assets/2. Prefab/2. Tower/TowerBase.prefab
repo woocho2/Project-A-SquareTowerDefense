@@ -268,6 +268,10 @@ MonoBehaviour:
   - {fileID: 1011, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   - {fileID: 1012, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   - {fileID: 1013, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  m_synergyCharacters: {fileID: 11400000, guid: 97fee378c3e247228e62e41bdd57fe2e, type: 2}
+  m_synergyCharacterMaterial: {fileID: 2100000, guid: 89cd8caee44e4653a67bf7dd09b241fc, type: 2}
+  m_synergyCornerRadius: 8
+  m_synergyCanvasWorldSize: 1.3333334
   m_splashColor: {r: 0.8862745, g: 0.3647059, b: 0.38431373, a: 1}
   m_targetColor: {r: 0.3254902, g: 0.5411765, b: 0.8039216, a: 1}
   m_buffColor: {r: 0.8352941, g: 0.6784314, b: 0.15686275, a: 1}

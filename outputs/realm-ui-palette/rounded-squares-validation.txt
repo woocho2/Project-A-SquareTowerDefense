@@ -1,0 +1,5 @@
+PASS rounded twenty square sprites; all forty rectangular sprites and atlas padding preserved pixel-for-pixel. Changed channels: 648279
+PASS only Shared_Frame_Btn_128_B has a 48px slicing border. All other 59 sprites have zero border. GUID, sprite IDs, rects and pivots preserved.
+PASS Unity imports all 60 sprites; exactly one 128x128 frame has slicing borders. Automatic Image mode follows borders; functional Filled gauges stay Filled. Native UI manual-color save/reopen regression also passes.
+
+Corrected requirement: PASS all four A/B/C/Frame Btn_128_B sprites are 128x128 with 48px borders; other 56 sprites have zero border. PNG unchanged. Newly changed panel sprite assignments restored at user's request.

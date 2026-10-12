@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 /// <summary>게임 전체의 상위 턴 상태입니다.</summary>
@@ -32,6 +33,16 @@ public class GameManager : MonoBehaviour
     public  float CurrentGameSpeed => m_currentgameSpeed;
     private int m_currentLife;
     public int CurrentLife => m_currentLife;
+    public int MaxLife
+    {
+        get
+        {
+            int cycle = WaveManager.Instance != null? WaveManager.Instance.CurrentCycle : 1;
+            int lifePerCycle = GameModeSession.SelectedDifficulty == GameDifficulty.Hard ? 15 : 20;
+
+            return cycle * lifePerCycle;
+        }
+    }
     public int maxShield = 5;
     private int m_currentShield;
     public int CurrentShield => m_currentShield;
@@ -61,7 +72,6 @@ public class GameManager : MonoBehaviour
 
     private Coroutine turnRoutine;
     private bool isPlayerTurnEnd = false;
-
 
     #endregion
 
@@ -332,6 +342,26 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Life and Shield
+
+    public bool CheckEnemyLimit()
+    {
+        if (TileManager.Instance == null)
+        {
+            return false;
+        }
+
+        int currentEnemyCount = TileManager.Instance.GetAllEnemiesOnPath().Count;
+
+        if (currentEnemyCount >= MaxLife)
+        {
+            OnGameOver();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     public void DecreaseLife(int amount)
     {

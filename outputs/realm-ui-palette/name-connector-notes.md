@@ -1,0 +1,19 @@
+# UI 이름의 비율로 아틀라스 연결
+
+Hierarchy 또는 Prefab Mode에서 UI 오브젝트/패널을 선택하고 Tools > UI > 이름의 비율로 스프라이트 연결을 엽니다. 미리보기에서 연결할 항목을 확인한 뒤 연결 적용을 누릅니다. 선택 범위 안의 Image만 수정하며 실제 씬/프리팹을 자동으로 저장하지 않습니다. Ctrl+Z로 한 번에 되돌리고 Ctrl+S로 저장할 수 있습니다. Project 창의 프리팹 에셋을 직접 선택한 경우에는 적용하지 않습니다.
+
+이름 예:
+- Img_A_Name_BG 3:2 → Shared_A_SkillCard_384x256
+- Img_B_Name_BG 3:1 → Shared_B_Capsule_384x128
+- Img_C_Name_BG 2:1 → Shared_C_Capsule_256x128
+- Img_Name_Frame 3:1 → Shared_Frame_Capsule_384x128
+- Img_A_Name_BG 1:1 → Shared_A_Btn_128_B (Sliced)
+
+Frame 표시가 프레임을 지정하며 A/B/C는 배경 종류를 지정합니다. 종류 표시가 없는 경우 현재 연결된 Shared 스프라이트의 레이어를 사용할 수 있습니다. 비율이 없는 Image는 옵션에 따라 가장 가까운 부모 이름의 비율을 사용합니다. 이름에 서로 다른 비율이 둘 이상 있거나 지원하지 않는 비율은 건너뜁니다. 6:4처럼 같은 비율은 3:2로 줄여서 연결합니다. 기존 6:1/1:6 조각도 지원하며 새 아틀라스를 만들지 않습니다.
+
+1:1은 기본으로 각 레이어의 128_B Sliced를 사용하며 창에서 Simple 128을 고를 수도 있습니다. 일반 비율은 Simple이며 기존 Filled 게이지는 fillAmount 및 Filled 방식을 유지합니다. UI 크기/위치와 Image 색상은 변경하지 않습니다. 선택한 이미지의 색은 연결 후에도 테마 적용에서 유지되도록 수동 색상 목록에 저장합니다. 테마 기본색을 다시 쓰려면 UIStageThemeController의 수동 색상 복원을 사용할 수 있습니다.
+
+사용자 추가 요청으로 아스가르드 B 기본 황금색은 #FFDF7D로 올리고 Frame은 #ECBB41을 유지합니다. 현재 Canvas에서 기존 기본 금색을 쓰던 Shared B 이미지 두 개도 이 밝은 금색으로 변경했으며 다른 직접 지정 색은 유지했습니다. 다른 월드의 팔레트는 변경하지 않았습니다.
+
+코드: Assets/Editor/UIAtlasNameConnector.cs. 자동 실행되는 연결 기능은 아니며 사용자가 적용 버튼을 눌렀을 때만 실행됩니다.
+검증: Runtime/Editor 전체 C# 컴파일, 별도 Unity 프로젝트에서 비율/레이어 매칭, 비활성 하위 UI, 중복 선택, 잘못된 비율 건너뛰기, 선택 범위, 미리보기 비변경, Undo, 반복 적용, 프리팹 저장·재열기, 색상/크기/Filled 보존을 확인했습니다. 실제 게임 Play Mode는 실행하지 않았습니다. NameConnectorCheck.cs와 name-connector-validation.log를 참고하세요.

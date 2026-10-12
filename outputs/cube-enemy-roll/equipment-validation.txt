@@ -1,0 +1,9 @@
+PASS runtime C# compilation (production EnemyCubeVisual).
+PASS Editor C# compilation.
+PASS browser preview readiness and 25 face/palette preservation checks (protected facial areas, warm gold, alpha).
+PASS continuous two-face rolling preview with equipment palettes (rechecked after movement update).
+PASS Unity GPU shader compilation and 25 production-material/sprite renders in an isolated project.
+PASS Action and GroupHeal prefab variant material inheritance in Unity.
+PASS seven material/prefab GUID connections and removal of whole-character tints.
+The game itself was not run in Play Mode. New Action/GroupHeal abilities and pool types remain outside this appearance change.
+2026-10-12 square six-face update: PASS 30 face/palette browser checks and Unity GPU renders, explicit Right sprite selection, 8px rounded corner shaders. Latest report: ../synergy-cube-characters-v1/validation.txt. Final full-game Runtime/Editor C# compilation and independent Unity character compilation both passed.

@@ -1,0 +1,3 @@
+PASS all four 3:2 sprites share the 6:1 corner/line/padding scale at equal UI height. Maximum boundary difference at 4x preview: 1 px (<=0.5 UI px).
+PASS remaining 56 sprites and padding unchanged pixel-for-pixel. Changed channels: 342992
+PASS atlas dimensions, sprite count, GUID, IDs, rects and slicing settings unchanged. UI layout/assignments not modified.

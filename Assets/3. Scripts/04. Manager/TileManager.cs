@@ -65,7 +65,7 @@ public class TileManager : MonoBehaviour
     [SerializeField] private Tilemap tilemap;
     [Header("타워 소환 타일맵")]
     [SerializeField] private Tilemap m_towerSpawnTilemap;
-    [Tooltip("시작점부터 도착점까지의 경로 좌표. 목록 순서가 이동 순서입니다.")]
+    [Tooltip("Start(0번)부터 한 바퀴를 도는 순환 경로 좌표. 목록 순서가 이동 순서이고, 마지막 칸은 0번 칸과 이어집니다.")]
     [SerializeField] private List<Vector3Int> m_pathGridPositions = new List<Vector3Int>();
 
     public IReadOnlyList<Vector3Int> PathGridPositions => m_pathGridPositions;
@@ -149,8 +149,16 @@ public class TileManager : MonoBehaviour
 
 
     public int PathTileCount => m_pathCellsByIndex.Count;
-    /// <summary>도착 타일의 패스 인덱스입니다. 경로가 비어 있으면 0을 반환합니다.</summary>
+    /// <summary>마지막 패스 인덱스입니다. 순환 경로라 이 칸 다음은 Start(0번)입니다. 경로가 비어 있으면 0을 반환합니다.</summary>
     public int LastPathIndex => Mathf.Max(0, m_pathGridPositions.Count - 1);
+    /// <summary>패스 인덱스를 순환 경로 위의 번호로 감습니다. 마지막 번호 다음은 0번, 0번 앞은 마지막 번호입니다.</summary>
+    public int WrapPathIndex(int index)
+    {
+        int count = PathTileCount;
+        if (count <= 0) return 0;
+
+        return ((index % count) + count) % count;
+    }
     public int TowerSpawnTileCount => m_towerSpawnCellsByIndex.Count;
 
     // 스테이지 시작 시 배치되는 고정 맵 버프
@@ -552,7 +560,7 @@ public class TileManager : MonoBehaviour
 
     /// <summary>
     /// 타워에서 가장 가까운 패스 인덱스입니다. 타일 거리가 같으면 직선상 가까운 칸, 그다음 앞 번호를 고릅니다.
-    /// 디버프 장판의 첫 배치에 쓰므로, 장판을 놓을 수 없는 소환 입구(0번)와 도착 타일은 제외합니다.
+    /// 디버프 장판의 첫 배치에 쓰므로, 장판을 놓을 수 없는 Start(0번)는 제외합니다.
     /// </summary>
     public bool TryGetClosestPathIndexToTower(int towerSpawnIndex, out int pathIndex)
     {
@@ -561,7 +569,7 @@ public class TileManager : MonoBehaviour
 
         int bestTileDistance = int.MaxValue;
         int bestSqrDistance = int.MaxValue;
-        for (int index = 1; index < PathTileCount - 1; index++)
+        for (int index = 1; index < PathTileCount; index++)
         {
             Vector3Int offset = m_pathBoardCellsByIndex[index] - towerCell;
             int tileDistance = GetCellDistance(m_pathBoardCellsByIndex[index], towerCell);
@@ -1357,7 +1365,7 @@ public class TileManager : MonoBehaviour
 
         List<Vector3Int> availableTiles = new List<Vector3Int>();
         HashSet<Vector3Int> uniqueCells = new HashSet<Vector3Int>();
-        for (int i = 1; i < m_pathGridPositions.Count - 1; i++)
+        for (int i = 1; i < m_pathGridPositions.Count; i++)
         {
             if (uniqueCells.Add(m_pathGridPositions[i])) availableTiles.Add(m_pathGridPositions[i]);
         }

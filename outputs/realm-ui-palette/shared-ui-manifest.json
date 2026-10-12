@@ -1,0 +1,326 @@
+{
+    "atlas":  "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\5. UI\\Shared_UI_Atlas.png",
+    "guid":  "8b158e0989f140a88351053d1be429f7",
+    "sprites":  [
+                    {
+                        "id":  2001,
+                        "name":  "Shared_A_Btn_1024",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2002,
+                        "name":  "Shared_A_Btn_512",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2003,
+                        "name":  "Shared_A_Btn_256",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2004,
+                        "name":  "Shared_A_Btn_128",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2005,
+                        "name":  "Shared_A_Btn_128_B",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2006,
+                        "name":  "Shared_A_MegaDock_768x128",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2007,
+                        "name":  "Shared_A_MegaRail_128x768",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2008,
+                        "name":  "Shared_A_Capsule_512x128",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2009,
+                        "name":  "Shared_A_TallBanner_128x512",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2010,
+                        "name":  "Shared_A_Capsule_384x128",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2011,
+                        "name":  "Shared_A_Gauge_128x384",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2012,
+                        "name":  "Shared_A_Capsule_256x128",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2013,
+                        "name":  "Shared_A_Capsule_128x256",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2014,
+                        "name":  "Shared_A_SkillCard_384x256",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2015,
+                        "name":  "Shared_A_CharCard_256x384",
+                        "layer":  "A"
+                    },
+                    {
+                        "id":  2101,
+                        "name":  "Shared_B_Btn_1024",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2102,
+                        "name":  "Shared_B_Btn_512",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2103,
+                        "name":  "Shared_B_Btn_256",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2104,
+                        "name":  "Shared_B_Btn_128",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2105,
+                        "name":  "Shared_B_Btn_128_B",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2106,
+                        "name":  "Shared_B_MegaDock_768x128",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2107,
+                        "name":  "Shared_B_MegaRail_128x768",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2108,
+                        "name":  "Shared_B_Capsule_512x128",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2109,
+                        "name":  "Shared_B_TallBanner_128x512",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2110,
+                        "name":  "Shared_B_Capsule_384x128",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2111,
+                        "name":  "Shared_B_Gauge_128x384",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2112,
+                        "name":  "Shared_B_Capsule_256x128",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2113,
+                        "name":  "Shared_B_Capsule_128x256",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2114,
+                        "name":  "Shared_B_SkillCard_384x256",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2115,
+                        "name":  "Shared_B_CharCard_256x384",
+                        "layer":  "B"
+                    },
+                    {
+                        "id":  2201,
+                        "name":  "Shared_C_Btn_1024",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2202,
+                        "name":  "Shared_C_Btn_512",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2203,
+                        "name":  "Shared_C_Btn_256",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2204,
+                        "name":  "Shared_C_Btn_128",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2205,
+                        "name":  "Shared_C_Btn_128_B",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2206,
+                        "name":  "Shared_C_MegaDock_768x128",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2207,
+                        "name":  "Shared_C_MegaRail_128x768",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2208,
+                        "name":  "Shared_C_Capsule_512x128",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2209,
+                        "name":  "Shared_C_TallBanner_128x512",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2210,
+                        "name":  "Shared_C_Capsule_384x128",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2211,
+                        "name":  "Shared_C_Gauge_128x384",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2212,
+                        "name":  "Shared_C_Capsule_256x128",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2213,
+                        "name":  "Shared_C_Capsule_128x256",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2214,
+                        "name":  "Shared_C_SkillCard_384x256",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2215,
+                        "name":  "Shared_C_CharCard_256x384",
+                        "layer":  "C"
+                    },
+                    {
+                        "id":  2301,
+                        "name":  "Shared_Frame_Btn_1024",
+                        "layer":  "Frame"
+                    },
+                    {
+                        "id":  2302,
+                        "name":  "Shared_Frame_Btn_512",
+                        "layer":  "Frame"
+                    },
+                    {
+                        "id":  2303,
+                        "name":  "Shared_Frame_Btn_256",
+                        "layer":  "Frame"
+                    },
+                    {
+                        "id":  2304,
+                        "name":  "Shared_Frame_Btn_128",
+                        "layer":  "Frame"
+                    },
+                    {
+                        "id":  2305,
+                        "name":  "Shared_Frame_Btn_128_B",
+                        "layer":  "Frame"
+                    },
+                    {
+                        "id":  2306,
+                        "name":  "Shared_Frame_MegaDock_768x128",
+                        "layer":  "Frame"
+                    },
+                    {
+                        "id":  2307,
+                        "name":  "Shared_Frame_MegaRail_128x768",
+                        "layer":  "Frame"
+                    },
+                    {
+                        "id":  2308,
+                        "name":  "Shared_Frame_Capsule_512x128",
+                        "layer":  "Frame"
+                    },
+                    {
+                        "id":  2309,
+                        "name":  "Shared_Frame_TallBanner_128x512",
+                        "layer":  "Frame"
+                    },
+                    {
+                        "id":  2310,
+                        "name":  "Shared_Frame_Capsule_384x128",
+                        "layer":  "Frame"
+                    },
+                    {
+                        "id":  2311,
+                        "name":  "Shared_Frame_Gauge_128x384",
+                        "layer":  "Frame"
+                    },
+                    {
+                        "id":  2312,
+                        "name":  "Shared_Frame_Capsule_256x128",
+                        "layer":  "Frame"
+                    },
+                    {
+                        "id":  2313,
+                        "name":  "Shared_Frame_Capsule_128x256",
+                        "layer":  "Frame"
+                    },
+                    {
+                        "id":  2314,
+                        "name":  "Shared_Frame_SkillCard_384x256",
+                        "layer":  "Frame"
+                    },
+                    {
+                        "id":  2315,
+                        "name":  "Shared_Frame_CharCard_256x384",
+                        "layer":  "Frame"
+                    }
+                ],
+    "removedTextures":  40,
+    "references":  541,
+    "manualColorsPreserved":  0,
+    "oldPngBytes":  3182830,
+    "newPngBytes":  298382,
+    "roundedSquares":  20,
+    "untouchedRectangles":  40,
+    "slicedSprites":  [
+                          "Shared_A_Btn_128_B",
+                          "Shared_B_Btn_128_B",
+                          "Shared_C_Btn_128_B",
+                          "Shared_Frame_Btn_128_B"
+                      ],
+    "slicedSpriteIDs":  [
+                            2005,
+                            2105,
+                            2205,
+                            2305
+                        ],
+    "skillCardCornerReference":  "MegaDock_768x128 scaled to equal displayed height"
+}

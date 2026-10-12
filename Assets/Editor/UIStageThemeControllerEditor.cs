@@ -97,9 +97,21 @@ public class UIStageThemeControllerEditor : Editor
         }
 
         EditorGUILayout.Space(8);
-        EditorGUILayout.LabelField("전용 스프라이트 (Theme Sprites)", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("useThemeSprites"), new GUIContent("전용 스프라이트 사용"));
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("realmSprites"), new GUIContent("스테이지별 스프라이트 목록"), true);
+        EditorGUILayout.LabelField("공통 아틀라스", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("useSharedAtlas"), new GUIContent("A/B/C/프레임 색상 적용"));
+        DrawColorPreview("B 강조색", controller.GetLayerColor("B"));
+        DrawColorPreview("C 짙은 바탕", controller.GetLayerColor("C"));
+        EditorGUILayout.HelpBox("Image의 Color를 직접 바꾸면 해당 UI의 색상을 저장하고 테마 자동 적용에서도 유지합니다.", MessageType.Info);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("imageColorOverrides"), new GUIContent("직접 지정한 UI 색상"), true);
+        if (controller.ManualColorCount > 0 && GUILayout.Button("직접 지정한 색상을 지우고 테마 기본색으로 복원"))
+        {
+            serializedObject.ApplyModifiedProperties();
+            Undo.RecordObject(controller, "수동 UI 색상 복원");
+            controller.ClearManualColors();
+            EditorUtility.SetDirty(controller);
+            PrefabUtility.RecordPrefabInstancePropertyModifications(controller);
+            serializedObject.Update();
+        }
 
         EditorGUILayout.Space(8);
         EditorGUILayout.LabelField("고급 설정", EditorStyles.boldLabel);

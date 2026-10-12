@@ -1,0 +1,542 @@
+[
+    {
+        "imageID":  "5271855722518311900",
+        "rectID":  "680430925345143185",
+        "path":  "Canvas/PlayerTurnPanel/Group_SpawnMiddleBoss/Img_SpawnMiddleBoss_Frame 1:1",
+        "role":  "Frame",
+        "ratio":  "1:1",
+        "width":  200,
+        "height":  200,
+        "sprite":  "Shared_Frame_Btn_128_B",
+        "fileID":  "2305",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  1,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "3518276299396026578",
+        "rectID":  "7573294508722195085",
+        "path":  "Canvas/PlayerTurnPanel/Group_CreateTower/Img_A_CreateTowerName_BG 3:2/Img_CreateTowerName_Frame 3:2",
+        "role":  "Frame",
+        "ratio":  "3:2",
+        "width":  225,
+        "height":  150,
+        "sprite":  "Shared_Frame_SkillCard_384x256",
+        "fileID":  "2314",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "6227226662249303419",
+        "rectID":  "3519766382590786291",
+        "path":  "Canvas/GameInfoPanel/Group_CurrentGold/Img_A_CurrentGold_BG 3:1",
+        "role":  "A",
+        "ratio":  "3:1",
+        "width":  225,
+        "height":  75,
+        "sprite":  "Shared_A_Capsule_384x128",
+        "fileID":  "2010",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      1,
+                      0.9882352941176471,
+                      0.92549019607843142
+                  ]
+    },
+    {
+        "imageID":  "4122412309006407195",
+        "rectID":  "4699060689560425281",
+        "path":  "Canvas/GameInfoPanel/Group_Wave/Img_Wave_Frame 3:1",
+        "role":  "Frame",
+        "ratio":  "3:1",
+        "width":  300,
+        "height":  100,
+        "sprite":  "Shared_Frame_Capsule_384x128",
+        "fileID":  "2310",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "8194005990487819489",
+        "rectID":  "7790262667197076954",
+        "path":  "Canvas/PlayerTurnPanel/Group_SpawnMiddleBoss/Img_A_SpawnMiddleBoss_BG 1:1",
+        "role":  "A",
+        "ratio":  "1:1",
+        "width":  200,
+        "height":  200,
+        "sprite":  "Shared_A_Btn_128",
+        "fileID":  "2004",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      1,
+                      0.9882352941176471,
+                      0.92549019607843142
+                  ]
+    },
+    {
+        "imageID":  "8137439116645628972",
+        "rectID":  "3874323727781026910",
+        "path":  "Canvas/GameInfoPanel/Group_Life/Img_A_Life_BG 3:1",
+        "role":  "A",
+        "ratio":  "3:1",
+        "width":  225,
+        "height":  75,
+        "sprite":  "Shared_A_Capsule_384x128",
+        "fileID":  "2010",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      1,
+                      0.9882352941176471,
+                      0.92549019607843142
+                  ]
+    },
+    {
+        "imageID":  "8021606826768804583",
+        "rectID":  "1266168107496399085",
+        "path":  "Canvas/GameInfoPanel/Group_GameSpeed/Img_GameSpeed_Frame 1:1",
+        "role":  "Frame",
+        "ratio":  "1:1",
+        "width":  75,
+        "height":  75,
+        "sprite":  "Shared_Frame_Btn_128_B",
+        "fileID":  "2305",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  1,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "5899873466638705774",
+        "rectID":  "6058443647550166668",
+        "path":  "Canvas/GameInfoPanel/Group_Option/Img_A_Option_BG 1:1",
+        "role":  "A",
+        "ratio":  "1:1",
+        "width":  75,
+        "height":  75,
+        "sprite":  "Shared_A_Btn_128",
+        "fileID":  "2004",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      1,
+                      0.9882352941176471,
+                      0.92549019607843142
+                  ]
+    },
+    {
+        "imageID":  "1732370034624114865",
+        "rectID":  "5628987272688796858",
+        "path":  "Canvas/PlayerTurnPanel/Group_TierUpTower/Img_C_TierUpTower_BG 2:3",
+        "role":  "C",
+        "ratio":  "2:3",
+        "width":  150,
+        "height":  225,
+        "sprite":  "Shared_C_CharCard_256x384",
+        "fileID":  "2215",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.14901960784313731,
+                      0.2196078431372549,
+                      0.33333333333333331
+                  ]
+    },
+    {
+        "imageID":  "3630046900386806833",
+        "rectID":  "6794212542908478386",
+        "path":  "Canvas/PlayerTurnPanel/Group_TurnEnd/Img_TurnEnd_Frame 4:1",
+        "role":  "Frame",
+        "ratio":  "4:1",
+        "width":  400,
+        "height":  100,
+        "sprite":  "Shared_Frame_Capsule_512x128",
+        "fileID":  "2308",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "4195841020430683046",
+        "rectID":  "490677120637577203",
+        "path":  "Canvas/PlayerTurnPanel/Group_CreateTower/Img_A_CreateTowerName_BG 3:2",
+        "role":  "A",
+        "ratio":  "3:2",
+        "width":  225,
+        "height":  150,
+        "sprite":  "Shared_A_SkillCard_384x256",
+        "fileID":  "2014",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      1,
+                      0.9882352941176471,
+                      0.92549019607843142
+                  ]
+    },
+    {
+        "imageID":  "146595475076699256",
+        "rectID":  "5797687076233103495",
+        "path":  "Canvas/PlayerTurnPanel/Group_CreateTower/Img_C_CreateTower_BG 2:3",
+        "role":  "C",
+        "ratio":  "2:3",
+        "width":  150,
+        "height":  225,
+        "sprite":  "Shared_C_CharCard_256x384",
+        "fileID":  "2215",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.14901960784313731,
+                      0.2196078431372549,
+                      0.33333333333333331
+                  ]
+    },
+    {
+        "imageID":  "4265788382760148761",
+        "rectID":  "5909563522438186543",
+        "path":  "Canvas/PlayerTurnPanel/Group_TierUpTower/Img_A_TierUpTowerName_BG 3:2/Img_TierUpTowerName_Frame 3:2",
+        "role":  "Frame",
+        "ratio":  "3:2",
+        "width":  225,
+        "height":  150,
+        "sprite":  "Shared_Frame_SkillCard_384x256",
+        "fileID":  "2314",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "1646546252326948310",
+        "rectID":  "3512411287287767985",
+        "path":  "Canvas/GameInfoPanel/Group_Wave/Img_C_Wave_BG 3:1",
+        "role":  "C",
+        "ratio":  "3:1",
+        "width":  300,
+        "height":  100,
+        "sprite":  "Shared_C_Capsule_384x128",
+        "fileID":  "2210",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.14901960784313731,
+                      0.2196078431372549,
+                      0.33333333333333331
+                  ]
+    },
+    {
+        "imageID":  "5239025561517766405",
+        "rectID":  "169606231373837571",
+        "path":  "Canvas/GameInfoPanel/Group_Life/Img_Life_Frame 3:1",
+        "role":  "Frame",
+        "ratio":  "3:1",
+        "width":  225,
+        "height":  75,
+        "sprite":  "Shared_Frame_Capsule_384x128",
+        "fileID":  "2310",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "1171897532450887254",
+        "rectID":  "3599376061357954841",
+        "path":  "Canvas/GameInfoPanel/Group_CurrentGem/Img_CurrentGem_Frame 3:1",
+        "role":  "Frame",
+        "ratio":  "3:1",
+        "width":  225,
+        "height":  75,
+        "sprite":  "Shared_Frame_Capsule_384x128",
+        "fileID":  "2310",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "5574703147668486310",
+        "rectID":  "1700096551229161089",
+        "path":  "Canvas/PlayerTurnPanel/Group_ColorUpTower/Img_A_ColorUpTowerName_BG 3:2",
+        "role":  "A",
+        "ratio":  "3:2",
+        "width":  225,
+        "height":  150,
+        "sprite":  "Shared_A_SkillCard_384x256",
+        "fileID":  "2014",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      1,
+                      0.9882352941176471,
+                      0.92549019607843142
+                  ]
+    },
+    {
+        "imageID":  "4176125104408575461",
+        "rectID":  "8044760442215573699",
+        "path":  "Canvas/GameInfoPanel/Group_Option/Img_Option_Frame 1:1",
+        "role":  "Frame",
+        "ratio":  "1:1",
+        "width":  75,
+        "height":  75,
+        "sprite":  "Shared_Frame_Btn_128_B",
+        "fileID":  "2305",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  1,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "527334639208587489",
+        "rectID":  "2580502482886021364",
+        "path":  "Canvas/PlayerTurnPanel/Group_CreateTower/Img_CreateTower_Frame 2:3",
+        "role":  "Frame",
+        "ratio":  "2:3",
+        "width":  150,
+        "height":  225,
+        "sprite":  "Shared_Frame_CharCard_256x384",
+        "fileID":  "2315",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "6662100653723942443",
+        "rectID":  "1164917528806542233",
+        "path":  "Canvas/PlayerTurnPanel/Group_SpawnMiddleBoss/Img_B_SpawnMiddleBossName_BG 3:2/Img_SpawnMiddleBossName_Frame 3:2",
+        "role":  "Frame",
+        "ratio":  "3:2",
+        "width":  300,
+        "height":  200,
+        "sprite":  "Shared_Frame_SkillCard_384x256",
+        "fileID":  "2314",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "3155084330078966611",
+        "rectID":  "8516050630408370209",
+        "path":  "Canvas/PlayerTurnPanel/Group_TierUpTower/Img_TierUpTower_Frame 2:3",
+        "role":  "Frame",
+        "ratio":  "2:3",
+        "width":  150,
+        "height":  225,
+        "sprite":  "Shared_Frame_CharCard_256x384",
+        "fileID":  "2315",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "5296297123900823883",
+        "rectID":  "8323431043188520059",
+        "path":  "Canvas/PlayerTurnPanel/Group_ColorUpTower/Img_C_ColorUpTower_BG 2:3",
+        "role":  "C",
+        "ratio":  "2:3",
+        "width":  150,
+        "height":  225,
+        "sprite":  "Shared_C_CharCard_256x384",
+        "fileID":  "2215",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.14901960784313731,
+                      0.2196078431372549,
+                      0.33333333333333331
+                  ]
+    },
+    {
+        "imageID":  "4773200623969301509",
+        "rectID":  "7247736223089890929",
+        "path":  "Canvas/PlayerTurnPanel/Group_ColorUpTower/Img_A_ColorUpTowerName_BG 3:2/Img_ColorUpTowerName_Frame 3:2",
+        "role":  "Frame",
+        "ratio":  "3:2",
+        "width":  225,
+        "height":  150,
+        "sprite":  "Shared_Frame_SkillCard_384x256",
+        "fileID":  "2314",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "2497599700615735504",
+        "rectID":  "4978261537371772530",
+        "path":  "Canvas/GameInfoPanel/Group_CurrentGold/Img_CurrentGold_Frame 3:1",
+        "role":  "Frame",
+        "ratio":  "3:1",
+        "width":  225,
+        "height":  75,
+        "sprite":  "Shared_Frame_Capsule_384x128",
+        "fileID":  "2310",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "122876287058604586",
+        "rectID":  "2900830147185319910",
+        "path":  "Canvas/PlayerTurnPanel/Group_SpawnMiddleBoss/Img_B_SpawnMiddleBossName_BG 3:2",
+        "role":  "B",
+        "ratio":  "3:2",
+        "width":  300,
+        "height":  200,
+        "sprite":  "Shared_B_SkillCard_384x256",
+        "fileID":  "2114",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      1,
+                      0.87450980392156863,
+                      0.49019607843137247
+                  ]
+    },
+    {
+        "imageID":  "3758505627249276769",
+        "rectID":  "253856230542207032",
+        "path":  "Canvas/PlayerTurnPanel/Group_TierUpTower/Img_A_TierUpTowerName_BG 3:2",
+        "role":  "A",
+        "ratio":  "3:2",
+        "width":  225,
+        "height":  150,
+        "sprite":  "Shared_A_SkillCard_384x256",
+        "fileID":  "2014",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      1,
+                      0.9882352941176471,
+                      0.92549019607843142
+                  ]
+    },
+    {
+        "imageID":  "3478961865715597771",
+        "rectID":  "6221624123634797498",
+        "path":  "Canvas/GameInfoPanel/Group_CurrentGem/Img_A_CurrentGem_BG 3:1",
+        "role":  "A",
+        "ratio":  "3:1",
+        "width":  225,
+        "height":  75,
+        "sprite":  "Shared_A_Capsule_384x128",
+        "fileID":  "2010",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      1,
+                      0.9882352941176471,
+                      0.92549019607843142
+                  ]
+    },
+    {
+        "imageID":  "3134285348777040023",
+        "rectID":  "8294241703279008218",
+        "path":  "Canvas/GameInfoPanel/Group_GameSpeed/Img_A_GameSpeed_BG 1:1",
+        "role":  "A",
+        "ratio":  "1:1",
+        "width":  75,
+        "height":  75,
+        "sprite":  "Shared_A_Btn_128",
+        "fileID":  "2004",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      1,
+                      0.9882352941176471,
+                      0.92549019607843142
+                  ]
+    },
+    {
+        "imageID":  "4630773882983091725",
+        "rectID":  "4418478360586617352",
+        "path":  "Canvas/PlayerTurnPanel/Group_ColorUpTower/Img_ColorUpTower_Frame 2:3",
+        "role":  "Frame",
+        "ratio":  "2:3",
+        "width":  150,
+        "height":  225,
+        "sprite":  "Shared_Frame_CharCard_256x384",
+        "fileID":  "2315",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.92549019607843142,
+                      0.73333333333333328,
+                      0.25490196078431371
+                  ]
+    },
+    {
+        "imageID":  "4352257608120516371",
+        "rectID":  "36655507851705646",
+        "path":  "Canvas/PlayerTurnPanel/Group_TurnEnd/Img_C_TurnEnd_BG 4:1",
+        "role":  "C",
+        "ratio":  "4:1",
+        "width":  400,
+        "height":  100,
+        "sprite":  "Shared_C_Capsule_512x128",
+        "fileID":  "2208",
+        "guid":  "8b158e0989f140a88351053d1be429f7",
+        "type":  0,
+        "color":  [
+                      0.14901960784313731,
+                      0.2196078431372549,
+                      0.33333333333333331
+                  ]
+    }
+]

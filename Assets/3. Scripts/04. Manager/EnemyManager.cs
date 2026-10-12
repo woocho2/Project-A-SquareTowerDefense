@@ -44,6 +44,10 @@ public class EnemyManager : MonoBehaviour
         if (shouldSpawn && WaveManager.Instance != null)
         {
             WaveManager.Instance.SpawnWaveEnemiesForTurn();
+            if (GameManager.Instance.CheckEnemyLimit())
+            {
+                yield break;   
+            }                        
         }
 
         // 새로 소환된 적을 포함해 현재 필드의 모든 적이 동시에 이동을 시작합니다.

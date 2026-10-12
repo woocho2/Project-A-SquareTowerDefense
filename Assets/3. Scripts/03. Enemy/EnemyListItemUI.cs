@@ -70,7 +70,8 @@ public class EnemyListItemUI : MonoBehaviour
         // 아이콘 스프라이트 표기
         if (m_icon != null)
         {
-            if (m_enemy.TryGetComponent(out SpriteRenderer sr) && sr.sprite != null)
+            SpriteRenderer sr = m_enemy.GetComponentInChildren<SpriteRenderer>(true);
+            if (sr != null && sr.sprite != null)
             {
                 m_icon.sprite = sr.sprite;
                 m_icon.enabled = true;
