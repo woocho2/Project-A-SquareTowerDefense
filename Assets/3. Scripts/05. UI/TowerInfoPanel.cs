@@ -26,6 +26,9 @@ public class TowerInfoPanel : MonoBehaviour
     [SerializeField] TextMeshProUGUI txt_attackCount;
     [SerializeField] TextMeshProUGUI txt_criticalRate;
     [SerializeField] TextMeshProUGUI txt_criticalDamage;
+    [SerializeField] TextMeshProUGUI txt_abilityValue;
+    [SerializeField] TextMeshProUGUI txt_duration;
+    [SerializeField] TextMeshProUGUI txt_mastery;
 
     [Header("설명")]
     [SerializeField] TextMeshProUGUI txt_default;
@@ -167,7 +170,7 @@ public class TowerInfoPanel : MonoBehaviour
         UpdateIdentityText(towerID);
         UpdateIdentityImage();
         UpdateTargetPriorityText();
-        UpdateStatText(stats);
+        UpdateStatText(data, stats);
         UpdateDescriptionText(data, stats);
         UpdateCombineButton();
     }
@@ -215,14 +218,70 @@ public class TowerInfoPanel : MonoBehaviour
             : "-";
     }
 
-    private void UpdateStatText(TowerStats stats)
+    // 쓰지 않는 스탯은 칸을 숨기지 않고 이 글자로 둡니다. 칸의 자리가 방식마다 바뀌지 않게 하려는 것입니다.
+    private const string UnusedStatText = "-";
+
+    // 칸의 구성은 27번 기획 4장 [타워 정보 카드]의 표를 따릅니다.
+    private void UpdateStatText(TowerData data, TowerStats stats)
     {
-        txt_power.text = $"{stats.AttackPower:F2}";
-        txt_range.text = $"{TowerAttackAction.ToTileRange(stats.Range)}칸";
-        txt_action.text = $"{m_selectedTower.GetMaxAction()}";
-        txt_attackCount.text = $"{stats.AttackCount}";
-        txt_criticalRate.text = $"{stats.CriticalRate * 100f:F2}%";
-        txt_criticalDamage.text = $"{(2f + stats.CriticalDamage) * 100f:F0}%";
+        AttackType attackType = data != null ? data.attackType : AttackType.None;
+        // 버프·디버프 타워는 공격하지 않으므로 사거리와 치명타를 쓰지 않습니다.
+        bool isSupport = attackType == AttackType.Buff || attackType == AttackType.Debuff;
+
+        txt_power.text = $"{stats.AttackPower:0.##}";
+        txt_range.text = isSupport ? UnusedStatText : $"{TowerAttackAction.ToTileRange(stats.Range)}칸";
+        txt_action.text = $"{m_selectedTower.GetRemainingAction()} / {m_selectedTower.GetMaxAction()}";
+        // 버프·디버프 타워의 공격 횟수는 한 번 행동에 쌓는 스택 수입니다.
+        txt_attackCount.text = isSupport ? $"{stats.AttackCount}스택" : $"{stats.AttackCount}회";
+        txt_criticalRate.text = isSupport ? UnusedStatText : $"{stats.CriticalRate * 100f:0.##}%";
+        txt_criticalDamage.text = isSupport ? UnusedStatText : $"{(2f + stats.CriticalDamage) * 100f:F0}%";
+
+        SetStatText(txt_abilityValue, $"×{stats.AbilityValue:0.##}");
+        SetStatText(txt_duration, GetDurationText(attackType, stats));
+        SetStatText(txt_mastery, GetMasteryText(attackType, stats));
+    }
+
+    // 둘째 줄의 칸은 프리팹에 연결하기 전에도 패널이 멈추지 않게 비어 있으면 건너뜁니다.
+    private void SetStatText(TextMeshProUGUI text, string value)
+    {
+        if (text == null) return;
+
+        text.text = value;
+    }
+
+    private string GetDurationText(AttackType attackType, TowerStats stats)
+    {
+        return attackType switch
+        {
+            AttackType.Splash => $"{stats.Duration:0.##}턴",
+            // 단일 타워의 적중은 적마다 따로 셉니다.
+            AttackType.Target => $"같은 적 {stats.Duration:0.##}회",
+            AttackType.Buff => $"{stats.Duration:0.##}회 행동",
+            AttackType.Debuff => $"{stats.Duration:0.##}회 행동",
+            _ => UnusedStatText
+        };
+    }
+
+    private string GetMasteryText(AttackType attackType, TowerStats stats)
+    {
+        switch (attackType)
+        {
+            case AttackType.Splash:
+                // 광역 범위 1 → 1×1, 2 → 3×3, 3 → 5×5
+                int side = Mathf.Max(1, stats.ProjectileRadius) * 2 - 1;
+                return $"{side}×{side}";
+
+            case AttackType.Target:
+                return $"{1 + Mathf.Max(0, stats.AdditionalHitCount)}발";
+
+            case AttackType.Buff:
+            case AttackType.Debuff:
+                // 지금 코드는 타워마다 존이 하나입니다. 존을 늘리는 것은 26번 G-22.
+                return "1개";
+
+            default:
+                return UnusedStatText;
+        }
     }
 
     private void UpdateDescriptionText(TowerData data, TowerStats stats)

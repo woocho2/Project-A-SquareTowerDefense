@@ -24,7 +24,7 @@ public static class NameConnectorCheck
             var reduced=MakeImage(root.transform,"Img_A_Reduced_BG 6 : 4");var unsupported=MakeImage(root.transform,"Img_A_Unknown_BG 5:1");
             var ambiguous=MakeImage(root.transform,"Img_A_Conflict_BG 3:2 3:1");var zero=MakeImage(root.transform,"Img_A_Zero_BG 0:1");
             var icon=MakeImage(root.transform,"Img_Icon 3:2");var outside=MakeImage(null,"Img_A_Outside_BG 3:1");
-            var plan=UIAtlasNameConnector.BuildPlan(new[]{root,card.gameObject},texture,true,true,UIAtlasNameConnector.SquareStyle.Sliced128B);
+            var plan=UIAtlasNameConnector.BuildPlan(new[]{root,card.gameObject},texture,true,true,UIAtlasNameConnector.SquareStyle.Sliced128B,false);
             Check(plan.Count==10,"Overlapping selection was not deduplicated or inactive children were missed");
             Check(plan.Single(row=>row.image==card).sprite.name=="Shared_A_SkillCard_384x256","3:2 mapping failed");
             Check(plan.Single(row=>row.image==bar).sprite.name=="Shared_B_Capsule_384x128","Inactive 3:1 mapping failed");
@@ -39,7 +39,7 @@ public static class NameConnectorCheck
             Check(outside.sprite==null&&unsupported.sprite==null&&icon.sprite==null,"Unselected or unsupported image was mutated");
             theme.ApplyTheme();Check(card.color==new Color(.13f,.39f,.7f,.4f),"Saved custom color was lost during theme reapplication");
             Undo.PerformUndo();Check(card.sprite==null&&square.sprite==null&&filled.sprite==null,"Undo failed to restore selected sprites");
-            plan=UIAtlasNameConnector.BuildPlan(new[]{root},texture,true,true,UIAtlasNameConnector.SquareStyle.Sliced128B);
+            plan=UIAtlasNameConnector.BuildPlan(new[]{root},texture,true,true,UIAtlasNameConnector.SquareStyle.Sliced128B,false);
             Check(UIAtlasNameConnector.Apply(plan)==6,"Redo application failed");
             Check(UIAtlasNameConnector.Apply(plan)==0,"Repeated application is not idempotent");
             PrefabUtility.SaveAsPrefabAsset(root,"Assets/ConnectedPanel.prefab");UnityEngine.Object.DestroyImmediate(root);AssetDatabase.SaveAssets();
@@ -49,10 +49,35 @@ public static class NameConnectorCheck
             var loadedTheme=loaded.GetComponent<UIStageThemeController>();loadedTheme.ApplyTheme();Check(loaded.transform.Find("Img_A_Card_BG 3:2").GetComponent<Image>().color==new Color(.13f,.39f,.7f,.4f),"Reopened prefab lost user color");
             var regular=UIAtlasNameConnector.BuildPlan(new[]{loaded.transform.Find("Img_C_Square_BG 1:1").gameObject},texture,false,false,UIAtlasNameConnector.SquareStyle.Simple128);
             Check(regular.Single().sprite.name=="Shared_C_Btn_128"&&regular.Single().type==Image.Type.Simple,"Optional Simple square mapping failed");
+            var colorPlan=UIAtlasNameConnector.BuildPlan(new[]{loaded},texture,true,true,UIAtlasNameConnector.SquareStyle.Sliced128B);
+            Check(colorPlan.Count(row=>row.NeedsChange)==6,"Already linked images were excluded from color matching");
+            Check(loaded.transform.Find("Img_A_Card_BG 3:2").GetComponent<Image>().color==new Color(.13f,.39f,.7f,.4f),"Color preview changed Image");
+            Check(UIAtlasNameConnector.Apply(colorPlan)==6,"Color-only matching failed");
+            Check(loadedTheme.ManualColorCount==0,"Old manual overrides block theme colors");
+            foreach(var row in colorPlan.Where(row=>row.CanApply)){
+                var expected=loadedTheme.GetLayerColor(UIStageThemeController.GetSharedLayer(row.sprite));expected.a=.4f;
+                Check(row.image.color==expected,"Layer color or alpha mismatch");
+            }
+            Check(UIAtlasNameConnector.Apply(UIAtlasNameConnector.BuildPlan(new[]{loaded},texture,true,true,UIAtlasNameConnector.SquareStyle.Sliced128B))==0,"Color matching is not idempotent");
+            Undo.PerformUndo();
+            Check(loaded.transform.Find("Img_A_Card_BG 3:2").GetComponent<Image>().color==new Color(.13f,.39f,.7f,.4f)&&loadedTheme.ManualColorCount==6,"Color/override Undo failed");
+            UIAtlasNameConnector.Apply(UIAtlasNameConnector.BuildPlan(new[]{loaded},texture,true,true,UIAtlasNameConnector.SquareStyle.Sliced128B));
+            loadedTheme.SetRealm(StageRealm.Midgard);
+            var midgard=loadedTheme.GetLayerColor("A");midgard.a=.4f;
+            Check(loaded.transform.Find("Img_A_Card_BG 3:2").GetComponent<Image>().color==midgard&&loadedTheme.ManualColorCount==0,"Matched color did not follow active theme");
+            PrefabUtility.SaveAsPrefabAsset(loaded,"Assets/MatchedColors.prefab");
             PrefabUtility.UnloadPrefabContents(loaded);
+            var reopened=PrefabUtility.LoadPrefabContents("Assets/MatchedColors.prefab");
+            reopened.GetComponent<UIStageThemeController>().ApplyTheme();
+            Check(reopened.transform.Find("Img_A_Card_BG 3:2").GetComponent<Image>().color==midgard,"Matched color was lost after save/reopen");
+            PrefabUtility.UnloadPrefabContents(reopened);
+            var noTheme=MakeImage(null,"Img_B_NoTheme_BG 3:1");
+            var defaultPlan=UIAtlasNameConnector.BuildPlan(new[]{noTheme.gameObject},texture,false,false,UIAtlasNameConnector.SquareStyle.Sliced128B);
+            UIAtlasNameConnector.Apply(defaultPlan);Check(noTheme.color==new Color(1,223f/255,125f/255,.4f),"Asgard color fallback failed");
             var asset=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/ConnectedPanel.prefab");Check(UIAtlasNameConnector.BuildPlan(new[]{asset},texture,true,true,UIAtlasNameConnector.SquareStyle.Sliced128B).Count==0,"Project prefab asset was edited directly");
             Debug.Log("PASS name-based A/B/C/Frame ratio mapping, inactive/deduplicated selection, inherited/equivalent ratios, invalid-name skips and preview without mutation");
             Debug.Log("PASS scope, color/size preservation, functional fill, Undo, repeated apply, prefab save/reopen and both square styles");
+            Debug.Log("PASS color-only matching on linked sprites, manual override removal, alpha preservation, color Undo, active theme following, prefab color save/reopen and no-controller Asgard fallback");
             EditorApplication.Exit(0);
         }
         catch(Exception error){Debug.LogException(error);EditorApplication.Exit(1);}

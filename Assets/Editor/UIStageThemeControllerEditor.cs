@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 [CustomEditor(typeof(UIStageThemeController))]
@@ -64,7 +65,11 @@ public class UIStageThemeControllerEditor : Editor
                     fixedHeight = 36
                 };
 
-                if (GUILayout.Button(s_realmLabels[index], buttonStyle))
+                // 색을 직접 지정한 스테이지는 이름 뒤에 표시합니다.
+                string label = controller.HasCustomThemeColor((StageRealm)index)
+                    ? s_realmLabels[index] + " *"
+                    : s_realmLabels[index];
+                if (GUILayout.Button(label, buttonStyle))
                 {
                     Undo.RecordObject(controller, "스테이지 테마 변경");
                     controller.CurrentRealm = (StageRealm)index;
@@ -76,12 +81,7 @@ public class UIStageThemeControllerEditor : Editor
         GUI.backgroundColor = Color.white;
 
         EditorGUILayout.Space(8);
-        var (backgroundColor, frameColor, realmName) = controller.GetCurrentThemeColors();
-        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        EditorGUILayout.LabelField($"{realmName} 테마 색상 미리보기", EditorStyles.boldLabel);
-        DrawColorPreview("TowerInfoPanel 기준 배경", backgroundColor);
-        DrawColorPreview("UI 프레임 (_frame)", frameColor);
-        EditorGUILayout.EndVertical();
+        DrawThemeColorEditor(controller);
 
         EditorGUILayout.Space(6);
         GUI.backgroundColor = new Color(0.2f, 0.75f, 0.35f);
@@ -99,8 +99,6 @@ public class UIStageThemeControllerEditor : Editor
         EditorGUILayout.Space(8);
         EditorGUILayout.LabelField("공통 아틀라스", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("useSharedAtlas"), new GUIContent("A/B/C/프레임 색상 적용"));
-        DrawColorPreview("B 강조색", controller.GetLayerColor("B"));
-        DrawColorPreview("C 짙은 바탕", controller.GetLayerColor("C"));
         EditorGUILayout.HelpBox("Image의 Color를 직접 바꾸면 해당 UI의 색상을 저장하고 테마 자동 적용에서도 유지합니다.", MessageType.Info);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("imageColorOverrides"), new GUIContent("직접 지정한 UI 색상"), true);
         if (controller.ManualColorCount > 0 && GUILayout.Button("직접 지정한 색상을 지우고 테마 기본색으로 복원"))
@@ -153,14 +151,62 @@ public class UIStageThemeControllerEditor : Editor
         serializedObject.ApplyModifiedProperties();
     }
 
-    private static void DrawColorPreview(string label, Color color)
+    /// <summary>현재 스테이지의 테마 색 네 가지를 직접 고르는 칸입니다. 바꾸면 그 스테이지의 사용자 정의 색으로 저장됩니다.</summary>
+    private void DrawThemeColorEditor(UIStageThemeController controller)
+    {
+        StageRealm realm = controller.CurrentRealm;
+        RealmThemeColor colors = controller.GetEffectiveThemeColor(realm);
+        bool isCustom = controller.HasCustomThemeColor(realm);
+
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        EditorGUILayout.LabelField(
+            $"{colors.displayName} 테마 색상 ({(isCustom ? "직접 지정" : "기본")})",
+            EditorStyles.boldLabel);
+
+        EditorGUI.BeginChangeCheck();
+        colors.bgColor = DrawColorField("배경 (_bg, A 레이어)", colors.bgColor);
+        colors.frameColor = DrawColorField("UI 프레임 (_frame)", colors.frameColor);
+        colors.colorB = DrawColorField("B 강조색", colors.colorB);
+        colors.colorC = DrawColorField("C 짙은 바탕", colors.colorC);
+        if (EditorGUI.EndChangeCheck())
+        {
+            serializedObject.ApplyModifiedProperties();
+            Undo.RecordObject(controller, "스테이지 테마 색상 변경");
+            controller.SetCustomThemeColor(colors);
+            MarkControllerDirty(controller);
+            serializedObject.Update();
+        }
+
+        using (new EditorGUI.DisabledScope(!isCustom))
+        {
+            if (GUILayout.Button("이 스테이지를 기본색으로 되돌리기"))
+            {
+                serializedObject.ApplyModifiedProperties();
+                Undo.RecordObject(controller, "스테이지 테마 색상 복원");
+                controller.ClearCustomThemeColor(realm);
+                MarkControllerDirty(controller);
+                serializedObject.Update();
+            }
+        }
+        EditorGUILayout.EndVertical();
+    }
+
+    private static Color DrawColorField(string label, Color color)
     {
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.PrefixLabel(label);
-        Rect colorRect = GUILayoutUtility.GetRect(120, 20);
-        EditorGUI.DrawRect(colorRect, color);
-        EditorGUILayout.LabelField($"#{ColorUtility.ToHtmlStringRGB(color)}", GUILayout.Width(70));
+        // 알파는 테마가 쓰지 않으므로 고르는 칸에서 뺍니다.
+        Color picked = EditorGUILayout.ColorField(new GUIContent(label), color, true, false, false);
+        EditorGUILayout.LabelField($"#{ColorUtility.ToHtmlStringRGB(picked)}", GUILayout.Width(70));
         EditorGUILayout.EndHorizontal();
+        return picked;
+    }
+
+    private static void MarkControllerDirty(UIStageThemeController controller)
+    {
+        EditorUtility.SetDirty(controller);
+        PrefabUtility.RecordPrefabInstancePropertyModifications(controller);
+        if (controller.gameObject.scene.IsValid() && controller.gameObject.scene.isLoaded)
+            EditorSceneManager.MarkSceneDirty(controller.gameObject.scene);
     }
 }
 #endif

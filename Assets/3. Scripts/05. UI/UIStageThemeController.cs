@@ -359,21 +359,85 @@ public class UIStageThemeController : MonoBehaviour
         return end > 7 ? sprite.name.Substring(7, end - 7) : null;
     }
 
-    public Color GetLayerColor(string layer)
+    public Color GetLayerColor(string layer) => GetLayerColor(currentRealm, layer);
+
+    public Color GetLayerColor(StageRealm realm, string layer)
     {
-        var theme = GetCurrentThemeColors();
+        var theme = GetThemeColors(realm);
         RealmThemeColor custom = useCustomColors && customThemes != null
-            ? customThemes.Find(item => item.realm == currentRealm) : default;
+            ? customThemes.Find(item => item.realm == realm) : default;
         if (layer == "A") return theme.bg;
         if (layer == "B") return !string.IsNullOrEmpty(custom.displayName) && custom.colorB.a > 0f ? custom.colorB :
-            currentRealm == StageRealm.Asgard ? HexToColor("FFDF7D") : theme.frame;
+            realm == StageRealm.Asgard ? GetDefaultLayerColor(realm, "B") : theme.frame;
         if (layer == "C")
         {
             if (!string.IsNullOrEmpty(custom.displayName) && custom.colorC.a > 0f) return custom.colorC;
-            string[] dark = { "263855", "6B4933", "254B35", "15364F", "35383C", "502F6D", "364B6A", "88421F", "101417", "424B58" };
-            return HexToColor(dark[(int)currentRealm]);
+            return GetDefaultLayerColor(realm, "C");
         }
         return theme.frame;
+    }
+
+    /// <summary>지금 이 스테이지에 실제로 쓰이는 색 네 가지(배경, 프레임, B, C)를 한 벌로 돌려줍니다.</summary>
+    public RealmThemeColor GetEffectiveThemeColor(StageRealm realm)
+    {
+        var theme = GetThemeColors(realm);
+        return new RealmThemeColor(realm, theme.name, theme.bg, theme.frame)
+        {
+            colorB = GetLayerColor(realm, "B"),
+            colorC = GetLayerColor(realm, "C")
+        };
+    }
+
+    public bool HasCustomThemeColor(StageRealm realm) =>
+        useCustomColors && customThemes != null &&
+        customThemes.Exists(item => item.realm == realm && !string.IsNullOrEmpty(item.displayName));
+
+    /// <summary>직접 고른 색을 이 스테이지의 사용자 정의 색으로 저장하고 바로 적용합니다.</summary>
+    public void SetCustomThemeColor(RealmThemeColor themeColor)
+    {
+        if (customThemes == null) customThemes = new List<RealmThemeColor>();
+
+        // 이름이 비어 있으면 GetThemeColors가 이 항목을 없는 것으로 봅니다.
+        if (string.IsNullOrEmpty(themeColor.displayName))
+        {
+            themeColor.displayName = s_defaultPresets.TryGetValue(themeColor.realm, out var preset)
+                ? preset.name : themeColor.realm.ToString();
+        }
+
+        // 알파가 0이면 B와 C는 기본색으로 읽히므로 1로 고정합니다.
+        themeColor.bgColor.a = 1f;
+        themeColor.frameColor.a = 1f;
+        themeColor.colorB.a = 1f;
+        themeColor.colorC.a = 1f;
+
+        int index = customThemes.FindIndex(item => item.realm == themeColor.realm);
+        if (index >= 0) customThemes[index] = themeColor;
+        else customThemes.Add(themeColor);
+
+        useCustomColors = true;
+        ApplyTheme();
+    }
+
+    /// <summary>이 스테이지의 사용자 정의 색을 지우고 기본색으로 되돌립니다.</summary>
+    public void ClearCustomThemeColor(StageRealm realm)
+    {
+        if (customThemes == null) return;
+
+        customThemes.RemoveAll(item => item.realm == realm);
+        ApplyTheme();
+    }
+
+    public static Color GetDefaultLayerColor(StageRealm realm, string layer)
+    {
+        if (!s_defaultPresets.TryGetValue(realm, out var preset)) return Color.white;
+        if (layer == "A") return preset.bg;
+        if (layer == "B") return realm == StageRealm.Asgard ? HexToColor("FFDF7D") : preset.frame;
+        if (layer == "C")
+        {
+            string[] dark = { "263855", "6B4933", "254B35", "15364F", "35383C", "502F6D", "364B6A", "88421F", "101417", "424B58" };
+            return HexToColor(dark[(int)realm]);
+        }
+        return preset.frame;
     }
 
     public bool ManagesImage(Image image)
@@ -384,6 +448,18 @@ public class UIStageThemeController : MonoBehaviour
     }
 
     public bool IsAutomaticColor(Image image) => lastAppliedColors.TryGetValue(image, out Color color) && color == image.color;
+    public bool HasImageColorOverride(Image image) => imageColorOverrides.Exists(item => item.image == image);
+
+    /// <summary>선택한 이미지의 수동 색을 해제하고 레이어 테마색을 적용하며 알파는 유지합니다.</summary>
+    public void ApplyImageThemeColor(Image image)
+    {
+        string layer = image != null ? GetSharedLayer(image.sprite) : null;
+        if (layer == null || !ManagesImage(image)) return;
+        imageColorOverrides.RemoveAll(item => item.image == image);
+        Color color = GetLayerColor(layer);
+        color.a = image.color.a;
+        ApplyColor(image, color);
+    }
 
     public void RememberImageColor(Image image)
     {

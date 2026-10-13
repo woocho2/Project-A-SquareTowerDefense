@@ -22,8 +22,12 @@ public static class UIAtlasNameConnector
         public string ratio;
         public string sourceName;
         public string reason;
+        public bool matchColor;
+        public Color color;
+        public UIStageThemeController theme;
         public bool CanApply => image != null && sprite != null;
-        public bool NeedsChange => CanApply && (image.sprite != sprite || image.type != type);
+        public bool NeedsChange => CanApply && (image.sprite != sprite || image.type != type ||
+            matchColor && (image.color != color || theme != null && theme.HasImageColorOverride(image)));
     }
 
     private static readonly Regex RatioPattern = new Regex(@"(?<![\d:：])(\d+)\s*[:：]\s*(\d+)(?![\d:：])");
@@ -38,7 +42,7 @@ public static class UIAtlasNameConnector
     };
 
     public static List<Row> BuildPlan(IEnumerable<GameObject> selection, Texture2D atlas,
-        bool includeChildren, bool useParentRatio, SquareStyle squareStyle)
+        bool includeChildren, bool useParentRatio, SquareStyle squareStyle, bool matchColors = true)
     {
         string path = atlas != null ? AssetDatabase.GetAssetPath(atlas) : string.Empty;
         var sprites = string.IsNullOrEmpty(path) ? new Dictionary<string, Sprite>() :
@@ -87,6 +91,11 @@ public static class UIAtlasNameConnector
             { row.reason = $"{spriteName} 조각 없음"; result.Add(row); continue; }
             row.type = image.type == Image.Type.Filled ? Image.Type.Filled :
                 row.sprite.border.sqrMagnitude > 0 ? Image.Type.Sliced : Image.Type.Simple;
+            row.matchColor = matchColors;
+            row.theme = image.GetComponentInParent<UIStageThemeController>(true);
+            Color color = row.theme != null ? row.theme.GetLayerColor(layer) :
+                UIStageThemeController.GetDefaultLayerColor(StageRealm.Asgard, layer);
+            row.color = new Color(color.r, color.g, color.b, image.color.a);
             result.Add(row);
         }
         return result;
@@ -107,15 +116,16 @@ public static class UIAtlasNameConnector
             image.sprite = row.sprite;
             image.type = row.type;
 
-            // 사용자가 고른 Image 색은 테마 재적용/저장에서도 유지합니다.
-            UIStageThemeController theme = image.GetComponentInParent<UIStageThemeController>(true);
+            UIStageThemeController theme = row.theme;
             if (theme != null && theme.ManagesImage(image))
             {
                 Undo.RecordObject(theme, action);
-                theme.RememberImageColor(image);
+                if (row.matchColor) theme.ApplyImageThemeColor(image);
+                else theme.RememberImageColor(image);
                 EditorUtility.SetDirty(theme);
                 PrefabUtility.RecordPrefabInstancePropertyModifications(theme);
             }
+            else if (row.matchColor) image.color = row.color;
             EditorUtility.SetDirty(image);
             PrefabUtility.RecordPrefabInstancePropertyModifications(image);
             if (image.gameObject.scene.IsValid() && image.gameObject.scene.isLoaded)
@@ -150,6 +160,7 @@ public class UIAtlasNameConnectorWindow : EditorWindow
     private bool includeChildren = true;
     private bool useParentRatio = true;
     private bool showSkipped;
+    private bool matchColors = true;
     private UIAtlasNameConnector.SquareStyle squareStyle;
     private List<UIAtlasNameConnector.Row> rows = new List<UIAtlasNameConnector.Row>();
     private Vector2 scroll;
@@ -167,15 +178,17 @@ public class UIAtlasNameConnectorWindow : EditorWindow
     private void OnSelectionChange() { RefreshPlan(); Repaint(); }
     private void OnHierarchyChange() { RefreshPlan(); Repaint(); }
     private void RefreshPlan() => rows = UIAtlasNameConnector.BuildPlan(Selection.gameObjects, atlas,
-        includeChildren, useParentRatio, squareStyle);
+        includeChildren, useParentRatio, squareStyle, matchColors);
 
     private void OnGUI()
     {
-        EditorGUILayout.HelpBox("Hierarchy 또는 Prefab Mode에서 UI를 선택하세요.\n예: Img_A_Name_BG 3:2 → A 384×256 / Img_Name_Frame 3:1 → Frame 384×128\n색상과 UI 크기를 유지하고 스프라이트와 표시 방식만 연결합니다.", MessageType.Info);
+        EditorGUILayout.HelpBox("Hierarchy 또는 Prefab Mode에서 UI를 선택하세요.\n예: Img_A_Name_BG 3:2 → A 384×256 / Img_Name_Frame 3:1 → Frame 384×128\nUI 크기와 알파는 유지합니다. 색상은 상위 Canvas의 현재 테마를 사용하며, 테마가 없으면 아스가르드를 사용합니다.", MessageType.Info);
         EditorGUI.BeginChangeCheck();
         atlas = (Texture2D)EditorGUILayout.ObjectField("공통 아틀라스", atlas, typeof(Texture2D), false);
         includeChildren = EditorGUILayout.Toggle("선택한 UI의 하위도 포함", includeChildren);
         useParentRatio = EditorGUILayout.Toggle("비율이 없으면 부모 이름 확인", useParentRatio);
+        matchColors = EditorGUILayout.Toggle("A/B/C/Frame 테마색도 적용", matchColors);
+        if (matchColors) EditorGUILayout.HelpBox("선택한 항목의 수동 색상을 테마색으로 바꿉니다. 이미 연결된 스프라이트도 색상만 다시 적용할 수 있습니다.", MessageType.None);
         int square = EditorGUILayout.Popup("1:1 연결 방식", (int)squareStyle,
             new[] { "Sliced — 128×128_B", "Simple — 128×128" });
         squareStyle = (UIAtlasNameConnector.SquareStyle)square;
@@ -208,6 +221,8 @@ public class UIAtlasNameConnectorWindow : EditorWindow
             if (row.CanApply)
             {
                 EditorGUILayout.LabelField($"{row.ratio} → {row.sprite.name} ({row.type})");
+                if (row.matchColor)
+                    using (new EditorGUI.DisabledScope(true)) EditorGUILayout.ColorField("적용할 색상", row.color);
                 if (row.sourceName != row.image.name) EditorGUILayout.LabelField("비율 출처: " + row.sourceName, EditorStyles.miniLabel);
             }
             else EditorGUILayout.LabelField(row.reason, EditorStyles.miniLabel);

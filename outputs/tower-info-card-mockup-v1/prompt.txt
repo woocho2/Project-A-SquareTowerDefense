@@ -1,0 +1,31 @@
+Use case: ui-mockup.
+Create a polished bitmap UI concept sheet for a 2D casual fantasy tower-defense mobile game with a Norse mythology theme.
+Composition: two full tall portrait tower-info cards on a plain neutral warm gray background. The primary attack card is larger, on the left; an identical support card is smaller, on the right. Each CARD is about 9:17 aspect ratio. The complete sheet may be landscape or square as necessary to fit both. Flat orthographic FRONT view, crisp readable pixels, no perspective, no device, no background scene. Keep both cards fully visible.
+
+Visual language: warm ivory cream, pale beige, softly glossy rounded panels, restrained gold outlines, gentle inner shadows, dark brown text. Cozy friendly cartoon fantasy UI. Rounded corners everywhere, equal side margins. Consistent thin stroke weight. Not dark, not realistic, not ornate. Simple stylized gold stat icons with occasional warm red and turquoise details. No character portrait.
+
+PRIMARY CARD exact layout top to bottom, six blocks:
+1) HEADER strip: "Lv 1" aligned left, then tower name "VALKYRA". Leave space for a seven-character tower name. Clear header hierarchy.
+2) KEYWORD strip: exactly FOUR small square badges centered and evenly spaced, ICONS ONLY: bronze tier gem, solid red square attack-type swatch, sword emblem, slash mark damage attribute. No badge labels.
+3) TARGET strip: centered short text "Target: First", small dropdown triangle at right.
+4) STAT block: ONE rounded container, EXACTLY 12 cells in TWO rows of SIX cells, no third row, no extra cells. Equal columns and consistent spacing. Each cell is icon ABOVE its bold dark number. Numbers should be the strongest visual element in the block, substantially larger and darker than typical small stat grid labels; numbers never beside their icon. No verbose stat labels. Thin horizontal divider and clear breathing space between rows.
+  Top row from left to right:
+   col1 sword icon, number "15";
+   col2 crosshair ring icon, number "2";
+   col3 clock icon, number "2/3";
+   col4 double arrow icon, number "2";
+   col5 target reticle icon, number "25%";
+   col6 burst star icon, number "200%".
+  Bottom row from left to right:
+   col1 crystal icon, number "x2";
+   col2 hourglass icon, number "5";
+   col3 medal icon, number "3x3";
+   col4 stacked chevrons icon, number "45/60";
+   col5 a thin-bordered skill cell with small sword-and-spark icon above short bold text "SK1";
+   col6 a slightly different thin-bordered skill cell with small rune-flame icon above short bold text "SK2".
+  Only ONE selected stat cell: the top-left power/sword cell. Soft warm glowing ring BEHIND its icon and a subtle gold selection outline around its cell. Other cells have NO selection glow.
+5) DESCRIPTION box: separate rounded cream box below stats, connected visually to selected power cell with a matching small gold selection accent and tiny sword icon. Text exactly three short lines: "POWER", "Base hit: 15", "Tap a stat". Readable body type, smaller than stat numbers. No long prose.
+6) FOOTER strip: "sell price" left; blue gem icon and bold "100" right.
+
+SUPPORT CARD to the right: same aspect ratio, same six blocks, same icons, same twelve-cell TWO-by-SIX stat grid and same relative spacing as primary. Smaller overall scale. Header "Lv 1" and "SKALD". Target: "Target: Ally". Exactly THREE stat cells are dimmed to approximately 35 percent opacity: TOP ROW col2 range/crosshair, col5 crit-chance/reticle, col6 crit-damage/burst star. These three display "-" instead of their numbers. All other cells are fully readable and active. The selected power cell remains active. Footer blue gem and "100".
+Keep all text brief in Latin characters and digits. Precise clean layout, legible typography, no text outside the card layouts, no watermarks.

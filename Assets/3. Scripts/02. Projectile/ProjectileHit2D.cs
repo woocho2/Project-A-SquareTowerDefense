@@ -167,9 +167,9 @@ public class ProjectileHit2D : MonoBehaviour
         SpriteRenderer renderer = GetSpriteRenderer();
         if (visual == null || renderer == null) return;
 
-        // 풀에서 재사용할 때도 소유 타워의 현재 문양과 색을 다시 적용합니다.
-        if (visual.EmblemSprite != null) renderer.sprite = visual.EmblemSprite;
-        renderer.color = visual.EmblemColor;
+        // 얼굴 그림을 탄에 복사하지 않고, 풀에서 재사용할 때도 기존 문양과 색을 유지합니다.
+        if (visual.ProjectileEmblemSprite != null) renderer.sprite = visual.ProjectileEmblemSprite;
+        renderer.color = visual.ProjectileEmblemColor;
     }
 
     private SpriteRenderer GetSpriteRenderer()

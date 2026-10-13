@@ -1,0 +1,12 @@
+Use case: precise-object-edit.
+Edit this 3-column by 2-row sprite atlas. Keep exactly the same six equal SQUARE cells and layout: top-left common face, top-middle bronze helmet, top-right silver helmet; bottom-left gold helmet, bottom-middle mithril helmet, bottom-right diamond helmet. Preserve actual transparent background and empty face windows in all helmets.
+User correction: tiers should differ by METAL COLORS ONLY. ALL FIVE helmets must use exactly the SAME original plain bronze geometry, same five visor slots, four rivets and same metal panel shapes. REMOVE ALL tier-specific extra decorations: the gold corner chevron engravings, the mithril runes, the diamond gem insets and crystalline seams. Upper corner metal plates must be plain, like the bronze helmet. No new engravings, symbols, gemstones, stars or particles.
+Keep the existing crimson splash panels and ivory forehead sword insignia in every helmet unchanged; these are the shared sword/splash identity. Preserve dark plum visor holes and recesses. The top-left common FACE stays unchanged.
+Metal palettes, all with ONLY THREE broad clean matte cel-shading tones:
+Bronze: keep the original approved bronze.
+Silver: medium cool steel gray, pale silver highlight, muted blue-gray shadow.
+Gold: rich warm gold, pale warm gold highlight, darker ochre-gold shadow, plain plates with zero added decoration.
+Mithril: light blue-green metallic cyan, paler cyan highlight and muted darker teal-blue shadow, plain plates with zero added decoration.
+DIAMOND: substantially MORE LUMINOUS and BRILLIANT than the original. Pearl ice-WHITE base #EDF9FF over most of the helmet, PURE WHITE #FFFFFF large restrained highlight planes, PALE icy blue #ADCFE8 shadows. Make it the brightest tier by far, distinctly brighter and whiter than silver and mithril. Brightness comes from the color palette itself, not extra ornaments or glow. No diamond-shaped gems, no crystalline seams, no glints, no particles. Plain original bronze-shaped helmet, colored radiant white/very pale blue.
+Same cute clean mobile-game art style, no texture, no gradients, no detailed metal, no black outlines added. Exactly same canvas registration and padded rounded-square silhouette for all helmet overlays. Face-window holes remain TRANSPARENT, do not add skin or faces to those cells.
+No text, no captions, no grid borders, no painted backdrop, no extra sprites. Preserve the 3x2 atlas layout.

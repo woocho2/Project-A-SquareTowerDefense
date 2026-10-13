@@ -1,0 +1,12 @@
+Use case: precise-object-edit.
+Correct the square swordsman's hat. Image 1 is the fitted square swordsman edit target; image 2 is the exact required tile silhouette.
+
+ABSOLUTE GEOMETRY REQUIREMENT: preserve the OUTER SHAPE of image 2 exactly: a SOLID GENTLY ROUNDED SQUARE with full-width STRAIGHT HORIZONTAL TOP and BOTTOM, full-height STRAIGHT VERTICAL SIDES, softly rounded four corners. All of the interior is colored character artwork. There is transparent alpha only outside this fixed square. The hat must NOT create a triangle-shaped outer contour. NO raised apex. NO roof-shaped silhouette. NO normal conical hat sticking above a square head. The actual character itself, including hat and face, IS THE SQUARE.
+
+Keep image 1's exact flat square contour, and redraw ONLY the brown HAT SURFACE neatly in three clean matte tones. A square-cropped East Asian satgat adapted as the upper portion of a cube-face texture. Top hat edge is a full-width FLAT horizontal line. Use a single INTERNAL central fold with light brown to one side and base bronze-brown to the other to suggest a shallow conical hat; both planes are cropped flush at the flat square top. Brown hat material fills both upper corners completely. At about 30 percent head height, place a broad simple DARK BROWN HORIZONTAL BRIM all the way across INSIDE the square, no protruding ends.
+Make the hat colors uniform clean flat fills, no mottled color, no warped rings, no striped texture, no staircase bands, no gradients, no tiny facets or details. Bronze-brown base, one tan highlight plane, one dark brown brim/shadow only.
+
+Everything below the hat stays the approved swordsman: blue headband with bronze ivory-sword clasp, dark side hair, peach face, closed eye on image LEFT as a perfectly straight horizontal stroke, a thin healed vertical scar crossing that side, simple open oval eye on image RIGHT, perfectly straight neutral mouth. Face is fully visible. No torso or held weapon. Preserve the identity and expression.
+
+The whole square has equal width and height, fills the same proportions as the tile reference, and has a small uniform transparent margin. Strictly straight-on orthographic FRONT portrait. No cube side/top, no perspective, no separate frame, no background square behind a triangular hat. Absolutely NO hat apex in the outer silhouette.
+Exactly one complete square front-face texture, transparent outside. No text or labels.
