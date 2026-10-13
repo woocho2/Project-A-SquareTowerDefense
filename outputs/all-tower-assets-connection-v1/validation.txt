@@ -1,0 +1,14 @@
+PASS full game runtime C# compilation against the current Unity response file.
+PASS Unity 6000.3.9f1 isolated native validation, exit code 0.
+PASS 280 regular visual combinations via integer ID and TowerData APIs.
+PASS tier frame alignment, layered/complete portraits, tint, bounds, sorting and fallback.
+PASS 14 v3 synergy portraits including 6014 Njord and normal/synergy state restoration.
+PASS actual TowerManager CSV loader: 280 distinct rows, 56 tier-one buildable entries.
+PASS all 28 projectile prefab bindings.
+PASS actual TowerBase/TowerController.Init for all 20 Water tier/class combinations.
+PASS actual 14 synergy definitions, material availability, three uses per material, condition predicates and controller initialization.
+PASS all 28 attack effect prefab bindings.
+PASS all original stats and names preserved across 260 ID-remapped rows.
+Water base stats are provisional clones of Wind at the same tier/class.
+Water-specific skills and full board Play Mode combat are outside this change.
+No GPU screenshot validation; headless native prefab/renderer/data validation only.

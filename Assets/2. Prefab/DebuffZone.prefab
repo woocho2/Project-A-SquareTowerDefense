@@ -65,6 +65,8 @@ MonoBehaviour:
   m_currentDebuffTarget: 1
   m_defaultSymbolSprite: {fileID: 1001, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   m_symbolMappings:
+  - target: 8
+    symbolSprite: {fileID: 21300000, guid: ac4c220652d946b393da83a480951449, type: 3}
   - target: 1
     symbolSprite: {fileID: 1001, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   - target: 3
@@ -79,17 +81,17 @@ MonoBehaviour:
     symbolSprite: {fileID: 1006, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   - target: 7
     symbolSprite: {fileID: 1007, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - target: 8
+  - target: 11
     symbolSprite: {fileID: 1008, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - target: 9
+  - target: 12
     symbolSprite: {fileID: 1009, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   - target: 10
     symbolSprite: {fileID: 1010, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - target: 11
+  - target: 9
     symbolSprite: {fileID: 1011, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - target: 12
-    symbolSprite: {fileID: 1012, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   - target: 13
+    symbolSprite: {fileID: 1012, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - target: 14
     symbolSprite: {fileID: 1013, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   m_debuffTrackAlpha: 0.3
   m_buffColor: {r: 0, g: 0, b: 0, a: 1}

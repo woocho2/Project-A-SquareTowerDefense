@@ -14,6 +14,7 @@ public static class BuffTargetNames
             BuffTarget.Axe => "치명타 피해",
             BuffTarget.Hammer => "방어 관통",
             BuffTarget.Fire => "공격 횟수",
+            BuffTarget.Water => "물결·해류",
             BuffTarget.Ice => "스플래시/추가 타격",
             BuffTarget.Electricity => "추가 공격",
             BuffTarget.Wind => "행동력",
@@ -35,6 +36,7 @@ public static class BuffTargetNames
             DebuffTarget.Axe => "취약",
             DebuffTarget.Hammer => "방어 파괴",
             DebuffTarget.Fire => "화상",
+            DebuffTarget.Water => "젖음·침수",
             DebuffTarget.Ice => "빙결",
             DebuffTarget.Electricity => "감전",
             DebuffTarget.Wind => "바람",
@@ -51,6 +53,7 @@ public static class BuffTargetNames
         return debuffTarget switch
         {
             DebuffTarget.Fire => "불 (화상)",
+            DebuffTarget.Water => "물 (젖음·침수)",
             DebuffTarget.Sword => "검 (저주)",
             DebuffTarget.Axe => "도끼 (취약)",
             DebuffTarget.Ice => "얼음 (빙결)",

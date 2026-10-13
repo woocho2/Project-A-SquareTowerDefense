@@ -18,19 +18,19 @@ MonoBehaviour:
   - effectID: 201
     effectPrefab: {fileID: 5220447335354414950, guid: e201a921dbfc447d807df3a428980501, type: 3}
   - effectID: 301
-    effectPrefab: {fileID: 9157105887711914197, guid: c4f829cb7dd4b864caf8832ec5b1ee55, type: 3}
+    effectPrefab: {fileID: 1775983108687427136, guid: 5139c00ca6ab24149b8532a3ad5f4ea0, type: 3}
   - effectID: 103
-    effectPrefab: {fileID: 5220447335354414950, guid: f50548a5917290643a3c4160bc2354e4, type: 3}
+    effectPrefab: {fileID: 5220447335354414950, guid: 1e8a29360d5cb944a9bcee06c594f913, type: 3}
   - effectID: 203
-    effectPrefab: {fileID: 1142942343058428718, guid: a72ebf8ba99b3734c92ea598a1e52810, type: 3}
+    effectPrefab: {fileID: 1142942343058428718, guid: 804b31f6846cbcd44b4546248df287e4, type: 3}
   - effectID: 303
-    effectPrefab: {fileID: 9157105887711914197, guid: c4f829cb7dd4b864caf8832ec5b1ee55, type: 3}
+    effectPrefab: {fileID: 1775983108687427136, guid: 5139c00ca6ab24149b8532a3ad5f4ea0, type: 3}
   - effectID: 105
     effectPrefab: {fileID: 5220447335354414950, guid: e103000000000000000000000000e103, type: 3}
   - effectID: 205
-    effectPrefab: {fileID: 3471829553732252764, guid: 804b31f6846cbcd44b4546248df287e4, type: 3}
+    effectPrefab: {fileID: 3471829553732252764, guid: 32f7cb591526c114bbabbad6a978ce74, type: 3}
   - effectID: 305
-    effectPrefab: {fileID: 9157105887711914197, guid: c4f829cb7dd4b864caf8832ec5b1ee55, type: 3}
+    effectPrefab: {fileID: 1775983108687427136, guid: 5139c00ca6ab24149b8532a3ad5f4ea0, type: 3}
   - effectID: 104
     effectPrefab: {fileID: 5220447335354414950, guid: 94f9559c477f31a44b008d8979be6291, type: 3}
   - effectID: 204
@@ -38,11 +38,11 @@ MonoBehaviour:
   - effectID: 304
     effectPrefab: {fileID: 1142942343058428718, guid: e9d7a9fb7b961954b8fdcf90dd923785, type: 3}
   - effectID: 102
-    effectPrefab: {fileID: 5220447335354414950, guid: d751b656c9b33e3479228e9cde1ac965, type: 3}
+    effectPrefab: {fileID: 5220447335354414950, guid: f50548a5917290643a3c4160bc2354e4, type: 3}
   - effectID: 202
-    effectPrefab: {fileID: 1142942343058428718, guid: 40b2d8df49d8de84281f033b6932cbce, type: 3}
+    effectPrefab: {fileID: 1142942343058428718, guid: a72ebf8ba99b3734c92ea598a1e52810, type: 3}
   - effectID: 302
-    effectPrefab: {fileID: 5220447335354414950, guid: d751b656c9b33e3479228e9cde1ac965, type: 3}
+    effectPrefab: {fileID: 5220447335354414950, guid: f50548a5917290643a3c4160bc2354e4, type: 3}
   - effectID: 106
     effectPrefab: {fileID: 5220447335354414950, guid: 8c6059e35c653c548852992e83fdc7db, type: 3}
   - effectID: 206
@@ -55,31 +55,39 @@ MonoBehaviour:
     effectPrefab: {fileID: 1142942343058428718, guid: 31a19937c3c8b1441947cd7a1fbdaf82, type: 3}
   - effectID: 307
     effectPrefab: {fileID: 5220447335354414950, guid: f590c60275e546f42bb75a5a91fda032, type: 3}
-  - effectID: 108
+  - effectID: 111
     effectPrefab: {fileID: 5220447335354414950, guid: 520a115fc42bf7748a8cb477dcd32609, type: 3}
-  - effectID: 208
+  - effectID: 211
     effectPrefab: {fileID: 1142942343058428718, guid: 59b6a148bbdf8f842b44321ea98fe03a, type: 3}
-  - effectID: 308
+  - effectID: 311
     effectPrefab: {fileID: 5220447335354414950, guid: e5aca07e1af2e434d9f6d76118489766, type: 3}
-  - effectID: 109
+  - effectID: 112
     effectPrefab: {fileID: 5220447335354414950, guid: 440ddc97d929a1142a442dd23c76628e, type: 3}
-  - effectID: 209
+  - effectID: 212
     effectPrefab: {fileID: 1142942343058428718, guid: da4fc7619d48d544690a0ec6f90927ae, type: 3}
-  - effectID: 309
+  - effectID: 312
     effectPrefab: {fileID: 5220447335354414950, guid: deea12e758c57c043a6995c240e7b714, type: 3}
   - effectID: 210
     effectPrefab: {fileID: 1142942343058428718, guid: 7a07022100000000000000000000210f, type: 3}
-  - effectID: 211
+  - effectID: 209
     effectPrefab: {fileID: 1142942343058428718, guid: 7a07022110000000000000000000211f, type: 3}
-  - effectID: 212
-    effectPrefab: {fileID: 1142942343058428718, guid: 7a07022120000000000000000000212f, type: 3}
   - effectID: 213
+    effectPrefab: {fileID: 1142942343058428718, guid: 7a07022120000000000000000000212f, type: 3}
+  - effectID: 214
     effectPrefab: {fileID: 1142942343058428718, guid: 7a07022130000000000000000000213f, type: 3}
   - effectID: 110
     effectPrefab: {fileID: 5220447335354414950, guid: 520a011100000000000000000000110f, type: 3}
-  - effectID: 111
+  - effectID: 109
     effectPrefab: {fileID: 5220447335354414950, guid: 520a011110000000000000000000111f, type: 3}
-  - effectID: 112
-    effectPrefab: {fileID: 5220447335354414950, guid: 520a011120000000000000000000112f, type: 3}
   - effectID: 113
+    effectPrefab: {fileID: 5220447335354414950, guid: 520a011120000000000000000000112f, type: 3}
+  - effectID: 114
     effectPrefab: {fileID: 5220447335354414950, guid: 520a011130000000000000000000113f, type: 3}
+  - effectID: 108
+    effectPrefab: {fileID: 5220447335354414950, guid: 5850f38036eb46fd8baea7b69e67fc4d, type: 3}
+  - effectID: 208
+    effectPrefab: {fileID: 5220447335354414950, guid: 5850f38036eb46fd8baea7b69e67fc4d, type: 3}
+  - effectID: 308
+    effectPrefab: {fileID: 5220447335354414950, guid: 5850f38036eb46fd8baea7b69e67fc4d, type: 3}
+  - effectID: 408
+    effectPrefab: {fileID: 5220447335354414950, guid: 5850f38036eb46fd8baea7b69e67fc4d, type: 3}

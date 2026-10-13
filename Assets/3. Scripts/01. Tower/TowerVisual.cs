@@ -14,7 +14,7 @@ public class TowerVisual : MonoBehaviour
     [SerializeField] private Sprite[] m_tierSprites;
     [Tooltip("문양 뒤에 표시하는 순백색 배경입니다. 공격방식의 색은 문양에만 적용합니다.")]
     [SerializeField] private Sprite m_backgroundSprite;
-    [Tooltip("문양 ID 순서입니다. 01 검, 02 도끼, 03 활, 04 창, 05 방패, 06 해머, 07 불, 08 얼음, 09 전기, 10 바람, 11 대지, 12 빛, 13 어둠.")]
+    [Tooltip("문양 ID 순서입니다. 검, 도끼, 활, 창, 방패, 해머, 불, 물, 대지, 바람, 얼음, 전기, 빛, 어둠.")]
     [SerializeField] private Sprite[] m_emblemSprites;
 
     [Header("검 타워 레이어 (광역 / 단일 / 버프 / 디버프)")]
@@ -24,11 +24,13 @@ public class TowerVisual : MonoBehaviour
     [Header("도끼 타워 레이어 (바이킹 / 버서커 / 스칼드 / 집행관)")]
     [SerializeField] private Sprite[] m_axeCharacterSprites;
     [SerializeField] private Sprite[] m_axeHeadgearSprites;
-    [Header("검·도끼 공통 프레임")]
+    [Header("나머지 일반 타워 완성 초상 (광역 / 단일 / 버프 / 디버프)")]
+    [SerializeField] private TowerCharacterCatalog m_regularCharacters;
+    [Header("일반 타워 공통 프레임")]
     [Tooltip("브론즈, 실버, 골드, 미스릴, 다이아 순서의 별도 캐릭터 테두리입니다.")]
     [SerializeField] private Sprite[] m_characterTierSprites;
     [SerializeField] private Sprite[] m_characterRimSprites;
-    [Tooltip("검·도끼의 모든 레이어에 적용되는 공통 크기입니다. 기본값은 256px / 192 PPU 기준의 95%입니다.")]
+    [Tooltip("일반 타워의 초상·테두리·장식에 적용되는 공통 크기입니다. 기본값은 256px / 192 PPU 기준의 95%입니다.")]
     [SerializeField, Min(0.01f)] private float m_swordCanvasWorldSize = (256f / 192f) * 0.95f;
 
     [Header("정적 시너지 캐릭터")]
@@ -112,6 +114,7 @@ public class TowerVisual : MonoBehaviour
         m_appliedVisualID = towerID;
         if (TryApplySynergyCharacter(towerID)) return;
         if (TryApplyLayeredCharacter(towerID)) return;
+        if (TryApplyPortraitCharacter(towerID)) return;
         int tier = towerID / 1000;
         int color = (towerID % 1000) / 100;
         int emblem = towerID % 100;
@@ -130,7 +133,7 @@ public class TowerVisual : MonoBehaviour
         m_appliedVisualID = towerData.VisualTowerID;
         // 실제 소환도 정수 ID를 적용할 때와 같은 방식으로 문양과 색깔을 결정합니다.
         if (towerData.Tier == 6 && TryApplySynergyCharacter(towerData.towerID)) return;
-        // 소환·강화도 같은 ID 경로에서 검·도끼 캐릭터 또는 기존 문양 외형을 선택합니다.
+        // 소환·강화도 같은 ID 경로에서 캐릭터와 해당 티어의 테두리를 선택합니다.
         Apply(towerData.VisualTowerID);
     }
 
@@ -212,6 +215,36 @@ public class TowerVisual : MonoBehaviour
         return true;
     }
 
+    private bool TryApplyPortraitCharacter(int towerID)
+    {
+        int tier = towerID / 1000;
+        int attack = (towerID % 1000) / 100;
+        if (tier < 1 || tier > 5 || attack < 1 || attack > 4) return false;
+        if (m_regularCharacters == null)
+            m_regularCharacters = Resources.Load<TowerCharacterCatalog>("TowerCharacterCatalog");
+        Sprite portrait = m_regularCharacters != null
+            ? m_regularCharacters.GetCharacter(towerID % 100, attack) : null;
+        Sprite frame = GetSprite(m_characterTierSprites, tier);
+        CacheRenderers();
+        if (portrait == null || frame == null || m_emblemRenderer == null || m_tierRenderer == null)
+            return false;
+
+        // 완성 초상에는 투구·장식이 포함되어 있으므로 테두리 위에 한 레이어로 표시합니다.
+        HideCharacterOverlays();
+        m_emblemRenderer.sprite = portrait;
+        m_emblemRenderer.color = Color.white;
+        m_emblemRenderer.enabled = true;
+        m_emblemRenderer.sharedMaterial = m_defaultEmblemMaterial;
+        m_emblemRenderer.SetPropertyBlock(null);
+        m_emblemRenderer.flipX = false;
+        m_emblemRenderer.flipY = false;
+        SetCanvasScale(m_emblemRenderer, portrait, m_swordCanvasWorldSize, m_defaultEmblemScale.z);
+        ApplyCharacterOverlay(m_tierRenderer, frame, -1, m_defaultTierScale.z);
+        if (m_colorRenderer != null) m_colorRenderer.enabled = false;
+        UsesCharacterVisual = true;
+        return true;
+    }
+
     private void ApplyCharacterOverlay(SpriteRenderer renderer, Sprite sprite, int orderOffset, float zScale)
     {
         renderer.sprite = sprite;
@@ -269,7 +302,7 @@ public class TowerVisual : MonoBehaviour
 
     private bool TryApplySynergyCharacter(int towerID)
     {
-        if (towerID < 6001 || towerID > 6013) return false;
+        if (towerID / 1000 != 6) return false;
         CacheRenderers();
         if (m_synergyCharacters == null)
             m_synergyCharacters = Resources.Load<SynergyCharacterCatalog>("SynergyCharacterCatalog");

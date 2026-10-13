@@ -3,8 +3,8 @@ using UnityEngine;
 public enum AttackType { Splash, Target, Buff, Debuff, None }
 // 순서는 문양 번호(TowerEmblem)와 같아야 합니다. 디버프 장판이 문양 번호를 DebuffTarget으로 그대로 바꿔 씁니다.
 // 무기는 공격 속성끼리 묶습니다: 베기(검·도끼), 찌르기(활·창), 타격(방패·해머).
-public enum BuffTarget { None, Sword, Axe, Bow, Spear, Shield, Hammer, Fire, Ice, Electricity, Wind, Earth, Light, Darkness, AttackCount }
-public enum DebuffTarget { None, Sword, Axe, Bow, Spear, Shield, Hammer, Fire, Ice, Electricity, Wind, Earth, Light, Darkness }
+public enum BuffTarget { None, Sword, Axe, Bow, Spear, Shield, Hammer, Fire, Water, Earth, Wind, Ice, Electricity, Light, Darkness, AttackCount }
+public enum DebuffTarget { None, Sword, Axe, Bow, Spear, Shield, Hammer, Fire, Water, Earth, Wind, Ice, Electricity, Light, Darkness }
 public enum TargetPriority { Default, Closest, First, Last, Strongest, Weakest }
 public enum StatType { Armor }
 
@@ -17,12 +17,13 @@ public static class TowerEmblem
     public const int SHIELD = 5;
     public const int HAMMER = 6;
     public const int FIRE = 7;
-    public const int ICE = 8;
-    public const int ELECTRICITY = 9;
+    public const int WATER = 8;
+    public const int EARTH = 9;
     public const int WIND = 10;
-    public const int EARTH = 11;
-    public const int LIGHT = 12;
-    public const int DARKNESS = 13;
+    public const int ICE = 11;
+    public const int ELECTRICITY = 12;
+    public const int LIGHT = 13;
+    public const int DARKNESS = 14;
 }
 
 [CreateAssetMenu(fileName = "NewTowerData", menuName = "Tower Defense/Tower Data")]

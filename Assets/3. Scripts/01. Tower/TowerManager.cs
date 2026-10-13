@@ -103,13 +103,14 @@ public class TowerManager : MonoBehaviour
         new SynergyDefinition(6004, "헬", 5102, TowerEmblem.AXE, TowerEmblem.ICE, TowerEmblem.DARKNESS),
         new SynergyDefinition(6005, "수르트", 5101, TowerEmblem.SWORD, TowerEmblem.FIRE, TowerEmblem.EARTH),
         new SynergyDefinition(6006, "프레이", 5101, TowerEmblem.SWORD, TowerEmblem.LIGHT, TowerEmblem.WIND),
-        new SynergyDefinition(6007, "발드르", 5105, TowerEmblem.SHIELD, TowerEmblem.FIRE, TowerEmblem.LIGHT),
-        new SynergyDefinition(6008, "스카디", 5103, TowerEmblem.BOW, TowerEmblem.ICE, TowerEmblem.WIND),
+        new SynergyDefinition(6007, "발드르", 5108, TowerEmblem.WATER, TowerEmblem.FIRE, TowerEmblem.LIGHT),
+        new SynergyDefinition(6008, "스카디", 5103, TowerEmblem.BOW, TowerEmblem.ICE, TowerEmblem.WATER),
         new SynergyDefinition(6009, "프레이야", 5104, TowerEmblem.SPEAR, TowerEmblem.LIGHT, TowerEmblem.EARTH),
         new SynergyDefinition(6010, "이미르", 5106, TowerEmblem.HAMMER, TowerEmblem.ICE, TowerEmblem.EARTH),
         new SynergyDefinition(6011, "울르", 5103, TowerEmblem.AXE, TowerEmblem.BOW, TowerEmblem.SHIELD),
         new SynergyDefinition(6012, "브륀힐드", 5101, TowerEmblem.SWORD, TowerEmblem.SHIELD, TowerEmblem.ELECTRICITY),
-        new SynergyDefinition(6013, "브록 & 에이트리", 5102, TowerEmblem.AXE, TowerEmblem.SPEAR, TowerEmblem.HAMMER)
+        new SynergyDefinition(6013, "브록 & 에이트리", 5102, TowerEmblem.AXE, TowerEmblem.SPEAR, TowerEmblem.HAMMER),
+        new SynergyDefinition(6014, "뇨르드", 5105, TowerEmblem.WATER, TowerEmblem.WIND, TowerEmblem.SHIELD)
     };
 
     private readonly Dictionary<int, ActiveSynergyTower> m_activeSynergyTowers =

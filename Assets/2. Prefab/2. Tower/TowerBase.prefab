@@ -266,10 +266,11 @@ MonoBehaviour:
   - {fileID: 1003, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   - {fileID: 1006, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   - {fileID: 1007, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 21300000, guid: ac4c220652d946b393da83a480951449, type: 3}
+  - {fileID: 1011, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1010, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   - {fileID: 1008, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   - {fileID: 1009, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1010, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1011, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   - {fileID: 1012, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   - {fileID: 1013, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   m_swordCharacterSprites:
@@ -292,6 +293,7 @@ MonoBehaviour:
   - {fileID: 42132, guid: 78365b743e2f4883b967be2df1c4e204, type: 3}
   - {fileID: 42133, guid: 78365b743e2f4883b967be2df1c4e204, type: 3}
   - {fileID: 42134, guid: 78365b743e2f4883b967be2df1c4e204, type: 3}
+  m_regularCharacters: {fileID: 11400000, guid: 24c24873dcee41018d2bd84bdbf9e2b5, type: 2}
   m_characterTierSprites:
   - {fileID: 42011, guid: d25b136f115b43538e33a31e1c69d13e, type: 3}
   - {fileID: 42012, guid: d25b136f115b43538e33a31e1c69d13e, type: 3}
