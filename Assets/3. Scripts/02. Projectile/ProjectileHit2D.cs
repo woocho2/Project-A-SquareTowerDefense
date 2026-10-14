@@ -66,6 +66,11 @@ public class ProjectileHit2D : MonoBehaviour
     private bool m_renderersHidden;
     private Vector3 m_originalLocalScale;
     private SpriteRenderer m_spriteRenderer;
+    private Animator m_motionAnimator;
+    private bool m_hasMotionAnimations;
+    private static readonly int s_isFlyingParameter = Animator.StringToHash("IsFlying");
+    private static readonly int s_idleMotionState = Animator.StringToHash("Idle");
+    private static readonly int s_flightMotionState = Animator.StringToHash("Flight");
     private Sprite m_originalSprite;
     private Color m_originalColor;
 
@@ -86,11 +91,14 @@ public class ProjectileHit2D : MonoBehaviour
 
     private void OnEnable()
     {
+        m_isLaunched = false;
+        SetMotionAnimation(false);
         s_activeProjectiles.Add(this);
     }
 
     private void OnDisable()
     {
+        SetMotionAnimation(false);
         s_activeProjectiles.Remove(this);
         ReleaseReservedDamage();
     }
@@ -104,6 +112,19 @@ public class ProjectileHit2D : MonoBehaviour
         {
             m_originalSprite = renderer.sprite;
             m_originalColor = renderer.color;
+        }
+
+        m_motionAnimator = GetComponent<Animator>();
+        if (m_usePrefabVisual && m_motionAnimator != null && m_motionAnimator.runtimeAnimatorController != null)
+        {
+            foreach (AnimatorControllerParameter parameter in m_motionAnimator.parameters)
+            {
+                if (parameter.nameHash == s_isFlyingParameter && parameter.type == AnimatorControllerParameterType.Bool)
+                {
+                    m_hasMotionAnimations = true;
+                    break;
+                }
+            }
         }
 
         if (m_trailRenderer == null) m_trailRenderer = GetComponent<TrailRenderer>();
@@ -174,7 +195,7 @@ public class ProjectileHit2D : MonoBehaviour
 
     private SpriteRenderer GetSpriteRenderer()
     {
-        if (m_spriteRenderer == null) m_spriteRenderer = GetComponent<SpriteRenderer>();
+        if (m_spriteRenderer == null) m_spriteRenderer = GetComponentInChildren<SpriteRenderer>(true);
         return m_spriteRenderer;
     }
 
@@ -184,6 +205,24 @@ public class ProjectileHit2D : MonoBehaviour
         if (renderer == null) return;
         renderer.sprite = m_originalSprite;
         renderer.color = m_originalColor;
+    }
+
+    private void SetMotionAnimation(bool flying)
+    {
+        if (!m_hasMotionAnimations || m_motionAnimator == null) return;
+
+        if (m_motionAnimator.isActiveAndEnabled)
+        {
+            if (!m_motionAnimator.isInitialized) m_motionAnimator.Rebind();
+            m_motionAnimator.SetBool(s_isFlyingParameter, flying);
+            // 대기·발사 전환은 같은 프레임에 적용하고, 풀 재사용은 Idle 첫 장부터 시작합니다.
+            m_motionAnimator.Play(flying ? s_flightMotionState : s_idleMotionState, 0, 0f);
+            m_motionAnimator.Update(0f);
+        }
+        else
+        {
+            m_motionAnimator.SetBool(s_isFlyingParameter, flying);
+        }
     }
 
     public ProjectileStats Stats => m_stats;
@@ -205,6 +244,7 @@ public class ProjectileHit2D : MonoBehaviour
         if (m_usePrefabVisual) RestorePrefabVisual();
 
         m_isLaunched = false;
+        SetMotionAnimation(false);
         m_homingTarget = null;
         m_lastDirection = Vector3.zero;
         transform.rotation = Quaternion.identity;
@@ -243,6 +283,7 @@ public class ProjectileHit2D : MonoBehaviour
         if (m_lifeCo != null) StopCoroutine(m_lifeCo);
 
         m_isLaunched = true;
+        SetMotionAnimation(true);
 
         // 타겟이 넘어왔다면 유도 대상으로 지정
         m_homingTarget = targetEnemy;
@@ -580,7 +621,7 @@ public class ProjectileHit2D : MonoBehaviour
         m_trailRenderer.autodestruct = false;
         m_trailRenderer.emitting = false;
 
-        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        SpriteRenderer sr = GetSpriteRenderer();
         if (sr != null)
         {
             m_trailRenderer.sortingLayerID = sr.sortingLayerID;
@@ -642,7 +683,7 @@ public class ProjectileHit2D : MonoBehaviour
         var psRenderer = GetComponent<ParticleSystemRenderer>();
         if (psRenderer != null)
         {
-            SpriteRenderer sr = GetComponent<SpriteRenderer>();
+            SpriteRenderer sr = GetSpriteRenderer();
             if (sr != null)
             {
                 psRenderer.sortingLayerID = sr.sortingLayerID;

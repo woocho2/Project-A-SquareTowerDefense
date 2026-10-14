@@ -1,0 +1,15 @@
+﻿PASS Sword: actual PlayMode pooled Idle -> Prepare -> Flight, 16 frames, 12 FPS, both loops, first Idle frame on reuse
+PASS Axe: actual PlayMode pooled Idle -> Prepare -> Flight, 16 frames, 12 FPS, both loops, first Idle frame on reuse
+PASS Bow: actual PlayMode pooled Idle -> Prepare -> Flight, 16 frames, 12 FPS, both loops, first Idle frame on reuse
+PASS Spear: actual PlayMode pooled Idle -> Prepare -> Flight, 16 frames, 12 FPS, both loops, first Idle frame on reuse
+PASS Shield: actual PlayMode pooled Idle -> Prepare -> Flight, 16 frames, 12 FPS, both loops, first Idle frame on reuse
+PASS Hammer: actual PlayMode pooled Idle -> Prepare -> Flight, 16 frames, 12 FPS, both loops, first Idle frame on reuse
+PASS Fire: actual PlayMode pooled Idle -> Prepare -> Flight, 16 frames, 12 FPS, both loops, first Idle frame on reuse
+PASS Water: actual PlayMode pooled Idle -> Prepare -> Flight, 16 frames, 12 FPS, both loops, first Idle frame on reuse
+PASS Earth: actual PlayMode pooled Idle -> Prepare -> Flight, 16 frames, 12 FPS, both loops, first Idle frame on reuse
+PASS Wind: actual PlayMode pooled Idle -> Prepare -> Flight, 16 frames, 12 FPS, both loops, first Idle frame on reuse
+PASS Ice: actual PlayMode pooled Idle -> Prepare -> Flight, 16 frames, 12 FPS, both loops, first Idle frame on reuse
+PASS Electric: actual PlayMode pooled Idle -> Prepare -> Flight, 16 frames, 12 FPS, both loops, first Idle frame on reuse
+PASS Light: actual PlayMode pooled Idle -> Prepare -> Flight, 16 frames, 12 FPS, both loops, first Idle frame on reuse
+PASS Dark: actual PlayMode pooled Idle -> Prepare -> Flight, 16 frames, 12 FPS, both loops, first Idle frame on reuse
+PASS all 14 single projectile motion state machines and PlayMode pool lifecycle

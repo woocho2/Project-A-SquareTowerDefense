@@ -1,0 +1,22 @@
+{
+  "key": "Front",
+  "prompt": "Use case: stylized-concept. Asset type: ONE transparent character portrait sprite for a self-healing Fallen Valkyrie cube enemy in a Unity Norse tower-defense game. Reference 1 (current Sword tower portraits) defines EXACT drawing style, head proportions and BUST composition: smooth polished anime chibi SD, very large round expressive eyes, face and hair above small armored shoulders, clean high quality cel shading, not an entire cube model and not a square cropped head. Reference 2 is current Fallen Valkyrie identity: preserve silver-white hair, magenta eyes, pale warm skin, small mischievous fang smile, winged Norse helmet with dark black/navy plates and rich gold trim. Turn her into the SELF-HEALING subtype: replace helmet's purple diamond jewel and wing feathers with deep ruby-red gem and muted red-black wing ornaments, ruby accents on compact armored shoulder pieces, preserve silver hair and gold trim. FRONT view, head and shoulders centered looking straight forward, symmetrical readable shoulder armor, full helmet and hair safely visible, no arms or body below upper chest. Match tower reference 1's painterly clean rendering instead of reference 2's large flat-outline square head. Transparent background, image canvas square, subject occupies 82% width and 82% height, at least 8% transparent padding every edge. Do not draw any decorative picture frame, tile, border, pedestal, floor, cube geometry or icon into this character portrait, because the exact existing red tower border and regeneration emblem are separate reusable layers. No text, lettering, watermark, no extra characters, no full body, no top/bottom view. One character only, no atlas.",
+  "refs": [
+    "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Sword_Front_Atlas_v2.png",
+    "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/Enemy_Cube_FallenValkyrie_Faces_v4.png"
+  ],
+  "originalPath": "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-d139cf3f-67f4-4c34-af64-bcca8fe8ba22.png",
+  "mode": "builtin-imagegen",
+  "packing": {
+    "source": {
+      "left": 88,
+      "top": 76,
+      "width": 1077,
+      "height": 1098
+    },
+    "left": 15,
+    "top": 16,
+    "width": 226,
+    "height": 230
+  }
+}

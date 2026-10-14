@@ -85,7 +85,7 @@ SpriteRenderer:
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 163250a97e184e4f80b2db2b57b57df7, type: 3}
+  m_Sprite: {fileID: 21301100, guid: fc3ec36e67c62f0898b66fc5a377ef9f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -173,12 +173,12 @@ MonoBehaviour:
   m_enemyLayer:
     serializedVersion: 2
     m_Bits: 256
+  m_usePrefabVisual: 1
+  m_prefabEffectColor: {r: 0.6, g: 0.85, b: 1, a: 1}
   m_enableTrail: 1
   m_enableParticles: 1
   m_trailRenderer: {fileID: 0}
   m_particleSystem: {fileID: 0}
-  m_usePrefabVisual: 1
-  m_prefabEffectColor: {r: 0.3, g: 0.8, b: 1, a: 1}
   lifeTime: 3
   IsSplash: 0
 --- !u!95 &5979125414150266392
@@ -189,16 +189,16 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6552874700961141187}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7a07020800000000000000000000208c, type: 2}
+  m_Controller: {fileID: 9100000, guid: 48d5f900b05b89249a5d912eb9eafd1a, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
-  m_WarningMessage: 
+  m_WarningMessage:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0

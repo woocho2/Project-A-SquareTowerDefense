@@ -1,0 +1,488 @@
+{
+  "tool": "built-in image_gen",
+  "framesPerState": 8,
+  "fps": 12,
+  "loopDuration": 0.6666666666666666,
+  "states": [
+    "Idle",
+    "Flight"
+  ],
+  "specs": [
+    {
+      "id": 1,
+      "key": "Sword",
+      "name": "검",
+      "body": "one slender pink plum-blossom petal fused with an ivory sword-cut glint, sharp tip pointing RIGHT, pale pink body and deep rose edge",
+      "palette": "pink, deep rose, luminous ivory",
+      "color": [
+        1,
+        0.4,
+        0.7
+      ],
+      "state": "Idle",
+      "job": "01_Sword_Idle",
+      "projectileID": 201,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/sword-hit-v3/Target-packed-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 검 / Sword. Palette: pink, deep rose, luminous ivory. Projectile body: one slender pink plum-blossom petal fused with an ivory sword-cut glint, sharp tip pointing RIGHT, pale pink body and deep rose edge.\nIDLE / awaiting launch near the tower: same compact body floats in place. Eight subtle phases of a calm repeating rim-glint pulse and a very small bob of at most3px. A few restrained particles orbit very close to body. NO long movement tail, NO speed lines, no launch. Small quiet alive object, not an attack burst.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 1,
+      "key": "Sword",
+      "name": "검",
+      "body": "one slender pink plum-blossom petal fused with an ivory sword-cut glint, sharp tip pointing RIGHT, pale pink body and deep rose edge",
+      "palette": "pink, deep rose, luminous ivory",
+      "color": [
+        1,
+        0.4,
+        0.7
+      ],
+      "state": "Flight",
+      "job": "01_Sword_Flight",
+      "projectileID": 201,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/sword-hit-v3/Target-packed-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 검 / Sword. Palette: pink, deep rose, luminous ivory. Projectile body: one slender pink plum-blossom petal fused with an ivory sword-cut glint, sharp tip pointing RIGHT, pale pink body and deep rose edge.\nFLIGHT / already launched: EXACT SAME projectile body as the Idle reference. Same head center x230,y192 and RIGHT facing direction in all8 frames. A short directional energy/element tail streams LEFT, varies smoothly in eight phases with a small traveling glint and a few matching particles. Animated flow implies movement RIGHT while the head stays locked. No changes of head size or pose, no shrink/fade. No big impact star or ring. Tail must remain compact, not exceed the cell margin.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 2,
+      "key": "Axe",
+      "name": "도끼",
+      "body": "one compact bronze throwing axe head with a very short dark haft, crisp heavy cleaving edge highlighted ivory and orange-red; recognizable axe silhouette, no long handle",
+      "palette": "bronze, red-orange, ivory",
+      "color": [
+        1,
+        0.38,
+        0.15
+      ],
+      "state": "Idle",
+      "job": "02_Axe_Idle",
+      "projectileID": 202,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/02_Axe_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 도끼 / Axe. Palette: bronze, red-orange, ivory. Projectile body: one compact bronze throwing axe head with a very short dark haft, crisp heavy cleaving edge highlighted ivory and orange-red; recognizable axe silhouette, no long handle.\nIDLE / awaiting launch near the tower: same compact body floats in place. Eight subtle phases of a calm repeating rim-glint pulse and a very small bob of at most3px. A few restrained particles orbit very close to body. NO long movement tail, NO speed lines, no launch. Small quiet alive object, not an attack burst.\nGame already spins this thrown weapon's transform during flight. Keep animation mainly a gleam and short close radial spark wake; do NOT animate additional whole-body rotation or add a very long directional tail.\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 2,
+      "key": "Axe",
+      "name": "도끼",
+      "body": "one compact bronze throwing axe head with a very short dark haft, crisp heavy cleaving edge highlighted ivory and orange-red; recognizable axe silhouette, no long handle",
+      "palette": "bronze, red-orange, ivory",
+      "color": [
+        1,
+        0.38,
+        0.15
+      ],
+      "state": "Flight",
+      "job": "02_Axe_Flight",
+      "projectileID": 202,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/02_Axe_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 도끼 / Axe. Palette: bronze, red-orange, ivory. Projectile body: one compact bronze throwing axe head with a very short dark haft, crisp heavy cleaving edge highlighted ivory and orange-red; recognizable axe silhouette, no long handle.\nFLIGHT / already launched: EXACT SAME projectile body as the Idle reference. Same head center x230,y192 and RIGHT facing direction in all8 frames. A short directional energy/element tail streams LEFT, varies smoothly in eight phases with a small traveling glint and a few matching particles. Animated flow implies movement RIGHT while the head stays locked. No changes of head size or pose, no shrink/fade. No big impact star or ring. Tail must remain compact, not exceed the cell margin.\nGame already spins this thrown weapon's transform during flight. Keep animation mainly a gleam and short close radial spark wake; do NOT animate additional whole-body rotation or add a very long directional tail.\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 3,
+      "key": "Bow",
+      "name": "활",
+      "body": "one straight silver arrow pointing RIGHT, jade-white luminous arrowhead, a slender short shaft and two small forest-jade fletchings at LEFT",
+      "palette": "silver, jade green, warm ivory",
+      "color": [
+        0.3,
+        0.85,
+        0.55
+      ],
+      "state": "Idle",
+      "job": "03_Bow_Idle",
+      "projectileID": 203,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/03_Bow_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 활 / Bow. Palette: silver, jade green, warm ivory. Projectile body: one straight silver arrow pointing RIGHT, jade-white luminous arrowhead, a slender short shaft and two small forest-jade fletchings at LEFT.\nIDLE / awaiting launch near the tower: same compact body floats in place. Eight subtle phases of a calm repeating rim-glint pulse and a very small bob of at most3px. A few restrained particles orbit very close to body. NO long movement tail, NO speed lines, no launch. Small quiet alive object, not an attack burst.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 3,
+      "key": "Bow",
+      "name": "활",
+      "body": "one straight silver arrow pointing RIGHT, jade-white luminous arrowhead, a slender short shaft and two small forest-jade fletchings at LEFT",
+      "palette": "silver, jade green, warm ivory",
+      "color": [
+        0.3,
+        0.85,
+        0.55
+      ],
+      "state": "Flight",
+      "job": "03_Bow_Flight",
+      "projectileID": 203,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/03_Bow_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 활 / Bow. Palette: silver, jade green, warm ivory. Projectile body: one straight silver arrow pointing RIGHT, jade-white luminous arrowhead, a slender short shaft and two small forest-jade fletchings at LEFT.\nFLIGHT / already launched: EXACT SAME projectile body as the Idle reference. Same head center x230,y192 and RIGHT facing direction in all8 frames. A short directional energy/element tail streams LEFT, varies smoothly in eight phases with a small traveling glint and a few matching particles. Animated flow implies movement RIGHT while the head stays locked. No changes of head size or pose, no shrink/fade. No big impact star or ring. Tail must remain compact, not exceed the cell margin.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 4,
+      "key": "Spear",
+      "name": "창",
+      "body": "one slim steel-blue spear pointing RIGHT, readable narrow lance tip and moderately long thin shaft, one small crimson pennant on the shaft just behind the spearhead",
+      "palette": "steel blue, ivory, muted crimson",
+      "color": [
+        0.5,
+        0.72,
+        1
+      ],
+      "state": "Idle",
+      "job": "04_Spear_Idle",
+      "projectileID": 204,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/04_Spear_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 창 / Spear. Palette: steel blue, ivory, muted crimson. Projectile body: one slim steel-blue spear pointing RIGHT, readable narrow lance tip and moderately long thin shaft, one small crimson pennant on the shaft just behind the spearhead.\nIDLE / awaiting launch near the tower: same compact body floats in place. Eight subtle phases of a calm repeating rim-glint pulse and a very small bob of at most3px. A few restrained particles orbit very close to body. NO long movement tail, NO speed lines, no launch. Small quiet alive object, not an attack burst.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 4,
+      "key": "Spear",
+      "name": "창",
+      "body": "one slim steel-blue spear pointing RIGHT, readable narrow lance tip and moderately long thin shaft, one small crimson pennant on the shaft just behind the spearhead",
+      "palette": "steel blue, ivory, muted crimson",
+      "color": [
+        0.5,
+        0.72,
+        1
+      ],
+      "state": "Flight",
+      "job": "04_Spear_Flight",
+      "projectileID": 204,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/04_Spear_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 창 / Spear. Palette: steel blue, ivory, muted crimson. Projectile body: one slim steel-blue spear pointing RIGHT, readable narrow lance tip and moderately long thin shaft, one small crimson pennant on the shaft just behind the spearhead.\nFLIGHT / already launched: EXACT SAME projectile body as the Idle reference. Same head center x230,y192 and RIGHT facing direction in all8 frames. A short directional energy/element tail streams LEFT, varies smoothly in eight phases with a small traveling glint and a few matching particles. Animated flow implies movement RIGHT while the head stays locked. No changes of head size or pose, no shrink/fade. No big impact star or ring. Tail must remain compact, not exceed the cell margin.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 5,
+      "key": "Shield",
+      "name": "방패",
+      "body": "one small royal-blue round throwing shield with a restrained warm-gold rim, steel-white center gleam, compact circular silhouette",
+      "palette": "royal blue, warm gold, white steel",
+      "color": [
+        0.3,
+        0.55,
+        1
+      ],
+      "state": "Idle",
+      "job": "05_Shield_Idle",
+      "projectileID": 205,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/05_Shield_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 방패 / Shield. Palette: royal blue, warm gold, white steel. Projectile body: one small royal-blue round throwing shield with a restrained warm-gold rim, steel-white center gleam, compact circular silhouette.\nIDLE / awaiting launch near the tower: same compact body floats in place. Eight subtle phases of a calm repeating rim-glint pulse and a very small bob of at most3px. A few restrained particles orbit very close to body. NO long movement tail, NO speed lines, no launch. Small quiet alive object, not an attack burst.\nGame already spins this thrown weapon's transform during flight. Keep animation mainly a gleam and short close radial spark wake; do NOT animate additional whole-body rotation or add a very long directional tail.\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 5,
+      "key": "Shield",
+      "name": "방패",
+      "body": "one small royal-blue round throwing shield with a restrained warm-gold rim, steel-white center gleam, compact circular silhouette",
+      "palette": "royal blue, warm gold, white steel",
+      "color": [
+        0.3,
+        0.55,
+        1
+      ],
+      "state": "Flight",
+      "job": "05_Shield_Flight",
+      "projectileID": 205,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/05_Shield_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 방패 / Shield. Palette: royal blue, warm gold, white steel. Projectile body: one small royal-blue round throwing shield with a restrained warm-gold rim, steel-white center gleam, compact circular silhouette.\nFLIGHT / already launched: EXACT SAME projectile body as the Idle reference. Same head center x230,y192 and RIGHT facing direction in all8 frames. A short directional energy/element tail streams LEFT, varies smoothly in eight phases with a small traveling glint and a few matching particles. Animated flow implies movement RIGHT while the head stays locked. No changes of head size or pose, no shrink/fade. No big impact star or ring. Tail must remain compact, not exceed the cell margin.\nGame already spins this thrown weapon's transform during flight. Keep animation mainly a gleam and short close radial spark wake; do NOT animate additional whole-body rotation or add a very long directional tail.\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 6,
+      "key": "Hammer",
+      "name": "해머",
+      "body": "one compact smith hammer with a squared bronze-white metal head and short dark handle, dense blocky head on RIGHT, handle leaning LEFT, no text or numbers",
+      "palette": "bronze, bright steel white, amber",
+      "color": [
+        1,
+        0.65,
+        0.25
+      ],
+      "state": "Idle",
+      "job": "06_Hammer_Idle",
+      "projectileID": 206,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/06_Hammer_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 해머 / Hammer. Palette: bronze, bright steel white, amber. Projectile body: one compact smith hammer with a squared bronze-white metal head and short dark handle, dense blocky head on RIGHT, handle leaning LEFT, no text or numbers.\nIDLE / awaiting launch near the tower: same compact body floats in place. Eight subtle phases of a calm repeating rim-glint pulse and a very small bob of at most3px. A few restrained particles orbit very close to body. NO long movement tail, NO speed lines, no launch. Small quiet alive object, not an attack burst.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 6,
+      "key": "Hammer",
+      "name": "해머",
+      "body": "one compact smith hammer with a squared bronze-white metal head and short dark handle, dense blocky head on RIGHT, handle leaning LEFT, no text or numbers",
+      "palette": "bronze, bright steel white, amber",
+      "color": [
+        1,
+        0.65,
+        0.25
+      ],
+      "state": "Flight",
+      "job": "06_Hammer_Flight",
+      "projectileID": 206,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/06_Hammer_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 해머 / Hammer. Palette: bronze, bright steel white, amber. Projectile body: one compact smith hammer with a squared bronze-white metal head and short dark handle, dense blocky head on RIGHT, handle leaning LEFT, no text or numbers.\nFLIGHT / already launched: EXACT SAME projectile body as the Idle reference. Same head center x230,y192 and RIGHT facing direction in all8 frames. A short directional energy/element tail streams LEFT, varies smoothly in eight phases with a small traveling glint and a few matching particles. Animated flow implies movement RIGHT while the head stays locked. No changes of head size or pose, no shrink/fade. No big impact star or ring. Tail must remain compact, not exceed the cell margin.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 7,
+      "key": "Fire",
+      "name": "불",
+      "body": "one dense small orange fireball, bright creamy-yellow spherical core on RIGHT, a few controlled scarlet flame licks, NOT an explosion",
+      "palette": "orange, scarlet, creamy yellow",
+      "color": [
+        1,
+        0.38,
+        0.08
+      ],
+      "state": "Idle",
+      "job": "07_Fire_Idle",
+      "projectileID": 207,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/07_Fire_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 불 / Fire. Palette: orange, scarlet, creamy yellow. Projectile body: one dense small orange fireball, bright creamy-yellow spherical core on RIGHT, a few controlled scarlet flame licks, NOT an explosion.\nIDLE / awaiting launch near the tower: same compact body floats in place. Eight subtle phases of a calm repeating rim-glint pulse and a very small bob of at most3px. A few restrained particles orbit very close to body. NO long movement tail, NO speed lines, no launch. Small quiet alive object, not an attack burst.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 7,
+      "key": "Fire",
+      "name": "불",
+      "body": "one dense small orange fireball, bright creamy-yellow spherical core on RIGHT, a few controlled scarlet flame licks, NOT an explosion",
+      "palette": "orange, scarlet, creamy yellow",
+      "color": [
+        1,
+        0.38,
+        0.08
+      ],
+      "state": "Flight",
+      "job": "07_Fire_Flight",
+      "projectileID": 207,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/07_Fire_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 불 / Fire. Palette: orange, scarlet, creamy yellow. Projectile body: one dense small orange fireball, bright creamy-yellow spherical core on RIGHT, a few controlled scarlet flame licks, NOT an explosion.\nFLIGHT / already launched: EXACT SAME projectile body as the Idle reference. Same head center x230,y192 and RIGHT facing direction in all8 frames. A short directional energy/element tail streams LEFT, varies smoothly in eight phases with a small traveling glint and a few matching particles. Animated flow implies movement RIGHT while the head stays locked. No changes of head size or pose, no shrink/fade. No big impact star or ring. Tail must remain compact, not exceed the cell margin.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 8,
+      "key": "Water",
+      "name": "물",
+      "body": "one compressed blue-turquoise water droplet with rounded dense head on RIGHT, clean curved white foam highlights and only two tiny water droplets",
+      "palette": "sea blue, turquoise, foam white",
+      "color": [
+        0.15,
+        0.75,
+        1
+      ],
+      "state": "Idle",
+      "job": "08_Water_Idle",
+      "projectileID": 208,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/08_Water_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 물 / Water. Palette: sea blue, turquoise, foam white. Projectile body: one compressed blue-turquoise water droplet with rounded dense head on RIGHT, clean curved white foam highlights and only two tiny water droplets.\nIDLE / awaiting launch near the tower: same compact body floats in place. Eight subtle phases of a calm repeating rim-glint pulse and a very small bob of at most3px. A few restrained particles orbit very close to body. NO long movement tail, NO speed lines, no launch. Small quiet alive object, not an attack burst.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 8,
+      "key": "Water",
+      "name": "물",
+      "body": "one compressed blue-turquoise water droplet with rounded dense head on RIGHT, clean curved white foam highlights and only two tiny water droplets",
+      "palette": "sea blue, turquoise, foam white",
+      "color": [
+        0.15,
+        0.75,
+        1
+      ],
+      "state": "Flight",
+      "job": "08_Water_Flight",
+      "projectileID": 208,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/08_Water_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 물 / Water. Palette: sea blue, turquoise, foam white. Projectile body: one compressed blue-turquoise water droplet with rounded dense head on RIGHT, clean curved white foam highlights and only two tiny water droplets.\nFLIGHT / already launched: EXACT SAME projectile body as the Idle reference. Same head center x230,y192 and RIGHT facing direction in all8 frames. A short directional energy/element tail streams LEFT, varies smoothly in eight phases with a small traveling glint and a few matching particles. Animated flow implies movement RIGHT while the head stays locked. No changes of head size or pose, no shrink/fade. No big impact star or ring. Tail must remain compact, not exceed the cell margin.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 9,
+      "key": "Earth",
+      "name": "대지",
+      "body": "one compact terracotta seed-stone with two small sturdy leaf-green leaves and a restrained golden life glint, readable seed shape, not a planted sprout or ground pile",
+      "palette": "terracotta, leaf green, warm gold",
+      "color": [
+        0.55,
+        0.82,
+        0.25
+      ],
+      "state": "Idle",
+      "job": "09_Earth_Idle",
+      "projectileID": 209,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/09_Earth_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 대지 / Earth. Palette: terracotta, leaf green, warm gold. Projectile body: one compact terracotta seed-stone with two small sturdy leaf-green leaves and a restrained golden life glint, readable seed shape, not a planted sprout or ground pile.\nIDLE / awaiting launch near the tower: same compact body floats in place. Eight subtle phases of a calm repeating rim-glint pulse and a very small bob of at most3px. A few restrained particles orbit very close to body. NO long movement tail, NO speed lines, no launch. Small quiet alive object, not an attack burst.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 9,
+      "key": "Earth",
+      "name": "대지",
+      "body": "one compact terracotta seed-stone with two small sturdy leaf-green leaves and a restrained golden life glint, readable seed shape, not a planted sprout or ground pile",
+      "palette": "terracotta, leaf green, warm gold",
+      "color": [
+        0.55,
+        0.82,
+        0.25
+      ],
+      "state": "Flight",
+      "job": "09_Earth_Flight",
+      "projectileID": 209,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/09_Earth_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 대지 / Earth. Palette: terracotta, leaf green, warm gold. Projectile body: one compact terracotta seed-stone with two small sturdy leaf-green leaves and a restrained golden life glint, readable seed shape, not a planted sprout or ground pile.\nFLIGHT / already launched: EXACT SAME projectile body as the Idle reference. Same head center x230,y192 and RIGHT facing direction in all8 frames. A short directional energy/element tail streams LEFT, varies smoothly in eight phases with a small traveling glint and a few matching particles. Animated flow implies movement RIGHT while the head stays locked. No changes of head size or pose, no shrink/fade. No big impact star or ring. Tail must remain compact, not exceed the cell margin.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 10,
+      "key": "Wind",
+      "name": "바람",
+      "body": "one compressed mint-white wind crescent on RIGHT, cool teal outer edge, translucent open inner curve, one sharp leading tip",
+      "palette": "mint white, pale sky blue, cool teal",
+      "color": [
+        0.65,
+        0.95,
+        0.9
+      ],
+      "state": "Idle",
+      "job": "10_Wind_Idle",
+      "projectileID": 210,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/10_Wind_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 바람 / Wind. Palette: mint white, pale sky blue, cool teal. Projectile body: one compressed mint-white wind crescent on RIGHT, cool teal outer edge, translucent open inner curve, one sharp leading tip.\nIDLE / awaiting launch near the tower: same compact body floats in place. Eight subtle phases of a calm repeating rim-glint pulse and a very small bob of at most3px. A few restrained particles orbit very close to body. NO long movement tail, NO speed lines, no launch. Small quiet alive object, not an attack burst.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 10,
+      "key": "Wind",
+      "name": "바람",
+      "body": "one compressed mint-white wind crescent on RIGHT, cool teal outer edge, translucent open inner curve, one sharp leading tip",
+      "palette": "mint white, pale sky blue, cool teal",
+      "color": [
+        0.65,
+        0.95,
+        0.9
+      ],
+      "state": "Flight",
+      "job": "10_Wind_Flight",
+      "projectileID": 210,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/10_Wind_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 바람 / Wind. Palette: mint white, pale sky blue, cool teal. Projectile body: one compressed mint-white wind crescent on RIGHT, cool teal outer edge, translucent open inner curve, one sharp leading tip.\nFLIGHT / already launched: EXACT SAME projectile body as the Idle reference. Same head center x230,y192 and RIGHT facing direction in all8 frames. A short directional energy/element tail streams LEFT, varies smoothly in eight phases with a small traveling glint and a few matching particles. Animated flow implies movement RIGHT while the head stays locked. No changes of head size or pose, no shrink/fade. No big impact star or ring. Tail must remain compact, not exceed the cell margin.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 11,
+      "key": "Ice",
+      "name": "얼음",
+      "body": "one compact icy white snowball core on RIGHT, pale-blue crystalline rim and three small readable frozen facets, no huge snowflake",
+      "palette": "ice blue, snow white, restrained cyan",
+      "color": [
+        0.6,
+        0.85,
+        1
+      ],
+      "state": "Idle",
+      "job": "11_Ice_Idle",
+      "projectileID": 211,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/11_Ice_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 얼음 / Ice. Palette: ice blue, snow white, restrained cyan. Projectile body: one compact icy white snowball core on RIGHT, pale-blue crystalline rim and three small readable frozen facets, no huge snowflake.\nIDLE / awaiting launch near the tower: same compact body floats in place. Eight subtle phases of a calm repeating rim-glint pulse and a very small bob of at most3px. A few restrained particles orbit very close to body. NO long movement tail, NO speed lines, no launch. Small quiet alive object, not an attack burst.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 11,
+      "key": "Ice",
+      "name": "얼음",
+      "body": "one compact icy white snowball core on RIGHT, pale-blue crystalline rim and three small readable frozen facets, no huge snowflake",
+      "palette": "ice blue, snow white, restrained cyan",
+      "color": [
+        0.6,
+        0.85,
+        1
+      ],
+      "state": "Flight",
+      "job": "11_Ice_Flight",
+      "projectileID": 211,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/11_Ice_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 얼음 / Ice. Palette: ice blue, snow white, restrained cyan. Projectile body: one compact icy white snowball core on RIGHT, pale-blue crystalline rim and three small readable frozen facets, no huge snowflake.\nFLIGHT / already launched: EXACT SAME projectile body as the Idle reference. Same head center x230,y192 and RIGHT facing direction in all8 frames. A short directional energy/element tail streams LEFT, varies smoothly in eight phases with a small traveling glint and a few matching particles. Animated flow implies movement RIGHT while the head stays locked. No changes of head size or pose, no shrink/fade. No big impact star or ring. Tail must remain compact, not exceed the cell margin.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 12,
+      "key": "Electric",
+      "name": "전기",
+      "body": "one dense yellow-white charged spark core on RIGHT, two short sharply zigzagging golden lightning branches and tiny blue charge chips",
+      "palette": "golden yellow, ice white, blue sparks",
+      "color": [
+        1,
+        0.85,
+        0.2
+      ],
+      "state": "Idle",
+      "job": "12_Electric_Idle",
+      "projectileID": 212,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/12_Electric_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 전기 / Electric. Palette: golden yellow, ice white, blue sparks. Projectile body: one dense yellow-white charged spark core on RIGHT, two short sharply zigzagging golden lightning branches and tiny blue charge chips.\nIDLE / awaiting launch near the tower: same compact body floats in place. Eight subtle phases of a calm repeating rim-glint pulse and a very small bob of at most3px. A few restrained particles orbit very close to body. NO long movement tail, NO speed lines, no launch. Small quiet alive object, not an attack burst.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 12,
+      "key": "Electric",
+      "name": "전기",
+      "body": "one dense yellow-white charged spark core on RIGHT, two short sharply zigzagging golden lightning branches and tiny blue charge chips",
+      "palette": "golden yellow, ice white, blue sparks",
+      "color": [
+        1,
+        0.85,
+        0.2
+      ],
+      "state": "Flight",
+      "job": "12_Electric_Flight",
+      "projectileID": 212,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/12_Electric_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 전기 / Electric. Palette: golden yellow, ice white, blue sparks. Projectile body: one dense yellow-white charged spark core on RIGHT, two short sharply zigzagging golden lightning branches and tiny blue charge chips.\nFLIGHT / already launched: EXACT SAME projectile body as the Idle reference. Same head center x230,y192 and RIGHT facing direction in all8 frames. A short directional energy/element tail streams LEFT, varies smoothly in eight phases with a small traveling glint and a few matching particles. Animated flow implies movement RIGHT while the head stays locked. No changes of head size or pose, no shrink/fade. No big impact star or ring. Tail must remain compact, not exceed the cell margin.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 13,
+      "key": "Light",
+      "name": "빛",
+      "body": "one compact cluster of three warm ivory spirit wisps forming a pointed gold-white leading head on RIGHT, tiny controlled rainbow prism edge",
+      "palette": "ivory white, warm gold, faint prism edges",
+      "color": [
+        1,
+        0.93,
+        0.7
+      ],
+      "state": "Idle",
+      "job": "13_Light_Idle",
+      "projectileID": 213,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/13_Light_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 빛 / Light. Palette: ivory white, warm gold, faint prism edges. Projectile body: one compact cluster of three warm ivory spirit wisps forming a pointed gold-white leading head on RIGHT, tiny controlled rainbow prism edge.\nIDLE / awaiting launch near the tower: same compact body floats in place. Eight subtle phases of a calm repeating rim-glint pulse and a very small bob of at most3px. A few restrained particles orbit very close to body. NO long movement tail, NO speed lines, no launch. Small quiet alive object, not an attack burst.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 13,
+      "key": "Light",
+      "name": "빛",
+      "body": "one compact cluster of three warm ivory spirit wisps forming a pointed gold-white leading head on RIGHT, tiny controlled rainbow prism edge",
+      "palette": "ivory white, warm gold, faint prism edges",
+      "color": [
+        1,
+        0.93,
+        0.7
+      ],
+      "state": "Flight",
+      "job": "13_Light_Flight",
+      "projectileID": 213,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/13_Light_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 빛 / Light. Palette: ivory white, warm gold, faint prism edges. Projectile body: one compact cluster of three warm ivory spirit wisps forming a pointed gold-white leading head on RIGHT, tiny controlled rainbow prism edge.\nFLIGHT / already launched: EXACT SAME projectile body as the Idle reference. Same head center x230,y192 and RIGHT facing direction in all8 frames. A short directional energy/element tail streams LEFT, varies smoothly in eight phases with a small traveling glint and a few matching particles. Animated flow implies movement RIGHT while the head stays locked. No changes of head size or pose, no shrink/fade. No big impact star or ring. Tail must remain compact, not exceed the cell margin.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 14,
+      "key": "Dark",
+      "name": "어둠",
+      "body": "one compact near-black violet void bead on RIGHT, lavender accretion rim, two sharp purple shadow slivers, readable genuinely dark core",
+      "palette": "near-black purple, deep violet, lavender",
+      "color": [
+        0.62,
+        0.28,
+        0.95
+      ],
+      "state": "Idle",
+      "job": "14_Dark_Idle",
+      "projectileID": 214,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/14_Dark_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 어둠 / Dark. Palette: near-black purple, deep violet, lavender. Projectile body: one compact near-black violet void bead on RIGHT, lavender accretion rim, two sharp purple shadow slivers, readable genuinely dark core.\nIDLE / awaiting launch near the tower: same compact body floats in place. Eight subtle phases of a calm repeating rim-glint pulse and a very small bob of at most3px. A few restrained particles orbit very close to body. NO long movement tail, NO speed lines, no launch. Small quiet alive object, not an attack burst.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    },
+    {
+      "id": 14,
+      "key": "Dark",
+      "name": "어둠",
+      "body": "one compact near-black violet void bead on RIGHT, lavender accretion rim, two sharp purple shadow slivers, readable genuinely dark core",
+      "palette": "near-black purple, deep violet, lavender",
+      "color": [
+        0.62,
+        0.28,
+        0.95
+      ],
+      "state": "Flight",
+      "job": "14_Dark_Flight",
+      "projectileID": 214,
+      "ref": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense-/outputs/all-tower-hit-v4/14_Dark_Target-contact.png",
+      "prompt": "Use case: stylized-concept. Asset type: Unity 2D tower-defense PROJECTILE LOOP sprite-sheet, true transparent RGBA.\nCreate exactly EIGHT different animation frames in an exact equal-square FOUR-column TWO-row atlas, canvas1536x768, square384px cells. Read left-to-right then second row. This is a SEAMLESS looping animation, never a one-shot impact. Keep full projectile body present in ALL EIGHT frames, NO formation or fade-to-empty, NO explosion. Keep frame8 close to frame1 so it loops smoothly.\nReference hit-effect image is ONLY a STYLE AND PALETTE reference. Create the matching flying projectile, not copies of explosions. Clean compact hand-drawn fantasy game art, crisp silhouette, two or three controlled cel-shaded tones, modest luminous edges, tiny glints, readable at 32-64px. No scene, enemy, tower, pedestal, floor, text, labels, numbering, grids, borders, background panels or painted checkerboard. All particles/glows contained INSIDE each cell with at least35px transparent margin. Exact FOUR equal columns, TWO equal rows. Same scale, view and body identity across ALL8 frames. BODY center remains at x230,y192 within each cell; direction RIGHT in every frame. Do NOT move the projectile across cells, do NOT flip it.\nTheme: 어둠 / Dark. Palette: near-black purple, deep violet, lavender. Projectile body: one compact near-black violet void bead on RIGHT, lavender accretion rim, two sharp purple shadow slivers, readable genuinely dark core.\nFLIGHT / already launched: EXACT SAME projectile body as the Idle reference. Same head center x230,y192 and RIGHT facing direction in all8 frames. A short directional energy/element tail streams LEFT, varies smoothly in eight phases with a small traveling glint and a few matching particles. Animated flow implies movement RIGHT while the head stays locked. No changes of head size or pose, no shrink/fade. No big impact star or ring. Tail must remain compact, not exceed the cell margin.\n\nMain request: an actual8-frame loop with clear subtle phase changes, same projectile, no repeated identical icons. Final frame flows back into first. Real transparent background."
+    }
+  ]
+}

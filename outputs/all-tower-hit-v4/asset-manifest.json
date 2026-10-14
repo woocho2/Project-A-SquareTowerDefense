@@ -1,0 +1,7265 @@
+{
+  "fps": 12,
+  "frames": 30,
+  "duration": 2.5,
+  "assets": [
+    {
+      "id": 1,
+      "key": "Sword",
+      "name": "Sword_Target_30_v3",
+      "emblemName": "검",
+      "kind": "Target",
+      "effectID": 201,
+      "base": "Assets/4. Asset/6. Effect/SwordHit_v3/Sword_Target_30_v3",
+      "guids": {
+        "texture": "ef65f75f09f5b7138e39a22539e53450",
+        "clip": "5b222aa90b198779240caebd5ce2ee96",
+        "controller": "ce663b04b79c7617d09fdbd006b446b1",
+        "prefab": "04148faa6dba7339656810f1a1d675af"
+      },
+      "reused": true,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "id": 1,
+      "key": "Sword",
+      "name": "Sword_Splash_30_v3",
+      "emblemName": "검",
+      "kind": "Splash",
+      "effectID": 101,
+      "base": "Assets/4. Asset/6. Effect/SwordHit_v3/Sword_Splash_30_v3",
+      "guids": {
+        "texture": "9ac6c74e7090c5e2151fa52c24c72d70",
+        "clip": "33462f57ab30e620027a6a9984abe28c",
+        "controller": "f9a5f0f85110f2532da6f89930234dff",
+        "prefab": "eda61c071deccfbbf7bee7ab82b05186"
+      },
+      "reused": true,
+      "pivot": {
+        "x": 0.5,
+        "y": 0.296875
+      }
+    },
+    {
+      "id": 2,
+      "key": "Axe",
+      "name": "Hit_Axe_Target_30_v4",
+      "kind": "Target",
+      "job": "02_Axe_Target",
+      "effectID": 202,
+      "palette": "orange-red, bronze steel and ivory highlights",
+      "motif": "a brutal concentrated cleaving slash, split bronze edge glints and sharp red-orange fracture streaks striking an enemy, NOT a self-buff ring",
+      "planningName": "쪼개기",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Axe_Target_30_v4",
+      "guids": {
+        "texture": "97c55df528a6f02d98a94ad4d6ee9294",
+        "clip": "3e4bb58d0df5545782d76c46515ce7d2",
+        "controller": "91db95f4fc33335ab21446646d725fa9",
+        "prefab": "c72c67ea83b56dc20634a6cf31c749ae"
+      },
+      "pivot": {
+        "x": 0.47265625,
+        "y": 0.46875
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          238,
+          463,
+          688,
+          915,
+          1142,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          245,
+          478,
+          714,
+          935,
+          1145
+        ],
+        "columnAnchors": [
+          127.5,
+          354,
+          576,
+          802,
+          1030,
+          1252.5
+        ],
+        "rowAnchors": [
+          146,
+          363.5,
+          594.5,
+          823.5,
+          1033.5
+        ],
+        "uniformScale": 1.04,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 95,
+            "top": 76,
+            "width": 79,
+            "height": 96
+          },
+          {
+            "frame": 2,
+            "left": 56,
+            "top": 64,
+            "width": 125,
+            "height": 130
+          },
+          {
+            "frame": 3,
+            "left": 46,
+            "top": 68,
+            "width": 171,
+            "height": 129
+          },
+          {
+            "frame": 4,
+            "left": 34,
+            "top": 66,
+            "width": 168,
+            "height": 131
+          },
+          {
+            "frame": 5,
+            "left": 48,
+            "top": 53,
+            "width": 173,
+            "height": 141
+          },
+          {
+            "frame": 6,
+            "left": 40,
+            "top": 46,
+            "width": 177,
+            "height": 154
+          },
+          {
+            "frame": 7,
+            "left": 41,
+            "top": 36,
+            "width": 175,
+            "height": 181
+          },
+          {
+            "frame": 8,
+            "left": 31,
+            "top": 41,
+            "width": 196,
+            "height": 170
+          },
+          {
+            "frame": 9,
+            "left": 28,
+            "top": 40,
+            "width": 202,
+            "height": 166
+          },
+          {
+            "frame": 10,
+            "left": 24,
+            "top": 39,
+            "width": 200,
+            "height": 179
+          },
+          {
+            "frame": 11,
+            "left": 30,
+            "top": 40,
+            "width": 186,
+            "height": 179
+          },
+          {
+            "frame": 12,
+            "left": 37,
+            "top": 39,
+            "width": 178,
+            "height": 182
+          },
+          {
+            "frame": 13,
+            "left": 33,
+            "top": 41,
+            "width": 186,
+            "height": 170
+          },
+          {
+            "frame": 14,
+            "left": 30,
+            "top": 36,
+            "width": 197,
+            "height": 185
+          },
+          {
+            "frame": 15,
+            "left": 32,
+            "top": 40,
+            "width": 192,
+            "height": 173
+          },
+          {
+            "frame": 16,
+            "left": 40,
+            "top": 36,
+            "width": 178,
+            "height": 185
+          },
+          {
+            "frame": 17,
+            "left": 35,
+            "top": 43,
+            "width": 186,
+            "height": 182
+          },
+          {
+            "frame": 18,
+            "left": 49,
+            "top": 40,
+            "width": 164,
+            "height": 174
+          },
+          {
+            "frame": 19,
+            "left": 60,
+            "top": 59,
+            "width": 135,
+            "height": 144
+          },
+          {
+            "frame": 20,
+            "left": 48,
+            "top": 45,
+            "width": 164,
+            "height": 162
+          },
+          {
+            "frame": 21,
+            "left": 70,
+            "top": 52,
+            "width": 115,
+            "height": 136
+          },
+          {
+            "frame": 22,
+            "left": 57,
+            "top": 59,
+            "width": 145,
+            "height": 139
+          },
+          {
+            "frame": 23,
+            "left": 59,
+            "top": 64,
+            "width": 138,
+            "height": 131
+          },
+          {
+            "frame": 24,
+            "left": 79,
+            "top": 60,
+            "width": 99,
+            "height": 118
+          },
+          {
+            "frame": 25,
+            "left": 87,
+            "top": 62,
+            "width": 92,
+            "height": 100
+          },
+          {
+            "frame": 26,
+            "left": 69,
+            "top": 73,
+            "width": 98,
+            "height": 106
+          },
+          {
+            "frame": 27,
+            "left": 53,
+            "top": 91,
+            "width": 123,
+            "height": 74
+          },
+          {
+            "frame": 28,
+            "left": 106,
+            "top": 101,
+            "width": 57,
+            "height": 72
+          },
+          {
+            "frame": 29,
+            "left": 116,
+            "top": 101,
+            "width": 60,
+            "height": 54
+          },
+          {
+            "frame": 30,
+            "left": 125,
+            "top": 125,
+            "width": 25,
+            "height": 35
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 121,
+          "y": 136
+        },
+        "sourceHash": "abf4668dc3e86adacaf0b2a308f9f42ec9080b2fbc25f36586b659de43ea19db",
+        "revision": 3
+      }
+    },
+    {
+      "id": 2,
+      "key": "Axe",
+      "name": "Hit_Axe_Splash_30_v4",
+      "kind": "Splash",
+      "job": "02_Axe_Splash",
+      "effectID": 102,
+      "palette": "orange-red, bronze steel and ivory highlights",
+      "motif": "a broad heavy red-orange axe-cleave crescent, a fleeting bronze axehead silhouette, and a wide ivory-orange impact burst",
+      "planningName": "강타",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Axe_Splash_30_v4",
+      "guids": {
+        "texture": "db43be597a1aaa12ac0d5c3a8d64fcd8",
+        "clip": "3919fe8f0dec2a8395773947ef2950ad",
+        "controller": "64b931de1decf7c6f2d4f9c6b8bba116",
+        "prefab": "1d3c966b964a8ad0f9874f75cc44990f"
+      },
+      "pivot": {
+        "x": 0.5078125,
+        "y": 0.41796875
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          241,
+          466,
+          688,
+          916,
+          1145,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          251,
+          488,
+          719,
+          955,
+          1145
+        ],
+        "columnAnchors": [
+          119,
+          352.5,
+          576.5,
+          804.5,
+          1029.5,
+          1256.5
+        ],
+        "rowAnchors": [
+          137,
+          366,
+          599,
+          830,
+          1073
+        ],
+        "uniformScale": 0.859504132231405,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 88,
+            "top": 94,
+            "width": 82,
+            "height": 90
+          },
+          {
+            "frame": 2,
+            "left": 70,
+            "top": 75,
+            "width": 107,
+            "height": 114
+          },
+          {
+            "frame": 3,
+            "left": 66,
+            "top": 66,
+            "width": 137,
+            "height": 124
+          },
+          {
+            "frame": 4,
+            "left": 56,
+            "top": 64,
+            "width": 144,
+            "height": 128
+          },
+          {
+            "frame": 5,
+            "left": 43,
+            "top": 39,
+            "width": 170,
+            "height": 168
+          },
+          {
+            "frame": 6,
+            "left": 39,
+            "top": 45,
+            "width": 179,
+            "height": 167
+          },
+          {
+            "frame": 7,
+            "left": 32,
+            "top": 45,
+            "width": 193,
+            "height": 168
+          },
+          {
+            "frame": 8,
+            "left": 35,
+            "top": 51,
+            "width": 191,
+            "height": 150
+          },
+          {
+            "frame": 9,
+            "left": 33,
+            "top": 55,
+            "width": 191,
+            "height": 147
+          },
+          {
+            "frame": 10,
+            "left": 28,
+            "top": 57,
+            "width": 196,
+            "height": 144
+          },
+          {
+            "frame": 11,
+            "left": 30,
+            "top": 55,
+            "width": 197,
+            "height": 146
+          },
+          {
+            "frame": 12,
+            "left": 32,
+            "top": 64,
+            "width": 197,
+            "height": 134
+          },
+          {
+            "frame": 13,
+            "left": 37,
+            "top": 54,
+            "width": 196,
+            "height": 143
+          },
+          {
+            "frame": 14,
+            "left": 32,
+            "top": 52,
+            "width": 193,
+            "height": 133
+          },
+          {
+            "frame": 15,
+            "left": 33,
+            "top": 54,
+            "width": 183,
+            "height": 145
+          },
+          {
+            "frame": 16,
+            "left": 34,
+            "top": 63,
+            "width": 190,
+            "height": 133
+          },
+          {
+            "frame": 17,
+            "left": 30,
+            "top": 65,
+            "width": 187,
+            "height": 126
+          },
+          {
+            "frame": 18,
+            "left": 49,
+            "top": 78,
+            "width": 158,
+            "height": 113
+          },
+          {
+            "frame": 19,
+            "left": 59,
+            "top": 71,
+            "width": 148,
+            "height": 114
+          },
+          {
+            "frame": 20,
+            "left": 56,
+            "top": 72,
+            "width": 144,
+            "height": 101
+          },
+          {
+            "frame": 21,
+            "left": 61,
+            "top": 91,
+            "width": 142,
+            "height": 86
+          },
+          {
+            "frame": 22,
+            "left": 65,
+            "top": 91,
+            "width": 131,
+            "height": 85
+          },
+          {
+            "frame": 23,
+            "left": 68,
+            "top": 74,
+            "width": 124,
+            "height": 99
+          },
+          {
+            "frame": 24,
+            "left": 76,
+            "top": 64,
+            "width": 85,
+            "height": 107
+          },
+          {
+            "frame": 25,
+            "left": 93,
+            "top": 77,
+            "width": 65,
+            "height": 82
+          },
+          {
+            "frame": 26,
+            "left": 87,
+            "top": 102,
+            "width": 52,
+            "height": 50
+          },
+          {
+            "frame": 27,
+            "left": 112,
+            "top": 109,
+            "width": 21,
+            "height": 42
+          },
+          {
+            "frame": 28,
+            "left": 120,
+            "top": 108,
+            "width": 15,
+            "height": 41
+          },
+          {
+            "frame": 29,
+            "left": 116,
+            "top": 108,
+            "width": 16,
+            "height": 40
+          },
+          {
+            "frame": 30,
+            "left": 122,
+            "top": 113,
+            "width": 11,
+            "height": 11
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 130,
+          "y": 149
+        },
+        "sourceHash": "ebf7715ab08852a216caf7001688c0d75f96379f065c6d9512738503cf6883dd",
+        "revision": 3
+      }
+    },
+    {
+      "id": 3,
+      "key": "Bow",
+      "name": "Hit_Bow_Target_30_v4",
+      "kind": "Target",
+      "job": "03_Bow_Target",
+      "effectID": 203,
+      "palette": "forest jade, silver arrows and warm gold accents",
+      "motif": "one luminous silver arrow thrust and a sharp white-silver impact star",
+      "planningName": "은화살",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Bow_Target_30_v4",
+      "guids": {
+        "texture": "dce5316ba5a283f184dccdcc6da20082",
+        "clip": "fdd6d9b1eed1ed82fdb80477b1664224",
+        "controller": "3da05d83dc84726fd3c53ed07a442976",
+        "prefab": "f2434ef5898e0256d7a5d42e00f33930"
+      },
+      "pivot": {
+        "x": 0.47265625,
+        "y": 0.4921875
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          245,
+          480,
+          691,
+          912,
+          1144,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          250,
+          492,
+          731,
+          951,
+          1145
+        ],
+        "columnAnchors": [
+          128.5,
+          359,
+          584.5,
+          801,
+          1030.5,
+          1256
+        ],
+        "rowAnchors": [
+          144.5,
+          366,
+          606.5,
+          834.5,
+          1026.5
+        ],
+        "uniformScale": 0.9719626168224299,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 59,
+            "top": 113,
+            "width": 119,
+            "height": 62
+          },
+          {
+            "frame": 2,
+            "left": 43,
+            "top": 104,
+            "width": 145,
+            "height": 49
+          },
+          {
+            "frame": 3,
+            "left": 52,
+            "top": 79,
+            "width": 136,
+            "height": 96
+          },
+          {
+            "frame": 4,
+            "left": 34,
+            "top": 64,
+            "width": 158,
+            "height": 124
+          },
+          {
+            "frame": 5,
+            "left": 43,
+            "top": 38,
+            "width": 161,
+            "height": 164
+          },
+          {
+            "frame": 6,
+            "left": 32,
+            "top": 39,
+            "width": 196,
+            "height": 182
+          },
+          {
+            "frame": 7,
+            "left": 35,
+            "top": 36,
+            "width": 187,
+            "height": 185
+          },
+          {
+            "frame": 8,
+            "left": 32,
+            "top": 32,
+            "width": 201,
+            "height": 191
+          },
+          {
+            "frame": 9,
+            "left": 38,
+            "top": 45,
+            "width": 181,
+            "height": 166
+          },
+          {
+            "frame": 10,
+            "left": 43,
+            "top": 49,
+            "width": 170,
+            "height": 163
+          },
+          {
+            "frame": 11,
+            "left": 36,
+            "top": 39,
+            "width": 185,
+            "height": 187
+          },
+          {
+            "frame": 12,
+            "left": 40,
+            "top": 39,
+            "width": 178,
+            "height": 175
+          },
+          {
+            "frame": 13,
+            "left": 45,
+            "top": 43,
+            "width": 168,
+            "height": 166
+          },
+          {
+            "frame": 14,
+            "left": 41,
+            "top": 56,
+            "width": 176,
+            "height": 156
+          },
+          {
+            "frame": 15,
+            "left": 48,
+            "top": 54,
+            "width": 162,
+            "height": 154
+          },
+          {
+            "frame": 16,
+            "left": 50,
+            "top": 56,
+            "width": 159,
+            "height": 146
+          },
+          {
+            "frame": 17,
+            "left": 60,
+            "top": 55,
+            "width": 151,
+            "height": 145
+          },
+          {
+            "frame": 18,
+            "left": 59,
+            "top": 46,
+            "width": 141,
+            "height": 157
+          },
+          {
+            "frame": 19,
+            "left": 67,
+            "top": 67,
+            "width": 127,
+            "height": 130
+          },
+          {
+            "frame": 20,
+            "left": 76,
+            "top": 75,
+            "width": 109,
+            "height": 107
+          },
+          {
+            "frame": 21,
+            "left": 60,
+            "top": 68,
+            "width": 108,
+            "height": 115
+          },
+          {
+            "frame": 22,
+            "left": 83,
+            "top": 69,
+            "width": 97,
+            "height": 115
+          },
+          {
+            "frame": 23,
+            "left": 86,
+            "top": 84,
+            "width": 86,
+            "height": 90
+          },
+          {
+            "frame": 24,
+            "left": 60,
+            "top": 70,
+            "width": 100,
+            "height": 117
+          },
+          {
+            "frame": 25,
+            "left": 88,
+            "top": 104,
+            "width": 76,
+            "height": 86
+          },
+          {
+            "frame": 26,
+            "left": 98,
+            "top": 98,
+            "width": 58,
+            "height": 65
+          },
+          {
+            "frame": 27,
+            "left": 105,
+            "top": 103,
+            "width": 51,
+            "height": 51
+          },
+          {
+            "frame": 28,
+            "left": 106,
+            "top": 101,
+            "width": 32,
+            "height": 49
+          },
+          {
+            "frame": 29,
+            "left": 112,
+            "top": 103,
+            "width": 19,
+            "height": 44
+          },
+          {
+            "frame": 30,
+            "left": 117,
+            "top": 103,
+            "width": 15,
+            "height": 46
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 121,
+          "y": 130
+        },
+        "sourceHash": "aa3296ce0bb0fa2d1ce7cb66835dede8db26b73ff083d7daac7818384496a42e",
+        "revision": 3
+      }
+    },
+    {
+      "id": 3,
+      "key": "Bow",
+      "name": "Hit_Bow_Splash_30_v4",
+      "kind": "Splash",
+      "job": "03_Bow_Splash",
+      "effectID": 103,
+      "palette": "forest jade, silver arrows and warm gold accents",
+      "motif": "three descending arrows landing in a staggered fan and small ground impacts",
+      "planningName": "화살비",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Bow_Splash_30_v4",
+      "guids": {
+        "texture": "82e04c0bfc179f42e85275819ae3b166",
+        "clip": "029a18509bb4fc40e735b7a5a54916ab",
+        "controller": "387495b822c05e612af097d8601970a1",
+        "prefab": "53fa9828e400da8ce2ef3538c7128299"
+      },
+      "pivot": {
+        "x": 0.4921875,
+        "y": 0.41796875
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          228,
+          461,
+          683,
+          915,
+          1144,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          263,
+          514,
+          741,
+          959,
+          1145
+        ],
+        "columnAnchors": [
+          119,
+          344,
+          572.5,
+          799,
+          1029,
+          1252
+        ],
+        "rowAnchors": [
+          133.5,
+          385.5,
+          641,
+          861,
+          1066
+        ],
+        "uniformScale": 0.9043478260869565,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 98,
+            "top": 58,
+            "width": 56,
+            "height": 152
+          },
+          {
+            "frame": 2,
+            "left": 95,
+            "top": 43,
+            "width": 70,
+            "height": 169
+          },
+          {
+            "frame": 3,
+            "left": 90,
+            "top": 44,
+            "width": 74,
+            "height": 168
+          },
+          {
+            "frame": 4,
+            "left": 71,
+            "top": 41,
+            "width": 118,
+            "height": 174
+          },
+          {
+            "frame": 5,
+            "left": 56,
+            "top": 42,
+            "width": 137,
+            "height": 174
+          },
+          {
+            "frame": 6,
+            "left": 43,
+            "top": 47,
+            "width": 173,
+            "height": 179
+          },
+          {
+            "frame": 7,
+            "left": 36,
+            "top": 30,
+            "width": 181,
+            "height": 182
+          },
+          {
+            "frame": 8,
+            "left": 30,
+            "top": 33,
+            "width": 195,
+            "height": 172
+          },
+          {
+            "frame": 9,
+            "left": 35,
+            "top": 37,
+            "width": 187,
+            "height": 168
+          },
+          {
+            "frame": 10,
+            "left": 31,
+            "top": 50,
+            "width": 202,
+            "height": 157
+          },
+          {
+            "frame": 11,
+            "left": 25,
+            "top": 61,
+            "width": 207,
+            "height": 145
+          },
+          {
+            "frame": 12,
+            "left": 30,
+            "top": 83,
+            "width": 196,
+            "height": 117
+          },
+          {
+            "frame": 13,
+            "left": 36,
+            "top": 73,
+            "width": 185,
+            "height": 103
+          },
+          {
+            "frame": 14,
+            "left": 37,
+            "top": 69,
+            "width": 177,
+            "height": 107
+          },
+          {
+            "frame": 15,
+            "left": 35,
+            "top": 73,
+            "width": 186,
+            "height": 107
+          },
+          {
+            "frame": 16,
+            "left": 37,
+            "top": 82,
+            "width": 184,
+            "height": 93
+          },
+          {
+            "frame": 17,
+            "left": 44,
+            "top": 87,
+            "width": 156,
+            "height": 87
+          },
+          {
+            "frame": 18,
+            "left": 49,
+            "top": 91,
+            "width": 153,
+            "height": 83
+          },
+          {
+            "frame": 19,
+            "left": 58,
+            "top": 76,
+            "width": 140,
+            "height": 90
+          },
+          {
+            "frame": 20,
+            "left": 66,
+            "top": 81,
+            "width": 134,
+            "height": 80
+          },
+          {
+            "frame": 21,
+            "left": 72,
+            "top": 87,
+            "width": 121,
+            "height": 72
+          },
+          {
+            "frame": 22,
+            "left": 73,
+            "top": 95,
+            "width": 109,
+            "height": 66
+          },
+          {
+            "frame": 23,
+            "left": 86,
+            "top": 97,
+            "width": 90,
+            "height": 68
+          },
+          {
+            "frame": 24,
+            "left": 95,
+            "top": 108,
+            "width": 55,
+            "height": 52
+          },
+          {
+            "frame": 25,
+            "left": 110,
+            "top": 99,
+            "width": 55,
+            "height": 52
+          },
+          {
+            "frame": 26,
+            "left": 112,
+            "top": 115,
+            "width": 33,
+            "height": 42
+          },
+          {
+            "frame": 27,
+            "left": 109,
+            "top": 113,
+            "width": 37,
+            "height": 48
+          },
+          {
+            "frame": 28,
+            "left": 117,
+            "top": 112,
+            "width": 20,
+            "height": 33
+          },
+          {
+            "frame": 29,
+            "left": 126,
+            "top": 109,
+            "width": 23,
+            "height": 30
+          },
+          {
+            "frame": 30,
+            "left": 127,
+            "top": 122,
+            "width": 6,
+            "height": 6
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 126,
+          "y": 149
+        },
+        "sourceHash": "8dea0cfa2ed2f21da2dc9a03eed0ba8e0004a25523ca2c81781f219ce2dee056",
+        "revision": 3
+      }
+    },
+    {
+      "id": 4,
+      "key": "Spear",
+      "name": "Hit_Spear_Target_30_v4",
+      "kind": "Target",
+      "job": "04_Spear_Target",
+      "effectID": 204,
+      "palette": "steel blue, ivory, muted crimson pennant",
+      "motif": "a narrow steel-blue lance thrust facing RIGHT into center, then a clean returning crimson-white tearing streak; symbolic energy only, no blood",
+      "planningName": "뽑아찢기",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Spear_Target_30_v4",
+      "guids": {
+        "texture": "14c6bdfa7f0c0ea7a46306ab3453c45a",
+        "clip": "ada73d307705d9dba553999095c2ea62",
+        "controller": "45eb788298486560d9211b39dd0cd975",
+        "prefab": "fa80434f35283e2e3f547036c93ce47f"
+      },
+      "pivot": {
+        "x": 0.703125,
+        "y": 0.53515625
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          247,
+          462,
+          687,
+          919,
+          1144,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          260,
+          490,
+          717,
+          938,
+          1145
+        ],
+        "columnAnchors": [
+          126,
+          348,
+          576,
+          804,
+          1032,
+          1253
+        ],
+        "rowAnchors": [
+          156,
+          376,
+          603,
+          816.5,
+          1026
+        ],
+        "uniformScale": 0.9122807017543859,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 57,
+            "top": 109,
+            "width": 119,
+            "height": 39
+          },
+          {
+            "frame": 2,
+            "left": 42,
+            "top": 98,
+            "width": 162,
+            "height": 59
+          },
+          {
+            "frame": 3,
+            "left": 35,
+            "top": 92,
+            "width": 172,
+            "height": 74
+          },
+          {
+            "frame": 4,
+            "left": 41,
+            "top": 61,
+            "width": 164,
+            "height": 132
+          },
+          {
+            "frame": 5,
+            "left": 45,
+            "top": 48,
+            "width": 169,
+            "height": 151
+          },
+          {
+            "frame": 6,
+            "left": 47,
+            "top": 56,
+            "width": 161,
+            "height": 149
+          },
+          {
+            "frame": 7,
+            "left": 37,
+            "top": 43,
+            "width": 196,
+            "height": 161
+          },
+          {
+            "frame": 8,
+            "left": 48,
+            "top": 50,
+            "width": 171,
+            "height": 148
+          },
+          {
+            "frame": 9,
+            "left": 53,
+            "top": 52,
+            "width": 156,
+            "height": 151
+          },
+          {
+            "frame": 10,
+            "left": 40,
+            "top": 63,
+            "width": 179,
+            "height": 132
+          },
+          {
+            "frame": 11,
+            "left": 40,
+            "top": 54,
+            "width": 173,
+            "height": 149
+          },
+          {
+            "frame": 12,
+            "left": 54,
+            "top": 58,
+            "width": 161,
+            "height": 143
+          },
+          {
+            "frame": 13,
+            "left": 48,
+            "top": 63,
+            "width": 161,
+            "height": 136
+          },
+          {
+            "frame": 14,
+            "left": 41,
+            "top": 56,
+            "width": 161,
+            "height": 139
+          },
+          {
+            "frame": 15,
+            "left": 41,
+            "top": 59,
+            "width": 157,
+            "height": 131
+          },
+          {
+            "frame": 16,
+            "left": 45,
+            "top": 63,
+            "width": 151,
+            "height": 130
+          },
+          {
+            "frame": 17,
+            "left": 60,
+            "top": 70,
+            "width": 140,
+            "height": 122
+          },
+          {
+            "frame": 18,
+            "left": 67,
+            "top": 65,
+            "width": 123,
+            "height": 126
+          },
+          {
+            "frame": 19,
+            "left": 73,
+            "top": 72,
+            "width": 117,
+            "height": 111
+          },
+          {
+            "frame": 20,
+            "left": 84,
+            "top": 80,
+            "width": 105,
+            "height": 103
+          },
+          {
+            "frame": 21,
+            "left": 84,
+            "top": 79,
+            "width": 88,
+            "height": 95
+          },
+          {
+            "frame": 22,
+            "left": 98,
+            "top": 88,
+            "width": 61,
+            "height": 80
+          },
+          {
+            "frame": 23,
+            "left": 80,
+            "top": 80,
+            "width": 80,
+            "height": 84
+          },
+          {
+            "frame": 24,
+            "left": 87,
+            "top": 94,
+            "width": 76,
+            "height": 80
+          },
+          {
+            "frame": 25,
+            "left": 86,
+            "top": 105,
+            "width": 63,
+            "height": 42
+          },
+          {
+            "frame": 26,
+            "left": 114,
+            "top": 102,
+            "width": 28,
+            "height": 41
+          },
+          {
+            "frame": 27,
+            "left": 112,
+            "top": 112,
+            "width": 49,
+            "height": 32
+          },
+          {
+            "frame": 28,
+            "left": 117,
+            "top": 113,
+            "width": 24,
+            "height": 30
+          },
+          {
+            "frame": 29,
+            "left": 123,
+            "top": 129,
+            "width": 12,
+            "height": 14
+          },
+          {
+            "frame": 30,
+            "left": 124,
+            "top": 131,
+            "width": 13,
+            "height": 12
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 180,
+          "y": 119
+        },
+        "sourceHash": "dd799dd3d164d564a611f430497aaee19ad4dfe89a46bc19065ee06b35bf93d7",
+        "revision": 3
+      }
+    },
+    {
+      "id": 4,
+      "key": "Spear",
+      "name": "Hit_Spear_Splash_30_v4",
+      "kind": "Splash",
+      "job": "04_Spear_Splash",
+      "effectID": 104,
+      "palette": "steel blue, ivory, muted crimson pennant",
+      "motif": "three parallel steel-blue spear-tip energy thrusts facing RIGHT, striking a narrow straight formation lane, crimson pennant streaks and white impact shards; NOT circular explosion; tips fully within cell",
+      "planningName": "선두 지휘",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Spear_Splash_30_v4",
+      "guids": {
+        "texture": "504dcb1b477deaabaa367a6efa3378f9",
+        "clip": "cff644963e4c5cd1a7f30cafbedd5edf",
+        "controller": "7c1d41d487b2580b98e8507604dcdb64",
+        "prefab": "a81a12f94580d10f0cb7cd9c24704531"
+      },
+      "pivot": {
+        "x": 0.703125,
+        "y": 0.515625
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          243,
+          468,
+          694,
+          923,
+          1152,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          237,
+          480,
+          719,
+          940,
+          1145
+        ],
+        "columnAnchors": [
+          126.5,
+          356,
+          576,
+          805,
+          1024.5,
+          1254
+        ],
+        "rowAnchors": [
+          131.5,
+          364,
+          593,
+          825,
+          1039.5
+        ],
+        "uniformScale": 0.9203539823008849,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 53,
+            "top": 97,
+            "width": 139,
+            "height": 56
+          },
+          {
+            "frame": 2,
+            "left": 53,
+            "top": 85,
+            "width": 155,
+            "height": 87
+          },
+          {
+            "frame": 3,
+            "left": 54,
+            "top": 73,
+            "width": 153,
+            "height": 108
+          },
+          {
+            "frame": 4,
+            "left": 51,
+            "top": 68,
+            "width": 156,
+            "height": 121
+          },
+          {
+            "frame": 5,
+            "left": 40,
+            "top": 50,
+            "width": 177,
+            "height": 150
+          },
+          {
+            "frame": 6,
+            "left": 50,
+            "top": 60,
+            "width": 157,
+            "height": 137
+          },
+          {
+            "frame": 7,
+            "left": 44,
+            "top": 44,
+            "width": 173,
+            "height": 168
+          },
+          {
+            "frame": 8,
+            "left": 41,
+            "top": 44,
+            "width": 177,
+            "height": 164
+          },
+          {
+            "frame": 9,
+            "left": 41,
+            "top": 38,
+            "width": 182,
+            "height": 181
+          },
+          {
+            "frame": 10,
+            "left": 41,
+            "top": 38,
+            "width": 192,
+            "height": 171
+          },
+          {
+            "frame": 11,
+            "left": 50,
+            "top": 44,
+            "width": 177,
+            "height": 176
+          },
+          {
+            "frame": 12,
+            "left": 52,
+            "top": 51,
+            "width": 170,
+            "height": 168
+          },
+          {
+            "frame": 13,
+            "left": 48,
+            "top": 41,
+            "width": 170,
+            "height": 174
+          },
+          {
+            "frame": 14,
+            "left": 52,
+            "top": 42,
+            "width": 154,
+            "height": 170
+          },
+          {
+            "frame": 15,
+            "left": 42,
+            "top": 52,
+            "width": 162,
+            "height": 161
+          },
+          {
+            "frame": 16,
+            "left": 48,
+            "top": 41,
+            "width": 185,
+            "height": 169
+          },
+          {
+            "frame": 17,
+            "left": 73,
+            "top": 64,
+            "width": 141,
+            "height": 124
+          },
+          {
+            "frame": 18,
+            "left": 58,
+            "top": 73,
+            "width": 134,
+            "height": 114
+          },
+          {
+            "frame": 19,
+            "left": 56,
+            "top": 62,
+            "width": 145,
+            "height": 109
+          },
+          {
+            "frame": 20,
+            "left": 56,
+            "top": 73,
+            "width": 132,
+            "height": 102
+          },
+          {
+            "frame": 21,
+            "left": 68,
+            "top": 77,
+            "width": 121,
+            "height": 96
+          },
+          {
+            "frame": 22,
+            "left": 72,
+            "top": 96,
+            "width": 93,
+            "height": 82
+          },
+          {
+            "frame": 23,
+            "left": 70,
+            "top": 92,
+            "width": 83,
+            "height": 77
+          },
+          {
+            "frame": 24,
+            "left": 74,
+            "top": 103,
+            "width": 71,
+            "height": 51
+          },
+          {
+            "frame": 25,
+            "left": 71,
+            "top": 95,
+            "width": 81,
+            "height": 62
+          },
+          {
+            "frame": 26,
+            "left": 81,
+            "top": 107,
+            "width": 70,
+            "height": 57
+          },
+          {
+            "frame": 27,
+            "left": 90,
+            "top": 116,
+            "width": 56,
+            "height": 24
+          },
+          {
+            "frame": 28,
+            "left": 88,
+            "top": 112,
+            "width": 52,
+            "height": 49
+          },
+          {
+            "frame": 29,
+            "left": 105,
+            "top": 120,
+            "width": 45,
+            "height": 16
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 180,
+          "y": 124
+        },
+        "sourceHash": "6ab95b63ea9ae68ec0c442e5945dc0205d721b3fa62f65639a9fcb94bd32c156",
+        "revision": 3
+      }
+    },
+    {
+      "id": 5,
+      "key": "Shield",
+      "name": "Hit_Shield_Target_30_v4",
+      "kind": "Target",
+      "job": "05_Shield_Target",
+      "effectID": 205,
+      "palette": "royal blue, warm gold, white steel",
+      "motif": "a short heavy blue-white collision with cracked dark plate fragments",
+      "planningName": "파쇄",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Shield_Target_30_v4",
+      "guids": {
+        "texture": "a34d1268340006c9f0ec6448e10bc75f",
+        "clip": "984fd1f6e1deb958a2c7ea1d4be0a897",
+        "controller": "a34b0c442c56ceb97da0178652d4d4aa",
+        "prefab": "4472d22db78ad69d0997d1d91ac91af6"
+      },
+      "pivot": {
+        "x": 0.515625,
+        "y": 0.49609375
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          241,
+          465,
+          680,
+          914,
+          1137,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          263,
+          505,
+          746,
+          954,
+          1145
+        ],
+        "columnAnchors": [
+          127.5,
+          352,
+          571,
+          796,
+          1022.5,
+          1247
+        ],
+        "rowAnchors": [
+          152,
+          381.5,
+          624.5,
+          850.5,
+          1041
+        ],
+        "uniformScale": 1.04,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 83,
+            "top": 85,
+            "width": 92,
+            "height": 84
+          },
+          {
+            "frame": 2,
+            "left": 75,
+            "top": 73,
+            "width": 107,
+            "height": 114
+          },
+          {
+            "frame": 3,
+            "left": 51,
+            "top": 64,
+            "width": 155,
+            "height": 122
+          },
+          {
+            "frame": 4,
+            "left": 41,
+            "top": 46,
+            "width": 178,
+            "height": 165
+          },
+          {
+            "frame": 5,
+            "left": 42,
+            "top": 48,
+            "width": 184,
+            "height": 165
+          },
+          {
+            "frame": 6,
+            "left": 36,
+            "top": 27,
+            "width": 192,
+            "height": 192
+          },
+          {
+            "frame": 7,
+            "left": 31,
+            "top": 32,
+            "width": 200,
+            "height": 190
+          },
+          {
+            "frame": 8,
+            "left": 31,
+            "top": 31,
+            "width": 201,
+            "height": 187
+          },
+          {
+            "frame": 9,
+            "left": 34,
+            "top": 37,
+            "width": 188,
+            "height": 183
+          },
+          {
+            "frame": 10,
+            "left": 36,
+            "top": 39,
+            "width": 197,
+            "height": 190
+          },
+          {
+            "frame": 11,
+            "left": 34,
+            "top": 35,
+            "width": 199,
+            "height": 191
+          },
+          {
+            "frame": 12,
+            "left": 30,
+            "top": 34,
+            "width": 197,
+            "height": 188
+          },
+          {
+            "frame": 13,
+            "left": 31,
+            "top": 32,
+            "width": 196,
+            "height": 188
+          },
+          {
+            "frame": 14,
+            "left": 43,
+            "top": 35,
+            "width": 184,
+            "height": 180
+          },
+          {
+            "frame": 15,
+            "left": 48,
+            "top": 46,
+            "width": 167,
+            "height": 167
+          },
+          {
+            "frame": 16,
+            "left": 26,
+            "top": 49,
+            "width": 190,
+            "height": 158
+          },
+          {
+            "frame": 17,
+            "left": 41,
+            "top": 33,
+            "width": 175,
+            "height": 180
+          },
+          {
+            "frame": 18,
+            "left": 39,
+            "top": 42,
+            "width": 181,
+            "height": 173
+          },
+          {
+            "frame": 19,
+            "left": 37,
+            "top": 54,
+            "width": 173,
+            "height": 129
+          },
+          {
+            "frame": 20,
+            "left": 60,
+            "top": 56,
+            "width": 136,
+            "height": 141
+          },
+          {
+            "frame": 21,
+            "left": 68,
+            "top": 64,
+            "width": 131,
+            "height": 128
+          },
+          {
+            "frame": 22,
+            "left": 67,
+            "top": 69,
+            "width": 124,
+            "height": 119
+          },
+          {
+            "frame": 23,
+            "left": 60,
+            "top": 75,
+            "width": 131,
+            "height": 115
+          },
+          {
+            "frame": 24,
+            "left": 61,
+            "top": 82,
+            "width": 120,
+            "height": 99
+          },
+          {
+            "frame": 25,
+            "left": 84,
+            "top": 78,
+            "width": 100,
+            "height": 90
+          },
+          {
+            "frame": 26,
+            "left": 76,
+            "top": 84,
+            "width": 90,
+            "height": 83
+          },
+          {
+            "frame": 27,
+            "left": 80,
+            "top": 84,
+            "width": 94,
+            "height": 88
+          },
+          {
+            "frame": 28,
+            "left": 87,
+            "top": 88,
+            "width": 76,
+            "height": 75
+          },
+          {
+            "frame": 29,
+            "left": 91,
+            "top": 100,
+            "width": 66,
+            "height": 64
+          },
+          {
+            "frame": 30,
+            "left": 69,
+            "top": 99,
+            "width": 93,
+            "height": 69
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 132,
+          "y": 129
+        },
+        "sourceHash": "19957c95e1baa43c67a058b6e5f132c12314ee8925acb283113261ab251cd05d",
+        "revision": 3
+      }
+    },
+    {
+      "id": 5,
+      "key": "Shield",
+      "name": "Hit_Shield_Splash_30_v4",
+      "kind": "Splash",
+      "job": "05_Shield_Splash",
+      "effectID": 105,
+      "palette": "royal blue, warm gold, white steel",
+      "motif": "a broad gold-edged blue shield rushing downward into a white impact ring and short stun stars",
+      "planningName": "방패 돌격",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Shield_Splash_30_v4",
+      "guids": {
+        "texture": "b197f0f82e78800660605163b9b896be",
+        "clip": "f974b31c9693e8d22a52b991dd087622",
+        "controller": "a2b06a2433cdca9d6cb597f391df3e48",
+        "prefab": "509050e323649703906d4d59dd094e35"
+      },
+      "pivot": {
+        "x": 0.48828125,
+        "y": 0.3984375
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          229,
+          459,
+          691,
+          911,
+          1149,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          269,
+          513,
+          747,
+          959,
+          1145
+        ],
+        "columnAnchors": [
+          116.5,
+          345,
+          574.5,
+          800.5,
+          1031,
+          1258
+        ],
+        "rowAnchors": [
+          132,
+          381.5,
+          632,
+          853.5,
+          1058
+        ],
+        "uniformScale": 0.8666666666666667,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 99,
+            "top": 74,
+            "width": 57,
+            "height": 128
+          },
+          {
+            "frame": 2,
+            "left": 90,
+            "top": 41,
+            "width": 75,
+            "height": 163
+          },
+          {
+            "frame": 3,
+            "left": 90,
+            "top": 37,
+            "width": 74,
+            "height": 167
+          },
+          {
+            "frame": 4,
+            "left": 63,
+            "top": 36,
+            "width": 131,
+            "height": 185
+          },
+          {
+            "frame": 5,
+            "left": 34,
+            "top": 28,
+            "width": 180,
+            "height": 200
+          },
+          {
+            "frame": 6,
+            "left": 42,
+            "top": 46,
+            "width": 172,
+            "height": 179
+          },
+          {
+            "frame": 7,
+            "left": 44,
+            "top": 48,
+            "width": 166,
+            "height": 160
+          },
+          {
+            "frame": 8,
+            "left": 34,
+            "top": 44,
+            "width": 189,
+            "height": 169
+          },
+          {
+            "frame": 9,
+            "left": 30,
+            "top": 44,
+            "width": 199,
+            "height": 170
+          },
+          {
+            "frame": 10,
+            "left": 33,
+            "top": 48,
+            "width": 191,
+            "height": 160
+          },
+          {
+            "frame": 11,
+            "left": 24,
+            "top": 50,
+            "width": 204,
+            "height": 153
+          },
+          {
+            "frame": 12,
+            "left": 40,
+            "top": 67,
+            "width": 176,
+            "height": 140
+          },
+          {
+            "frame": 13,
+            "left": 43,
+            "top": 56,
+            "width": 175,
+            "height": 139
+          },
+          {
+            "frame": 14,
+            "left": 44,
+            "top": 63,
+            "width": 171,
+            "height": 126
+          },
+          {
+            "frame": 15,
+            "left": 35,
+            "top": 65,
+            "width": 172,
+            "height": 130
+          },
+          {
+            "frame": 16,
+            "left": 47,
+            "top": 60,
+            "width": 165,
+            "height": 117
+          },
+          {
+            "frame": 17,
+            "left": 44,
+            "top": 71,
+            "width": 172,
+            "height": 115
+          },
+          {
+            "frame": 18,
+            "left": 51,
+            "top": 79,
+            "width": 157,
+            "height": 101
+          },
+          {
+            "frame": 19,
+            "left": 64,
+            "top": 81,
+            "width": 128,
+            "height": 88
+          },
+          {
+            "frame": 20,
+            "left": 64,
+            "top": 91,
+            "width": 129,
+            "height": 75
+          },
+          {
+            "frame": 21,
+            "left": 83,
+            "top": 92,
+            "width": 97,
+            "height": 74
+          },
+          {
+            "frame": 22,
+            "left": 58,
+            "top": 82,
+            "width": 114,
+            "height": 89
+          },
+          {
+            "frame": 23,
+            "left": 72,
+            "top": 108,
+            "width": 114,
+            "height": 65
+          },
+          {
+            "frame": 24,
+            "left": 101,
+            "top": 100,
+            "width": 67,
+            "height": 57
+          },
+          {
+            "frame": 25,
+            "left": 108,
+            "top": 105,
+            "width": 63,
+            "height": 48
+          },
+          {
+            "frame": 26,
+            "left": 101,
+            "top": 108,
+            "width": 31,
+            "height": 39
+          },
+          {
+            "frame": 27,
+            "left": 108,
+            "top": 115,
+            "width": 42,
+            "height": 33
+          },
+          {
+            "frame": 28,
+            "left": 122,
+            "top": 115,
+            "width": 25,
+            "height": 27
+          },
+          {
+            "frame": 29,
+            "left": 121,
+            "top": 116,
+            "width": 21,
+            "height": 31
+          },
+          {
+            "frame": 30,
+            "left": 124,
+            "top": 121,
+            "width": 4,
+            "height": 3
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 125,
+          "y": 154
+        },
+        "sourceHash": "491ddd21d8f46725d638029b501bfbebd70ad4e9030140896f06fde488f35439",
+        "revision": 3
+      }
+    },
+    {
+      "id": 6,
+      "key": "Hammer",
+      "name": "Hit_Hammer_Target_30_v4",
+      "kind": "Target",
+      "job": "06_Hammer_Target",
+      "effectID": 206,
+      "palette": "warm bronze, bright white steel, orange sparks",
+      "motif": "a single concentrated hammer strike with a compressed orange-white shock star",
+      "planningName": "망치질",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Hammer_Target_30_v4",
+      "guids": {
+        "texture": "b4524cde0f6a6a8e56646088e2423be0",
+        "clip": "0e9ac42f92aa88b190015fc79d0352c9",
+        "controller": "f12bf415067670afba698093c4ddf371",
+        "prefab": "81eb422e34d4266a38f7a21a280618f2"
+      },
+      "pivot": {
+        "x": 0.48828125,
+        "y": 0.49609375
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          240,
+          464,
+          683,
+          911,
+          1145,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          271,
+          511,
+          747,
+          949,
+          1145
+        ],
+        "columnAnchors": [
+          131,
+          352.5,
+          576.5,
+          802,
+          1029.5,
+          1257
+        ],
+        "rowAnchors": [
+          162.5,
+          395.5,
+          629,
+          844,
+          1043
+        ],
+        "uniformScale": 0.9585253456221198,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 81,
+            "top": 98,
+            "width": 79,
+            "height": 61
+          },
+          {
+            "frame": 2,
+            "left": 75,
+            "top": 77,
+            "width": 114,
+            "height": 104
+          },
+          {
+            "frame": 3,
+            "left": 79,
+            "top": 74,
+            "width": 122,
+            "height": 116
+          },
+          {
+            "frame": 4,
+            "left": 51,
+            "top": 42,
+            "width": 159,
+            "height": 165
+          },
+          {
+            "frame": 5,
+            "left": 39,
+            "top": 45,
+            "width": 184,
+            "height": 161
+          },
+          {
+            "frame": 6,
+            "left": 54,
+            "top": 50,
+            "width": 148,
+            "height": 155
+          },
+          {
+            "frame": 7,
+            "left": 43,
+            "top": 47,
+            "width": 172,
+            "height": 157
+          },
+          {
+            "frame": 8,
+            "left": 43,
+            "top": 36,
+            "width": 171,
+            "height": 175
+          },
+          {
+            "frame": 9,
+            "left": 35,
+            "top": 44,
+            "width": 188,
+            "height": 176
+          },
+          {
+            "frame": 10,
+            "left": 24,
+            "top": 44,
+            "width": 202,
+            "height": 169
+          },
+          {
+            "frame": 11,
+            "left": 24,
+            "top": 36,
+            "width": 204,
+            "height": 184
+          },
+          {
+            "frame": 12,
+            "left": 30,
+            "top": 48,
+            "width": 196,
+            "height": 165
+          },
+          {
+            "frame": 13,
+            "left": 32,
+            "top": 32,
+            "width": 178,
+            "height": 173
+          },
+          {
+            "frame": 14,
+            "left": 38,
+            "top": 49,
+            "width": 184,
+            "height": 158
+          },
+          {
+            "frame": 15,
+            "left": 39,
+            "top": 49,
+            "width": 171,
+            "height": 166
+          },
+          {
+            "frame": 16,
+            "left": 46,
+            "top": 42,
+            "width": 166,
+            "height": 152
+          },
+          {
+            "frame": 17,
+            "left": 55,
+            "top": 57,
+            "width": 148,
+            "height": 131
+          },
+          {
+            "frame": 18,
+            "left": 61,
+            "top": 62,
+            "width": 135,
+            "height": 133
+          },
+          {
+            "frame": 19,
+            "left": 70,
+            "top": 63,
+            "width": 128,
+            "height": 117
+          },
+          {
+            "frame": 20,
+            "left": 71,
+            "top": 75,
+            "width": 112,
+            "height": 95
+          },
+          {
+            "frame": 21,
+            "left": 76,
+            "top": 67,
+            "width": 110,
+            "height": 107
+          },
+          {
+            "frame": 22,
+            "left": 66,
+            "top": 77,
+            "width": 116,
+            "height": 103
+          },
+          {
+            "frame": 23,
+            "left": 82,
+            "top": 98,
+            "width": 91,
+            "height": 68
+          },
+          {
+            "frame": 24,
+            "left": 94,
+            "top": 125,
+            "width": 76,
+            "height": 46
+          },
+          {
+            "frame": 25,
+            "left": 95,
+            "top": 89,
+            "width": 67,
+            "height": 64
+          },
+          {
+            "frame": 26,
+            "left": 76,
+            "top": 116,
+            "width": 98,
+            "height": 59
+          },
+          {
+            "frame": 27,
+            "left": 105,
+            "top": 105,
+            "width": 32,
+            "height": 47
+          },
+          {
+            "frame": 28,
+            "left": 129,
+            "top": 105,
+            "width": 8,
+            "height": 10
+          },
+          {
+            "frame": 29,
+            "left": 101,
+            "top": 118,
+            "width": 62,
+            "height": 40
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 125,
+          "y": 129
+        },
+        "sourceHash": "97828ed573bb981aca29ebe17bf8c401db317074b077097a0d01d0e88819cd69",
+        "revision": 3
+      }
+    },
+    {
+      "id": 6,
+      "key": "Hammer",
+      "name": "Hit_Hammer_Splash_30_v4",
+      "kind": "Splash",
+      "job": "06_Hammer_Splash",
+      "effectID": 106,
+      "palette": "warm bronze, bright white steel, orange sparks",
+      "motif": "one oversized plain smith hammer strikes downward, then heavy golden shock ring and dust chips; NO text or numerals",
+      "planningName": "100T 해머",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Hammer_Splash_30_v4",
+      "guids": {
+        "texture": "3bf890de522b34484fe116d3c9f7c447",
+        "clip": "478d619638fb093b661360850587f148",
+        "controller": "8d2040021037bb3ce0d6a397d6c76eff",
+        "prefab": "4ae2e4a03abc01c1cebec7d28a9e54c4"
+      },
+      "pivot": {
+        "x": 0.51953125,
+        "y": 0.421875
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          233,
+          461,
+          687,
+          915,
+          1140,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          275,
+          520,
+          754,
+          968,
+          1145
+        ],
+        "columnAnchors": [
+          122.5,
+          345.5,
+          573.5,
+          799.5,
+          1027.5,
+          1253.5
+        ],
+        "rowAnchors": [
+          148.5,
+          400,
+          640.5,
+          867,
+          1072
+        ],
+        "uniformScale": 0.8927038626609443,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 91,
+            "top": 78,
+            "width": 77,
+            "height": 115
+          },
+          {
+            "frame": 2,
+            "left": 75,
+            "top": 45,
+            "width": 107,
+            "height": 156
+          },
+          {
+            "frame": 3,
+            "left": 62,
+            "top": 24,
+            "width": 119,
+            "height": 177
+          },
+          {
+            "frame": 4,
+            "left": 35,
+            "top": 47,
+            "width": 186,
+            "height": 162
+          },
+          {
+            "frame": 5,
+            "left": 29,
+            "top": 34,
+            "width": 199,
+            "height": 181
+          },
+          {
+            "frame": 6,
+            "left": 33,
+            "top": 70,
+            "width": 191,
+            "height": 143
+          },
+          {
+            "frame": 7,
+            "left": 30,
+            "top": 43,
+            "width": 196,
+            "height": 160
+          },
+          {
+            "frame": 8,
+            "left": 28,
+            "top": 45,
+            "width": 204,
+            "height": 162
+          },
+          {
+            "frame": 9,
+            "left": 28,
+            "top": 51,
+            "width": 202,
+            "height": 150
+          },
+          {
+            "frame": 10,
+            "left": 28,
+            "top": 51,
+            "width": 202,
+            "height": 155
+          },
+          {
+            "frame": 11,
+            "left": 29,
+            "top": 54,
+            "width": 198,
+            "height": 149
+          },
+          {
+            "frame": 12,
+            "left": 29,
+            "top": 69,
+            "width": 196,
+            "height": 136
+          },
+          {
+            "frame": 13,
+            "left": 42,
+            "top": 59,
+            "width": 183,
+            "height": 139
+          },
+          {
+            "frame": 14,
+            "left": 46,
+            "top": 59,
+            "width": 177,
+            "height": 146
+          },
+          {
+            "frame": 15,
+            "left": 46,
+            "top": 58,
+            "width": 167,
+            "height": 139
+          },
+          {
+            "frame": 16,
+            "left": 45,
+            "top": 60,
+            "width": 175,
+            "height": 137
+          },
+          {
+            "frame": 17,
+            "left": 49,
+            "top": 62,
+            "width": 170,
+            "height": 128
+          },
+          {
+            "frame": 18,
+            "left": 56,
+            "top": 67,
+            "width": 140,
+            "height": 121
+          },
+          {
+            "frame": 19,
+            "left": 50,
+            "top": 57,
+            "width": 135,
+            "height": 122
+          },
+          {
+            "frame": 20,
+            "left": 64,
+            "top": 62,
+            "width": 114,
+            "height": 109
+          },
+          {
+            "frame": 21,
+            "left": 74,
+            "top": 83,
+            "width": 96,
+            "height": 92
+          },
+          {
+            "frame": 22,
+            "left": 84,
+            "top": 82,
+            "width": 86,
+            "height": 94
+          },
+          {
+            "frame": 23,
+            "left": 79,
+            "top": 84,
+            "width": 89,
+            "height": 91
+          },
+          {
+            "frame": 24,
+            "left": 115,
+            "top": 91,
+            "width": 27,
+            "height": 68
+          },
+          {
+            "frame": 25,
+            "left": 88,
+            "top": 93,
+            "width": 64,
+            "height": 70
+          },
+          {
+            "frame": 26,
+            "left": 94,
+            "top": 104,
+            "width": 62,
+            "height": 58
+          },
+          {
+            "frame": 27,
+            "left": 119,
+            "top": 111,
+            "width": 29,
+            "height": 46
+          },
+          {
+            "frame": 28,
+            "left": 113,
+            "top": 104,
+            "width": 41,
+            "height": 45
+          },
+          {
+            "frame": 29,
+            "left": 108,
+            "top": 107,
+            "width": 37,
+            "height": 42
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 133,
+          "y": 148
+        },
+        "sourceHash": "9171577de86f2cea70caf035df94cbe8a5663e6d83e4d87b0cf5284ad4c6d0fb",
+        "revision": 3
+      }
+    },
+    {
+      "id": 7,
+      "key": "Fire",
+      "name": "Hit_Fire_Target_30_v4",
+      "kind": "Target",
+      "job": "07_Fire_Target",
+      "effectID": 207,
+      "palette": "warm orange, scarlet flame edge, creamy yellow core",
+      "motif": "a compact dense fireball detonates into a bright orange star and short licking flames",
+      "planningName": "화염구",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Fire_Target_30_v4",
+      "guids": {
+        "texture": "f0e6472c2a3690245fac6507971b742b",
+        "clip": "71b47fe6117850a861b66e8c985922ec",
+        "controller": "2923c09bccf4b94641248d9d47f50b52",
+        "prefab": "7e430bbee4b6f51cdf7a98c50ec2cba9"
+      },
+      "pivot": {
+        "x": 0.4921875,
+        "y": 0.49609375
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          243,
+          459,
+          689,
+          908,
+          1127,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          263,
+          496,
+          738,
+          950,
+          1145
+        ],
+        "columnAnchors": [
+          137,
+          352.5,
+          574,
+          798.5,
+          1017,
+          1238
+        ],
+        "rowAnchors": [
+          146,
+          380,
+          614.5,
+          836.5,
+          1042
+        ],
+        "uniformScale": 1.0297029702970297,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 84,
+            "top": 107,
+            "width": 72,
+            "height": 55
+          },
+          {
+            "frame": 2,
+            "left": 71,
+            "top": 83,
+            "width": 96,
+            "height": 90
+          },
+          {
+            "frame": 3,
+            "left": 56,
+            "top": 62,
+            "width": 145,
+            "height": 133
+          },
+          {
+            "frame": 4,
+            "left": 46,
+            "top": 50,
+            "width": 169,
+            "height": 159
+          },
+          {
+            "frame": 5,
+            "left": 46,
+            "top": 56,
+            "width": 166,
+            "height": 140
+          },
+          {
+            "frame": 6,
+            "left": 29,
+            "top": 24,
+            "width": 196,
+            "height": 201
+          },
+          {
+            "frame": 7,
+            "left": 43,
+            "top": 40,
+            "width": 172,
+            "height": 175
+          },
+          {
+            "frame": 8,
+            "left": 44,
+            "top": 34,
+            "width": 170,
+            "height": 188
+          },
+          {
+            "frame": 9,
+            "left": 27,
+            "top": 36,
+            "width": 200,
+            "height": 184
+          },
+          {
+            "frame": 10,
+            "left": 37,
+            "top": 52,
+            "width": 183,
+            "height": 163
+          },
+          {
+            "frame": 11,
+            "left": 35,
+            "top": 36,
+            "width": 190,
+            "height": 185
+          },
+          {
+            "frame": 12,
+            "left": 38,
+            "top": 32,
+            "width": 194,
+            "height": 186
+          },
+          {
+            "frame": 13,
+            "left": 43,
+            "top": 32,
+            "width": 174,
+            "height": 192
+          },
+          {
+            "frame": 14,
+            "left": 38,
+            "top": 33,
+            "width": 182,
+            "height": 182
+          },
+          {
+            "frame": 15,
+            "left": 46,
+            "top": 41,
+            "width": 173,
+            "height": 175
+          },
+          {
+            "frame": 16,
+            "left": 45,
+            "top": 55,
+            "width": 160,
+            "height": 152
+          },
+          {
+            "frame": 17,
+            "left": 45,
+            "top": 48,
+            "width": 166,
+            "height": 161
+          },
+          {
+            "frame": 18,
+            "left": 56,
+            "top": 57,
+            "width": 152,
+            "height": 137
+          },
+          {
+            "frame": 19,
+            "left": 65,
+            "top": 61,
+            "width": 128,
+            "height": 131
+          },
+          {
+            "frame": 20,
+            "left": 69,
+            "top": 67,
+            "width": 111,
+            "height": 115
+          },
+          {
+            "frame": 21,
+            "left": 74,
+            "top": 75,
+            "width": 111,
+            "height": 107
+          },
+          {
+            "frame": 22,
+            "left": 65,
+            "top": 74,
+            "width": 124,
+            "height": 114
+          },
+          {
+            "frame": 23,
+            "left": 65,
+            "top": 81,
+            "width": 122,
+            "height": 91
+          },
+          {
+            "frame": 24,
+            "left": 92,
+            "top": 103,
+            "width": 73,
+            "height": 61
+          },
+          {
+            "frame": 25,
+            "left": 82,
+            "top": 88,
+            "width": 74,
+            "height": 68
+          },
+          {
+            "frame": 26,
+            "left": 94,
+            "top": 90,
+            "width": 70,
+            "height": 73
+          },
+          {
+            "frame": 27,
+            "left": 80,
+            "top": 103,
+            "width": 70,
+            "height": 50
+          },
+          {
+            "frame": 28,
+            "left": 105,
+            "top": 107,
+            "width": 47,
+            "height": 48
+          },
+          {
+            "frame": 29,
+            "left": 102,
+            "top": 106,
+            "width": 55,
+            "height": 42
+          },
+          {
+            "frame": 30,
+            "left": 114,
+            "top": 130,
+            "width": 19,
+            "height": 20
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 126,
+          "y": 129
+        },
+        "sourceHash": "183c8bad7eeb2bea985256ef53c1d1a8395c8a7a091a3d5eeffe301a3dc8bb9a",
+        "revision": 3
+      }
+    },
+    {
+      "id": 7,
+      "key": "Fire",
+      "name": "Hit_Fire_Splash_30_v4",
+      "kind": "Splash",
+      "job": "07_Fire_Splash",
+      "effectID": 107,
+      "palette": "warm orange, scarlet flame edge, creamy yellow core",
+      "motif": "one fiery rocky meteor drops downward and bursts into a broad orange flame ring",
+      "planningName": "메테오",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Fire_Splash_30_v4",
+      "guids": {
+        "texture": "31aec5a126e9d059ef126da1aff5454e",
+        "clip": "096cbd08c2a56f89d3e14992fa34222a",
+        "controller": "d51973b81d199829bc467d40001517b8",
+        "prefab": "2d608e100fba80d2c480e8666ad8adc1"
+      },
+      "pivot": {
+        "x": 0.48828125,
+        "y": 0.3984375
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          231,
+          457,
+          686,
+          915,
+          1143,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          250,
+          496,
+          729,
+          945,
+          1145
+        ],
+        "columnAnchors": [
+          119.5,
+          343.5,
+          572,
+          803,
+          1029,
+          1256
+        ],
+        "rowAnchors": [
+          131.5,
+          380,
+          606,
+          828,
+          1055.5
+        ],
+        "uniformScale": 0.8888888888888888,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 107,
+            "top": 86,
+            "width": 34,
+            "height": 108
+          },
+          {
+            "frame": 2,
+            "left": 97,
+            "top": 44,
+            "width": 62,
+            "height": 156
+          },
+          {
+            "frame": 3,
+            "left": 92,
+            "top": 28,
+            "width": 71,
+            "height": 178
+          },
+          {
+            "frame": 4,
+            "left": 70,
+            "top": 33,
+            "width": 109,
+            "height": 177
+          },
+          {
+            "frame": 5,
+            "left": 48,
+            "top": 44,
+            "width": 163,
+            "height": 169
+          },
+          {
+            "frame": 6,
+            "left": 38,
+            "top": 44,
+            "width": 180,
+            "height": 172
+          },
+          {
+            "frame": 7,
+            "left": 32,
+            "top": 26,
+            "width": 178,
+            "height": 188
+          },
+          {
+            "frame": 8,
+            "left": 33,
+            "top": 30,
+            "width": 190,
+            "height": 170
+          },
+          {
+            "frame": 9,
+            "left": 31,
+            "top": 54,
+            "width": 194,
+            "height": 148
+          },
+          {
+            "frame": 10,
+            "left": 28,
+            "top": 66,
+            "width": 194,
+            "height": 136
+          },
+          {
+            "frame": 11,
+            "left": 33,
+            "top": 67,
+            "width": 191,
+            "height": 131
+          },
+          {
+            "frame": 12,
+            "left": 33,
+            "top": 57,
+            "width": 200,
+            "height": 143
+          },
+          {
+            "frame": 13,
+            "left": 36,
+            "top": 51,
+            "width": 185,
+            "height": 148
+          },
+          {
+            "frame": 14,
+            "left": 39,
+            "top": 62,
+            "width": 180,
+            "height": 141
+          },
+          {
+            "frame": 15,
+            "left": 42,
+            "top": 61,
+            "width": 176,
+            "height": 129
+          },
+          {
+            "frame": 16,
+            "left": 43,
+            "top": 68,
+            "width": 178,
+            "height": 132
+          },
+          {
+            "frame": 17,
+            "left": 46,
+            "top": 67,
+            "width": 166,
+            "height": 124
+          },
+          {
+            "frame": 18,
+            "left": 56,
+            "top": 61,
+            "width": 148,
+            "height": 129
+          },
+          {
+            "frame": 19,
+            "left": 61,
+            "top": 74,
+            "width": 140,
+            "height": 111
+          },
+          {
+            "frame": 20,
+            "left": 60,
+            "top": 77,
+            "width": 137,
+            "height": 102
+          },
+          {
+            "frame": 21,
+            "left": 69,
+            "top": 76,
+            "width": 118,
+            "height": 92
+          },
+          {
+            "frame": 22,
+            "left": 63,
+            "top": 80,
+            "width": 131,
+            "height": 96
+          },
+          {
+            "frame": 23,
+            "left": 83,
+            "top": 79,
+            "width": 83,
+            "height": 94
+          },
+          {
+            "frame": 24,
+            "left": 88,
+            "top": 96,
+            "width": 74,
+            "height": 70
+          },
+          {
+            "frame": 25,
+            "left": 91,
+            "top": 77,
+            "width": 87,
+            "height": 76
+          },
+          {
+            "frame": 26,
+            "left": 83,
+            "top": 94,
+            "width": 59,
+            "height": 65
+          },
+          {
+            "frame": 27,
+            "left": 108,
+            "top": 107,
+            "width": 46,
+            "height": 43
+          },
+          {
+            "frame": 28,
+            "left": 104,
+            "top": 88,
+            "width": 51,
+            "height": 48
+          },
+          {
+            "frame": 29,
+            "left": 120,
+            "top": 143,
+            "width": 12,
+            "height": 12
+          },
+          {
+            "frame": 30,
+            "left": 127,
+            "top": 149,
+            "width": 2,
+            "height": 2
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 125,
+          "y": 154
+        },
+        "sourceHash": "eb829916d666ec4ddfefbc4e0ece54bd37d862781468d575a7439f8f40a99e87",
+        "revision": 3
+      }
+    },
+    {
+      "id": 8,
+      "key": "Water",
+      "name": "Hit_Water_Target_30_v4",
+      "kind": "Target",
+      "job": "08_Water_Target",
+      "effectID": 208,
+      "palette": "clear turquoise water, sea blue and white foam",
+      "motif": "a compressed blue-white water-jet impact pointing RIGHT, then compact round foam splash and diminishing droplets, no projectile flying across entire sheet",
+      "planningName": "급류",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Water_Target_30_v4",
+      "guids": {
+        "texture": "bb3462899181ca9b3906d9dc2a6d51b4",
+        "clip": "2f2451ede602b109bef41fdd488aaca9",
+        "controller": "128b8ff291e901242bae00eea1dd8dcc",
+        "prefab": "6ae5386ea469ace6866844eb5e349780"
+      },
+      "pivot": {
+        "x": 0.453125,
+        "y": 0.44140625
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          239,
+          462,
+          694,
+          920,
+          1147,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          238,
+          478,
+          730,
+          951,
+          1145
+        ],
+        "columnAnchors": [
+          123.5,
+          347.5,
+          577.5,
+          801.5,
+          1035.5,
+          1258
+        ],
+        "rowAnchors": [
+          140.5,
+          362,
+          599.5,
+          831.5,
+          1046.5
+        ],
+        "uniformScale": 1.0348258706467661,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 97,
+            "top": 100,
+            "width": 53,
+            "height": 51
+          },
+          {
+            "frame": 2,
+            "left": 73,
+            "top": 78,
+            "width": 106,
+            "height": 101
+          },
+          {
+            "frame": 3,
+            "left": 67,
+            "top": 76,
+            "width": 147,
+            "height": 108
+          },
+          {
+            "frame": 4,
+            "left": 48,
+            "top": 65,
+            "width": 185,
+            "height": 133
+          },
+          {
+            "frame": 5,
+            "left": 34,
+            "top": 59,
+            "width": 196,
+            "height": 139
+          },
+          {
+            "frame": 6,
+            "left": 41,
+            "top": 55,
+            "width": 187,
+            "height": 142
+          },
+          {
+            "frame": 7,
+            "left": 42,
+            "top": 52,
+            "width": 191,
+            "height": 152
+          },
+          {
+            "frame": 8,
+            "left": 30,
+            "top": 36,
+            "width": 198,
+            "height": 184
+          },
+          {
+            "frame": 9,
+            "left": 30,
+            "top": 36,
+            "width": 197,
+            "height": 185
+          },
+          {
+            "frame": 10,
+            "left": 40,
+            "top": 39,
+            "width": 187,
+            "height": 185
+          },
+          {
+            "frame": 11,
+            "left": 27,
+            "top": 33,
+            "width": 203,
+            "height": 192
+          },
+          {
+            "frame": 12,
+            "left": 30,
+            "top": 34,
+            "width": 197,
+            "height": 186
+          },
+          {
+            "frame": 13,
+            "left": 40,
+            "top": 27,
+            "width": 178,
+            "height": 186
+          },
+          {
+            "frame": 14,
+            "left": 37,
+            "top": 26,
+            "width": 182,
+            "height": 183
+          },
+          {
+            "frame": 15,
+            "left": 30,
+            "top": 43,
+            "width": 188,
+            "height": 171
+          },
+          {
+            "frame": 16,
+            "left": 38,
+            "top": 38,
+            "width": 180,
+            "height": 185
+          },
+          {
+            "frame": 17,
+            "left": 44,
+            "top": 43,
+            "width": 178,
+            "height": 172
+          },
+          {
+            "frame": 18,
+            "left": 34,
+            "top": 59,
+            "width": 189,
+            "height": 149
+          },
+          {
+            "frame": 19,
+            "left": 62,
+            "top": 61,
+            "width": 147,
+            "height": 135
+          },
+          {
+            "frame": 20,
+            "left": 68,
+            "top": 65,
+            "width": 144,
+            "height": 126
+          },
+          {
+            "frame": 21,
+            "left": 74,
+            "top": 68,
+            "width": 123,
+            "height": 114
+          },
+          {
+            "frame": 22,
+            "left": 66,
+            "top": 66,
+            "width": 118,
+            "height": 110
+          },
+          {
+            "frame": 23,
+            "left": 54,
+            "top": 73,
+            "width": 129,
+            "height": 113
+          },
+          {
+            "frame": 24,
+            "left": 70,
+            "top": 84,
+            "width": 96,
+            "height": 90
+          },
+          {
+            "frame": 25,
+            "left": 94,
+            "top": 87,
+            "width": 65,
+            "height": 64
+          },
+          {
+            "frame": 26,
+            "left": 82,
+            "top": 96,
+            "width": 84,
+            "height": 64
+          },
+          {
+            "frame": 27,
+            "left": 77,
+            "top": 97,
+            "width": 70,
+            "height": 54
+          },
+          {
+            "frame": 28,
+            "left": 88,
+            "top": 105,
+            "width": 63,
+            "height": 40
+          },
+          {
+            "frame": 29,
+            "left": 102,
+            "top": 137,
+            "width": 13,
+            "height": 12
+          },
+          {
+            "frame": 30,
+            "left": 129,
+            "top": 140,
+            "width": 14,
+            "height": 16
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 116,
+          "y": 143
+        },
+        "sourceHash": "91b4ec3006cf6190a8c9c14dcbfacbfb2a2887707aa18f8c4cf681896ddfc9b8",
+        "revision": 3
+      }
+    },
+    {
+      "id": 8,
+      "key": "Water",
+      "name": "Hit_Water_Splash_30_v4",
+      "kind": "Splash",
+      "job": "08_Water_Splash",
+      "effectID": 108,
+      "palette": "clear turquoise water, sea blue and white foam",
+      "motif": "one broad turquoise curling wave advancing downward, then spreading foamy water wash",
+      "planningName": "쓰나미",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Water_Splash_30_v4",
+      "guids": {
+        "texture": "04f0e4e447c2d0687e069fd6757e89c1",
+        "clip": "68851761b5ac51bb60a8822199d0e33f",
+        "controller": "84b946f6d285eed66fa3a0219fd2253f",
+        "prefab": "1d8d582faab8cb0474581b8054045eb2"
+      },
+      "pivot": {
+        "x": 0.48046875,
+        "y": 0.53125
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          235,
+          462,
+          687,
+          913,
+          1147,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          255,
+          513,
+          743,
+          953,
+          1145
+        ],
+        "columnAnchors": [
+          117,
+          347,
+          573.5,
+          805,
+          1029,
+          1255.5
+        ],
+        "rowAnchors": [
+          157,
+          396.5,
+          632.5,
+          843,
+          1044.5
+        ],
+        "uniformScale": 0.8353413654618473,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 78,
+            "top": 84,
+            "width": 101,
+            "height": 91
+          },
+          {
+            "frame": 2,
+            "left": 76,
+            "top": 80,
+            "width": 101,
+            "height": 96
+          },
+          {
+            "frame": 3,
+            "left": 67,
+            "top": 79,
+            "width": 122,
+            "height": 107
+          },
+          {
+            "frame": 4,
+            "left": 63,
+            "top": 56,
+            "width": 134,
+            "height": 129
+          },
+          {
+            "frame": 5,
+            "left": 53,
+            "top": 49,
+            "width": 160,
+            "height": 143
+          },
+          {
+            "frame": 6,
+            "left": 52,
+            "top": 24,
+            "width": 147,
+            "height": 175
+          },
+          {
+            "frame": 7,
+            "left": 54,
+            "top": 24,
+            "width": 165,
+            "height": 175
+          },
+          {
+            "frame": 8,
+            "left": 40,
+            "top": 31,
+            "width": 176,
+            "height": 169
+          },
+          {
+            "frame": 9,
+            "left": 42,
+            "top": 29,
+            "width": 171,
+            "height": 166
+          },
+          {
+            "frame": 10,
+            "left": 37,
+            "top": 58,
+            "width": 174,
+            "height": 140
+          },
+          {
+            "frame": 11,
+            "left": 39,
+            "top": 69,
+            "width": 177,
+            "height": 130
+          },
+          {
+            "frame": 12,
+            "left": 49,
+            "top": 68,
+            "width": 165,
+            "height": 124
+          },
+          {
+            "frame": 13,
+            "left": 45,
+            "top": 56,
+            "width": 165,
+            "height": 123
+          },
+          {
+            "frame": 14,
+            "left": 44,
+            "top": 77,
+            "width": 170,
+            "height": 101
+          },
+          {
+            "frame": 15,
+            "left": 51,
+            "top": 74,
+            "width": 159,
+            "height": 104
+          },
+          {
+            "frame": 16,
+            "left": 49,
+            "top": 86,
+            "width": 150,
+            "height": 91
+          },
+          {
+            "frame": 17,
+            "left": 53,
+            "top": 74,
+            "width": 151,
+            "height": 111
+          },
+          {
+            "frame": 18,
+            "left": 65,
+            "top": 75,
+            "width": 134,
+            "height": 107
+          },
+          {
+            "frame": 19,
+            "left": 69,
+            "top": 90,
+            "width": 128,
+            "height": 79
+          },
+          {
+            "frame": 20,
+            "left": 65,
+            "top": 90,
+            "width": 124,
+            "height": 75
+          },
+          {
+            "frame": 21,
+            "left": 69,
+            "top": 90,
+            "width": 119,
+            "height": 76
+          },
+          {
+            "frame": 22,
+            "left": 77,
+            "top": 92,
+            "width": 103,
+            "height": 73
+          },
+          {
+            "frame": 23,
+            "left": 85,
+            "top": 93,
+            "width": 98,
+            "height": 75
+          },
+          {
+            "frame": 24,
+            "left": 67,
+            "top": 91,
+            "width": 108,
+            "height": 65
+          },
+          {
+            "frame": 25,
+            "left": 79,
+            "top": 105,
+            "width": 98,
+            "height": 50
+          },
+          {
+            "frame": 26,
+            "left": 102,
+            "top": 106,
+            "width": 53,
+            "height": 40
+          },
+          {
+            "frame": 27,
+            "left": 122,
+            "top": 112,
+            "width": 38,
+            "height": 38
+          },
+          {
+            "frame": 28,
+            "left": 118,
+            "top": 106,
+            "width": 32,
+            "height": 36
+          },
+          {
+            "frame": 29,
+            "left": 108,
+            "top": 113,
+            "width": 39,
+            "height": 30
+          },
+          {
+            "frame": 30,
+            "left": 128,
+            "top": 115,
+            "width": 2,
+            "height": 2
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 123,
+          "y": 120
+        },
+        "sourceHash": "9e05770156bc7d5b6e3211b69f5455879bc36db2f63da801721c769890e5010b",
+        "revision": 3
+      }
+    },
+    {
+      "id": 9,
+      "key": "Earth",
+      "name": "Hit_Earth_Target_30_v4",
+      "kind": "Target",
+      "job": "09_Earth_Target",
+      "effectID": 209,
+      "palette": "leaf green, terracotta, golden growth sparkle",
+      "motif": "one small terracotta seed-stone impacts center, an emerald pulse and two sturdy short leaves flash then vanish into tiny leaf and soil fragments",
+      "planningName": "씨뿌리기",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Earth_Target_30_v4",
+      "guids": {
+        "texture": "11152751aecbe21a1ff0d76827ba129d",
+        "clip": "d7f0cf7669ef0b12b1e855d1cacff6d9",
+        "controller": "7c39b851708ff0a58f0093ef439ba2b1",
+        "prefab": "84be99e2e6b2625eff4038ddc54bd912"
+      },
+      "pivot": {
+        "x": 0.5078125,
+        "y": 0.46875
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          249,
+          472,
+          698,
+          912,
+          1147,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          251,
+          494,
+          732,
+          949,
+          1145
+        ],
+        "columnAnchors": [
+          131.5,
+          361.5,
+          583.5,
+          800,
+          1025,
+          1256
+        ],
+        "rowAnchors": [
+          141.5,
+          375,
+          610,
+          830,
+          1038.5
+        ],
+        "uniformScale": 1.0097087378640777,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 84,
+            "top": 118,
+            "width": 89,
+            "height": 54
+          },
+          {
+            "frame": 2,
+            "left": 75,
+            "top": 50,
+            "width": 107,
+            "height": 141
+          },
+          {
+            "frame": 3,
+            "left": 65,
+            "top": 43,
+            "width": 124,
+            "height": 153
+          },
+          {
+            "frame": 4,
+            "left": 51,
+            "top": 44,
+            "width": 163,
+            "height": 165
+          },
+          {
+            "frame": 5,
+            "left": 55,
+            "top": 52,
+            "width": 148,
+            "height": 159
+          },
+          {
+            "frame": 6,
+            "left": 40,
+            "top": 54,
+            "width": 167,
+            "height": 149
+          },
+          {
+            "frame": 7,
+            "left": 47,
+            "top": 31,
+            "width": 161,
+            "height": 174
+          },
+          {
+            "frame": 8,
+            "left": 36,
+            "top": 36,
+            "width": 185,
+            "height": 170
+          },
+          {
+            "frame": 9,
+            "left": 34,
+            "top": 33,
+            "width": 191,
+            "height": 181
+          },
+          {
+            "frame": 10,
+            "left": 39,
+            "top": 54,
+            "width": 179,
+            "height": 165
+          },
+          {
+            "frame": 11,
+            "left": 36,
+            "top": 53,
+            "width": 197,
+            "height": 163
+          },
+          {
+            "frame": 12,
+            "left": 44,
+            "top": 53,
+            "width": 169,
+            "height": 150
+          },
+          {
+            "frame": 13,
+            "left": 36,
+            "top": 42,
+            "width": 187,
+            "height": 164
+          },
+          {
+            "frame": 14,
+            "left": 39,
+            "top": 48,
+            "width": 183,
+            "height": 162
+          },
+          {
+            "frame": 15,
+            "left": 31,
+            "top": 44,
+            "width": 196,
+            "height": 162
+          },
+          {
+            "frame": 16,
+            "left": 46,
+            "top": 59,
+            "width": 164,
+            "height": 135
+          },
+          {
+            "frame": 17,
+            "left": 43,
+            "top": 65,
+            "width": 163,
+            "height": 126
+          },
+          {
+            "frame": 18,
+            "left": 40,
+            "top": 71,
+            "width": 158,
+            "height": 123
+          },
+          {
+            "frame": 19,
+            "left": 55,
+            "top": 68,
+            "width": 152,
+            "height": 120
+          },
+          {
+            "frame": 20,
+            "left": 58,
+            "top": 83,
+            "width": 148,
+            "height": 104
+          },
+          {
+            "frame": 21,
+            "left": 75,
+            "top": 87,
+            "width": 121,
+            "height": 98
+          },
+          {
+            "frame": 22,
+            "left": 81,
+            "top": 72,
+            "width": 101,
+            "height": 108
+          },
+          {
+            "frame": 23,
+            "left": 74,
+            "top": 79,
+            "width": 107,
+            "height": 87
+          },
+          {
+            "frame": 24,
+            "left": 87,
+            "top": 84,
+            "width": 85,
+            "height": 84
+          },
+          {
+            "frame": 25,
+            "left": 95,
+            "top": 98,
+            "width": 51,
+            "height": 54
+          },
+          {
+            "frame": 26,
+            "left": 105,
+            "top": 101,
+            "width": 41,
+            "height": 55
+          },
+          {
+            "frame": 27,
+            "left": 96,
+            "top": 105,
+            "width": 45,
+            "height": 51
+          },
+          {
+            "frame": 28,
+            "left": 117,
+            "top": 120,
+            "width": 16,
+            "height": 16
+          },
+          {
+            "frame": 29,
+            "left": 115,
+            "top": 120,
+            "width": 27,
+            "height": 29
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 130,
+          "y": 136
+        },
+        "sourceHash": "ea6c9c8a7a4aa676d021f7303bdf9a6dc1e1e4ea7b995290afdd4facab169b62",
+        "revision": 3
+      }
+    },
+    {
+      "id": 9,
+      "key": "Earth",
+      "name": "Hit_Earth_Splash_30_v4",
+      "kind": "Splash",
+      "job": "09_Earth_Splash",
+      "effectID": 109,
+      "palette": "leaf green, terracotta, golden growth sparkle",
+      "motif": "three broad earthen stone spikes erupt from a cracked ground ring with green life glow",
+      "planningName": "대지의 분노",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Earth_Splash_30_v4",
+      "guids": {
+        "texture": "e77294e201490daa46984774add45e36",
+        "clip": "f1d862f5d31fc19218ad080032e3e103",
+        "controller": "0e6c7d9b95ff5452b1abac51357eacc4",
+        "prefab": "7fc467944801a7ce86afdbe47a8b8a5a"
+      },
+      "pivot": {
+        "x": 0.50390625,
+        "y": 0.4375
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          233,
+          461,
+          692,
+          912,
+          1146,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          249,
+          490,
+          731,
+          955,
+          1145
+        ],
+        "columnAnchors": [
+          117.5,
+          349.5,
+          576,
+          799,
+          1031,
+          1253
+        ],
+        "rowAnchors": [
+          149,
+          379,
+          608,
+          836.5,
+          1061.5
+        ],
+        "uniformScale": 0.8666666666666667,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 99,
+            "top": 99,
+            "width": 62,
+            "height": 67
+          },
+          {
+            "frame": 2,
+            "left": 85,
+            "top": 96,
+            "width": 85,
+            "height": 81
+          },
+          {
+            "frame": 3,
+            "left": 55,
+            "top": 76,
+            "width": 136,
+            "height": 105
+          },
+          {
+            "frame": 4,
+            "left": 56,
+            "top": 66,
+            "width": 143,
+            "height": 115
+          },
+          {
+            "frame": 5,
+            "left": 61,
+            "top": 57,
+            "width": 134,
+            "height": 125
+          },
+          {
+            "frame": 6,
+            "left": 49,
+            "top": 36,
+            "width": 169,
+            "height": 158
+          },
+          {
+            "frame": 7,
+            "left": 37,
+            "top": 39,
+            "width": 184,
+            "height": 159
+          },
+          {
+            "frame": 8,
+            "left": 36,
+            "top": 41,
+            "width": 189,
+            "height": 153
+          },
+          {
+            "frame": 9,
+            "left": 28,
+            "top": 39,
+            "width": 200,
+            "height": 164
+          },
+          {
+            "frame": 10,
+            "left": 35,
+            "top": 66,
+            "width": 186,
+            "height": 133
+          },
+          {
+            "frame": 11,
+            "left": 28,
+            "top": 67,
+            "width": 199,
+            "height": 127
+          },
+          {
+            "frame": 12,
+            "left": 35,
+            "top": 58,
+            "width": 198,
+            "height": 141
+          },
+          {
+            "frame": 13,
+            "left": 34,
+            "top": 58,
+            "width": 188,
+            "height": 139
+          },
+          {
+            "frame": 14,
+            "left": 35,
+            "top": 68,
+            "width": 189,
+            "height": 130
+          },
+          {
+            "frame": 15,
+            "left": 41,
+            "top": 53,
+            "width": 187,
+            "height": 137
+          },
+          {
+            "frame": 16,
+            "left": 35,
+            "top": 55,
+            "width": 186,
+            "height": 146
+          },
+          {
+            "frame": 17,
+            "left": 44,
+            "top": 58,
+            "width": 174,
+            "height": 141
+          },
+          {
+            "frame": 18,
+            "left": 52,
+            "top": 76,
+            "width": 153,
+            "height": 109
+          },
+          {
+            "frame": 19,
+            "left": 68,
+            "top": 76,
+            "width": 127,
+            "height": 97
+          },
+          {
+            "frame": 20,
+            "left": 68,
+            "top": 71,
+            "width": 121,
+            "height": 111
+          },
+          {
+            "frame": 21,
+            "left": 71,
+            "top": 82,
+            "width": 117,
+            "height": 94
+          },
+          {
+            "frame": 22,
+            "left": 83,
+            "top": 86,
+            "width": 94,
+            "height": 94
+          },
+          {
+            "frame": 23,
+            "left": 80,
+            "top": 87,
+            "width": 82,
+            "height": 90
+          },
+          {
+            "frame": 24,
+            "left": 89,
+            "top": 83,
+            "width": 76,
+            "height": 74
+          },
+          {
+            "frame": 25,
+            "left": 89,
+            "top": 96,
+            "width": 78,
+            "height": 73
+          },
+          {
+            "frame": 26,
+            "left": 91,
+            "top": 96,
+            "width": 56,
+            "height": 49
+          },
+          {
+            "frame": 27,
+            "left": 62,
+            "top": 88,
+            "width": 102,
+            "height": 81
+          },
+          {
+            "frame": 28,
+            "left": 95,
+            "top": 89,
+            "width": 57,
+            "height": 62
+          },
+          {
+            "frame": 29,
+            "left": 105,
+            "top": 96,
+            "width": 49,
+            "height": 74
+          },
+          {
+            "frame": 30,
+            "left": 116,
+            "top": 96,
+            "width": 14,
+            "height": 41
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 129,
+          "y": 144
+        },
+        "sourceHash": "4bd251d8c65ec50dfd2a2100c6ecdf1c074c8bc336ca055c480a4b10f178b059",
+        "revision": 3
+      }
+    },
+    {
+      "id": 10,
+      "key": "Wind",
+      "name": "Hit_Wind_Target_30_v4",
+      "kind": "Target",
+      "job": "10_Wind_Target",
+      "effectID": 210,
+      "palette": "mint white, pale sky-blue and cool teal",
+      "motif": "a concentrated mint-white gust collides at center, tight spiral cut, then dispersing short wind wisps; an ENEMY HIT, not a source self-buff",
+      "planningName": "폭풍",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Wind_Target_30_v4",
+      "guids": {
+        "texture": "676af2c59c26f9384b9e0a8b52e135f6",
+        "clip": "29b26cfc2c25379fb5bcf14bd05c7cdb",
+        "controller": "6dbf0e774de5c68aa8fbe5e9029e3697",
+        "prefab": "be7ee7052bf1b6015b1412ba1ebec01b"
+      },
+      "pivot": {
+        "x": 0.48046875,
+        "y": 0.4921875
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          243,
+          469,
+          693,
+          926,
+          1142,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          246,
+          489,
+          725,
+          925,
+          1145
+        ],
+        "columnAnchors": [
+          131.5,
+          355,
+          577.5,
+          810,
+          1033.5,
+          1248.5
+        ],
+        "rowAnchors": [
+          144.5,
+          372.5,
+          603,
+          824.5,
+          1020
+        ],
+        "uniformScale": 0.9952153110047847,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 86,
+            "top": 80,
+            "width": 84,
+            "height": 91
+          },
+          {
+            "frame": 2,
+            "left": 77,
+            "top": 70,
+            "width": 131,
+            "height": 124
+          },
+          {
+            "frame": 3,
+            "left": 62,
+            "top": 70,
+            "width": 140,
+            "height": 117
+          },
+          {
+            "frame": 4,
+            "left": 42,
+            "top": 75,
+            "width": 175,
+            "height": 117
+          },
+          {
+            "frame": 5,
+            "left": 44,
+            "top": 61,
+            "width": 166,
+            "height": 133
+          },
+          {
+            "frame": 6,
+            "left": 39,
+            "top": 31,
+            "width": 179,
+            "height": 178
+          },
+          {
+            "frame": 7,
+            "left": 40,
+            "top": 37,
+            "width": 177,
+            "height": 180
+          },
+          {
+            "frame": 8,
+            "left": 33,
+            "top": 37,
+            "width": 190,
+            "height": 183
+          },
+          {
+            "frame": 9,
+            "left": 31,
+            "top": 41,
+            "width": 197,
+            "height": 181
+          },
+          {
+            "frame": 10,
+            "left": 32,
+            "top": 33,
+            "width": 192,
+            "height": 188
+          },
+          {
+            "frame": 11,
+            "left": 39,
+            "top": 39,
+            "width": 179,
+            "height": 184
+          },
+          {
+            "frame": 12,
+            "left": 48,
+            "top": 24,
+            "width": 173,
+            "height": 196
+          },
+          {
+            "frame": 13,
+            "left": 42,
+            "top": 37,
+            "width": 181,
+            "height": 171
+          },
+          {
+            "frame": 14,
+            "left": 42,
+            "top": 40,
+            "width": 190,
+            "height": 176
+          },
+          {
+            "frame": 15,
+            "left": 34,
+            "top": 57,
+            "width": 187,
+            "height": 150
+          },
+          {
+            "frame": 16,
+            "left": 36,
+            "top": 56,
+            "width": 186,
+            "height": 156
+          },
+          {
+            "frame": 17,
+            "left": 48,
+            "top": 51,
+            "width": 168,
+            "height": 153
+          },
+          {
+            "frame": 18,
+            "left": 45,
+            "top": 44,
+            "width": 163,
+            "height": 162
+          },
+          {
+            "frame": 19,
+            "left": 45,
+            "top": 68,
+            "width": 138,
+            "height": 121
+          },
+          {
+            "frame": 20,
+            "left": 74,
+            "top": 75,
+            "width": 103,
+            "height": 111
+          },
+          {
+            "frame": 21,
+            "left": 53,
+            "top": 73,
+            "width": 128,
+            "height": 112
+          },
+          {
+            "frame": 22,
+            "left": 61,
+            "top": 64,
+            "width": 100,
+            "height": 111
+          },
+          {
+            "frame": 23,
+            "left": 80,
+            "top": 75,
+            "width": 88,
+            "height": 99
+          },
+          {
+            "frame": 24,
+            "left": 79,
+            "top": 96,
+            "width": 95,
+            "height": 65
+          },
+          {
+            "frame": 25,
+            "left": 91,
+            "top": 89,
+            "width": 78,
+            "height": 69
+          },
+          {
+            "frame": 26,
+            "left": 87,
+            "top": 103,
+            "width": 82,
+            "height": 53
+          },
+          {
+            "frame": 27,
+            "left": 84,
+            "top": 101,
+            "width": 90,
+            "height": 55
+          },
+          {
+            "frame": 28,
+            "left": 97,
+            "top": 75,
+            "width": 61,
+            "height": 81
+          },
+          {
+            "frame": 29,
+            "left": 104,
+            "top": 114,
+            "width": 52,
+            "height": 43
+          },
+          {
+            "frame": 30,
+            "left": 127,
+            "top": 114,
+            "width": 16,
+            "height": 14
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 123,
+          "y": 130
+        },
+        "sourceHash": "ac1005011b54dac2138132c764f0132e772ad8afd12718b202564b90af15423c",
+        "revision": 3
+      }
+    },
+    {
+      "id": 10,
+      "key": "Wind",
+      "name": "Hit_Wind_Splash_30_v4",
+      "kind": "Splash",
+      "job": "10_Wind_Splash",
+      "effectID": 110,
+      "palette": "mint white, pale sky-blue and cool teal",
+      "motif": "three intersecting sharp mint-white wind blades in a wide radial sweep",
+      "planningName": "칼바람",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Wind_Splash_30_v4",
+      "guids": {
+        "texture": "d04565c7b55c640169a41236f07b7499",
+        "clip": "b257090b1edbc78d908b6edbddeed188",
+        "controller": "b7fe33acb115a98864534760c8079b97",
+        "prefab": "5ee6bf0d7a09c6ab590f6a1102dcfe3f"
+      },
+      "pivot": {
+        "x": 0.51953125,
+        "y": 0.48046875
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          244,
+          466,
+          689,
+          917,
+          1144,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          242,
+          493,
+          743,
+          955,
+          1145
+        ],
+        "columnAnchors": [
+          126,
+          356,
+          579.5,
+          803,
+          1035,
+          1260
+        ],
+        "rowAnchors": [
+          135,
+          371.5,
+          614,
+          839.5,
+          1059
+        ],
+        "uniformScale": 0.8888888888888888,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 87,
+            "top": 108,
+            "width": 70,
+            "height": 65
+          },
+          {
+            "frame": 2,
+            "left": 70,
+            "top": 92,
+            "width": 108,
+            "height": 84
+          },
+          {
+            "frame": 3,
+            "left": 59,
+            "top": 60,
+            "width": 132,
+            "height": 134
+          },
+          {
+            "frame": 4,
+            "left": 57,
+            "top": 46,
+            "width": 153,
+            "height": 148
+          },
+          {
+            "frame": 5,
+            "left": 52,
+            "top": 49,
+            "width": 161,
+            "height": 159
+          },
+          {
+            "frame": 6,
+            "left": 43,
+            "top": 50,
+            "width": 172,
+            "height": 147
+          },
+          {
+            "frame": 7,
+            "left": 33,
+            "top": 38,
+            "width": 197,
+            "height": 181
+          },
+          {
+            "frame": 8,
+            "left": 31,
+            "top": 35,
+            "width": 195,
+            "height": 181
+          },
+          {
+            "frame": 9,
+            "left": 27,
+            "top": 27,
+            "width": 198,
+            "height": 192
+          },
+          {
+            "frame": 10,
+            "left": 27,
+            "top": 32,
+            "width": 199,
+            "height": 181
+          },
+          {
+            "frame": 11,
+            "left": 24,
+            "top": 41,
+            "width": 193,
+            "height": 180
+          },
+          {
+            "frame": 12,
+            "left": 34,
+            "top": 44,
+            "width": 180,
+            "height": 172
+          },
+          {
+            "frame": 13,
+            "left": 47,
+            "top": 38,
+            "width": 179,
+            "height": 176
+          },
+          {
+            "frame": 14,
+            "left": 48,
+            "top": 47,
+            "width": 165,
+            "height": 163
+          },
+          {
+            "frame": 15,
+            "left": 50,
+            "top": 52,
+            "width": 166,
+            "height": 158
+          },
+          {
+            "frame": 16,
+            "left": 46,
+            "top": 46,
+            "width": 164,
+            "height": 164
+          },
+          {
+            "frame": 17,
+            "left": 50,
+            "top": 47,
+            "width": 157,
+            "height": 155
+          },
+          {
+            "frame": 18,
+            "left": 68,
+            "top": 54,
+            "width": 123,
+            "height": 146
+          },
+          {
+            "frame": 19,
+            "left": 68,
+            "top": 70,
+            "width": 120,
+            "height": 113
+          },
+          {
+            "frame": 20,
+            "left": 83,
+            "top": 76,
+            "width": 95,
+            "height": 94
+          },
+          {
+            "frame": 21,
+            "left": 72,
+            "top": 84,
+            "width": 112,
+            "height": 86
+          },
+          {
+            "frame": 22,
+            "left": 89,
+            "top": 86,
+            "width": 101,
+            "height": 85
+          },
+          {
+            "frame": 23,
+            "left": 83,
+            "top": 96,
+            "width": 98,
+            "height": 78
+          },
+          {
+            "frame": 24,
+            "left": 87,
+            "top": 102,
+            "width": 84,
+            "height": 68
+          },
+          {
+            "frame": 25,
+            "left": 84,
+            "top": 89,
+            "width": 88,
+            "height": 71
+          },
+          {
+            "frame": 26,
+            "left": 77,
+            "top": 100,
+            "width": 92,
+            "height": 56
+          },
+          {
+            "frame": 27,
+            "left": 107,
+            "top": 119,
+            "width": 52,
+            "height": 52
+          },
+          {
+            "frame": 28,
+            "left": 112,
+            "top": 119,
+            "width": 19,
+            "height": 44
+          },
+          {
+            "frame": 29,
+            "left": 120,
+            "top": 125,
+            "width": 3,
+            "height": 3
+          },
+          {
+            "frame": 30,
+            "left": 126,
+            "top": 126,
+            "width": 1,
+            "height": 1
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 133,
+          "y": 133
+        },
+        "sourceHash": "812d810d7f5c2c46fe90b677b44f7e6d8bfe8800a06f9508a4d5881f4a5a1154",
+        "revision": 3
+      }
+    },
+    {
+      "id": 11,
+      "key": "Ice",
+      "name": "Hit_Ice_Target_30_v4",
+      "kind": "Target",
+      "job": "11_Ice_Target",
+      "effectID": 211,
+      "palette": "ice blue, bright white snow, restrained cyan",
+      "motif": "one compact white snowball hits and bursts into chunky snow clumps and pale-blue frost ring",
+      "planningName": "스노우볼",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Ice_Target_30_v4",
+      "guids": {
+        "texture": "914d39b7108be43d116e327b52dff3c8",
+        "clip": "0a865d90c7514fa75e42c579a044b9ab",
+        "controller": "eea9b03e561a23aefcf36a24a51e68e3",
+        "prefab": "eaa06dcd4c873ea2773e445cd24e3803"
+      },
+      "pivot": {
+        "x": 0.51171875,
+        "y": 0.484375
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          240,
+          467,
+          689,
+          914,
+          1153,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          250,
+          496,
+          744,
+          955,
+          1145
+        ],
+        "columnAnchors": [
+          122,
+          354.5,
+          575,
+          802.5,
+          1030.5,
+          1257
+        ],
+        "rowAnchors": [
+          140,
+          376.5,
+          617,
+          844.5,
+          1047
+        ],
+        "uniformScale": 1.0146341463414634,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 99,
+            "top": 99,
+            "width": 57,
+            "height": 58
+          },
+          {
+            "frame": 2,
+            "left": 78,
+            "top": 84,
+            "width": 108,
+            "height": 93
+          },
+          {
+            "frame": 3,
+            "left": 75,
+            "top": 71,
+            "width": 120,
+            "height": 115
+          },
+          {
+            "frame": 4,
+            "left": 47,
+            "top": 56,
+            "width": 146,
+            "height": 139
+          },
+          {
+            "frame": 5,
+            "left": 50,
+            "top": 59,
+            "width": 159,
+            "height": 142
+          },
+          {
+            "frame": 6,
+            "left": 49,
+            "top": 38,
+            "width": 163,
+            "height": 171
+          },
+          {
+            "frame": 7,
+            "left": 37,
+            "top": 32,
+            "width": 187,
+            "height": 187
+          },
+          {
+            "frame": 8,
+            "left": 37,
+            "top": 38,
+            "width": 183,
+            "height": 179
+          },
+          {
+            "frame": 9,
+            "left": 36,
+            "top": 34,
+            "width": 192,
+            "height": 188
+          },
+          {
+            "frame": 10,
+            "left": 31,
+            "top": 33,
+            "width": 195,
+            "height": 191
+          },
+          {
+            "frame": 11,
+            "left": 24,
+            "top": 36,
+            "width": 209,
+            "height": 188
+          },
+          {
+            "frame": 12,
+            "left": 40,
+            "top": 39,
+            "width": 179,
+            "height": 182
+          },
+          {
+            "frame": 13,
+            "left": 38,
+            "top": 33,
+            "width": 182,
+            "height": 187
+          },
+          {
+            "frame": 14,
+            "left": 38,
+            "top": 32,
+            "width": 189,
+            "height": 183
+          },
+          {
+            "frame": 15,
+            "left": 38,
+            "top": 51,
+            "width": 182,
+            "height": 160
+          },
+          {
+            "frame": 16,
+            "left": 48,
+            "top": 50,
+            "width": 161,
+            "height": 161
+          },
+          {
+            "frame": 17,
+            "left": 34,
+            "top": 55,
+            "width": 167,
+            "height": 143
+          },
+          {
+            "frame": 18,
+            "left": 46,
+            "top": 47,
+            "width": 165,
+            "height": 163
+          },
+          {
+            "frame": 19,
+            "left": 72,
+            "top": 65,
+            "width": 130,
+            "height": 120
+          },
+          {
+            "frame": 20,
+            "left": 58,
+            "top": 72,
+            "width": 124,
+            "height": 114
+          },
+          {
+            "frame": 21,
+            "left": 74,
+            "top": 77,
+            "width": 106,
+            "height": 97
+          },
+          {
+            "frame": 22,
+            "left": 90,
+            "top": 88,
+            "width": 92,
+            "height": 83
+          },
+          {
+            "frame": 23,
+            "left": 110,
+            "top": 80,
+            "width": 72,
+            "height": 78
+          },
+          {
+            "frame": 24,
+            "left": 86,
+            "top": 102,
+            "width": 64,
+            "height": 83
+          },
+          {
+            "frame": 25,
+            "left": 90,
+            "top": 91,
+            "width": 68,
+            "height": 72
+          },
+          {
+            "frame": 26,
+            "left": 82,
+            "top": 100,
+            "width": 77,
+            "height": 46
+          },
+          {
+            "frame": 27,
+            "left": 87,
+            "top": 110,
+            "width": 62,
+            "height": 38
+          },
+          {
+            "frame": 28,
+            "left": 117,
+            "top": 106,
+            "width": 22,
+            "height": 46
+          },
+          {
+            "frame": 29,
+            "left": 116,
+            "top": 109,
+            "width": 22,
+            "height": 41
+          },
+          {
+            "frame": 30,
+            "left": 109,
+            "top": 118,
+            "width": 20,
+            "height": 29
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 131,
+          "y": 132
+        },
+        "sourceHash": "5848c15c6878e611ab9c21133a314a55cd9a4eb451fb203e92cf39d723913170",
+        "revision": 3
+      }
+    },
+    {
+      "id": 11,
+      "key": "Ice",
+      "name": "Hit_Ice_Splash_30_v4",
+      "kind": "Splash",
+      "job": "11_Ice_Splash",
+      "effectID": 111,
+      "palette": "ice blue, bright white snow, restrained cyan",
+      "motif": "a swirling white-blue snow squall and large readable ice flakes, no opaque white cloud",
+      "planningName": "블리자드",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Ice_Splash_30_v4",
+      "guids": {
+        "texture": "418b29851bcc5e87c8282ff4742b9e97",
+        "clip": "37865d72757511c1314da96472e8d37e",
+        "controller": "192d690960f69b62b381eea56b2b8b34",
+        "prefab": "392acfb33e73963411c50c6ffa838df2"
+      },
+      "pivot": {
+        "x": 0.4921875,
+        "y": 0.45703125
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          230,
+          448,
+          685,
+          920,
+          1147,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          241,
+          493,
+          732,
+          948,
+          1145
+        ],
+        "columnAnchors": [
+          115,
+          339.5,
+          571,
+          804.5,
+          1027.5,
+          1263
+        ],
+        "rowAnchors": [
+          125,
+          368.5,
+          609.5,
+          836,
+          1047.5
+        ],
+        "uniformScale": 0.9203539823008849,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 83,
+            "top": 80,
+            "width": 89,
+            "height": 124
+          },
+          {
+            "frame": 2,
+            "left": 82,
+            "top": 52,
+            "width": 94,
+            "height": 154
+          },
+          {
+            "frame": 3,
+            "left": 76,
+            "top": 49,
+            "width": 106,
+            "height": 158
+          },
+          {
+            "frame": 4,
+            "left": 67,
+            "top": 47,
+            "width": 123,
+            "height": 161
+          },
+          {
+            "frame": 5,
+            "left": 53,
+            "top": 48,
+            "width": 143,
+            "height": 159
+          },
+          {
+            "frame": 6,
+            "left": 42,
+            "top": 47,
+            "width": 160,
+            "height": 171
+          },
+          {
+            "frame": 7,
+            "left": 43,
+            "top": 31,
+            "width": 170,
+            "height": 189
+          },
+          {
+            "frame": 8,
+            "left": 37,
+            "top": 30,
+            "width": 182,
+            "height": 191
+          },
+          {
+            "frame": 9,
+            "left": 24,
+            "top": 29,
+            "width": 202,
+            "height": 191
+          },
+          {
+            "frame": 10,
+            "left": 26,
+            "top": 40,
+            "width": 204,
+            "height": 177
+          },
+          {
+            "frame": 11,
+            "left": 32,
+            "top": 36,
+            "width": 193,
+            "height": 191
+          },
+          {
+            "frame": 12,
+            "left": 32,
+            "top": 41,
+            "width": 184,
+            "height": 175
+          },
+          {
+            "frame": 13,
+            "left": 37,
+            "top": 37,
+            "width": 188,
+            "height": 172
+          },
+          {
+            "frame": 14,
+            "left": 41,
+            "top": 40,
+            "width": 178,
+            "height": 162
+          },
+          {
+            "frame": 15,
+            "left": 41,
+            "top": 52,
+            "width": 181,
+            "height": 153
+          },
+          {
+            "frame": 16,
+            "left": 29,
+            "top": 56,
+            "width": 196,
+            "height": 147
+          },
+          {
+            "frame": 17,
+            "left": 45,
+            "top": 47,
+            "width": 168,
+            "height": 153
+          },
+          {
+            "frame": 18,
+            "left": 43,
+            "top": 65,
+            "width": 170,
+            "height": 133
+          },
+          {
+            "frame": 19,
+            "left": 63,
+            "top": 63,
+            "width": 133,
+            "height": 117
+          },
+          {
+            "frame": 20,
+            "left": 66,
+            "top": 74,
+            "width": 120,
+            "height": 110
+          },
+          {
+            "frame": 21,
+            "left": 71,
+            "top": 69,
+            "width": 109,
+            "height": 112
+          },
+          {
+            "frame": 22,
+            "left": 78,
+            "top": 81,
+            "width": 102,
+            "height": 101
+          },
+          {
+            "frame": 23,
+            "left": 81,
+            "top": 82,
+            "width": 82,
+            "height": 93
+          },
+          {
+            "frame": 24,
+            "left": 109,
+            "top": 95,
+            "width": 46,
+            "height": 67
+          },
+          {
+            "frame": 25,
+            "left": 88,
+            "top": 85,
+            "width": 68,
+            "height": 73
+          },
+          {
+            "frame": 26,
+            "left": 104,
+            "top": 99,
+            "width": 39,
+            "height": 49
+          },
+          {
+            "frame": 27,
+            "left": 122,
+            "top": 101,
+            "width": 22,
+            "height": 55
+          },
+          {
+            "frame": 28,
+            "left": 98,
+            "top": 129,
+            "width": 43,
+            "height": 21
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 126,
+          "y": 139
+        },
+        "sourceHash": "6f988511ca030d986ef6fc645b397de7f7059514d14efcd5f00c58ac4443116a",
+        "revision": 3
+      }
+    },
+    {
+      "id": 12,
+      "key": "Electric",
+      "name": "Hit_Electric_Target_30_v4",
+      "kind": "Target",
+      "job": "12_Electric_Target",
+      "effectID": 212,
+      "palette": "golden yellow lightning, ice-white core, blue charge sparks",
+      "motif": "a concentrated white-yellow electric detonation with two outward chain-lightning branches",
+      "planningName": "과부하",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Electric_Target_30_v4",
+      "guids": {
+        "texture": "cc11850d202b5d413ad7123d490bda89",
+        "clip": "a05d4ba97742c914f9e3463da65d0d7e",
+        "controller": "7192f2f6dc7587c0167e2b453442868e",
+        "prefab": "feb4b284c514ae083ae457e2b93a7514"
+      },
+      "pivot": {
+        "x": 0.5078125,
+        "y": 0.51171875
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          233,
+          472,
+          684,
+          915,
+          1133,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          273,
+          496,
+          719,
+          927,
+          1145
+        ],
+        "columnAnchors": [
+          121.5,
+          353.5,
+          569.5,
+          794,
+          1026,
+          1247
+        ],
+        "rowAnchors": [
+          169.5,
+          386,
+          602,
+          822,
+          1022.5
+        ],
+        "uniformScale": 0.9244444444444444,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 100,
+            "top": 97,
+            "width": 62,
+            "height": 67
+          },
+          {
+            "frame": 2,
+            "left": 79,
+            "top": 75,
+            "width": 94,
+            "height": 100
+          },
+          {
+            "frame": 3,
+            "left": 71,
+            "top": 62,
+            "width": 112,
+            "height": 133
+          },
+          {
+            "frame": 4,
+            "left": 56,
+            "top": 51,
+            "width": 145,
+            "height": 142
+          },
+          {
+            "frame": 5,
+            "left": 46,
+            "top": 52,
+            "width": 163,
+            "height": 152
+          },
+          {
+            "frame": 6,
+            "left": 41,
+            "top": 50,
+            "width": 175,
+            "height": 159
+          },
+          {
+            "frame": 7,
+            "left": 44,
+            "top": 48,
+            "width": 168,
+            "height": 160
+          },
+          {
+            "frame": 8,
+            "left": 33,
+            "top": 40,
+            "width": 200,
+            "height": 165
+          },
+          {
+            "frame": 9,
+            "left": 42,
+            "top": 48,
+            "width": 187,
+            "height": 162
+          },
+          {
+            "frame": 10,
+            "left": 35,
+            "top": 57,
+            "width": 184,
+            "height": 145
+          },
+          {
+            "frame": 11,
+            "left": 48,
+            "top": 53,
+            "width": 162,
+            "height": 153
+          },
+          {
+            "frame": 12,
+            "left": 40,
+            "top": 43,
+            "width": 165,
+            "height": 148
+          },
+          {
+            "frame": 13,
+            "left": 44,
+            "top": 52,
+            "width": 167,
+            "height": 153
+          },
+          {
+            "frame": 14,
+            "left": 50,
+            "top": 52,
+            "width": 159,
+            "height": 152
+          },
+          {
+            "frame": 15,
+            "left": 52,
+            "top": 60,
+            "width": 158,
+            "height": 144
+          },
+          {
+            "frame": 16,
+            "left": 54,
+            "top": 54,
+            "width": 157,
+            "height": 144
+          },
+          {
+            "frame": 17,
+            "left": 61,
+            "top": 55,
+            "width": 149,
+            "height": 143
+          },
+          {
+            "frame": 18,
+            "left": 58,
+            "top": 72,
+            "width": 139,
+            "height": 128
+          },
+          {
+            "frame": 19,
+            "left": 68,
+            "top": 66,
+            "width": 116,
+            "height": 115
+          },
+          {
+            "frame": 20,
+            "left": 80,
+            "top": 83,
+            "width": 96,
+            "height": 91
+          },
+          {
+            "frame": 21,
+            "left": 80,
+            "top": 79,
+            "width": 96,
+            "height": 99
+          },
+          {
+            "frame": 22,
+            "left": 77,
+            "top": 82,
+            "width": 102,
+            "height": 92
+          },
+          {
+            "frame": 23,
+            "left": 94,
+            "top": 86,
+            "width": 77,
+            "height": 88
+          },
+          {
+            "frame": 24,
+            "left": 96,
+            "top": 101,
+            "width": 69,
+            "height": 67
+          },
+          {
+            "frame": 25,
+            "left": 106,
+            "top": 86,
+            "width": 66,
+            "height": 85
+          },
+          {
+            "frame": 26,
+            "left": 95,
+            "top": 94,
+            "width": 47,
+            "height": 80
+          },
+          {
+            "frame": 27,
+            "left": 96,
+            "top": 95,
+            "width": 42,
+            "height": 63
+          },
+          {
+            "frame": 28,
+            "left": 105,
+            "top": 101,
+            "width": 66,
+            "height": 50
+          },
+          {
+            "frame": 29,
+            "left": 92,
+            "top": 104,
+            "width": 61,
+            "height": 46
+          },
+          {
+            "frame": 30,
+            "left": 130,
+            "top": 116,
+            "width": 18,
+            "height": 35
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 130,
+          "y": 125
+        },
+        "sourceHash": "fb79c102fb533653fa3a9859159a70bf827e24ce6a1de0d97c3a87cf2bda59b1",
+        "revision": 3
+      }
+    },
+    {
+      "id": 12,
+      "key": "Electric",
+      "name": "Hit_Electric_Splash_30_v4",
+      "kind": "Splash",
+      "job": "12_Electric_Splash",
+      "effectID": 112,
+      "palette": "golden yellow lightning, ice-white core, blue charge sparks",
+      "motif": "a wide branching golden lightning vortex ring with a clear charged center",
+      "planningName": "라이트닝 볼텍스",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Electric_Splash_30_v4",
+      "guids": {
+        "texture": "859d2d2cb6a42d07156f37d4b3f8aba4",
+        "clip": "3ea88c05919b79bf2f50a59211e2338a",
+        "controller": "246bd71963d2d860ce39ae9f9fb77c8a",
+        "prefab": "2e0e9ac1683e1bc8aab4985b6e690503"
+      },
+      "pivot": {
+        "x": 0.51171875,
+        "y": 0.453125
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          232,
+          455,
+          690,
+          916,
+          1148,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          239,
+          488,
+          727,
+          953,
+          1145
+        ],
+        "columnAnchors": [
+          118,
+          343,
+          572.5,
+          805,
+          1029.5,
+          1256.5
+        ],
+        "rowAnchors": [
+          122,
+          367.5,
+          606,
+          832.5,
+          1067
+        ],
+        "uniformScale": 0.9162995594713657,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 93,
+            "top": 79,
+            "width": 65,
+            "height": 104
+          },
+          {
+            "frame": 2,
+            "left": 91,
+            "top": 67,
+            "width": 78,
+            "height": 122
+          },
+          {
+            "frame": 3,
+            "left": 86,
+            "top": 48,
+            "width": 94,
+            "height": 145
+          },
+          {
+            "frame": 4,
+            "left": 57,
+            "top": 34,
+            "width": 152,
+            "height": 172
+          },
+          {
+            "frame": 5,
+            "left": 39,
+            "top": 43,
+            "width": 179,
+            "height": 171
+          },
+          {
+            "frame": 6,
+            "left": 38,
+            "top": 57,
+            "width": 181,
+            "height": 153
+          },
+          {
+            "frame": 7,
+            "left": 29,
+            "top": 33,
+            "width": 199,
+            "height": 169
+          },
+          {
+            "frame": 8,
+            "left": 31,
+            "top": 51,
+            "width": 195,
+            "height": 155
+          },
+          {
+            "frame": 9,
+            "left": 28,
+            "top": 27,
+            "width": 202,
+            "height": 188
+          },
+          {
+            "frame": 10,
+            "left": 27,
+            "top": 51,
+            "width": 203,
+            "height": 159
+          },
+          {
+            "frame": 11,
+            "left": 24,
+            "top": 52,
+            "width": 209,
+            "height": 159
+          },
+          {
+            "frame": 12,
+            "left": 33,
+            "top": 54,
+            "width": 192,
+            "height": 148
+          },
+          {
+            "frame": 13,
+            "left": 46,
+            "top": 58,
+            "width": 175,
+            "height": 138
+          },
+          {
+            "frame": 14,
+            "left": 41,
+            "top": 46,
+            "width": 181,
+            "height": 158
+          },
+          {
+            "frame": 15,
+            "left": 42,
+            "top": 62,
+            "width": 167,
+            "height": 132
+          },
+          {
+            "frame": 16,
+            "left": 43,
+            "top": 61,
+            "width": 176,
+            "height": 139
+          },
+          {
+            "frame": 17,
+            "left": 56,
+            "top": 62,
+            "width": 157,
+            "height": 140
+          },
+          {
+            "frame": 18,
+            "left": 48,
+            "top": 65,
+            "width": 156,
+            "height": 127
+          },
+          {
+            "frame": 19,
+            "left": 61,
+            "top": 70,
+            "width": 128,
+            "height": 117
+          },
+          {
+            "frame": 20,
+            "left": 57,
+            "top": 74,
+            "width": 130,
+            "height": 113
+          },
+          {
+            "frame": 21,
+            "left": 67,
+            "top": 70,
+            "width": 133,
+            "height": 101
+          },
+          {
+            "frame": 22,
+            "left": 68,
+            "top": 67,
+            "width": 117,
+            "height": 121
+          },
+          {
+            "frame": 23,
+            "left": 76,
+            "top": 70,
+            "width": 104,
+            "height": 96
+          },
+          {
+            "frame": 24,
+            "left": 88,
+            "top": 101,
+            "width": 89,
+            "height": 60
+          },
+          {
+            "frame": 25,
+            "left": 104,
+            "top": 92,
+            "width": 68,
+            "height": 72
+          },
+          {
+            "frame": 26,
+            "left": 115,
+            "top": 80,
+            "width": 24,
+            "height": 82
+          },
+          {
+            "frame": 27,
+            "left": 109,
+            "top": 89,
+            "width": 36,
+            "height": 78
+          },
+          {
+            "frame": 28,
+            "left": 117,
+            "top": 123,
+            "width": 16,
+            "height": 18
+          },
+          {
+            "frame": 30,
+            "left": 120,
+            "top": 123,
+            "width": 16,
+            "height": 16
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 131,
+          "y": 140
+        },
+        "sourceHash": "88c4143a8a52b7fc9da3d06ca508a99c4397816b7cb4aafc421ba64fd030f803",
+        "revision": 3
+      }
+    },
+    {
+      "id": 13,
+      "key": "Light",
+      "name": "Hit_Light_Target_30_v4",
+      "kind": "Target",
+      "job": "13_Light_Target",
+      "effectID": 213,
+      "palette": "ivory white, warm gold and soft rainbow prism edges",
+      "motif": "three small warm ivory wisps gather into a concentrated gold-white spirit flame burst",
+      "planningName": "도깨비불",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Light_Target_30_v4",
+      "guids": {
+        "texture": "4e861f0805549045dbc2cd6ce8b16798",
+        "clip": "d62930643906acc085d7ae15487bed71",
+        "controller": "6df41a7113691ae3dfc20f3cc7bda0eb",
+        "prefab": "b0895e97c8f0a5448623eb42c49a4499"
+      },
+      "pivot": {
+        "x": 0.50390625,
+        "y": 0.49609375
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          226,
+          461,
+          697,
+          919,
+          1142,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          264,
+          508,
+          741,
+          953,
+          1145
+        ],
+        "columnAnchors": [
+          118,
+          350.5,
+          575.5,
+          799,
+          1031,
+          1263
+        ],
+        "rowAnchors": [
+          156.5,
+          389.5,
+          625,
+          840.5,
+          1045.5
+        ],
+        "uniformScale": 0.9674418604651163,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 61,
+            "top": 43,
+            "width": 125,
+            "height": 143
+          },
+          {
+            "frame": 2,
+            "left": 70,
+            "top": 63,
+            "width": 110,
+            "height": 121
+          },
+          {
+            "frame": 3,
+            "left": 59,
+            "top": 53,
+            "width": 126,
+            "height": 128
+          },
+          {
+            "frame": 4,
+            "left": 50,
+            "top": 62,
+            "width": 136,
+            "height": 140
+          },
+          {
+            "frame": 5,
+            "left": 40,
+            "top": 55,
+            "width": 153,
+            "height": 147
+          },
+          {
+            "frame": 6,
+            "left": 37,
+            "top": 48,
+            "width": 166,
+            "height": 163
+          },
+          {
+            "frame": 7,
+            "left": 45,
+            "top": 44,
+            "width": 166,
+            "height": 172
+          },
+          {
+            "frame": 8,
+            "left": 24,
+            "top": 34,
+            "width": 200,
+            "height": 184
+          },
+          {
+            "frame": 9,
+            "left": 27,
+            "top": 35,
+            "width": 203,
+            "height": 183
+          },
+          {
+            "frame": 10,
+            "left": 48,
+            "top": 46,
+            "width": 177,
+            "height": 164
+          },
+          {
+            "frame": 11,
+            "left": 47,
+            "top": 46,
+            "width": 162,
+            "height": 158
+          },
+          {
+            "frame": 12,
+            "left": 47,
+            "top": 43,
+            "width": 152,
+            "height": 176
+          },
+          {
+            "frame": 13,
+            "left": 59,
+            "top": 39,
+            "width": 156,
+            "height": 179
+          },
+          {
+            "frame": 14,
+            "left": 57,
+            "top": 40,
+            "width": 150,
+            "height": 177
+          },
+          {
+            "frame": 15,
+            "left": 61,
+            "top": 44,
+            "width": 144,
+            "height": 151
+          },
+          {
+            "frame": 16,
+            "left": 67,
+            "top": 54,
+            "width": 125,
+            "height": 147
+          },
+          {
+            "frame": 17,
+            "left": 70,
+            "top": 66,
+            "width": 119,
+            "height": 129
+          },
+          {
+            "frame": 18,
+            "left": 75,
+            "top": 75,
+            "width": 107,
+            "height": 104
+          },
+          {
+            "frame": 19,
+            "left": 79,
+            "top": 55,
+            "width": 100,
+            "height": 128
+          },
+          {
+            "frame": 20,
+            "left": 91,
+            "top": 81,
+            "width": 75,
+            "height": 95
+          },
+          {
+            "frame": 21,
+            "left": 81,
+            "top": 90,
+            "width": 76,
+            "height": 71
+          },
+          {
+            "frame": 22,
+            "left": 90,
+            "top": 82,
+            "width": 76,
+            "height": 62
+          },
+          {
+            "frame": 23,
+            "left": 84,
+            "top": 88,
+            "width": 88,
+            "height": 87
+          },
+          {
+            "frame": 24,
+            "left": 112,
+            "top": 109,
+            "width": 43,
+            "height": 39
+          },
+          {
+            "frame": 25,
+            "left": 109,
+            "top": 98,
+            "width": 59,
+            "height": 63
+          },
+          {
+            "frame": 26,
+            "left": 108,
+            "top": 93,
+            "width": 54,
+            "height": 71
+          },
+          {
+            "frame": 27,
+            "left": 118,
+            "top": 98,
+            "width": 38,
+            "height": 64
+          },
+          {
+            "frame": 28,
+            "left": 105,
+            "top": 104,
+            "width": 30,
+            "height": 30
+          },
+          {
+            "frame": 29,
+            "left": 111,
+            "top": 109,
+            "width": 38,
+            "height": 39
+          },
+          {
+            "frame": 30,
+            "left": 123,
+            "top": 108,
+            "width": 13,
+            "height": 13
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 129,
+          "y": 129
+        },
+        "sourceHash": "efe2df00d6c7627e366787b313be3821c19b48d32defac3fec787a91a656c8cf",
+        "revision": 3
+      }
+    },
+    {
+      "id": 13,
+      "key": "Light",
+      "name": "Hit_Light_Splash_30_v4",
+      "kind": "Splash",
+      "job": "13_Light_Splash",
+      "effectID": 113,
+      "palette": "ivory white, warm gold and soft rainbow prism edges",
+      "motif": "one clear diamond prism forms, then refracts a bright six-point white-gold burst with modest rainbow edge",
+      "planningName": "프리즘",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Light_Splash_30_v4",
+      "guids": {
+        "texture": "35c250ccae3a696358841915ed75da8c",
+        "clip": "84d7ea1031585375329d8801ecba17ff",
+        "controller": "6fc7b474f81b952bec001dc980e22758",
+        "prefab": "22bc53b71bb5d7c69db73ed74e6c3dc4"
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.46484375
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          233,
+          456,
+          690,
+          914,
+          1143,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          249,
+          500,
+          742,
+          955,
+          1145
+        ],
+        "columnAnchors": [
+          120.5,
+          347,
+          572,
+          800.5,
+          1028,
+          1253
+        ],
+        "rowAnchors": [
+          139,
+          374,
+          614.5,
+          837.5,
+          1073
+        ],
+        "uniformScale": 0.9629629629629629,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 101,
+            "top": 83,
+            "width": 56,
+            "height": 98
+          },
+          {
+            "frame": 2,
+            "left": 75,
+            "top": 49,
+            "width": 107,
+            "height": 161
+          },
+          {
+            "frame": 3,
+            "left": 72,
+            "top": 45,
+            "width": 112,
+            "height": 167
+          },
+          {
+            "frame": 4,
+            "left": 58,
+            "top": 46,
+            "width": 138,
+            "height": 164
+          },
+          {
+            "frame": 5,
+            "left": 43,
+            "top": 34,
+            "width": 170,
+            "height": 181
+          },
+          {
+            "frame": 6,
+            "left": 37,
+            "top": 34,
+            "width": 183,
+            "height": 180
+          },
+          {
+            "frame": 7,
+            "left": 43,
+            "top": 31,
+            "width": 170,
+            "height": 195
+          },
+          {
+            "frame": 8,
+            "left": 35,
+            "top": 30,
+            "width": 189,
+            "height": 198
+          },
+          {
+            "frame": 9,
+            "left": 24,
+            "top": 25,
+            "width": 209,
+            "height": 207
+          },
+          {
+            "frame": 10,
+            "left": 30,
+            "top": 34,
+            "width": 196,
+            "height": 183
+          },
+          {
+            "frame": 11,
+            "left": 30,
+            "top": 35,
+            "width": 196,
+            "height": 184
+          },
+          {
+            "frame": 12,
+            "left": 34,
+            "top": 35,
+            "width": 188,
+            "height": 177
+          },
+          {
+            "frame": 13,
+            "left": 35,
+            "top": 39,
+            "width": 187,
+            "height": 173
+          },
+          {
+            "frame": 14,
+            "left": 32,
+            "top": 40,
+            "width": 192,
+            "height": 177
+          },
+          {
+            "frame": 15,
+            "left": 32,
+            "top": 38,
+            "width": 194,
+            "height": 181
+          },
+          {
+            "frame": 16,
+            "left": 39,
+            "top": 47,
+            "width": 182,
+            "height": 157
+          },
+          {
+            "frame": 17,
+            "left": 43,
+            "top": 59,
+            "width": 169,
+            "height": 145
+          },
+          {
+            "frame": 18,
+            "left": 44,
+            "top": 50,
+            "width": 169,
+            "height": 148
+          },
+          {
+            "frame": 19,
+            "left": 55,
+            "top": 69,
+            "width": 146,
+            "height": 117
+          },
+          {
+            "frame": 20,
+            "left": 57,
+            "top": 69,
+            "width": 145,
+            "height": 108
+          },
+          {
+            "frame": 21,
+            "left": 56,
+            "top": 77,
+            "width": 141,
+            "height": 102
+          },
+          {
+            "frame": 22,
+            "left": 78,
+            "top": 84,
+            "width": 93,
+            "height": 100
+          },
+          {
+            "frame": 23,
+            "left": 103,
+            "top": 87,
+            "width": 66,
+            "height": 97
+          },
+          {
+            "frame": 24,
+            "left": 119,
+            "top": 89,
+            "width": 32,
+            "height": 57
+          },
+          {
+            "frame": 25,
+            "left": 75,
+            "top": 76,
+            "width": 114,
+            "height": 89
+          },
+          {
+            "frame": 26,
+            "left": 97,
+            "top": 100,
+            "width": 47,
+            "height": 65
+          },
+          {
+            "frame": 27,
+            "left": 111,
+            "top": 106,
+            "width": 52,
+            "height": 45
+          },
+          {
+            "frame": 28,
+            "left": 121,
+            "top": 99,
+            "width": 24,
+            "height": 46
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 128,
+          "y": 137
+        },
+        "sourceHash": "0b359cf66092fde089fbc9c7c2c48e32f127caadc9209f0f67a26ae5126d1072",
+        "revision": 3
+      }
+    },
+    {
+      "id": 14,
+      "key": "Dark",
+      "name": "Hit_Dark_Target_30_v4",
+      "kind": "Target",
+      "job": "14_Dark_Target",
+      "effectID": 214,
+      "palette": "deep violet, near-black purple and lavender edge light",
+      "motif": "one narrow deep-purple void rift opens vertically and erupts in lavender edged shadows",
+      "planningName": "심연",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Dark_Target_30_v4",
+      "guids": {
+        "texture": "5b60a209d0a18b385726e6e33beb5725",
+        "clip": "232db775122874229776b560ba0f745d",
+        "controller": "bca93eafed998f8044fb8195f31ee436",
+        "prefab": "772c4c61c0ef0dfffb30c6d1270e792c"
+      },
+      "pivot": {
+        "x": 0.50390625,
+        "y": 0.50390625
+      },
+      "packing": {
+        "sourceWidth": 1374,
+        "sourceHeight": 1145,
+        "columnCuts": [
+          0,
+          228,
+          455,
+          697,
+          925,
+          1142,
+          1374
+        ],
+        "rowCuts": [
+          0,
+          263,
+          530,
+          763,
+          975,
+          1145
+        ],
+        "rowCutsPerColumn": [
+          [
+            0,
+            241,
+            528,
+            763,
+            975,
+            1145
+          ],
+          [
+            0,
+            246,
+            529,
+            757,
+            972,
+            1145
+          ],
+          [
+            0,
+            251,
+            530,
+            755,
+            907,
+            1145
+          ],
+          [
+            0,
+            265,
+            521,
+            756,
+            920,
+            1145
+          ],
+          [
+            0,
+            284,
+            522,
+            755,
+            894,
+            1145
+          ],
+          [
+            0,
+            292,
+            523,
+            700,
+            905,
+            1145
+          ]
+        ],
+        "columnAnchors": [
+          120.5,
+          348.5,
+          569.5,
+          812,
+          1029.5,
+          1254
+        ],
+        "rowAnchors": [
+          149,
+          391.5,
+          637,
+          861,
+          999.5
+        ],
+        "uniformScale": 0.6459627329192547,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 106,
+            "top": 94,
+            "width": 47,
+            "height": 71
+          },
+          {
+            "frame": 2,
+            "left": 97,
+            "top": 69,
+            "width": 66,
+            "height": 112
+          },
+          {
+            "frame": 3,
+            "left": 90,
+            "top": 66,
+            "width": 78,
+            "height": 121
+          },
+          {
+            "frame": 4,
+            "left": 66,
+            "top": 65,
+            "width": 109,
+            "height": 132
+          },
+          {
+            "frame": 5,
+            "left": 64,
+            "top": 47,
+            "width": 129,
+            "height": 163
+          },
+          {
+            "frame": 6,
+            "left": 61,
+            "top": 34,
+            "width": 131,
+            "height": 181
+          },
+          {
+            "frame": 7,
+            "left": 61,
+            "top": 53,
+            "width": 126,
+            "height": 154
+          },
+          {
+            "frame": 8,
+            "left": 60,
+            "top": 44,
+            "width": 137,
+            "height": 165
+          },
+          {
+            "frame": 9,
+            "left": 54,
+            "top": 44,
+            "width": 146,
+            "height": 166
+          },
+          {
+            "frame": 10,
+            "left": 62,
+            "top": 54,
+            "width": 136,
+            "height": 143
+          },
+          {
+            "frame": 11,
+            "left": 75,
+            "top": 64,
+            "width": 121,
+            "height": 129
+          },
+          {
+            "frame": 12,
+            "left": 74,
+            "top": 72,
+            "width": 114,
+            "height": 122
+          },
+          {
+            "frame": 13,
+            "left": 71,
+            "top": 67,
+            "width": 113,
+            "height": 129
+          },
+          {
+            "frame": 14,
+            "left": 62,
+            "top": 67,
+            "width": 134,
+            "height": 123
+          },
+          {
+            "frame": 15,
+            "left": 54,
+            "top": 67,
+            "width": 138,
+            "height": 118
+          },
+          {
+            "frame": 16,
+            "left": 71,
+            "top": 69,
+            "width": 117,
+            "height": 120
+          },
+          {
+            "frame": 17,
+            "left": 80,
+            "top": 74,
+            "width": 101,
+            "height": 112
+          },
+          {
+            "frame": 18,
+            "left": 83,
+            "top": 81,
+            "width": 92,
+            "height": 88
+          },
+          {
+            "frame": 19,
+            "left": 85,
+            "top": 83,
+            "width": 92,
+            "height": 97
+          },
+          {
+            "frame": 20,
+            "left": 81,
+            "top": 93,
+            "width": 92,
+            "height": 82
+          },
+          {
+            "frame": 21,
+            "left": 82,
+            "top": 83,
+            "width": 94,
+            "height": 75
+          },
+          {
+            "frame": 22,
+            "left": 92,
+            "top": 91,
+            "width": 72,
+            "height": 76
+          },
+          {
+            "frame": 23,
+            "left": 97,
+            "top": 94,
+            "width": 63,
+            "height": 55
+          },
+          {
+            "frame": 24,
+            "left": 92,
+            "top": 24,
+            "width": 61,
+            "height": 132
+          },
+          {
+            "frame": 25,
+            "left": 103,
+            "top": 137,
+            "width": 50,
+            "height": 42
+          },
+          {
+            "frame": 26,
+            "left": 106,
+            "top": 141,
+            "width": 44,
+            "height": 43
+          },
+          {
+            "frame": 27,
+            "left": 110,
+            "top": 68,
+            "width": 66,
+            "height": 114
+          },
+          {
+            "frame": 28,
+            "left": 98,
+            "top": 77,
+            "width": 59,
+            "height": 103
+          },
+          {
+            "frame": 29,
+            "left": 106,
+            "top": 60,
+            "width": 45,
+            "height": 120
+          },
+          {
+            "frame": 30,
+            "left": 112,
+            "top": 67,
+            "width": 33,
+            "height": 113
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 129,
+          "y": 127
+        },
+        "sourceHash": "0f2a7897ee87d9a6f467fbaf909be57795a06e72c9bbe7f3bfd0417770beeda4",
+        "revision": 3
+      }
+    },
+    {
+      "id": 14,
+      "key": "Dark",
+      "name": "Hit_Dark_Splash_30_v4",
+      "kind": "Splash",
+      "job": "14_Dark_Splash",
+      "effectID": 114,
+      "palette": "deep violet, near-black purple and lavender edge light",
+      "motif": "a stable round BLACK-HOLE disc with spiraling violet accretion rim and inward curling matter, true black center",
+      "planningName": "블랙홀",
+      "base": "Assets/4. Asset/6. Effect/TowerHits_v4/Hit_Dark_Splash_30_v4",
+      "guids": {
+        "texture": "74d6d20b1b0f1c556de547f7fb25693b",
+        "clip": "04e816181e0b80404f1e609ea52e0aeb",
+        "controller": "bb2ad338ca032286b2947d94651e98c7",
+        "prefab": "53cde5824bd1f3bdd4a9a7fabc654230"
+      },
+      "pivot": {
+        "x": 0.46484375,
+        "y": 0.48046875
+      },
+      "packing": {
+        "sourceWidth": 1536,
+        "sourceHeight": 1024,
+        "columnCuts": [
+          0,
+          267,
+          516,
+          766,
+          1030,
+          1284,
+          1536
+        ],
+        "rowCuts": [
+          0,
+          249,
+          465,
+          676,
+          867,
+          1024
+        ],
+        "columnAnchors": [
+          135,
+          391,
+          641,
+          896,
+          1155.5,
+          1408.5
+        ],
+        "rowAnchors": [
+          129,
+          355,
+          569,
+          765,
+          946
+        ],
+        "uniformScale": 0.8421052631578947,
+        "bounds": [
+          {
+            "frame": 1,
+            "left": 71,
+            "top": 88,
+            "width": 115,
+            "height": 78
+          },
+          {
+            "frame": 2,
+            "left": 71,
+            "top": 77,
+            "width": 113,
+            "height": 102
+          },
+          {
+            "frame": 3,
+            "left": 58,
+            "top": 72,
+            "width": 136,
+            "height": 118
+          },
+          {
+            "frame": 4,
+            "left": 40,
+            "top": 52,
+            "width": 164,
+            "height": 149
+          },
+          {
+            "frame": 5,
+            "left": 32,
+            "top": 32,
+            "width": 192,
+            "height": 167
+          },
+          {
+            "frame": 6,
+            "left": 33,
+            "top": 45,
+            "width": 184,
+            "height": 174
+          },
+          {
+            "frame": 7,
+            "left": 30,
+            "top": 49,
+            "width": 201,
+            "height": 153
+          },
+          {
+            "frame": 8,
+            "left": 32,
+            "top": 53,
+            "width": 193,
+            "height": 148
+          },
+          {
+            "frame": 9,
+            "left": 34,
+            "top": 55,
+            "width": 189,
+            "height": 147
+          },
+          {
+            "frame": 10,
+            "left": 29,
+            "top": 51,
+            "width": 202,
+            "height": 156
+          },
+          {
+            "frame": 11,
+            "left": 32,
+            "top": 55,
+            "width": 201,
+            "height": 149
+          },
+          {
+            "frame": 12,
+            "left": 28,
+            "top": 56,
+            "width": 203,
+            "height": 146
+          },
+          {
+            "frame": 13,
+            "left": 40,
+            "top": 54,
+            "width": 178,
+            "height": 138
+          },
+          {
+            "frame": 14,
+            "left": 38,
+            "top": 56,
+            "width": 181,
+            "height": 146
+          },
+          {
+            "frame": 15,
+            "left": 39,
+            "top": 53,
+            "width": 183,
+            "height": 143
+          },
+          {
+            "frame": 16,
+            "left": 41,
+            "top": 59,
+            "width": 179,
+            "height": 136
+          },
+          {
+            "frame": 17,
+            "left": 32,
+            "top": 59,
+            "width": 180,
+            "height": 140
+          },
+          {
+            "frame": 18,
+            "left": 38,
+            "top": 61,
+            "width": 170,
+            "height": 135
+          },
+          {
+            "frame": 19,
+            "left": 57,
+            "top": 72,
+            "width": 142,
+            "height": 112
+          },
+          {
+            "frame": 20,
+            "left": 58,
+            "top": 76,
+            "width": 141,
+            "height": 104
+          },
+          {
+            "frame": 21,
+            "left": 59,
+            "top": 71,
+            "width": 138,
+            "height": 114
+          },
+          {
+            "frame": 22,
+            "left": 62,
+            "top": 76,
+            "width": 131,
+            "height": 106
+          },
+          {
+            "frame": 23,
+            "left": 80,
+            "top": 73,
+            "width": 84,
+            "height": 105
+          },
+          {
+            "frame": 24,
+            "left": 88,
+            "top": 103,
+            "width": 81,
+            "height": 70
+          },
+          {
+            "frame": 25,
+            "left": 82,
+            "top": 109,
+            "width": 83,
+            "height": 48
+          },
+          {
+            "frame": 26,
+            "left": 81,
+            "top": 113,
+            "width": 77,
+            "height": 37
+          },
+          {
+            "frame": 27,
+            "left": 99,
+            "top": 114,
+            "width": 61,
+            "height": 29
+          },
+          {
+            "frame": 28,
+            "left": 105,
+            "top": 99,
+            "width": 46,
+            "height": 39
+          },
+          {
+            "frame": 29,
+            "left": 123,
+            "top": 115,
+            "width": 15,
+            "height": 15
+          },
+          {
+            "frame": 30,
+            "left": 127,
+            "top": 117,
+            "width": 12,
+            "height": 11
+          }
+        ],
+        "sourceEdgePixels": 0,
+        "impactCore": {
+          "x": 119,
+          "y": 133
+        },
+        "sourceHash": "3f5139324e8a0de98a50d4364ca3c1554ef75303ef76bf0825516e0b9370b2f1",
+        "revision": 3
+      }
+    }
+  ],
+  "failures": [],
+  "complete": true,
+  "connected": true
+}

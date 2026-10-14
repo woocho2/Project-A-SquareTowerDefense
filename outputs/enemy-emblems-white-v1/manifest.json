@@ -1,0 +1,94 @@
+{
+  "mode": "hand-authored vector SVG rasterized to transparent white PNG",
+  "size": 256,
+  "ppu": 256,
+  "atlas": "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblems_White_Atlas_v1.png",
+  "atlasGuid": "5304e4ae70eaef4e6bcc3a00a2bc9870",
+  "atlasSize": [
+    1024,
+    512
+  ],
+  "grid": [
+    4,
+    2
+  ],
+  "assets": [
+    {
+      "id": 1,
+      "key": "SelfHeal",
+      "label": "자가치유형",
+      "meaning": "회전 화살표와 십자",
+      "svg": "svg/SelfHeal.svg",
+      "png": "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_SelfHeal_White_v1.png",
+      "guid": "2ec4ad1f5927dfcb904ec12b1e9244d7",
+      "atlasSprite": "Enemy_Emblem_SelfHeal",
+      "atlasFileID": 71001
+    },
+    {
+      "id": 2,
+      "key": "Mobility",
+      "label": "이동력형",
+      "meaning": "발과 속도선",
+      "svg": "svg/Mobility.svg",
+      "png": "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_Mobility_White_v1.png",
+      "guid": "7fdbdc7aed4c5696d509b492e58ebdaa",
+      "atlasSprite": "Enemy_Emblem_Mobility",
+      "atlasFileID": 71002
+    },
+    {
+      "id": 3,
+      "key": "Action",
+      "label": "행동력형",
+      "meaning": "번개",
+      "svg": "svg/Action.svg",
+      "png": "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_Action_White_v1.png",
+      "guid": "23ede20e1230ffa019db5cd67b26fba6",
+      "atlasSprite": "Enemy_Emblem_Action",
+      "atlasFileID": 71003
+    },
+    {
+      "id": 4,
+      "key": "Defense",
+      "label": "방어형",
+      "meaning": "방패",
+      "svg": "svg/Defense.svg",
+      "png": "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_Defense_White_v1.png",
+      "guid": "075290bf89b21bd29de7ea284d099a12",
+      "atlasSprite": "Enemy_Emblem_Defense",
+      "atlasFileID": 71004
+    },
+    {
+      "id": 5,
+      "key": "GroupHeal",
+      "label": "전체회복형",
+      "meaning": "동료 셋과 십자",
+      "svg": "svg/GroupHeal.svg",
+      "png": "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_GroupHeal_White_v1.png",
+      "guid": "c2ce641d3e38efd52ce440edf1e14bd1",
+      "atlasSprite": "Enemy_Emblem_GroupHeal",
+      "atlasFileID": 71005
+    },
+    {
+      "id": 6,
+      "key": "MiddleBoss",
+      "label": "중간보스형",
+      "meaning": "왕관",
+      "svg": "svg/MiddleBoss.svg",
+      "png": "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_MiddleBoss_White_v1.png",
+      "guid": "07e3d3e0bc14cadf4ed4968d808bfb70",
+      "atlasSprite": "Enemy_Emblem_MiddleBoss",
+      "atlasFileID": 71006
+    },
+    {
+      "id": 7,
+      "key": "FinalBoss",
+      "label": "최종보스형",
+      "meaning": "왕관을 쓴 해골",
+      "svg": "svg/FinalBoss.svg",
+      "png": "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_FinalBoss_White_v1.png",
+      "guid": "24be8d89ceb65747df5b5136dbccfc39",
+      "atlasSprite": "Enemy_Emblem_FinalBoss",
+      "atlasFileID": 71007
+    }
+  ]
+}

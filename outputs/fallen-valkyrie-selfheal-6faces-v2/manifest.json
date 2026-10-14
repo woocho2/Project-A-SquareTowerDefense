@@ -1,0 +1,50 @@
+{
+  "size": 256,
+  "atlasSize": [
+    768,
+    512
+  ],
+  "order": [
+    "Front",
+    "Left",
+    "Right",
+    "Back",
+    "Top",
+    "Bottom"
+  ],
+  "topFrontEdge": "bottom",
+  "whiteEmblem": "layers/SelfHeal_White.png",
+  "faces": [
+    {
+      "key": "Front",
+      "path": "faces/Front.png",
+      "sha256": "ba3e40bc92bc658d9e39be3e8f0293cd56b815789b24672685d474f5adc50c43"
+    },
+    {
+      "key": "Left",
+      "path": "faces/Left.png",
+      "sha256": "8cbefe5d0528439d418e4d3be5f186f41a3e26c44d27e100c6ca50a2990f57ba"
+    },
+    {
+      "key": "Right",
+      "path": "faces/Right.png",
+      "sha256": "59b5c0ee1d9e9d75c0c487ed1bad412f9a9ba39003fa6211028fafd3ec2f4dae"
+    },
+    {
+      "key": "Back",
+      "path": "faces/Back.png",
+      "sha256": "e7864a5c14a80595b161f3fa80f16195d827ae920ba47921797604cb243b457a"
+    },
+    {
+      "key": "Top",
+      "path": "faces/Top.png",
+      "sha256": "312fe21bb8e4bcd5bb4a7b2794f8299831f79693fea0b93cb38ebfd0854c3d2a"
+    },
+    {
+      "key": "Bottom",
+      "path": "faces/Bottom.png",
+      "sha256": "2881db58220beec08ae58cfb478a42c70653e416548e1a8a4c83bc1eaf58b567"
+    }
+  ],
+  "generationMode": "builtin-imagegen: Top and Bottom; existing exact SVG emblem overlay; four existing faces preserved"
+}

@@ -85,7 +85,7 @@ SpriteRenderer:
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 6189000690ae4a998ebbe1a896683575, type: 3}
+  m_Sprite: {fileID: 21300400, guid: a2d1eaeab4d150693aa69ca7e4faf412, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -93,7 +93,7 @@ SpriteRenderer:
   m_Size: {x: 0.1875, y: 0.1875}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
 --- !u!50 &283738656983380058
 Rigidbody2D:
@@ -173,12 +173,12 @@ MonoBehaviour:
   m_enemyLayer:
     serializedVersion: 2
     m_Bits: 256
+  m_usePrefabVisual: 1
+  m_prefabEffectColor: {r: 0.5, g: 0.72, b: 1, a: 1}
   m_enableTrail: 1
   m_enableParticles: 1
   m_trailRenderer: {fileID: 0}
   m_particleSystem: {fileID: 0}
-  m_usePrefabVisual: 1
-  m_prefabEffectColor: {r: 0.65, g: 0.8, b: 1, a: 1}
   lifeTime: 3
   IsSplash: 0
 --- !u!95 &3943595858292165860
@@ -189,16 +189,16 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6552874700961141187}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c49427bed3e8bd243b0dc5bbcb9c5f5f, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
-  m_WarningMessage: 
+  m_WarningMessage:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0

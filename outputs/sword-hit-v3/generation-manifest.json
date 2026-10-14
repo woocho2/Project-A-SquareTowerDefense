@@ -1,0 +1,15 @@
+{
+  "builtIn": true,
+  "sources": [
+    {
+      "kind": "Target",
+      "source": "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-e4705b57-de82-4c3a-b573-384c42ddc71a.png"
+    },
+    {
+      "kind": "Splash",
+      "source": "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-6875d1c1-25d0-48cc-8e8c-81a0f2334e90.png"
+    }
+  ],
+  "correctedSplash": "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-9cd92eb6-97a8-4a7b-8a2b-4004773dea0f.png",
+  "splashLayoutPrompt": "Use case: precise-object-edit. Edit this animation sheet, preserve the ivory/gold Excalibur style and action progression, fix ONLY the spatial registration and sheet grid layout.\nThe reference contains 30 frames in 6 columns and 5 uneven rows, which is WRONG for Unity. Rebuild as EXACTLY 6 columns by EXACTLY 5 rows of IDENTICAL SQUARE cells; canvas1536x1280, each cell256x256. Rows must have EXACTLY equal heights. No image may overlap any adjacent cell. Keep large transparent gutters. No visible grid or labels. Every frame's impact anchor MUST be x128,y174 WITHIN its own cell. The golden ellipse ground ring must be centered on that exact anchor in EVERY frame where it appears. Camera and overall sword scale constant. Maximum sword height130px, maximum ellipse width175px. Fit the complete sword entirely INSIDE each square cell including the first row. Avoid stretching the first row taller than others.\nFrames1-6: one holy sword manifests high above the fixed anchor then drops onto it, straight blade tip DOWN, constant compact sword style. Frames7-10: sword strikes centered anchor and an ellipse shockwave brightens. Frames11-18: same sword dissolves into gold sparks while ellipse expands with its center LOCKED to the fixed anchor. Frames19-24: sword gone, shrinking brightness of broken ellipse arcs and sparks. Frames25-30: isolated gold specks progressively vanish, last frame almost empty. Preserve transparent negative space, tiny restrained glow, crisp game art. TRUE transparent RGBA, no background, no floor. EXACTLY 30 whole separate frames arranged in a uniform 6x5 equal square grid. No cropped sprites, no shift of impact origin at a row transition."
+}

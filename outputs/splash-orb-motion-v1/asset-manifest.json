@@ -1,0 +1,371 @@
+{
+  "mode": "builtin-imagegen for six weapon redraws; native Unity curves for motion",
+  "fps": 12,
+  "posesPerState": 8,
+  "duration": 0.6666666666666666,
+  "poses": {
+    "Idle": {
+      "x": [
+        1,
+        1.023,
+        1.039,
+        1.026,
+        1.002,
+        0.977,
+        0.962,
+        0.974
+      ],
+      "y": [
+        1,
+        1.023,
+        1.039,
+        1.026,
+        1.002,
+        0.977,
+        0.962,
+        0.974
+      ],
+      "alpha": [
+        1,
+        0.98,
+        0.96,
+        0.975,
+        0.995,
+        0.98,
+        0.95,
+        0.97
+      ],
+      "angle": [
+        0,
+        1.7,
+        2.4,
+        1.6,
+        0.1,
+        -1.7,
+        -2.4,
+        -1.6
+      ]
+    },
+    "Flight": {
+      "x": [
+        1.1,
+        1.122,
+        1.14,
+        1.125,
+        1.104,
+        1.083,
+        1.067,
+        1.081
+      ],
+      "y": [
+        0.96,
+        0.947,
+        0.936,
+        0.945,
+        0.958,
+        0.973,
+        0.985,
+        0.976
+      ],
+      "alpha": [
+        1,
+        0.99,
+        0.97,
+        0.98,
+        0.995,
+        0.98,
+        0.96,
+        0.99
+      ],
+      "angle": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "assets": [
+    {
+      "id": 1,
+      "key": "Sword",
+      "label": "검",
+      "texture": "Assets/4. Asset/3. Projectile/AnimatedSplash_v1/Splash_Sword_Orb_v2.png",
+      "fixtureTexture": "Assets/OrbMotion_v1/Splash_Sword.png",
+      "color": [
+        1,
+        0.4,
+        0.7
+      ],
+      "redrawn": true,
+      "prefab": "Assets/Resources/Projectiles/101.prefab",
+      "guids": {
+        "texture": "74089f3dbc99afe3111586b92946f8cb",
+        "controller": "b79d9882eeb131d4faebcb8e0e3ed984"
+      },
+      "sha256": "e1103530ae82a2428ee2e6e663b029aa80ba792b9a4611626084c9c8bb37a6f4"
+    },
+    {
+      "id": 2,
+      "key": "Axe",
+      "label": "도끼",
+      "texture": "Assets/4. Asset/3. Projectile/AnimatedSplash_v1/Splash_Axe_Orb_v2.png",
+      "fixtureTexture": "Assets/OrbMotion_v1/Splash_Axe.png",
+      "color": [
+        1,
+        0.38,
+        0.15
+      ],
+      "redrawn": true,
+      "prefab": "Assets/Resources/Projectiles/102.prefab",
+      "guids": {
+        "texture": "4a135123f5314daddf7b5a5745b81e50",
+        "controller": "b79d9882eeb131d4faebcb8e0e3ed984"
+      },
+      "sha256": "7cfe94d576f375c62aa98c3b6a8ba6a798da0339fa3965442b32e7e72ae09310"
+    },
+    {
+      "id": 3,
+      "key": "Bow",
+      "label": "활",
+      "texture": "Assets/4. Asset/3. Projectile/AnimatedSplash_v1/Splash_Bow_Orb_v2.png",
+      "fixtureTexture": "Assets/OrbMotion_v1/Splash_Bow.png",
+      "color": [
+        0.3,
+        0.85,
+        0.55
+      ],
+      "redrawn": true,
+      "prefab": "Assets/Resources/Projectiles/103.prefab",
+      "guids": {
+        "texture": "5bbf5b190b000f838a576a44a9598a8a",
+        "controller": "b79d9882eeb131d4faebcb8e0e3ed984"
+      },
+      "sha256": "83be4c74b1c7adb5850fc4c7707509777f8ce1aee356ab1aa5df0c1956248b3b"
+    },
+    {
+      "id": 4,
+      "key": "Spear",
+      "label": "창",
+      "texture": "Assets/4. Asset/3. Projectile/AnimatedSplash_v1/Splash_Spear_Orb_v2.png",
+      "fixtureTexture": "Assets/OrbMotion_v1/Splash_Spear.png",
+      "color": [
+        0.5,
+        0.72,
+        1
+      ],
+      "redrawn": true,
+      "prefab": "Assets/Resources/Projectiles/104.prefab",
+      "guids": {
+        "texture": "fbae865b9b0f722553760831cfb711ed",
+        "controller": "b79d9882eeb131d4faebcb8e0e3ed984"
+      },
+      "sha256": "5e98e3521d0ee5e25286b74dafc3c6e808db38507585821364ae022cc9a6bee4"
+    },
+    {
+      "id": 5,
+      "key": "Shield",
+      "label": "방패",
+      "texture": "Assets/4. Asset/3. Projectile/AnimatedSplash_v1/Splash_Shield_Orb_v2.png",
+      "fixtureTexture": "Assets/OrbMotion_v1/Splash_Shield.png",
+      "color": [
+        0.3,
+        0.55,
+        1
+      ],
+      "redrawn": true,
+      "prefab": "Assets/Resources/Projectiles/105.prefab",
+      "guids": {
+        "texture": "30e918b58b0e742691e1c5640ecf9f3d",
+        "controller": "b79d9882eeb131d4faebcb8e0e3ed984"
+      },
+      "sha256": "bf4dbda08532f2eb5e879f0591a0c75adb5a0b47fa241c8e4a6cff623d1da045"
+    },
+    {
+      "id": 6,
+      "key": "Hammer",
+      "label": "해머",
+      "texture": "Assets/4. Asset/3. Projectile/AnimatedSplash_v1/Splash_Hammer_Orb_v2.png",
+      "fixtureTexture": "Assets/OrbMotion_v1/Splash_Hammer.png",
+      "color": [
+        1,
+        0.65,
+        0.25
+      ],
+      "redrawn": true,
+      "prefab": "Assets/Resources/Projectiles/106.prefab",
+      "guids": {
+        "texture": "a7c25d9596b485aaeace39d125b7266e",
+        "controller": "b79d9882eeb131d4faebcb8e0e3ed984"
+      },
+      "sha256": "c92440cffa085cae1fce67584aac69065666d97cebe45bf97632e09e16290d15"
+    },
+    {
+      "id": 7,
+      "key": "Fire",
+      "label": "불",
+      "texture": "Assets/4. Asset/3. Projectile/Cartoon/Splash/Splash_Fire.png",
+      "fixtureTexture": "Assets/OrbMotion_v1/Splash_Fire.png",
+      "color": [
+        1,
+        0.38,
+        0.08
+      ],
+      "redrawn": false,
+      "prefab": "Assets/Resources/Projectiles/107.prefab",
+      "guids": {
+        "texture": "2b2db83c474c42fea5d10fe7fcd3f132",
+        "controller": "b79d9882eeb131d4faebcb8e0e3ed984"
+      },
+      "sha256": "f11ec62730599a98d49cc72b18c5a6ed3dda87a70b2459a8f536de16fc13ffee"
+    },
+    {
+      "id": 8,
+      "key": "Water",
+      "label": "물",
+      "texture": "Assets/4. Asset/3. Projectile/Cartoon/Splash/Splash_Water.png",
+      "fixtureTexture": "Assets/OrbMotion_v1/Splash_Water.png",
+      "color": [
+        0.15,
+        0.75,
+        1
+      ],
+      "redrawn": false,
+      "prefab": "Assets/Resources/Projectiles/108.prefab",
+      "guids": {
+        "texture": "14fac9e119ca45f6a4ad0b5ed4b807f4",
+        "controller": "b79d9882eeb131d4faebcb8e0e3ed984"
+      },
+      "sha256": "34a7a5d1b91373de9f355b9dc3ced0f4384b10ad935cc1c6e0b5d5fc8622325b",
+      "fixtureTextureGuidRemap": {
+        "from": "2c36ca355771b644f81dd1af2a887c45",
+        "to": "14fac9e119ca45f6a4ad0b5ed4b807f4"
+      }
+    },
+    {
+      "id": 9,
+      "key": "Earth",
+      "label": "대지",
+      "texture": "Assets/4. Asset/3. Projectile/Cartoon/Splash/Splash_Earth.png",
+      "fixtureTexture": "Assets/OrbMotion_v1/Splash_Earth.png",
+      "color": [
+        0.55,
+        0.82,
+        0.25
+      ],
+      "redrawn": false,
+      "prefab": "Assets/Resources/Projectiles/109.prefab",
+      "guids": {
+        "texture": "f893cf758fdc4560864b83632a149805",
+        "controller": "b79d9882eeb131d4faebcb8e0e3ed984"
+      },
+      "sha256": "4fbce7bef47f5738515fefceb2937fb7bd6f4206b1c1981bdd0ccea3f5906dfd"
+    },
+    {
+      "id": 10,
+      "key": "Wind",
+      "label": "바람",
+      "texture": "Assets/4. Asset/3. Projectile/Cartoon/Splash/Splash_Wind.png",
+      "fixtureTexture": "Assets/OrbMotion_v1/Splash_Wind.png",
+      "color": [
+        0.65,
+        0.95,
+        0.9
+      ],
+      "redrawn": false,
+      "prefab": "Assets/Resources/Projectiles/110.prefab",
+      "guids": {
+        "texture": "6644bf898e58416d9cdb24e0ba857737",
+        "controller": "b79d9882eeb131d4faebcb8e0e3ed984"
+      },
+      "sha256": "b0376c176a3059f14a19d303f9c6cc58eda552f48767fbe8cfcb884c1e7675ff"
+    },
+    {
+      "id": 11,
+      "key": "Ice",
+      "label": "얼음",
+      "texture": "Assets/4. Asset/3. Projectile/Cartoon/Splash/Splash_Ice.png",
+      "fixtureTexture": "Assets/OrbMotion_v1/Splash_Ice.png",
+      "color": [
+        0.6,
+        0.85,
+        1
+      ],
+      "redrawn": false,
+      "prefab": "Assets/Resources/Projectiles/111.prefab",
+      "guids": {
+        "texture": "0adc7347f08b4e0abbc67ad9bf9e1e6a",
+        "controller": "b79d9882eeb131d4faebcb8e0e3ed984"
+      },
+      "sha256": "840b687829b82c408d636b8f56f22b96f4e34f204ffdd2ce9730028bee430e31"
+    },
+    {
+      "id": 12,
+      "key": "Electric",
+      "label": "전기",
+      "texture": "Assets/4. Asset/3. Projectile/Cartoon/Splash/Splash_Electric.png",
+      "fixtureTexture": "Assets/OrbMotion_v1/Splash_Electric.png",
+      "color": [
+        1,
+        0.85,
+        0.2
+      ],
+      "redrawn": false,
+      "prefab": "Assets/Resources/Projectiles/112.prefab",
+      "guids": {
+        "texture": "5039adb254c843fea4b1a38d0db8146a",
+        "controller": "b79d9882eeb131d4faebcb8e0e3ed984"
+      },
+      "sha256": "1f895e3a3e5f06ac03ea9404aba153bc488a74d3b8e4786a901c39acea23be95"
+    },
+    {
+      "id": 13,
+      "key": "Light",
+      "label": "빛",
+      "texture": "Assets/4. Asset/3. Projectile/Cartoon/Splash/Splash_Light.png",
+      "fixtureTexture": "Assets/OrbMotion_v1/Splash_Light.png",
+      "color": [
+        1,
+        0.93,
+        0.7
+      ],
+      "redrawn": false,
+      "prefab": "Assets/Resources/Projectiles/113.prefab",
+      "guids": {
+        "texture": "30094cdb665146cba87f104bc08f4bee",
+        "controller": "b79d9882eeb131d4faebcb8e0e3ed984"
+      },
+      "sha256": "2b16a25683cdfbadc0f0ab7ee3e1ec4fac6edc86d9b909b3b54c0fc6bf7924ca"
+    },
+    {
+      "id": 14,
+      "key": "Dark",
+      "label": "어둠",
+      "texture": "Assets/4. Asset/3. Projectile/Cartoon/Splash/Splash_Dark.png",
+      "fixtureTexture": "Assets/OrbMotion_v1/Splash_Dark.png",
+      "color": [
+        0.62,
+        0.28,
+        0.95
+      ],
+      "redrawn": false,
+      "prefab": "Assets/Resources/Projectiles/114.prefab",
+      "guids": {
+        "texture": "349a19b129a447b3a0a299ae6b5bb388",
+        "controller": "b79d9882eeb131d4faebcb8e0e3ed984"
+      },
+      "sha256": "4f83bc9974bb5043c8913cc102844cd7ed1a143553a98bc39bbab16a4606bea3"
+    }
+  ],
+  "connected": true,
+  "playmodeVerified": true,
+  "sharedAnimations": {
+    "idle": "Assets/4. Asset/3. Projectile/AnimatedSplash_v1/Orb_Idle.anim",
+    "flight": "Assets/4. Asset/3. Projectile/AnimatedSplash_v1/Orb_Flight.anim",
+    "controller": "Assets/4. Asset/3. Projectile/AnimatedSplash_v1/Orb_Motion.controller"
+  }
+}

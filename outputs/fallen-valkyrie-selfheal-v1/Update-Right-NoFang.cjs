@@ -1,0 +1,15 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),cp=require('node:child_process');
+const out=__dirname,manifestPath=path.join(out,'generation-manifest.json');
+const specs=JSON.parse(fs.readFileSync(manifestPath,'utf8')),edit=JSON.parse(fs.readFileSync(path.join(out,'generation/Right-no-fang-edit.json'),'utf8'));
+const hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const unchanged=['Front','Left','Back'].map(key=>({key,portrait:hash(path.join(out,'portraits',key+'.png')),face:hash(path.join(out,'faces',key+'.png'))}));
+const previous=specs.find(s=>s.key==='Right');
+fs.copyFileSync(path.join(out,'source/Right.png'),path.join(out,'source/Right-before-fang-removal.png'));
+fs.writeFileSync(path.join(out,'generation/Right-before-fang-removal.json'),JSON.stringify(previous,null,2));
+previous.history=[{prompt:previous.prompt,refs:previous.refs,originalPath:previous.originalPath,preservedSource:'source/Right-before-fang-removal.png'}];
+previous.prompt=edit.prompt;previous.refs=edit.refs;previous.originalPath=edit.originalPath;previous.mode=edit.mode;previous.preservedEditInput='source/Right-before-fang-removal.png';
+fs.writeFileSync(manifestPath,JSON.stringify(specs,null,2));
+const prompts=JSON.parse(fs.readFileSync(path.join(out,'prompts.json'),'utf8'));const prompt=prompts.find(s=>s.key==='Right');Object.assign(prompt,{prompt:edit.prompt,refs:edit.refs,originalPath:edit.originalPath,preservedEditInput:'source/Right-before-fang-removal.png'});fs.writeFileSync(path.join(out,'prompts.json'),JSON.stringify(prompts,null,2));
+cp.execFileSync(process.execPath,[path.join(out,'Build-Preview.cjs')],{stdio:'inherit'});
+for(const a of unchanged)if(a.portrait!==hash(path.join(out,'portraits',a.key+'.png'))||a.face!==hash(path.join(out,'faces',a.key+'.png')))throw Error(a.key+' changed unexpectedly');
+console.log('Updated Right without fang; Front, Left and Back remain byte-identical');
