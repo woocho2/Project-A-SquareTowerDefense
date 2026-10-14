@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Tilemaps;
+
 
 
 public enum PathTileBuffType
@@ -117,6 +120,8 @@ public class TileManager : MonoBehaviour
     [SerializeField, Min(0.1f)] private float m_enemyFormationMoveSpeed = 1.5f;
 
     public float EnemyFormationMoveSpeed => m_enemyFormationMoveSpeed;
+
+    public event Action EnemyCountChanged;
 
     #endregion
 
@@ -635,6 +640,8 @@ public class TileManager : MonoBehaviour
 
         occupants.Add(enemy);
         m_pathIndexByEnemy[enemy] = index;
+
+        EnemyCountChanged?.Invoke();
         return true;
     }
 
@@ -652,6 +659,8 @@ public class TileManager : MonoBehaviour
             occupants.Remove(enemy);
             if (occupants.Count == 0) m_enemiesByPathIndex.Remove(previousIndex);
         }
+
+        EnemyCountChanged?.Invoke();
         return true;
     }
 

@@ -8,8 +8,9 @@ public class GameInfoPanel : MonoBehaviour
     [Header("정보 표시")]
     [SerializeField] TextMeshProUGUI txt_stage;
     [SerializeField] TextMeshProUGUI txt_currentWave;
-    [SerializeField] Image[] m_currentLifes;
-    [SerializeField] Image[] m_currentShields;
+    [SerializeField] TextMeshProUGUI txt_currentLimit;
+    [SerializeField] Image img_life;
+    [SerializeField] Image img_shield;
     [SerializeField] TextMeshProUGUI txt_currentGold;
     [SerializeField] TextMeshProUGUI txt_currentGem;
     [SerializeField] TextMeshProUGUI txt_currentGameSpeed;
@@ -22,22 +23,21 @@ public class GameInfoPanel : MonoBehaviour
     private void Start()
     {
         txt_stage.text = SceneManager.GetActiveScene().name;
-        
-        if (GameManager.Instance == null || WaveManager.Instance == null || CurrencyManager.Instance == null)
+
+        if (GameManager.Instance == null || WaveManager.Instance == null || CurrencyManager.Instance == null || TileManager.Instance == null)
         {
             Debug.LogError("GaInfoPanel : GameManager/WaveManager/CurrencyManager가 없습니다.");
-            return;   
+            return;
         }
-        
-        UpdateLifeImage(GameManager.Instance.CurrentLife);
-        UpdateShieldImage(GameManager.Instance.CurrentShield);
+
+        UpdateLimitText();
         UpdateWaveText(WaveManager.Instance.CurrentWave);
         UpdateGoldText(CurrencyManager.Instance.CurrentGold);
         UpdateGemText(CurrencyManager.Instance.CurrentGem);
         UpdateGameSpeedText(GameManager.Instance.CurrentGameSpeed);
-        
-        GameManager.Instance.CurrentLifeChanged += UpdateLifeImage;
-        GameManager.Instance.CurrentShieldChanged += UpdateShieldImage;
+
+        GameManager.Instance.EnemyLimitChanged += HandleLimitChanged;
+        TileManager.Instance.EnemyCountChanged += UpdateLimitText;
         WaveManager.Instance.CurrentWaveChanged += UpdateWaveText;
         CurrencyManager.Instance.CurrentGoldChanged += UpdateGoldText;
         CurrencyManager.Instance.CurrentGemChanged += UpdateGemText;
@@ -56,8 +56,7 @@ public class GameInfoPanel : MonoBehaviour
 
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.CurrentLifeChanged -= UpdateLifeImage;
-            GameManager.Instance.CurrentShieldChanged -= UpdateShieldImage;
+            GameManager.Instance.EnemyLimitChanged -= HandleLimitChanged;
             GameManager.Instance.CurrentGameSpeedChanged -= UpdateGameSpeedText;
         }
 
@@ -65,6 +64,11 @@ public class GameInfoPanel : MonoBehaviour
         {
             CurrencyManager.Instance.CurrentGoldChanged -= UpdateGoldText;
             CurrencyManager.Instance.CurrentGemChanged -= UpdateGemText;
+        }
+
+        if (TileManager.Instance != null)
+        {
+            TileManager.Instance.EnemyCountChanged -= UpdateLimitText;
         }
 
         if (btn_option != null)
@@ -83,26 +87,12 @@ public class GameInfoPanel : MonoBehaviour
         txt_currentWave.text = $"Wave {wave}";
     }
 
-    private void UpdateLifeImage(int life)
+    private void UpdateLimitText()
     {
-        for (int i = 0; i < m_currentLifes.Length; i++)
-        {
-            if (m_currentLifes[i] != null)
-            {
-                m_currentLifes[i].gameObject.SetActive(i < life);
-            }
-        }
-    }
+        int count = TileManager.Instance.GetAllEnemiesOnPath().Count;
+        int limit = GameManager.Instance.EnemyLimit;
 
-    private void UpdateShieldImage(int shield)
-    {
-        for (int i = 0; i < m_currentShields.Length; i++)
-        {
-            if (m_currentShields[i] != null)
-            {
-                m_currentShields[i].gameObject.SetActive(i < shield);
-            }
-        }
+        txt_currentLimit.text = $"{count}/{limit}";
     }
 
     private void UpdateGoldText(int amount)
@@ -112,12 +102,17 @@ public class GameInfoPanel : MonoBehaviour
 
     private void UpdateGemText(int amount)
     {
-        txt_currentGem.text = $"{amount}"; 
+        txt_currentGem.text = $"{amount}";
     }
 
     private void UpdateGameSpeedText(float amount)
     {
         txt_currentGameSpeed.text = $"{amount}";
+    }
+
+    private void HandleLimitChanged(int limit)
+    {
+        UpdateLimitText();
     }
 
     private void HandleOptionClick()

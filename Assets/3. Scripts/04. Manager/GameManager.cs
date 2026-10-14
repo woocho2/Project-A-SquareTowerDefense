@@ -15,67 +15,48 @@ public enum TurnState
 }
 
 /// <summary>
-/// 플레이어 턴과 10회의 적 턴을 순환시키고 게임 속도, 라이프, 보호막과 종료 상태를 관리합니다.
+/// 플레이어 턴과 10회의 적 턴을 순환시키고 게임 속도, 적 수 한도와 종료 상태를 관리합니다.
 /// 웨이브 구성과 적 능력치 계산은 WaveManager에 위임합니다.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
-    #region Singleton and Configuration
-
     public static GameManager Instance { get; private set; }
 
     private const int TurnsPerWave = 10;
     private const int EnemySpawnTurns = 5;
     private const int FinalWave = 40;
 
-    [Header("게임 배속 및 라이프 설정")]
+    [Header("게임 배속 및 적 수 한도 설정")]
     private float m_currentgameSpeed = 1.0f;
-    public  float CurrentGameSpeed => m_currentgameSpeed;
-    private int m_currentLife;
-    public int CurrentLife => m_currentLife;
-    public int MaxLife
+    public float CurrentGameSpeed => m_currentgameSpeed;
+    public event Action<int> EnemyLimitChanged;
+    private int m_lastEnemyLimit;
+    public int EnemyLimit
     {
         get
         {
-            int cycle = WaveManager.Instance != null? WaveManager.Instance.CurrentCycle : 1;
-            int lifePerCycle = GameModeSession.SelectedDifficulty == GameDifficulty.Hard ? 15 : 20;
+            int cycle = WaveManager.Instance != null ? WaveManager.Instance.CurrentCycle : 1;
+            int limitPerCycle = GameModeSession.SelectedDifficulty == GameDifficulty.Hard ? 15 : 20;
 
-            return cycle * lifePerCycle;
+            return cycle * limitPerCycle;
         }
     }
-    public int maxShield = 5;
-    private int m_currentShield;
-    public int CurrentShield => m_currentShield;
 
 
     [Header("에너미 턴 연출 속도")]
     [SerializeField, Min(0f)] private float m_towerAttackResolutionDelay = 0.2f;
     [SerializeField, Min(0.1f)] private float m_projectileWaitTimeout = 10f;
 
-    #endregion
-
-    #region Public State and Events
-
     public TurnState CurrentState { get; private set; } = TurnState.None;
     public bool CanPerformPlayerAction => m_currentTurnState != null && m_currentTurnState.CanPerformPlayerAction;
 
-    public event Action<int> CurrentLifeChanged;
-    public event Action<int> CurrentShieldChanged;
     public event Action<float> CurrentGameSpeedChanged;
 
-
-    #endregion
-
-    #region Runtime State
 
     private IGameTurnState m_currentTurnState;
 
     private Coroutine turnRoutine;
     private bool isPlayerTurnEnd = false;
-
-    #endregion
-
-    #region Unity Lifecycle
 
     private void Awake()
     {
@@ -87,20 +68,28 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
 
-        m_currentLife = GameModeSession.SelectedDifficulty == GameDifficulty.Hard ? 2 : 5;
-
         DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
-        OnStartGame();
+        if (WaveManager.Instance != null)
+        {
+            WaveManager.Instance.CurrentWaveChanged += HandleWaveChanged;
+        }
 
+        RefreshEnemyLimit();
+
+        OnStartGame();
     }
 
-    #endregion
-
-    #region Main Turn Loop
+    private void OnDestroy()
+    {
+        if (WaveManager.Instance != null)
+        {
+            WaveManager.Instance.CurrentWaveChanged -= HandleWaveChanged;
+        }
+    }
 
     public void OnStartGame()
     {
@@ -171,9 +160,6 @@ public class GameManager : MonoBehaviour
         }
         return false;
     }
-    #endregion
-
-    #region Player Turn
 
     private IEnumerator PlayerTurnRoutine()
     {
@@ -197,10 +183,6 @@ public class GameManager : MonoBehaviour
             isPlayerTurnEnd = true;
         }
     }
-
-    #endregion
-
-    #region Enemy Turn
 
     private IEnumerator EnemyTurnRoutine(bool shouldSpawn)
     {
@@ -299,10 +281,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    #endregion
-
-    #region Game Speed and Pause
-
     public void OnClickGameSpeed()
     {
         float nextSpeed = m_currentgameSpeed switch
@@ -339,10 +317,6 @@ public class GameManager : MonoBehaviour
         return m_currentgameSpeed;
     }
 
-    #endregion
-
-    #region Life and Shield
-
     public bool CheckEnemyLimit()
     {
         if (TileManager.Instance == null)
@@ -352,7 +326,7 @@ public class GameManager : MonoBehaviour
 
         int currentEnemyCount = TileManager.Instance.GetAllEnemiesOnPath().Count;
 
-        if (currentEnemyCount >= MaxLife)
+        if (currentEnemyCount >= EnemyLimit)
         {
             OnGameOver();
             return true;
@@ -363,45 +337,24 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void DecreaseLife(int amount)
+    public void RefreshEnemyLimit()
     {
-        if (amount <= 0 || m_currentLife <= 0 ||
-            CurrentState == TurnState.GameOver || CurrentState == TurnState.GameClear) return;
+        int limit = EnemyLimit;
 
-        if (m_currentShield > 0)
+        if (m_lastEnemyLimit == limit)
         {
-            int remainingDamage = Mathf.Max(0, amount - m_currentShield);
-            m_currentShield = Mathf.Max(0, m_currentShield - amount);
-
-            CurrentShieldChanged?.Invoke(m_currentShield);
-
-            amount = remainingDamage;
-
-            if (amount <= 0)
-            {
-                return;
-            }
+            return;
         }
 
-        m_currentLife = Mathf.Max(0, m_currentLife - amount);
+        m_lastEnemyLimit = limit;
 
-        CurrentLifeChanged?.Invoke(m_currentLife);
-
-        if (m_currentLife == 0)
-        {
-            OnGameOver();
-        }
+        EnemyLimitChanged?.Invoke(m_lastEnemyLimit);
     }
 
-    public void AddShield(int shield)
+    private void HandleWaveChanged(int wave)
     {
-        m_currentShield = Mathf.Min(m_currentShield + shield, maxShield);
-        CurrentShieldChanged?.Invoke(m_currentShield);
+        RefreshEnemyLimit();
     }
-
-    #endregion
-
-    #region Game End and State Transition
 
     public void OnGameOver()
     {
@@ -450,6 +403,4 @@ public class GameManager : MonoBehaviour
         m_currentTurnState.Enter(this);
         GameStateVersion.MarkChanged();
     }
-
-    #endregion
 }

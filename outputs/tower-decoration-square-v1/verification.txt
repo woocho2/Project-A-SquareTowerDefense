@@ -1,0 +1,15 @@
+10 tower-spawn FRAME decorations corrected; all other atlas sprite cells unchanged.
+Canvas=256x256; drawn bounds=(7,7,242,242); center=(128,128); outer radius=28px.
+Asgard: before={X=6,Y=5,Width=244,Height=242}; after=(7,7,242,242); other 720896 pixels unchanged.
+Alfheim: before={X=6,Y=5,Width=244,Height=242}; after=(7,7,242,242); other 720896 pixels unchanged.
+Vanaheim: before={X=6,Y=5,Width=244,Height=242}; after=(7,7,242,242); other 720896 pixels unchanged.
+Midgard: before={X=6,Y=5,Width=244,Height=242}; after=(7,7,242,242); other 720896 pixels unchanged.
+Jotunheim: before={X=6,Y=5,Width=244,Height=242}; after=(7,7,242,242); other 720896 pixels unchanged.
+Nidavellir: before={X=6,Y=5,Width=244,Height=242}; after=(7,7,242,242); other 720896 pixels unchanged.
+Niflheim: before={X=6,Y=5,Width=244,Height=242}; after=(7,7,242,242); other 720896 pixels unchanged.
+Muspelheim: before={X=6,Y=5,Width=244,Height=242}; after=(7,7,242,242); other 720896 pixels unchanged.
+Hel: before={X=6,Y=5,Width=244,Height=242}; after=(7,7,242,242); other 720896 pixels unchanged.
+Ragnarok: before={X=6,Y=5,Width=244,Height=242}; after=(7,7,242,242); other 720896 pixels unchanged.
+All 10 FRAME alpha masks identical and symmetric horizontally, vertically, and through 90-degree rotations.
+Existing overlay PPU=256 with tile transform 1.3333334 gives same world canvas as floor PPU=192. Metadata and tile transforms unchanged.
+Regular portrait canvas remains at user's previous 95% display setting; no runtime code changes. No Unity launch.

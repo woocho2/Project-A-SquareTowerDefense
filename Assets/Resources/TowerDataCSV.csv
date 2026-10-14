@@ -16,7 +16,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 1201,검객,3.8,1,3,1,0,1,0.15,0.15,8,1.5,Target,None,None,10,201,Closest
 1202,버서커,5.7,1,5,1,0,1,0.09,0.225,8,1.5,Target,None,None,10,202,Closest
 1203,헌터,2.66,4,3,1,0,1,0.165,0.105,8,1.5,Target,None,None,10,203,Closest
-1204,창지기,3.04,3,3,1,0,1,0.225,0.09,8,1.5,Target,None,None,10,204,Closest
+1204,창술사,3.04,3,3,1,0,1,0.225,0.09,8,1.5,Target,None,None,10,204,Closest
 1205,실드메이든,3.42,1,5,1,0,1,0.15,0.195,8,1.5,Target,None,None,10,205,Closest
 1206,메이슨,4.94,1,5,1,0,1,0.12,0.195,8,1.5,Target,None,None,10,206,Closest
 1207,샐러맨더,4.56,3,1,1,0,1,0.165,0.105,8,1.5,Target,None,None,10,207,Closest
@@ -72,7 +72,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 2201,검객,3.8,1,2,1,0,1,0.15,0.15,8,1.5,Target,None,None,10,201,Closest
 2202,버서커,5.7,1,4,1,0,1,0.09,0.225,8,1.5,Target,None,None,10,202,Closest
 2203,헌터,2.66,4,2,1,0,1,0.165,0.105,8,1.5,Target,None,None,10,203,Closest
-2204,창지기,3.04,3,2,1,0,1,0.225,0.09,8,1.5,Target,None,None,10,204,Closest
+2204,창술사,3.04,3,2,1,0,1,0.225,0.09,8,1.5,Target,None,None,10,204,Closest
 2205,실드메이든,3.42,1,4,1,0,1,0.15,0.195,8,1.5,Target,None,None,10,205,Closest
 2206,메이슨,4.94,1,4,1,0,1,0.12,0.195,8,1.5,Target,None,None,10,206,Closest
 2207,샐러맨더,4.56,3,1,1,0,1,0.165,0.105,8,1.5,Target,None,None,10,207,Closest
@@ -128,7 +128,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 3201,검객,7.6,2,2,1,0,1,0.15,0.15,8,1.5,Target,None,None,10,201,Closest
 3202,버서커,11.4,2,4,1,0,1,0.09,0.225,8,1.5,Target,None,None,10,202,Closest
 3203,헌터,5.32,5,2,1,0,1,0.165,0.105,8,1.5,Target,None,None,10,203,Closest
-3204,창지기,6.08,4,2,1,0,1,0.225,0.09,8,1.5,Target,None,None,10,204,Closest
+3204,창술사,6.08,4,2,1,0,1,0.225,0.09,8,1.5,Target,None,None,10,204,Closest
 3205,실드메이든,6.84,2,4,1,0,1,0.15,0.195,8,1.5,Target,None,None,10,205,Closest
 3206,메이슨,9.88,2,4,1,0,1,0.12,0.195,8,1.5,Target,None,None,10,206,Closest
 3207,샐러맨더,9.12,4,1,1,0,1,0.165,0.105,8,1.5,Target,None,None,10,207,Closest
@@ -184,7 +184,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 4201,검객,7.6,2,2,1,0,1,0.3,0.3,8,1.5,Target,None,None,10,201,Closest
 4202,버서커,11.4,2,4,1,0,1,0.18,0.45,8,1.5,Target,None,None,10,202,Closest
 4203,헌터,5.32,5,2,1,0,1,0.33,0.21,8,1.5,Target,None,None,10,203,Closest
-4204,창지기,6.08,4,2,1,0,1,0.45,0.18,8,1.5,Target,None,None,10,204,Closest
+4204,창술사,6.08,4,2,1,0,1,0.45,0.18,8,1.5,Target,None,None,10,204,Closest
 4205,실드메이든,6.84,2,4,1,0,1,0.3,0.39,8,1.5,Target,None,None,10,205,Closest
 4206,메이슨,9.88,2,4,1,0,1,0.24,0.39,8,1.5,Target,None,None,10,206,Closest
 4207,샐러맨더,9.12,4,1,1,0,1,0.33,0.21,8,1.5,Target,None,None,10,207,Closest
@@ -240,7 +240,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 5201,검객,7.6,2,1,3,0,1,0.3,0.3,8,1.5,Target,None,None,10,201,Closest
 5202,버서커,11.4,2,3,2,0,1,0.18,0.45,8,1.5,Target,None,None,10,202,Closest
 5203,헌터,5.32,5,1,4,0,1,0.33,0.21,8,1.5,Target,None,None,10,203,Closest
-5204,창지기,6.08,4,1,4,0,1,0.45,0.18,8,1.5,Target,None,None,10,204,Closest
+5204,창술사,6.08,4,1,4,0,1,0.45,0.18,8,1.5,Target,None,None,10,204,Closest
 5205,실드메이든,6.84,2,3,2,0,1,0.3,0.39,8,1.5,Target,None,None,10,205,Closest
 5206,메이슨,9.88,2,3,2,0,1,0.24,0.39,8,1.5,Target,None,None,10,206,Closest
 5207,샐러맨더,9.12,4,1,2,0,1,0.33,0.21,8,1.5,Target,None,None,10,207,Closest

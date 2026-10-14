@@ -1,0 +1,879 @@
+21. 구현 계획서 — 지금 코드, 할 일(순서대로), 구조 메모
+작성일: 2026-10-02 · 다시 씀: 2026-10-14
+바탕: 20. 통합 기획서(2026-10-14 최종 확정)와 그날의 코드 (스크립트 81개와 에디터 8개를 함수 본문까지 읽고, "어디" 칸의 이름을 코드와 맞춰 봄).
+이전 판의 작업 목록·결정 목록·충돌 기록은 지움 (이력은 git).
+
+======================================================================
+0. 읽는 순서
+======================================================================
+
+문서 셋의 흐름 (2026-10-14 확정): 기획(20번) → 구현 계획서(이 문서) → 구현 내역서(22번)
+- 20번 기획: 게임의 컨셉과 구조를 미리 정의한 것.
+- 21번 구현 계획서: 기획에 맞춰 코드를 어떤 구조로, 무엇을 고치고, 어떻게 리팩토링할지 정의한 문서.
+- 22번 구현 내역서: 이 문서의 항목 중 코드로 구현한 것을 날짜와 함께 "~를 ~로 바꿨다 / ~방식으로 구현했다"로 적는 문서.
+- 구현한 항목은 Unity 검증을 마치지 않았어도 22번에 적고 "유니티 검증 필요"로 표시함.
+- 끝난 것은 이 문서에서 바로 지움 (완료 표시를 남기지 않음). 항목 전체든 항목 안의 한 줄이든 같음. 확인만 하고 끝난 것도 지움.
+- 테스트에서 버그나 오류가 나오면 그 내용을 이 문서에 다시 적음 (5장의 해당 단계나 맨 앞 "버그" 항목).
+
+1) 규칙은 「20. 통합 기획서.txt」. 이 문서에는 규칙을 다시 적지 않고 "20번 ○장"으로 가리킴.
+2) 무엇을 어떤 순서로 할지는 5장. 위에서부터 차례로 하면 됨.
+3) 파일을 고치기 직전에는 2장(실행 흐름), 3장(소유권 표), 부록 A(스크립트별 메모)에서 그 파일을 찾아볼 것.
+
+이 문서를 쓰는 법
+- 커밋은 퇴근할 때 하루치를 한 번에 함. 항목은 하루 안에 끝낼 수 있는 크기로 잡음. 항목마다 "어디"(파일·함수), "할 일", "확인"(끝났는지 보는 법)을 적었음.
+- 표시:  [ ] 아직 / [부분] 일부 되어 있음 (무엇이 되어 있는지 적음).
+- 옛 작업 번호(A-1, E-1, F-2, G-22 등)는 20번과 22번이 가리키므로 해당 항목 끝에 (옛 G-22)처럼 적어 둠.
+- 규칙을 바꾸는 항목은 Assets/Editor/Tests/GameRuleTests.cs의 기대값도 함께 고칠 것.
+- 순서를 이렇게 잡은 까닭: 판의 규칙(순환·한도) → 적 → 타워의 공통 틀 → 문양 → 모드·경제 → 구조 정리.
+  문양 14종은 공통 틀 위에 올라가므로 틀이 먼저이고, 구조 정리를 뒤에 둔 것은 규칙이 고정돼야 무엇을 어디로 나눌지가 정해지기 때문.
+  다만 문양을 옮기면서 그 문양의 옛 코드는 그때그때 지움 (5장 4단계의 "지울 것").
+
+======================================================================
+1. 규칙이 있는 곳
+======================================================================
+
+규칙과 기획은 전부 20번에만 있음.
+- 한 판의 구조·패배 조건 1장 / 맵과 타일 2장 / 적 3장 / 타워 공통 4장 / 공통 틀 4-1장 / 문양 4-2 ~ 4-16장
+- 공격 타워 5장 / 성장과 경제 8장 / 스테이지·모드·시너지 9장 / 밸런스 기준 10장 / 열어 둔 것 12장
+둘이 다르면 20번이 우선. 이 문서나 코드를 20번에 맞춰 고침.
+
+======================================================================
+2. 실제 실행 흐름 (지금 코드)
+======================================================================
+
+[2-1] 게임 시작과 한 웨이브
+
+GameManager.OnStartGame()
+  → Idle 상태, 기존 turnRoutine 중지
+  → TurnLoopRoutine()
+      → PlayerTurnRoutine(): Player 상태, 턴 종료 버튼 대기
+      → EnemyWaveRoutine(): EnemyTurnRoutine 10번, 처음 5번만 shouldSpawn=true
+          → 40웨이브면 최종 보스가 살아 있는 동안 EnemyTurnRoutine(false)를 계속 반복   ← 5장 1-3에서 "적 턴 40번"으로 바뀜
+          → 종료 상태가 아니면 WaveManager.NextWave()
+          → TowerManager.ProcessEarthTowerWave(완료 웨이브)                              ← 5장 1-9에서 삭제
+      → 다시 플레이어 턴
+
+- turnRoutine은 '누구 턴인가'가 아니라 실행 중인 코루틴 핸들.
+- EnemyTurnRoutine 끝에 WaitForSeconds(0.3f)가 있음.
+- NextWave()는 완료한 웨이브가 40 미만일 때만 호출됨. 웨이브 번호는 40에서 멈춤.
+
+[2-2] 적 1턴 — GameManager.EnemyTurnRoutine()
+
+  ① ProcessEnemyMovement()
+      → EnemyManager.ProcessEnemyTurnRoutine()
+          → 소환 턴이면 WaveManager.SpawnWaveEnemiesForTurn() → GameManager.CheckEnemyLimit() (한도 이상이면 게임 오버)
+          → 적마다 EnemyMoveController.ProcessTurnMoveRoutine(), 모든 이동 완료 대기
+  ② ProcessTowerSupport()
+      → TowerManager.BeginEnemyTurnForTowers(): 이전 타일 버프 기록, 타워 상태 시간 감소
+      → ExecuteSupportTowerActionTurnRoutine(): 버프/디버프 타워 실행, 그 뒤 타워가 자기 타일의 스택형 버프 기록을 읽음
+  ③ ProcessTileBuffs()
+      → EnemyManager.ApplyAllTileBuffs() → 적마다 EnemyMoveController.CheckAndApplyTileBuff()
+          → 타일 스탯 초기화 → 멈춘 타일의 속도/방어/회복 적용 → EnemyDebuffController.RefreshTileDebuffs()
+  ④ ProcessTowerAttacks()
+      → TowerManager.ExecuteAttackTowerActionTurnRoutine()
+          → 타워별 스킬 확인(TryUseSkill) → 타워 기본 행동 → 활성 투사체가 없어질 때까지 대기
+  ⑤ ProcessDamageDebuffs()
+      → EnemyManager.AdvanceAllDebuffTurns() → 적마다 EnemyDebuffController.AdvanceDebuffTurn(): 상태 시간, 도트 피해, 조건부 즉사
+
+이 순서는 게임 규칙 (20번 1장 [적 1턴의 순서]). 메서드 위치만 옮겨도 같은 턴에 적용되는지가 달라짐.
+
+[2-3] 적 한 마리 생성
+
+EnemyManager → WaveManager.SpawnWaveEnemiesForTurn(이번 턴에 무엇을 몇 마리) → EnemyObjectPool2D.Spawn()
+  → 풀에서 꺼내 활성화 → 이전 디버프 정리 → 이동 초기화 (이 안에서 TileManager의 0번 칸에 점유 등록) → 체력 초기화
+- 살아 있는 적의 목록은 따로 없음. 원본은 TileManager의 칸별 점유이고, GetAllEnemiesOnPath가 부를 때마다 새 List로 모아 줌.
+  EnemyManager는 상태가 없음. 그래서 점유에 등록된 것은 전부 "적"으로 셈: 한도 판정(CheckEnemyLimit), 이동·타일·디버프 순회,
+  타워의 타겟 탐색(TowerAttackAction이 GetEnemyOccupantsAtPathIndex), 적 정보 패널의 칸별 목록(GetLivingEnemiesAtPathCell).
+- 풀 클래스가 이동·체력·상태 초기화의 순서까지 알고 있음.
+- 활성화가 초기화보다 먼저라, OnEnable에서 완성된 데이터를 가정하면 위험.
+  권장 순서: 비활성 상태에서 디버프·체력·이동 초기화 → 위치 설정 → 활성화 → 점유 등록. (5장 6-5)
+
+[2-4] 타워 한 발의 공격과 사망
+
+TowerManager → TowerController.ExecuteTurnAction()
+  → TargetAttackAction / SplashAttackAction → TowerAttackAction의 투사체 준비·발사
+  → GlobalProjectileManager / ProjectileObjectPool2D → ProjectileHit2D가 이동하여 명중 판정
+  → EnemyHealthController.ApplyDamage()
+      → 치명타 관련 디버프 반응 → 방어력 등을 반영한 피해 → HP 표시, 대미지 텍스트
+      → 사망 시 Die() (m_hasDied로 한 번만 실행)
+          → 공격 타워의 처치 반응 (NotifyEnemyKilled)
+          → WaveManager.GetKillReward로 보상 계산 → CurrencyManager에 지급
+          → WaveManager.OnEnemyDied(적 종류, 소환 웨이브) → 40웨이브에 소환된 Boss면 GameManager.OnGameClear()
+          → ReturnToPool(): 디버프·이동·점유 정리, 풀 반환
+단일 공격은 ProjectileHit2D에서 TowerController.NotifyPrimaryTargetHit()로도 돌아옴 (스킬의 적중 집계).
+스킬이 쏜 투사체(ProjectileStats.skill)는 명중할 때 TowerSkill.OnSkillProjectileImpact만 호출함.
+
+[2-5] 타일 효과의 전달
+
+BuffAction / DebuffAction
+  → TileManager: SourceID, 적용 버전, 좌표, 수치 등의 효과 기록 (TowerTileBuffEffect, PathTileDebuffEffect)
+      → TowerController: 타워가 받는 버프/스택 적용 (새 틀의 문양은 TowerBuffStatus가 상태를 가짐. 지금은 불만)
+      → EnemyDebuffController: 적이 받는 디버프/스택 적용 (새 틀의 문양은 EnemyDebuffRule이 규칙을 가짐. 지금은 불만)
+'타일에 기록하고 대상이 읽는 구조'는 원한 방향이고, 존(20번 4-1장)도 이 구조 위에 올림 (5장 3-7 ~ 3-9).
+
+======================================================================
+3. 소유권 표 (수정 전에 옆에 놓고 볼 것)
+======================================================================
+
+값/규칙                        지금의 주인                  주의점
+----------------------------------------------------------------------
+현재 턴/웨이브 내 진행 순서     GameManager                 다른 곳에도 대기 존재
+현재 웨이브/사이클/소환 구성    WaveManager                 5턴 상수가 GameManager와 중복
+처치 보상 계산                 WaveManager.GetKillReward   지급 호출은 EnemyHealthController
+타워 배치/강화/합성/소환비      TowerManager                너무 많은 책임
+타워 1개 스탯                  TowerController             공유 강화도 조회
+타워 스킬 상태(턴·적중 카운터)  TowerSkill 파생 클래스       지금은 불만 (FireSplash/FireTarget)
+타워가 받은 스택형 버프 상태    TowerBuffStatus 파생 클래스  지금은 불만. 나머지는 TowerController의 switch
+적 체력/사망                   EnemyHealthController       재화 지급·웨이브 통보까지 호출
+적 행동력/이동 인덱스/진형 보간 EnemyMoveController         타일 스탯도 변경
+적 디버프 상태                 EnemyDebuffController       구형 API와 공존, UI 문구도 생성 (불의 규칙과 문구는 FireDebuffRule)
+길 순서/점유/도착 예약/타일 효과 TileManager                 시각화도 함께 관리
+살아 있는 적의 목록            TileManager의 점유           따로 든 목록 없음. GetAllEnemiesOnPath가 매번 새 List
+재화 원본                     CurrencyManager             획득 정책은 외부
+적 수 한도/게임오버 판정        GameManager (EnemyLimit, CheckEnemyLimit, RefreshEnemyLimit)   한도는 물어볼 때마다 계산
+타워 원본 데이터               Resources/TowerDataCSV.csv  CSV가 유일한 원본. 로더는 TowerManager
+투사체 진행 여부               GlobalProjectileManager     투사체가 스스로 등록하는 목록의 수로 판정 (목록은 ProjectileHit2D의 static)
+입력(클릭/드래그)              BoardInputController
+
+'지금의 주인'은 좋은 구조라는 뜻이 아니라 지금 확인한 소유 위치.
+
+======================================================================
+4. 지금 코드와 기획의 차이 (2026-10-14에 코드를 읽어 확인한 것)
+======================================================================
+
+이미 되어 있는 것
+- 길의 순환: TileManager.WrapPathIndex, EnemyMoveController의 전진·후진이 감아서 돎 (뒤로 가는 하한 없음). 첫 이동은 m_hasMadeFirstMove로 판정.
+- 적 수 한도: GameManager.EnemyLimit = 사이클 × 20 (하드 15), CheckEnemyLimit을 EnemyManager가 소환 직후에 부름.
+  라이프·방어막·도착 처리는 지웠고 상단에 "적 수/한도"를 보여 줌 (22번 2026-10-14).
+- 문양 번호: TowerEmblem 상수와 BuffTarget·DebuffTarget enum에 물이 들어가 있고 원소 순서도 새 번호 (07 불 ~ 14 어둠).
+  TowerDataCSV.csv는 280줄 (물 20줄 포함).
+  에셋의 칸도 14종이 다 있음: Resources/Projectiles의 101 ~ 114·201 ~ 214, TowerBase.prefab의 문양 스프라이트 14칸,
+  DebuffZone.prefab의 심볼 대응표 1 ~ 14 (두 표가 문양마다 같은 그림을 가리킴), TowerCharacterCatalog 3 ~ 14 (검·도끼는 TowerVisual의 레이어 배열).
+  그림이 이름과 맞는지와 EffectLibrary의 끊어진 칸 셋은 5장 0-2.
+- 불 문양만 새 틀의 초안이 있음 (TowerSkill·TowerBuffStatus·EnemyDebuffRule). 단, 스택을 받는 타워와 적이 가지는 옛 방식.
+- 시너지 타워 조합표: TowerManager.s_synergyDefinitions가 이미 20번 9장 [조합표] 14종과 같음 (뇨르드 6014, 스카디·발드르의 새 재료).
+  SynergyCharacterCatalog도 6001 ~ 6014가 다 있음. 효과는 없고 생성과 표시만 (5장 5-3).
+- 타워 정보 카드의 상당 부분: TowerInfoPanel이 위력·사거리·행동력·공격 횟수(지원은 스택)·치명타·계수·Duration·Mastery를 이미 보여 줌 (5장 3-13).
+
+아직 옛 코드인 것 (큰 것만. 자세한 것은 5장의 각 항목)
+- 판: 40웨이브는 보스가 죽을 때까지 무한 턴.
+      보스 제한 턴 없음. 중간 보스는 버튼 소환 (TrySpawnMiddleBoss, 소환 구간 5 ~ 7웨이브 등).
+- 타일: 길 위 특수 타일이 방어·속도·회복 셋 (5 / 5 / 2개). 타워 쪽은 공격력 ×1.5·행동력 -1·공격 횟수 셋.
+- 적: 종류 다섯(Normal, Speed, Depend, MiddleBoss, Boss). 이동력은 최댓값 하나(1 ~ Speed). 특성 주사위 없음. 저항력 값은 있으나 쓰지 않음.
+      웨이브 구성과 마리 수(사이클 × 2), 방어 배율(1 / 2), 사이클 체력 배율(1 / 2 / 4 / 8)이 옛 값. 일반 적 골드 10 × 웨이브.
+      방어력을 0.1 ~ 500으로, 한 번의 피해를 50000으로 자름. 방어력은 음수가 될 수 없음.
+- 타워: CSV 열이 SplashRadius·AdditionalHitCount (Mastery·Stack 없음). 문턱은 60 ÷ 레벨. 컬러 강화는 옛 표.
+        버프는 사거리 안의 모든 타일에 기록, 디버프 장판은 자유롭게 옮김, 스택은 받는 쪽이 가짐. 타겟 우선순위는 옛 목록(선두·후미).
+        생성 비용 +2, 최대 300. 대지의 웨이브 무료 강화(ProcessEarthTowerWave)와 어둠의 공유 값이 남아 있음.
+- 문양: 불을 뺀 13종의 버프·디버프는 TowerController와 EnemyDebuffController의 switch(옛 효과). 공격 스킬은 불만 있음. 물은 효과가 없음.
+- 모드: GameDifficulty가 노말·하드 둘뿐이고, 난이도와 문양을 고르는 함수(SelectDifficulty·TrySelectEmblem)를 부르는 곳이 없어 늘 노말.
+- 씬: 재시작·재시도·메뉴 버튼이 동작하지 않음 (5장 6-17. 씬 설정은 게임을 다 만든 뒤).
+- 그 밖: Debuff/ 폴더의 구형 클래스 13개(효과 없음).
+
+======================================================================
+5. 작업 목록 (추천 순서)
+======================================================================
+
+>>> 이어서 할 곳: 1-2 (GameManager.RefreshEnemyLimit에 "한도가 줄면 CheckEnemyLimit" 넣기). 그다음 1-3.
+
+----------------------------------------------------------------------
+버그 (단계와 상관없이 먼저 고칠 것. 테스트에서 나온 버그를 여기에 적음)
+----------------------------------------------------------------------
+
+(지금 없음. 재시작·메뉴 버튼이 동작하지 않는 것은 씬 설정을 게임을 다 만든 뒤에 하기로 해서 6-17로 옮김)
+
+----------------------------------------------------------------------
+0단계. 시작하기 전에
+----------------------------------------------------------------------
+
+0-1. [ ] 지금 상태를 커밋 (오늘 퇴근할 때 다른 작업과 함께). 커밋되지 않은 것: 26·27·28번 삭제와 20·21·22번 추가, TowerManager.cs·GameRuleTests.cs(주석의 문서 번호),
+       TowerDataCSV.csv(창술사), .vscode/settings.json(솔루션 이름 한 줄). Codex의 에셋 변경(타일 아틀라스, Tower_Frame 아틀라스,
+       CubeConcepts/Pixel64_Concepts, Projectiles의 109·114·214 .meta)과 outputs/가 섞여 있으니 나눠서 커밋.
+       git은 PowerShell의 PATH에 없음. GitHub Desktop에 들어 있는 git을 쓰거나 GitHub Desktop으로.
+0-2. [ ] Unity에서 확인 (코드는 고쳤고 실행해 보지 않은 것).
+       - 치트(T + 4자리 ID)로 물(1108·1208·1308·1408)과 번호가 바뀐 원소(대지 09, 얼음 11, 전기 12, 빛 13, 어둠 14)를 소환:
+         문양 그림, 투사체, 명중 이펙트, 디버프 장판의 심볼이 이름과 맞는지. 없는 에셋이 있으면 목록으로 적어 둘 것 (옛 G-23).
+         확인할 곳: Resources/Projectiles, 2. Prefab/4. Effect, EffectLibrary.asset, DebuffZone.prefab의 문양 → 심볼 대응표,
+                    TowerBase.prefab의 문양 스프라이트 배열, TowerInfoPanel.GetEmblemName, ProjectileHit2D의 HitEffectID 분기.
+         (칸은 14종이 다 있음. 4장 참고. 여기서 볼 것은 그림이 맞는지)
+       - EffectLibrary.asset의 102·302(도끼 광역·버프)와 203(활 단일)은 프로젝트 어디에도 없는 프리팹을 가리킴 (끊어진 guid).
+         그 타워가 맞힐 때 이펙트 대신 "프리팹을 찾을 수 없습니다" 경고만 나옴. 프리팹을 다시 연결할 것.
+       - 시너지 타워의 외형: 조합표는 코드에 이미 20번 9장과 같게 들어 있음. 6001 ~ 6014의 그림이 이름과 맞는지만 봄.
+
+----------------------------------------------------------------------
+1단계. 판의 규칙 — 순환 구조 마무리                         규칙: 20번 1장, 2장
+----------------------------------------------------------------------
+
+1-2. [ ] 한도 판정에서 세는 것 정리.
+       어디: GameManager.CheckEnemyLimit·RefreshEnemyLimit, TileManager.GetAllEnemiesOnPath.
+       할 일: 한도가 줄어드는 순간에도 판정하도록,
+             RefreshEnemyLimit이 한도가 줄었을 때 CheckEnemyLimit을 부르게 함 (한도를 바꾸는 쪽은 RefreshEnemyLimit만 부르면 되게).
+             나중에 빛의 더미는 세지 않음 (4-13).
+             힌트: 새 한도와 지난 한도(m_lastEnemyLimit)를 비교해 줄었으면 CheckEnemyLimit(). 비교는 m_lastEnemyLimit = limit 줄보다 앞에서.
+       확인: 지금은 한도가 줄어드는 경우가 없어 코드만 확인. 플레이 확인은 4-5(도끼)·4-6(방패)에서.
+1-3. [ ] 보스의 제한 턴 40.
+       어디: GameManager.EnemyWaveRoutine(40웨이브의 while 루프, IsFinalBossAlive), EnemyHealthController 또는 새 작은 컴포넌트.
+       할 일: 보스·중간 보스가 "남은 제한 턴"을 가지고 적 턴이 끝날 때마다 1씩 줄임.
+             최종 보스가 0이 되면 게임 오버, 중간 보스는 보상 없이 사라짐 (게임 오버 아님).
+             40웨이브는 while 루프 대신 적 턴 40번을 이어서 돌림. 그 동안 플레이어 턴 없음. 앞 5턴만 소환.
+             10·20·30웨이브의 보스는 판에 남은 채로 다음 웨이브가 진행됨 (제한 턴은 따로 흐름).
+       확인: 10웨이브 보스를 일부러 안 잡으면 13웨이브가 끝나는 턴에 게임 오버 (소환된 웨이브부터 셈. 20번 3장의 중간 보스 예와 같은 셈).
+             중간 보스는 8웨이브가 끝날 때 사라짐.
+             남은 턴이 보스의 머리 위나 정보 패널에 보임.
+1-4. [ ] 중간 보스 자동 소환.
+       어디: WaveManager(TrySpawnMiddleBoss, IsMiddleBossSummonWindow, CanSummonMiddleBoss, m_middleBossSpawned, MiddleBossSummonableChanged),
+             PlayerTurnPanel(소환 버튼과 RefreshMiddleBossButton).
+       할 일: 5·15·25·35웨이브의 첫 소환 턴에 중간 보스 1마리를 자동으로 소환 (2-2의 웨이브 표와 함께 해도 됨). 버튼과 이벤트는 지움.
+       확인: 5웨이브에 일반 적 없이 중간 보스만 나옴. 버튼이 화면에 없음.
+1-5. [ ] 길 위의 특수 타일을 새 표로.
+       어디: TileManager(PathTileBuffType, defendTileCount·speedTileCount·healTileCount, AssignRandomSpecialTiles),
+             EnemyMoveController(CheckAndApplyTileBuff, ResetAllBuffs, MoveStepsRoutine·MoveBackwardStepsRoutine),
+             타일 문구: TileinfoPanel.AddPathMapTileDescription("속도 타일 …"), EnemyInfoPanel의 버프 목록(PathTileBuffType.SpeedTile 분기).
+       할 일: (1) PathTileBuffType에 이동력·행동 카운트·정화·비프로스트를 넣고 속도 타일을 없앰. 개수는 인스펙터 (방어 2, 이동력 2, 행동 카운트 2,
+                 회복 2, 정화 1). 비프로스트 두 칸의 인덱스도 인스펙터. 무작위 타일은 Start와 비프로스트 칸을 피함.
+             (2) 이동력 타일: 멈춰 있는 동안 최소·최대 +2. 행동 카운트 타일: 멈춰 있는 동안 매 턴 행동 카운트 +2.
+             (3) 정화: 멈춘 적의 모든 디버프(영구 포함)를 지우고 저항력을 기본값으로.
+             (4) 비프로스트: 멈춘 적을 건너편 칸으로 옮김. 행동 불가 턴에는 넘어가지 않음. 건너온 직후 다시 밟은 것으로 치지 않음.
+             (5) Start 회복: 0번을 "앞으로 통과하는 순간" 최대 체력의 50% (보스·중간 보스 10%). 멈춘 타일이 아니라 지나간 칸으로 판정하므로
+                 MoveStepsRoutine 안에서 처리. 뒤로 넘어갔던 적은 다시 앞으로 넘을 때 회복하지 않음 (적마다 "뒤로 넘어간 횟수"를 듦).
+                 비프로스트로 건너뛴 것은 넘은 것으로 치지 않음.
+       확인: 20번 2장의 표와 [Start]·[비프로스트]·[정화]의 줄마다 한 번씩 만들어 봄. 같은 좌표를 두 번 지나는 길은 7장 [경로 인덱스와 좌표] 참고.
+1-6. [ ] 타워 스폰 타일의 특수 타일을 새 표로.
+       어디: TileManager(TowerTileBuffType, 개수, AssignRandomTowerTileBuffs), TowerController(GetFinalStats, GetFinalAction),
+             타일 문구: TileinfoPanel.AddTowerMapTileDescription("공격력 50% 증가", "행동력 1 감소").
+       할 일: 공격력 +30% (지금 ×1.5), 행동 카운트 매 턴 +1 (지금은 행동력 -1), 공격 횟수 +1, 마스터리 +1 타일 추가 (3-2 뒤에 효과 연결).
+             개수 2 / 2 / 2 / 1. 버프·디버프 타워는 받지 않음 (지금도 그럼).
+1-7. [ ] 타겟 우선순위 여섯 가지와 공격할 칸 고르기.
+       어디: TowerDataSO의 TargetPriority enum(Default, Closest, First, Last, Strongest, Weakest), TowerAttackAction.TryFindTarget·NormalizeTargetPriority,
+             TowerController, TowerInfoPanel(순환 배열 s_targetPriorityOrder, GetTargetPriorityName), CSV의 TargetPriority 열.
+       할 일: 가까운 적 / 먼 적 / 체력 많은 적 / 체력 적은 적 / 적이 가장 많은 곳 / 보스. First·Last는 없앰.
+             enum 숫자가 프리팹·CSV에 저장돼 있으니 값을 직접 지정하거나 CSV의 문자열을 함께 바꿀 것.
+             "체력 많은 적"의 보스 우선 예외를 지움. "보스"는 사거리에 보스가 없으면 체력 많은 적.
+             공격할 칸: 타워마다 "고른 길 타일" 하나를 들고, 그 칸에 적이 있으면 그 칸을, 없으면 우선순위대로. 사거리 안의 길 타일만 고를 수 있음.
+       확인: 여섯 가지를 하나씩 바꿔 가며 같은 배치에서 누구를 때리는지 봄. 고른 칸을 해제하면 우선순위로 돌아옴.
+1-8. [ ] 적 턴 안의 순서 하나: 같은 턴에 걸린 치유 감소가 그 턴의 회복에 적용되게 (20번 1장 [적 1턴의 순서] 끝줄).
+       어디: EnemyMoveController.CheckAndApplyTileBuff (지금은 회복이 먼저, RefreshTileDebuffs가 나중).
+       할 일: 디버프 적용을 먼저, 회복을 나중으로.
+1-9. [ ] 쓸 곳이 없어진 옛 기능 지우기.
+       어디: TowerManager.ProcessEarthTowerWave·UpgradeTowerTierWithoutCost와 GameManager의 호출 (대지의 웨이브 무료 강화).
+       확인: 3웨이브가 끝나도 타워가 저절로 오르지 않음.
+
+----------------------------------------------------------------------
+2단계. 적                                                    규칙: 20번 3장, 8장, 9장
+----------------------------------------------------------------------
+
+2-1. [ ] 적 데이터와 종류 일곱.
+       어디: EnemyDataSO(EnemyData, EnemyType), 2. Prefab/3. Enemy의 에셋·프리팹 5쌍, WaveManager의 m_enemyPool 배열, EnemyData.DisplayName.
+       할 일: EnemyType을 자가치유형·이동력형·행동력형·방어형·체력회복형·중간 보스·최종 보스로. 프리팹에 저장된 숫자가 밀리지 않게
+             새 종류는 enum에 숫자를 직접 지정 (Normal → 자가치유형, Speed → 이동력형, Depend → 방어형은 숫자 그대로).
+             EnemyData에 SpeedMin·SpeedMax(지금 Speed 하나), AbilityValue를 넣음. Resistance는 기본 저항력으로 씀.
+             풀 배열이 (int)EnemyType 순서에 기대는 것을 "종류 → 풀" 표로 바꿈 (옛 E-5). 행동력형·체력회복형의 프리팹과 에셋을 만듦.
+       확인: 일곱 종류가 치트나 테스트 웨이브로 한 마리씩 나오고 이름과 색이 맞음.
+2-2. [ ] 웨이브 구성과 배율.
+       어디: WaveManager.GetWaveEnemyComposition·SpawnWaveEnemiesForTurn·GetEnemyStatMultipliers·GetCycleMultipliers.
+       할 일: 구성을 "순서(1 ~ 10) × 소환 턴(1 ~ 5)" 표로 (20번 3장 [웨이브 구성]). SpawnWaveEnemiesForTurn이 몇 번째 소환 턴인지 알아야 함.
+             소환 턴마다 나오는 수 = 사이클 번호 (지금 사이클 × 2). 순서 1 ~ 4는 소환 턴 1·3·5에만.
+             방어 배율: 순서마다 +0.2 (1.0 ~ 2.6), 보스는 1.0. 사이클 배율: 체력·방어 모두 1 / 2 / 3 / 4 (지금 체력 1 / 2 / 4 / 8).
+             모드 배율: 스토리 ×0.75, 하드 ×1.5 (GameModeSession.SelectedDifficulty. 스토리 모드 값은 5-2에서 생김).
+             호출할 때마다 새 List를 만드는 것을 웨이브가 바뀔 때 한 번만 만들게 (옛 G-10의 일부).
+       확인: 사이클 1의 일반 적이 32마리, 한 판 320마리. GameRuleTests에 "1 ~ 40웨이브 구성" 테스트를 넣기 좋은 자리.
+2-3. [ ] 이동력의 최소 ~ 최대.
+       어디: EnemyMoveController(m_baseDiceMaxSpeed, RawDiceMaxSpeed, CurrentDiceMaxSpeed, 주사위를 굴리는 Random.Range(1, 최대 + 1),
+             최대만 보정하는 SetPermanentDiceMaxModifier, 행동 주기를 늘리는 SetPermanentActionPenalty),
+             EnemyInfoPanel의 이동력 표시("이동력: 주사위 1 ~ 최대칸").
+       할 일: 최소도 값으로 들고 최소 ~ 최대에서 굴림. 타일·특성·디버프 보정을 최소와 최대에 따로 더할 수 있게.
+             1 아래로 깎이려던 만큼 행동 주기를 늘리는 규칙은 그대로. 음수가 나오면 그만큼 뒤로 (바람에서 씀).
+2-4. [ ] 특성 주사위.
+       어디: EnemyMoveController.ProcessTurnMoveRoutine (이동이 끝난 자리), 새 파일 (종류별 특성 하나씩. TowerSkill처럼 "틀 + 종류별 파일").
+       할 일: 이동을 마친 뒤 도착한 타일에서 1 ~ AbilityValue를 굴림 (0번에서는 굴리지 않음. 첫 이동 뒤 1번 타일에서 처음).
+             자가치유(최대 체력의 눈금 × 10%), 이동력(다음 행동의 최소·최대에 +눈금), 행동력(행동 카운트 +눈금. 넘친 만큼은 다음 주기로 넘김),
+             방어(방어력 +눈금 × 10%), 체력회복(같은 타일의 적 각자 최대 체력의 눈금 × 2.5%. 자기 포함).
+             AbilityValue는 사이클 배율(1 / 2 / 3 / 4). 모드 보정: 하드는 최소·최대 +1, 스토리는 -1 (눈금 0이면 발동 없음).
+             굴린 눈금과 걸려 있는 특성을 적 정보 패널에 보여 줌. 회복은 HealMaxHealthPercent를 써서 치유 감소가 함께 걸리게.
+2-5. [ ] 행동 불가 = 이동력 0 / 0인 행동.
+       어디: EnemyMoveController(m_forcedNoMoveTurns, ForceNoMoveForTurns: 지금은 그 턴을 통째로 건너뜀).
+       할 일: "다음 행동 한 번을 0 / 0으로"로 바꿈. 그 행동에도 디버프의 유지 시간이 줄고, 제자리의 타일·존을 다시 밟은 것으로 치고,
+             특성 주사위도 굴림 (20번 3장 [저항력]의 행동 불가 턴의 처리). 빙결·기절·속박이 이 함수 하나를 씀.
+2-6. [ ] 저항력.
+       어디: EnemyHealthController 또는 EnemyDebuffController에 "기본 저항력 / 지금 저항력", EnemyInfoPanel의 저항력 표시
+             (지금은 EnemyData.Resistance를 그대로 보여 주고, 계산에는 아무 데서도 쓰지 않음).
+       할 일: 강한 CC기(빙결·기절·속박)를 거는 공용 함수 하나: 지금 저항력%로 막고, 걸리면 기본 저항력만큼 오름 (최대 100%),
+             막히면 오르지 않음, 이미 행동 불가인 적에게는 아무 일도 없음. 행동할 때마다 기본 저항력의 1/2씩 내려감.
+             약한 CC기는 EnemyDebuffRule이 수치를 내는 공용 지점 한 곳에서 × (1 - 기본 저항력%). 정수형은 곱하지 않음.
+             패널에 기본 저항력과 지금 저항력을 함께.
+2-7. [ ] 디버프의 유지를 행동으로 셈. (옛 G-18의 남은 절반)
+       어디: EnemyDebuffController.AdvanceDebuffTurn (지금 적 턴마다 줄임), EnemyMoveController.ProcessTurnMoveRoutine.
+       할 일: 남은 시간을 줄이는 것을 "그 적이 행동할 때"로 옮김. 지속 피해는 지금처럼 매 턴 (⑤ 단계) 그대로.
+2-8. [ ] 받는 피해 계산과 겹침 공식.
+       어디: EnemyHealthController(FinalDefend, EstimateDamage, ApplyDamage, SetDefendMultiplier·SetVulnerability·SetHealReceivedMultiplier),
+             EnemyDebuffController.RefreshPersistentStats(문양 이름으로 박힌 보정. 지금은 받는 피해가 도끼는 더하고 얼음은 × 1.1로 곱하며,
+             치유 감소는 규칙들 중 가장 센 하나(Mathf.Min)만 씀 → 둘 다 아래 (2)의 합으로).
+       할 일: (1) 방어력 0.1 ~ 500 자르기와 피해 50000 자르기를 지움. (옛 G-21)
+             (2) 방어력 %, 받는 피해 %, 치유 감소 %를 "버프 %의 합 - 디버프 %의 합"으로 모으는 작은 집계 하나를 둠.
+                 누가 얼마를 넣었는지(방어 타일, 특성, 문양별 디버프)를 이름표로 넣고 빼게 하면 정보 패널에도 그대로 씀.
+             (3) 방어력이 음수면 피해 × (1 + 0.01 × |방어력|). 방어 관통은 양수면 줄이고 음수면 더 음수로.
+             (4) 치유 감소의 합은 100%까지.
+       확인: 방어 타일(+20%) 위에서 방어력 감소 30%면 -10%. 방어력 -100이면 피해 2배. 계산은 static 함수로 빼서 GameRuleTests에 넣을 것.
+2-9. [ ] 경제의 새 값.
+       어디: WaveManager.GetKillReward(NormalGoldPerWave = 10), TowerManager.BuildTower(BuildCost += 2, 최대 300), GameRuleTests의 처치 보상 기대값.
+       할 일: 일반 적 골드 50 × 사이클. 생성 비용 +5씩, 최대 1500. Resources의 WavePerEnemies&Gold&Gem.xlsx는 옛 구성 기준이라 지우거나 다시 계산.
+
+----------------------------------------------------------------------
+3단계. 타워의 공통 틀                                        규칙: 20번 4-1장, 8장, 10장
+----------------------------------------------------------------------
+
+3-1. [ ] 데이터: Mastery와 Stack. (옛 G-22의 데이터 부분)
+       어디: TowerDataCSV.csv(SplashRadius·AdditionalHitCount 열), TowerDataSO(TowerData.splashRadius·additionalHitCount, ToTowerStats),
+             TowerController.cs 안의 TowerStats(ProjectileRadius·AdditionalHitCount), TowerManager.LoadTowerDataFromCSV(열 번호).
+       할 일: 두 열을 Mastery 하나로, Stack 열을 추가. 로더는 열 번호 대신 헤더 이름으로 찾게 하면 다음에 열을 바꿔도 안 깨짐.
+             CSV 280줄은 손으로 고치지 말고, 브론즈 줄에서 티어 공용 표(20번 10장)로 계산해 채우는 스크립트로 다시 만듦.
+             tools/Generate-TowerBalance.ps1은 고쳐 쓰기보다 새로 씀: 문양별 표(patternStats)가 옛 번호 순서이고 13번까지만 있어
+             14번(어둠)에서 "Unsupported tower ID"로 멈추고, CSV에 없는 열(IsCritical)에 값을 넣으며, 티어 규칙도 옛것.
+             결과는 Assets/TowerDataCSV_BalanceDraft.csv에 따로 쓰므로 확인한 뒤 Resources의 CSV로 옮김. 실버 Action -1 / 골드 Power ×3·Mastery +1 /
+             미스릴 AttackCount +1·Action -1·Stack ÷2 / 다이아 Action -3·Power ×5·Mastery +2. Duration은 공격 타워 실버 -1·다이아 -1,
+             디버프 타워 실버 +1·다이아 +1. 2026-10-02에 넣은 골드 이상의 Range +1과 치명타 ×2는 되돌림. 수치 자체는 임시값이면 됨.
+       확인: 로드 로그 280개. 같은 문양·컬러의 다섯 티어를 나란히 놓고 표대로 오르는지.
+3-2. [ ] Mastery를 전투에 연결.
+       어디: SplashAttackAction·TargetAttackAction, TowerAttackAction.GetProjectilesPerSatellite, TowerController.GetFinalStats.
+       할 일: 광역 = 범위 단계 (1 → 1×1, 2 → 3×3, 3 → 5×5). 단일 = 발 수 (1단계 2발, 단계마다 +2). 타격 수 = AttackCount × 발 수.
+             광역은 한 번 행동에 AttackCount 발. 1-6의 마스터리 타일도 여기서 연결.
+3-3. [ ] 컬러 강화의 새 표.
+       어디: TowerManager.UpgradeTower(같은 컬러의 모든 타워. 지금은 AbilityValue × (1 + 2^(레벨-2) ÷ 10), 공격 타워의 Duration ÷ 레벨,
+             레벨 3·5에서 범위·추가 타격 +1·+2), GetColorUpgradeCost(지금 2^레벨 젬), TowerAttackAction.GetStackSkillThreshold(60 ÷ 레벨),
+             FireSplashSkill·FireTargetSkill(나눠 둔 Duration을 그대로 읽음. 주석도 그렇게 적혀 있음), GameRuleTests의 문턱 테스트.
+       할 일: 비용 4 / 12 / 48 / 240젬. 레벨 2 AbilityValue ×2 / 레벨 3 AttackCount +1 (단일 +2) / 레벨 4 StackValue ×2·최대 스택 ÷2 /
+             레벨 5 Mastery +1·AbilityValue ×4·AttackCount +1 (단일 +2). 레벨 6은 대지의 만개만 (4-9).
+             문턱은 그 타워의 Stack (미스릴과 레벨 4에서 절반). Duration ÷ 레벨은 없앰.
+             레벨 4에서 문턱이 절반이 될 때 이미 쌓인 스택 (20번 4-1장 [Stack]): 공격 타워는 개수 그대로 두고 넘치는 만큼 버림.
+             버프·디버프는 스킬 1 단계의 존만 0스택부터 다시, 스킬 2 단계의 존은 그대로.
+3-4. [ ] 공격 타워의 스택.
+       어디: TowerSkill(공통 틀), TowerController(행동한 뒤), TowerInfoPanel과 옵션 패널.
+       할 일: 행동할 때마다 AttackCount 만큼 쌓고, 다 차면 멈춤 (넘친 것은 버림). 스택을 쓴 스킬 2는 × (1 + Stack × 0.01 × StackValue), 쓰면 0.
+             자동 / 수동 소모: 옵션의 전체 설정(기본 자동)과 타워 종류(문양 + 컬러)별 예외. 수동일 때는 타워마다 버튼이 있고 적 턴 중에도 누를 수 있음.
+             버튼을 둘 자리는 고민 중이라(20번 12장) 우선 정보 패널에 임시로 둠.
+             티어 강화: 새 타워가 스킬의 진행 상태를 그대로 이어받음 (20번 8장 [티어 강화]). 스택, 광역의 스킬 주기 카운트,
+             스킬이 자기에게 건 버프(쪼개기·폭풍 등), 대지의 성장(4-9). 지금은 TowerController.Init이 TowerSkill.Create로 스킬을 새로 만들어
+             전부 0이 됨 → TowerManager.UpgradeTowerTier에서 InheritBuffStatuses처럼 이전 타워의 스킬 상태를 넘겨받는 자리를 만듦.
+             이어받은 주기 카운트는 새 Duration(실버·다이아에서 -1)과 견줌.
+             최대 스택이 절반이 되는 순간(미스릴로 티어 강화, 컬러 강화 레벨 4, 만개로 레벨 6): 개수 그대로, 넘치는 만큼 버림.
+             만개 존을 벗어나 레벨 5로 돌아가도 개수 그대로.
+3-5. [ ] 단일 타워의 스킬 2: 적중을 적마다 셈. (옛 F-2의 남은 것)
+       어디: TowerSkill.OnPrimaryTargetHit(지금 인자가 없음), TowerController.NotifyPrimaryTargetHit, ProjectileHit2D, FireTargetSkill.m_hitCount,
+             적 쪽에 "문양별 맞은 횟수"를 드는 자리.
+       할 일: 명중한 적을 넘기고, 횟수는 적이 문양별로 가짐 (같은 문양의 단일 타워가 함께 쌓음. 티어가 달라도).
+             맞힌 타워가 자기 필요 횟수(Duration)와 견줘 발동, 발동하면 그 적의 횟수는 0. 적이 죽거나 풀로 돌아가면 지움.
+             적 정보 패널에 맞은 횟수 표시.
+3-6. [ ] 스킬의 공통 규칙.
+       어디: TowerSkill, FireSplashSkill(지금 치명타 없음).
+       할 일: 모든 스킬에 치명타 (여러 번 나눠 주는 스킬은 한 번 판정). 스킬이 거는 버프·디버프의 유지 = 컬러 레벨 × 2 (가진 쪽의 행동 횟수).
+             유지 중 다시 발동하면 유지 시간만 초기화. 길 타일에 깔리는 것만 겹침. 맵 전체 스킬의 공통 부분(낙하, 전원 피해)을 FireSplashSkill에서 꺼내 둠.
+3-7. [ ] 존. (옛 G-22의 핵심)
+       어디: DebuffZone(드래그로 옮기는 장판), DebuffAction, BuffAction(사거리 안의 모든 타일에 기록), TileManager(TowerTileBuffEffect·PathTileDebuffEffect와
+             그 기록·삭제 함수들, TryGetStrongestBuffTowerStatsInRange), TowerManager.UpgradeTowerTier(장판 위치를 이어받는 TrySetDebuffZoneIndex),
+             GameManager.OnClickSkipPlayerTurn, BoardInputController(선택한 타워의 장판만 끌고, 놓으면 CommitPreviewPosition).
+       지금: 장판은 놓은 뒤에도 플레이어 턴이면 언제든 다시 끌 수 있음. 놓을 수 없는 칸은 0번(Start)뿐 (비프로스트는 아직 없음).
+             장판의 반지름은 ProjectileRadius - 1이고, 타워마다 장판이 하나.
+       할 일: (1) 존 하나의 상태를 담는 클래스: 주인 타워, 문양, 종류(버프 / 디버프), 타일, 스택, 단계(스킬 1 / 스킬 2). TileManager가 타일별로 보관.
+             (2) 버프 타워도 존을 가짐 (타워 스폰 타일 한 칸). DebuffZone을 두 종류가 함께 쓰는 "존 배치"로 일반화.
+             (3) 한 번 확정하면 옮길 수 없음. 한 타일에 같은 문양 하나, 다른 문양 3개까지. 디버프존은 Start와 비프로스트 칸에 못 놓음.
+             (4) 존의 수 = Mastery. 늘어나면 새 존만 고름. 버프·디버프 타워가 사라지면(티어 강화·합성·판매) 존과 스택을 지움. 이어받지 않음.
+                 (공격 타워의 티어 강화는 반대로 이어받음. 3-4, 3-8)
+             (5) 자리를 고르지 않은 존이 있으면 턴 종료를 막음. 놓을 칸이 하나도 없을 때만 미룰 수 있음.
+       확인: 20번 4-1장 [존]의 아홉 줄을 하나씩 만들어 봄.
+3-8. [ ] 버프의 전달.
+       어디: BuffAction, TowerBuffStatus(지금은 받는 타워가 스택을 가짐), TowerController(RefreshStackBuffs, DropBuffStatusesOutOfRange, InheritBuffStatuses,
+             ApplyCurrentTileBuffTowerEffects의 switch).
+       할 일: 버프 타워가 행동할 때 자기 존마다 AttackCount 만큼 스택을 쌓고, 존 위의 타워에게 그 존의 단계의 버프를 줌.
+             스택은 존이 가지고, 타워가 드는 것은 "어느 존에서 어떤 단계의 무슨 값을 받고 있는가"뿐.
+             존에 서 있는 동안 유지, 벗어나면 끝. 벗어났는지는 적 턴이 시작될 때 판정 (플레이어 턴에 옮겼다 되돌리면 그대로).
+             확률로 터지는 버프도 존을 벗어나면 끝. 버프 타워는 Duration을 쓰지 않음. 버프·디버프 타워는 버프를 받지 않음.
+             받는 타워가 누구인지(공격 방식, 문양, 공격 속성) 버프가 알 수 있게 통로를 엶 (문양의 맞물림이 전부 이것을 씀).
+             존 위에서 티어 강화한 공격 타워는 새로 올라온 것으로 치지 않고 받던 버프를 그대로 이어받음 (20번 4-1장 [컬러별 틀]).
+             지금 InheritBuffStatuses가 하는 일을 존 방식에서도 유지.
+3-9. [ ] 디버프의 전달.
+       어디: DebuffAction, EnemyDebuffController(ApplyZoneStack, RefreshTileDebuffs, GetStackGainPerAction), EnemyDebuffRule·EnemyDebuffState.
+       할 일: 스택은 존이 쌓음: 적이 밟을(멈출) 때마다 AttackCount, 밟지 않아도 Action 턴마다 AttackCount.
+             밟은 적은 존의 지금 단계의 효과를 받음. 스킬 1은 그 적이 Duration 번 행동하면 꺼지고, 스킬 2는 영구 (정화만 지움).
+             같은 문양의 디버프는 가장 센 것 하나만. 스킬 2가 걸린 적에게 스킬 1은 무시. 적이 스택을 가지지 않음.
+             규칙 파일이 행동 주기·이동력 보정을 직접 내고, "피해를 받을 때 / 죽을 때 / 이동할 때"를 들을 수 있게 엶.
+       확인: 불 디버프로 먼저 맞춰 봄 (4-1). 높은 티어 존을 밟은 적이 낮은 티어 존을 무시하는 옛 버그가 이 규칙으로 정리되는지.
+3-10. [ ] 버프가 행동 주기를 바꾸면 즉시 반영. (옛 G-16)
+       어디: TowerController(GetFinalAction을 행동력을 다시 채울 때만 읽음).
+       할 일: 걸리거나 풀리는 순간 남은 행동력에 차이만큼 더하거나 뺌. "매 턴 행동 카운트 +n"(순풍, 행동 카운트 타일)도 같은 자리.
+3-11. [ ] 피해 정보를 하나로 묶기와 공격 속성.
+       어디: EnemyHealthController.ApplyDamage(피해량, 치명타, 방어 관통, 공격자를 따로 받음), ProjectileStats, TowerDataSO.
+       할 일: 피해 정보 구조체: 양, 치명타 여부와 배율, 방어 관통, 공격자, 공격 속성(베기·찌르기·타격·없음), 기본 공격인지 스킬인지,
+             이동력에 변화를 준 공격인지(물의 젖음이 봄). 속성은 문양에서 정해짐 (검·도끼 = 베기, 활·창 = 찌르기, 방패·해머 = 타격, 원소 = 없음).
+             탄 분배의 예상 피해(EstimateDamage)도 같은 구조체를 받게.
+3-12. [ ] 사망 결과를 한 번에 알리기. (옛 F-4)
+       어디: EnemyHealthController.Die (재화 지급, 웨이브 통보, 처치 반응을 직접 부름).
+       할 일: "누가, 무엇으로, 어떤 적을(종류, 소환 웨이브, 걸려 있던 디버프)" 죽였는지를 한 번 알리고, 보상·클리어 판정·문양의 반응이 그것을 받음.
+             어둠의 카운트, 해머의 원석·금맥, 창 단일의 골드, 어둠의 재화 +150%가 전부 이 지점을 씀. 누가 언제 구독하는지 7장에 적을 것.
+3-13. [부분] 타워 정보 카드.
+       되어 있는 것: TowerInfoPanel이 칸의 상당 부분을 이미 그림. 위력, 사거리(지원 타워는 "-"), 행동력(남은 / 최대), 공격 횟수(지원 타워는 n스택),
+             치명타 확률·피해(200% 기준), 스킬 계수 ×n, Duration(광역 n턴 / 단일 같은 적 n회 / 버프·디버프 n회 행동), Mastery 문구,
+             판매가 3^(티어 - 1)젬, 합성 버튼 셋과 판매 버튼.
+       어디: TowerInfoPanel, TowerController.GetFinalStats (합친 값만 돌려줌).
+       할 일: 12칸 카드 (20번 4장 [타워 정보 카드])와 칸을 하나씩 맞춰 보고 빠진 칸을 채움. 설명 문구를 새 틀로 (버프 타워의 Duration은 "쓰지 않음").
+             GetFinalStats가 "어디서 얼마가 붙었는지"를 함께 남기게 함 (2-8의 이름표와 같은 방식).
+             코드 주석의 옛 문서 번호("27번 기획 4장", "26번 G-22")를 20번·21번으로.
+             시너지 타워에서 판매를 누르면 판매는 막히는데(SellTower) 패널은 닫힘(HandleSellTowerClick이 결과를 보지 않음) → 버튼을 끄거나 결과를 봄.
+             합성·판매 버튼과 타워별 조작의 자리는 고민 중이라 지금 자리에 둠.
+
+----------------------------------------------------------------------
+4단계. 문양 14종을 새 틀로                                   규칙: 20번 4-2 ~ 4-16장
+----------------------------------------------------------------------
+
+문양 하나를 옮길 때마다 하는 일 (공통)
+  - 파일 넷: 광역 스킬, 단일 스킬(TowerSkill 상속), 버프(TowerBuffStatus 상속), 디버프(EnemyDebuffRule 상속). 각 틀의 Create / Get에 한 줄.
+  - 스킬명은 20번의 새 이름으로 (4장 [타워의 컨셉]의 표. 강타, 선두 지휘, 방패 돌격, 불씨 → 불길, 급류, 대지의 분노, 석화, 도깨비불 등).
+  - 그 문양의 옛 코드를 지움: TowerController.ApplyCurrentTileBuffTowerEffects의 분기, EnemyDebuffController의 switch 분기
+    (ApplyZoneStack·AdvanceDebuffTurn·RefreshPersistentStats), Debuff/ 폴더의 그 문양 파일, ProjectileHit2D의 그 문양 전용 코드.
+  - 이름과 문구: BuffTargetNames의 세 표(GetBuffTargetName·GetDebuffTargetName·GetEnemyDebuffName)의 그 문양 줄을 20번 4-1장 [문양별 이름]으로.
+    지금은 전부 옛 이름이고 (불 버프 "공격 횟수", 대지 버프 "티어 강화", 창 디버프 "투창", 대지 디버프 "지진" 등),
+    GetEnemyDebuffName에는 해머 줄이 없어 "특수"로 나옴. EnemyDebuffController.GetActiveDebuffDescriptions의 그 문양 문구, 정보 패널의 설명 문구도.
+  - 그 문양의 줄을 20번에서 하나씩 읽으며 손으로 확인.
+순서는 "틀에 새로 필요한 것이 적은 문양부터". 뒤 문양이 앞 문양에서 연 통로를 다시 씀.
+
+4-1. [부분] 불 (4-9장). 틀의 초안이 있으므로 새 존 방식이 맞는지 여기서 먼저 검증.
+       할 일: 불씨 → 불길 (불길은 레벨 × 5턴 뒤 0스택의 불씨로 도는 예외), 화상 → 연소 (공통 식. 치유 감소도 같은 값. 연소의 번지는 불),
+             메테오 (맵 전체, 치명타, 화상 +50% / 연소 +100%), 화염구 (60% 확률로 화상), 불 타워끼리의 맞물림.
+       지울 것: 옛 5단계 예열 식과 과열 × 2, 메테오의 연쇄와 확률 추가 타격, 화상의 고정 40%.
+       고칠 것: EnemyDebuffController.HasActiveDebuff가 RemainingDuration ≠ 0이면 켜진 것으로 봐서, 기본값 -1(아직 유지 시간을 받지 않은 상태)도
+                "걸려 있음"이 됨. 메테오의 화상 배율(FireSplashSkill.GetFireDebuffMultiplier)이 이것을 씀 → EnemyDebuffRule.IsSkill1Active와 같은 기준으로.
+4-2. [ ] 검 (4-3장). 가장 단순함. 공격 속성 시너지의 첫 예.
+       새로 필요한 것: 버프가 받는 타워의 속성을 봄(3-8), 디버프가 맞은 공격의 속성을 봄(3-11), 고정 피해 전환, 최대 체력 감소(현재 체력도 같은 비율),
+                       24번에 나눠 주는 스킬.
+       지울 것: 공격력 티어 고정표, 저주 스택, EnemyHealthController.SetMaxHealthReductionPercent의 옛 경로.
+                (지금 이 함수는 현재 체력을 새 최대 체력으로 자르기만 함 → 현재 체력도 같은 비율로 줄이게. 다시 늘 때의 처리도 함께 정함)
+4-3. [ ] 활 (4-5장).
+       새로 필요한 것: 길 타일에 일정 턴 남는 것(화살비. 여러 개가 겹침, ⑤ 단계에서 타일 쪽을 한 번 돎), 최대 체력 비례 스킬 피해(은화살),
+                       거리 비례 추가 피해의 새 식(사거리로 나누지 않음), 사거리 +1칸 버프, 받는 치명타 피해 증가.
+       지울 것: 사거리·거리 비례 티어 고정표, 고정 피해 전환(검으로 감), GetBowDistanceDamageBonus.
+4-4. [ ] 창 (4-6장).
+       새로 필요한 것: 줄 단위 공격(선두 지휘. 공격 대상의 가로줄·세로줄을 맵 끝까지), 스킬 계수에 치명타 확률, 체력 5% 미만 즉사와 골드(뽑아찢기),
+                       방어 관통 버프, 행동 주기 +1의 대가, 치유 감소, 특성 주사위의 눈금을 1로 만드는 것(2-4와 연결), 잃은 체력 비례 피해.
+       지울 것: 치명타 확률 고정표, 누적 피해·즉사(RegisterCriticalHit, EndZoneDebuff, PendingDamage).
+4-5. [ ] 도끼 (4-4장).
+       새로 필요한 것: 한도를 깎는 것(GameManager.EnemyLimit에 항을 더하고 RefreshEnemyLimit을 부름. 광란의 노래. 가장 높은 티어 하나 기준, 깎이는 순간 한도 판정), 반드시 치명타인 스킬(강타),
+                       자기 버프 스킬(쪼개기), Action -1과 Mastery +1을 주는 버프, 체력 비율 즉사(피해를 받을 때마다 판정), 적에게 이득을 주는 디버프(선고).
+       지울 것: 치명타 피해 고정표, 취약 스택.
+4-6. [ ] 방패 (4-7장).
+       새로 필요한 것: 한도를 늘리는 방어막(티어 비율. EnemyLimit에 항으로 더하고 RefreshEnemyLimit을 부름. 타워가 사라지면 줄고 그 순간 한도 판정), 스택을 버프 타워 자신이 가지는 예외,
+                       한도를 곱하는 버프 식, 기절(2-6의 강한 CC 함수), 방어력 감소(2-8의 집계), 최대 행동 +1.
+       지울 것: BuffAction의 방패 분기, 속박(ForceNoMoveForTurns(2)).
+       화면: 방어막이 전개되면 GameInfoPanel의 방패 아이콘(img_shield)을 흰색으로. 한도 글자는 EnemyLimitChanged로 이미 따라옴.
+4-7. [ ] 해머 (4-8장).
+       새로 필요한 것: 현재 골드를 곱하는 버프 식, 확률로 젬을 얻는 것(세공·금맥), 처치 골드 증가(3-12의 사망 결과), 이동력 감소와 1 / 1 고정,
+                       공격 횟수를 주는 타격 시너지.
+       지울 것: 방어 관통 고정표, 옛 방어력 감소.
+4-8. [ ] 얼음 (4-13장).
+       새로 필요한 것: 빙결(2-5·2-6)과 해동(빙결 중 받은 피해의 25%), 턴마다 확률로 거는 디버프, 줄어든 이동력을 읽는 스킬(스노우볼),
+                       공격이 맞을 때 확률로 이동력을 깎는 버프, 얼음 타워에게만 주는 Mastery.
+       지울 것: 광역 범위 증가·주변 추가 타격(ProjectileHit2D.ApplyIceAdditionalHits), 냉기 5스택 빙결.
+4-9. [ ] 대지 (4-11장).
+       새로 필요한 것: 쓸 때마다 자라는 스킬(타워가 판 위에 있는 동안 유지. 티어 강화 때 이어받음, 3-4), 다른 타워의 AbilityValue를 올리는 버프,
+                       타워별 컬러 레벨 +1(만개. 레벨 6. 레벨이 오르내릴 때의 스택은 3-4),
+                       속박, 적의 방어력을 올리는 대가와 그 방어력을 읽는 스킬(원래 방어력 + 늘어난 방어력 기준), 최소 이동력 감소.
+       지울 것: 옛 대지 디버프(5턴마다 행동 지연·피해). 웨이브 무료 강화는 1-9에서 이미 지움.
+4-10. [ ] 바람 (4-12장).
+       새로 필요한 것: 확률로 터지는 버프(버프 타워가 행동할 때 굴림), 매 턴 행동 카운트 +2, 최소 이동력이 -최대가 되는 것(2-3의 음수 이동),
+                       이동한 칸 수에 비례한 피해(뒤로 간 칸도), 적 수로 나누는 스킬(칼바람)과 스킬의 턴 카운트를 당기는 것, 확률로 터지는 자기 버프(폭풍).
+       지울 것: 행동력 -티어(GetCurrentTileBuffActionReduction), 돌풍(ReverseNextDiceMove).
+4-11. [ ] 물 (4-10장). 지금 효과가 없는 문양.
+       새로 필요한 것: 다음 행동을 뒤로 n칸으로 바꾸는 것(급류. (100 - 저항력)% 확률), 다음 행동 한 번의 이동력 -2(쓰나미),
+                       스택이 쌓이는 양을 올리는 버프와 스택을 쓴 뒤 절반이 남는 것(해류. 3-4와 연결), "이동력에 변화를 준 공격"을 읽는 디버프(3-11),
+                       맵 버프를 절반만 받게 하는 것(침수. 1-5와 연결).
+4-12. [ ] 전기 (4-14장).
+       새로 필요한 것: 적이 가지는 전하(상한 없음, 소수), 세 단계로 도는 존(충전 → 과충전 → 방전 5턴), 연쇄 스킬(과부하. 가까운 적부터, 1 + 레벨 × Mastery 단계),
+                       존에 선 타워의 공격이 전하를 주는 것, 매 턴 전하를 주는 디버프.
+       지울 것: 확률 추가 타격(ExtraHitChance), 전류 5스택. ProjectileHit2D의 연쇄 코드는 과부하가 다시 쓰는지 보고 정리.
+4-13. [ ] 빛 (4-15장).
+       새로 필요한 것: 더미(움직이지 않고, 맞으면 본체가 2배 / 4배를 실시간으로 받음. 타겟은 되지만 한도·처치 보상·적 목록에서는 빠짐. 풀에서 꺼내 씀.
+                       적 목록의 원본이 TileManager의 점유라(2장 [2-3]) 더미를 점유에 그냥 넣으면 한도·순회·목록에 모두 잡힘.
+                       점유에 "더미" 표시를 두고 GetAllEnemiesOnPath·CheckEnemyLimit·EnemyManager의 순회에서 거르거나, 타겟 탐색만 보는 칸을 따로 둠),
+                       프리즘(줄어드는 남은 횟수, 기본 공격에 터짐), 그 턴 안에서만 세는 스택(도깨비불), 터지면 여러 스탯을 한꺼번에 주는 버프.
+       지울 것: 연쇄 버프(ChainCount), 체력 % 이하 즉사.
+4-14. [ ] 어둠 (4-16장).
+       새로 필요한 것: 카운트(판 전체에 하나. 3-12의 사망 결과로 올림. 기본 +1은 어둠 버프 타워가 있을 때만), 카운트 단계별 효과,
+                       블랙홀(길 타일에 남고, 맵 전체의 적을 인덱스 기준으로 끌어당김. 여러 개면 가까운 것), 카운트를 읽는 스킬(심연).
+       지울 것: TowerManager의 공유 값(GetSharedDarknessAbility·AddSharedDarknessAbility), TowerController.NotifyEnemyKilled·ApplyTileDarknessBuff,
+               EnemyDebuffController.ApplyDarknessMovementModifier.
+4-15. [ ] 문양을 다 옮긴 뒤의 청소.
+       어디: Debuff/ 폴더(남은 것 전부와 DebuffBase), EnemyDebuffController.AddDebuff(빈 메서드), EnemyMoveController.SetSpeedMultiplier·CurrentSpeed,
+             ProjectileHit2D가 구형 디버프를 만드는 경로, TowerController와 EnemyDebuffController에 남은 switch와 TierValue·GetTierValue 고정표,
+             TileManager의 옛 기록 함수(SetFirePreheatEffects, AddTowerBuffEffect 등)와 TowerTileBuffEffect·PathTileDebuffEffect,
+             SetSpeedMultiplier를 부르는 EnemyDebuffController.ClearAllDebuffs의 한 줄, EnemyMoveController의 구형 DebuffBase 주석.
+       주의: 참조가 0이라는 이유만으로 지우지 말고 프리팹·애니메이션 이벤트·문자열 검색까지 한 뒤에.
+
+----------------------------------------------------------------------
+5단계. 모드, 스테이지, 시너지                                규칙: 20번 8장, 9장
+----------------------------------------------------------------------
+
+5-1. [ ] 문양 선택을 타워 생성에 반영. (옛 E-1)
+       어디: GameModeSession.SelectedEmblemIDs(있지만 쓰이지 않음), TowerManager.BuildTower(1티어 전체에서 뽑음), 스테이지 선택 씬.
+             고르는 함수(TrySelectEmblem·RemoveEmblem·ClearEmblems)는 있지만 부르는 곳이 없음. static 함수라 인스펙터의 버튼 이벤트에
+             바로 연결할 수 없으니, 선택 화면의 스크립트가 부름. 지금 메뉴(UIManager_Menu)는 "3. Stage1"로 바로 감.
+       할 일: 고른 문양 × 컬러 4에서만 생성. 노말 6개, 하드 8개. 선택이 비어 있을 때의 기본 동작을 정해 둘 것. 문양 선택 화면.
+5-2. [ ] 모드 셋.
+       어디: GameModeSession(GameDifficulty는 Normal·Hard 둘. SelectDifficulty를 부르는 곳이 없어 지금은 늘 노말. PickLimit 6 / 8),
+             GameManager.EnemyLimit(하드 15), WaveManager의 배율(2-2), 특성 주사위(2-4), 메뉴 씬(모드를 고르는 화면이 없음).
+             GameModeSession은 static 멤버만 있는 MonoBehaviour라 static class로 바꿔도 됨.
+       할 일: 스토리(스테이지가 지정한 문양만, 해금된 시너지 타워만, 체력·방어력 ×0.75, 눈금 -1) / 노말 / 하드(한도 15씩, ×1.5, 눈금 +1).
+             노말·하드는 처음부터 14종 전부. 스토리의 해금 상태 저장 (스테이지를 깨면 다음 스테이지와 그 문양·시너지 타워가 열림).
+             라그나로크는 스토리에서 문양 6개를 직접 고르는 유일한 스테이지.
+5-3. 시너지 타워 조합표 14종 — 코드에 이미 있음. 할 일 없음 (그림 확인은 0-2).
+       TowerManager.s_synergyDefinitions의 14종이 20번 9장 [조합표]와 같고 (뇨르드 6014, 스카디 활·얼음·물, 발드르 물·불·빛),
+       생기는 조건(재료 문양마다 미스릴 이상이 판 위에 있음), 이동·교환·판매 불가도 20번과 같음. 효과는 나중 (20번 12장).
+       스토리 모드의 해금(그 스테이지에서 열린 시너지만)은 5-2에서.
+5-4. [ ] 스테이지별 적 (일반 한 가지 + 색 다섯, 중간 보스, 최종 보스. 라그나로크는 사이클마다 다른 스테이지의 적).
+       에셋이 들어오는 대로. 코드는 "스테이지 → 적 프리팹 묶음" 표 하나면 됨.
+       같은 표에 UI 테마도: UIStageThemeController.SetRealm을 부르는 곳이 없어, 지금 테마는 씬에 저장된 값(인스펙터) 하나로 고정.
+
+----------------------------------------------------------------------
+6단계. 구조 정리, 최적화, 잔재                                (규칙이 고정된 뒤)
+----------------------------------------------------------------------
+
+구조
+6-1. [ ] 순수 데이터 분리. TowerStats를 TowerController.cs 밖으로, enum을 TowerDataSO.cs 밖으로. TowerData와 TowerStats가 같은 스탯을 겹쳐 드는 것 정리.
+        타일 거리 변환(ToTileRange, ToWorldRange)을 TowerAttackAction 밖으로. 사거리를 정수 칸으로만 들면 변환이 대부분 사라짐. (옛 F-1)
+        계산을 MonoBehaviour 밖으로 꺼내야 GameRuleTests로 테스트하기 쉬워짐.
+6-2. [ ] TowerManager 책임 줄이기. CSV 데이터 조회 → 비용·강화·합성 계산 → 배치 → 턴 실행 순으로 떼어 냄.
+        한꺼번에 새 매니저로 쪼개지 말고 '원본 데이터를 누가 가지는가'부터. 치트 입력(CheckDigitInput)도 따로. (옛 F-3)
+6-3. [ ] 공격 완료의 약속. 지금은 전체 투사체 수로 턴의 끝을 판정함. 공격마다 자기 탄 목록을 들고
+        완료·취소·타깃 소멸·풀 반환을 하나의 종료로 묶음. 광역 타워의 탄 분배도 이때. (옛 A-1의 남은 것)
+        대상: TargetAttackAction, TowerAttackAction.SatelliteAttackRoutine, TowerManager의 대기 루프, GlobalProjectileManager, GameManager의 바깥 타임아웃.
+6-4. [ ] 적 이동 코루틴의 소유. EnemyManager가 바깥 코루틴을, 이동 컴포넌트가 안쪽 코루틴을 돌려서 이동 중 제거되면 바깥이 남음.
+        논리 위치 / 이동 목적지 / 화면 보간 위치의 뜻을 구분할 것. (옛 F-5)
+6-5. [ ] 적 생성 순서. 비활성 상태에서 초기화 → 위치 → 활성화 → 점유와 등록 (2-3).
+6-6. [ ] 턴 상태 ↔ UI ↔ 입력. 상태 클래스(GameTurnState)가 UIManager·드래그 취소·카메라를 직접 만짐.
+        상태는 허용 행동과 진입·종료만, 화면 배치는 UI에. (옛 F-7)
+6-7. [ ] UI. 디버프 문구 생성을 EnemyDebuffController에서 떼어 냄. EnemyInfoPanel이 빠진 UI를 코드로 만드는 경로를 프리팹으로.
+        RemoveAllListeners()(UIManager, EnemyInfoPanel, EnemyListItemUI, UIManager_Start/Menu)를 이름 있는 핸들러의 Add/Remove로.
+        UIManager.ShowGameOver의 FindObjectsByType<EnemyHealthController>(체력바를 숨기려고 씬 전체를 찾음)를 TileManager.GetAllEnemiesOnPath로
+        (EnemyManager에는 목록이 없음. 2장 [2-3]).
+        적 상세의 디버프 목록이 선택한 순간에만 만들어지는 것, TileinfoPanel의 항목 재사용과 Content 높이. (옛 F-6)
+        화면에 보이는 값을 바꾸는 코드를 새로 넣을 때는 GameStateVersion.MarkChanged()를 부를 것.
+6-8. [ ] GameManager.Awake의 DontDestroyOnLoad 지우기. (옛 G-4)
+        GameManager는 Manager 프리팹(=====Manager======)의 자식이라 이 줄이 동작하지 않음 (루트 오브젝트에만 됨). 실행할 때마다 경고만 남김.
+        그래서 지금도 다른 매니저처럼 씬과 함께 지워지고 새로 만들어짐. 씬 사이에 남길 값(난이도·고른 문양)은 이미 static인 GameModeSession에 있으므로
+        지금 동작이 맞음. 줄만 지우면 됨.
+
+최적화 (옛 G-10)
+6-9.  [ ] TowerController.GetFinalStats가 부를 때마다 Dictionary를 만듦 → 한 타워 행동에 한 번만 계산.
+6-10. [ ] 한 공격 안에서 반복되는 전체 적 타겟 탐색 → 한 공격 묶음에 한 번.
+6-11. [ ] sourceID로 지울 때 TileManager 전체 칸 순회 → "주인 → 영향받는 칸" 역인덱스 (존으로 바꾸면 대부분 사라짐).
+6-12. [ ] TowerAttackAction.GetSatelliteOffset의 배열 생성, 투사체 VFX의 Gradient·AnimationCurve 반복 생성, UI 타일 목록의 Instantiate/Destroy 반복.
+6-13. [ ] EnemyManager가 턴마다 List를 새로 만드는 곳 (ProcessEnemyTurnRoutine의 movingEnemies 등).
+
+데이터·잔재
+6-14. [ ] CSV 로더 검증: 헤더, 투사체 누락, enum 범위. 단순 Split(',')라 이름에 쉼표가 들어가면 깨짐. (옛 E-4)
+6-15. [ ] CurrencyManager: SpendGold·SpendGem이 성공 여부를 돌려주지 않음 (모자라면 경고만 남기고 안 뺌. 부르는 쪽은 성공했는지 모름),
+        음수 금액을 막지 않음 (SpendGold(-100)이면 100이 늚) → TrySpend. HasEnoughGem이 float을 받는 것. (옛 E-6)
+6-16. [ ] 이름과 오타: EnemyType.Depend(2-1에서 함께), WaveManager 스크립트가 붙은 프리팹 이름이 SpawnManager, 섞여 있는 singleton·SerializeField 명명. (옛 D-6)
+6-17. [ ] 씬 이동과 로딩. 게임을 다 만든 뒤 씬을 전부 설정할 때 함. (옛 G-6)
+        버그: 재시작·재시도·메뉴 버튼이 아무것도 안 함 (게임 속도만 1로 돌아옴).
+          SceneLoader.StartLoad가 NextScene만 저장하고 LoadScene 줄이 주석. 주석 속 씬 이름 "LoadingScene"은 빌드 목록에 없음
+          (빌드에 있는 것은 LoadingScene1·LoadingScene2. 둘 다 씬에 저장된 m_testMode가 0이라 실제로 다음 씬을 엶).
+          부르는 곳: OptionPanel의 재시작, GameOverPanel의 메뉴·재시도, GameClearPanel의 메뉴.
+          GameOverPanel·GameClearPanel의 "홈"과 GameClearPanel의 "다음 스테이지"는 OnQuitGame(게임 종료, 에디터에서는 플레이 중지)을 부름.
+          확인: 게임 오버 → 재시도로 1웨이브·시작 골드부터 다시. 다시 시작하면 매니저가 전부 새로 만들어짐 (6-8).
+        경로: UIManager_Start/Menu와 OptionPanel의 메뉴는 SceneManager.LoadScene 직접, 다른 경로는 SceneLoader.NextScene + LoadingManager. 한 경로로.
+        LoadingManager: 실제 로딩의 첫 루프(progress < 0.9)에서 UpdateUI를 부르지 않아 진행 막대가 0에 멈춰 있다가 뒤늦게 한 번에 뜀,
+        쓰지 않는 m_percentText, 변화 없는 CoFade(0, 0, 1.5), m_testMode 기본값 true (두 로딩 씬에는 0으로 저장돼 있어 지금 동작과는 무관),
+        Awake의 ??=는 Unity 오브젝트의 "가짜 null"을 거르지 못해 인스펙터에서 비운 칸이 자동으로 채워지지 않을 수 있음 → if (x == null).
+6-18. [ ] UIStageThemeController: 이름 문자열(_bg, _frame, TurnEnd, CTxt_)로 역할을 추론. ExecuteAlways·OnValidate가 씬과 프리팹을 바꿈.
+        역할을 명시하는 컴포넌트로, 에디터 연결 코드는 Editor 전용으로. (옛 G-7)
+        UIStageThemeControllerEditor의 버튼 이름이 "알프하임·바나하임·요툰하임·니플하임·무스펠하임"으로 런타임 표(…헤임)·20번과 다름.
+        SetRealm을 부르는 곳이 없음 (5-4).
+6-19. [ ] TileSatelliteOrbiter(약 800줄): 공전·색·Trail·Particle·심볼·에디터 자동 구성이 한 파일. 검정 디버프의 본체와 꼬리 색이 다름.
+        EffectManager/EffectPool2D의 int effectID → enum, 반복 파티클의 최대 수명. (옛 G-8)
+6-20. [ ] 작은 것: CameraController의 static 코루틴 핸들과 부를 때마다의 FindFirstObjectByType,
+        HPBarSlider.SetHP의 null 검사 뒤 무조건 접근(m_gauge가 비면 NullReferenceException), DamageText의 F2 표시,
+        GameManager.EnemyTurnRoutine 끝의 WaitForSeconds(0.3f), CommonUtil(호출하는 곳 없음),
+        EnemyListItemUI가 갱신할 때마다 GetComponentInChildren<SpriteRenderer>로 아이콘을 찾음(굴러가는 큐브의 지금 면이 잡힘). (옛 G-9)
+6-21. [ ] 쓰지 않는 파일: Resources의 TowerDataCSV_master.xlsx·TowerBalance.xlsx(실시간 시절의 옛 표), outputs/ 폴더(약 90MB, 커밋되지 않음),
+        10.Animation/Effect의 Canvas.controller·BackGround.controller (Canvas의 Animator를 지운 뒤로 아무 데서도 안 씀).
+
+======================================================================
+6. 시스템별 구조 메모
+======================================================================
+
+5장에 적은 내용은 반복하지 않음. 여기는 "왜 엮여 있는가"와 분리 방향만.
+
+[읽기 어려운 이유]
+파일이 나뉘어 있는 것 자체보다, 한 기능의 시작·종료·데이터 소유자가 흩어져 있기 때문.
+A. GameManager가 턴을 진행하지만 종료 대기는 TowerManager와 투사체 관리자에도 있음.
+B. 적의 체력 담당이 보상 지급, 승리 통보, 풀 반환, 이동 정리까지 담당.
+C. TileManager가 효과를 기록하고 타워/적이 읽지만, 구형 직접 방식의 잔재도 남아 있음.
+D. TowerController에 공통 스탯, 구체 공격 생성, 버프, 투사체 연출이 모임.
+E. 타입 참조가 거의 없는 파일도 씬 이름·리소스 경로·애니메이션 이벤트에는 강하게 연결됨.
+
+[TowerManager]
+- CSV 읽기, 데이터 인덱싱, 글로벌 업그레이드, 생성·판매, 이동·교환, 티어/컬러 강화, 합성, 행동 순서, 시너지, 치트 입력을 모두 담당.
+- TowerController가 TowerManager의 공유 강화 상태를 읽거나 갱신하는 역방향도 있음.
+
+[TowerController와 공격 Action]
+- 역할 구분 (2026-10-02 확정):
+    TowerController     최종 스탯 구조체(TowerStats)를 만들고, 그 스탯으로 행동력을 계산하고, 행동 스크립트와 스킬 스크립트를 부름.
+    행동·스킬 스크립트  대상 선택, 투사체 연출, 피해 계산을 각자 알아서 함.
+- 위성 투사체 연출은 TowerAttackAction.SatelliteAttackRoutine에 있음. 연출 설정값 5개는 프리팹의 값을 지키려고 TowerController에 남아 있음.
+- Splash/Target/Buff/Debuff로 공격 방식(스킬 1)을 나눈 방향은 좋음. 스킬 2는 TowerSkill, 받은 버프는 TowerBuffStatus가 같은 방식으로 나눔.
+  TowerController는 TryUseSkill / NotifyPrimaryTargetHit / AdvanceSkillTurn / RefreshStackBuffs / ConsumeBuffAction(받은 버프와 스킬의 OnOwnerActed)만
+  부르고 문양을 모르는 것이 목표.
+- bool ExecuteAction()만으로는 비동기 공격의 완료를 표현할 수 없어 상위 매니저가 전역 투사체를 감시함 (5장 6-3).
+
+[GameManager]
+- 턴 상태, 턴 코루틴, 한도, 게임 속도와 일시정지, 게임오버/클리어를 함께 가짐.
+- 상태 클래스(PlayerTurnState 등)가 UIManager, 드래그 취소, DebuffZone 취소, 카메라를 직접 조작.
+
+[WaveManager]
+- 웨이브 구성, 난이도 배율, 풀 선택, 소환, 중간 보스, 보상 계산, 최종 클리어 통보를 담당.
+
+[Enemy]
+- EnemyHealthController: 수명주기의 허브 (5장 3-12).
+- EnemyMoveController: 행동 카운터, 주사위, 이동, 점유, 타일 스탯 적용, 진형 보간. 타일 스탯 적용과 이동 자체는 나눌 후보.
+- EnemyDebuffController: 스택, 즉시 피해, 지속 피해, 처형, 이동/방어/취약 보정, 이탈 후 처리, duration, UI 문구를 한 클래스가 처리.
+  옛 문양은 ApplyZoneStack, AdvanceDebuffTurn, RefreshPersistentStats의 switch를 함께 고쳐야 함. 새 틀은 EnemyDebuffRule 파일 하나 + Get에 한 줄.
+- EnemyManager: 상태가 없음. 적은 TileManager의 점유에서 매번 모음 (GetAllEnemiesOnPath. 2장 [2-3]).
+  따로 목록을 둘지는 6-13(턴마다 새 List)과 4-13(빛의 더미)을 할 때 정함. 둔다면 등록/해제는 대칭 API로, 밖에는 IReadOnlyList로.
+
+[TileManager]
+- 경로·소환 타일 인덱스, 타워/적 점유, 도착 예약, 특수 타일 배치, 타워 버프와 경로 디버프 기록, duration 감소, source별 삭제,
+  위성 이펙트 생성/삭제, 좌표 변환, 길의 화살표 발광까지 담당.
+- 좌표 판정을 Dictionary로 하는 방향 자체는 기획과 잘 맞으므로 유지. 효과 저장 / 턴 진행 / 연출을 나눌 후보.
+
+[ProjectileHit2D]
+- 유도 이동과 회전, 수명과 풀 반환, 단일/스플래시 명중, 얼음 추가 대상, 연쇄, 데미지 전달, 구형 디버프 생성, Trail/Particle 구성,
+  원소별 색상을 모두 담당. 명중 시점에 피해가 들어가는 것은 유지하되 시각 수명과 전투 결과 처리를 나눌 후보.
+- 공격자 콜백(NotifyPrimaryTargetHit, 스킬 투사체의 OnSkillProjectileImpact)과 대상 사망 재진입에 주의.
+- 스킬 투사체는 명중 뒤 후속 코루틴이 끝날 때까지 보이지 않는 채로 남아 있음 (턴 대기가 투사체 수를 세기 때문).
+
+[UI]
+- UIManager는 패널 켜고 끄기만. 화면별 파일: PlayerTurnPanel, GameInfoPanel, TowerInfoPanel, TileinfoPanel, EnemyInfoPanel,
+  OptionPanel, GameOverPanel, GameClearPanel.
+
+[좋은 분리 — 그대로 둘 것]
+- DamageText는 구체 풀 대신 IObjectPool을 받아 반환.
+- EnemyListItemUI는 패널을 직접 알지 않고 선택 콜백을 받음.
+- CurrencyManager의 변경 이벤트로 UI가 갱신.
+- EnemyUIController → HPBarSlider는 목적이 좁은 연결.
+
+======================================================================
+7. 작지만 놓치면 안 되는 연결
+======================================================================
+
+[이벤트 / 콜백]
+- CurrencyManager 변경 이벤트 → GameInfoPanel 재화 표시.
+- GameManager.EnemyLimitChanged(새 한도) → GameInfoPanel의 "적 수/한도". 한도를 바꾸는 쪽은 RefreshEnemyLimit을 부름.
+- TileManager.EnemyCountChanged → GameInfoPanel의 "적 수/한도". SetEnemyAtPathIndex·RemoveEnemyFromPath가 부름 (이동 때는 두 번).
+- WaveManager.CurrentWaveChanged → GameManager.HandleWaveChanged → RefreshEnemyLimit (사이클이 바뀌면 한도가 바뀜).
+- WaveManager.CurrentWaveChanged → GameInfoPanel 웨이브 표시.
+- WaveManager.MiddleBossSummonableChanged → PlayerTurnPanel의 소환 버튼 (5장 1-4에서 삭제).
+- TowerManager.CurrentCreateTowerValueChanged → PlayerTurnPanel의 생성 비용 표시.
+- DebuffZone 배치 좌표 이벤트 → DebuffAction → TileManager 기록 이동.
+- EnemyListItemUI의 선택 콜백 → EnemyInfoPanel 선택 처리.
+이벤트도 결합임. 발행 시점·인자의 뜻·구독 수명이 계약. 새 이벤트를 만들면 여기에 적을 것.
+
+[애니메이션]
+EffectController.DestroyEffect()는 C# 호출자가 0으로 보이지만 Assets/10.Animation/Effect의 애니메이션 클립 이벤트 26개가 이름으로 부름.
+이름을 바꾸면 클립도 함께 바꿔야 함.
+
+[프리팹 / 이름 / 에디터]
+- DebuffAction / DebuffZone의 Tilemap_Path 이름 검색.
+- Resources/Projectiles/{컬러 + 문양} 파일명 규칙, HitEffectID = 컬러 + 문양.
+- BuffTarget·DebuffTarget enum의 순서는 문양 번호(TowerEmblem)와 같아야 함. 디버프 장판이 문양 번호를 DebuffTarget으로 그대로 바꿔 씀.
+- UIStageTheme의 자식 이름과 스프라이트 이름.
+- TileManagerEditor가 m_pathGridPositions를 직접 추가/삭제/초기화. 경로 인덱스를 저장해 둔 데이터(비프로스트의 인덱스 등)는 경로 편집과 함께 볼 것.
+- SerializedObject.FindProperty의 필드명 문자열은 변수명 변경에 자동으로 따라오지 않음.
+- enum 숫자가 프리팹·씬·에셋에 저장됨. enum의 순서를 바꾸거나 중간에 끼워 넣으면 저장된 값이 다른 것을 가리킴.
+
+[경로 인덱스와 좌표]
+길의 순서 인덱스와 Vector3Int 셀 좌표는 같은 개념이 아님. 일부 범위 조회는 좌표 HashSet으로 중복을 없애고,
+좌표 → 인덱스 조회는 첫 위치를 찾음 (m_pathIndicesByCell에는 전부 있음). 같은 좌표를 다시 지나는 길을 만들 때는 따로 점검할 것.
+TileManagerEditor의 Shift + 클릭은 경로에 없는 칸만 추가하므로, 같은 좌표를 두 번 지나는 길은 에디터로 만들 수 없음 (인스펙터의 배열로 직접).
+
+======================================================================
+8. 조심할 것
+======================================================================
+
+- CSV 열 순서는 코드의 숫자 인덱스와 묶여 있음. 열을 추가·삭제하면 TowerManager의 로더를 함께 고쳐야 함 (5장 3-1에서 헤더 이름으로 바꿈).
+- 같은 폴더에서 Codex가 에셋 작업을 함께 함. 코드 작업을 시작하기 전에 git status로 다른 변경이 섞여 있지 않은지 볼 것.
+- 남은 에디터 도구: Click Debug, 타일 경로 편집(TileManagerEditor), UI 테마 인스펙터, UIAtlasNameConnector, UIThemeManualColorTracker.
+- 문양을 새 틀로 옮기는 동안에는 옛 방식의 문양과 새 방식의 문양이 함께 돌아감. 3-7 ~ 3-9에서 옛 기록 구조를 바로 지우지 말고,
+  문양을 다 옮긴 뒤(4-15)에 지울 것.
+
+======================================================================
+10. 코드 쪽에서 정해야 하는 것
+======================================================================
+
+기획의 열린 항목은 20번 12장. 여기는 코드만.
+- 6-17에서 두 로딩 씬(LoadingScene1·LoadingScene2) 중 무엇을 쓸지.
+- Resources의 옛 엑셀 셋(TowerDataCSV_master.xlsx, TowerBalance.xlsx, WavePerEnemies&Gold&Gem.xlsx)을 지울지, 새 값으로 다시 만들지.
+- outputs/ 폴더를 커밋할지.
+
+======================================================================
+11. 자동 테스트
+======================================================================
+
+Assets/Editor/Tests/GameRuleTests.cs (그 밖에 EnemyCubeOrientationTests, EnemyCubeRollGeometryTests)
+  실행: Unity 메뉴 Window > General > Test Runner > EditMode 탭 > Run All. 테스트를 고치거나 늘린 항목은 끝낼 때 한 번 돌림.
+  방식: asmdef 없이 Editor 폴더에 둠. public static인 계산만 바로 테스트할 수 있음.
+  지금 있는 것: 스킬 2 문턱(60 ÷ 레벨. 3-3에서 바뀜), 사거리 칸 변환, 처치 보상(2-9에서 바뀜. 일반 10 × 웨이브, 보스 100 × 웨이브 × 사이클 골드 등),
+               큐브 굴림(EnemyCubeOrientationTests 3개(케이스 6개), EnemyCubeRollGeometryTests 4개. 규칙과 무관해 바뀌지 않음).
+앞으로 넣기 좋은 것 (해당 항목을 하면서 함께)
+  2단계: 1 ~ 40웨이브 구성과 마리 수, 배율 표, 받는 피해 계산(음수 방어력, 관통), 겹침 공식, 저항력의 오르내림, 처치 보상.
+  3단계: 티어 공용 표로 만든 스탯, 컬러 강화 레벨별 값, 문턱과 StackValue, 스택이 찬 스킬의 배율, 단일 타워의 적중 판정(상위·하위 타워의 예).
+  4단계: 문양별 공통 식의 값 (브론즈 0 ~ 1.2%, 다이아 0 ~ 18%).
+
+======================================================================
+12. 유지할 것 / 하지 않아도 되는 것 / 목표 구조
+======================================================================
+
+[유지할 가치가 있는 지금의 구조]
+- Splash/Target/Buff/Debuff Action 분리, TowerVisual 분리.
+- 적, 투사체, 데미지 텍스트, 이펙트 오브젝트 풀.
+- 타일 Dictionary 기반의 실제 판정, 경로 인덱스 기반의 타겟 판정.
+- 시각 효과와 타일 데이터의 분리.
+- 타워 행동을 코루틴으로 순차 연출하는 구조.
+- PlayerTurn/EnemyTurn/GameOver/GameClear 상태 클래스.
+전면 재작성은 권하지 않음. 상태의 주인과 실행 순서를 분명하게 만드는 것이 핵심.
+
+[굳이 하지 않아도 되는 것]
+- 모든 메서드를 이벤트로 바꾸기. 모든 클래스에 인터페이스 달기. 직접 연결을 전부 금지하기. GameManager에 모든 로직을 합치기.
+호출 순서는 명시적으로, 결과 알림은 필요할 때 이벤트로.
+
+[함수를 고칠 때 옆에서 확인할 다섯 가지]
+1. 누가 호출하는가?
+2. 어떤 값을 읽는가?
+3. 어떤 값을 바꾸는가? 그 값의 진짜 주인은 누구인가?
+4. 끝났다는 것은 어떻게 알리는가?
+5. 대상이 죽거나 씬이 바뀌면 누가 취소/해제하는가?
+
+[최종 목표 구조]                                               (2026-10-02 확정)
+한꺼번에 옮기지 않고, 5장 6단계를 거치며 시스템 하나씩 옮김.
+
+GameSession        적 수 한도, 게임오버/클리어, 전투 시작/초기화
+TurnOrchestrator   PlayerTurn, 지원 phase, 공격 phase, 소환/이동 phase, 타일 해석 phase
+GameSpeedController 배속/일시정지
+WaveSystem         WaveCatalog, WaveRuntimeState, EnemySpawner, WaveProgression
+TowerSystem        TowerCatalog, TowerBoard, TowerFactory, TowerProgressionService,
+                   TowerTurnScheduler, TowerStatCalculator, TowerSynergyService, TowerCheatController
+  스탯 모델        TowerDefinition(원본) / TowerRuntimeState / TowerUpgradeState /
+                   TowerEffectSnapshot / TowerFinalStats(공격 직전 계산한 불변 결과)
+  Action 계약      CanExecute, Execute(코루틴 또는 실행 핸들), OnTowerMoved, Dispose
+EnemySystem        EnemyLifecycle, EnemyHealth, EnemyMovement, EnemyDebuffRuntime(DebuffState + DebuffRule), EnemyStatAggregator
+TileSystem         TileMapGenerator, ZoneRepository, TileEffectTurnSystem, TileEffectPresenter, TileQueryService
+ProjectileSystem   ProjectilePool, ProjectileMotion, ProjectileLifetime, ProjectileHitResolver, ChainTargetSelector, ProjectileVfx
+기타               CurrencyWallet(TrySpend + 변경 이벤트), SceneTransitionService, CanvasGroupFader,
+                   TileSatelliteMotion/Appearance/Vfx
+
+중요한 것은 매니저의 수가 아니라 데이터의 주인, 계산, 진행, 표현의 경계.
+
+======================================================================
+부록 A. 스크립트별 메모
+======================================================================
+
+Assets/3. Scripts 81개, Assets/Editor 8개 (2026-10-14).
+
+[01. Tower]
+TowerManager          CSV 데이터, 배치, 소환비, 판매, 합성, 티어·컬러 강화, 시너지, 전체 행동 순서, 치트 입력.
+TowerController       타워 1개 초기화·최종 스탯·행동·버프·선택 표시·디버프 장판 연결. TowerStats도 이 파일에 있음.
+TowerSkill            (03. TowerSkill) 공격 타워 스킬 2의 공용 틀. Create에서 문양별 스킬을 고름.
+FireSplashSkill       불 광역의 메테오 (발사, 전원 피해, 화상·연소 배율. 옛 연쇄 코드 포함).
+FireTargetSkill       불 단일의 옛 치명타 스택 (적중 집계, 지속).
+TowerBuffStatus       (04. TowerBuff) 타워가 받은 스택형 버프의 공용 틀. 지금은 받는 타워가 스택을 가짐.
+FireBuffStatus        불 버프가 최종 스탯에 주는 효과.
+TowerVisual           외형을 고르는 순서: 시너지(6티어) → 검·도끼의 레이어(얼굴 + 테두리 + 투구) → 나머지 문양의 완성 초상 → (그림이 없으면) 문양 + 공격 방식 색.
+                      자식 이름(Emblem·Color·Tier·FrameRim·Headgear)으로 렌더러를 찾음. 투사체의 문양 그림과 색도 여기서 줌.
+TowerSelectionVisual  선택 표시.
+TowerCharacterCatalog / SynergyCharacterCatalog   타워와 시너지 타워의 캐릭터 외형 목록 (Resources의 에셋).
+TowerAttackAction     공통 공격 계약, 대상 탐색, 격자 범위 변환, 투사체 준비, 위성 연출. GetStackSkillThreshold도 여기.
+TargetAttackAction    사거리 내 대상 공격, 탄 사전 분배, 투사체 피해 정보 구성. Splash와 겹치는 수식이 있음.
+SplashAttackAction    범위 공격.
+BuffAction            사거리 안의 타일에 버프 기록. 방패·대지는 아무것도 하지 않고 끝남. 존 방식으로 바뀜 (5장 3-7, 3-8).
+DebuffAction          장판 생성/관리, 장판 이벤트를 타일 효과 기록에 연결. Tilemap 이름 검색.
+DebuffZone            장판 입력/배치 좌표/시각 효과와 좌표 변경 이벤트. 존 배치의 바탕이 됨.
+TowerDataSO           TowerData와 전투 enum(AttackType, BuffTarget, DebuffTarget, TargetPriority), TowerEmblem 상수.
+
+[02. Projectile]
+ProjectileHit2D        이동·명중·연쇄/범위·피해·스킬 투사체 처리·구형 디버프·효과·반환. ProjectileStats도 선언.
+ProjectileObjectPool2D 투사체 풀.
+
+[03. Enemy]
+EnemyDataSO            EnemyData와 EnemyType. enum 숫자가 WaveManager의 풀 배열 순서와 연결.
+EnemyHealthController  체력과 피해, 처치 반응·재화 지급·클리어 통보·풀 반환.
+EnemyMoveController    행동 카운터·주사위·이동(순환)·점유·타일 적용·진형 보간.
+EnemyDebuffController  상태 Dictionary, 스택, 지속 피해, 즉사, 이동/방어/치유 보정, UI 문구. 규칙이 등록된 문양은 EnemyDebuffRule에 맡김.
+EnemyDebuffRule        (DebuffRule) 디버프 규칙의 공용 틀과 상태 클래스 EnemyDebuffState. Get에서 문양별 규칙을 고름.
+FireDebuffRule         불 디버프의 화상·연소.
+EnemyObjectPool2D      풀 + 상태·이동·체력 초기화 (점유 등록은 이동 초기화 안에서).
+EnemyUIController      HP 표시를 HPBarSlider에 전달.
+EnemyListItemUI        적 한 마리의 목록 UI와 선택 콜백.
+EnemyCubeVisual / EnemyCubeOrientation / EnemyCubeRollGeometry   적을 여섯 면의 큐브로 굴리는 표현.
+Debuff/ 13개           DebuffBase + 문양 12개. 구형 경로이고 효과가 없음 (EnemyDebuffController.AddDebuff가 빈 메서드). 5장 4-15에서 삭제.
+
+[04. Manager]
+GameManager            게임 상태와 큰 턴 순서, 한도(EnemyLimit·CheckEnemyLimit·RefreshEnemyLimit·EnemyLimitChanged), 속도/일시정지, 종료.
+                       DontDestroyOnLoad를 부르지만 Manager 프리팹의 자식이라 동작하지 않음 (5장 6-8).
+GameTurnState          Idle/Player/Enemy/GameOver/GameClear 상태. 구체 UI/입력/카메라를 직접 조작.
+GameModeSession        난이도(SelectedDifficulty)와 고른 문양(SelectedEmblemIDs). 고르는 함수를 부르는 곳이 없음 (5장 5-1, 5-2).
+WaveManager            웨이브/사이클, 적 구성과 배율, 턴별 소환, 중간 보스, 보상 계산, 최종 클리어 통보.
+EnemyManager           상태 없음. TileManager의 점유에서 적을 모아 이동·타일·디버프 처리를 순회. 소환 직후 한도 판정을 부름.
+TileManager            경로(순환)·점유·도착 예약·특수 타일·효과 기록·시각 효과.
+GlobalProjectileManager 타워 데이터에서 투사체 풀 준비, 발사, 활성 여부 제공.
+CurrencyManager        골드/젬 원본과 변경 알림.
+LoadingManager         SceneLoader.NextScene을 읽어 로딩 연출과 씬 이동.
+
+[05. UI]
+UIManager              패널 켜고 끄기.
+PlayerTurnPanel, GameInfoPanel, TowerInfoPanel, TileinfoPanel, OptionPanel, GameOverPanel, GameClearPanel
+EnemyInfoPanel         길 위 적 목록, 선택한 적의 스탯/상태와 타일 정보. 빠진 UI를 코드로 생성.
+UIManager_Start / UIManager_Menu  씬 이름으로 직접 이동.
+UIStageThemeController UI 색상/스프라이트/계층에 테마 적용. 이름·키워드·아틀라스에 강하게 연결. SetRealm을 부르는 곳 없음.
+
+[06. Effect]
+EffectController       애니메이션 종료 시 EffectPool2D에 반환 요청. DestroyEffect 애니메이션 이벤트 연결.
+EffectLibrary          효과 ID와 프리팹 목록.
+EffectManager          라이브러리 ID로 풀과 효과 재생 제공.
+EffectPool2D           효과 수명과 반환.
+TileSatelliteOrbiter   타일 주변 위성 궤도/색/트레일.
+PathTileBubbleEffect   길 위 특수 타일의 기포 표시만 담당. 계산은 TileManager.
+
+[08. Common]
+BoardInputController   클릭/드래그 입력.
+BuffTargetNames        문양 이름 문자열.
+CameraController       카메라 크기 연출.
+CommonUtil             레이어 마스크 계산. 호출하는 곳 없음.
+DamageText / DamageTextPool  피해 숫자 연출과 풀.
+HPBarSlider            HP바 표시.
+GameStateVersion       화면에 보이는 상태가 바뀔 때 오르는 번호. 정보 패널의 갱신 기준.
+SceneLoader            다음 씬 이름을 static으로 보관. 로딩 씬을 여는 줄이 주석 (5장 6-17).
+
+[Editor]
+ClickDebugWindow, TileManagerEditor(경로 좌표 편집), UIStageThemeControllerEditor, UIAtlasNameConnector, UIThemeManualColorTracker,
+Tests/GameRuleTests, Tests/EnemyCubeOrientationTests, Tests/EnemyCubeRollGeometryTests.
+
+======================================================================
+부록 B. 직렬화된 스크립트 연결
+======================================================================
+
+2026-09-23 기준으로 찾은 것이고 그 뒤의 추가·삭제는 반영되지 않았음. 스크립트 이름이나 enum을 바꾸기 전에 다시 검색할 것.
+
+Assets/2. Prefab/1. Manager/   TowerManager, CurrencyManager, GameManager, GlobalProjectileManager, UIManager, EffectManager 프리팹에 같은 이름의 스크립트.
+                               SpawnManager.prefab ← WaveManager.
+                               =====Manager======.prefab이 이 매니저 프리팹들을 자식으로 묶고, 3. Stage1.unity는 이 묶음을 씀
+                               (그래서 GameManager는 루트 오브젝트가 아님. 2026-10-14 확인).
+Assets/Resources/              TowerCharacterCatalog.asset, SynergyCharacterCatalog.asset ← 같은 이름의 ScriptableObject (TowerVisual이 Resources.Load로도 읽음).
+Assets/2. Prefab/2. Tower/TowerBase.prefab  ← TowerController, TowerVisual
+Assets/2. Prefab/3. Enemy/     1. Enemy_normal ~ 5. Enemy_boss
+                               .prefab 5개 ← EnemyHealth/Move/Debuff/UIController, HPBarSlider
+                               .asset 5개  ← EnemyDataSO
+Assets/2. Prefab/4. Effect/    이펙트 프리팹 ← EffectController, EffectPool2D. EffectLibrary.asset ← EffectLibrary
+Assets/2. Prefab/              DebuffZone.prefab ← DebuffZone, TileSatelliteOrbiter
+                               MapBuff.prefab ← TileSatelliteOrbiter
+                               =====Pool=====.prefab ← EnemyObjectPool2D, DamageTextPool
+                               Txt_Damage.prefab ← DamageText
+                               HPBar.prefab ← HPBarSlider
+Assets/Resources/Projectiles/  컬러 + 문양 번호의 투사체 프리팹 ← ProjectileHit2D
+Assets/1. Scenes/3. Stage1.unity  ← EnemyObjectPool2D, EnemyManager, TileManager, CameraController

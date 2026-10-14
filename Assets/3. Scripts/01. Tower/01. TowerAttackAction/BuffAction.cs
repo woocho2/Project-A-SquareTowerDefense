@@ -10,7 +10,6 @@ public class BuffAction : TowerAttackAction
         int sourceTier = Mathf.Clamp(m_data.Tier, 1, 5);
         if (m_data.buffTarget == BuffTarget.Shield)
         {
-            GameManager.Instance?.AddShield(1);
             return true;
         }
 

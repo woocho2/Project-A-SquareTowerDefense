@@ -420,26 +420,6 @@ public class EnemyMoveController : MonoBehaviour
         }
     }
 
-    private const int NormalLeakDamage = 1;
-    private const int BossLeakDamage = 3;
-    private const int FinalWave = 40;
-
-    // [호출하는 곳 없음] 한 줄짜리 길에서 도착점에 닿은 적을 처리하던 함수입니다.
-    // 순환 경로에는 도착점이 없습니다. 패배 조건을 적 수 한도로 바꿀 때 아래 상수와 함께 지웁니다.
-    public void OnReachEnd()
-    {
-        bool isBoss = m_health != null && m_health.EnemyType == EnemyType.Boss;
-
-        if (GameManager.Instance != null)
-        {
-            bool isFinalBoss = isBoss && m_health.SpawnWave >= FinalWave;
-            if (isFinalBoss) GameManager.Instance.OnGameOver();
-            else GameManager.Instance.DecreaseLife(isBoss ? BossLeakDamage : NormalLeakDamage);
-        }
-
-        m_health?.ReturnToPool();
-    }
-
     public void SetPermanentActionPenalty(int penalty)
     {
         m_permanentActionPenalty = Mathf.Max(0, penalty);

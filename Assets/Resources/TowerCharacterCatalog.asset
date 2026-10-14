@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -13,87 +13,101 @@ MonoBehaviour:
   m_Name: TowerCharacterCatalog
   m_EditorClassIdentifier: Assembly-CSharp::TowerCharacterCatalog
   m_entries:
+  - emblemId: 1
+    emblemName: 검
+    characters:
+    - {fileID: 52010, guid: 69ef51cd58244ba0b749572a967a4d02, type: 3}
+    - {fileID: 52011, guid: 69ef51cd58244ba0b749572a967a4d02, type: 3}
+    - {fileID: 52012, guid: 69ef51cd58244ba0b749572a967a4d02, type: 3}
+    - {fileID: 52013, guid: 69ef51cd58244ba0b749572a967a4d02, type: 3}
+  - emblemId: 2
+    emblemName: 도끼
+    characters:
+    - {fileID: 52020, guid: 38dd808fe99a439d8843a95932730424, type: 3}
+    - {fileID: 52021, guid: 38dd808fe99a439d8843a95932730424, type: 3}
+    - {fileID: 52022, guid: 38dd808fe99a439d8843a95932730424, type: 3}
+    - {fileID: 52023, guid: 38dd808fe99a439d8843a95932730424, type: 3}
   - emblemId: 3
     emblemName: 활
     characters:
-    - {fileID: 48030, guid: bd9ec1b356ee45478a11a3fc7f10a631, type: 3}
-    - {fileID: 48031, guid: bd9ec1b356ee45478a11a3fc7f10a631, type: 3}
-    - {fileID: 48032, guid: bd9ec1b356ee45478a11a3fc7f10a631, type: 3}
-    - {fileID: 48033, guid: bd9ec1b356ee45478a11a3fc7f10a631, type: 3}
+    - {fileID: 52030, guid: e6e5c445463b4dd4a9288d13ab488f8e, type: 3}
+    - {fileID: 52031, guid: e6e5c445463b4dd4a9288d13ab488f8e, type: 3}
+    - {fileID: 52032, guid: e6e5c445463b4dd4a9288d13ab488f8e, type: 3}
+    - {fileID: 52033, guid: e6e5c445463b4dd4a9288d13ab488f8e, type: 3}
   - emblemId: 4
     emblemName: 창
     characters:
-    - {fileID: 48040, guid: 183a3307955e457fbbdd5fa142e5672c, type: 3}
-    - {fileID: 48041, guid: 183a3307955e457fbbdd5fa142e5672c, type: 3}
-    - {fileID: 48042, guid: 183a3307955e457fbbdd5fa142e5672c, type: 3}
-    - {fileID: 48043, guid: 183a3307955e457fbbdd5fa142e5672c, type: 3}
+    - {fileID: 52040, guid: 8afebe18f45b43e8beeca6d3bf595c4e, type: 3}
+    - {fileID: 52041, guid: 8afebe18f45b43e8beeca6d3bf595c4e, type: 3}
+    - {fileID: 52042, guid: 8afebe18f45b43e8beeca6d3bf595c4e, type: 3}
+    - {fileID: 52043, guid: 8afebe18f45b43e8beeca6d3bf595c4e, type: 3}
   - emblemId: 5
     emblemName: 방패
     characters:
-    - {fileID: 48050, guid: 5b0aa1ebbc724004af9c4b8ebed2fda1, type: 3}
-    - {fileID: 48051, guid: 5b0aa1ebbc724004af9c4b8ebed2fda1, type: 3}
-    - {fileID: 48052, guid: 5b0aa1ebbc724004af9c4b8ebed2fda1, type: 3}
-    - {fileID: 48053, guid: 5b0aa1ebbc724004af9c4b8ebed2fda1, type: 3}
+    - {fileID: 52050, guid: dad3e683a34749cf8b77273c00554807, type: 3}
+    - {fileID: 52051, guid: dad3e683a34749cf8b77273c00554807, type: 3}
+    - {fileID: 52052, guid: dad3e683a34749cf8b77273c00554807, type: 3}
+    - {fileID: 52053, guid: dad3e683a34749cf8b77273c00554807, type: 3}
   - emblemId: 6
     emblemName: 해머
     characters:
-    - {fileID: 48060, guid: 5da98dd5d44247e3a7f5e5cfc592e440, type: 3}
-    - {fileID: 48061, guid: 5da98dd5d44247e3a7f5e5cfc592e440, type: 3}
-    - {fileID: 48062, guid: 5da98dd5d44247e3a7f5e5cfc592e440, type: 3}
-    - {fileID: 48063, guid: 5da98dd5d44247e3a7f5e5cfc592e440, type: 3}
+    - {fileID: 52060, guid: 7f1926df052b4b21835940e0c831f4bb, type: 3}
+    - {fileID: 52061, guid: 7f1926df052b4b21835940e0c831f4bb, type: 3}
+    - {fileID: 52062, guid: 7f1926df052b4b21835940e0c831f4bb, type: 3}
+    - {fileID: 52063, guid: 7f1926df052b4b21835940e0c831f4bb, type: 3}
   - emblemId: 7
     emblemName: 불
     characters:
-    - {fileID: 48070, guid: 28e5567c793f4577966b7785232449b3, type: 3}
-    - {fileID: 48071, guid: 28e5567c793f4577966b7785232449b3, type: 3}
-    - {fileID: 48072, guid: 28e5567c793f4577966b7785232449b3, type: 3}
-    - {fileID: 48073, guid: 28e5567c793f4577966b7785232449b3, type: 3}
+    - {fileID: 52070, guid: 4b7ae037348c4e1fb2b07ef4e812345a, type: 3}
+    - {fileID: 52071, guid: 4b7ae037348c4e1fb2b07ef4e812345a, type: 3}
+    - {fileID: 52072, guid: 4b7ae037348c4e1fb2b07ef4e812345a, type: 3}
+    - {fileID: 52073, guid: 4b7ae037348c4e1fb2b07ef4e812345a, type: 3}
   - emblemId: 8
     emblemName: 물
     characters:
-    - {fileID: 48080, guid: 293a1f32a77d4b7b996e168f56c78355, type: 3}
-    - {fileID: 48081, guid: 293a1f32a77d4b7b996e168f56c78355, type: 3}
-    - {fileID: 48082, guid: 293a1f32a77d4b7b996e168f56c78355, type: 3}
-    - {fileID: 48083, guid: 293a1f32a77d4b7b996e168f56c78355, type: 3}
+    - {fileID: 52080, guid: e93520a891c74b879b9906b1be2b09ff, type: 3}
+    - {fileID: 52081, guid: e93520a891c74b879b9906b1be2b09ff, type: 3}
+    - {fileID: 52082, guid: e93520a891c74b879b9906b1be2b09ff, type: 3}
+    - {fileID: 52083, guid: e93520a891c74b879b9906b1be2b09ff, type: 3}
   - emblemId: 9
     emblemName: 대지
     characters:
-    - {fileID: 48090, guid: 4f4febe3dbd546899f9c9850bfd29336, type: 3}
-    - {fileID: 48091, guid: 4f4febe3dbd546899f9c9850bfd29336, type: 3}
-    - {fileID: 48092, guid: 4f4febe3dbd546899f9c9850bfd29336, type: 3}
-    - {fileID: 48093, guid: 4f4febe3dbd546899f9c9850bfd29336, type: 3}
+    - {fileID: 52090, guid: 8390fb07d78842e5bd54661b86f954b3, type: 3}
+    - {fileID: 52091, guid: 8390fb07d78842e5bd54661b86f954b3, type: 3}
+    - {fileID: 52092, guid: 8390fb07d78842e5bd54661b86f954b3, type: 3}
+    - {fileID: 52093, guid: 8390fb07d78842e5bd54661b86f954b3, type: 3}
   - emblemId: 10
     emblemName: 바람
     characters:
-    - {fileID: 48100, guid: f62a7ac7cdb94aedbf0a80a618d935dc, type: 3}
-    - {fileID: 48101, guid: f62a7ac7cdb94aedbf0a80a618d935dc, type: 3}
-    - {fileID: 48102, guid: f62a7ac7cdb94aedbf0a80a618d935dc, type: 3}
-    - {fileID: 48103, guid: f62a7ac7cdb94aedbf0a80a618d935dc, type: 3}
+    - {fileID: 52100, guid: fdb92e0d3d25433194d359753018fcbe, type: 3}
+    - {fileID: 52101, guid: fdb92e0d3d25433194d359753018fcbe, type: 3}
+    - {fileID: 52102, guid: fdb92e0d3d25433194d359753018fcbe, type: 3}
+    - {fileID: 52103, guid: fdb92e0d3d25433194d359753018fcbe, type: 3}
   - emblemId: 11
     emblemName: 얼음
     characters:
-    - {fileID: 48110, guid: 925af37efc89471198789be4a9e96cd0, type: 3}
-    - {fileID: 48111, guid: 925af37efc89471198789be4a9e96cd0, type: 3}
-    - {fileID: 48112, guid: 925af37efc89471198789be4a9e96cd0, type: 3}
-    - {fileID: 48113, guid: 925af37efc89471198789be4a9e96cd0, type: 3}
+    - {fileID: 52110, guid: 538a88213ca7412fb8598d7eeb49b43a, type: 3}
+    - {fileID: 52111, guid: 538a88213ca7412fb8598d7eeb49b43a, type: 3}
+    - {fileID: 52112, guid: 538a88213ca7412fb8598d7eeb49b43a, type: 3}
+    - {fileID: 52113, guid: 538a88213ca7412fb8598d7eeb49b43a, type: 3}
   - emblemId: 12
     emblemName: 전기
     characters:
-    - {fileID: 48120, guid: f81783d0cb104047a9a2ee69104482dc, type: 3}
-    - {fileID: 48121, guid: f81783d0cb104047a9a2ee69104482dc, type: 3}
-    - {fileID: 48122, guid: f81783d0cb104047a9a2ee69104482dc, type: 3}
-    - {fileID: 48123, guid: f81783d0cb104047a9a2ee69104482dc, type: 3}
+    - {fileID: 52120, guid: adde8ba3d8f748ee86bd238829b414e1, type: 3}
+    - {fileID: 52121, guid: adde8ba3d8f748ee86bd238829b414e1, type: 3}
+    - {fileID: 52122, guid: adde8ba3d8f748ee86bd238829b414e1, type: 3}
+    - {fileID: 52123, guid: adde8ba3d8f748ee86bd238829b414e1, type: 3}
   - emblemId: 13
     emblemName: 빛
     characters:
-    - {fileID: 48130, guid: f385bba2956544899d181fe9aab67fc5, type: 3}
-    - {fileID: 48131, guid: f385bba2956544899d181fe9aab67fc5, type: 3}
-    - {fileID: 48132, guid: f385bba2956544899d181fe9aab67fc5, type: 3}
-    - {fileID: 48133, guid: f385bba2956544899d181fe9aab67fc5, type: 3}
+    - {fileID: 52130, guid: 9fd282ad393245f582b02e8677341e08, type: 3}
+    - {fileID: 52131, guid: 9fd282ad393245f582b02e8677341e08, type: 3}
+    - {fileID: 52132, guid: 9fd282ad393245f582b02e8677341e08, type: 3}
+    - {fileID: 52133, guid: 9fd282ad393245f582b02e8677341e08, type: 3}
   - emblemId: 14
     emblemName: 어둠
     characters:
-    - {fileID: 48140, guid: 92b7b2c012dd417d9d748fd1ca383843, type: 3}
-    - {fileID: 48141, guid: 92b7b2c012dd417d9d748fd1ca383843, type: 3}
-    - {fileID: 48142, guid: 92b7b2c012dd417d9d748fd1ca383843, type: 3}
-    - {fileID: 48143, guid: 92b7b2c012dd417d9d748fd1ca383843, type: 3}
+    - {fileID: 52140, guid: 953a471c72b546ad9068c0faea033d7d, type: 3}
+    - {fileID: 52141, guid: 953a471c72b546ad9068c0faea033d7d, type: 3}
+    - {fileID: 52142, guid: 953a471c72b546ad9068c0faea033d7d, type: 3}
+    - {fileID: 52143, guid: 953a471c72b546ad9068c0faea033d7d, type: 3}

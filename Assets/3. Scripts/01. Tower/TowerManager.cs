@@ -93,7 +93,7 @@ public class TowerManager : MonoBehaviour
         public int SpawnIndex;
     }
 
-    // 27. 기획 통합.txt 9장의 최신 명단과 조합. 기존 논리 ID는 유지한다.
+    // 20. 통합 기획서.txt 9장의 최신 명단과 조합. 기존 논리 ID는 유지한다.
     // 각 항목은 4티어 이상 재료 문양을 모두 보유하면 생성된다.
     private static readonly SynergyDefinition[] s_synergyDefinitions =
     {

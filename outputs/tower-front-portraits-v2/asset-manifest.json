@@ -1,0 +1,1192 @@
+[
+    {
+        "kind":  "normal",
+        "emblemId":  1,
+        "attackClass":  1,
+        "towerIdExample":  1101,
+        "concept":  "히어로",
+        "spriteName":  "Tower_Sword_Hero_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Sword_Front_Atlas_v2.png",
+        "guid":  "69ef51cd58244ba0b749572a967a4d02",
+        "fileID":  52010,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  1,
+        "attackClass":  2,
+        "towerIdExample":  1201,
+        "concept":  "검객",
+        "spriteName":  "Tower_Sword_Swordsman_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Sword_Front_Atlas_v2.png",
+        "guid":  "69ef51cd58244ba0b749572a967a4d02",
+        "fileID":  52011,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  1,
+        "attackClass":  3,
+        "towerIdExample":  1301,
+        "concept":  "팔라딘",
+        "spriteName":  "Tower_Sword_Paladin_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Sword_Front_Atlas_v2.png",
+        "guid":  "69ef51cd58244ba0b749572a967a4d02",
+        "fileID":  52012,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  1,
+        "attackClass":  4,
+        "towerIdExample":  1401,
+        "concept":  "데스나이트",
+        "spriteName":  "Tower_Sword_DeathKnight_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Sword_Front_Atlas_v2.png",
+        "guid":  "69ef51cd58244ba0b749572a967a4d02",
+        "fileID":  52013,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  2,
+        "attackClass":  1,
+        "towerIdExample":  1102,
+        "concept":  "바이킹",
+        "spriteName":  "Tower_Axe_Viking_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Axe_Front_Atlas_v2.png",
+        "guid":  "38dd808fe99a439d8843a95932730424",
+        "fileID":  52020,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  2,
+        "attackClass":  2,
+        "towerIdExample":  1202,
+        "concept":  "버서커",
+        "spriteName":  "Tower_Axe_Berserker_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Axe_Front_Atlas_v2.png",
+        "guid":  "38dd808fe99a439d8843a95932730424",
+        "fileID":  52021,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  2,
+        "attackClass":  3,
+        "towerIdExample":  1302,
+        "concept":  "스칼드",
+        "spriteName":  "Tower_Axe_Skald_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Axe_Front_Atlas_v2.png",
+        "guid":  "38dd808fe99a439d8843a95932730424",
+        "fileID":  52022,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  2,
+        "attackClass":  4,
+        "towerIdExample":  1402,
+        "concept":  "집행관",
+        "spriteName":  "Tower_Axe_Executioner_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Axe_Front_Atlas_v2.png",
+        "guid":  "38dd808fe99a439d8843a95932730424",
+        "fileID":  52023,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  3,
+        "attackClass":  1,
+        "towerIdExample":  1103,
+        "concept":  "레인저",
+        "spriteName":  "Tower_Bow_Ranger_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Bow_Front_Atlas_v2.png",
+        "guid":  "e6e5c445463b4dd4a9288d13ab488f8e",
+        "fileID":  52030,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  3,
+        "attackClass":  2,
+        "towerIdExample":  1203,
+        "concept":  "헌터",
+        "spriteName":  "Tower_Bow_Hunter_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Bow_Front_Atlas_v2.png",
+        "guid":  "e6e5c445463b4dd4a9288d13ab488f8e",
+        "fileID":  52031,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  3,
+        "attackClass":  3,
+        "towerIdExample":  1303,
+        "concept":  "엘프",
+        "spriteName":  "Tower_Bow_Elf_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Bow_Front_Atlas_v2.png",
+        "guid":  "e6e5c445463b4dd4a9288d13ab488f8e",
+        "fileID":  52032,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  3,
+        "attackClass":  4,
+        "towerIdExample":  1403,
+        "concept":  "스나이퍼",
+        "spriteName":  "Tower_Bow_Sniper_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Bow_Front_Atlas_v2.png",
+        "guid":  "e6e5c445463b4dd4a9288d13ab488f8e",
+        "fileID":  52033,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  4,
+        "attackClass":  1,
+        "towerIdExample":  1104,
+        "concept":  "워로드",
+        "spriteName":  "Tower_Spear_Warlord_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Spear_Front_Atlas_v2.png",
+        "guid":  "8afebe18f45b43e8beeca6d3bf595c4e",
+        "fileID":  52040,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  4,
+        "attackClass":  2,
+        "towerIdExample":  1204,
+        "concept":  "창술사",
+        "spriteName":  "Tower_Spear_SpearMaster_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Spear_Front_Atlas_v2.png",
+        "guid":  "8afebe18f45b43e8beeca6d3bf595c4e",
+        "fileID":  52041,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  4,
+        "attackClass":  3,
+        "towerIdExample":  1304,
+        "concept":  "랜서",
+        "spriteName":  "Tower_Spear_Lancer_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Spear_Front_Atlas_v2.png",
+        "guid":  "8afebe18f45b43e8beeca6d3bf595c4e",
+        "fileID":  52042,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  4,
+        "attackClass":  4,
+        "towerIdExample":  1404,
+        "concept":  "임페일러",
+        "spriteName":  "Tower_Spear_Impaler_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Spear_Front_Atlas_v2.png",
+        "guid":  "8afebe18f45b43e8beeca6d3bf595c4e",
+        "fileID":  52043,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  5,
+        "attackClass":  1,
+        "towerIdExample":  1105,
+        "concept":  "서전트",
+        "spriteName":  "Tower_Shield_Sergeant_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Shield_Front_Atlas_v2.png",
+        "guid":  "dad3e683a34749cf8b77273c00554807",
+        "fileID":  52050,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  5,
+        "attackClass":  2,
+        "towerIdExample":  1205,
+        "concept":  "실드메이든",
+        "spriteName":  "Tower_Shield_Shieldmaiden_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Shield_Front_Atlas_v2.png",
+        "guid":  "dad3e683a34749cf8b77273c00554807",
+        "fileID":  52051,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  5,
+        "attackClass":  3,
+        "towerIdExample":  1305,
+        "concept":  "가디언",
+        "spriteName":  "Tower_Shield_Guardian_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Shield_Front_Atlas_v2.png",
+        "guid":  "dad3e683a34749cf8b77273c00554807",
+        "fileID":  52052,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  5,
+        "attackClass":  4,
+        "towerIdExample":  1405,
+        "concept":  "워든",
+        "spriteName":  "Tower_Shield_Warden_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Shield_Front_Atlas_v2.png",
+        "guid":  "dad3e683a34749cf8b77273c00554807",
+        "fileID":  52053,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  6,
+        "attackClass":  1,
+        "towerIdExample":  1106,
+        "concept":  "브레이커",
+        "spriteName":  "Tower_Hammer_Breaker_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Hammer_Front_Atlas_v2.png",
+        "guid":  "7f1926df052b4b21835940e0c831f4bb",
+        "fileID":  52060,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  6,
+        "attackClass":  2,
+        "towerIdExample":  1206,
+        "concept":  "메이슨",
+        "spriteName":  "Tower_Hammer_Mason_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Hammer_Front_Atlas_v2.png",
+        "guid":  "7f1926df052b4b21835940e0c831f4bb",
+        "fileID":  52061,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  6,
+        "attackClass":  3,
+        "towerIdExample":  1306,
+        "concept":  "블랙스미스",
+        "spriteName":  "Tower_Hammer_Blacksmith_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Hammer_Front_Atlas_v2.png",
+        "guid":  "7f1926df052b4b21835940e0c831f4bb",
+        "fileID":  52062,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  6,
+        "attackClass":  4,
+        "towerIdExample":  1406,
+        "concept":  "드워프",
+        "spriteName":  "Tower_Hammer_Dwarf_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Hammer_Front_Atlas_v2.png",
+        "guid":  "7f1926df052b4b21835940e0c831f4bb",
+        "fileID":  52063,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  7,
+        "attackClass":  1,
+        "towerIdExample":  1107,
+        "concept":  "화염술사",
+        "spriteName":  "Tower_Fire_Pyromancer_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Fire_Front_Atlas_v2.png",
+        "guid":  "4b7ae037348c4e1fb2b07ef4e812345a",
+        "fileID":  52070,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  7,
+        "attackClass":  2,
+        "towerIdExample":  1207,
+        "concept":  "샐러맨더",
+        "spriteName":  "Tower_Fire_Salamander_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Fire_Front_Atlas_v2.png",
+        "guid":  "4b7ae037348c4e1fb2b07ef4e812345a",
+        "fileID":  52071,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  7,
+        "attackClass":  3,
+        "towerIdExample":  1307,
+        "concept":  "피닉스",
+        "spriteName":  "Tower_Fire_Phoenix_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Fire_Front_Atlas_v2.png",
+        "guid":  "4b7ae037348c4e1fb2b07ef4e812345a",
+        "fileID":  52072,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  7,
+        "attackClass":  4,
+        "towerIdExample":  1407,
+        "concept":  "이프리트",
+        "spriteName":  "Tower_Fire_Ifrit_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Fire_Front_Atlas_v2.png",
+        "guid":  "4b7ae037348c4e1fb2b07ef4e812345a",
+        "fileID":  52073,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  8,
+        "attackClass":  1,
+        "towerIdExample":  1108,
+        "concept":  "파도술사",
+        "spriteName":  "Tower_Water_TideMage_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Water_Front_Atlas_v2.png",
+        "guid":  "e93520a891c74b879b9906b1be2b09ff",
+        "fileID":  52080,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  8,
+        "attackClass":  2,
+        "towerIdExample":  1208,
+        "concept":  "운디네",
+        "spriteName":  "Tower_Water_Undine_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Water_Front_Atlas_v2.png",
+        "guid":  "e93520a891c74b879b9906b1be2b09ff",
+        "fileID":  52081,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  8,
+        "attackClass":  3,
+        "towerIdExample":  1308,
+        "concept":  "나이아드",
+        "spriteName":  "Tower_Water_Naiad_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Water_Front_Atlas_v2.png",
+        "guid":  "e93520a891c74b879b9906b1be2b09ff",
+        "fileID":  52082,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  8,
+        "attackClass":  4,
+        "towerIdExample":  1408,
+        "concept":  "세이렌",
+        "spriteName":  "Tower_Water_Siren_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Water_Front_Atlas_v2.png",
+        "guid":  "e93520a891c74b879b9906b1be2b09ff",
+        "fileID":  52083,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  9,
+        "attackClass":  1,
+        "towerIdExample":  1109,
+        "concept":  "드루이드",
+        "spriteName":  "Tower_Earth_Druid_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Earth_Front_Atlas_v2.png",
+        "guid":  "8390fb07d78842e5bd54661b86f954b3",
+        "fileID":  52090,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  9,
+        "attackClass":  2,
+        "towerIdExample":  1209,
+        "concept":  "노움",
+        "spriteName":  "Tower_Earth_Gnome_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Earth_Front_Atlas_v2.png",
+        "guid":  "8390fb07d78842e5bd54661b86f954b3",
+        "fileID":  52091,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  9,
+        "attackClass":  3,
+        "towerIdExample":  1309,
+        "concept":  "오리에드",
+        "spriteName":  "Tower_Earth_Oread_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Earth_Front_Atlas_v2.png",
+        "guid":  "8390fb07d78842e5bd54661b86f954b3",
+        "fileID":  52092,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  9,
+        "attackClass":  4,
+        "towerIdExample":  1409,
+        "concept":  "고르곤",
+        "spriteName":  "Tower_Earth_Gorgon_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Earth_Front_Atlas_v2.png",
+        "guid":  "8390fb07d78842e5bd54661b86f954b3",
+        "fileID":  52093,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  10,
+        "attackClass":  1,
+        "towerIdExample":  1110,
+        "concept":  "기상술사",
+        "spriteName":  "Tower_Wind_WeatherMage_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Wind_Front_Atlas_v2.png",
+        "guid":  "fdb92e0d3d25433194d359753018fcbe",
+        "fileID":  52100,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  10,
+        "attackClass":  2,
+        "towerIdExample":  1210,
+        "concept":  "실프",
+        "spriteName":  "Tower_Wind_Sylph_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Wind_Front_Atlas_v2.png",
+        "guid":  "fdb92e0d3d25433194d359753018fcbe",
+        "fileID":  52101,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  10,
+        "attackClass":  3,
+        "towerIdExample":  1310,
+        "concept":  "에리얼",
+        "spriteName":  "Tower_Wind_Aerial_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Wind_Front_Atlas_v2.png",
+        "guid":  "fdb92e0d3d25433194d359753018fcbe",
+        "fileID":  52102,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  10,
+        "attackClass":  4,
+        "towerIdExample":  1410,
+        "concept":  "하피",
+        "spriteName":  "Tower_Wind_Harpy_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Wind_Front_Atlas_v2.png",
+        "guid":  "fdb92e0d3d25433194d359753018fcbe",
+        "fileID":  52103,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  11,
+        "attackClass":  1,
+        "towerIdExample":  1111,
+        "concept":  "소서러",
+        "spriteName":  "Tower_Ice_Sorcerer_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Ice_Front_Atlas_v2.png",
+        "guid":  "538a88213ca7412fb8598d7eeb49b43a",
+        "fileID":  52110,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  11,
+        "attackClass":  2,
+        "towerIdExample":  1211,
+        "concept":  "잭 프로스트",
+        "spriteName":  "Tower_Ice_JackFrost_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Ice_Front_Atlas_v2.png",
+        "guid":  "538a88213ca7412fb8598d7eeb49b43a",
+        "fileID":  52111,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  11,
+        "attackClass":  3,
+        "towerIdExample":  1311,
+        "concept":  "글래셔",
+        "spriteName":  "Tower_Ice_Glacier_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Ice_Front_Atlas_v2.png",
+        "guid":  "538a88213ca7412fb8598d7eeb49b43a",
+        "fileID":  52112,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  11,
+        "attackClass":  4,
+        "towerIdExample":  1411,
+        "concept":  "예티",
+        "spriteName":  "Tower_Ice_Yeti_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Ice_Front_Atlas_v2.png",
+        "guid":  "538a88213ca7412fb8598d7eeb49b43a",
+        "fileID":  52113,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  12,
+        "attackClass":  1,
+        "towerIdExample":  1112,
+        "concept":  "스톰브링어",
+        "spriteName":  "Tower_Electric_Stormbringer_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Electric_Front_Atlas_v2.png",
+        "guid":  "adde8ba3d8f748ee86bd238829b414e1",
+        "fileID":  52120,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  12,
+        "attackClass":  2,
+        "towerIdExample":  1212,
+        "concept":  "썬더버드",
+        "spriteName":  "Tower_Electric_Thunderbird_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Electric_Front_Atlas_v2.png",
+        "guid":  "adde8ba3d8f748ee86bd238829b414e1",
+        "fileID":  52121,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  12,
+        "attackClass":  3,
+        "towerIdExample":  1312,
+        "concept":  "키린",
+        "spriteName":  "Tower_Electric_Qilin_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Electric_Front_Atlas_v2.png",
+        "guid":  "adde8ba3d8f748ee86bd238829b414e1",
+        "fileID":  52122,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  12,
+        "attackClass":  4,
+        "towerIdExample":  1412,
+        "concept":  "라이트닝 울프",
+        "spriteName":  "Tower_Electric_LightningWolf_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Electric_Front_Atlas_v2.png",
+        "guid":  "adde8ba3d8f748ee86bd238829b414e1",
+        "fileID":  52123,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  13,
+        "attackClass":  1,
+        "towerIdExample":  1113,
+        "concept":  "아크메이지",
+        "spriteName":  "Tower_Light_Archmage_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Light_Front_Atlas_v2.png",
+        "guid":  "9fd282ad393245f582b02e8677341e08",
+        "fileID":  52130,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  13,
+        "attackClass":  2,
+        "towerIdExample":  1213,
+        "concept":  "위습",
+        "spriteName":  "Tower_Light_Wisp_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Light_Front_Atlas_v2.png",
+        "guid":  "9fd282ad393245f582b02e8677341e08",
+        "fileID":  52131,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  13,
+        "attackClass":  3,
+        "towerIdExample":  1313,
+        "concept":  "비숍",
+        "spriteName":  "Tower_Light_Bishop_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Light_Front_Atlas_v2.png",
+        "guid":  "9fd282ad393245f582b02e8677341e08",
+        "fileID":  52132,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  13,
+        "attackClass":  4,
+        "towerIdExample":  1413,
+        "concept":  "루시퍼",
+        "spriteName":  "Tower_Light_Lucifer_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Light_Front_Atlas_v2.png",
+        "guid":  "9fd282ad393245f582b02e8677341e08",
+        "fileID":  52133,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  14,
+        "attackClass":  1,
+        "towerIdExample":  1114,
+        "concept":  "다크메이지",
+        "spriteName":  "Tower_Dark_DarkMage_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Dark_Front_Atlas_v2.png",
+        "guid":  "953a471c72b546ad9068c0faea033d7d",
+        "fileID":  52140,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  14,
+        "attackClass":  2,
+        "towerIdExample":  1214,
+        "concept":  "셰이드",
+        "spriteName":  "Tower_Dark_Shade_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Dark_Front_Atlas_v2.png",
+        "guid":  "953a471c72b546ad9068c0faea033d7d",
+        "fileID":  52141,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  14,
+        "attackClass":  3,
+        "towerIdExample":  1314,
+        "concept":  "헬레틱",
+        "spriteName":  "Tower_Dark_Heretic_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Dark_Front_Atlas_v2.png",
+        "guid":  "953a471c72b546ad9068c0faea033d7d",
+        "fileID":  52142,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "normal",
+        "emblemId":  14,
+        "attackClass":  4,
+        "towerIdExample":  1414,
+        "concept":  "레이스",
+        "spriteName":  "Tower_Dark_Wraith_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Tower_Dark_Front_Atlas_v2.png",
+        "guid":  "953a471c72b546ad9068c0faea033d7d",
+        "fileID":  52143,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "synergy",
+        "emblemId":  0,
+        "attackClass":  0,
+        "towerIdExample":  6001,
+        "concept":  "오딘",
+        "spriteName":  "Synergy_Odin_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Synergy_All14_Front_Atlas_v2.png",
+        "guid":  "51c06b39b3eb456ca1078f566804ea92",
+        "fileID":  53001,
+        "rect":  {
+                     "x":  0,
+                     "y":  768,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "synergy",
+        "emblemId":  0,
+        "attackClass":  0,
+        "towerIdExample":  6002,
+        "concept":  "토르",
+        "spriteName":  "Synergy_Thor_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Synergy_All14_Front_Atlas_v2.png",
+        "guid":  "51c06b39b3eb456ca1078f566804ea92",
+        "fileID":  53002,
+        "rect":  {
+                     "x":  256,
+                     "y":  768,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "synergy",
+        "emblemId":  0,
+        "attackClass":  0,
+        "towerIdExample":  6003,
+        "concept":  "로키",
+        "spriteName":  "Synergy_Loki_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Synergy_All14_Front_Atlas_v2.png",
+        "guid":  "51c06b39b3eb456ca1078f566804ea92",
+        "fileID":  53003,
+        "rect":  {
+                     "x":  512,
+                     "y":  768,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "synergy",
+        "emblemId":  0,
+        "attackClass":  0,
+        "towerIdExample":  6004,
+        "concept":  "헬",
+        "spriteName":  "Synergy_Hel_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Synergy_All14_Front_Atlas_v2.png",
+        "guid":  "51c06b39b3eb456ca1078f566804ea92",
+        "fileID":  53004,
+        "rect":  {
+                     "x":  768,
+                     "y":  768,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "synergy",
+        "emblemId":  0,
+        "attackClass":  0,
+        "towerIdExample":  6005,
+        "concept":  "수르트",
+        "spriteName":  "Synergy_Surtr_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Synergy_All14_Front_Atlas_v2.png",
+        "guid":  "51c06b39b3eb456ca1078f566804ea92",
+        "fileID":  53005,
+        "rect":  {
+                     "x":  0,
+                     "y":  512,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "synergy",
+        "emblemId":  0,
+        "attackClass":  0,
+        "towerIdExample":  6006,
+        "concept":  "프레이",
+        "spriteName":  "Synergy_Freyr_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Synergy_All14_Front_Atlas_v2.png",
+        "guid":  "51c06b39b3eb456ca1078f566804ea92",
+        "fileID":  53006,
+        "rect":  {
+                     "x":  256,
+                     "y":  512,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "synergy",
+        "emblemId":  0,
+        "attackClass":  0,
+        "towerIdExample":  6007,
+        "concept":  "발드르",
+        "spriteName":  "Synergy_Baldr_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Synergy_All14_Front_Atlas_v2.png",
+        "guid":  "51c06b39b3eb456ca1078f566804ea92",
+        "fileID":  53007,
+        "rect":  {
+                     "x":  512,
+                     "y":  512,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "synergy",
+        "emblemId":  0,
+        "attackClass":  0,
+        "towerIdExample":  6008,
+        "concept":  "스카디",
+        "spriteName":  "Synergy_Skadi_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Synergy_All14_Front_Atlas_v2.png",
+        "guid":  "51c06b39b3eb456ca1078f566804ea92",
+        "fileID":  53008,
+        "rect":  {
+                     "x":  768,
+                     "y":  512,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "synergy",
+        "emblemId":  0,
+        "attackClass":  0,
+        "towerIdExample":  6009,
+        "concept":  "프레이야",
+        "spriteName":  "Synergy_Freyja_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Synergy_All14_Front_Atlas_v2.png",
+        "guid":  "51c06b39b3eb456ca1078f566804ea92",
+        "fileID":  53009,
+        "rect":  {
+                     "x":  0,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "synergy",
+        "emblemId":  0,
+        "attackClass":  0,
+        "towerIdExample":  6010,
+        "concept":  "이미르",
+        "spriteName":  "Synergy_Ymir_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Synergy_All14_Front_Atlas_v2.png",
+        "guid":  "51c06b39b3eb456ca1078f566804ea92",
+        "fileID":  53010,
+        "rect":  {
+                     "x":  256,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "synergy",
+        "emblemId":  0,
+        "attackClass":  0,
+        "towerIdExample":  6011,
+        "concept":  "울르",
+        "spriteName":  "Synergy_Ullr_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Synergy_All14_Front_Atlas_v2.png",
+        "guid":  "51c06b39b3eb456ca1078f566804ea92",
+        "fileID":  53011,
+        "rect":  {
+                     "x":  512,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "synergy",
+        "emblemId":  0,
+        "attackClass":  0,
+        "towerIdExample":  6012,
+        "concept":  "브륀힐드",
+        "spriteName":  "Synergy_Brunhild_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Synergy_All14_Front_Atlas_v2.png",
+        "guid":  "51c06b39b3eb456ca1078f566804ea92",
+        "fileID":  53012,
+        "rect":  {
+                     "x":  768,
+                     "y":  256,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "synergy",
+        "emblemId":  0,
+        "attackClass":  0,
+        "towerIdExample":  6013,
+        "concept":  "브록 \u0026 에이트리",
+        "spriteName":  "Synergy_BrokEitri_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Synergy_All14_Front_Atlas_v2.png",
+        "guid":  "51c06b39b3eb456ca1078f566804ea92",
+        "fileID":  53013,
+        "rect":  {
+                     "x":  0,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    },
+    {
+        "kind":  "synergy",
+        "emblemId":  0,
+        "attackClass":  0,
+        "towerIdExample":  6014,
+        "concept":  "뇨르드",
+        "spriteName":  "Synergy_Njord_Front_v2",
+        "atlas":  "Assets/4. Asset/2. Tower/Portraits_SD_Front_v2/Synergy_All14_Front_Atlas_v2.png",
+        "guid":  "51c06b39b3eb456ca1078f566804ea92",
+        "fileID":  53014,
+        "rect":  {
+                     "x":  256,
+                     "y":  0,
+                     "width":  256,
+                     "height":  256
+                 }
+    }
+]

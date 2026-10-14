@@ -3082,6 +3082,17 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &1578735095 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 592743237413253621, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+  m_PrefabInstance: {fileID: 7833166977621882913}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &1605401815 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5203215593360184427, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
@@ -5036,6 +5047,18 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.9254902
       objectReference: {fileID: 0}
+    - target: {fileID: 7139277456695371452, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: img_life
+      value: 
+      objectReference: {fileID: 775661898}
+    - target: {fileID: 7139277456695371452, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: img_shield
+      value: 
+      objectReference: {fileID: 1605401843}
+    - target: {fileID: 7139277456695371452, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
+      propertyPath: txt_currentLimit
+      value: 
+      objectReference: {fileID: 1578735095}
     - target: {fileID: 7585999403140057473, guid: 2a2dc2c1027adca49894008fc234f54c, type: 3}
       propertyPath: m_Color.b
       value: 0.25490198

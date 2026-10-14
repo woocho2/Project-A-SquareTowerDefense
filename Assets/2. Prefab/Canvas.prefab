@@ -9684,18 +9684,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameInfoPanel
   txt_stage: {fileID: 4302315564900681717}
   txt_currentWave: {fileID: 8043609364954299459}
-  m_currentLifes:
-  - {fileID: 7297826245231774740}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  m_currentShields:
-  - {fileID: 1785483448187578996}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  txt_currentLimit: {fileID: 0}
+  img_life: {fileID: 0}
+  img_shield: {fileID: 0}
   txt_currentGold: {fileID: 1923203476564582155}
   txt_currentGem: {fileID: 717181989286566304}
   txt_currentGameSpeed: {fileID: 8053327983237638601}

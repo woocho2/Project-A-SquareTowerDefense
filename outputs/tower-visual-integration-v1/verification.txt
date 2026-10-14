@@ -1,0 +1,6 @@
+PASS: prefab local fileIDs and references are consistent, including nested/stripped documents.
+PASS: existing nested DebuffZone settings match the original snapshot.
+PASS: no Assets reference to any of the 47 removed PNG GUIDs.
+PASS: actual TowerVisual and both catalogs compiled using Unity API stand-ins; all 280 normal + 14 synergy IDs checked.
+PASS: layer order, equal layer scale, emblem-only tint, normal/synergy reuse, retained projectile identity and null-data guard.
+Unity importer, rendering and playmode were not run; the user performs Unity validation.

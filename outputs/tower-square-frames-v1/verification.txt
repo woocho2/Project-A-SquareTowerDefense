@@ -1,0 +1,13 @@
+Canvas per sprite: 256x256; atlas: 768x512 (unchanged).
+Pixel coordinates are measured from PNG top-left; alpha threshold 128.
+Center: (128,128) on pixel edges. Outer radius: 28px; inner radius: 20px.
+Straight border thickness: 29px on every side.
+Bronze: outer=(7,7,242,242); opening=(36,36,184,184); masks identical.
+Silver: outer=(7,7,242,242); opening=(36,36,184,184); masks identical.
+Gold: outer=(7,7,242,242); opening=(36,36,184,184); masks identical.
+Mithril: outer=(7,7,242,242); opening=(36,36,184,184); masks identical.
+Diamond: outer=(7,7,242,242); opening=(36,36,184,184); masks identical.
+Synergy: outer=(7,7,242,242); opening=(36,36,184,184); masks identical.
+Outer/opening alpha masks: 90-degree rotational symmetry and horizontal/vertical symmetry verified.
+Six rims share exact alpha; white interiors are fully opaque; texture dimensions unchanged.
+Spawn texture and runtime 95% scale are unchanged. Native spawn outer was 244x242, so it is not an exact square match yet.

@@ -1,0 +1,11 @@
+2 atlases, 6 sprites per atlas, 768x512, grid 3x2, cells 256x256.
+Both layers use actual current spawn-tile alpha masks. Visible bounds=(7,7,242,242). Shared center=(128,128).
+Bronze: identical alpha in each layer; background center RGB=252,236,220; decoration center alpha=0.
+Silver: identical alpha in each layer; background center RGB=234,239,243; decoration center alpha=0.
+Gold: identical alpha in each layer; background center RGB=253,246,218; decoration center alpha=0.
+Mithril: identical alpha in each layer; background center RGB=227,249,246; decoration center alpha=0.
+Diamond: identical alpha in each layer; background center RGB=222,241,252; decoration center alpha=0.
+Synergy: identical alpha in each layer; background center RGB=252,251,244; decoration center alpha=0.
+Native imagegen art normalized and packed with original masks. No source atlas, portrait, prefab or runtime code changed. Unity was not launched.
+
+Final Assets PNG hashes match packed files; both importers have 6 valid 256x256 slices, PPU 192 and Full Rect. 12 sprite names/IDs/rectangles verified.
