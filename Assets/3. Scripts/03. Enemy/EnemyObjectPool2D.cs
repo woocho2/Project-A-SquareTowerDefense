@@ -111,6 +111,9 @@ public class EnemyObjectPool2D : MonoBehaviour
             return null;
         }
 
+        // Start도 같은 9자리 제한을 적용합니다. 자리가 없으면 풀 객체를 꺼내지 않습니다.
+        if (TileManager.Instance != null && !TileManager.Instance.HasEnemyCapacityAtPathIndex(0)) return null;
+
         var health = TryGet();
         if (health == null) return null;
 
@@ -128,13 +131,18 @@ public class EnemyObjectPool2D : MonoBehaviour
         if (health.TryGetComponent<EnemyMoveController>(out var movement))
         {
             // InitMovement가 적을 TileManager의 패스 0번 인덱스에 등록합니다.
-            movement.InitMovement(m_enemyData);
+            if (!movement.InitMovement(m_enemyData))
+            {
+                health.ReturnToPool();
+                return null;
+            }
         }
 
         // 3. 체력 초기화[cite: 22]
         float finalMaxHP = m_enemyData.MaxHP * hpMultiplier;
         float finalDefend = m_enemyData.Defend * defendMultiplier;
         health.InitHealth(m_enemyData, finalMaxHP, finalDefend, m_poolEnemyType);
+        movement?.PlaySpawnDrop();
 
         return health;
     }

@@ -1,0 +1,226 @@
+{
+  "size": 512,
+  "spritePPU": 384,
+  "canvasWorldSize": 1.3333333333333333,
+  "gridCellSize": 1.5,
+  "cubeSideRecommendation": 1.3333333333333333,
+  "pathReference": {
+    "canvas": 256,
+    "ppu": 192
+  },
+  "decorationBounds": {
+    "x": 14,
+    "y": 14,
+    "width": 484,
+    "height": 484
+  },
+  "portraitMaster": "outputs/fallen-valkyrie-selfheal-v1/source/Front.png",
+  "portraitMasterSHA256": "3108205098443077d12c308a55f3371409a01fdb5ea44ddd2126470f57ecf31c",
+  "equipmentMaskPixels": 17636,
+  "geometry": "same master portrait and exact path decoration alpha for all six states",
+  "atlas": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_StateFaces_Atlas_v1.png",
+  "atlasSize": [
+    1536,
+    1024
+  ],
+  "assets": [
+    {
+      "key": "SelfHeal",
+      "label": "자가치유",
+      "color": "#d92746",
+      "background": "#fbe7eb",
+      "recommendedCubeAxis": "+Z",
+      "path": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_SelfHeal_v1.png",
+      "guid": "53a404216eb27b70d178bb6dad6df761",
+      "texture3D": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Textures3D/Enemy_Valkyrie_Face_SelfHeal_v1.png",
+      "layers": {
+        "portrait": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_SelfHeal.png",
+        "decoration": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_SelfHeal.png",
+        "background": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_SelfHeal.png"
+      },
+      "bounds": {
+        "x": 14,
+        "y": 14,
+        "width": 484,
+        "height": 484
+      },
+      "portraitPlacement": {
+        "left": 30,
+        "top": 32,
+        "width": 452,
+        "height": 460
+      },
+      "badge": {
+        "left": 218,
+        "top": 26,
+        "size": 76
+      },
+      "sha256": "72429e25567a4ad0ea2420a177224df7c6b4e3b4151eba65678ff0ee46a0fb76"
+    },
+    {
+      "key": "Defense",
+      "label": "방어",
+      "color": "#d4a928",
+      "background": "#faf3d5",
+      "recommendedCubeAxis": "-Z",
+      "path": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Defense_v1.png",
+      "guid": "ccea413c6b9b148e3ae4cf8e6b84bf1c",
+      "texture3D": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Textures3D/Enemy_Valkyrie_Face_Defense_v1.png",
+      "layers": {
+        "portrait": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Defense.png",
+        "decoration": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Defense.png",
+        "background": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Defense.png"
+      },
+      "bounds": {
+        "x": 14,
+        "y": 14,
+        "width": 484,
+        "height": 484
+      },
+      "portraitPlacement": {
+        "left": 30,
+        "top": 32,
+        "width": 452,
+        "height": 460
+      },
+      "badge": {
+        "left": 218,
+        "top": 26,
+        "size": 76
+      },
+      "sha256": "17467c13a2615be353bdf38e4c7a91ab7bfa52c26bbb55f552d2c72f00ec0a86"
+    },
+    {
+      "key": "Mobility",
+      "label": "이동력",
+      "color": "#53b8e0",
+      "background": "#e4f4fc",
+      "recommendedCubeAxis": "+X",
+      "path": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Mobility_v1.png",
+      "guid": "eccd865af6e48a0d8f2954b6cb84e1d1",
+      "texture3D": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Textures3D/Enemy_Valkyrie_Face_Mobility_v1.png",
+      "layers": {
+        "portrait": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Mobility.png",
+        "decoration": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Mobility.png",
+        "background": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Mobility.png"
+      },
+      "bounds": {
+        "x": 14,
+        "y": 14,
+        "width": 484,
+        "height": 484
+      },
+      "portraitPlacement": {
+        "left": 30,
+        "top": 32,
+        "width": 452,
+        "height": 460
+      },
+      "badge": {
+        "left": 218,
+        "top": 26,
+        "size": 76
+      },
+      "sha256": "dc7582cbe8cadc20ea7675568ba8d62d237b8756af44835dc9c89732450f9edd"
+    },
+    {
+      "key": "Action",
+      "label": "행동력",
+      "color": "#3aa45f",
+      "background": "#e7f5e8",
+      "recommendedCubeAxis": "-X",
+      "path": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Action_v1.png",
+      "guid": "f7a1621718a30c35de555fa807157563",
+      "texture3D": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Textures3D/Enemy_Valkyrie_Face_Action_v1.png",
+      "layers": {
+        "portrait": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Action.png",
+        "decoration": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Action.png",
+        "background": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Action.png"
+      },
+      "bounds": {
+        "x": 14,
+        "y": 14,
+        "width": 484,
+        "height": 484
+      },
+      "portraitPlacement": {
+        "left": 30,
+        "top": 32,
+        "width": 452,
+        "height": 460
+      },
+      "badge": {
+        "left": 218,
+        "top": 26,
+        "size": 76
+      },
+      "sha256": "ccb66fc6d0cba292c20d07a368972966e4537b2e8b0a00dbc97fb54719dde7c4"
+    },
+    {
+      "key": "Locked",
+      "label": "자물쇠 · 약점",
+      "color": "#78808c",
+      "background": "#ebedf1",
+      "recommendedCubeAxis": "+Y",
+      "path": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Locked_v1.png",
+      "guid": "c0bdac22e962958997115409e4829de6",
+      "texture3D": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Textures3D/Enemy_Valkyrie_Face_Locked_v1.png",
+      "layers": {
+        "portrait": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Locked.png",
+        "decoration": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Locked.png",
+        "background": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Locked.png"
+      },
+      "bounds": {
+        "x": 14,
+        "y": 14,
+        "width": 484,
+        "height": 484
+      },
+      "portraitPlacement": {
+        "left": 30,
+        "top": 32,
+        "width": 452,
+        "height": 460
+      },
+      "badge": {
+        "left": 218,
+        "top": 26,
+        "size": 76
+      },
+      "sha256": "5d2975590f551333a23d60285a83b3061c6765e20ce260597702f0bdee151c62"
+    },
+    {
+      "key": "Hourglass",
+      "label": "모래시계 · 무적",
+      "color": "#9360d6",
+      "background": "#f0e8fb",
+      "recommendedCubeAxis": "-Y",
+      "path": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Hourglass_v1.png",
+      "guid": "37d6d01ada43f4a91048421264ce89a1",
+      "texture3D": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Textures3D/Enemy_Valkyrie_Face_Hourglass_v1.png",
+      "layers": {
+        "portrait": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Hourglass.png",
+        "decoration": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Hourglass.png",
+        "background": "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Hourglass.png"
+      },
+      "bounds": {
+        "x": 14,
+        "y": 14,
+        "width": 484,
+        "height": 484
+      },
+      "portraitPlacement": {
+        "left": 30,
+        "top": 32,
+        "width": 452,
+        "height": 460
+      },
+      "badge": {
+        "left": 218,
+        "top": 26,
+        "size": 76
+      },
+      "sha256": "fd94aec210c7aa854e5ccc8bf6570f2aa7ed245de9a5fde0be40886e360be701"
+    }
+  ]
+}

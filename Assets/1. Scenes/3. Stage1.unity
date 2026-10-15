@@ -308,8 +308,7 @@ MonoBehaviour:
   mapTileBuffEffectPrefab: {fileID: 8006718689985283710, guid: 5139c00ca6ab24149b8532a3ad5f4ea0, type: 3}
   m_pathMapBuffVisualPrefab: {fileID: 100000, guid: ff449bbf718644659eb42066d3d91291, type: 3}
   mapTileBuffEffectParent: {fileID: 1988861637}
-  m_enemySlotSpacing: 0.28
-  m_enemyFormationMaxColumns: 3
+  m_enemySlotSpacing: 0.33333334
   m_enemyFormationMoveSpeed: 1.5
 --- !u!1839735485 &296768363
 Tilemap:
@@ -1680,7 +1679,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 10
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4437,7 +4436,7 @@ PrefabInstance:
     - target: {fileID: 2714449143849703359, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
       propertyPath: enemyPrefab
       value: 
-      objectReference: {fileID: 1969506814401737429, guid: 565bffcfa3c50e14cb7dd6553827e48f, type: 3}
+      objectReference: {fileID: 236192059372975241, guid: 1679782d7e31a1143b96b4e8288a006f, type: 3}
     - target: {fileID: 2714449143849703359, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
       propertyPath: m_enemyData
       value: 
@@ -4449,11 +4448,11 @@ PrefabInstance:
     - target: {fileID: 5954208249013597334, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
       propertyPath: enemyPrefab
       value: 
-      objectReference: {fileID: 866073402872553475, guid: c76796b80392aa945b78f7e93474582f, type: 3}
+      objectReference: {fileID: 236192059372975241, guid: 1679782d7e31a1143b96b4e8288a006f, type: 3}
     - target: {fileID: 5954208249013597334, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
       propertyPath: m_enemyData
       value: 
-      objectReference: {fileID: 11400000, guid: fb027507efe6ced45b5a0ff06d4ddf46, type: 2}
+      objectReference: {fileID: 11400000, guid: 6ddf5b99e9c8d9fa9a08827af2636edd, type: 2}
     - target: {fileID: 5954208249013597334, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
       propertyPath: m_poolEnemyType
       value: 2
@@ -4485,11 +4484,11 @@ PrefabInstance:
     - target: {fileID: 9141810548019818990, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
       propertyPath: enemyPrefab
       value: 
-      objectReference: {fileID: 5633490450687420132, guid: 59fc314a09822ce449024d418dc667f4, type: 3}
+      objectReference: {fileID: 236192059372975241, guid: 1679782d7e31a1143b96b4e8288a006f, type: 3}
     - target: {fileID: 9141810548019818990, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
       propertyPath: m_enemyData
       value: 
-      objectReference: {fileID: 11400000, guid: d359c7964242f4c418f6b8c3247704c8, type: 2}
+      objectReference: {fileID: 11400000, guid: 6ea698e26a7315ee56962b43312c09af, type: 2}
     - target: {fileID: 9141810548019818990, guid: 8156ef0932ada0f4493f3267e52967bc, type: 3}
       propertyPath: m_poolEnemyType
       value: 1

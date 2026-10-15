@@ -50,6 +50,23 @@ public class EnemyManager : MonoBehaviour
             }                        
         }
 
+        // 새 적이 모두 착지할 때까지 기존 적도 기다렸다가 함께 이동합니다.
+        List<EnemyHealthController> spawnedEnemies = GetEnemiesOnPath();
+        bool anySpawning;
+        do
+        {
+            anySpawning = false;
+            foreach (EnemyHealthController enemy in spawnedEnemies)
+            {
+                if (enemy != null && enemy.gameObject.activeInHierarchy && enemy.Movement != null && enemy.Movement.IsSpawning)
+                {
+                    anySpawning = true;
+                    break;
+                }
+            }
+            if (anySpawning) yield return null;
+        } while (anySpawning);
+
         // 새로 소환된 적을 포함해 현재 필드의 모든 적이 동시에 이동을 시작합니다.
         List<EnemyMoveController> movingEnemies = new List<EnemyMoveController>();
         foreach (EnemyHealthController enemy in GetEnemiesOnPath())

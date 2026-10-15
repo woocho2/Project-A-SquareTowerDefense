@@ -6,15 +6,21 @@ using UnityEngine;
 public class EnemyMoveController : MonoBehaviour
 {
     [Header("이동 속도 설정")]
-    [Tooltip("실제 화면 이동 속도(월드 단위/초). 낮을수록 이동과 굴림이 함께 느려집니다. 이동 주사위의 칸 수와는 별개입니다.")]
+    [Tooltip("메시 큐브는 굴림 속도 배율(1=타일당 약 0.4초), 기존 적은 월드 단위/초입니다. 주사위 이동 칸 수와는 별개입니다.")]
     [SerializeField, Min(0.01f)] private float m_moveSpeed = 1;
     [SerializeField] private bool m_spriteFacesLeftByDefault = true;
 
     [Header("큐브 굴림")]
     [SerializeField] private EnemyCubeVisual m_cubeVisual;
+    [SerializeField] private EnemyCubeMeshVisual m_cubeMeshVisual;
     private EnemyCubeOrientation m_cubeOrientation = EnemyCubeOrientation.Identity;
     public EnemyCubeFace VisibleCubeFace => m_cubeOrientation.VisibleFace;
+    public int VisibleCubeFaceIndex => (int)m_cubeOrientation.VisibleFace;
+    public int VisibleCubeAssetIndex => UsesMeshCube ? m_cubeMeshVisual.GetFaceAssetIndex(VisibleCubeFaceIndex) : -1;
     public int CubeFaceQuarterTurns => m_cubeOrientation.CounterClockwiseQuarterTurns;
+    private bool UsesMeshCube => m_cubeMeshVisual != null && m_cubeMeshVisual.HasAllFaces;
+    private bool CanRollCube => UsesMeshCube || (m_cubeVisual != null && m_cubeVisual.HasAllFaces);
+    private float CubeLandingPause => UsesMeshCube ? m_cubeMeshVisual.LandingPause : m_cubeVisual != null ? m_cubeVisual.LandingPause : 0f;
 
     [Header("런타임 턴 스탯 (디버그 확인용)")]
     [SerializeField] private int m_currentTileIndex = 0;
@@ -40,13 +46,16 @@ public class EnemyMoveController : MonoBehaviour
     private Vector3[] m_uiLocalPositions;
     private Quaternion[] m_uiLocalRotations;
     private bool m_isMoving = false;
+    private bool m_isSpawning;
+    private Coroutine m_spawnRoutine;
 
     // 같은 타일의 적과 겹치지 않도록 벌려 설 화면상 목표 위치입니다. 논리적 타일 위치(m_currentTileIndex)와는 무관합니다.
     private Vector3 m_formationTarget;
     private bool m_hasFormationTarget;
 
     public int CurrentTileIndex => m_currentTileIndex;
-    public bool IsMoving => m_isMoving;
+    public bool IsMoving => m_isMoving || m_isSpawning;
+    public bool IsSpawning => m_isSpawning;
     // 이동 주사위 최댓값은 어떤 경우에도 1 아래로 내려가지 않습니다.
     // 1 아래로 깎이려던 만큼은 버리지 않고 행동 주기를 그만큼 늘립니다.
     private int RawDiceMaxSpeed => m_baseDiceMaxSpeed + m_tileBuffSpeed + m_diceMaxModifier + m_temporaryDiceMaxModifier;
@@ -70,6 +79,7 @@ public class EnemyMoveController : MonoBehaviour
         m_health = GetComponent<EnemyHealthController>();
         m_spriteRenderer = GetComponentInChildren<SpriteRenderer>(true);
         if (m_cubeVisual == null) m_cubeVisual = GetComponentInChildren<EnemyCubeVisual>(true);
+        if (m_cubeMeshVisual == null) m_cubeMeshVisual = GetComponentInChildren<EnemyCubeMeshVisual>(true);
         m_baseRotation = transform.rotation;
 
         Canvas[] canvases = GetComponentsInChildren<Canvas>(true);
@@ -91,7 +101,7 @@ public class EnemyMoveController : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (!m_hasFormationTarget || m_isMoving || TileManager.Instance == null) return;
+        if (!m_hasFormationTarget || IsMoving || TileManager.Instance == null) return;
 
         transform.position = Vector3.MoveTowards(
             transform.position,
@@ -102,12 +112,14 @@ public class EnemyMoveController : MonoBehaviour
     }
 
     // ScriptableObject(EnemyData)의 Action과 Speed를 기반으로 초기화
-    public void InitMovement(EnemyData data)
+    public bool InitMovement(EnemyData data)
     {
         StopAllCoroutines();
+        m_spawnRoutine = null;
+        m_isSpawning = false;
         ResetFacingDirection();
-        m_cubeOrientation = EnemyCubeOrientation.Identity;
-        if (m_cubeVisual != null) m_cubeVisual.ShowOrientation(m_cubeOrientation);
+        m_cubeOrientation = UsesMeshCube ? m_cubeMeshVisual.RandomizeForSpawn() : EnemyCubeOrientation.Identity;
+        ShowCubeOrientation();
         m_hasFormationTarget = false;
         m_currentTileIndex = 0;
         m_currentActionCounter = 0;
@@ -139,21 +151,54 @@ public class EnemyMoveController : MonoBehaviour
 
         if (TileManager.Instance != null)
         {
-            transform.position = TileManager.Instance.GetPathWorldPosition(0);
-            RegisterAtTile(m_currentTileIndex);
+            if (!RegisterAtTile(m_currentTileIndex)) return false;
+            if (TileManager.Instance.TryGetEnemyFormationPosition(m_health, out Vector3 position))
+                transform.position = position;
+            m_hasFormationTarget = false;
         }
+        return true;
+    }
+
+    /// <summary>풀에서 초기화와 자리 배정을 마친 뒤 호출합니다. 같은 프레임에 소환한 큐브는 함께 떨어집니다.</summary>
+    public void PlaySpawnDrop()
+    {
+        if (!UsesMeshCube || !isActiveAndEnabled) return;
+        if (m_spawnRoutine != null) StopCoroutine(m_spawnRoutine);
+        m_isSpawning = true;
+        m_spawnRoutine = StartCoroutine(SpawnDropRoutine());
+    }
+
+    private IEnumerator SpawnDropRoutine()
+    {
+        float elapsed = 0f;
+        float duration = m_cubeMeshVisual.SpawnDuration;
+        while (elapsed < duration)
+        {
+            m_cubeMeshVisual.AnimateSpawn(m_cubeOrientation, elapsed);
+            yield return null;
+            elapsed += Time.deltaTime;
+        }
+        ShowCubeOrientation();
+        m_isSpawning = false;
+        m_spawnRoutine = null;
+    }
+
+    private void OnDisable()
+    {
+        StopMovement();
     }
 
     /// <summary>
     /// 이동이 완료된 순간 호출하여 전투 점유 타일을 확정하고, 떠난 타일과 도착한 타일의 진형을 다시 배치합니다.
     /// </summary>
-    private void RegisterAtTile(int index)
+    private bool RegisterAtTile(int index)
     {
         TileManager tileManager = TileManager.Instance;
-        if (tileManager == null || !tileManager.SetEnemyAtPathIndex(m_health, index, out int previousIndex)) return;
+        if (tileManager == null || !tileManager.SetEnemyAtPathIndex(m_health, index, out int previousIndex)) return false;
 
         if (previousIndex >= 0 && previousIndex != index) ArrangeFormation(previousIndex);
         ArrangeFormation(index);
+        return true;
     }
 
     /// <summary>
@@ -171,13 +216,14 @@ public class EnemyMoveController : MonoBehaviour
             EnemyMoveController movement = enemies[i].Movement;
             if (movement == null) continue;
 
-            movement.m_formationTarget = tileManager.GetEnemyFormationPosition(pathIndex, i, enemies.Count);
-            movement.m_hasFormationTarget = true;
+            movement.m_hasFormationTarget = tileManager.TryGetEnemyFormationPosition(enemies[i], out movement.m_formationTarget);
         }
     }
 
     public IEnumerator ProcessTurnMoveRoutine()
     {
+        while (m_isSpawning && isActiveAndEnabled) yield return null;
+        if (!isActiveAndEnabled) yield break;
         TileManager tileManager = TileManager.Instance;
         if (tileManager == null) yield break;
 
@@ -191,8 +237,9 @@ public class EnemyMoveController : MonoBehaviour
         // 한 바퀴 돌아 Start(0번)에 선 적과 구분하려고, 칸 번호가 아니라 첫 이동 여부로 판정합니다.
         if (!m_hasMadeFirstMove)
         {
-            m_hasMadeFirstMove = true;
+            int beforeIndex = m_currentTileIndex;
             yield return StartCoroutine(MoveStepsRoutine(1));
+            m_hasMadeFirstMove = m_currentTileIndex != beforeIndex;
             yield break;
         }
 
@@ -220,17 +267,20 @@ public class EnemyMoveController : MonoBehaviour
     private IEnumerator MoveBackwardStepsRoutine(int steps)
     {
         m_isMoving = true;
+        bool hasMoved = false;
         for (int i = 0; i < steps; i++)
         {
             int nextIndex = TileManager.Instance.WrapPathIndex(m_currentTileIndex - 1);
-            Vector3 targetPos = TileManager.Instance.ReserveEnemyArrivalPosition(m_health, nextIndex);
-            yield return MoveOneTileRoutine(nextIndex, targetPos);
+            if (!TileManager.Instance.TryReserveEnemyArrivalPosition(m_health, nextIndex, out Vector3 targetPos)) break;
+            yield return MoveOneTileRoutine(nextIndex, targetPos, i == 0);
             // 도착한 순간에만 인덱스를 바꿔 TileManager의 점유 인덱스와 항상 일치시킵니다.
             m_currentTileIndex = nextIndex;
             RegisterAtTile(m_currentTileIndex);
-            if (m_cubeVisual != null && m_cubeVisual.HasAllFaces && m_cubeVisual.LandingPause > 0f)
-                yield return new WaitForSeconds(m_cubeVisual.LandingPause);
+            hasMoved = true;
+            if (!UsesMeshCube && CanRollCube && CubeLandingPause > 0f)
+                yield return new WaitForSeconds(CubeLandingPause);
         }
+        if (hasMoved) yield return FinishCubeTravelRoutine();
         m_isMoving = false;
     }
 
@@ -238,31 +288,91 @@ public class EnemyMoveController : MonoBehaviour
     private IEnumerator MoveStepsRoutine(int steps)
     {
         m_isMoving = true;
+        bool hasMoved = false;
 
         for (int i = 0; i < steps; i++)
         {
             int nextIndex = TileManager.Instance.WrapPathIndex(m_currentTileIndex + 1);
-            Vector3 targetPos = TileManager.Instance.ReserveEnemyArrivalPosition(m_health, nextIndex);
-            yield return MoveOneTileRoutine(nextIndex, targetPos);
+            if (!TileManager.Instance.TryReserveEnemyArrivalPosition(m_health, nextIndex, out Vector3 targetPos)) break;
+            yield return MoveOneTileRoutine(nextIndex, targetPos, i == 0);
             // 도착한 순간에만 인덱스를 바꿔 TileManager의 점유 인덱스와 항상 일치시킵니다.
             m_currentTileIndex = nextIndex;
             RegisterAtTile(m_currentTileIndex);
+            hasMoved = true;
 
-            if (m_cubeVisual != null && m_cubeVisual.HasAllFaces && m_cubeVisual.LandingPause > 0f)
-                yield return new WaitForSeconds(m_cubeVisual.LandingPause);
+            if (!UsesMeshCube && CanRollCube && CubeLandingPause > 0f)
+                yield return new WaitForSeconds(CubeLandingPause);
 
         }
+        if (hasMoved) yield return FinishCubeTravelRoutine();
         m_isMoving = false;
 
         yield break;
     }
 
-    private IEnumerator MoveOneTileRoutine(int nextIndex, Vector3 targetPosition)
+    private float MeshCubeTileDuration => Mathf.Max(0.12f, m_cubeMeshVisual.TileRollDuration / Mathf.Max(0.01f, m_moveSpeed));
+
+    private IEnumerator FinishCubeTravelRoutine()
+    {
+        if (!UsesMeshCube) yield break;
+        float duration = MeshCubeTileDuration * 0.175f;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            m_cubeMeshVisual.AnimateUprightSquash(m_cubeOrientation, 0.16f * Mathf.Sin(Mathf.Clamp01(elapsed / duration) * Mathf.PI));
+            yield return null;
+        }
+        ShowCubeOrientation();
+        yield return CorrectCubeUprightRoutine();
+    }
+
+    private IEnumerator CorrectCubeUprightRoutine()
+    {
+        if (!UsesMeshCube) yield break;
+        // 마지막 도착 지점에서만 같은 면을 유지하며, 가장 짧은 1~2번의 점프로 일어납니다.
+        while (m_cubeOrientation.CounterClockwiseQuarterTurns != 0)
+        {
+            EnemyCubeOrientation before = m_cubeOrientation;
+            int direction = before.CounterClockwiseQuarterTurns == 3 ? 1 : -1;
+            float impactDuration = m_cubeMeshVisual.UprightImpactDuration;
+            float elapsed = 0f;
+            float prepareDuration = impactDuration * 0.6f;
+            while (elapsed < prepareDuration)
+            {
+                elapsed += Time.deltaTime;
+                m_cubeMeshVisual.AnimateUprightSquash(before, 0.1f * Mathf.Clamp01(elapsed / prepareDuration));
+                yield return null;
+            }
+            elapsed = 0f;
+            float hopDuration = m_cubeMeshVisual.UprightHopDuration;
+            while (elapsed < hopDuration)
+            {
+                elapsed += Time.deltaTime;
+                m_cubeMeshVisual.AnimateUprightHop(before, direction, elapsed / hopDuration);
+                yield return null;
+            }
+            // 90도 점프 착지 때마다 논리 자세도 확정합니다. 중단된 점프는 누적하지 않습니다.
+            m_cubeOrientation = EnemyCubeOrientation.FromFace(before.VisibleFace, before.CounterClockwiseQuarterTurns + direction);
+            ShowCubeOrientation();
+            elapsed = 0f;
+            while (elapsed < impactDuration)
+            {
+                elapsed += Time.deltaTime;
+                float progress = Mathf.Clamp01(elapsed / impactDuration);
+                m_cubeMeshVisual.AnimateUprightSquash(m_cubeOrientation, 0.16f * Mathf.Sin(progress * Mathf.PI));
+                yield return null;
+            }
+            ShowCubeOrientation();
+        }
+    }
+
+    private IEnumerator MoveOneTileRoutine(int nextIndex, Vector3 targetPosition, bool prepareLaunch)
     {
         // 진형 때문에 목적지가 조금 벌어져 있어도, 굴림 방향은 패스 타일의 중심으로 계산합니다.
         Vector3 pathDirection = TileManager.Instance.GetPathWorldPosition(nextIndex)
             - TileManager.Instance.GetPathWorldPosition(m_currentTileIndex);
-        bool rollCube = m_cubeVisual != null && m_cubeVisual.HasAllFaces && pathDirection.sqrMagnitude > 0.0001f;
+        bool rollCube = CanRollCube && pathDirection.sqrMagnitude > 0.0001f;
         EnemyCubeRollDirection direction = Mathf.Abs(pathDirection.x) >= Mathf.Abs(pathDirection.y)
             ? (pathDirection.x >= 0f ? EnemyCubeRollDirection.Right : EnemyCubeRollDirection.Left)
             : (pathDirection.y >= 0f ? EnemyCubeRollDirection.Up : EnemyCubeRollDirection.Down);
@@ -271,6 +381,36 @@ public class EnemyMoveController : MonoBehaviour
 
         Vector3 startPosition = transform.position;
         float distance = Vector3.Distance(startPosition, targetPosition);
+        if (rollCube && UsesMeshCube && distance > 0.0001f)
+        {
+            float duration = MeshCubeTileDuration;
+            if (prepareLaunch)
+            {
+                float elapsed = 0f;
+                float prepareDuration = duration * 0.1f;
+                while (elapsed < prepareDuration)
+                {
+                    elapsed += Time.deltaTime;
+                    m_cubeMeshVisual.AnimateWindUp(m_cubeOrientation, direction, elapsed / prepareDuration);
+                    yield return null;
+                }
+            }
+            EnemyCubeOrientation before = m_cubeOrientation;
+            float rollDuration = duration * 0.725f;
+            float rollElapsed = 0f;
+            while (rollElapsed < rollDuration)
+            {
+                rollElapsed += Time.deltaTime;
+                m_cubeMeshVisual.AnimateTileRoll(before, direction, rollElapsed / rollDuration, out float travel, out m_cubeOrientation);
+                transform.position = Vector3.Lerp(startPosition, targetPosition, travel);
+                yield return null;
+            }
+            // 프레임 간격과 무관하게 정확히 세 번의 90도 회전과 도착을 확정합니다.
+            m_cubeMeshVisual.AnimateTileRoll(before, direction, 1f, out _, out m_cubeOrientation);
+            transform.position = targetPosition;
+            ShowCubeOrientation();
+            yield break;
+        }
         if (rollCube && distance > 0.0001f)
         {
             float duration = Mathf.Max(0.01f, distance / Mathf.Max(0.01f, m_moveSpeed));
@@ -281,7 +421,8 @@ public class EnemyMoveController : MonoBehaviour
                 float progress = Mathf.Clamp01(elapsed / duration);
                 // 일정한 슬라이드 대신, 모서리를 넘어가는 큐브 중심의 궤적을 따라갑니다.
                 transform.position = Vector3.Lerp(startPosition, targetPosition, EnemyCubeRollGeometry.Sample(progress).Travel);
-                m_cubeVisual.AnimateRoll(m_cubeOrientation, nextOrientation, direction, progress);
+                if (UsesMeshCube) m_cubeMeshVisual.AnimateRoll(m_cubeOrientation, direction, progress);
+                else m_cubeVisual.AnimateRoll(m_cubeOrientation, nextOrientation, direction, progress);
                 yield return null;
             }
         }
@@ -296,21 +437,29 @@ public class EnemyMoveController : MonoBehaviour
         transform.position = targetPosition;
         // 이동 중단 시 미완료 굴림을 누적하지 않고, 도착한 한 칸의 자세만 확정합니다.
         m_cubeOrientation = nextOrientation;
-        if (m_cubeVisual != null) m_cubeVisual.ShowOrientation(m_cubeOrientation);
+        ShowCubeOrientation();
     }
 
     public void StopMovement()
     {
         m_isMoving = false;
+        m_isSpawning = false;
+        m_spawnRoutine = null;
         StopAllCoroutines();
         m_hasFormationTarget = false;
-        if (m_cubeVisual != null) m_cubeVisual.ShowOrientation(m_cubeOrientation);
+        ShowCubeOrientation();
 
         // 점유와 도착 예약을 함께 제거하므로, 풀에 들어간 적이 공격 대상에 남지 않습니다.
         if (TileManager.Instance != null && TileManager.Instance.RemoveEnemyFromPath(m_health, out int previousIndex))
         {
             ArrangeFormation(previousIndex);
         }
+    }
+
+    private void ShowCubeOrientation()
+    {
+        if (UsesMeshCube) m_cubeMeshVisual.ShowOrientation(m_cubeOrientation);
+        else if (m_cubeVisual != null) m_cubeVisual.ShowOrientation(m_cubeOrientation);
     }
 
     private void FaceMoveDirection(Vector3 targetPosition)

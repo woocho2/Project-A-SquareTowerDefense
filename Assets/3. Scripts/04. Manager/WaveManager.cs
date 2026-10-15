@@ -83,6 +83,8 @@ public class WaveManager : MonoBehaviour
 
         for (int i = 0; i < spawnCount && m_waveSpawnedCount < waveEnemies.Count; i++)
         {
+            // Start가 가득 찬 것은 정상적인 대기 상황입니다. 소환 수에 포함하지 않습니다.
+            if (!TileManager.Instance.HasEnemyCapacityAtPathIndex(0)) break;
             EnemyType currentEnemyType = waveEnemies[m_waveSpawnedCount];
             int poolIndex = (int)currentEnemyType;
 
@@ -261,6 +263,7 @@ public class WaveManager : MonoBehaviour
         int poolIndex = (int)EnemyType.MiddleBoss;
         if (m_enemyPool == null || poolIndex >= m_enemyPool.Length || m_enemyPool[poolIndex] == null) return false;
         if (TileManager.Instance == null) return false;
+        if (!TileManager.Instance.HasEnemyCapacityAtPathIndex(0)) return false;
 
         GetCycleMultipliers(m_currentWave, out float middleBossHPMulti, out float middleBossDefendMulti);
 

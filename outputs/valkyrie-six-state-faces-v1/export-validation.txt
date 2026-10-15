@@ -1,0 +1,4 @@
+PASS six equal 512x512 sprites, 384 PPU, 1.3333333333 world canvas matching 256px / 192 PPU path
+PASS all six outer bounds (14,14,484,484), identical portrait and decoration alpha
+PASS all non-equipment master portrait pixels unchanged (skin, eyes, mouth, gold, hair)
+PASS identical portrait placement, badge size and position; six opaque 3D texture alternatives

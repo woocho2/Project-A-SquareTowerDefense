@@ -113,13 +113,12 @@ public class TileManager : MonoBehaviour
 
     [Header("적 진형 배치")]
     [Tooltip("한 타일에 적이 여럿 있을 때 서로 벌릴 간격 (타일 크기에 비례)")]
-    [SerializeField, Range(0.05f, 0.45f)] private float m_enemySlotSpacing = 0.28f;
-    [Tooltip("한 타일 안에서 적을 몇 열까지 배치할지. 초과한 적은 다음 행으로 내려갑니다.")]
-    [SerializeField, Range(1, 5)] private int m_enemyFormationMaxColumns = 3;
+    [SerializeField, Range(0.3f, 0.34f)] private float m_enemySlotSpacing = 1f / 3f;
     [Tooltip("적 수가 바뀌어 진형을 재정렬할 때 새 자리까지 이동하는 속도")]
     [SerializeField, Min(0.1f)] private float m_enemyFormationMoveSpeed = 1.5f;
 
     public float EnemyFormationMoveSpeed => m_enemyFormationMoveSpeed;
+    public const int EnemyTileCapacity = 9;
 
     public event Action EnemyCountChanged;
 
@@ -144,10 +143,11 @@ public class TileManager : MonoBehaviour
         new Dictionary<int, List<EnemyHealthController>>();
     private readonly Dictionary<EnemyHealthController, int> m_pathIndexByEnemy =
         new Dictionary<EnemyHealthController, int>();
-    // 이동 중인 적이 도착할 타일의 진형 자리 예약. 표현 전용이며 점유(공격 대상)에는 포함하지 않는다.
+    // 도착 예약은 정원에 포함하지만 점유(공격 대상)에는 도착할 때까지 포함하지 않습니다.
     private readonly Dictionary<EnemyHealthController, int> m_arrivalPathIndexByEnemy =
         new Dictionary<EnemyHealthController, int>();
-    private readonly Dictionary<int, int> m_arrivalCountByPathIndex = new Dictionary<int, int>();
+    private readonly Dictionary<EnemyHealthController, int> m_formationSlotByEnemy = new Dictionary<EnemyHealthController, int>();
+    private readonly Dictionary<EnemyHealthController, int> m_arrivalSlotByEnemy = new Dictionary<EnemyHealthController, int>();
     private readonly Dictionary<int, TowerController> m_towersBySpawnIndex =
         new Dictionary<int, TowerController>();
     private readonly SortedSet<int> m_emptyTowerSpawnIndices = new SortedSet<int>();
@@ -631,6 +631,19 @@ public class TileManager : MonoBehaviour
         previousIndex = -1;
         if (enemy == null || !m_pathCellsByIndex.ContainsKey(index)) return false;
 
+        if (m_pathIndexByEnemy.TryGetValue(enemy, out int currentIndex) && currentIndex == index)
+        {
+            previousIndex = index;
+            CancelEnemyArrival(enemy);
+            return true;
+        }
+
+        int slot;
+        if (m_arrivalPathIndexByEnemy.TryGetValue(enemy, out int reservedIndex) && reservedIndex == index)
+            slot = m_arrivalSlotByEnemy[enemy];
+        else if (!TryGetFreeEnemySlot(enemy, index, out slot))
+            return false; // 10번째 적의 등록이 실패해도 기존 점유는 보존합니다.
+
         RemoveEnemyFromPath(enemy, out previousIndex);
         if (!m_enemiesByPathIndex.TryGetValue(index, out List<EnemyHealthController> occupants))
         {
@@ -640,6 +653,7 @@ public class TileManager : MonoBehaviour
 
         occupants.Add(enemy);
         m_pathIndexByEnemy[enemy] = index;
+        m_formationSlotByEnemy[enemy] = slot;
 
         EnemyCountChanged?.Invoke();
         return true;
@@ -654,6 +668,7 @@ public class TileManager : MonoBehaviour
         if (!m_pathIndexByEnemy.TryGetValue(enemy, out previousIndex)) return false;
 
         m_pathIndexByEnemy.Remove(enemy);
+        m_formationSlotByEnemy.Remove(enemy);
         if (m_enemiesByPathIndex.TryGetValue(previousIndex, out List<EnemyHealthController> occupants))
         {
             occupants.Remove(enemy);
@@ -755,59 +770,90 @@ public class TileManager : MonoBehaviour
     #region 적 진형 배치
 
     /// <summary>
-    /// 이동을 시작하기 전에 목적 타일에서 사용할 화면상 자리만 예약하고 그 좌표를 반환합니다.
+    /// 목적 타일에서 현재와 같은 자리를 우선 예약합니다. 차 있으면 오른쪽부터 빈자리를 찾습니다.
+    /// 정원이 차면 이동하지 않습니다.
     /// 점유는 바꾸지 않으므로 이동 중인 적이 다음 타일의 공격·디버프 대상이 되지 않습니다.
     /// 예약은 도착(SetEnemyAtPathIndex)하거나 패스에서 제거될 때 함께 해제됩니다.
     /// </summary>
-    public Vector3 ReserveEnemyArrivalPosition(EnemyHealthController enemy, int index)
+    public bool TryReserveEnemyArrivalPosition(EnemyHealthController enemy, int index, out Vector3 position)
     {
-        if (enemy == null || index < 0 || index > LastPathIndex) return GetPathWorldPosition(index);
+        position = default;
+        if (enemy == null || !TryGetFreeEnemySlot(enemy, index, out int slot)) return false;
 
         CancelEnemyArrival(enemy);
-
-        int occupantCount = 0;
-        if (m_enemiesByPathIndex.TryGetValue(index, out List<EnemyHealthController> occupants))
-        {
-            foreach (EnemyHealthController occupant in occupants)
-            {
-                if (occupant != null && occupant.gameObject.activeInHierarchy) occupantCount++;
-            }
-        }
-
-        m_arrivalCountByPathIndex.TryGetValue(index, out int arrivalCount);
-        int arrivalOrder = occupantCount + arrivalCount;
-
         m_arrivalPathIndexByEnemy[enemy] = index;
-        m_arrivalCountByPathIndex[index] = arrivalCount + 1;
-
-        return GetEnemyFormationPosition(index, arrivalOrder, arrivalOrder + 1);
+        m_arrivalSlotByEnemy[enemy] = slot;
+        position = GetEnemyFormationPosition(index, slot);
+        return true;
     }
 
     private void CancelEnemyArrival(EnemyHealthController enemy)
     {
-        if (!m_arrivalPathIndexByEnemy.TryGetValue(enemy, out int index)) return;
-
         m_arrivalPathIndexByEnemy.Remove(enemy);
-        if (!m_arrivalCountByPathIndex.TryGetValue(index, out int count)) return;
+        m_arrivalSlotByEnemy.Remove(enemy);
+    }
 
-        if (count <= 1) m_arrivalCountByPathIndex.Remove(index);
-        else m_arrivalCountByPathIndex[index] = count - 1;
+    public bool HasEnemyCapacityAtPathIndex(int index) => TryGetFreeEnemySlot(null, index, out _);
+
+    private bool TryGetFreeEnemySlot(EnemyHealthController requestingEnemy, int index, out int slot)
+    {
+        slot = -1;
+        if (!m_pathCellsByIndex.TryGetValue(index, out Vector3Int cell)) return false;
+        int usedSlots = 0;
+        // 같은 셀을 여러 번 지나는 경로도 물리적인 한 타일의 정원을 공유합니다.
+        foreach (var entry in m_pathIndexByEnemy)
+        {
+            if (entry.Key == requestingEnemy || entry.Key == null || !entry.Key.gameObject.activeInHierarchy) continue;
+            if (m_pathCellsByIndex.TryGetValue(entry.Value, out Vector3Int occupiedCell) && occupiedCell == cell)
+                usedSlots |= 1 << m_formationSlotByEnemy[entry.Key];
+        }
+        foreach (var entry in m_arrivalPathIndexByEnemy)
+        {
+            if (entry.Key == requestingEnemy || entry.Key == null || !entry.Key.gameObject.activeInHierarchy) continue;
+            if (m_pathCellsByIndex.TryGetValue(entry.Value, out Vector3Int reservedCell) && reservedCell == cell)
+                usedSlots |= 1 << m_arrivalSlotByEnemy[entry.Key];
+        }
+        // 같은 목적지에 이미 예약했다면 그 자리를 유지합니다. 그 외에는 출발 타일의 자리를 우선합니다.
+        int preferredSlot = 4;
+        if (requestingEnemy != null)
+        {
+            if (m_arrivalPathIndexByEnemy.TryGetValue(requestingEnemy, out int arrivalIndex) && arrivalIndex == index)
+                preferredSlot = m_arrivalSlotByEnemy[requestingEnemy];
+            else if (m_formationSlotByEnemy.TryGetValue(requestingEnemy, out int currentSlot))
+                preferredSlot = currentSlot;
+        }
+        // 화면 기준 오른쪽으로 진행합니다. 행 끝에서는 다음 행으로, 마지막 행에서는 첫 행으로 감습니다.
+        // 소환처럼 출발 자리가 없는 적은 중앙부터 같은 순서로 찾습니다.
+        for (int offset = 0; offset < EnemyTileCapacity; offset++)
+        {
+            int candidate = (preferredSlot + offset) % EnemyTileCapacity;
+            if ((usedSlots & (1 << candidate)) != 0) continue;
+            slot = candidate;
+            return true;
+        }
+        return false;
+    }
+
+    public bool TryGetEnemyFormationPosition(EnemyHealthController enemy, out Vector3 position)
+    {
+        position = default;
+        if (!m_pathIndexByEnemy.TryGetValue(enemy, out int index) || !m_formationSlotByEnemy.TryGetValue(enemy, out int slot)) return false;
+        position = GetEnemyFormationPosition(index, slot);
+        return true;
     }
 
     /// <summary>
-    /// 같은 패스 타일 안에서 사용할 격자형 화면 위치를 계산합니다.
-    /// 행·열 중앙을 기준으로 오프셋을 잡아 적 수가 홀수·짝수여도 진형 전체가 타일 중심에 유지됩니다.
+    /// 고정된 3×3 자리의 좌표입니다. 다른 적이 죽거나 도착해도 기존 자리는 바뀌지 않습니다.
     /// </summary>
-    public Vector3 GetEnemyFormationPosition(int pathIndex, int slotIndex, int totalEnemyCount)
+    private Vector3 GetEnemyFormationPosition(int pathIndex, int slotIndex)
     {
-        int columns = Mathf.Max(1, Mathf.Min(m_enemyFormationMaxColumns, totalEnemyCount));
-        int rows = Mathf.CeilToInt(totalEnemyCount / (float)columns);
         float tileSize = tilemap != null ? Mathf.Min(tilemap.cellSize.x, tilemap.cellSize.y) : 1f;
-        float spacing = tileSize * m_enemySlotSpacing;
-        int column = slotIndex % columns;
-        int row = slotIndex / columns;
-        float xOffset = (column - ((columns - 1) * 0.5f)) * spacing;
-        float yOffset = (((rows - 1) * 0.5f) - row) * spacing;
+        float spacing = tileSize * Mathf.Clamp(m_enemySlotSpacing, 0.3f, 0.34f);
+        slotIndex = Mathf.Clamp(slotIndex, 0, EnemyTileCapacity - 1);
+        int column = slotIndex % 3;
+        int row = slotIndex / 3;
+        float xOffset = (column - 1) * spacing;
+        float yOffset = (1 - row) * spacing;
         return GetPathWorldPosition(pathIndex) + new Vector3(xOffset, yOffset, 0f);
     }
 

@@ -1,6 +1,8 @@
 using System;
 
-public enum EnemyCubeFace { Front, Back, Left, Right, Top, Bottom }
+// 메시의 서브메시/재질 슬롯과 같은 순서입니다. 면 인덱스는 굴러도 바뀌지 않습니다.
+public enum EnemyCubeFace { Front = 0, Back = 1, Left = 2, Right = 3, Top = 4, Bottom = 5 }
+public enum EnemyCubeFaceAsset { SelfHeal = 0, Defense = 1, Action = 2, Mobility = 3, Locked = 4, Hourglass = 5 }
 public enum EnemyCubeRollDirection { Right, Left, Up, Down }
 
 /// <summary>
@@ -21,6 +23,32 @@ public struct EnemyCubeOrientation
     {
         m_right = new Axis(1, 0, 0), m_up = new Axis(0, 1, 0), m_front = new Axis(0, 0, 1)
     };
+
+    /// <summary>보이는 면(0~5)과 그림의 반시계 회전(0~3)으로 24가지 정규 자세 중 하나를 만듭니다.</summary>
+    public static EnemyCubeOrientation FromFace(EnemyCubeFace face, int counterClockwiseQuarterTurns)
+    {
+        EnemyCubeOrientation orientation = Identity;
+        switch (face)
+        {
+            case EnemyCubeFace.Front: break;
+            case EnemyCubeFace.Back: orientation = orientation.Rolled(EnemyCubeRollDirection.Right).Rolled(EnemyCubeRollDirection.Right); break;
+            case EnemyCubeFace.Left: orientation = orientation.Rolled(EnemyCubeRollDirection.Right); break;
+            case EnemyCubeFace.Right: orientation = orientation.Rolled(EnemyCubeRollDirection.Left); break;
+            case EnemyCubeFace.Top: orientation = orientation.Rolled(EnemyCubeRollDirection.Down); break;
+            case EnemyCubeFace.Bottom: orientation = orientation.Rolled(EnemyCubeRollDirection.Up); break;
+            default: throw new ArgumentOutOfRangeException(nameof(face));
+        }
+        int turns = ((counterClockwiseQuarterTurns % 4) + 4 - orientation.CounterClockwiseQuarterTurns) % 4;
+        for (int i = 0; i < turns; i++)
+        {
+            orientation.m_right = RotateCounterClockwise(orientation.m_right);
+            orientation.m_up = RotateCounterClockwise(orientation.m_up);
+            orientation.m_front = RotateCounterClockwise(orientation.m_front);
+        }
+        return orientation;
+    }
+
+    private static Axis RotateCounterClockwise(Axis axis) => new Axis(-axis.y, axis.x, axis.z);
 
     public EnemyCubeFace VisibleFace
     {

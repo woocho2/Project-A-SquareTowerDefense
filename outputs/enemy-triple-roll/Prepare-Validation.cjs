@@ -1,0 +1,10 @@
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process');
+const root=path.resolve(__dirname,'../..'),fixture=path.join(root,'outputs/all-tower-assets-connection-v1/UnityValidation');
+cp.execFileSync(process.execPath,[path.join(root,'outputs/enemy-upright-hop/Prepare-Validation.cjs')],{cwd:root,stdio:'inherit'});
+let harness=fs.readFileSync(path.join(root,'outputs/enemy-upright-hop/ValidateUprightHop.cs'),'utf8');
+harness=harness.replace('yield return RandomCubeChecks.VerifyRolls(pool);','yield return RandomCubeChecks.VerifyRolls(pool);yield return TripleRollChecks.Verify(pool,manager);TripleRollChecks.RenderPreview(prefab);');
+fs.writeFileSync(path.join(__dirname,'ValidateTripleRoll.cs'),harness);fs.writeFileSync(path.join(fixture,'Assets/ValidateNineSlots.cs'),harness);
+fs.copyFileSync(path.join(__dirname,'TripleRollChecks.cs'),path.join(fixture,'Assets/TripleRollChecks.cs'));
+for(const p of ['Assets/3. Scripts/03. Enemy/EnemyCubeShadow.shader','Assets/3. Scripts/03. Enemy/EnemyCubeShadow.shader.meta'])fs.copyFileSync(path.join(root,p),path.join(fixture,'Assets/GameScripts/03. Enemy',path.basename(p)));
+for(const suffix of ['', '.meta'])fs.copyFileSync(path.join(root,'Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateCube3D_v1/EnemyCube_Shadow.mat'+suffix),path.join(fixture,'Assets/EnemyCubeGenerated/EnemyCube_Shadow.mat'+suffix));
+console.log('Prepared triple-roll, timing, shadow and existing arrival/pool regression checks');
