@@ -1,0 +1,8 @@
+﻿PASS: 72 obsolete assets removed (66 artwork/material/animation assets, 6 legacy prefabs).
+PASS: 152 files including metadata archived with SHA256 verification.
+PASS: no deleted asset GUID remains in Assets.
+PASS: 28 retained enemy art/material/mesh assets; all retained dependencies resolve (173 GUID references).
+PASS: current Brunhild/Loki cube connection checks passed separately.
+PASS: 8 legacy referrer files migrated to the current Valkyrie cube with matching health/movement component IDs.
+PASS: only scoped enemy asset paths were removed; runtime scripts and enemy stat data kept.
+Unity was not launched.

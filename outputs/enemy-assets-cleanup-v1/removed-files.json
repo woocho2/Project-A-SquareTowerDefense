@@ -1,0 +1,762 @@
+﻿[
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Enemy_Serpent_Defend.png",
+        "Bytes":  111197,
+        "SHA256":  "2247B319BDF08997E387AA5A30A5FD1B25DF7B907EEBB8629A55D296BE7EF8CF"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Enemy_Serpent_Defend.png.meta",
+        "Bytes":  3540,
+        "SHA256":  "B6D9E70FD0A7E9F7A27084D46C9C91E2B641C7918AC1CB21F27C3CC6AFD290A6"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Enemy_Serpent_FinalBoss.png",
+        "Bytes":  239204,
+        "SHA256":  "DF80C2156A3DD5AA8C114C2076A3AA54B04B030158CE04B2AEF5D56301931A50"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Enemy_Serpent_FinalBoss.png.meta",
+        "Bytes":  3540,
+        "SHA256":  "1FA476F835BEC3E1D1BB0F26E0EFBEF7960FF71356B07EBC68F8911B76ED4CAE"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Enemy_Serpent_MiddleBoss.png",
+        "Bytes":  129061,
+        "SHA256":  "568574EE95B2B845953D3F41FF0BBD5504CE3170373D3F2B19543A9527210289"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Enemy_Serpent_MiddleBoss.png.meta",
+        "Bytes":  3540,
+        "SHA256":  "8C5E23F49605355274A47B72D827B3C542CD57B78D2B546F673BE4B06B70BA45"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Enemy_Serpent_Normal.png",
+        "Bytes":  92595,
+        "SHA256":  "C959708A43E4F1DAFBDE2CA56DECC7AA7EEDE280FB8BEC39E66235922F4BD618"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Enemy_Serpent_Normal.png.meta",
+        "Bytes":  3540,
+        "SHA256":  "797BC57DB4CA4DBC6730B9A1445EA4E636C72EA4BACEA8CAA087FC84DF849FEF"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Enemy_Serpent_Speed.png",
+        "Bytes":  131514,
+        "SHA256":  "0DA44B58015C9CB29953CC6D56D7D89ECC6D4007DF61CF8C7D8C29627E6F312D"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Enemy_Serpent_Speed.png.meta",
+        "Bytes":  3540,
+        "SHA256":  "E12372524396BFFFC5ED7B8078FDF79EB7440650F34AD65235AA456A18EC62DA"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/AsgardSoldier_Normal_Walk_4Dir_4Frames.png",
+        "Bytes":  1166916,
+        "SHA256":  "646D0DAA1BB7744799F4511A2B92DF402BB9ECCE4100ACEE1474C19F628B9E6B"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/AsgardSoldier_Normal_Walk_4Dir_4Frames.png.meta",
+        "Bytes":  13821,
+        "SHA256":  "84ADB0A398EE53FA83EE0BDEBC5680204D759F82F9EEE427D88C99DCB0CA8E54"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/Animations/AsgardSoldier_Normal_Walk_Down.anim",
+        "Bytes":  2372,
+        "SHA256":  "9EAD4A79446D0B26840C68F43FB093158E725FCFF299D204FCC17570713BBA1A"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/Animations/AsgardSoldier_Normal_Walk_Down.anim.meta",
+        "Bytes":  195,
+        "SHA256":  "566DE5251BC6476E08D581C9C2B7F180C0696D3D8F459E8670AA6F0448E58A78"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/Animations/AsgardSoldier_Normal_Walk_Left.anim",
+        "Bytes":  2372,
+        "SHA256":  "1A65027561243D568DF404AD68FAF23D0C619C845C9702A148302B2162A7EB15"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/Animations/AsgardSoldier_Normal_Walk_Left.anim.meta",
+        "Bytes":  195,
+        "SHA256":  "E6AB376240F6C0AEDE6F65F86E12FB5C6960DF9FEF805F78D77B91679FED8F23"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/Animations/AsgardSoldier_Normal_Walk_Right.anim",
+        "Bytes":  2373,
+        "SHA256":  "7F9A86287C69FDFC025D6DE41E609C642FAAE7D4D5E38E81067C89D790F9BA80"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/Animations/AsgardSoldier_Normal_Walk_Right.anim.meta",
+        "Bytes":  195,
+        "SHA256":  "7B168061B624556C39E7AC1A11BCB386106C5CD1FFAC87C13CDB079FC1E14385"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/Animations/AsgardSoldier_Normal_Walk_Up.anim",
+        "Bytes":  2370,
+        "SHA256":  "FCF3099BF137F2496DE64E9F0F09E13DAB5EF03BC1BAEAB546E99AA685C3E0A3"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/Animations/AsgardSoldier_Normal_Walk_Up.anim.meta",
+        "Bytes":  195,
+        "SHA256":  "4AD7D9CD72565BCA763003208F908D0CBC4A0AB1C4D37CF30B5F0A5985CA1DE2"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/Enemy_Cube_FallenValkyrie_Faces_v4.png",
+        "Bytes":  771856,
+        "SHA256":  "9BB6F9F9611981183193D8AF9363954B99E3AECFBF2CA98232510A2D7A5B7A60"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/Enemy_Cube_FallenValkyrie_Faces_v4.png.meta",
+        "Bytes":  6973,
+        "SHA256":  "D7871792F58FCB252069397D99FD9A0356E69692185B468729311B50047E8EDC"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/EquipmentPalettes/Valkyrie_Action.mat",
+        "Bytes":  1052,
+        "SHA256":  "FA7820C9E2688561E5DBE6CA7B46A761F59A10CE62F74431757261008A997DB2"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/EquipmentPalettes/Valkyrie_Action.mat.meta",
+        "Bytes":  160,
+        "SHA256":  "583A7D479EC9E0CEFB1515EFACEBAA806C0DD409E102204282C101E55E8C9B63"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/EquipmentPalettes/Valkyrie_Defense.mat",
+        "Bytes":  1053,
+        "SHA256":  "D5FB2B2EAC10EDF8600DA4240D0D529B9BE2EBFAFE25249A6281F23696F1D504"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/EquipmentPalettes/Valkyrie_Defense.mat.meta",
+        "Bytes":  160,
+        "SHA256":  "A8C773489FC0371FE58B5F82223EB3544A2BBC0FF84016D81701AEA2E6D00140"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/EquipmentPalettes/Valkyrie_GroupHeal.mat",
+        "Bytes":  1051,
+        "SHA256":  "0F2AC4A1D2BD62E0305350E08AB5216A8BE010A406D51B2902C9005219D01879"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/EquipmentPalettes/Valkyrie_GroupHeal.mat.meta",
+        "Bytes":  160,
+        "SHA256":  "F80ED6F85682503338F706076A11F6A169A67C766CAB0C26FB95819231C11E64"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/EquipmentPalettes/Valkyrie_Mobility.mat",
+        "Bytes":  1054,
+        "SHA256":  "39E9770DC06CF324E6D403B408EC8F87598F91F0D40AF90AEC2262BD19DDF116"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/EquipmentPalettes/Valkyrie_Mobility.mat.meta",
+        "Bytes":  160,
+        "SHA256":  "494CBA2EA74B5A0DE7F36A7CA28931A04FE817DAA8FAB056C78F2F04FDA4E3C5"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/EquipmentPalettes/Valkyrie_SelfHeal.mat",
+        "Bytes":  1054,
+        "SHA256":  "4AA58AC3683DB70D650FE3E8D18A75DE0E1D31DF7F694D8F80EEDCE940CF56EB"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/EquipmentPalettes/Valkyrie_SelfHeal.mat.meta",
+        "Bytes":  160,
+        "SHA256":  "0902538652569E8F18B6F709B94F89F615AE06702858F2A188E7E2B8FDF1E27F"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Action_v1.png",
+        "Bytes":  460940,
+        "SHA256":  "CCB66FC6D0CBA292C20D07A368972966E4537B2E8B0A00DBC97FB54719DDE7C4"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Action_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "AF13DC7C712089425A27F8A902A927460CE07CB36DC9B14862B7C3CEB714BCA0"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Defense_v1.png",
+        "Bytes":  460205,
+        "SHA256":  "17467C13A2615BE353BDF38E4C7A91AB7BFA52C26BBB55F552D2C72F00EC0A86"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Defense_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "577522623784EFCD880192C90C849FDCFBDCA1771718E63A366FA9B216E0EBB2"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Hourglass_v1.png",
+        "Bytes":  461261,
+        "SHA256":  "FD94AEC210C7AA854E5CCC8BF6570F2AA7ED245DE9A5FDE0BE40886E360BE701"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Hourglass_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "775F0E792ECB5431A55E1B81E5DF59CEE9FB8EAA809F6553431DAB8585026F0E"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Locked_v1.png",
+        "Bytes":  436723,
+        "SHA256":  "5D2975590F551333A23D60285A83B3061C6765E20CE260597702F0BDEE151C62"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Locked_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "0BDD2806022314749860D5F68C9A9C69E2DAA0D71C12A55BBE1A99287EE73750"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Mobility_v1.png",
+        "Bytes":  459939,
+        "SHA256":  "DC7582CBE8CADC20EA7675568BA8D62D237B8756AF44835DC9C89732450F9EDD"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_Mobility_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "140844295051FBE58ECB513AD9AD68351C4074B2620A77A632CA50D9E37291A3"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_SelfHeal_v1.png",
+        "Bytes":  459049,
+        "SHA256":  "72429E25567A4AD0EA2420A177224DF7C6B4E3B4151EBA65678FF0EE46A0FB76"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_Face_SelfHeal_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "11E4A4F9CB1E98E58C26110D6FC34030319B729C4BAD00C1C5064E4AA7B37D17"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_StateFaces_Atlas_v1.png",
+        "Bytes":  1847263,
+        "SHA256":  "30106917FA9513E71847CE3DD3227608E703EC89BD25C269341C8A312A7FB7FC"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Enemy_Valkyrie_StateFaces_Atlas_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "91F603A27AE23FB818147ADF42435B0CF89F832B59459EB01A84F204FB622898"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Symbol_Hourglass_White_v1.png",
+        "Bytes":  3735,
+        "SHA256":  "FF7F08E0A144E62ACD2D1EBBEDD1F51EDC9FD6A035499D81339B1166669C06EF"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Symbol_Hourglass_White_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "85037E63A4539F24759D8B2A845604E2BE15408DB44FE863692DE2242EAF2F00"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Symbol_Locked_White_v1.png",
+        "Bytes":  2828,
+        "SHA256":  "980E9B5FB708F53DE25EF87F75A271AED2DB561579CD66E962EDFA3DAA94633E"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Symbol_Locked_White_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "D6DAF5C7E0DD3012174BA45F68F84BF3CBDC255583398B438C95DA80145E8FCB"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Action.png",
+        "Bytes":  7054,
+        "SHA256":  "B8C849BCBB459D46141D55AE32DEA6AD4CCB7B44252C884F608DC0CC3B84AF77"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Action.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "5EB104A470C353ECB42B6054ECD4415158ACAC16BF8FA97E71D4380ACAA1673D"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Defense.png",
+        "Bytes":  7050,
+        "SHA256":  "E504943A4DEDD148CCCB0435038AC85013E8052DD31321B0CD4286F1FF11B3A9"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Defense.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "6A7B90A55D98459533FB589415669568A8D7E081E206A1867CB4BAA52600E92A"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Hourglass.png",
+        "Bytes":  7053,
+        "SHA256":  "6D39F8A408D71F4CC23CFA90E2E9BA521F580E9CA5036A4C850A271729C4A870"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Hourglass.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "B526DDC166A38AF410A81894A2641CAFAE2011A3164C12EFBAE536E4B433FE10"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Locked.png",
+        "Bytes":  7054,
+        "SHA256":  "590BF89AE0D281714DD268FBB9459BD00964D74F2B6EBC701D8130C22FD54490"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Locked.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "65E76C1914A35C216A203A5957B1DF5CE914655003E4BA0982C42E051719E449"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Mobility.png",
+        "Bytes":  7056,
+        "SHA256":  "1FC043F6816CF6A22F7A9CECCD247E61154F6090FFB64346A668BDFD8AD31F2D"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_Mobility.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "8225F2E197347BB4CFE618772978E9F318D8A9B752B5150517B2CD9B53C86843"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_SelfHeal.png",
+        "Bytes":  7045,
+        "SHA256":  "4AF92A051AA7E05933C1391CF3DA5F59A0683A10C5FFBF0FE0A7030AE4163D12"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Background_SelfHeal.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "1E156BE80DBAA07AE5621C995DDB02C59D22A4C99EB83C89B6F30C1D204B9B2E"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Action.png",
+        "Bytes":  36735,
+        "SHA256":  "065E977A0DF21A088FADA2C7A0A578510BC338C64A23D2BC2A5F04782C794024"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Action.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "87B9E92C9FE02F89F3567ECD7EB021CF3167974E9C6561A5B1E09A7C2A1AF2CA"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Defense.png",
+        "Bytes":  35678,
+        "SHA256":  "8E2760AFE66ACA3E48D5BCAC485A77FD7E6C55ABCA4841C10945903BAE69C63F"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Defense.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "4F37870C011727ECAE507D7B04177EE7056BD863DC56502F0ACEF60ADA178C7C"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Hourglass.png",
+        "Bytes":  36272,
+        "SHA256":  "C4816FD2DAA6D723F42515D9C8F12172763BC1033812868FC41670C9B32286DA"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Hourglass.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "8793C6DE931A567D3672D7C30D2EEF18ABB8CD0031B9E62693C01B3EC23EB2A4"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Locked.png",
+        "Bytes":  28947,
+        "SHA256":  "065622439F421D43C8519E517F4B7B07B71267AC8752EA8F73BAB8392B6850E7"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Locked.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "E7BF9828C92FDF191A1E65AECC74262022E11AB3A8E527AF1A5CE3BF6D4A611B"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Mobility.png",
+        "Bytes":  35958,
+        "SHA256":  "35BB5739BC75671680E30B04480377DA3EB8FE8B9DAA36562F227AF50404BD5A"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_Mobility.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "13148EB8FFB4DD27F9DD9C9845426AB3F1ACC7AE2C492CC647A35938E79BD7FF"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_SelfHeal.png",
+        "Bytes":  35929,
+        "SHA256":  "FC78B8FE72350355194E8ECB6F8FBB28490952D132CF7A0D0E802E88C9E26057"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Decoration_SelfHeal.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "E6B4084AF2D25A781CEB4114A9858A50DD6997ED277044529BDB5BF96BC844E9"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Action.png",
+        "Bytes":  502813,
+        "SHA256":  "F83AA20B7D2DB5929541604E196C02F10CDDA22950CAD09C48853CB26A9BEDA8"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Action.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "AB2EE5F453AF7BD93D8F235BF1E44169516A7BAF6937C54D0D505B12638AC91C"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Defense.png",
+        "Bytes":  502837,
+        "SHA256":  "591ADFFBF9D41D88D9862F2E24B509D78D7B9603058954561190C265796DF378"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Defense.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "1B0D15788B565265E3CD248E4F8766BAA24D86A0F65C61C0E20D29A91B9FC465"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Hourglass.png",
+        "Bytes":  503243,
+        "SHA256":  "52C9F86B92DFB6EDEA0150D1CD023116921B4683AEA39492A8384A62B8A1295B"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Hourglass.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "4EAC0B8796B77A63951C42B6001E8A357FAD53F85457E442AEAF2DCC56885EA7"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Locked.png",
+        "Bytes":  488972,
+        "SHA256":  "355AD22DEBDA7A47729B599B9D8862F4E2E51ECB0182DF6E9236AD8853F0643F"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Locked.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "40C4AF69235D72A7E045E27675315504BAF41B51D507EDEE97C14A7440175BA9"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Mobility.png",
+        "Bytes":  502792,
+        "SHA256":  "DEBA67891D219F2673A186E1E404194CA25E91FBC69C8DBF1B15C3F9DB3202F5"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_Mobility.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "6C35A24ADA5990512BE73D45323A54FB54EA3C6942007742CF38F6B4C9FB2B6A"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_SelfHeal.png",
+        "Bytes":  504500,
+        "SHA256":  "C0B7ACDA17C3136BB103FFBD282F1F5780FC1A85F5BE97D981FC4F5AB5F78820"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers/Portrait_SelfHeal.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "BE94ABEA38B9FBB3138EB2A1E04333BE6CCAE34DA74DE5A2B3832B90A0D14B6E"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/BossCube/Boss_Brunhild_Faces_v2.png",
+        "Bytes":  828768,
+        "SHA256":  "3EED93ADD97941957E4375B4E7650B53F905D46B0D17A69346380866B5A28D2C"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/BossCube/Boss_Brunhild_Faces_v2.png.meta",
+        "Bytes":  6973,
+        "SHA256":  "24E600C7909D0F3507B06543138EC942F9EEAE395ACB0FEE77589E093DBC39E6"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/BossCube/Boss_Hel_Faces_v2.png",
+        "Bytes":  831985,
+        "SHA256":  "269657B03F3BA4150105B0E3B35F8189E61B5E17C4803924008F5B3392593FE1"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/BossCube/Boss_Hel_Faces_v2.png.meta",
+        "Bytes":  6883,
+        "SHA256":  "83DF707BC2AF45B19690B14E53C99186225060FB8F2B3DFA7C9B2ECA50E1FD7E"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/BossCube/Boss_Loki_Faces_v2.png",
+        "Bytes":  816269,
+        "SHA256":  "B32632C691D7B3E5B77780DD712935CA47DBBFE9F99995BC76CDB7255EA8E422"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/BossCube/Boss_Loki_Faces_v2.png.meta",
+        "Bytes":  6901,
+        "SHA256":  "C183DD87C85D04D10E07D9349999955906385BB2B0C2AE637EC51A5064596017"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/BossCube/Boss_Surtr_Faces_v2.png",
+        "Bytes":  861435,
+        "SHA256":  "359AC1CC5BDB9BA79B44F8506F5D1C8D2591E486917A30D7EFBCB853D7E53476"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/BossCube/Boss_Surtr_Faces_v2.png.meta",
+        "Bytes":  6919,
+        "SHA256":  "9F292D655FB68810BAB86FE9470E47E8BDEB15D729494A43A24AC8AA64B637C6"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/BossCube/Boss_Ymir_Faces_v2.png",
+        "Bytes":  784414,
+        "SHA256":  "747154B5440138EDDF5A349010BEA16836320772688C6E56A85351794D4755A7"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/BossCube/Boss_Ymir_Faces_v2.png.meta",
+        "Bytes":  6901,
+        "SHA256":  "9A71EF3804BA4988A9353E448A5E9D2FEB1CFB7A3DCB8BC605CB6B684E1913BA"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblems_White_Atlas_v1.png",
+        "Bytes":  23879,
+        "SHA256":  "51A46419575F3C5F26F0635C5DA31FE8936ABDD10F6660A4F52A3DF67A93E489"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblems_White_Atlas_v1.png.meta",
+        "Bytes":  7926,
+        "SHA256":  "DE206CFD3FFA822DEA1B6AB1D1E307B934B6465772F362C95E6715F40479E887"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_Action_White_v1.png",
+        "Bytes":  2377,
+        "SHA256":  "0F1C6D371BB3E19B820196A7625D36918E27053BB4D8A7C66D528860D0173108"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_Action_White_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "E4E9583DBD065DE07D00AEB78B3BD4117BEFA866DDD4B15B8316BC990E3354AF"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_Defense_White_v1.png",
+        "Bytes":  4403,
+        "SHA256":  "C89341303AB2BDC04D0AF9577E52C432A7322D16F5D03F99EEF8BBD65FB6AABB"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_Defense_White_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "9B4D6779F9644174A5DD811513227194BE6A9B5F493A2F205F742EF11847DC8C"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_FinalBoss_White_v1.png",
+        "Bytes":  3311,
+        "SHA256":  "8FF4053ADC000555C1BD14DEAF14DF41E9165CE6A588B13EBCCD6F00FFB7F586"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_FinalBoss_White_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "C02704FE9D81A4B6C53EA8B1B071399262E351F4480EB1184CC8B423D6D9515C"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_GroupHeal_White_v1.png",
+        "Bytes":  2786,
+        "SHA256":  "7C35F40CC89149A3C2066350233B1A51E128725D8D0F2F1CA198E946A248E4AE"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_GroupHeal_White_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "4223B02AF77CA2D71F7596EB8D254C0E75B6432E26AD0A0359E6608F24A75429"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_MiddleBoss_White_v1.png",
+        "Bytes":  2805,
+        "SHA256":  "5471A2DDA39FC5C228F2576FCE716FC4FCEA256F78B47A4E8351E336E521C50F"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_MiddleBoss_White_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "E56FDE897ED2A535AB88A0FC3D47B5AB4DDF8DCC6EC747CD76E1C3EF2671CE1A"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_Mobility_White_v1.png",
+        "Bytes":  2119,
+        "SHA256":  "F1E7E6E3022FBD4BA964364D08A436B3D5B07740E79303344EB0D7DEA16B3D56"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_Mobility_White_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "B4A667AF4B7D33A27D05FF97D8B37DF9928E459FE56B8F7069B0AA3121E39084"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_SelfHeal_White_v1.png",
+        "Bytes":  4539,
+        "SHA256":  "851F9D9E9D49AF7222893CAA842E557699E28DC6986263197D85B0A42D860A23"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1/Enemy_Emblem_SelfHeal_White_v1.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "43D06088ADC86E5C8E6F2D30B062800119344D7D464ACE2D182DD2379A34189B"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Serpent_Defend_Gold.png",
+        "Bytes":  111197,
+        "SHA256":  "2247B319BDF08997E387AA5A30A5FD1B25DF7B907EEBB8629A55D296BE7EF8CF"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Serpent_Defend_Gold.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "D9BCF22F9B3BDF6207EE6FD723ECC9E645C3C4664A884F778A4674BAF7278DF5"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Serpent_FinalBoss_Jormungandr.png",
+        "Bytes":  239204,
+        "SHA256":  "DF80C2156A3DD5AA8C114C2076A3AA54B04B030158CE04B2AEF5D56301931A50"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Serpent_FinalBoss_Jormungandr.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "0450C2A739650073EB2216E9C69982C684FFD51BA7FEFB011F9B9A7719F80179"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Serpent_MiddleBoss_Red.png",
+        "Bytes":  129061,
+        "SHA256":  "568574EE95B2B845953D3F41FF0BBD5504CE3170373D3F2B19543A9527210289"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Serpent_MiddleBoss_Red.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "99764EE0670ACFD249E36908A74E30F5C35667C79EAE93A7BD1EB5605B008BCD"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Serpent_Normal_White.png",
+        "Bytes":  92595,
+        "SHA256":  "C959708A43E4F1DAFBDE2CA56DECC7AA7EEDE280FB8BEC39E66235922F4BD618"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Serpent_Normal_White.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "1859AE7CD0EADBCD636BFC8030314BCCAB7B7FE453A493B033E33A6EA6D77398"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Serpent_Speed_Blue.png",
+        "Bytes":  131514,
+        "SHA256":  "0DA44B58015C9CB29953CC6D56D7D89ECC6D4007DF61CF8C7D8C29627E6F312D"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Serpent_Speed_Blue.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "6B79AAFAE3CBD392A6672E1E66E8408F93538A374A1B01F1D0765143260442FD"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Tight_Bounds/Serpent_Defend_Gold_Tight.png",
+        "Bytes":  102239,
+        "SHA256":  "C4E2AD15737C2F792372CAAE47A4C2D9D39865AF25FC4804E961B0A2B864525B"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Tight_Bounds/Serpent_Defend_Gold_Tight.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "63668567EBC6F2D5EA0D622A70BCDE62480C48CEA16204981DA26E69F0E631D5"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Tight_Bounds/Serpent_FinalBoss_Jormungandr_Tight.png",
+        "Bytes":  232002,
+        "SHA256":  "03AF7AD81216E9BB710F0008D3F2BBA4DED83856EEF321CF40468C491558704C"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Tight_Bounds/Serpent_FinalBoss_Jormungandr_Tight.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "45F5A8A1FEED222D333B90A97B419DE38B53817AEA296835383DA25664F3BD20"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Tight_Bounds/Serpent_MiddleBoss_Red_Tight.png",
+        "Bytes":  119150,
+        "SHA256":  "5D8FC22D5487DABF0600DB3A8650122C2374B4299965D88F83D4F9B729D766AE"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Tight_Bounds/Serpent_MiddleBoss_Red_Tight.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "8119267BE61087143A37161D92F19473C137F20305215AB94337EC36FAB48B7C"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Tight_Bounds/Serpent_Normal_White_Tight.png",
+        "Bytes":  80929,
+        "SHA256":  "3EB97BD832DE4DCD097EA6082F336A02BD59D9EB15EBF6083A5110BD034CB24C"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Tight_Bounds/Serpent_Normal_White_Tight.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "43D469D9AEAC6C47F5DDAFD82519C77FA70985AC0161A6BE4B0662F19597B900"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Tight_Bounds/Serpent_Speed_Blue_Tight.png",
+        "Bytes":  123809,
+        "SHA256":  "CCC0116BE85D249B9F6641B9BF2CF0741EBFECEDF596C6B018C5749AB07F9561"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Tight_Bounds/Serpent_Speed_Blue_Tight.png.meta",
+        "Bytes":  3539,
+        "SHA256":  "C6A57AFEC4E387E8E6B92A134C17D6A80A33EA5668C60B176352C78A3CB4D6EE"
+    },
+    {
+        "Path":  "Assets/2. Prefab/3. Enemy/1. Enemy_normal.prefab",
+        "Bytes":  14160,
+        "SHA256":  "DF1393342E7C8649D4C50E797CD3A0152192A81115E239CA01F3461E08483CEE"
+    },
+    {
+        "Path":  "Assets/2. Prefab/3. Enemy/1. Enemy_normal.prefab.meta",
+        "Bytes":  161,
+        "SHA256":  "F42DBDCEE5775C6CFEAC6EFB78E0F02D2BB1716D53CDBC66B2FAA6A94E93CF62"
+    },
+    {
+        "Path":  "Assets/2. Prefab/3. Enemy/VisualVariants/Enemy_Action_Visual.prefab",
+        "Bytes":  1070,
+        "SHA256":  "E8C9E78EEA34BD55DC7F07178B49C9111EF6A7CEBC7D3059492C2A8FDEBAFE3A"
+    },
+    {
+        "Path":  "Assets/2. Prefab/3. Enemy/VisualVariants/Enemy_Action_Visual.prefab.meta",
+        "Bytes":  154,
+        "SHA256":  "8E668512F530C1FBE9665861ADBD47DCF0C03779A48724DB8F003298FE608735"
+    },
+    {
+        "Path":  "Assets/2. Prefab/3. Enemy/VisualVariants/Enemy_GroupHeal_Visual.prefab",
+        "Bytes":  1073,
+        "SHA256":  "171A2BDA9FDB08043B98F0FD44447C3B4E295968918D1D292E758D135F2BE4C4"
+    },
+    {
+        "Path":  "Assets/2. Prefab/3. Enemy/VisualVariants/Enemy_GroupHeal_Visual.prefab.meta",
+        "Bytes":  154,
+        "SHA256":  "F0E651AA66881B0F83D12B700625E038B9B027B97332AB0DE49BDE456B940874"
+    },
+    {
+        "Path":  "Assets/2. Prefab/3. Enemy/BossCharacters/EnemyBoss_Hel.prefab",
+        "Bytes":  14164,
+        "SHA256":  "27B2DC00C3FFA91C05A8B5283102FBEBF714FDAFFE42D15F7440DB1472BA728D"
+    },
+    {
+        "Path":  "Assets/2. Prefab/3. Enemy/BossCharacters/EnemyBoss_Hel.prefab.meta",
+        "Bytes":  151,
+        "SHA256":  "02C051AF1CFB41A8FE5719FAEAA2A8CDB49A100160FF64BA6F41F82361B1E44B"
+    },
+    {
+        "Path":  "Assets/2. Prefab/3. Enemy/BossCharacters/EnemyBoss_Surtr.prefab",
+        "Bytes":  14166,
+        "SHA256":  "DBA3BC6792A331577A83D0DC938E1D34BACCEB34B3299879958A0C299CF25FCF"
+    },
+    {
+        "Path":  "Assets/2. Prefab/3. Enemy/BossCharacters/EnemyBoss_Surtr.prefab.meta",
+        "Bytes":  151,
+        "SHA256":  "C050CE16E95694859B709C96891A94823973BBB4367A756048AF9C8A61810E59"
+    },
+    {
+        "Path":  "Assets/2. Prefab/3. Enemy/BossCharacters/EnemyBoss_Ymir.prefab",
+        "Bytes":  14165,
+        "SHA256":  "F5FB2CAAC257E14B8E8225B0D8F0D279A11B99EB2B502452C3D97F2DFBC0AF5E"
+    },
+    {
+        "Path":  "Assets/2. Prefab/3. Enemy/BossCharacters/EnemyBoss_Ymir.prefab.meta",
+        "Bytes":  151,
+        "SHA256":  "4CBB92C503E5A778249CE3DAE39284F844E3036C8DFA8E8448066D697FA5C67C"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/StateFaces_v1/Layers.meta",
+        "Bytes":  180,
+        "SHA256":  "1C66CEDEDF9DE345335CD6DEFCACFA5567124C33DEF8DFD89708C42DD94C1076"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/CubeValkyrie/EquipmentPalettes.meta",
+        "Bytes":  172,
+        "SHA256":  "38144329C32610302BD34EEB6B79DF3AD7827847E940FFD6A88DB23C16A29326"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent/Tight_Bounds.meta",
+        "Bytes":  180,
+        "SHA256":  "6220D9FB6B92FA8FD0F321AF15F417E6D0971B1F8AC9FBE4978D09D640860AB2"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Asgard/Animations.meta",
+        "Bytes":  179,
+        "SHA256":  "6E8DCAD3AE1085CCA4AA19560D2D6895586E3E156CA657AE00781C958ED10ED8"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Midgard_Serpent.meta",
+        "Bytes":  183,
+        "SHA256":  "D53E09C9F32214CDBAA5204C1E206CE2D0D6355BB2D3BB78294DDE7F39211ED8"
+    },
+    {
+        "Path":  "Assets/2. Prefab/3. Enemy/VisualVariants.meta",
+        "Bytes":  172,
+        "SHA256":  "75BF40F3D5748C5E98108C519B0A272D3C79F54C9AC216D463CC171DA537DF0A"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/Emblems_v1.meta",
+        "Bytes":  180,
+        "SHA256":  "7BE0137449381187455F8AD1C36D4DF4B4DA9F2EABCFD7456BE29B973DFB4CE5"
+    },
+    {
+        "Path":  "Assets/4. Asset/4. Enemy/BossCube.meta",
+        "Bytes":  169,
+        "SHA256":  "1685327AE4DB7D30ECE5F53C8F783B2CEA1A6E2F35544348573E914741B4661B"
+    }
+]

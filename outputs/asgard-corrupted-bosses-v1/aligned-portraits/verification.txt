@@ -1,0 +1,17 @@
+PASS: Brunhild/SelfHeal: exact canonical alpha and non-accent RGBA; identical face, eyes, chin, hair and shoulder positions.
+PASS: Brunhild/Defense: exact canonical alpha and non-accent RGBA; identical face, eyes, chin, hair and shoulder positions.
+PASS: Brunhild/Mobility: exact canonical alpha and non-accent RGBA; identical face, eyes, chin, hair and shoulder positions.
+PASS: Brunhild/Action: exact canonical alpha and non-accent RGBA; identical face, eyes, chin, hair and shoulder positions.
+PASS: Brunhild/Locked: exact canonical alpha and non-accent RGBA; identical face, eyes, chin, hair and shoulder positions.
+PASS: Brunhild/Hourglass: exact canonical alpha and non-accent RGBA; identical face, eyes, chin, hair and shoulder positions.
+Brunhild: one unchanged canonical self-heal portrait for all six states; recolored equipment pixels=9235.
+PASS: Loki/SelfHeal: exact canonical alpha and non-accent RGBA; identical face, eyes, chin, hair and shoulder positions.
+PASS: Loki/Defense: exact canonical alpha and non-accent RGBA; identical face, eyes, chin, hair and shoulder positions.
+PASS: Loki/Mobility: exact canonical alpha and non-accent RGBA; identical face, eyes, chin, hair and shoulder positions.
+PASS: Loki/Action: exact canonical alpha and non-accent RGBA; identical face, eyes, chin, hair and shoulder positions.
+PASS: Loki/Locked: exact canonical alpha and non-accent RGBA; identical face, eyes, chin, hair and shoulder positions.
+PASS: Loki/Hourglass: exact canonical alpha and non-accent RGBA; identical face, eyes, chin, hair and shoulder positions.
+Loki: one unchanged canonical self-heal portrait for all six states; recolored equipment pixels=9060.
+PASS: Brunhild final asset/staging SHA256 3C9CE13B392FC60F5B556A61500E5F8EFB20FF4A3FD7888670F455647FB04884
+PASS: Loki final asset/staging SHA256 CB7B9A20F8E483028693CE73C0C2376FC494DD9549D470BE71BCC7647FE18E49
+PASS: existing atlas metadata, materials, and prefab references retain their SHA256 hashes. Unity was not launched.

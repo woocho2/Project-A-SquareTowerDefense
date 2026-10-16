@@ -15,7 +15,7 @@ public enum TurnState
 }
 
 /// <summary>
-/// 플레이어 턴과 10회의 적 턴을 순환시키고 게임 속도, 적 수 한도와 종료 상태를 관리합니다.
+/// 웨이브마다 소환 전 판정과 일괄 소환 뒤 플레이어 턴 1회와 적 턴 10회를 진행하고, 게임 속도, 적 수 한도와 종료 상태를 관리합니다.
 /// 웨이브 구성과 적 능력치 계산은 WaveManager에 위임합니다.
 /// </summary>
 public class GameManager : MonoBehaviour
@@ -23,7 +23,6 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     private const int TurnsPerWave = 10;
-    private const int EnemySpawnTurns = 5;
     private const int FinalWave = 40;
 
     [Header("게임 배속 및 적 수 한도 설정")]
@@ -100,13 +99,20 @@ public class GameManager : MonoBehaviour
         turnRoutine = StartCoroutine(TurnLoopRoutine());
     }
 
-    /// <summary>플레이어 턴과 적 웨이브를 게임 종료 전까지 반복합니다.</summary>
+    /// <summary>웨이브를 게임 종료 전까지 반복합니다.</summary>
     private IEnumerator TurnLoopRoutine()
     {
+        // 다른 매니저의 Start(경로 초기화 등)가 모두 끝난 다음 프레임에 첫 웨이브를 시작합니다.
+        yield return null;
+
         while (CurrentState != TurnState.GameOver && CurrentState != TurnState.GameClear)
         {
-            yield return StartCoroutine(PlayerTurnRoutine());
-            if (CurrentState == TurnState.GameOver || CurrentState == TurnState.GameClear) yield break;
+            // 웨이브 시작: 소환 전 잔존 적 수 판정 → 일괄 소환과 착지 대기
+            if (CheckEnemyLimit()) yield break;
+            if (EnemyManager.Instance != null)
+            {
+                yield return StartCoroutine(EnemyManager.Instance.SpawnWaveRoutine());
+            }
 
             yield return StartCoroutine(EnemyWaveRoutine());
         }
@@ -114,23 +120,24 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator EnemyWaveRoutine()
     {
-        // 모든 웨이브는 10턴이며, 처음 5턴에만 새로운 적을 소환합니다.
+        // 소환된 적을 보고 배치하는 플레이어 턴은 웨이브마다 한 번입니다.
+        yield return StartCoroutine(PlayerTurnRoutine());
+
+        // 그 뒤 적 턴 10번을 자동으로 진행합니다. 웨이브 도중에는 소환하지 않습니다.
         for (int turn = 0; turn < TurnsPerWave; turn++)
         {
             if (CurrentState == TurnState.GameOver || CurrentState == TurnState.GameClear) yield break;
 
-            bool shouldSpawn = turn < EnemySpawnTurns;
-
-            yield return StartCoroutine(EnemyTurnRoutine(shouldSpawn));
+            yield return StartCoroutine(EnemyTurnRoutine());
         }
 
-        // 마지막 웨이브는 10턴 제한이 없습니다. 최종 보스가 처치되거나(클리어) 도착할 때까지(게임 오버)
-        // 플레이어 턴으로 돌아가지 않고 소환 없는 적 턴을 계속 진행합니다.
+        // 마지막 웨이브는 최종 보스가 처치되거나(클리어) 제한 턴 20이 다 될 때까지(게임 오버) 적 턴을 계속합니다.
+        // 제한 턴은 EnemyTurnRoutine 끝에서 셉니다.
         while (WaveManager.Instance != null && WaveManager.Instance.CurrentWave >= FinalWave && IsFinalBossAlive())
         {
             if (CurrentState == TurnState.GameOver || CurrentState == TurnState.GameClear) yield break;
 
-            yield return StartCoroutine(EnemyTurnRoutine(false));
+            yield return StartCoroutine(EnemyTurnRoutine());
         }
 
         if (CurrentState == TurnState.GameOver || CurrentState == TurnState.GameClear) yield break;
@@ -184,12 +191,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator EnemyTurnRoutine(bool shouldSpawn)
+    private IEnumerator EnemyTurnRoutine()
     {
         ChangeState(new EnemyTurnState());
 
-        // 1) 필요 시 적 소환 후 모든 적 이동
-        yield return StartCoroutine(ProcessEnemyMovement(shouldSpawn));
+        // 1) 모든 적 이동
+        yield return StartCoroutine(ProcessEnemyMovement());
         GameStateVersion.MarkChanged();
 
         // 2) 이동을 마친 타일의 즉시 효과 적용
@@ -205,17 +212,26 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(ProcessDamageDebuffs());
         GameStateVersion.MarkChanged();
 
-        // 적 턴 하나 종료. 한 웨이브의 적 턴이 모두 끝나야 플레이어 턴으로 돌아갑니다.
+        // 5) 보스·중간 보스의 제한 턴을 1 줄입니다. 그 턴의 공격과 지속 피해가 모두 끝난 뒤 셈하고, 다 된 보스가 있으면 게임 오버입니다.
+        if (EnemyManager.Instance != null && EnemyManager.Instance.AdvanceAllBossTurnLimits())
+        {
+            OnGameOver();
+            yield break;
+        }
+
+        GameStateVersion.MarkChanged();
+
+        // 적 턴 하나 종료. 한 웨이브의 적 턴이 모두 끝나면 다음 웨이브의 소환 전 판정으로 넘어갑니다.
         yield return new WaitForSeconds(0.3f);
     }
 
     // 몬스터 이동 처리 코루틴 (EnemyManager 연동 지점)
-    private IEnumerator ProcessEnemyMovement(bool shouldSpawn)
+    private IEnumerator ProcessEnemyMovement()
     {
         if (EnemyManager.Instance != null)
         {
-            // 에너미 매니저를 통해 신규 몬스터 스폰 및 이동 실행
-            yield return StartCoroutine(EnemyManager.Instance.ProcessEnemyTurnRoutine(shouldSpawn));
+            // 에너미 매니저를 통해 모든 적의 이동 실행
+            yield return StartCoroutine(EnemyManager.Instance.ProcessEnemyTurnRoutine());
         }
         else
         {
@@ -326,7 +342,7 @@ public class GameManager : MonoBehaviour
 
         int currentEnemyCount = TileManager.Instance.GetAllEnemiesOnPath().Count;
 
-        if (currentEnemyCount >= EnemyLimit)
+        if (currentEnemyCount > EnemyLimit)
         {
             OnGameOver();
             return true;

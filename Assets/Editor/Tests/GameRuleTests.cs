@@ -63,26 +63,14 @@ public class GameRuleTests
     // ------------------------------------------------------------------
 
     [TestCase(1, 10)]
-    [TestCase(11, 110)]
-    [TestCase(40, 400)]
-    public void 일반_적은_웨이브당_10골드이고_젬은_없다(int wave, int expectedGold)
+    [TestCase(11, 20)]
+    [TestCase(40, 40)]
+    public void 일반_적은_사이클당_10골드이고_젬은_없다(int wave, int expectedGold)
     {
         WaveManager.GetKillReward(EnemyType.Normal, wave, out int gold, out int gem);
 
         Assert.AreEqual(expectedGold, gold);
         Assert.AreEqual(0, gem);
-    }
-
-    [Test]
-    public void 속도형과_방어형도_일반_적과_같은_보상()
-    {
-        WaveManager.GetKillReward(EnemyType.Speed, 7, out int speedGold, out int speedGem);
-        WaveManager.GetKillReward(EnemyType.Depend, 7, out int defendGold, out int defendGem);
-
-        Assert.AreEqual(70, speedGold);
-        Assert.AreEqual(70, defendGold);
-        Assert.AreEqual(0, speedGem);
-        Assert.AreEqual(0, defendGem);
     }
 
     [TestCase(10, 1000, 20)]

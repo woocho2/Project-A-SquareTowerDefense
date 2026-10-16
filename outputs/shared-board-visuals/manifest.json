@@ -1,0 +1,114 @@
+{
+    "decorationGuid":  "fdea12801c584d78a0a6c49e41916f49",
+    "decorationTile":  "176982873afa46f9be2dcd2ffb7cda56",
+    "tierColors":  [
+                       {
+                           "bg":  "{r: 0.98823529, g: 0.9254902, b: 0.8627451, a: 1}",
+                           "frame":  "{r: 0.84705882, g: 0.61176471, b: 0.45098039, a: 1}"
+                       },
+                       {
+                           "bg":  "{r: 0.91764706, g: 0.9372549, b: 0.95294118, a: 1}",
+                           "frame":  "{r: 0.78431373, g: 0.83529412, b: 0.89019608, a: 1}"
+                       },
+                       {
+                           "bg":  "{r: 0.99215686, g: 0.96470588, b: 0.85490196, a: 1}",
+                           "frame":  "{r: 0.94509804, g: 0.81568627, b: 0.44313725, a: 1}"
+                       },
+                       {
+                           "bg":  "{r: 0.89019608, g: 0.97647059, b: 0.96470588, a: 1}",
+                           "frame":  "{r: 0.6, g: 0.85098039, b: 0.74901961, a: 1}"
+                       },
+                       {
+                           "bg":  "{r: 0.87058824, g: 0.94509804, b: 0.98823529, a: 1}",
+                           "frame":  "{r: 0.60392157, g: 0.78823529, b: 0.91764706, a: 1}"
+                       },
+                       {
+                           "bg":  "{r: 0.98431373, g: 0.90980392, b: 0.91372549, a: 1}",
+                           "frame":  "{r: 0.80392157, g: 0.49803922, b: 0.61568627, a: 1}"
+                       }
+                   ],
+    "retired":  [
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\1. BackGround\\Tile_Path_Overlay_Asgard_Atlas.png",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\1. BackGround\\Tile_Path_Overlay_Alfheim_Atlas.png",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\1. BackGround\\Tile_Path_Overlay_Vanaheim_Atlas.png",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\1. BackGround\\Tile_Path_Overlay_Midgard_Atlas.png",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\1. BackGround\\Tile_Path_Overlay_Jotunheim_Atlas.png",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\1. BackGround\\Tile_Path_Overlay_Nidavellir_Atlas.png",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\1. BackGround\\Tile_Path_Overlay_Niflheim_Atlas.png",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\1. BackGround\\Tile_Path_Overlay_Muspelheim_Atlas.png",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\1. BackGround\\Tile_Path_Overlay_Hel_Atlas.png",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\1. BackGround\\Tile_Path_Overlay_Ragnarok_Atlas.png",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\1. BackGround\\Tile_Floor_Atlas.png",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\2. Tower\\Tower_Backgrounds_Atlas_v1.png",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\2. Tower\\Tower_Decorations_Atlas_v1.png",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\4. Enemy\\Asgard\\Brunhild_Heal.mat",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\4. Enemy\\Asgard\\Loki_Heal.mat",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\4. Enemy\\Asgard\\Brunhild_Defense.mat",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\4. Enemy\\Asgard\\Loki_Defense.mat",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\4. Enemy\\Asgard\\Brunhild_Action.mat",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\4. Enemy\\Asgard\\Loki_Action.mat",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\4. Enemy\\Asgard\\Brunhild_Mobility.mat",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\4. Enemy\\Asgard\\Loki_Mobility.mat",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\4. Enemy\\Asgard\\Brunhild_Locked.mat",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\4. Enemy\\Asgard\\Loki_Locked.mat",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\4. Enemy\\Asgard\\Brunhild_Hourglass.mat",
+                    "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\4. Enemy\\Asgard\\Loki_Hourglass.mat"
+                ],
+    "stageColors":  [
+                        {
+                            "spawn":  "{r: 1, g: 0.98823529, b: 0.9254902, a: 1}",
+                            "path":  "{r: 0.14901961, g: 0.21960784, b: 0.33333333, a: 1}",
+                            "frame":  "{r: 0.89411765, g: 0.67058824, b: 0.17647059, a: 1}"
+                        },
+                        {
+                            "spawn":  "{r: 0.95686275, g: 0.97254902, b: 0.92156863, a: 1}",
+                            "path":  "{r: 0.41960784, g: 0.28627451, b: 0.2, a: 1}",
+                            "frame":  "{r: 0.57647059, g: 0.36470588, b: 0.18039216, a: 1}"
+                        },
+                        {
+                            "spawn":  "{r: 0.9372549, g: 0.96862745, b: 0.94117647, a: 1}",
+                            "path":  "{r: 0.14509804, g: 0.29411765, b: 0.20784314, a: 1}",
+                            "frame":  "{r: 0.52941176, g: 0.6627451, b: 0.41960784, a: 1}"
+                        },
+                        {
+                            "spawn":  "{r: 0.92941176, g: 0.97254902, b: 0.96078431, a: 1}",
+                            "path":  "{r: 0.08235294, g: 0.21176471, b: 0.30980392, a: 1}",
+                            "frame":  "{r: 0.41568627, g: 0.61960784, b: 0.71372549, a: 1}"
+                        },
+                        {
+                            "spawn":  "{r: 0.95294118, g: 0.96078431, b: 0.96078431, a: 1}",
+                            "path":  "{r: 0.20784314, g: 0.21960784, b: 0.23529412, a: 1}",
+                            "frame":  "{r: 0.51764706, g: 0.55686275, b: 0.6, a: 1}"
+                        },
+                        {
+                            "spawn":  "{r: 0.95686275, g: 0.9372549, b: 0.97647059, a: 1}",
+                            "path":  "{r: 0.31372549, g: 0.18431373, b: 0.42745098, a: 1}",
+                            "frame":  "{r: 0.57254902, g: 0.34117647, b: 0.78039216, a: 1}"
+                        },
+                        {
+                            "spawn":  "{r: 0.96862745, g: 0.98431373, b: 1, a: 1}",
+                            "path":  "{r: 0.21176471, g: 0.29411765, b: 0.41568627, a: 1}",
+                            "frame":  "{r: 0.57647059, g: 0.68235294, b: 0.78431373, a: 1}"
+                        },
+                        {
+                            "spawn":  "{r: 1, g: 0.96078431, b: 0.9254902, a: 1}",
+                            "path":  "{r: 0.53333333, g: 0.25882353, b: 0.12156863, a: 1}",
+                            "frame":  "{r: 0.80392157, g: 0.54509804, b: 0.44705882, a: 1}"
+                        },
+                        {
+                            "spawn":  "{r: 0.94509804, g: 0.97254902, b: 0.95686275, a: 1}",
+                            "path":  "{r: 0.0627451, g: 0.07843137, b: 0.09019608, a: 1}",
+                            "frame":  "{r: 0.16470588, g: 0.65098039, b: 0.60392157, a: 1}"
+                        },
+                        {
+                            "spawn":  "{r: 0.8627451, g: 0.84705882, b: 0.79215686, a: 1}",
+                            "path":  "{r: 0.25882353, g: 0.29411765, b: 0.34509804, a: 1}",
+                            "frame":  "{r: 0.65490196, g: 0.58431373, b: 0.43529412, a: 1}"
+                        }
+                    ],
+    "backgroundGuid":  "887a2b3fda8248ee8761c5268b098428",
+    "settingsGuid":  "d9b3d0b98a2b476b8ebef152fc6fb854",
+    "arrowTile":  "ae15e722a5704a2c8f2a6163dea4e8ee",
+    "arrowGuid":  "9b52863a276c47eea04ae0dc7a25d6a8",
+    "backgroundTile":  "d5465c6891bb49be9033b17a3dc1a41a"
+}

@@ -41,6 +41,9 @@ TextureImporter:
   - first:
       213: 1013
     second: Emblem_13_Dark
+  - first:
+      213: 1014
+    second: Emblem_08_Water
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -73,7 +76,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -447,6 +450,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Emblem_08_Water
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f300000000000000800000000000000
+      internalID: 1014
+      vertices: []
+      indices:
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -469,6 +494,7 @@ TextureImporter:
       Emblem_06_Hammer: 1006
       Emblem_07_Fire: 1007
       Emblem_08_Ice: 1008
+      Emblem_08_Water: 1014
       Emblem_09_Electricity: 1009
       Emblem_10_Wind: 1010
       Emblem_11_Earth: 1011

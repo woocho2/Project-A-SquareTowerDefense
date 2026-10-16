@@ -196,7 +196,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyObjectPool2D
   m_enemyData: {fileID: 11400000, guid: a7f97c2ce48afde47b934739b24d9111, type: 2}
-  enemyPrefab: {fileID: 8667325651164272175, guid: 6eb6174d1ae64f5449b881462ba06aec, type: 3}
+  enemyPrefab: {fileID: 8667325651164272175, guid: 87c1241159284a9088223da54f5600f3, type: 3}
   m_poolEnemyType: 3
   initialSize: 2
   maxSize: 2
@@ -452,7 +452,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyObjectPool2D
   m_enemyData: {fileID: 11400000, guid: 6aaa53e87325d014cacb08571783b02d, type: 2}
-  enemyPrefab: {fileID: 1541420121208455735, guid: 68a2d2e6e734e2f4f889e39e452619a0, type: 3}
+  enemyPrefab: {fileID: 1541420121208455735, guid: ec24315888414e95885402e897e27826, type: 3}
   m_poolEnemyType: 4
   initialSize: 2
   maxSize: 2

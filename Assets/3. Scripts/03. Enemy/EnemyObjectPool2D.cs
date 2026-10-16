@@ -10,8 +10,8 @@ public class EnemyObjectPool2D : MonoBehaviour
     [SerializeField] private EnemyType m_poolEnemyType;         // 이 풀의 적 타입
 
     [Header("Pool Settings")]
-    [SerializeField] private int initialSize = 30;
-    [SerializeField] private int maxSize = 101;
+    [SerializeField] private int initialSize = 100;
+    [SerializeField] private int maxSize = 150;
     [SerializeField] private bool expandable = true;
 
     [Header("Hierarchy")]
@@ -103,7 +103,7 @@ public class EnemyObjectPool2D : MonoBehaviour
         Destroy(e.gameObject);
     }
 
-    public EnemyHealthController Spawn(Vector3 position, float hpMultiplier, float defendMultiplier)
+    public EnemyHealthController Spawn(int pathIndex, float hpMultiplier, float defendMultiplier)
     {
         if (m_enemyData == null)
         {
@@ -111,14 +111,13 @@ public class EnemyObjectPool2D : MonoBehaviour
             return null;
         }
 
-        // Start도 같은 9자리 제한을 적용합니다. 자리가 없으면 풀 객체를 꺼내지 않습니다.
-        if (TileManager.Instance != null && !TileManager.Instance.HasEnemyCapacityAtPathIndex(0)) return null;
+        if (TileManager.Instance == null || pathIndex < 0 || pathIndex >= TileManager.Instance.PathTileCount) return null;
 
         var health = TryGet();
         if (health == null) return null;
 
         // 위치 지정 및 오브젝트 활성화 (누락되었던 부분)
-        health.transform.position = position;
+        health.transform.position = TileManager.Instance.GetPathWorldPosition(pathIndex);
         health.gameObject.SetActive(true);
 
         // 1. 디버프 상태 초기화[cite: 22]
@@ -130,8 +129,8 @@ public class EnemyObjectPool2D : MonoBehaviour
         // 2. 턴제 이동 데이터 초기화 (EnemyData 전달)[cite: 22]
         if (health.TryGetComponent<EnemyMoveController>(out var movement))
         {
-            // InitMovement가 적을 TileManager의 패스 0번 인덱스에 등록합니다.
-            if (!movement.InitMovement(m_enemyData))
+            // InitMovement가 적을 TileManager의 받은 패스 인덱스에 등록합니다.
+            if (!movement.InitMovement(m_enemyData, pathIndex))
             {
                 health.ReturnToPool();
                 return null;

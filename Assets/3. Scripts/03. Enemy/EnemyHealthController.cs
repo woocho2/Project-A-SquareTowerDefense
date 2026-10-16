@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class EnemyHealthController : MonoBehaviour
@@ -26,6 +27,10 @@ public class EnemyHealthController : MonoBehaviour
     private int m_spawnWave = 1;
     // 이미 발사되어 날아오는 탄이 줄 것으로 예상되는 피해의 합입니다. 탄 사전 분배에만 씁니다.
     private float m_reservedDamage;
+    // 보스·중간 보스는 소환된 뒤 적 턴 20번 안에 처치해야 합니다. 못 잡으면 게임 오버입니다.
+    private const int BossTurnLimit = 20;
+    private int m_remainingBossTurns;
+
 
     public int SpawnWave => m_spawnWave;
     /// <summary>날아오는 탄만으로 이미 죽을 예정이면 true. 다음 탄은 다른 적에게 배정합니다.</summary>
@@ -41,6 +46,9 @@ public class EnemyHealthController : MonoBehaviour
     public EnemyType EnemyType => m_enemyType;
     public EnemyData EnemyData { get; private set; }
     public EnemyMoveController Movement => m_movement;
+    public int RemainingBossTurns => m_remainingBossTurns;
+    public bool IsBossTurnLimitOver => IsBoss && m_remainingBossTurns <= 0;
+
 
     private void Awake()
     {
@@ -57,10 +65,19 @@ public class EnemyHealthController : MonoBehaviour
         InitHealth(maxHP, defend, enemyType);
     }
 
+    // 적 턴이 끝날 때마다 한 번 부릅니다. 보스가 아니거나 이미 0이면 아무것도 하지 않습니다.
+    public void AdvanceBossTurnLimit()
+    {
+        if (!IsBoss || m_remainingBossTurns <= 0) return;
+        m_remainingBossTurns--;
+    }
+
+
     public void InitHealth(float maxHP, float defend, EnemyType enemyType = EnemyType.Normal)
     {
         m_hasDied = false;
         m_enemyType = enemyType;
+        m_remainingBossTurns = IsBoss ? BossTurnLimit : 0;
         m_spawnWave = WaveManager.Instance != null ? WaveManager.Instance.CurrentWave : 1;
         m_originalMaxHP = maxHP;
         m_maxHP = maxHP;
@@ -226,6 +243,7 @@ public class EnemyHealthController : MonoBehaviour
     }
     private void ShowHPBar()
     {
+        if (m_movement != null && !m_movement.IsTopOfStack) return;
         if (m_hpBar != null)
         {
             m_hpBar.SetActive(true);

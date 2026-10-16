@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// 플레이어 턴의 행동 버튼(타워 생성·컬러 강화·티어 강화·중간 보스 소환·턴 종료)과 비용 표시를 담당합니다.
+/// 플레이어 턴의 행동 버튼(타워 생성·컬러 강화·티어 강화·턴 종료)과 비용 표시를 담당합니다.
 /// 패널을 켜고 끄는 것은 UIManager가 하고, 표시 내용은 각 매니저의 이벤트를 구독해 갱신합니다.
 /// </summary>
 public class PlayerTurnPanel : MonoBehaviour
@@ -14,7 +14,6 @@ public class PlayerTurnPanel : MonoBehaviour
     [SerializeField] TextMeshProUGUI txt_colorUpgradeValue;
     [SerializeField] Button btn_tierUpgrade;
     [SerializeField] TextMeshProUGUI txt_tierUpgradeValue;
-    [SerializeField] Button btn_summonMiddleBoss;
     [SerializeField] Button btn_turnEnd;
 
     // 강화 대상은 마지막으로 클릭한 타워입니다.
@@ -31,18 +30,15 @@ public class PlayerTurnPanel : MonoBehaviour
         TowerManager.Instance.CurrentCreateTowerValueChanged += UpdateCreateTowerText;
         TowerManager.Instance.CurrentColorUpgradeValueChanged += HandleUpgradeCostChanged;
         TowerManager.Instance.CurrentTierUpgradeValueChanged += HandleUpgradeCostChanged;
-        WaveManager.Instance.MiddleBossSummonableChanged += RefreshMiddleBossButton;
         BoardInputController.OnTowerClickedAction += HandleTowerClicked;
 
         btn_createTower.onClick.AddListener(HandleCreateTowerClick);
         btn_colorUpgrade.onClick.AddListener(HandleColorUpgradeClick);
         btn_tierUpgrade.onClick.AddListener(HandleTierUpgradeClick);
-        btn_summonMiddleBoss.onClick.AddListener(HandleSummonMiddleBossClick);
         btn_turnEnd.onClick.AddListener(HandleTurnEndClick);
 
         UpdateCreateTowerText(TowerManager.Instance.CreateTowerGold);
         RefreshUpgradeCostTexts();
-        RefreshMiddleBossButton();
     }
 
     private void OnDestroy()
@@ -52,11 +48,6 @@ public class PlayerTurnPanel : MonoBehaviour
             TowerManager.Instance.CurrentCreateTowerValueChanged -= UpdateCreateTowerText;
             TowerManager.Instance.CurrentColorUpgradeValueChanged -= HandleUpgradeCostChanged;
             TowerManager.Instance.CurrentTierUpgradeValueChanged -= HandleUpgradeCostChanged;
-        }
-
-        if (WaveManager.Instance != null)
-        {
-            WaveManager.Instance.MiddleBossSummonableChanged -= RefreshMiddleBossButton;
         }
 
         BoardInputController.OnTowerClickedAction -= HandleTowerClicked;
@@ -72,10 +63,6 @@ public class PlayerTurnPanel : MonoBehaviour
         if (btn_tierUpgrade != null)
         {
             btn_tierUpgrade.onClick.RemoveListener(HandleTierUpgradeClick);
-        }
-        if (btn_summonMiddleBoss != null)
-        {
-            btn_summonMiddleBoss.onClick.RemoveListener(HandleSummonMiddleBossClick);
         }
         if (btn_turnEnd != null)
         {
@@ -126,15 +113,6 @@ public class PlayerTurnPanel : MonoBehaviour
         return cost > 0 ? $"{cost}" : "MAX";
     }
 
-    private void RefreshMiddleBossButton()
-    {
-        if (btn_summonMiddleBoss == null) return;
-
-        bool canSummon = WaveManager.Instance != null && WaveManager.Instance.CanSummonMiddleBoss;
-        btn_summonMiddleBoss.gameObject.SetActive(canSummon);
-        btn_summonMiddleBoss.interactable = canSummon;
-    }
-
     private void HandleCreateTowerClick()
     {
         TowerManager.Instance?.BuildTower();
@@ -166,11 +144,6 @@ public class PlayerTurnPanel : MonoBehaviour
             m_selectedTower = upgradedTower;
             RefreshUpgradeCostTexts();
         }
-    }
-
-    private void HandleSummonMiddleBossClick()
-    {
-        WaveManager.Instance?.TrySpawnMiddleBoss();
     }
 
     private void HandleTurnEndClick()

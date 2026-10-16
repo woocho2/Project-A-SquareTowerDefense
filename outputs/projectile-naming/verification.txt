@@ -1,0 +1,7 @@
+﻿PASS: 130 assets renamed; every original GUID preserved.
+PASS: all PNG byte hashes and sprite internalIDs preserved.
+PASS: animation/controller contents unchanged except their asset names; Idle/Flight runtime state names and IsFlying parameter unchanged.
+PASS: 14 Single projectile sets use numbered Atlas, Animator, Animation_Idle and Animation_Fly names.
+PASS: no version tags remain in projectile art paths or sprite frame names.
+PASS: shared Orb clips/controller are explicitly named Shared_Orb.
+Numeric Resources projectile prefab keys and runtime scripts unchanged; no artwork deleted. Unity was not launched by Codex.

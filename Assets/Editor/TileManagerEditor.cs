@@ -37,12 +37,14 @@ public class TileManagerEditor : Editor
             path.InsertArrayElementAtIndex(newIndex);
             path.GetArrayElementAtIndex(newIndex).vector3IntValue = cell;
             serializedObject.ApplyModifiedProperties();
+            SharedBoardVisualPreview.Queue();
         }
         else if (currentEvent.control && !currentEvent.shift && existingIndex >= 0)
         {
             Undo.RecordObject(manager, "Remove Path Tile");
             path.DeleteArrayElementAtIndex(existingIndex);
             serializedObject.ApplyModifiedProperties();
+            SharedBoardVisualPreview.Queue();
         }
 
         currentEvent.Use();
@@ -50,7 +52,11 @@ public class TileManagerEditor : Editor
 
     public override void OnInspectorGUI()
     {
+        EditorGUI.BeginChangeCheck();
         DrawDefaultInspector();
+        if (EditorGUI.EndChangeCheck()) SharedBoardVisualPreview.Queue();
+        if (GUILayout.Button("공용 비주얼 색상 편집")) SharedBoardVisualsWindow.Open();
+        if (GUILayout.Button("공용 배경·장식 / 경로 화살표 적용")) SharedBoardVisualPreview.Apply();
 
         EditorGUILayout.Space(10);
         EditorGUILayout.HelpBox(
@@ -66,6 +72,7 @@ public class TileManagerEditor : Editor
             Undo.RecordObject(target, "Remove Last Path Tile");
             path.DeleteArrayElementAtIndex(path.arraySize - 1);
             serializedObject.ApplyModifiedProperties();
+            SharedBoardVisualPreview.Queue();
         }
 
         if (GUILayout.Button("경로 전체 초기화") && path.arraySize > 0 &&
@@ -74,6 +81,7 @@ public class TileManagerEditor : Editor
             Undo.RecordObject(target, "Clear Path Tiles");
             path.ClearArray();
             serializedObject.ApplyModifiedProperties();
+            SharedBoardVisualPreview.Queue();
         }
     }
 

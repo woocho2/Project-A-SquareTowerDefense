@@ -1,6 +1,6 @@
 21. 구현 계획서 — 지금 코드, 할 일(순서대로), 구조 메모
 작성일: 2026-10-02 · 다시 씀: 2026-10-14
-기획 반영: 2026-10-16 (랜덤 위치 일괄 소환, 소환 전 잔존 적 수 > 한도 판정, 매 적 턴 전 플레이어 턴, 큐브 면 기준 정리. 이번 변경은 문서만.)
+기획 반영: 2026-10-16 (랜덤 위치 일괄 소환, 소환 전 잔존 적 수 > 한도 판정, 큐브 면 기준 정리. 이번 변경은 문서만.) 같은 날 웨이브당 플레이어 턴은 소환 뒤 1번으로 정함.
 바탕: 20. 통합 기획서(2026-10-14 최종 확정)와 그날의 코드 (스크립트 81개와 에디터 8개를 함수 본문까지 읽고, "어디" 칸의 이름을 코드와 맞춰 봄).
 이전 판의 작업 목록·결정 목록·충돌 기록은 지움 (이력은 git).
 
@@ -42,19 +42,18 @@
 2. 실제 실행 흐름 (지금 코드)
 ======================================================================
 
-이 장은 기존 코드의 흐름임. 소환 직후 한도 판정과 턴별 분할 소환은 새 기획과 다르며, 5장 1-2·2-2에서 소환 전 판정과 웨이브 일괄 소환으로 바꿀 예정.
-
 [2-1] 게임 시작과 한 웨이브
 
 GameManager.OnStartGame()
   → Idle 상태, 기존 turnRoutine 중지
-  → TurnLoopRoutine()
-      → PlayerTurnRoutine(): Player 상태, 턴 종료 버튼 대기
-      → EnemyWaveRoutine(): EnemyTurnRoutine 10번, 처음 5번만 shouldSpawn=true
-          → 40웨이브면 최종 보스가 살아 있는 동안 EnemyTurnRoutine(false)를 계속 반복   ← 5장 1-3에서 "적 턴 40번"으로 바뀜
+  → TurnLoopRoutine(): 웨이브마다
+      → CheckEnemyLimit(): 소환 전 잔존 적 수 > 한도면 게임 오버, 새 적을 만들지 않음
+      → EnemyManager.SpawnWaveRoutine(): WaveManager.SpawnWaveEnemies()로 웨이브 구성 전부 소환 → 모든 큐브 착지 대기
+      → EnemyWaveRoutine(): PlayerTurnRoutine 1번 → EnemyTurnRoutine 10번
+          → 40웨이브면 최종 보스가 살아 있는 동안 적 턴을 계속 반복 (보스의 제한 턴 20이 다 되면 게임 오버로 끝남)
           → 종료 상태가 아니면 WaveManager.NextWave()
-          → TowerManager.ProcessEarthTowerWave(완료 웨이브)                              ← 5장 1-9에서 삭제
-      → 다시 플레이어 턴
+          → TowerManager.ProcessEarthTowerWave(완료 웨이브)                         ← 5장 1-9에서 삭제
+      → 다음 웨이브의 소환 전 판정
 
 - turnRoutine은 '누구 턴인가'가 아니라 실행 중인 코루틴 핸들.
 - EnemyTurnRoutine 끝에 WaitForSeconds(0.3f)가 있음.
@@ -64,7 +63,6 @@ GameManager.OnStartGame()
 
   ① ProcessEnemyMovement()
       → EnemyManager.ProcessEnemyTurnRoutine()
-          → 소환 턴이면 WaveManager.SpawnWaveEnemiesForTurn() → GameManager.CheckEnemyLimit() (한도 이상이면 게임 오버)
           → 적마다 EnemyMoveController.ProcessTurnMoveRoutine(), 모든 이동 완료 대기
   ② ProcessTowerSupport()
       → TowerManager.BeginEnemyTurnForTowers(): 이전 타일 버프 기록, 타워 상태 시간 감소
@@ -77,21 +75,23 @@ GameManager.OnStartGame()
           → 타워별 스킬 확인(TryUseSkill) → 타워 기본 행동 → 활성 투사체가 없어질 때까지 대기
   ⑤ ProcessDamageDebuffs()
       → EnemyManager.AdvanceAllDebuffTurns() → 적마다 EnemyDebuffController.AdvanceDebuffTurn(): 상태 시간, 도트 피해, 조건부 즉사
+  ⑥ EnemyManager.AdvanceAllBossTurnLimits(): 보스·중간 보스의 EnemyHealthController.RemainingBossTurns를 1 줄임. 0이 된 보스가 있으면 OnGameOver
 
-소환·한도 판정은 5장 1-2·2-2에서 분리하고, 나머지 이동 → 지원 → 타일 → 공격 → 디버프 순서는 20번 1장 [적 1턴의 순서]를 따름. 메서드 위치만 옮겨도 같은 턴에 적용되는지가 달라짐.
+이동 → 지원 → 타일 → 공격 → 디버프 순서는 20번 1장 [적 1턴의 순서]를 따름. 메서드 위치만 옮겨도 같은 턴에 적용되는지가 달라짐.
 
 [2-3] 적 한 마리 생성
 
-EnemyManager → WaveManager.SpawnWaveEnemiesForTurn(이번 턴에 무엇을 몇 마리) → EnemyObjectPool2D.Spawn()
-  → 풀에서 꺼내 활성화 → 이전 디버프 정리 → 이동 초기화 (이 안에서 TileManager의 0번 칸에 점유 등록) → 체력 초기화
+EnemyManager.SpawnWaveRoutine → WaveManager.SpawnWaveEnemies(이번 웨이브 구성 전부)
+  → 한 마리마다 TileManager.TryGetRandomEnemySpawnIndex(전체 패스 인덱스 중 무작위. 타일당 수 제한 없음) → EnemyObjectPool2D.Spawn(그 인덱스)
+  → 풀에서 꺼내 활성화 → 이전 디버프 정리 → 이동 초기화 (이 안에서 TileManager의 받은 인덱스에 점유 등록) → 체력 초기화
+  중간 보스·최종 보스도 웨이브 구성으로 같은 길을 거침.
 - 살아 있는 적의 목록은 따로 없음. 원본은 TileManager의 칸별 점유이고, GetAllEnemiesOnPath가 부를 때마다 새 List로 모아 줌.
   EnemyManager는 상태가 없음. 그래서 점유에 등록된 것은 전부 "적"으로 셈: 한도 판정(CheckEnemyLimit), 이동·타일·디버프 순회,
   타워의 타겟 탐색(TowerAttackAction이 GetEnemyOccupantsAtPathIndex), 적 정보 패널의 칸별 목록(GetLivingEnemiesAtPathCell).
 - 풀 클래스가 이동·체력·상태 초기화의 순서까지 알고 있음.
 - 활성화가 초기화보다 먼저라, OnEnable에서 완성된 데이터를 가정하면 위험.
   권장 순서: 비활성 상태에서 디버프·체력·이동 초기화 → 위치 설정 → 활성화 → 점유 등록. (5장 6-5)
-- 2026-10-16 추가: 풀의 이동·체력 초기화 뒤 큐브의 PlaySpawnDrop을 실행함. EnemyManager는 낙하가 전부 끝나야 기존 적과 새 적을 함께 이동시킴.
-  소환 위치·분할 소환·한도 판정·플레이어 턴 배치는 아직 기존 흐름이며 5장 1-2·2-2에서 변경 예정.
+- 풀의 이동·체력 초기화 뒤 큐브의 PlaySpawnDrop을 실행함. SpawnWaveRoutine은 낙하가 전부 끝나야 플레이어 턴으로 넘김.
 
 [2-4] 타워 한 발의 공격과 사망
 
@@ -123,16 +123,16 @@ BuffAction / DebuffAction
 값/규칙                        지금의 주인                  주의점
 ----------------------------------------------------------------------
 현재 턴/웨이브 내 진행 순서     GameManager                 다른 곳에도 대기 존재
-현재 웨이브/사이클/소환 구성    WaveManager                 5턴 상수가 GameManager와 중복
+현재 웨이브/사이클/소환 구성    WaveManager                 구성·배율은 20번 3장과 같음
 처치 보상 계산                 WaveManager.GetKillReward   지급 호출은 EnemyHealthController
 타워 배치/강화/합성/소환비      TowerManager                너무 많은 책임
 타워 1개 스탯                  TowerController             공유 강화도 조회
 타워 스킬 상태(턴·적중 카운터)  TowerSkill 파생 클래스       지금은 불만 (FireSplash/FireTarget)
 타워가 받은 스택형 버프 상태    TowerBuffStatus 파생 클래스  지금은 불만. 나머지는 TowerController의 switch
 적 체력/사망                   EnemyHealthController       재화 지급·웨이브 통보까지 호출
-적 행동력/이동 인덱스/진형 보간 EnemyMoveController         타일 스탯도 변경
+적 행동력/이동 인덱스/겹침 순서 EnemyMoveController         타일 스탯도 변경
 적 디버프 상태                 EnemyDebuffController       구형 API와 공존, UI 문구도 생성 (불의 규칙과 문구는 FireDebuffRule)
-길 순서/점유/도착 예약/타일 효과 TileManager                 시각화도 함께 관리
+길 순서/점유/도착 순서/타일 효과 TileManager                 시각화(적 수 "x N" 포함)도 함께 관리
 살아 있는 적의 목록            TileManager의 점유           따로 든 목록 없음. GetAllEnemiesOnPath가 매번 새 List
 재화 원본                     CurrencyManager             획득 정책은 외부
 적 수 한도/게임오버 판정        GameManager (EnemyLimit, CheckEnemyLimit, RefreshEnemyLimit)   한도는 물어볼 때마다 계산
@@ -148,7 +148,7 @@ BuffAction / DebuffAction
 
 이미 되어 있는 것
 - 길의 순환: TileManager.WrapPathIndex, EnemyMoveController의 전진·후진이 감아서 돎 (뒤로 가는 하한 없음). 첫 이동은 m_hasMadeFirstMove로 판정.
-- 적 수 한도: GameManager.EnemyLimit = 사이클 × 20 (하드 15), CheckEnemyLimit을 EnemyManager가 소환 직후에 부름.
+- 적 수 한도: GameManager.EnemyLimit = 사이클 × 20 (하드 15), CheckEnemyLimit(적 수 > 한도)을 GameManager가 웨이브 시작의 소환 직전에만 부름.
   라이프·방어막·도착 처리는 지웠고 상단에 "적 수/한도"를 보여 줌 (22번 2026-10-14).
 - 문양 번호: TowerEmblem 상수와 BuffTarget·DebuffTarget enum에 물이 들어가 있고 원소 순서도 새 번호 (07 불 ~ 14 어둠).
   TowerDataCSV.csv는 280줄 (물 20줄 포함).
@@ -161,11 +161,9 @@ BuffAction / DebuffAction
 - 타워 정보 카드의 상당 부분: TowerInfoPanel이 위력·사거리·행동력·공격 횟수(지원은 스택)·치명타·계수·Duration·Mastery를 이미 보여 줌 (5장 3-13).
 
 아직 옛 코드인 것 (큰 것만. 자세한 것은 5장의 각 항목)
-- 판: 40웨이브는 보스가 죽을 때까지 무한 턴.
-      보스 제한 턴 없음. 중간 보스는 버튼 소환 (TrySpawnMiddleBoss, 소환 구간 5 ~ 7웨이브 등).
 - 타일: 길 위 특수 타일이 방어·속도·회복 셋 (5 / 5 / 2개). 타워 쪽은 공격력 ×1.5·행동력 -1·공격 횟수 셋.
-- 적: 종류 다섯(Normal, Speed, Depend, MiddleBoss, Boss). 이동력은 최댓값 하나(1 ~ Speed). 특성 주사위 없음. 저항력 값은 있으나 쓰지 않음.
-      웨이브 구성과 마리 수(사이클 × 2), 방어 배율(1 / 2), 사이클 체력 배율(1 / 2 / 4 / 8)이 옛 값. 일반 적 골드 10 × 웨이브.
+- 적: enum은 종류 다섯(Normal, Speed, Depend, MiddleBoss, Boss)이 남아 있음 (웨이브에는 Speed·Depend가 안 나옴). 이동력은 최댓값 하나(1 ~ Speed).
+      특성 주사위 없음. 저항력 값은 있으나 쓰지 않음.
       방어력을 0.1 ~ 500으로, 한 번의 피해를 50000으로 자름. 방어력은 음수가 될 수 없음.
 - 타워: CSV 열이 SplashRadius·AdditionalHitCount (Mastery·Stack 없음). 문턱은 60 ÷ 레벨. 컬러 강화는 옛 표.
         버프는 사거리 안의 모든 타일에 기록, 디버프 장판은 자유롭게 옮김, 스택은 받는 쪽이 가짐. 타겟 우선순위는 옛 목록(선두·후미).
@@ -179,7 +177,7 @@ BuffAction / DebuffAction
 5. 작업 목록 (추천 순서)
 ======================================================================
 
->>> 이어서 할 곳: 1-2 (소환 전 잔존 적 수 판정과 웨이브 일괄 소환·플레이어 턴 순서). 그다음 1-3.
+>>> 이어서 할 곳: 1-5 (길 위의 특수 타일을 새 표로).
 
 ----------------------------------------------------------------------
 버그 (단계와 상관없이 먼저 고칠 것. 테스트에서 나온 버그를 여기에 적음)
@@ -209,41 +207,16 @@ BuffAction / DebuffAction
 1단계. 판의 규칙 — 순환 구조 마무리                         규칙: 20번 1장, 2장
 ----------------------------------------------------------------------
 
-1-2. [ ] 소환 전 한도 판정과 새 턴 순서.
-       어디: GameManager.CheckEnemyLimit·RefreshEnemyLimit·TurnLoopRoutine·EnemyWaveRoutine·EnemyTurnRoutine,
-             EnemyManager.ProcessEnemyTurnRoutine, WaveManager의 소환 함수, TileManager.GetAllEnemiesOnPath.
-       할 일: 20번 1장 순서로 연결. 이전 웨이브의 마지막 디버프 처리 → 잔존 적 수 판정 → 새 적 일괄 소환 연출 → 플레이어 턴.
-             비교를 적 수 > 현재 한도로. 소환할 예정인 적은 더하지 않고, 판정에 실패하면 다음 웨이브 적을 생성하지 않음.
-             소환 직후와 한도 감소 즉시의 패배 호출은 없앰. RefreshEnemyLimit은 값과 UI를 갱신하고 판정은 소환 전 한 곳에서만 함.
-             웨이브 안에서는 플레이어 턴 → 적 이동 → 이동 후 효과·타워 공격 → 디버프 처리를 반복. 적 턴마다 소환하지 않음.
-             적 턴 10번 뒤 다음 웨이브로 진행. 나중에 빛의 더미는 한도에 세지 않음 (4-13).
-       확인: 한도 20에서 잔존 적 20마리는 소환으로 진행하고 21마리는 생성 전에 게임 오버.
-             새 소환으로 한도를 잠시 넘어도 플레이어 턴을 주고, 다음 소환 전까지 정리하면 생존.
-             도끼·방패로 한도가 변해도 즉시 패배하지 않고 다음 소환 전 갱신된 한도로 판정.
-1-3. [ ] 보스의 제한 턴 40.
-       어디: GameManager.EnemyWaveRoutine(40웨이브의 while 루프, IsFinalBossAlive), EnemyHealthController 또는 새 작은 컴포넌트.
-       할 일: 보스·중간 보스가 "남은 제한 턴"을 가지고 적 턴이 끝날 때마다 1씩 줄임.
-             최종 보스가 0이 되면 게임 오버, 중간 보스는 보상 없이 사라짐 (게임 오버 아님).
-             40웨이브는 시작 때 한 번 소환하고 플레이어 턴 → 적 턴을 최대 40번 반복. 중간 추가 소환은 없음.
-             10·20·30웨이브의 보스는 판에 남은 채로 다음 웨이브가 진행됨 (제한 턴은 따로 흐름).
-       확인: 10웨이브 보스를 일부러 안 잡으면 13웨이브가 끝나는 턴에 게임 오버 (소환된 웨이브부터 셈. 20번 3장의 중간 보스 예와 같은 셈).
-             중간 보스는 8웨이브가 끝날 때 사라짐.
-             남은 턴이 보스의 머리 위나 정보 패널에 보임.
-1-4. [ ] 중간 보스 자동 소환.
-       어디: WaveManager(TrySpawnMiddleBoss, IsMiddleBossSummonWindow, CanSummonMiddleBoss, m_middleBossSpawned, MiddleBossSummonableChanged),
-             PlayerTurnPanel(소환 버튼과 RefreshMiddleBossButton).
-       할 일: 5·15·25·35웨이브 시작의 일괄 소환 단계에 중간 보스 1마리를 자동으로 소환 (2-2와 함께 해도 됨). 버튼과 이벤트는 지움.
-       확인: 5웨이브에 일반 적 없이 중간 보스만 나옴. 버튼이 화면에 없음.
-1-5. [ ] 길 위의 특수 타일을 새 표로.
-       어디: TileManager(PathTileBuffType, defendTileCount·speedTileCount·healTileCount, AssignRandomSpecialTiles),
-             EnemyMoveController(CheckAndApplyTileBuff, ResetAllBuffs, MoveStepsRoutine·MoveBackwardStepsRoutine),
-             타일 문구: TileinfoPanel.AddPathMapTileDescription("속도 타일 …"), EnemyInfoPanel의 버프 목록(PathTileBuffType.SpeedTile 분기).
-       할 일: (1) PathTileBuffType에 이동력·행동 카운트·정화·비프로스트를 넣고 속도 타일을 없앰. 개수는 인스펙터 (방어 2, 이동력 2, 행동 카운트 2,
-                 회복 2, 정화 1). 비프로스트 두 칸의 인덱스도 인스펙터. 무작위 타일은 Start와 비프로스트 칸을 피함.
-             (2) 이동력 타일: 멈춰 있는 동안 최소·최대 +2. 행동 카운트 타일: 멈춰 있는 동안 매 턴 행동 카운트 +2.
-             (3) 정화: 멈춘 적의 모든 디버프(영구 포함)를 지우고 저항력을 기본값으로.
-             (4) 비프로스트: 멈춘 적을 건너편 칸으로 옮김. 행동 불가 턴에는 넘어가지 않음. 건너온 직후 다시 밟은 것으로 치지 않음.
-       확인: 20번 2장의 표와 [Start]·[비프로스트]·[정화]의 줄마다 한 번씩 만들어 봄. 같은 좌표를 두 번 지나는 길은 7장 [경로 인덱스와 좌표] 참고.
+1-5. [부분] 길 위의 특수 타일을 새 표로. 종류·개수·색, 비프로스트, 0번을 평범한 칸으로는 됨 (22번 19·20장).
+       어디: EnemyMoveController(CheckAndApplyTileBuff, ResetAllBuffs, m_tileBuffSpeed, m_currentActionCounter),
+             EnemyDebuffController.ClearAllDebuffs,
+             타일 문구: TileinfoPanel.AddPathMapTileDescription(MoveTile은 아직 "속도 타일 …", ActionTile·PurifyTile 없음),
+             EnemyInfoPanel의 버프 목록(MoveTile 분기).
+       할 일: (2) 이동력 타일: 지금은 옛 속도 타일 효과(행동 주기 -1, 최대 +2). 멈춰 있는 동안 최대 +2만으로 (최소 +2는 2-3에서 최소값이 생긴 뒤).
+                 행동 카운트 타일: 멈춰 있는 동안 매 턴 행동 카운트 +2.
+             (3) 정화: 멈춘 적의 모든 디버프(영구 포함)를 지우고 저항력을 기본값으로 (저항력은 2-6에서 생김).
+             (4) 타일 문구를 새 표대로.
+       확인: 20번 2장의 표와 [정화]의 줄마다 한 번씩 만들어 봄.
 1-6. [ ] 타워 스폰 타일의 특수 타일을 새 표로.
        어디: TileManager(TowerTileBuffType, 개수, AssignRandomTowerTileBuffs), TowerController(GetFinalStats, GetFinalAction),
              타일 문구: TileinfoPanel.AddTowerMapTileDescription("공격력 50% 증가", "행동력 1 감소").
@@ -275,20 +248,6 @@ BuffAction / DebuffAction
              EnemyData에 SpeedMin·SpeedMax(지금 Speed 하나)를 넣음. Resistance는 기본 저항력으로 씀.
              풀 배열이 (int)EnemyType 순서에 기대는 것을 역할별 풀 선택으로 바꿈 (옛 E-5).
        확인: 일반 적은 공통 큐브로 소환되고, 중간 보스·최종 보스의 개별 데이터·프리팹·보상 참조는 유지됨.
-2-2. [ ] 웨이브 구성·배율과 랜덤 소환 위치.
-       어디: WaveManager.GetWaveEnemyComposition·SpawnWaveEnemiesForTurn·GetEnemyStatMultipliers·GetCycleMultipliers.
-             소환 위치: EnemyObjectPool2D.Spawn, EnemyMoveController.InitMovement, TileManager의 빈자리 확인·도착 예약·점유 등록.
-       할 일: 20번 3장 [웨이브 구성]의 웨이브당 전체 적을 시작 때 한 번에 소환하는 함수로 변경. 웨이브 도중 분할 소환과 중복 생성을 막음.
-             순서 1~4는 일반 적 3 × 사이클 번호, 순서 6~9는 5 × 사이클 번호. 보스 웨이브는 해당 보스 1마리만.
-             한도 검사를 통과한 뒤 빈자리를 예약하고 기존 큐브 낙하 연출을 웨이브 전체에 동시에 재생. 연출이 끝난 뒤 플레이어 턴으로 넘어감.
-             방어 배율: 순서마다 +0.2 (1.0 ~ 2.6), 보스는 1.0. 사이클 배율: 체력·방어 모두 1 / 2 / 3 / 4 (지금 체력 1 / 2 / 4 / 8).
-             모드 배율: 스토리 ×0.75, 하드 ×1.5 (GameModeSession.SelectedDifficulty. 스토리 모드 값은 5-2에서 생김).
-             호출할 때마다 새 List를 만드는 것을 웨이브가 바뀔 때 한 번만 만들게 (옛 G-10의 일부).
-             소환 위치 선택을 20번 2장 [순환 구조의 첫 맵]에 맞춤. 0번 고정 참조를 없애고, 선택한 경로 인덱스·점유·화면 좌표가 같게 초기화.
-             일반 적·중간 보스·최종 보스가 같은 위치 선택을 사용하게 하며, 정원이 찬 타일을 제외하고 예약도 함께 확인.
-       확인: 사이클 1의 일반 적이 32마리, 한 판 320마리. GameRuleTests에 "1 ~ 40웨이브 구성" 테스트를 넣기 좋은 자리.
-             모든 빈 경로 인덱스가 소환 후보가 되고, 0번만 가득 차도 다른 빈 타일에 소환됨. 전체가 찼을 때 소환 수가 늘지 않음.
-             소환 직후에는 이동하지 않음. 플레이어 턴 뒤 마지막 인덱스의 적이 첫 이동으로 0번에 가고, 막혔으면 다음 이동 기회에 다시 시도함.
 2-3. [ ] 이동력의 최소 ~ 최대.
        어디: EnemyMoveController(m_baseDiceMaxSpeed, RawDiceMaxSpeed, CurrentDiceMaxSpeed, 주사위를 굴리는 Random.Range(1, 최대 + 1),
              최대만 보정하는 SetPermanentDiceMaxModifier, 행동 주기를 늘리는 SetPermanentActionPenalty),
@@ -326,8 +285,8 @@ BuffAction / DebuffAction
              (4) 치유 감소의 합은 100%까지.
        확인: 방어 타일(+20%) 위에서 방어력 감소 30%면 -10%. 방어력 -100이면 피해 2배. 계산은 static 함수로 빼서 GameRuleTests에 넣을 것.
 2-9. [ ] 경제의 새 값.
-       어디: WaveManager.GetKillReward(NormalGoldPerWave = 10), TowerManager.BuildTower(BuildCost += 2, 최대 300), GameRuleTests의 처치 보상 기대값.
-       할 일: 일반 적 골드 50 × 사이클. 생성 비용 +5씩, 최대 1500. Resources의 WavePerEnemies&Gold&Gem.xlsx는 옛 구성 기준이라 지우거나 다시 계산.
+       어디: TowerManager.BuildTower(BuildCost += 2, 최대 300). 일반 적 골드 10 × 사이클은 됨 (22번 15장).
+       할 일: 생성 비용 +5씩, 최대 1500. Resources의 WavePerEnemies&Gold&Gem.xlsx는 옛 구성 기준이라 지우거나 다시 계산.
 
 ----------------------------------------------------------------------
 3단계. 타워의 공통 틀                                        규칙: 20번 4-1장, 8장, 10장
@@ -382,11 +341,11 @@ BuffAction / DebuffAction
        어디: DebuffZone(드래그로 옮기는 장판), DebuffAction, BuffAction(사거리 안의 모든 타일에 기록), TileManager(TowerTileBuffEffect·PathTileDebuffEffect와
              그 기록·삭제 함수들, TryGetStrongestBuffTowerStatsInRange), TowerManager.UpgradeTowerTier(장판 위치를 이어받는 TrySetDebuffZoneIndex),
              GameManager.OnClickSkipPlayerTurn, BoardInputController(선택한 타워의 장판만 끌고, 놓으면 CommitPreviewPosition).
-       지금: 장판은 놓은 뒤에도 플레이어 턴이면 언제든 다시 끌 수 있음. 놓을 수 없는 칸은 0번(Start)뿐 (비프로스트는 아직 없음).
+       지금: 장판은 놓은 뒤에도 플레이어 턴이면 언제든 다시 끌 수 있음. 놓을 수 없는 칸은 비프로스트 두 칸뿐 (0번도 놓을 수 있음. 22번 20장).
              장판의 반지름은 ProjectileRadius - 1이고, 타워마다 장판이 하나.
        할 일: (1) 존 하나의 상태를 담는 클래스: 주인 타워, 문양, 종류(버프 / 디버프), 타일, 스택, 단계(스킬 1 / 스킬 2). TileManager가 타일별로 보관.
              (2) 버프 타워도 존을 가짐 (타워 스폰 타일 한 칸). DebuffZone을 두 종류가 함께 쓰는 "존 배치"로 일반화.
-             (3) 한 번 확정하면 옮길 수 없음. 한 타일에 같은 문양 하나, 다른 문양 3개까지. 디버프존은 Start와 비프로스트 칸에 못 놓음.
+             (3) 한 번 확정하면 옮길 수 없음. 한 타일에 같은 문양 하나, 다른 문양 3개까지. 디버프존은 비프로스트 칸에 못 놓음.
              (4) 존의 수 = Mastery. 늘어나면 새 존만 고름. 버프·디버프 타워가 사라지면(티어 강화·합성·판매) 존과 스택을 지움. 이어받지 않음.
                  (공격 타워의 티어 강화는 반대로 이어받음. 3-4, 3-8)
              (5) 자리를 고르지 않은 존이 있으면 턴 종료를 막음. 놓을 칸이 하나도 없을 때만 미룰 수 있음.
@@ -466,7 +425,7 @@ BuffAction / DebuffAction
                        방어 관통 버프, 행동 주기 +1의 대가, 치유 감소, 잃은 체력 비례 피해. 과다출혈의 추가 고유 효과는 12장 확정 뒤 2-4와 연결.
        지울 것: 치명타 확률 고정표, 누적 피해·즉사(RegisterCriticalHit, EndZoneDebuff, PendingDamage).
 4-5. [ ] 도끼 (4-4장).
-       새로 필요한 것: 한도를 깎는 것(GameManager.EnemyLimit에 항을 더하고 RefreshEnemyLimit으로 값·UI 갱신. 광란의 노래. 가장 높은 티어 하나 기준, 패배 판정은 1-2), 반드시 치명타인 스킬(강타),
+       새로 필요한 것: 한도를 깎는 것(GameManager.EnemyLimit에 항을 더하고 RefreshEnemyLimit으로 값·UI 갱신. 광란의 노래. 가장 높은 티어 하나 기준, 패배 판정은 소환 전 CheckEnemyLimit 한 곳), 반드시 치명타인 스킬(강타),
                        자기 버프 스킬(쪼개기), Action -1과 Mastery +1을 주는 버프, 체력 비율 즉사(피해를 받을 때마다 판정), 적에게 이득을 주는 디버프(선고).
        지울 것: 치명타 피해 고정표, 취약 스택.
 4-6. [ ] 방패 (4-7장).
@@ -528,7 +487,7 @@ BuffAction / DebuffAction
        할 일: 고른 문양 × 컬러 4에서만 생성. 노말 6개, 하드 8개. 선택이 비어 있을 때의 기본 동작을 정해 둘 것. 문양 선택 화면.
 5-2. [ ] 모드 셋.
        어디: GameModeSession(GameDifficulty는 Normal·Hard 둘. SelectDifficulty를 부르는 곳이 없어 지금은 늘 노말. PickLimit 6 / 8),
-             GameManager.EnemyLimit(하드 15), WaveManager의 배율(2-2), 큐브 면 능력(2-4. 모드별 보정은 20번 12장에서 확정), 메뉴 씬(모드를 고르는 화면이 없음).
+             GameManager.EnemyLimit(하드 15), WaveManager.GetEnemyStatMultipliers의 modeMulti(하드 1.5만 있음. 스토리 0.75를 넣을 곳), 큐브 면 능력(2-4. 모드별 보정은 20번 12장에서 확정), 메뉴 씬(모드를 고르는 화면이 없음).
              GameModeSession은 static 멤버만 있는 MonoBehaviour라 static class로 바꿔도 됨.
        할 일: 스토리(스테이지가 지정한 문양만, 해금된 시너지 타워만, 체력·방어력 ×0.75) / 노말 / 하드(한도 15씩, ×1.5).
              노말·하드는 처음부터 14종 전부. 스토리의 해금 상태 저장 (스테이지를 깨면 다음 스테이지와 그 문양·시너지 타워가 열림).
@@ -643,14 +602,14 @@ E. 타입 참조가 거의 없는 파일도 씬 이름·리소스 경로·애니
 
 [Enemy]
 - EnemyHealthController: 수명주기의 허브 (5장 3-12).
-- EnemyMoveController: 행동 카운터, 주사위, 이동, 점유, 타일 스탯 적용, 진형 보간. 타일 스탯 적용과 이동 자체는 나눌 후보.
+- EnemyMoveController: 행동 카운터, 주사위, 이동, 점유, 타일 스탯 적용, 겹친 적의 그리는 순서. 타일 스탯 적용과 이동 자체는 나눌 후보.
 - EnemyDebuffController: 스택, 즉시 피해, 지속 피해, 처형, 이동/방어/취약 보정, 이탈 후 처리, duration, UI 문구를 한 클래스가 처리.
   옛 문양은 ApplyZoneStack, AdvanceDebuffTurn, RefreshPersistentStats의 switch를 함께 고쳐야 함. 새 틀은 EnemyDebuffRule 파일 하나 + Get에 한 줄.
 - EnemyManager: 상태가 없음. 적은 TileManager의 점유에서 매번 모음 (GetAllEnemiesOnPath. 2장 [2-3]).
   따로 목록을 둘지는 6-13(턴마다 새 List)과 4-13(빛의 더미)을 할 때 정함. 둔다면 등록/해제는 대칭 API로, 밖에는 IReadOnlyList로.
 
 [TileManager]
-- 경로·소환 타일 인덱스, 타워/적 점유, 도착 예약, 특수 타일 배치, 타워 버프와 경로 디버프 기록, duration 감소, source별 삭제,
+- 경로·소환 타일 인덱스, 타워/적 점유, 적의 도착 순서와 타일별 적 수 표시, 특수 타일 배치, 타워 버프와 경로 디버프 기록, duration 감소, source별 삭제,
   위성 이펙트 생성/삭제, 좌표 변환, 길의 화살표 발광까지 담당.
 - 좌표 판정을 Dictionary로 하는 방향 자체는 기획과 잘 맞으므로 유지. 효과 저장 / 턴 진행 / 연출을 나눌 후보.
 
@@ -680,7 +639,6 @@ E. 타입 참조가 거의 없는 파일도 씬 이름·리소스 경로·애니
 - TileManager.EnemyCountChanged → GameInfoPanel의 "적 수/한도". SetEnemyAtPathIndex·RemoveEnemyFromPath가 부름 (이동 때는 두 번).
 - WaveManager.CurrentWaveChanged → GameManager.HandleWaveChanged → RefreshEnemyLimit (사이클이 바뀌면 한도가 바뀜).
 - WaveManager.CurrentWaveChanged → GameInfoPanel 웨이브 표시.
-- WaveManager.MiddleBossSummonableChanged → PlayerTurnPanel의 소환 버튼 (5장 1-4에서 삭제).
 - TowerManager.CurrentCreateTowerValueChanged → PlayerTurnPanel의 생성 비용 표시.
 - DebuffZone 배치 좌표 이벤트 → DebuffAction → TileManager 기록 이동.
 - EnemyListItemUI의 선택 콜백 → EnemyInfoPanel 선택 처리.
@@ -814,7 +772,7 @@ ProjectileObjectPool2D 투사체 풀.
 [03. Enemy]
 EnemyDataSO            EnemyData와 EnemyType. enum 숫자가 WaveManager의 풀 배열 순서와 연결.
 EnemyHealthController  체력과 피해, 처치 반응·재화 지급·클리어 통보·풀 반환.
-EnemyMoveController    행동 카운터·주사위·이동(순환)·점유·타일 적용·진형 보간.
+EnemyMoveController    행동 카운터·주사위·이동(순환)·점유·타일 적용·겹침 순서.
 EnemyDebuffController  상태 Dictionary, 스택, 지속 피해, 즉사, 이동/방어/치유 보정, UI 문구. 규칙이 등록된 문양은 EnemyDebuffRule에 맡김.
 EnemyDebuffRule        (DebuffRule) 디버프 규칙의 공용 틀과 상태 클래스 EnemyDebuffState. Get에서 문양별 규칙을 고름.
 FireDebuffRule         불 디버프의 화상·연소.
@@ -829,9 +787,9 @@ GameManager            게임 상태와 큰 턴 순서, 한도(EnemyLimit·Check
                        DontDestroyOnLoad를 부르지만 Manager 프리팹의 자식이라 동작하지 않음 (5장 6-8).
 GameTurnState          Idle/Player/Enemy/GameOver/GameClear 상태. 구체 UI/입력/카메라를 직접 조작.
 GameModeSession        난이도(SelectedDifficulty)와 고른 문양(SelectedEmblemIDs). 고르는 함수를 부르는 곳이 없음 (5장 5-1, 5-2).
-WaveManager            웨이브/사이클, 적 구성과 배율, 턴별 소환, 중간 보스, 보상 계산, 최종 클리어 통보.
-EnemyManager           상태 없음. TileManager의 점유에서 적을 모아 이동·타일·디버프 처리를 순회. 소환 직후 한도 판정을 부름.
-TileManager            경로(순환)·점유·도착 예약·특수 타일·효과 기록·시각 효과.
+WaveManager            웨이브/사이클, 적 구성과 배율, 웨이브 일괄 소환, 중간 보스, 보상 계산, 최종 클리어 통보.
+EnemyManager           상태 없음. 웨이브 시작의 일괄 소환과 착지 대기, TileManager의 점유에서 적을 모아 이동·타일·디버프 처리를 순회.
+TileManager            경로(순환)·점유·도착 순서·특수 타일·효과 기록·시각 효과.
 GlobalProjectileManager 타워 데이터에서 투사체 풀 준비, 발사, 활성 여부 제공.
 CurrencyManager        골드/젬 원본과 변경 알림.
 LoadingManager         SceneLoader.NextScene을 읽어 로딩 연출과 씬 이동.

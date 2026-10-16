@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Net;
 using UnityEngine;
 
 public class EnemyMoveController : MonoBehaviour
@@ -49,11 +47,8 @@ public class EnemyMoveController : MonoBehaviour
     private bool m_isSpawning;
     private Coroutine m_spawnRoutine;
 
-    // 같은 타일의 적과 겹치지 않도록 벌려 설 화면상 목표 위치입니다. 논리적 타일 위치(m_currentTileIndex)와는 무관합니다.
-    private Vector3 m_formationTarget;
-    private bool m_hasFormationTarget;
-
     public int CurrentTileIndex => m_currentTileIndex;
+    public bool IsTopOfStack { get; private set; } = true;
     public bool IsMoving => m_isMoving || m_isSpawning;
     public bool IsSpawning => m_isSpawning;
     // 이동 주사위 최댓값은 어떤 경우에도 1 아래로 내려가지 않습니다.
@@ -96,23 +91,18 @@ public class EnemyMoveController : MonoBehaviour
     }
 
     /// <summary>
-    /// 이동 코루틴이 끝난 뒤, 진형 자리까지 부드럽게 보간합니다.
-    /// 이동 중에는 코루틴이 Transform을 제어하므로 건드리지 않습니다.
+    /// 먼저 도착한 적의 큐브가 위에 보이도록 렌더 순서를 적용합니다.
     /// </summary>
-    private void Update()
+    public void SetStackRenderOrder(int sortingOrder, bool isTop)
     {
-        if (!m_hasFormationTarget || IsMoving || TileManager.Instance == null) return;
-
-        transform.position = Vector3.MoveTowards(
-            transform.position,
-            m_formationTarget,
-            TileManager.Instance.EnemyFormationMoveSpeed * Time.deltaTime);
-
-        if (transform.position == m_formationTarget) m_hasFormationTarget = false;
+        IsTopOfStack = isTop;
+        if (m_cubeMeshVisual != null) m_cubeMeshVisual.SetSortingOrder(sortingOrder);
+        if (m_spriteRenderer != null) m_spriteRenderer.sortingOrder = sortingOrder;
+        if (!isTop && m_health != null) m_health.HideHPBar();
     }
 
     // ScriptableObject(EnemyData)의 Action과 Speed를 기반으로 초기화
-    public bool InitMovement(EnemyData data)
+    public bool InitMovement(EnemyData data, int startIndex)
     {
         StopAllCoroutines();
         m_spawnRoutine = null;
@@ -120,8 +110,7 @@ public class EnemyMoveController : MonoBehaviour
         ResetFacingDirection();
         m_cubeOrientation = UsesMeshCube ? m_cubeMeshVisual.RandomizeForSpawn() : EnemyCubeOrientation.Identity;
         ShowCubeOrientation();
-        m_hasFormationTarget = false;
-        m_currentTileIndex = 0;
+        m_currentTileIndex = startIndex;
         m_currentActionCounter = 0;
         m_tileBuffSpeed = 0;
         m_permanentActionPenalty = 0;
@@ -152,9 +141,7 @@ public class EnemyMoveController : MonoBehaviour
         if (TileManager.Instance != null)
         {
             if (!RegisterAtTile(m_currentTileIndex)) return false;
-            if (TileManager.Instance.TryGetEnemyFormationPosition(m_health, out Vector3 position))
-                transform.position = position;
-            m_hasFormationTarget = false;
+            transform.position = TileManager.Instance.GetPathWorldPosition(m_currentTileIndex);
         }
         return true;
     }
@@ -189,35 +176,12 @@ public class EnemyMoveController : MonoBehaviour
     }
 
     /// <summary>
-    /// 이동이 완료된 순간 호출하여 전투 점유 타일을 확정하고, 떠난 타일과 도착한 타일의 진형을 다시 배치합니다.
+    /// 이동이 완료된 순간 전투 점유와 타일 도착 순서를 확정합니다.
     /// </summary>
     private bool RegisterAtTile(int index)
     {
         TileManager tileManager = TileManager.Instance;
-        if (tileManager == null || !tileManager.SetEnemyAtPathIndex(m_health, index, out int previousIndex)) return false;
-
-        if (previousIndex >= 0 && previousIndex != index) ArrangeFormation(previousIndex);
-        ArrangeFormation(index);
-        return true;
-    }
-
-    /// <summary>
-    /// 한 타일의 점유 목록을 기준으로 모든 적의 진형 자리를 다시 계산합니다.
-    /// Transform을 즉시 옮기지 않고 목표만 갱신하며, 각 적이 Update에서 스스로 이동합니다.
-    /// </summary>
-    private static void ArrangeFormation(int pathIndex)
-    {
-        TileManager tileManager = TileManager.Instance;
-        if (tileManager == null) return;
-
-        List<EnemyHealthController> enemies = tileManager.GetEnemyOccupantsAtPathIndex(pathIndex);
-        for (int i = 0; i < enemies.Count; i++)
-        {
-            EnemyMoveController movement = enemies[i].Movement;
-            if (movement == null) continue;
-
-            movement.m_hasFormationTarget = tileManager.TryGetEnemyFormationPosition(enemies[i], out movement.m_formationTarget);
-        }
+        return tileManager != null && tileManager.SetEnemyAtPathIndex(m_health, index, out _);
     }
 
     public IEnumerator ProcessTurnMoveRoutine()
@@ -227,19 +191,24 @@ public class EnemyMoveController : MonoBehaviour
         TileManager tileManager = TileManager.Instance;
         if (tileManager == null) yield break;
 
+        // 행동 불가 턴에는 움직이지 않으므로 비프로스트도 건너지 않습니다.
         if (m_forcedNoMoveTurns > 0)
         {
             m_forcedNoMoveTurns--;
             yield break;
         }
 
+        // 비프로스트 위에서 행동을 시작했다면 이번에 또 비프로스트에 멈춰도 건너지 않습니다 (건너온 뒤 끝없이 오가지 않게).
+        bool startedOnBifrost = tileManager.GetTileTypeAt(m_currentTileIndex) == PathTileBuffType.Bifrost;
+
         // 갓 소환된 적은 첫 이동에 무조건 한 칸 전진합니다.
-        // 한 바퀴 돌아 Start(0번)에 선 적과 구분하려고, 칸 번호가 아니라 첫 이동 여부로 판정합니다.
+        // 소환 위치가 무작위라 칸 번호로는 갓 소환된 적을 알 수 없으므로, 첫 이동 여부로 판정합니다.
         if (!m_hasMadeFirstMove)
         {
             int beforeIndex = m_currentTileIndex;
             yield return StartCoroutine(MoveStepsRoutine(1));
             m_hasMadeFirstMove = m_currentTileIndex != beforeIndex;
+            if (m_hasMadeFirstMove && !startedOnBifrost) yield return StartCoroutine(CrossBifrostRoutine());
             yield break;
         }
 
@@ -260,7 +229,27 @@ public class EnemyMoveController : MonoBehaviour
             {
                 yield return StartCoroutine(MoveStepsRoutine(totalSteps));
             }
+
+            if (!startedOnBifrost) yield return StartCoroutine(CrossBifrostRoutine());
         }
+    }
+
+    /// <summary>
+    /// 이동을 마친 칸이 비프로스트면 건너편 칸으로 옮깁니다. 앞쪽 칸에서 건너면 뒤로 돌아가는 셈입니다.
+    /// 메시 큐브는 건너편에서 소환 때처럼 위에서 떨어지며 나타납니다.
+    /// </summary>
+    private IEnumerator CrossBifrostRoutine()
+    {
+        TileManager tileManager = TileManager.Instance;
+        if (tileManager == null || !tileManager.TryGetBifrostDestination(m_currentTileIndex, out int destination)) yield break;
+
+        m_isMoving = true;
+        m_currentTileIndex = destination;
+        RegisterAtTile(m_currentTileIndex);
+        transform.position = tileManager.GetPathWorldPosition(m_currentTileIndex);
+
+        if (UsesMeshCube) yield return SpawnDropRoutine();
+        m_isMoving = false;
     }
 
     // 순환 경로를 거꾸로 돕니다. 하한이 없어 Start(0번)에서 한 칸 뒤는 마지막 번호입니다.
@@ -271,7 +260,7 @@ public class EnemyMoveController : MonoBehaviour
         for (int i = 0; i < steps; i++)
         {
             int nextIndex = TileManager.Instance.WrapPathIndex(m_currentTileIndex - 1);
-            if (!TileManager.Instance.TryReserveEnemyArrivalPosition(m_health, nextIndex, out Vector3 targetPos)) break;
+            Vector3 targetPos = TileManager.Instance.GetPathWorldPosition(nextIndex);
             yield return MoveOneTileRoutine(nextIndex, targetPos, i == 0);
             // 도착한 순간에만 인덱스를 바꿔 TileManager의 점유 인덱스와 항상 일치시킵니다.
             m_currentTileIndex = nextIndex;
@@ -293,7 +282,7 @@ public class EnemyMoveController : MonoBehaviour
         for (int i = 0; i < steps; i++)
         {
             int nextIndex = TileManager.Instance.WrapPathIndex(m_currentTileIndex + 1);
-            if (!TileManager.Instance.TryReserveEnemyArrivalPosition(m_health, nextIndex, out Vector3 targetPos)) break;
+            Vector3 targetPos = TileManager.Instance.GetPathWorldPosition(nextIndex);
             yield return MoveOneTileRoutine(nextIndex, targetPos, i == 0);
             // 도착한 순간에만 인덱스를 바꿔 TileManager의 점유 인덱스와 항상 일치시킵니다.
             m_currentTileIndex = nextIndex;
@@ -369,7 +358,7 @@ public class EnemyMoveController : MonoBehaviour
 
     private IEnumerator MoveOneTileRoutine(int nextIndex, Vector3 targetPosition, bool prepareLaunch)
     {
-        // 진형 때문에 목적지가 조금 벌어져 있어도, 굴림 방향은 패스 타일의 중심으로 계산합니다.
+        // 타일 중심 사이의 방향으로 굴립니다. 도착 타일에 적이 있어도 이동합니다.
         Vector3 pathDirection = TileManager.Instance.GetPathWorldPosition(nextIndex)
             - TileManager.Instance.GetPathWorldPosition(m_currentTileIndex);
         bool rollCube = CanRollCube && pathDirection.sqrMagnitude > 0.0001f;
@@ -446,14 +435,9 @@ public class EnemyMoveController : MonoBehaviour
         m_isSpawning = false;
         m_spawnRoutine = null;
         StopAllCoroutines();
-        m_hasFormationTarget = false;
         ShowCubeOrientation();
 
-        // 점유와 도착 예약을 함께 제거하므로, 풀에 들어간 적이 공격 대상에 남지 않습니다.
-        if (TileManager.Instance != null && TileManager.Instance.RemoveEnemyFromPath(m_health, out int previousIndex))
-        {
-            ArrangeFormation(previousIndex);
-        }
+        if (TileManager.Instance != null) TileManager.Instance.RemoveEnemyFromPath(m_health, out _);
     }
 
     private void ShowCubeOrientation()
@@ -509,9 +493,8 @@ public class EnemyMoveController : MonoBehaviour
         // 1. 기존 버프 완전 초기화 (스피드 및 방어력 복구)
         ResetAllBuffs();
 
+        // 0번(Start)도 평범한 칸이라 특수 타일과 디버프존의 효과를 받습니다.
         if (TileManager.Instance == null) return;
-        // Start(0번)에는 타일 효과와 디버프존이 없습니다. 나머지 칸은 마지막 번호까지 모두 평범한 칸입니다.
-        if (m_currentTileIndex <= 0) return;
 
         // 2. 현재 멈춰있는 타일 타입 확인
         PathTileBuffType tileType = TileManager.Instance.GetTileTypeAt(m_currentTileIndex);
@@ -519,7 +502,7 @@ public class EnemyMoveController : MonoBehaviour
         // 3. 타일 타입별 버프 분기 처리
         switch (tileType)
         {
-            case PathTileBuffType.SpeedTile:
+            case PathTileBuffType.MoveTile:
                 // 스피드 타일: 행동 주기 1 감소 (최소 1), 이동 주사위 최댓값 +2 증가
                 m_actionInterval = Mathf.Max(1, m_baseActionInterval + m_permanentActionPenalty + m_temporaryActionPenalty - 1);
                 m_tileBuffSpeed = 2;

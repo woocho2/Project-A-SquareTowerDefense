@@ -1,0 +1,14 @@
+Tile_Path_Overlay_Alfheim_Atlas.png: x=7,y=7,width=242,height=242
+Tile_Path_Overlay_Asgard_Atlas.png: x=7,y=7,width=242,height=242
+Tile_Path_Overlay_Hel_Atlas.png: x=7,y=7,width=242,height=242
+Tile_Path_Overlay_Jotunheim_Atlas.png: x=7,y=7,width=242,height=242
+Tile_Path_Overlay_Midgard_Atlas.png: x=7,y=7,width=242,height=242
+Tile_Path_Overlay_Muspelheim_Atlas.png: x=7,y=7,width=242,height=242
+Tile_Path_Overlay_Nidavellir_Atlas.png: x=7,y=7,width=242,height=242
+Tile_Path_Overlay_Niflheim_Atlas.png: x=7,y=7,width=242,height=242
+Tile_Path_Overlay_Ragnarok_Atlas.png: x=7,y=7,width=242,height=242
+Tile_Path_Overlay_Vanaheim_Atlas.png: x=7,y=7,width=242,height=242
+Tower decorations: all six measured x=7,y=7,width=242,height=242.
+Spawn world width: 242 / 256 * 1.3333334 = 1.2604167296875
+Tower decoration world width: 242 / 256 * 1.3333334 = 1.2604167296875
+Final correction: regular and synergy canvases are 1.3333334; Character, Background and Decoration prefab scales are 1.0. Regular portrait artwork is resized inside the PNG cells, not via renderer scale.

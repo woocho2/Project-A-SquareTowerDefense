@@ -7,6 +7,9 @@ public sealed class EnemyCubeMeshVisual : MonoBehaviour
     public const int FaceCount = 6;
     public const int RollsPerTile = 3;
 
+    [Header("캐릭터 (배경·장식은 공용 재질에서 합성)")]
+    [SerializeField] private EnemyCubeAppearance m_appearance;
+    [SerializeField] private SharedBoardVisuals m_sharedVisuals;
     [Header("면 에셋 후보 (0 회복 / 1 방어 / 2 행동 / 3 이동 / 4 자물쇠 / 5 모래시계)")]
     [Tooltip("소환할 때 각 면이 독립적으로 뽑습니다. 같은 에셋이 여러 면에 나올 수 있습니다.")]
     [SerializeField] private Material[] m_faceAssetPool;
@@ -31,6 +34,7 @@ public sealed class EnemyCubeMeshVisual : MonoBehaviour
     private Vector3 m_baseScale;
     private bool m_hasAllFaces;
     private MeshRenderer m_renderer;
+    private MaterialPropertyBlock m_appearanceProperties;
     private Material[] m_faceMaterials;
     private MeshRenderer m_shadowRenderer;
     private Vector3 m_shadowScale;
@@ -51,6 +55,7 @@ public sealed class EnemyCubeMeshVisual : MonoBehaviour
         m_baseScale = transform.localScale;
         Mesh mesh = GetComponent<MeshFilter>().sharedMesh;
         m_renderer = GetComponent<MeshRenderer>();
+        ApplyAppearance();
         m_faceMaterials = m_renderer.sharedMaterials;
         // 이전 프리팹은 기존의 고정 6면 재질을 후보로 사용할 수 있습니다.
         if (m_faceAssetPool == null || m_faceAssetPool.Length == 0) m_faceAssetPool = (Material[])m_faceMaterials.Clone();
@@ -65,6 +70,65 @@ public sealed class EnemyCubeMeshVisual : MonoBehaviour
             if (material == null) m_hasAllFaces = false;
         }
         CreateShadow();
+    }
+
+    /// <summary>한 설정 에셋을 교체하면 여섯 면의 캐릭터가 함께 바뀝니다.</summary>
+    public void SetAppearance(EnemyCubeAppearance appearance)
+    {
+        m_appearance = appearance;
+        ApplyAppearance();
+    }
+
+    private void ApplyAppearance()
+    {
+        if (m_renderer == null) m_renderer = GetComponent<MeshRenderer>();
+        if (m_renderer == null) return;
+        if (m_appearanceProperties == null) m_appearanceProperties = new MaterialPropertyBlock();
+        m_appearanceProperties.Clear();
+        if (m_appearance != null && m_appearance.CharacterTexture != null)
+        {
+            m_appearanceProperties.SetTexture("_MainTex", m_appearance.CharacterTexture);
+            m_appearanceProperties.SetTexture("_EquipmentMask", m_appearance.EquipmentMask != null
+                ? m_appearance.EquipmentMask : Texture2D.blackTexture);
+        }
+        SharedBoardVisuals visuals = m_sharedVisuals != null ? m_sharedVisuals : SharedBoardVisuals.Default;
+        if (visuals != null)
+        {
+            if (visuals.Background != null) m_appearanceProperties.SetTexture("_BackgroundTex", visuals.Background.texture);
+            if (visuals.Decoration != null) m_appearanceProperties.SetTexture("_DecorationTex", visuals.Decoration.texture);
+        }
+        // Indexed blocks carry both appearance and colors: Unity does not merge them with renderer-wide blocks.
+        m_renderer.SetPropertyBlock(null);
+        int slots = m_renderer.sharedMaterials.Length;
+        for (int face = 0; face < slots; face++)
+        {
+            int asset = m_faceAssetIndices != null && face < m_faceAssetIndices.Length ? m_faceAssetIndices[face] : face;
+            EnemyFacePalette colors = visuals != null ? visuals.GetEnemy(m_appearance, (EnemyCubeFaceAsset)asset) : null;
+            if (colors != null)
+            {
+                m_appearanceProperties.SetColor("_BackgroundColor", colors.background);
+                m_appearanceProperties.SetColor("_DecorationColor", colors.decoration);
+                m_appearanceProperties.SetColor("_EquipmentColor", colors.equipment);
+            }
+            else
+            {
+                m_appearanceProperties.SetColor("_BackgroundColor", Color.white);
+                m_appearanceProperties.SetColor("_DecorationColor", Color.white);
+                m_appearanceProperties.SetColor("_EquipmentColor", Color.white);
+            }
+            m_renderer.SetPropertyBlock(m_appearanceProperties, face);
+        }
+    }
+
+    private void OnEnable() => SharedBoardVisuals.Changed += RefreshSharedVisuals;
+    private void OnDisable() => SharedBoardVisuals.Changed -= RefreshSharedVisuals;
+    public void RefreshSharedVisuals() => ApplyAppearance();
+
+    public void SetSortingOrder(int sortingOrder)
+    {
+        if (m_renderer == null) m_renderer = GetComponent<MeshRenderer>();
+        m_renderer.sortingOrder = sortingOrder;
+        if (m_shadowRenderer != null) m_shadowRenderer.sortingOrder = sortingOrder - 1;
     }
 
     private void CreateShadow()
@@ -120,6 +184,7 @@ public sealed class EnemyCubeMeshVisual : MonoBehaviour
         }
         // sharedMaterials 배열만 교체합니다. 공유 Material 에셋 자체는 변경하지 않습니다.
         m_renderer.sharedMaterials = m_faceMaterials;
+        ApplyAppearance();
         // 소환은 정방향으로 시작합니다. 이동 중 그림도 같이 구르고, 도착 후에는 별도 점프로 일어납니다.
         var orientation = EnemyCubeOrientation.FromFace((EnemyCubeFace)Random.Range(0, FaceCount), 0);
         ShowOrientation(orientation);

@@ -192,6 +192,7 @@ public class TowerInfoPanel : MonoBehaviour
         TowerVisual towerVisual = m_selectedTower.GetComponentInChildren<TowerVisual>(true);
 
         UpdateImage(img_tier, towerVisual != null ? towerVisual.TierSprite : null);
+        if (img_tier != null) img_tier.color = towerVisual != null ? towerVisual.TierColor : Color.white;
         UpdateImage(img_color, towerVisual != null ? towerVisual.ColorSprite : null);
         UpdateImage(img_emblem, towerVisual != null ? towerVisual.EmblemSprite : null);
         if (towerVisual != null && img_color != null)

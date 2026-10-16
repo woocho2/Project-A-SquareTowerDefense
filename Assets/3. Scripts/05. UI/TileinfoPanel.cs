@@ -138,11 +138,14 @@ public class TileinfoPanel : MonoBehaviour
             case PathTileBuffType.DefendTile:
                 descriptions.Add("방어 타일\n방어력 20% 증가");
                 break;
-            case PathTileBuffType.SpeedTile:
+            case PathTileBuffType.MoveTile:
                 descriptions.Add("속도 타일\n행동 주기 1 감소 · 이동 주사위 최대값 +2");
                 break;
             case PathTileBuffType.HealTile:
                 descriptions.Add("회복 타일\n매 턴 최대 체력의 5% 회복");
+                break;
+            case PathTileBuffType.Bifrost:
+                descriptions.Add("비프로스트\n멈춘 적은 맞은편 비프로스트로 이동");
                 break;
         }
     }

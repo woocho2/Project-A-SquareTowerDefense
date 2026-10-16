@@ -1,0 +1,3 @@
+PASS: 512x512, centered 484x484 outer bounds, grayscale 150..255, empty center, rotationally symmetric silhouette.
+PASS: original straight-edge thickness 20px retained; opaque area 65512 -> 65104; corner area 12538 -> 12436 (no enlargement).
+PASS: applied matched-width contour cleanup; other common textures, material colors, metadata and palette unchanged.

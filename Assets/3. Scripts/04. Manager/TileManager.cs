@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
@@ -12,8 +13,11 @@ public enum PathTileBuffType
 {
     Normal,
     DefendTile,
-    SpeedTile,
-    HealTile
+    MoveTile,
+    HealTile,
+    ActionTile,
+    PurifyTile,
+    Bifrost
 }
 
 public enum TowerTileBuffType
@@ -58,7 +62,7 @@ public sealed class PathTileDebuffEffect
 }
 
 [RequireComponent(typeof(Tilemap))]
-public class TileManager : MonoBehaviour
+public partial class TileManager : MonoBehaviour
 {
     #region 설정
 
@@ -73,6 +77,13 @@ public class TileManager : MonoBehaviour
 
     public IReadOnlyList<Vector3Int> PathGridPositions => m_pathGridPositions;
     public Tilemap TowerSpawnTilemap => m_towerSpawnTilemap;
+
+    [Header("공용 배경·장식 / 스테이지 색상")]
+    [SerializeField] private SharedBoardVisuals m_sharedVisuals;
+    [SerializeField] private StageRealm m_stageRealm = StageRealm.Asgard;
+    [SerializeField] private Tilemap m_towerDecorationTilemap;
+    [SerializeField] private Tilemap m_pathArrowTilemap;
+    public StageRealm StageRealm => m_stageRealm;
 
     [Header("패스 장식과 화살표 순차 발광")]
     [Tooltip("테두리 장식, 중앙 방향 화살표와 END 표시가 있는 Path Direction 타일맵입니다.")]
@@ -90,9 +101,11 @@ public class TileManager : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float m_pathArrowCombatStrength = 0.55f;
 
     [Header("에너미 특수 타일 생성 개수 설정")]
-    [SerializeField] private int defendTileCount = 5;
-    [SerializeField] private int speedTileCount = 5;
+    [SerializeField] private int defendTileCount = 2;
+    [SerializeField] private int moveTileCount = 2;
+    [SerializeField] private int actionTileCount = 2;
     [SerializeField] private int healTileCount = 2;
+    [SerializeField] private int purifyTileCount = 1;
 
     [Header("타워 특수 타일 생성 개수 설정")]
     [Tooltip("공격력 증가 타일 생성 개수")]
@@ -111,14 +124,12 @@ public class TileManager : MonoBehaviour
     [FormerlySerializedAs("towerTileBuffEffectParent")]
     [SerializeField] private Transform mapTileBuffEffectParent;
 
-    [Header("적 진형 배치")]
-    [Tooltip("한 타일에 적이 여럿 있을 때 서로 벌릴 간격 (타일 크기에 비례)")]
-    [SerializeField, Range(0.3f, 0.34f)] private float m_enemySlotSpacing = 1f / 3f;
-    [Tooltip("적 수가 바뀌어 진형을 재정렬할 때 새 자리까지 이동하는 속도")]
-    [SerializeField, Min(0.1f)] private float m_enemyFormationMoveSpeed = 1.5f;
-
-    public float EnemyFormationMoveSpeed => m_enemyFormationMoveSpeed;
-    public const int EnemyTileCapacity = 9;
+    [Header("패스 타일 적 수 표시")]
+    [SerializeField] private TMP_FontAsset m_enemyCountFont;
+    [SerializeField, Min(0.1f)] private float m_enemyCountFontSize = 2.5f;
+    [SerializeField] private Color m_enemyCountColor = Color.white;
+    [Tooltip("타일 크기에 비례한 표시 위치입니다. 기본값은 오른쪽 아래입니다.")]
+    [SerializeField] private Vector2 m_enemyCountOffset = new Vector2(0.27f, -0.3f);
 
     public event Action EnemyCountChanged;
 
@@ -143,11 +154,9 @@ public class TileManager : MonoBehaviour
         new Dictionary<int, List<EnemyHealthController>>();
     private readonly Dictionary<EnemyHealthController, int> m_pathIndexByEnemy =
         new Dictionary<EnemyHealthController, int>();
-    // 도착 예약은 정원에 포함하지만 점유(공격 대상)에는 도착할 때까지 포함하지 않습니다.
-    private readonly Dictionary<EnemyHealthController, int> m_arrivalPathIndexByEnemy =
-        new Dictionary<EnemyHealthController, int>();
-    private readonly Dictionary<EnemyHealthController, int> m_formationSlotByEnemy = new Dictionary<EnemyHealthController, int>();
-    private readonly Dictionary<EnemyHealthController, int> m_arrivalSlotByEnemy = new Dictionary<EnemyHealthController, int>();
+    private readonly Dictionary<EnemyHealthController, long> m_enemyArrivalOrder = new Dictionary<EnemyHealthController, long>();
+    private readonly Dictionary<Vector3Int, TextMeshPro> m_enemyCountLabels = new Dictionary<Vector3Int, TextMeshPro>();
+    private long m_nextEnemyArrivalOrder;
     private readonly Dictionary<int, TowerController> m_towersBySpawnIndex =
         new Dictionary<int, TowerController>();
     private readonly SortedSet<int> m_emptyTowerSpawnIndices = new SortedSet<int>();
@@ -180,8 +189,15 @@ public class TileManager : MonoBehaviour
 
     // 패스 맵 버프 이펙트 색상
     private readonly Color defendColor = HexToColor("ffc74f");
-    private readonly Color speedColor = HexToColor("57cfff");
+    private readonly Color moveColor = HexToColor("57cfff");
     private readonly Color healColor = HexToColor("60ff68");
+    private readonly Color actionColor = HexToColor("c78bff");
+    private readonly Color purifyColor = HexToColor("ffffff");
+    private readonly Color bifrostColor = HexToColor("ff9de2");
+
+    // 이번 판의 비프로스트 두 칸. 판마다 AssignRandomSpecialTiles에서 정하고, 적이 건너갈 때 씁니다.
+    private int m_bifrostIndexA = -1;
+    private int m_bifrostIndexB = -1;
 
     // 타워 소환 맵 버프 이펙트 색상
     private readonly Color towerAttackPowerColor = HexToColor("ff5d5d");
@@ -198,6 +214,8 @@ public class TileManager : MonoBehaviour
         public Color OriginalColor;
         public TileFlags OriginalFlags;
         public Color LastColor;
+        public Color ArrowColor;
+        public Color LastArrowColor;
         public float Intensity;
     }
 
@@ -231,10 +249,12 @@ public class TileManager : MonoBehaviour
     private void OnEnable()
     {
         m_pathArrowElapsed = 0f;
+        SharedBoardVisuals.Changed += ApplySharedVisuals;
     }
 
     private void OnDisable()
     {
+        SharedBoardVisuals.Changed -= ApplySharedVisuals;
         RestorePathArrowColors();
     }
 
@@ -248,7 +268,7 @@ public class TileManager : MonoBehaviour
         if (tilemap == null) tilemap = GetComponent<Tilemap>();
         InitializePathTileIndices();
         InitializeTowerSpawnTileIndices();
-        InitializePathArrowPulse();
+        ApplySharedVisuals();
 
         AssignRandomSpecialTiles();
 
@@ -261,6 +281,8 @@ public class TileManager : MonoBehaviour
 
     private void InitializePathArrowPulse()
     {
+        RestorePathArrowColors();
+        m_pathArrowCells.Clear();
         if (m_pathDirectionTilemap == null) return;
 
         // 표시 타일맵의 좌표계가 달라도 경로의 월드 위치를 기준으로 연결합니다.
@@ -282,7 +304,9 @@ public class TileManager : MonoBehaviour
                     Cell = cell,
                     OriginalColor = color,
                     OriginalFlags = m_pathDirectionTilemap.GetTileFlags(cell),
-                    LastColor = color
+                    LastColor = color,
+                    ArrowColor = m_pathArrowTilemap != null ? m_pathArrowTilemap.GetColor(cell) : Color.white,
+                    LastArrowColor = m_pathArrowTilemap != null ? m_pathArrowTilemap.GetColor(cell) : Color.white
                 });
                 cellIndices.Add(cell, cellIndex);
             }
@@ -327,6 +351,8 @@ public class TileManager : MonoBehaviour
                 : 1f - Mathf.SmoothStep(0f, 1f, (age - rise) / (fade - rise));
             // 같은 칸을 다시 지나는 경로도 각 방문 순서에 맞춰 빛납니다.
             PathArrowCell entry = m_pathArrowCells[cellIndex];
+            if (intensity > entry.Intensity && m_pathArrowTilemap != null && TryGetPathArrowRotation(index, out Quaternion rotation))
+                m_pathArrowTilemap.SetTransformMatrix(entry.Cell, Matrix4x4.Rotate(rotation));
             entry.Intensity = Mathf.Max(entry.Intensity, intensity);
         }
 
@@ -341,9 +367,16 @@ public class TileManager : MonoBehaviour
             color.g *= brightness;
             color.b *= brightness;
             color.a *= Mathf.Lerp(Mathf.Clamp01(m_pathArrowIdleOpacity), 1f, intensity);
-            if (color == entry.LastColor) continue;
-            m_pathDirectionTilemap.SetColor(entry.Cell, color);
+            if (color != entry.LastColor) m_pathDirectionTilemap.SetColor(entry.Cell, color);
             entry.LastColor = color;
+            Color arrowColor = entry.ArrowColor;
+            arrowColor.r *= brightness;
+            arrowColor.g *= brightness;
+            arrowColor.b *= brightness;
+            arrowColor.a *= Mathf.Lerp(Mathf.Clamp01(m_pathArrowIdleOpacity), 1f, intensity);
+            if (m_pathArrowTilemap != null && arrowColor != entry.LastArrowColor)
+                m_pathArrowTilemap.SetColor(entry.Cell, arrowColor);
+            entry.LastArrowColor = arrowColor;
         }
     }
 
@@ -355,6 +388,8 @@ public class TileManager : MonoBehaviour
             m_pathDirectionTilemap.SetColor(entry.Cell, entry.OriginalColor);
             m_pathDirectionTilemap.SetTileFlags(entry.Cell, entry.OriginalFlags);
             entry.LastColor = entry.OriginalColor;
+            if (m_pathArrowTilemap != null) m_pathArrowTilemap.SetColor(entry.Cell, entry.ArrowColor);
+            entry.LastArrowColor = entry.ArrowColor;
         }
         m_pathArrowColorsOverridden = false;
     }
@@ -565,7 +600,7 @@ public class TileManager : MonoBehaviour
 
     /// <summary>
     /// 타워에서 가장 가까운 패스 인덱스입니다. 타일 거리가 같으면 직선상 가까운 칸, 그다음 앞 번호를 고릅니다.
-    /// 디버프 장판의 첫 배치에 쓰므로, 장판을 놓을 수 없는 Start(0번)는 제외합니다.
+    /// 디버프 장판의 첫 배치에 쓰므로, 장판을 놓을 수 없는 비프로스트 칸은 제외합니다.
     /// </summary>
     public bool TryGetClosestPathIndexToTower(int towerSpawnIndex, out int pathIndex)
     {
@@ -574,8 +609,10 @@ public class TileManager : MonoBehaviour
 
         int bestTileDistance = int.MaxValue;
         int bestSqrDistance = int.MaxValue;
-        for (int index = 1; index < PathTileCount; index++)
+        for (int index = 0; index < PathTileCount; index++)
         {
+            if (GetTileTypeAt(index) == PathTileBuffType.Bifrost) continue;
+
             Vector3Int offset = m_pathBoardCellsByIndex[index] - towerCell;
             int tileDistance = GetCellDistance(m_pathBoardCellsByIndex[index], towerCell);
             int sqrDistance = offset.x * offset.x + offset.y * offset.y;
@@ -631,20 +668,24 @@ public class TileManager : MonoBehaviour
         previousIndex = -1;
         if (enemy == null || !m_pathCellsByIndex.ContainsKey(index)) return false;
 
-        if (m_pathIndexByEnemy.TryGetValue(enemy, out int currentIndex) && currentIndex == index)
+        bool wasRegistered = m_pathIndexByEnemy.TryGetValue(enemy, out int currentIndex);
+        if (wasRegistered && currentIndex == index)
         {
             previousIndex = index;
-            CancelEnemyArrival(enemy);
             return true;
         }
 
-        int slot;
-        if (m_arrivalPathIndexByEnemy.TryGetValue(enemy, out int reservedIndex) && reservedIndex == index)
-            slot = m_arrivalSlotByEnemy[enemy];
-        else if (!TryGetFreeEnemySlot(enemy, index, out slot))
-            return false; // 10번째 적의 등록이 실패해도 기존 점유는 보존합니다.
-
-        RemoveEnemyFromPath(enemy, out previousIndex);
+        Vector3Int destinationCell = m_pathCellsByIndex[index];
+        Vector3Int previousCell = default;
+        if (wasRegistered)
+        {
+            previousIndex = currentIndex;
+            previousCell = m_pathCellsByIndex[currentIndex];
+            RemoveEnemyOccupancy(enemy, currentIndex);
+        }
+        // 같은 물리 타일의 다른 방문 인덱스로 바뀌는 경우 도착 순서는 유지합니다.
+        if (!wasRegistered || previousCell != destinationCell)
+            m_enemyArrivalOrder[enemy] = m_nextEnemyArrivalOrder++;
         if (!m_enemiesByPathIndex.TryGetValue(index, out List<EnemyHealthController> occupants))
         {
             occupants = new List<EnemyHealthController>();
@@ -653,7 +694,8 @@ public class TileManager : MonoBehaviour
 
         occupants.Add(enemy);
         m_pathIndexByEnemy[enemy] = index;
-        m_formationSlotByEnemy[enemy] = slot;
+        if (wasRegistered && previousCell != destinationCell) RefreshEnemyStack(previousCell);
+        RefreshEnemyStack(destinationCell);
 
         EnemyCountChanged?.Invoke();
         return true;
@@ -664,22 +706,26 @@ public class TileManager : MonoBehaviour
         previousIndex = -1;
         if (ReferenceEquals(enemy, null)) return false;
 
-        CancelEnemyArrival(enemy);
         if (!m_pathIndexByEnemy.TryGetValue(enemy, out previousIndex)) return false;
 
         m_pathIndexByEnemy.Remove(enemy);
-        m_formationSlotByEnemy.Remove(enemy);
-        if (m_enemiesByPathIndex.TryGetValue(previousIndex, out List<EnemyHealthController> occupants))
-        {
-            occupants.Remove(enemy);
-            if (occupants.Count == 0) m_enemiesByPathIndex.Remove(previousIndex);
-        }
-
+        m_enemyArrivalOrder.Remove(enemy);
+        RemoveEnemyOccupancy(enemy, previousIndex);
+        RefreshEnemyStack(m_pathCellsByIndex[previousIndex]);
         EnemyCountChanged?.Invoke();
         return true;
     }
 
-    // 표현용 진형 배치에도 쓰이므로 여기서는 HP를 거르지 않는다.
+    private void RemoveEnemyOccupancy(EnemyHealthController enemy, int index)
+    {
+        if (m_enemiesByPathIndex.TryGetValue(index, out List<EnemyHealthController> occupants))
+        {
+            occupants.Remove(enemy);
+            if (occupants.Count == 0) m_enemiesByPathIndex.Remove(index);
+        }
+    }
+
+    // 소환 초기화 중에도 수와 표시 순서가 필요하므로 HP 초기화 여부는 거르지 않습니다.
     public List<EnemyHealthController> GetEnemyOccupantsAtPathIndex(int index)
     {
         List<EnemyHealthController> result = new List<EnemyHealthController>();
@@ -700,7 +746,51 @@ public class TileManager : MonoBehaviour
         {
             result.AddRange(GetEnemyOccupantsAtPathIndex(index));
         }
+        result.Sort((left, right) => m_enemyArrivalOrder[left].CompareTo(m_enemyArrivalOrder[right]));
         return result;
+    }
+
+    private void RefreshEnemyStack(Vector3Int cell)
+    {
+        List<EnemyHealthController> enemies = GetEnemyOccupantsAtPathCell(cell);
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            EnemyMoveController movement = enemies[i].Movement;
+            if (movement != null) movement.SetStackRenderOrder(Mathf.Max(-20000, 20000 - i * 2), i == 0);
+        }
+
+        if (enemies.Count == 0)
+        {
+            if (m_enemyCountLabels.TryGetValue(cell, out TextMeshPro emptyLabel) && emptyLabel != null)
+                emptyLabel.gameObject.SetActive(false);
+            return;
+        }
+
+        if (!m_enemyCountLabels.TryGetValue(cell, out TextMeshPro label) || label == null)
+        {
+            var labelObject = new GameObject($"EnemyCount_{cell.x}_{cell.y}", typeof(TextMeshPro));
+            labelObject.layer = gameObject.layer;
+            labelObject.transform.SetParent(transform, false);
+            label = labelObject.GetComponent<TextMeshPro>();
+            label.font = m_enemyCountFont != null ? m_enemyCountFont : TMP_Settings.defaultFontAsset;
+            label.fontSize = m_enemyCountFontSize;
+            label.fontStyle = FontStyles.Bold;
+            label.color = m_enemyCountColor;
+            label.outlineColor = Color.black;
+            label.outlineWidth = 0.2f;
+            label.alignment = TextAlignmentOptions.Center;
+            label.raycastTarget = false;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.renderer.sortingLayerID = SortingLayer.NameToID("Enemy");
+            label.renderer.sortingOrder = 30000;
+            Vector3 size = tilemap.cellSize;
+            label.rectTransform.sizeDelta = new Vector2(size.x * 0.5f, size.y * 0.3f);
+            label.transform.position = tilemap.GetCellCenterWorld(cell)
+                + new Vector3(size.x * m_enemyCountOffset.x, size.y * m_enemyCountOffset.y, -2f);
+            m_enemyCountLabels[cell] = label;
+        }
+        label.SetText("x{0}", enemies.Count);
+        label.gameObject.SetActive(true);
     }
 
     /// <summary>패스에 등록된 모든 적을 복사해 반환합니다. 순회 중 적이 죽거나 이동해도 안전합니다.</summary>
@@ -767,97 +857,12 @@ public class TileManager : MonoBehaviour
 
     #endregion
 
-    #region 적 진형 배치
-
-    /// <summary>
-    /// 목적 타일에서 현재와 같은 자리를 우선 예약합니다. 차 있으면 오른쪽부터 빈자리를 찾습니다.
-    /// 정원이 차면 이동하지 않습니다.
-    /// 점유는 바꾸지 않으므로 이동 중인 적이 다음 타일의 공격·디버프 대상이 되지 않습니다.
-    /// 예약은 도착(SetEnemyAtPathIndex)하거나 패스에서 제거될 때 함께 해제됩니다.
-    /// </summary>
-    public bool TryReserveEnemyArrivalPosition(EnemyHealthController enemy, int index, out Vector3 position)
+    /// <summary>Select a path visit without an occupancy limit.</summary>
+    public bool TryGetRandomEnemySpawnIndex(out int index)
     {
-        position = default;
-        if (enemy == null || !TryGetFreeEnemySlot(enemy, index, out int slot)) return false;
-
-        CancelEnemyArrival(enemy);
-        m_arrivalPathIndexByEnemy[enemy] = index;
-        m_arrivalSlotByEnemy[enemy] = slot;
-        position = GetEnemyFormationPosition(index, slot);
-        return true;
+        index = PathTileCount > 0 ? Random.Range(0, PathTileCount) : -1;
+        return index >= 0;
     }
-
-    private void CancelEnemyArrival(EnemyHealthController enemy)
-    {
-        m_arrivalPathIndexByEnemy.Remove(enemy);
-        m_arrivalSlotByEnemy.Remove(enemy);
-    }
-
-    public bool HasEnemyCapacityAtPathIndex(int index) => TryGetFreeEnemySlot(null, index, out _);
-
-    private bool TryGetFreeEnemySlot(EnemyHealthController requestingEnemy, int index, out int slot)
-    {
-        slot = -1;
-        if (!m_pathCellsByIndex.TryGetValue(index, out Vector3Int cell)) return false;
-        int usedSlots = 0;
-        // 같은 셀을 여러 번 지나는 경로도 물리적인 한 타일의 정원을 공유합니다.
-        foreach (var entry in m_pathIndexByEnemy)
-        {
-            if (entry.Key == requestingEnemy || entry.Key == null || !entry.Key.gameObject.activeInHierarchy) continue;
-            if (m_pathCellsByIndex.TryGetValue(entry.Value, out Vector3Int occupiedCell) && occupiedCell == cell)
-                usedSlots |= 1 << m_formationSlotByEnemy[entry.Key];
-        }
-        foreach (var entry in m_arrivalPathIndexByEnemy)
-        {
-            if (entry.Key == requestingEnemy || entry.Key == null || !entry.Key.gameObject.activeInHierarchy) continue;
-            if (m_pathCellsByIndex.TryGetValue(entry.Value, out Vector3Int reservedCell) && reservedCell == cell)
-                usedSlots |= 1 << m_arrivalSlotByEnemy[entry.Key];
-        }
-        // 같은 목적지에 이미 예약했다면 그 자리를 유지합니다. 그 외에는 출발 타일의 자리를 우선합니다.
-        int preferredSlot = 4;
-        if (requestingEnemy != null)
-        {
-            if (m_arrivalPathIndexByEnemy.TryGetValue(requestingEnemy, out int arrivalIndex) && arrivalIndex == index)
-                preferredSlot = m_arrivalSlotByEnemy[requestingEnemy];
-            else if (m_formationSlotByEnemy.TryGetValue(requestingEnemy, out int currentSlot))
-                preferredSlot = currentSlot;
-        }
-        // 화면 기준 오른쪽으로 진행합니다. 행 끝에서는 다음 행으로, 마지막 행에서는 첫 행으로 감습니다.
-        // 소환처럼 출발 자리가 없는 적은 중앙부터 같은 순서로 찾습니다.
-        for (int offset = 0; offset < EnemyTileCapacity; offset++)
-        {
-            int candidate = (preferredSlot + offset) % EnemyTileCapacity;
-            if ((usedSlots & (1 << candidate)) != 0) continue;
-            slot = candidate;
-            return true;
-        }
-        return false;
-    }
-
-    public bool TryGetEnemyFormationPosition(EnemyHealthController enemy, out Vector3 position)
-    {
-        position = default;
-        if (!m_pathIndexByEnemy.TryGetValue(enemy, out int index) || !m_formationSlotByEnemy.TryGetValue(enemy, out int slot)) return false;
-        position = GetEnemyFormationPosition(index, slot);
-        return true;
-    }
-
-    /// <summary>
-    /// 고정된 3×3 자리의 좌표입니다. 다른 적이 죽거나 도착해도 기존 자리는 바뀌지 않습니다.
-    /// </summary>
-    private Vector3 GetEnemyFormationPosition(int pathIndex, int slotIndex)
-    {
-        float tileSize = tilemap != null ? Mathf.Min(tilemap.cellSize.x, tilemap.cellSize.y) : 1f;
-        float spacing = tileSize * Mathf.Clamp(m_enemySlotSpacing, 0.3f, 0.34f);
-        slotIndex = Mathf.Clamp(slotIndex, 0, EnemyTileCapacity - 1);
-        int column = slotIndex % 3;
-        int row = slotIndex / 3;
-        float xOffset = (column - 1) * spacing;
-        float yOffset = (1 - row) * spacing;
-        return GetPathWorldPosition(pathIndex) + new Vector3(xOffset, yOffset, 0f);
-    }
-
-    #endregion
 
     #region 타워 점유
 
@@ -1418,16 +1423,55 @@ public class TileManager : MonoBehaviour
             return;
         }
 
+        // 0번(Start)도 평범한 칸이라 후보에 넣습니다.
         List<Vector3Int> availableTiles = new List<Vector3Int>();
         HashSet<Vector3Int> uniqueCells = new HashSet<Vector3Int>();
-        for (int i = 1; i < m_pathGridPositions.Count; i++)
+        for (int i = 0; i < m_pathGridPositions.Count; i++)
         {
             if (uniqueCells.Add(m_pathGridPositions[i])) availableTiles.Add(m_pathGridPositions[i]);
         }
 
+        // 비프로스트를 먼저 깔아야 나머지 특수 타일이 그 두 칸을 피합니다.
+        // 첫 칸은 무작위, 다른 칸은 길 인덱스 수의 절반만큼 떨어진 맞은편입니다.
+        m_bifrostIndexA = Random.Range(0, PathTileCount);
+        m_bifrostIndexB = WrapPathIndex(m_bifrostIndexA + PathTileCount / 2);
+        PlaceBifrostTile(m_bifrostIndexA, availableTiles);
+        PlaceBifrostTile(m_bifrostIndexB, availableTiles);
+
         SetRandomTiles(availableTiles, defendTileCount, PathTileBuffType.DefendTile, defendColor);
-        SetRandomTiles(availableTiles, speedTileCount, PathTileBuffType.SpeedTile, speedColor);
+        SetRandomTiles(availableTiles, moveTileCount, PathTileBuffType.MoveTile, moveColor);
+        SetRandomTiles(availableTiles, actionTileCount, PathTileBuffType.ActionTile, actionColor);
         SetRandomTiles(availableTiles, healTileCount, PathTileBuffType.HealTile, healColor);
+        SetRandomTiles(availableTiles, purifyTileCount, PathTileBuffType.PurifyTile, purifyColor);
+    }
+
+    // 비프로스트를 놓고, 무작위 타일 후보(pool)에서 그 칸을 뺍니다.
+    private void PlaceBifrostTile(int index, List<Vector3Int> pool)
+    {
+        if (!m_pathCellsByIndex.TryGetValue(index, out Vector3Int cell)) return;
+
+        if (m_pathIndicesByCell.TryGetValue(cell, out List<int> visits))
+        {
+            foreach (int visit in visits) m_pathTileBuffByIndex[visit] = PathTileBuffType.Bifrost;
+        }
+
+        SpawnMapTileEffect(tilemap, cell, bifrostColor, "PathMapBuff", m_pathMapBuffEffects, true);
+        pool.Remove(cell);
+    }
+
+    /// <summary>
+    /// 비프로스트 칸이면 건너편 칸의 인덱스를 돌려줍니다. 같은 칸을 여러 번 지나는 길도 칸(좌표)으로 비교합니다.
+    /// </summary>
+    public bool TryGetBifrostDestination(int index, out int destination)
+    {
+        destination = -1;
+        if (!m_pathCellsByIndex.TryGetValue(index, out Vector3Int cell)) return false;
+        if (!m_pathCellsByIndex.TryGetValue(m_bifrostIndexA, out Vector3Int cellA)) return false;
+        if (!m_pathCellsByIndex.TryGetValue(m_bifrostIndexB, out Vector3Int cellB)) return false;
+
+        if (cell == cellA) destination = m_bifrostIndexB;
+        else if (cell == cellB) destination = m_bifrostIndexA;
+        return destination >= 0 && m_pathCellsByIndex[destination] != cell;
     }
 
     private void SetRandomTiles(List<Vector3Int> pool, int count, PathTileBuffType type, Color color)

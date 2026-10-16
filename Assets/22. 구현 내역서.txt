@@ -48,6 +48,11 @@
 2026-10-13            물 문양 추가, 타워 56종의 컨셉, 문양 번호 다시 매김(문서)       기획
 2026-10-14            라이프·방어막·도착 처리 삭제, 적 수 한도 표시 (21번 1-1)        구현
 2026-10-16            큐브 적 소환 시 낙하·착지·반동과 이동 대기 연결                  구현
+                      적 소환 위치를 전체 패스의 빈자리 중 무작위로 (21번 2-2의 일부)
+                      소환 전 한도 판정, 웨이브 일괄 소환 뒤 플레이어 턴 (21번 1-2)
+                      웨이브 구성 8 / 10 × 사이클, 중간 보스 자동 소환, 적 풀 크기 버그
+                      보스·중간 보스의 제한 턴 20 (21번 1-3), 웨이브별 능력치 배율 (21번 2-2)
+                      길 위 특수 타일의 종류·개수, 비프로스트, 0번을 평범한 칸으로 (21번 1-5의 일부)
 
 ======================================================================
 1. 2026-09-21 ~ 09-23 — 코드 점검
@@ -478,12 +483,177 @@
 - EnemyObjectPool2D: 이동·체력 초기화를 마친 뒤 PlaySpawnDrop을 실행. 같은 프레임에 소환한 큐브는 동시에 떨어짐.
 - EnemyMoveController: IsSpawning과 낙하 코루틴을 추가. 낙하 중에는 진형 보간과 첫 이동을 기다리고,
   StopMovement·비활성화·풀 반환에서 연출과 점유를 정리함. 재소환 때 원래 높이에서 다시 시작함.
-- EnemyManager: 새 큐브들이 모두 착지한 뒤 기존 적과 함께 이동. 현재의 분할 소환·0번 위치·턴 구조는 유지함.
-  새 기획의 랜덤 위치·웨이브 일괄 소환·소환 전 한도 판정·착지 후 플레이어 턴 연결은 21번 1-2·2-2의 남은 작업.
+- EnemyManager: 새 큐브들이 모두 착지한 뒤 기존 적과 함께 이동. 현재의 분할 소환·턴 구조는 유지함.
+  랜덤 위치는 13장, 웨이브 일괄 소환·소환 전 한도 판정·착지 후 플레이어 턴 연결은 14장.
 - 검증: 전체 런타임 C# 컴파일 성공. 별도 Unity 6000.3.9f1 PlayMode에서 9마리 동시 낙하, 공중 정원 9자리,
   면·위치 보존, 일시정지, 착지 복원, 첫 이동 대기와 이후 실제 굴림, 도중 풀 반환·재소환·직접 비활성화,
   기존 적의 착지 대기를 확인함. Unity 렌더링 60프레임도 확인. 실제 Stage1 전체 진행 검증은 별도.
   검사·미리보기: outputs/enemy-spawn-drop/.
+
+======================================================================
+13. 2026-10-16 — 적 소환 위치를 무작위로 (21번 2-2의 일부)
+======================================================================
+
+20번 2장: 일반 적·중간 보스·최종 보스 모두 0번을 포함한 전체 패스 인덱스 중 빈자리가 있는 칸을 같은 확률로 골라 소환.
+
+- TileManager.TryGetRandomEnemySpawnIndex(out int index): 0 ~ LastPathIndex 중 HasEnemyCapacityAtPathIndex가 참인 인덱스를
+  후보로 모아 하나를 무작위로 고름. 도착 예약도 정원에 들어감. 후보가 없으면 index = -1, false.
+- EnemyMoveController.InitMovement(EnemyData, int startIndex): 시작 칸을 0 고정에서 받은 인덱스로.
+- EnemyObjectPool2D.Spawn(int pathIndex, ...): 위치(Vector3) 대신 패스 인덱스를 받음. 그 칸의 정원 확인, 화면 위치, InitMovement에 같은 인덱스를 씀.
+- WaveManager.SpawnWaveEnemiesForTurn·TrySpawnMiddleBoss: 0번 고정 대신 한 마리마다 위치를 새로 고름.
+  모든 타일이 차면 소환을 멈추고 소환 수에 넣지 않음 (기존 0번이 찼을 때와 같은 처리).
+  최종 보스는 웨이브 구성으로 SpawnWaveEnemiesForTurn을 거치므로 같은 위치 선택을 씀.
+- 첫 이동은 기존 m_hasMadeFirstMove 그대로 무조건 한 칸. 0번 소환을 전제로 한 주석들을 고침.
+- 확인 상태: 유니티 검증 완료 — 2026-10-16.
+  확인한 것: 여러 타일에 흩어져 소환됨, 첫 적 턴에 한 칸 이동, 마지막 인덱스에서 첫 이동하면 0번, 중간 보스도 무작위 위치,
+  0번이 가득 차도 다른 빈 타일에 소환됨, 전체가 찼을 때 소환 수가 늘지 않음.
+- 14장에서 SpawnWaveEnemiesForTurn의 이름이 SpawnWaveEnemies로 바뀜.
+- 같은 날 Codex 작업(outputs/enemy-tile-stacks/)으로 타일당 3×3·9마리 정원과 도착 예약이 없어지고, 적이 한 타일에 겹쳐 서며
+  "x N"으로 수를 표시하게 바뀜. TryGetRandomEnemySpawnIndex도 정원 없이 전체 패스 인덱스 중 무작위로. 20번 2장도 그에 맞춰 고침.
+
+======================================================================
+14. 2026-10-16 — 소환 전 한도 판정, 웨이브 일괄 소환 뒤 플레이어 턴 (21번 1-2, 2-2의 일부)
+======================================================================
+
+20번 1장: 웨이브 시작에 소환 전 적 수 판정 → 전원 동시 소환 → 플레이어 턴 1번 → 적 턴 10번 자동. 판정은 적 수 > 한도.
+  처음에는 기획서의 "플레이어 턴 → 적 턴을 10번 반복"대로 매 적 턴 앞에 플레이어 턴을 넣었으나, 사용자의 의도는
+  웨이브당 플레이어 턴 1번이었음. 같은 날 코드와 20번 1장·3장을 그쪽으로 고침.
+
+- GameManager.TurnLoopRoutine: 웨이브마다 CheckEnemyLimit → EnemyManager.SpawnWaveRoutine → EnemyWaveRoutine.
+  맨 앞에 yield return null로 한 프레임 기다림. 첫 소환이 게임 시작 직후라, TileManager.Start의 경로 초기화보다
+  먼저 불리면 후보 칸이 0개여서 한 마리도 소환되지 않았음 (Start 순서는 보장되지 않음).
+- GameManager.EnemyWaveRoutine: PlayerTurnRoutine 1번 → EnemyTurnRoutine 10번. 40웨이브의 while문은 적 턴만 계속.
+  원래 웨이브 시작(소환 전)에 있던 플레이어 턴이 소환 뒤로 옮겨짐.
+  EnemyTurnRoutine·ProcessEnemyMovement에서 shouldSpawn 매개변수를 지움. 상수 EnemySpawnTurns(5)를 지움.
+- GameManager.CheckEnemyLimit: 비교를 >= 에서 > 로. 부르는 곳은 웨이브 시작의 소환 직전 한 곳뿐.
+- EnemyManager: ProcessEnemyTurnRoutine(bool)을 둘로 나눔.
+    SpawnWaveRoutine(): WaveManager.SpawnWaveEnemies()를 부르고 새 큐브가 모두 착지할 때까지 기다림.
+    ProcessEnemyTurnRoutine(): 모든 적의 이동과 완료 대기만. 소환 직후의 한도 판정 호출은 지움.
+- WaveManager.SpawnWaveEnemiesForTurn → SpawnWaveEnemies: 턴당 수(사이클 × 2, 보스 1)로 끊던 것을 없애고
+  웨이브 구성이 끝날 때까지 소환. 자리가 없거나 풀이 비면 멈춤 (웨이브 도중 다시 시도하지 않음).
+- 이때 웨이브당 마릿수는 옛 식 (사이클 1에서 10마리). 같은 날 15장에서 새 구성으로 바꿈.
+- 확인 상태: 유니티 검증 완료 — 2026-10-16.
+  확인한 것: 웨이브 시작에 적이 한 번에 떨어지고, 착지 뒤 플레이어 턴. 턴 종료 뒤 적 턴 10번이 자동으로 진행.
+  다음 웨이브 시작에 적이 21마리 이상이면 게임 오버.
+  따로 보지 않은 것: 잔존 적이 정확히 20마리일 때 다음 웨이브로 진행하는지.
+
+======================================================================
+15. 2026-10-16 — 웨이브 구성 변경, 중간 보스 자동 소환, 적 풀 크기 (21번 2-2·1-4의 일부)
+======================================================================
+
+기획 변경 (같은 날 20번에 반영):
+- 웨이브 구성: 순서 1~4는 일반 적 8 × 사이클, 순서 6~9는 10 × 사이클 (전에는 3 × / 5 ×). 사이클 합계 72 / 144 / 216 / 288, 한 판 720마리.
+- 최종 보스와 중간 보스 모두 제한 턴 20턴. 못 잡으면 게임 오버 (전에는 40턴, 중간 보스는 보상 없이 사라짐).
+- 일반 적 처치 골드: 마리당 10 × 사이클 (전에는 기획 50 × 사이클, 코드 10 × 웨이브). 한 판 21,600골드.
+
+- WaveManager.GetWaveEnemyComposition: 옛 "5턴 × 턴당 수" 계산(turnPerWave 등)과 Speed·Depend를 섞던 구성을 지움.
+  순서 1~4 AddEnemies(Normal, 8 × cycle), 순서 5 MiddleBoss 1마리, 순서 6~9 AddEnemies(Normal, 10 × cycle), 순서 10 Boss.
+  AddMixedEnemies를 지움. 웨이브 구성에 Speed·Depend가 더는 나오지 않음.
+- 중간 보스가 웨이브 구성으로 자동 소환됨 (21번 1-4). 소환 버튼과 그 상태를 지움:
+    WaveManager의 TrySpawnMiddleBoss·IsMiddleBossSummonWindow·CanSummonMiddleBoss·m_middleBossSpawned·MiddleBossSummonableChanged,
+    PlayerTurnPanel의 btn_summonMiddleBoss·RefreshMiddleBossButton·HandleSummonMiddleBossClick, Canvas.prefab의 Group_SpawnMiddleBoss.
+    UIStageThemeController.cs의 "SpawnMiddleBoss" 이름 검사는 걸리는 오브젝트가 없어져 쓰이지 않음 (남겨 둠).
+- WaveManager.GetEnemyStatMultipliers: 순서 5의 체력 배율 3.0 → 1.0. 중간 보스가 사이클 배율만 받게.
+- WaveManager.GetKillReward: 상수 NormalGoldPerWave → NormalGoldPerCycle, 일반 적 골드 = 10 × cycle.
+  GameRuleTests: 일반 적 기대값을 1 / 11 / 40웨이브에 10 / 20 / 40으로. 속도형·방어형 보상 테스트는 지움 (웨이브에 더는 안 나옴).
+- 버그 수정: 적 풀의 maxSize가 20이라, 판 위의 일반 적이 20마리가 되면 소환이 실패하고 한도 판정(20 이하 통과)도 계속 통과해
+  게임이 끝나지 않았음. Enemy_Pool_normal의 Max Size를 150으로 (사용자가 인스펙터에서). EnemyObjectPool2D의 기본값도 100 / 150으로.
+  Speed·Depend 풀은 지우기로 함. WaveManager.m_enemyPool 배열은 (int)EnemyType 순서라 크기 5를 유지하고 1·2번 칸만 비울 것 (21번 2-1).
+- 확인 상태: 일부 유니티 검증 — 2026-10-16.
+  확인한 것: 1웨이브에 8마리. 일반 적이 20마리를 넘어도 소환이 멈추지 않고, 다음 웨이브 시작에 한도를 넘었으면 게임 오버 (풀 버그 수정).
+  유니티 검증 필요: 6웨이브에 10마리, 11웨이브에 16마리. 5웨이브에 일반 적 없이 중간 보스만 자동으로 나옴. 소환 버튼이 없음.
+  일반 적 처치 골드 10. Test Runner(EditMode) 전부 통과.
+
+======================================================================
+16. 2026-10-16 — 적 큐브의 배경·캐릭터·장식 분리
+======================================================================
+
+- EnemyCubeUnlit.shader: 공용 배경 → 캐릭터 → 테두리 → 상태 배지를 실시간 합성.
+  외곽 알파로 같은 둥근 모양을 유지하고, 장비 마스크에만 상태 색상을 적용.
+- 후속 요청으로 Enemy_Decoration.png를 흰색·회색 베이스로 수정(원본 모양·알파·명암 유지).
+  State Color 하나로 장비 마스크와 테두리에 같은 상태색 적용. 별도 테두리 색상 설정 제거.
+  세 캐릭터 × 6상태 재질을 같은 팔레트로 통일.
+- Assets/4. Asset/4. Enemy/: 공용 배경·테두리·배지 아틀라스와
+  발키리/브륀힐드/로키의 캐릭터·장비 마스크를 총 9개 텍스처로 분리.
+- EnemyCubeAppearance.cs 및 설정 3개 추가. EnemyCubeMeshVisual의 Appearance를
+  바꾸면 여섯 면의 캐릭터와 마스크를 함께 교체. MaterialPropertyBlock으로 공유 재질은 유지.
+- 기존 재질 18개의 GUID와 6면 풀 유지. 적/보스 프리팹 5개에는 Appearance 참조만 추가.
+  굴림·이동·낙하·게임플레이 데이터와 웨이브 코드는 변경하지 않음.
+- 후속 정리 요청으로 기존 합성 이미지 8개를 삭제. 사용 중인 이미지·머티리얼·메시·외형 설정
+  32개를 Assets/4. Asset/4. Enemy/ 바로 아래로 이동하고 빈 하위 폴더 제거. 파일 내용/GUID 유지.
+  변경 전 파일: outputs/enemy-folder-cleanup/before.zip, 삭제 목록: 같은 폴더의 deleted-images.txt.
+- 확인: 18개 CPU 합성의 캐릭터 위치/알파/장비 외 픽셀, 레이어 참조와 프리팹 변경 범위 검사 통과.
+  C# 독립 빌드 통과(설치된 Unity CoreModule 참조). Unity 미실행; 셰이더 컴파일/실제 렌더링은 사용자 확인.
+  상세: outputs/enemy-cube-layers/README.md 및 preview.png.
+
+======================================================================
+17. 2026-10-16 — 보스·중간 보스의 제한 턴 20 (21번 1-3)
+======================================================================
+
+20번 1장: 최종 보스와 중간 보스는 소환된 뒤 적 턴 20번 안에 처치해야 함. 못 잡으면 게임 오버.
+
+- EnemyHealthController: 상수 BossTurnLimit(20), m_remainingBossTurns, RemainingBossTurns, IsBossTurnLimitOver.
+  InitHealth에서 m_enemyType을 정한 직후 보스면 20, 아니면 0. AdvanceBossTurnLimit()이 보스일 때만 1 줄임 (0 아래로 안 내려감).
+- EnemyManager.AdvanceAllBossTurnLimits(): 길 위의 보스마다 AdvanceBossTurnLimit을 부르고, 0이 된 보스가 있으면 true.
+- GameManager.EnemyTurnRoutine: ⑤ 디버프 처리 뒤에 ⑥으로 위 함수를 부르고, true면 OnGameOver 후 종료.
+  그 턴의 공격과 지속 피해로 보스를 잡을 기회를 다 준 뒤 셈. 뒤에 GameStateVersion.MarkChanged()로 패널 갱신.
+- 40웨이브의 while문은 그대로. 제한 턴이 다 되면 게임 오버로 끝나므로 적 턴은 최대 20번.
+- EnemyInfoPanel: 보스 제목을 "[BOSS] 이름 남은 턴 N"으로.
+- 확인 상태: 에디터 진단만. 유니티 검증 필요.
+  확인할 것: 10웨이브 보스를 안 잡으면 11웨이브의 10번째 적 턴이 끝날 때 게임 오버. 5웨이브 중간 보스도 6웨이브 끝에 게임 오버.
+  보스를 클릭하면 남은 턴이 20부터 적 턴마다 1씩 줆. 20번째 적 턴에 지속 피해로 보스를 잡으면 게임 오버가 아님.
+  (WaveManager 인스펙터의 m_currentWave를 5나 10으로 두고 시작하면 빨리 볼 수 있음)
+
+======================================================================
+18. 2026-10-16 — 웨이브별 능력치 배율 (21번 2-2)
+======================================================================
+
+20번 3장 [웨이브별 능력치 배율], 9장 [세 모드의 비교].
+
+- WaveManager.GetEnemyStatMultipliers: 방어 배율을 순서마다 +0.2로 (1.0 / 1.2 / 1.4 / 1.6 / - / 2.0 / 2.2 / 2.4 / 2.6 / -).
+  순서 5·10은 보스라 1.0 (전에는 순서 1~5가 1.0, 6~9가 2.0). 체력 배율은 전과 같음.
+  하드 모드면 체력·방어 모두 × 1.5 (modeMulti). 스토리 모드의 × 0.75는 모드가 생기는 21번 5-2에서.
+- WaveManager.GetCycleMultipliers: 사이클 체력 배율 1 / 2 / 4 / 8 → 1 / 2 / 3 / 4. 방어는 원래 1 / 2 / 3 / 4.
+- 21번 2-2의 "구성 List를 웨이브가 바뀔 때 한 번만 만들기"는 일괄 소환(14장)으로 웨이브마다 한 번만 부르게 되어 할 일이 없어짐.
+- 확인 상태: 에디터 진단만. 유니티 검증 필요.
+  확인할 것: 2웨이브 일반 적의 방어력이 1웨이브의 1.2배, 11웨이브 일반 적의 체력이 1웨이브의 2배 (정보 패널의 체력·방어력).
+
+======================================================================
+19. 2026-10-16 — 길 위 특수 타일의 종류·개수 (21번 1-5의 일부)
+======================================================================
+
+기획 변경 (같은 날 20번 2장에 반영): 0번(Start)도 평범한 칸 (특수 타일·비프로스트·디버프존 가능).
+  비프로스트는 판마다 무작위로 먼저 깔고(두 칸은 길의 맞은편), 나머지 특수 타일은 그 두 칸을 뺀 칸에.
+
+- TileManager.PathTileBuffType: SpeedTile → MoveTile(이동력. F2로 EnemyMoveController·TileinfoPanel·EnemyInfoPanel까지 이름 변경),
+  ActionTile(행동 카운트)·PurifyTile(정화)·Bifrost를 맨 뒤에 추가 (enum 숫자가 바뀌지 않게).
+- 개수: defendTileCount 2, moveTileCount 2(옛 speedTileCount), actionTileCount 2, healTileCount 2, purifyTileCount 1.
+  Stage1 씬의 저장값도 같게 맞춤 (Defend 5 → 2).
+- 색: moveColor(옛 speedColor), actionColor c78bff, purifyColor ffffff. AssignRandomSpecialTiles가 다섯 종류를 깖.
+- 행동 카운트·정화 타일은 깔리기만 하고 효과는 아직 없음 (21번 1-5의 (2) ~ (4)). 비프로스트도 아직 깔리지 않음.
+- 확인 상태: 에디터 진단만. 유니티 검증 필요.
+  확인할 것: 방어·이동력·행동 카운트·회복 각 2칸, 정화 1칸이 서로 다른 색으로 깔림. 옛 속도 타일 자리에 이동력 타일이 있고 효과는 전과 같음.
+
+======================================================================
+20. 2026-10-16 — 비프로스트, 0번(Start)을 평범한 칸으로 (21번 1-5의 일부)
+======================================================================
+
+20번 2장 [비프로스트]·[배치], 4-1장 [존]. 이 장은 사용자 요청으로 Claude가 직접 구현함.
+
+- TileManager.AssignRandomSpecialTiles: 후보를 0번부터 모음. 비프로스트를 먼저 깖:
+  m_bifrostIndexA = 0 ~ PathTileCount-1 중 무작위, m_bifrostIndexB = WrapPathIndex(A + PathTileCount / 2).
+  PlaceBifrostTile이 그 칸(같은 칸의 모든 방문 인덱스)을 Bifrost로 기록하고 이펙트(ff9de2)를 깔고 후보에서 뺌. 그 뒤 나머지 특수 타일.
+- TileManager.TryGetBifrostDestination(index, out destination): 칸(좌표)으로 비교해 짝 칸의 인덱스를 줌.
+- EnemyMoveController.ProcessTurnMoveRoutine: 행동을 시작할 때 비프로스트 위였는지 기억(startedOnBifrost).
+  첫 이동이나 주사위 이동(앞·뒤)을 마친 뒤 비프로스트에 멈췄고 startedOnBifrost가 아니면 CrossBifrostRoutine으로 건너편에 옮김.
+  메시 큐브는 건너편에서 SpawnDropRoutine으로 위에서 떨어지며 나타남. 행동 불가 턴(m_forcedNoMoveTurns)에는 움직이지 않으므로 건너지 않음.
+- 0번을 평범한 칸으로: CheckAndApplyTileBuff의 "0번이면 효과 없음"을 지움. DebuffZone.MoveToPathIndex의 0번 금지를
+  "비프로스트 칸 금지"로. TileManager.TryGetClosestPathIndexToTower(장판 첫 자리)를 0번부터, 비프로스트 칸은 건너뜀.
+- TileinfoPanel: 비프로스트 칸의 설명 "비프로스트 / 멈춘 적은 맞은편 비프로스트로 이동".
+- 확인 상태: 에디터 진단만. 유니티 검증 필요.
+  확인할 것: 판을 시작할 때마다 비프로스트 두 칸(분홍)이 바뀌고 늘 길의 맞은편. 다른 특수 타일이 그 칸에 겹치지 않음.
+  비프로스트에 멈춘 적이 맞은편 칸에 위에서 떨어지며 나타남. 건너온 적이 다음 행동에 다시 비프로스트에 멈춰도 건너지 않음.
+  디버프 장판을 비프로스트 칸에 놓을 수 없고 0번에는 놓을 수 있음.
 
 ======================================================================
 부록. 문서에 날짜 기록이 없는 것
@@ -494,3 +664,39 @@
   Assets/Editor/Tests/EnemyCubeOrientationTests.cs, EnemyCubeRollGeometryTests.cs
 - 01. Tower/SynergyCharacterCatalog.cs (시너지 타워의 외형. 2026-10-12의 작업으로 보임)
 - Assets/Editor/UIThemeManualColorTracker.cs, UIAtlasNameConnector.cs
+
+======================================================================
+2026-10-16. 패스 타일 적 겹침과 마릿수 표시
+======================================================================
+- 적 분산 배치, 3×3 자리 배정, 도착 자리 예약과 타일당 9마리 제한을 제거했다.
+- 적은 타일 중심으로 이동한다. 같은 물리 타일에서 먼저 도착한 적부터 위에 그린다.
+  맨 위 적이 떠나거나 제거되면 다음 도착한 적이 위에 보인다. 풀에서 다시 소환되면 새 도착으로 취급한다.
+- TileManager가 점유 타일 오른쪽 아래에 TextMeshPro 월드 텍스트 x1, x2 등을 생성한다.
+  같은 좌표의 여러 경로 방문 인덱스는 합산하고, 빈 타일의 텍스트는 숨긴다.
+  폰트·크기·색·타일 대비 위치는 TileManager의 '패스 타일 적 수 표시'에서 조정한다.
+- 가려진 적의 체력바는 표시하지 않는다. 공격 대상과 개별 체력·스탯은 기존대로 유지한다.
+- 확인: 전체 런타임 C#을 설치된 Unity 어셈블리 참조로 외부 컴파일, 경고 0 / 오류 0.
+  실제 점유·순서·텍스트 갱신 메서드를 표시용 스텁과 실행한 로직 검사 29개 통과.
+  Unity 실행·화면 검증은 하지 않았다. 검사와 변경 전 백업: outputs/enemy-tile-stacks/.
+
+======================================================================
+2026-10-16. 공용 배경·장식과 색상 설정 통합
+======================================================================
+- 기존 적 배경·장식을 Assets/4. Asset/0. Common/Board_Background.png, Board_Decoration.png로 이동했다.
+  GUID를 유지하고 단일 Sprite(512×512, PPU 384)로도 사용할 수 있게 했다. 타일·타워·큐브 적이 같은 텍스처를 공유한다.
+- 공용 원본의 명암은 RGB 150~255. 배경은 위 255 → 아래 150, 장식은 기존 명암 단계를 같은 범위로 변환했다.
+  내부는 알파 255, 외부는 0, 경계에만 기존 중간 알파를 남겼다. 외곽 범위는 동일한 정사각형 484×484이다.
+- 공용 화살표 하나를 기존 그림에서 분리했다. Path Arrows 타일맵에서 다음 경로 칸 방향으로 회전한다.
+  마지막 방문에는 화살표를 두지 않는다. 기존 Path Direction은 공용 장식이며 화살표와 함께 순서대로 발광한다.
+  START/END/JUMP/RETURN 표시는 사용하지 않는다. 경로 인덱스와 적 이동의 순환 규칙은 그대로다.
+- Assets/Resources/SharedBoardVisuals.asset이 색상 원본이다.
+  Tools > Visuals > 공용 배경·장식 색상에서 스테이지별 스폰/패스/화살표, 타워 티어/개별 ID,
+  몬스터 면 유형/캐릭터별 배경·장식·장비색을 편집한다. TileManager의 Stage Realm으로 씬의 테마를 지정한다.
+- 타워의 색상별 Sprite 배열을 제거했다. 실제 타워 ID의 색상과 VisualTowerID의 캐릭터 선택은 별도로 유지한다.
+  큐브 적은 면별 MaterialPropertyBlock에 캐릭터 텍스처와 독립 색상을 함께 지정한다.
+  기존 몬스터 머티리얼의 현재 색상을 설정 에셋에 옮겼고 동일한 캐릭터 값은 공통 기본값을 상속하게 했다.
+- 대체한 색상별 텍스처 13장과 중복 보스 머티리얼 12개를 outputs/shared-board-visuals/retired/로 보관했다.
+  변경 전 씬·프리팹·에셋은 before/에 보관했다. 기존 보드 외곽/바닥과 UI는 별도다.
+- 확인: 외부 런타임·에디터·플레이어 C# 컴파일 오류/경고 0. 색상 조회 검사 14개 통과.
+  경로/타일 배치·타워 스케일 유지, 저장된 화살표 방향 33개, GUID 연결과 원본 명암·알파를 검사했다.
+  발키리 마스크와 캐릭터 그림은 변경하지 않았다. Unity 실행·화면·셰이더 검증은 하지 않았다.

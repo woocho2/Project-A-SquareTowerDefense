@@ -78,8 +78,9 @@ public class DebuffZone : MonoBehaviour
 
     private bool MoveToPathIndex(int index)
     {
-        // Start(0번)에는 타일 효과가 적용되지 않으므로 장판을 놓을 수 없습니다.
-        if (TileManager.Instance == null || index <= 0 || !TileManager.Instance.TryGetPathWorldPosition(index, out Vector3 center)) return false;
+        // 비프로스트 칸에는 장판을 놓을 수 없습니다. 0번(Start)은 평범한 칸이라 놓을 수 있습니다.
+        if (TileManager.Instance == null || TileManager.Instance.GetTileTypeAt(index) == PathTileBuffType.Bifrost) return false;
+        if (!TileManager.Instance.TryGetPathWorldPosition(index, out Vector3 center)) return false;
 
         center.z = transform.position.z;
         transform.position = center;

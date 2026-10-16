@@ -1,0 +1,4 @@
+PASS: 1048576 atlas pixels contain exactly RGBA(255,255,255,255) or RGBA(0,0,0,0).
+Opaque=106833; transparent=941743.
+Water: single droplet in 256x256 cell at PNG (256,768); height 180, centered.
+PASS: original 13 slice IDs/names/rects preserved; only water references changed in both prefabs.

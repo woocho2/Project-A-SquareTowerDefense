@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9206132105379693727}
@@ -282,6 +282,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c4addbeb5994f00ae570f852388b10c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCubeMeshVisual
+  m_appearance: {fileID: 11400000, guid: fc98e507947c490b9aad3d78015f8c66, type: 2}
+  m_sharedVisuals: {fileID: 11400000, guid: d9b3d0b98a2b476b8ebef152fc6fb854, type: 2}
   m_faceAssetPool:
   - {fileID: 2100000, guid: 9df8be1bab4a2fc47921e74135f607a4, type: 2}
   - {fileID: 2100000, guid: b57563c28da8cb0478e2b83544d11bb6, type: 2}

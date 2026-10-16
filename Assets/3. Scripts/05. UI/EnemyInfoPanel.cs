@@ -665,7 +665,7 @@ public class EnemyInfoPanel : MonoBehaviour
             ? m_selectedEnemy.EnemyData.DisplayName
             : m_selectedEnemy.gameObject.name;
 
-        if (m_selectedEnemy.IsBoss) enemyName = $"[BOSS] {enemyName}";
+        if (m_selectedEnemy.IsBoss) enemyName = $"[BOSS] {enemyName} 남은 턴 {m_selectedEnemy.RemainingBossTurns}";
         if (m_txtDetailTitle != null) m_txtDetailTitle.text = enemyName;
 
         // 체력
@@ -738,7 +738,7 @@ public class EnemyInfoPanel : MonoBehaviour
             PathTileBuffType tileType = TileManager.Instance.GetTileTypeAt(m_currentPathCell);
             switch (tileType)
             {
-                case PathTileBuffType.SpeedTile:
+                case PathTileBuffType.MoveTile:
                     buffDescriptions.Add("스피드 타일 효과\n행동주기 1 감소, 이동 주사위 최댓값 +2 증가");
                     break;
                 case PathTileBuffType.DefendTile:

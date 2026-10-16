@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// TileManager의 패스 인덱스에 등록된 적을 대상으로, 한 번의 적 턴에서 소환과 이동을 순서대로 처리합니다.
+/// TileManager의 패스 인덱스에 등록된 적을 대상으로, 웨이브 시작의 일괄 소환과 적 턴의 이동을 처리합니다.
 /// 타일 효과와 디버프 턴 진행은 GameManager가 정한 단계에서 별도로 호출합니다.
 /// </summary>
 public class EnemyManager : MonoBehaviour
@@ -36,21 +36,13 @@ public class EnemyManager : MonoBehaviour
     #region Enemy Turn Processing
 
     /// <summary>
-    /// 필요하면 이번 턴의 적을 먼저 소환한 뒤, 살아 있는 모든 적의 이동 완료를 기다립니다.
+    /// 이번 웨이브의 적을 한 번에 소환하고, 모두 착지할 때까지 기다립니다.
     /// </summary>
-    public IEnumerator ProcessEnemyTurnRoutine(bool shouldSpawn)
+    public IEnumerator SpawnWaveRoutine()
     {
-        // 웨이브 1~5턴에만 사이클별 소환 수만큼 적을 추가합니다.
-        if (shouldSpawn && WaveManager.Instance != null)
-        {
-            WaveManager.Instance.SpawnWaveEnemiesForTurn();
-            if (GameManager.Instance.CheckEnemyLimit())
-            {
-                yield break;   
-            }                        
-        }
+        if (WaveManager.Instance != null) WaveManager.Instance.SpawnWaveEnemies();
 
-        // 새 적이 모두 착지할 때까지 기존 적도 기다렸다가 함께 이동합니다.
+        // 새 큐브가 모두 착지해야 플레이어 턴으로 넘어갑니다.
         List<EnemyHealthController> spawnedEnemies = GetEnemiesOnPath();
         bool anySpawning;
         do
@@ -66,8 +58,14 @@ public class EnemyManager : MonoBehaviour
             }
             if (anySpawning) yield return null;
         } while (anySpawning);
+    }
 
-        // 새로 소환된 적을 포함해 현재 필드의 모든 적이 동시에 이동을 시작합니다.
+    /// <summary>
+    /// 살아 있는 모든 적의 이동 완료를 기다립니다.
+    /// </summary>
+    public IEnumerator ProcessEnemyTurnRoutine()
+    {
+        // 현재 필드의 모든 적이 동시에 이동을 시작합니다.
         List<EnemyMoveController> movingEnemies = new List<EnemyMoveController>();
         foreach (EnemyHealthController enemy in GetEnemiesOnPath())
         {
@@ -119,6 +117,22 @@ public class EnemyManager : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// 모든 보스·중간 보스의 남은 제한 턴을 1 줄입니다. 0이 된 보스가 있으면 true를 반환합니다.
+    /// </summary>
+    public bool AdvanceAllBossTurnLimits()
+    {
+        foreach (EnemyHealthController enemy in GetEnemiesOnPath())
+        {
+            if (!enemy.gameObject.activeInHierarchy || !enemy.IsBoss) continue;
+
+            enemy.AdvanceBossTurnLimit();
+            if (enemy.IsBossTurnLimitOver) return true;
+        }
+        return false;
+    }
+
 
     // 적 목록의 원본은 TileManager의 패스 인덱스별 점유 목록입니다.
     private static List<EnemyHealthController> GetEnemiesOnPath()

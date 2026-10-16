@@ -1,0 +1,8 @@
+﻿PASS: Assets/2. Prefab/3. Enemy/BossCharacters/EnemyBoss_Brunhild.prefab (six states, mesh movement, local references, preserved gameplay/HP references)
+PASS: Assets/2. Prefab/3. Enemy/BossCharacters/EnemyBoss_Loki.prefab (six states, mesh movement, local references, preserved gameplay/HP references)
+PASS: Assets/2. Prefab/3. Enemy/4. Enemy_middleBoss.prefab (six states, mesh movement, local references, preserved gameplay/HP references)
+PASS: Assets/2. Prefab/3. Enemy/5. Enemy_boss.prefab (six states, mesh movement, local references, preserved gameplay/HP references)
+PASS: Assets/2. Prefab/=====Pool=====.prefab (only two boss prefab references changed)
+PASS: Assets/1. Scenes/3. Stage1.unity (only two boss prefab references changed)
+PASS: common six-submesh mesh and atlas UV-transform shader reused; no runtime code changes required.
+Unity was not launched. Import, rendering, and gameplay validation are left to the user.
