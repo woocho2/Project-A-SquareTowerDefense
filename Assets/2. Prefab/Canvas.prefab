@@ -2462,6 +2462,7 @@ GameObject:
   - component: {fileID: 7573294508722195085}
   - component: {fileID: 4170685178468366441}
   - component: {fileID: 3518276299396026578}
+  - component: {fileID: 8800100000000000001}
   m_Layer: 5
   m_Name: Img_CreateTowerName_Frame 3:2
   m_TagString: Untagged
@@ -2516,8 +2517,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2314, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2402, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2525,7 +2526,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 610041158088424483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &626678932648835307
 GameObject:
   m_ObjectHideFlags: 0
@@ -2696,6 +2715,7 @@ GameObject:
   - component: {fileID: 2392488823630189018}
   - component: {fileID: 4640701146269983811}
   - component: {fileID: 6573152903711986177}
+  - component: {fileID: 8800100000000000002}
   m_Layer: 5
   m_Name: Img_CombineEmblem_Frame 1:1
   m_TagString: Untagged
@@ -2750,7 +2770,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2305, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Sprite: {fileID: 2402, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2759,7 +2779,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 670623661058715908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &684843570301749240
 GameObject:
   m_ObjectHideFlags: 0
@@ -2856,6 +2894,7 @@ GameObject:
   - component: {fileID: 7833307844737750961}
   - component: {fileID: 3280972226031226991}
   - component: {fileID: 8434814818971506732}
+  - component: {fileID: 8800100000000000003}
   m_Layer: 5
   m_Name: Img_C_CombineEmblem_BG 1:1
   m_TagString: Untagged
@@ -2910,7 +2949,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2205, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2919,7 +2958,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696131352760564558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 2
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.14901961, g: 0.21960784, b: 0.33333334, a: 1}
 --- !u!1 &738327375346814989
 GameObject:
   m_ObjectHideFlags: 0
@@ -3777,6 +3834,7 @@ GameObject:
   - component: {fileID: 3519766382590786291}
   - component: {fileID: 5641609377627586207}
   - component: {fileID: 6227226662249303419}
+  - component: {fileID: 8800100000000000004}
   m_Layer: 5
   m_Name: Img_A_CurrentGold_BG 3:1
   m_TagString: Untagged
@@ -3831,8 +3889,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2010, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3840,7 +3898,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 897202519934709125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 0
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 1, g: 0.9882353, b: 0.9254902, a: 1}
 --- !u!1 &899244074217506197
 GameObject:
   m_ObjectHideFlags: 0
@@ -3852,6 +3928,7 @@ GameObject:
   - component: {fileID: 4699060689560425281}
   - component: {fileID: 3561565074854753157}
   - component: {fileID: 4122412309006407195}
+  - component: {fileID: 8800100000000000005}
   m_Layer: 5
   m_Name: Img_Wave_Frame 3:1
   m_TagString: Untagged
@@ -3906,8 +3983,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2310, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2402, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3915,7 +3992,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899244074217506197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &914779180037072436
 GameObject:
   m_ObjectHideFlags: 0
@@ -4772,6 +4867,7 @@ GameObject:
   - component: {fileID: 6801111368773126216}
   - component: {fileID: 2894966483806437637}
   - component: {fileID: 750099288839602137}
+  - component: {fileID: 8800100000000000006}
   m_Layer: 5
   m_Name: Img_A_BackGround_BG 1:1 Slice
   m_TagString: Untagged
@@ -4826,7 +4922,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2005, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4835,7 +4931,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1136415003996795559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 0
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 1, g: 0.9882353, b: 0.9254902, a: 1}
 --- !u!1 &1175872198795756633
 GameObject:
   m_ObjectHideFlags: 0
@@ -4984,6 +5098,7 @@ GameObject:
   - component: {fileID: 5918220608280342840}
   - component: {fileID: 498159808795381220}
   - component: {fileID: 3723410155652823411}
+  - component: {fileID: 8800100000000000007}
   m_Layer: 5
   m_Name: Img_B_Target_BG 6:1
   m_TagString: Untagged
@@ -5038,8 +5153,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2106, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5047,7 +5162,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1198669696885125106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 1
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9245283, g: 0.8644415, b: 0.65850836, a: 1}
 --- !u!1 &1198966700772631095
 GameObject:
   m_ObjectHideFlags: 0
@@ -5200,7 +5333,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5778648779384294947
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5522,6 +5655,7 @@ GameObject:
   - component: {fileID: 3874323727781026910}
   - component: {fileID: 8552077115612837563}
   - component: {fileID: 8137439116645628972}
+  - component: {fileID: 8800100000000000008}
   m_Layer: 5
   m_Name: Img_A_Life_BG 3:1
   m_TagString: Untagged
@@ -5576,8 +5710,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2010, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5585,7 +5719,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298422070131583974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 0
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 1, g: 0.9882353, b: 0.9254902, a: 1}
 --- !u!1 &1312396219245656567
 GameObject:
   m_ObjectHideFlags: 0
@@ -5818,6 +5970,7 @@ GameObject:
   - component: {fileID: 1266168107496399085}
   - component: {fileID: 6287402735954981735}
   - component: {fileID: 8021606826768804583}
+  - component: {fileID: 8800100000000000009}
   m_Layer: 5
   m_Name: Img_GameSpeed_Frame 1:1
   m_TagString: Untagged
@@ -5872,7 +6025,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2305, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Sprite: {fileID: 2403, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5881,7 +6034,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1357428614586887896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &1404154674371235709
 GameObject:
   m_ObjectHideFlags: 0
@@ -6105,6 +6276,7 @@ GameObject:
   - component: {fileID: 6825492837356825866}
   - component: {fileID: 6012453212557156529}
   - component: {fileID: 9017101260729075521}
+  - component: {fileID: 8800100000000000010}
   m_Layer: 5
   m_Name: Img_B_Stats_BG 2:1
   m_TagString: Untagged
@@ -6159,8 +6331,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2112, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -6168,7 +6340,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1430571558686864604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 1
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9245283, g: 0.8644415, b: 0.65850836, a: 1}
 --- !u!1 &1469981838943588171
 GameObject:
   m_ObjectHideFlags: 0
@@ -6399,7 +6589,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8878049129392573744
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6938,6 +7128,7 @@ GameObject:
   - component: {fileID: 3830188221089406622}
   - component: {fileID: 6036087209279257159}
   - component: {fileID: 2274194421993843974}
+  - component: {fileID: 8800100000000000011}
   m_Layer: 5
   m_Name: Img_CombineColor_Frame 1:1
   m_TagString: Untagged
@@ -6992,7 +7183,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2305, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Sprite: {fileID: 2402, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7001,7 +7192,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1630920186235066923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &1714703366595094783
 GameObject:
   m_ObjectHideFlags: 0
@@ -7013,6 +7222,7 @@ GameObject:
   - component: {fileID: 3582734548298164443}
   - component: {fileID: 2457605129638095028}
   - component: {fileID: 6664126457820021456}
+  - component: {fileID: 8800100000000000012}
   m_Layer: 5
   m_Name: Img_C_CombineExact_BG 1:1
   m_TagString: Untagged
@@ -7067,7 +7277,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2205, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7076,7 +7286,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1714703366595094783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 2
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.14901961, g: 0.21960784, b: 0.33333334, a: 1}
 --- !u!1 &1733638298789179474
 GameObject:
   m_ObjectHideFlags: 0
@@ -8723,6 +8951,7 @@ GameObject:
   - component: {fileID: 139767961452987228}
   - component: {fileID: 7713359990626405917}
   - component: {fileID: 6700100966843730612}
+  - component: {fileID: 8800100000000000013}
   m_Layer: 5
   m_Name: Img_C_CombineColor_BG 1:1
   m_TagString: Untagged
@@ -8777,7 +9006,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2205, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8786,7 +9015,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2054571096414337342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 2
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.14901961, g: 0.21960784, b: 0.33333334, a: 1}
 --- !u!1 &2126961037424133958
 GameObject:
   m_ObjectHideFlags: 0
@@ -9083,7 +9330,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8072685275418215309
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9345,7 +9592,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5710981590515884924
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9609,6 +9856,7 @@ GameObject:
   - component: {fileID: 6058443647550166668}
   - component: {fileID: 4975981618749181506}
   - component: {fileID: 5899873466638705774}
+  - component: {fileID: 8800100000000000014}
   m_Layer: 5
   m_Name: Img_A_Option_BG 1:1
   m_TagString: Untagged
@@ -9663,8 +9911,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2004, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -9672,7 +9920,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2275631089026224280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 0
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 1, g: 0.9882353, b: 0.9254902, a: 1}
 --- !u!1 &2282767694564670215
 GameObject:
   m_ObjectHideFlags: 0
@@ -10371,6 +10637,7 @@ GameObject:
   - component: {fileID: 5628987272688796858}
   - component: {fileID: 6270385666347696458}
   - component: {fileID: 1732370034624114865}
+  - component: {fileID: 8800100000000000015}
   m_Layer: 5
   m_Name: Img_C_TierUpTower_BG 2:3
   m_TagString: Untagged
@@ -10425,8 +10692,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2215, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -10434,7 +10701,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2433334921828005478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 2
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.14901961, g: 0.21960784, b: 0.33333334, a: 1}
 --- !u!1 &2438197218216607829
 GameObject:
   m_ObjectHideFlags: 0
@@ -10961,7 +11246,7 @@ RectTransform:
   m_GameObject: {fileID: 2496719023786573408}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5710981590515884924}
@@ -10975,6 +11260,7 @@ RectTransform:
   - {fileID: 2911313330983530291}
   - {fileID: 2906335298989268810}
   - {fileID: 1012261111602121101}
+  - {fileID: 3949093359065936073}
   m_Father: {fileID: 9019515539557091308}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -11002,6 +11288,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dc7d502c28fbe146a2689630afee139, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TowerInfoPanel
+  cardView: {fileID: 377614810756243537}
   txt_level: {fileID: 0}
   txt_name: {fileID: 2774314494109469694}
   txt_tier: {fileID: 0}
@@ -13323,7 +13610,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 100102, guid: a59a7d01000100010001000100010099, type: 3}
+  m_Sprite: {fileID: 100102, guid: b201a001000100010001000100010010, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -13398,7 +13685,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 100103, guid: a59a7d01000100010001000100010099, type: 3}
+  m_Sprite: {fileID: 100103, guid: b201a001000100010001000100010010, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -13611,6 +13898,7 @@ GameObject:
   - component: {fileID: 6794212542908478386}
   - component: {fileID: 3900633865820727260}
   - component: {fileID: 3630046900386806833}
+  - component: {fileID: 8800100000000000016}
   m_Layer: 5
   m_Name: Img_TurnEnd_Frame 4:1
   m_TagString: Untagged
@@ -13665,8 +13953,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2308, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2402, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -13674,7 +13962,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3146937412605223639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &3170732695604247041
 GameObject:
   m_ObjectHideFlags: 0
@@ -13935,6 +14241,7 @@ GameObject:
   - component: {fileID: 490677120637577203}
   - component: {fileID: 151923946599181689}
   - component: {fileID: 4195841020430683046}
+  - component: {fileID: 8800100000000000017}
   m_Layer: 5
   m_Name: Img_A_CreateTowerName_BG 3:2
   m_TagString: Untagged
@@ -13993,8 +14300,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2014, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -14002,7 +14309,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3233499729573819592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 0
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 1, g: 0.9882353, b: 0.9254902, a: 1}
 --- !u!1 &3268129105175063723
 GameObject:
   m_ObjectHideFlags: 0
@@ -14137,6 +14462,7 @@ GameObject:
   - component: {fileID: 5797687076233103495}
   - component: {fileID: 7256952250695447899}
   - component: {fileID: 146595475076699256}
+  - component: {fileID: 8800100000000000018}
   m_Layer: 5
   m_Name: Img_C_CreateTower_BG 2:3
   m_TagString: Untagged
@@ -14191,8 +14517,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2215, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -14200,7 +14526,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3273014576264519159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 2
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.14901961, g: 0.21960784, b: 0.33333334, a: 1}
 --- !u!1 &3325731423389851308
 GameObject:
   m_ObjectHideFlags: 0
@@ -15363,7 +15707,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5433095469016993145
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15628,6 +15972,7 @@ GameObject:
   - component: {fileID: 5909563522438186543}
   - component: {fileID: 3987334555380067286}
   - component: {fileID: 4265788382760148761}
+  - component: {fileID: 8800100000000000019}
   m_Layer: 5
   m_Name: Img_TierUpTowerName_Frame 3:2
   m_TagString: Untagged
@@ -15682,8 +16027,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2314, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2402, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -15691,7 +16036,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3941985990714258273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &3945008146090798262
 GameObject:
   m_ObjectHideFlags: 0
@@ -15840,6 +16203,7 @@ GameObject:
   - component: {fileID: 3512411287287767985}
   - component: {fileID: 1271206466545032455}
   - component: {fileID: 1646546252326948310}
+  - component: {fileID: 8800100000000000020}
   m_Layer: 5
   m_Name: Img_C_Wave_BG 3:1
   m_TagString: Untagged
@@ -15894,8 +16258,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2210, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -15903,7 +16267,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3980535432162067427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 2
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.14901961, g: 0.21960784, b: 0.33333334, a: 1}
 --- !u!1 &3999335364543539830
 GameObject:
   m_ObjectHideFlags: 0
@@ -15915,6 +16297,7 @@ GameObject:
   - component: {fileID: 169606231373837571}
   - component: {fileID: 3493774207949977730}
   - component: {fileID: 5239025561517766405}
+  - component: {fileID: 8800100000000000021}
   m_Layer: 5
   m_Name: Img_Life_Frame 3:1
   m_TagString: Untagged
@@ -15969,8 +16352,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2310, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2403, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -15978,7 +16361,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3999335364543539830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &4027464942040975152
 GameObject:
   m_ObjectHideFlags: 0
@@ -15990,6 +16391,7 @@ GameObject:
   - component: {fileID: 3599376061357954841}
   - component: {fileID: 741368292563140726}
   - component: {fileID: 1171897532450887254}
+  - component: {fileID: 8800100000000000022}
   m_Layer: 5
   m_Name: Img_CurrentGem_Frame 3:1
   m_TagString: Untagged
@@ -16044,8 +16446,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2310, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2403, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -16053,7 +16455,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4027464942040975152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &4035047515139047244
 GameObject:
   m_ObjectHideFlags: 0
@@ -16341,6 +16761,7 @@ GameObject:
   - component: {fileID: 1700096551229161089}
   - component: {fileID: 4581431405065861896}
   - component: {fileID: 5574703147668486310}
+  - component: {fileID: 8800100000000000023}
   m_Layer: 5
   m_Name: Img_A_ColorUpTowerName_BG 3:2
   m_TagString: Untagged
@@ -16399,8 +16820,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2014, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -16408,7 +16829,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4082940902348303625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 0
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 1, g: 0.9882353, b: 0.9254902, a: 1}
 --- !u!1 &4093660788984875720
 GameObject:
   m_ObjectHideFlags: 0
@@ -16420,6 +16859,7 @@ GameObject:
   - component: {fileID: 8044760442215573699}
   - component: {fileID: 685200658936999020}
   - component: {fileID: 4176125104408575461}
+  - component: {fileID: 8800100000000000024}
   m_Layer: 5
   m_Name: Img_Option_Frame 1:1
   m_TagString: Untagged
@@ -16474,7 +16914,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2305, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Sprite: {fileID: 2403, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -16483,7 +16923,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4093660788984875720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &4114781365198632885
 GameObject:
   m_ObjectHideFlags: 0
@@ -16495,6 +16953,7 @@ GameObject:
   - component: {fileID: 2580502482886021364}
   - component: {fileID: 7351913137329250145}
   - component: {fileID: 527334639208587489}
+  - component: {fileID: 8800100000000000025}
   m_Layer: 5
   m_Name: Img_CreateTower_Frame 2:3
   m_TagString: Untagged
@@ -16549,8 +17008,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2315, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2402, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -16558,7 +17017,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4114781365198632885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &4133530738878815229
 GameObject:
   m_ObjectHideFlags: 0
@@ -17483,7 +17960,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 100101, guid: a59a7d01000100010001000100010099, type: 3}
+  m_Sprite: {fileID: 100101, guid: b201a001000100010001000100010010, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -17583,7 +18060,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3932661159465247304
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18305,6 +18782,7 @@ GameObject:
   - component: {fileID: 5998636110863778997}
   - component: {fileID: 562648538455987046}
   - component: {fileID: 8387644630896507919}
+  - component: {fileID: 8800100000000000026}
   m_Layer: 5
   m_Name: Img_Tower_Frame 6:1
   m_TagString: Untagged
@@ -18359,8 +18837,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2306, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2403, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -18368,7 +18846,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4818639279967798390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &4853155534415968525
 GameObject:
   m_ObjectHideFlags: 0
@@ -18778,6 +19274,7 @@ GameObject:
   - component: {fileID: 8516050630408370209}
   - component: {fileID: 224746510282124883}
   - component: {fileID: 3155084330078966611}
+  - component: {fileID: 8800100000000000027}
   m_Layer: 5
   m_Name: Img_TierUpTower_Frame 2:3
   m_TagString: Untagged
@@ -18832,8 +19329,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2315, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2402, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -18841,7 +19338,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4984803228702186654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &5055160833053804937
 GameObject:
   m_ObjectHideFlags: 0
@@ -18928,6 +19443,7 @@ GameObject:
   - component: {fileID: 8056185809392946692}
   - component: {fileID: 2331105796061694629}
   - component: {fileID: 7585999403140057473}
+  - component: {fileID: 8800100000000000028}
   m_Layer: 5
   m_Name: Img_BackGround_Frame 1:1 Slice
   m_TagString: Untagged
@@ -18982,7 +19498,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2305, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Sprite: {fileID: 2402, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -18991,7 +19507,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5080199473522573111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &5094764903672475735
 GameObject:
   m_ObjectHideFlags: 0
@@ -22940,6 +23474,7 @@ GameObject:
   - component: {fileID: 8323431043188520059}
   - component: {fileID: 8487983223174079079}
   - component: {fileID: 5296297123900823883}
+  - component: {fileID: 8800100000000000029}
   m_Layer: 5
   m_Name: Img_C_ColorUpTower_BG 2:3
   m_TagString: Untagged
@@ -22994,8 +23529,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2215, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -23003,7 +23538,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6287710211515864382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 2
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.14901961, g: 0.21960784, b: 0.33333334, a: 1}
 --- !u!1 &6323440998021684930
 GameObject:
   m_ObjectHideFlags: 0
@@ -24188,7 +24741,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6690007485840296513
 RectTransform:
   m_ObjectHideFlags: 0
@@ -24301,6 +24854,7 @@ GameObject:
   - component: {fileID: 4905608006102490531}
   - component: {fileID: 7546853673126674185}
   - component: {fileID: 2567949497384092068}
+  - component: {fileID: 8800100000000000030}
   m_Layer: 5
   m_Name: Img_C_SellTower_BG 4:1
   m_TagString: Untagged
@@ -24355,8 +24909,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2208, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -24364,7 +24918,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6873765309858754953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 2
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.14901961, g: 0.21960784, b: 0.33333334, a: 1}
 --- !u!1 &6952885317540703986
 GameObject:
   m_ObjectHideFlags: 0
@@ -24376,6 +24948,7 @@ GameObject:
   - component: {fileID: 7019525269262622892}
   - component: {fileID: 1897468430320347581}
   - component: {fileID: 4788092224003924960}
+  - component: {fileID: 8800100000000000031}
   m_Layer: 5
   m_Name: Img_Stats_Frame 2:1
   m_TagString: Untagged
@@ -24430,8 +25003,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2312, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2402, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -24439,7 +25012,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6952885317540703986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &6963828438395063151
 GameObject:
   m_ObjectHideFlags: 0
@@ -25868,6 +26459,7 @@ GameObject:
   - component: {fileID: 7247736223089890929}
   - component: {fileID: 5060971101441024072}
   - component: {fileID: 4773200623969301509}
+  - component: {fileID: 8800100000000000032}
   m_Layer: 5
   m_Name: Img_ColorUpTowerName_Frame 3:2
   m_TagString: Untagged
@@ -25922,8 +26514,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2314, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2402, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -25931,7 +26523,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7277583855454831539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &7282225896047038306
 GameObject:
   m_ObjectHideFlags: 0
@@ -26313,6 +26923,7 @@ GameObject:
   - component: {fileID: 4978261537371772530}
   - component: {fileID: 5592692275814287574}
   - component: {fileID: 2497599700615735504}
+  - component: {fileID: 8800100000000000033}
   m_Layer: 5
   m_Name: Img_CurrentGold_Frame 3:1
   m_TagString: Untagged
@@ -26367,8 +26978,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2310, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2403, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -26376,7 +26987,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7333482517659057311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &7348473749388599164
 GameObject:
   m_ObjectHideFlags: 0
@@ -26566,7 +27195,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7357461218170953261}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -26579,7 +27208,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 5461481920830446396, guid: b201a001000100010001000100010010, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -27325,6 +27954,7 @@ GameObject:
   - component: {fileID: 6240608517092355296}
   - component: {fileID: 9084116570455620555}
   - component: {fileID: 3344335853890939068}
+  - component: {fileID: 8800100000000000034}
   m_Layer: 5
   m_Name: Img_Target_Frame 6:1
   m_TagString: Untagged
@@ -27379,8 +28009,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2306, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2403, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -27388,7 +28018,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7559477442047068026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &7581339342463150684
 GameObject:
   m_ObjectHideFlags: 0
@@ -27800,6 +28448,7 @@ GameObject:
   - component: {fileID: 5301583943472528097}
   - component: {fileID: 559166688171064325}
   - component: {fileID: 4322449430415611511}
+  - component: {fileID: 8800100000000000035}
   m_Layer: 5
   m_Name: Img_CombineExact_Frame 1:1
   m_TagString: Untagged
@@ -27854,7 +28503,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2305, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Sprite: {fileID: 2402, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -27863,7 +28512,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7715712855017043496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &7720615495088400510
 GameObject:
   m_ObjectHideFlags: 0
@@ -27875,6 +28542,7 @@ GameObject:
   - component: {fileID: 253856230542207032}
   - component: {fileID: 5732221745596120537}
   - component: {fileID: 3758505627249276769}
+  - component: {fileID: 8800100000000000036}
   m_Layer: 5
   m_Name: Img_A_TierUpTowerName_BG 3:2
   m_TagString: Untagged
@@ -27933,8 +28601,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2014, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -27942,7 +28610,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7720615495088400510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 0
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 1, g: 0.9882353, b: 0.9254902, a: 1}
 --- !u!1 &7782325673105734041
 GameObject:
   m_ObjectHideFlags: 0
@@ -28153,6 +28839,7 @@ GameObject:
   - component: {fileID: 8402623009861948770}
   - component: {fileID: 8162712181263653209}
   - component: {fileID: 835958106707745836}
+  - component: {fileID: 8800100000000000037}
   m_Layer: 5
   m_Name: Img_B_Tower_BG 6:1
   m_TagString: Untagged
@@ -28207,8 +28894,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2106, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -28216,7 +28903,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7830405370002931930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 1
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9245283, g: 0.8644415, b: 0.65850836, a: 1}
 --- !u!1 &7832611327619714101
 GameObject:
   m_ObjectHideFlags: 0
@@ -28308,7 +29013,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2911313330983530291
 RectTransform:
   m_ObjectHideFlags: 0
@@ -28469,7 +29174,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7737896559783393424
 RectTransform:
   m_ObjectHideFlags: 0
@@ -28623,6 +29328,7 @@ GameObject:
   - component: {fileID: 6221624123634797498}
   - component: {fileID: 1691709098833896168}
   - component: {fileID: 3478961865715597771}
+  - component: {fileID: 8800100000000000038}
   m_Layer: 5
   m_Name: Img_A_CurrentGem_BG 3:1
   m_TagString: Untagged
@@ -28677,8 +29383,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2010, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -28686,7 +29392,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7865441803525037125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 0
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 1, g: 0.9882353, b: 0.9254902, a: 1}
 --- !u!1 &7880183090088079059
 GameObject:
   m_ObjectHideFlags: 0
@@ -29060,6 +29784,7 @@ GameObject:
   - component: {fileID: 2013691903544481061}
   - component: {fileID: 2172869558918825670}
   - component: {fileID: 8211286329154816527}
+  - component: {fileID: 8800100000000000039}
   m_Layer: 5
   m_Name: Img_SellTower_Frame 4:1
   m_TagString: Untagged
@@ -29114,8 +29839,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2308, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2403, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -29123,7 +29848,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7984518622446401221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &8014918454593175352
 GameObject:
   m_ObjectHideFlags: 0
@@ -29457,6 +30200,7 @@ GameObject:
   - component: {fileID: 8294241703279008218}
   - component: {fileID: 7172626065423645440}
   - component: {fileID: 3134285348777040023}
+  - component: {fileID: 8800100000000000040}
   m_Layer: 5
   m_Name: Img_A_GameSpeed_BG 1:1
   m_TagString: Untagged
@@ -29511,8 +30255,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2004, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -29520,7 +30264,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8074626361976657865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 0
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 1, g: 0.9882353, b: 0.9254902, a: 1}
 --- !u!1 &8119997518247854468
 GameObject:
   m_ObjectHideFlags: 0
@@ -29888,6 +30650,7 @@ GameObject:
   - component: {fileID: 2561768541378992600}
   - component: {fileID: 4517207998023080459}
   - component: {fileID: 8694265999651757704}
+  - component: {fileID: 8800100000000000041}
   m_Layer: 5
   m_Name: Img_B_Keyword_BG 6:1
   m_TagString: Untagged
@@ -29942,8 +30705,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2106, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -29951,7 +30714,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8288180329173862817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 1
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9245283, g: 0.8644415, b: 0.65850836, a: 1}
 --- !u!1 &8381289835484338200
 GameObject:
   m_ObjectHideFlags: 0
@@ -31089,6 +31870,7 @@ GameObject:
   - component: {fileID: 4385297607373960829}
   - component: {fileID: 5621570308037758322}
   - component: {fileID: 5432468123914764598}
+  - component: {fileID: 8800100000000000042}
   m_Layer: 5
   m_Name: Img_Keyword_Frame 6:1
   m_TagString: Untagged
@@ -31143,8 +31925,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2306, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2403, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -31152,7 +31934,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 4.6875
+--- !u!114 &8800100000000000042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8590056612107658837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &8635485537334077084
 GameObject:
   m_ObjectHideFlags: 0
@@ -31199,6 +31999,7 @@ GameObject:
   - component: {fileID: 4418478360586617352}
   - component: {fileID: 4680397598624246787}
   - component: {fileID: 4630773882983091725}
+  - component: {fileID: 8800100000000000043}
   m_Layer: 5
   m_Name: Img_ColorUpTower_Frame 2:3
   m_TagString: Untagged
@@ -31253,8 +32054,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2315, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2402, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -31262,7 +32063,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8652066999629288295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.9974823, g: 1, b: 0.8349056, a: 1}
 --- !u!1 &8674904638798835339
 GameObject:
   m_ObjectHideFlags: 0
@@ -32280,6 +33099,7 @@ GameObject:
   - component: {fileID: 36655507851705646}
   - component: {fileID: 194430204582222503}
   - component: {fileID: 4352257608120516371}
+  - component: {fileID: 8800100000000000044}
   m_Layer: 5
   m_Name: Img_C_TurnEnd_BG 4:1
   m_TagString: Untagged
@@ -32334,8 +33154,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2208, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -32343,7 +33163,25 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 3.125
+--- !u!114 &8800100000000000044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9061348493787933920}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 2
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 1
+  customColor: {r: 0.14901961, g: 0.21960784, b: 0.33333334, a: 1}
 --- !u!1 &9077209402182838331
 GameObject:
   m_ObjectHideFlags: 0
@@ -32721,3 +33559,128 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1001 &920500000000000001
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8770730461144707938}
+    m_Modifications:
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1280
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183609394694944955, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+      propertyPath: m_Name
+      value: TowerInfoCard
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+--- !u!114 &377614810756243537 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 719392264751816784, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+  m_PrefabInstance: {fileID: 920500000000000001}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20307f5dfbdc44328b5148ce6cc412a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TowerInfoCardView
+--- !u!224 &3949093359065936073 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4182641891814535368, guid: 630d56b331bed4e46acd6108d7d8b6fe, type: 3}
+  m_PrefabInstance: {fileID: 920500000000000001}
+  m_PrefabAsset: {fileID: 0}

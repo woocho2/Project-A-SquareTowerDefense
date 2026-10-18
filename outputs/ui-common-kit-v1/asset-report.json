@@ -1,0 +1,40 @@
+{
+  "dimensions": [
+    1024,
+    256
+  ],
+  "oldDimensions": [
+    4096,
+    2048
+  ],
+  "texelReduction": 32,
+  "uniqueShapes": 3,
+  "compatibilityAliases": 60,
+  "canonicalSprites": [
+    "Shared_A_Surface",
+    "Shared_Frame_Decorated",
+    "Shared_Frame_Compact"
+  ],
+  "shadeRange": [
+    200,
+    255
+  ],
+  "atlasGuid": "8b158e0989f140a88351053d1be429f7",
+  "atlasSha256": "fe6c0e5aa58c5e4723774d25bda51e4cc0bfd1dfb739519b085cf0c5242adb13",
+  "guids": {
+    "UITileSkin": "2514f906c5fc403e64ba5a3b997f22d7",
+    "UITileSurface": "f43424de21bfacd130bf5c0d3f0d9400",
+    "UITilePanel": "5490e0460ebb7953510c8ca8aa97ad75"
+  },
+  "skinGuid": "73bceaeac919eea6cf8c1c241a8bf627",
+  "prefabs": [
+    {
+      "path": "Assets/2. Prefab/Canvas.prefab",
+      "images": 44
+    },
+    {
+      "path": "Assets/2. Prefab/BuffPrefab.prefab",
+      "images": 2
+    }
+  ]
+}

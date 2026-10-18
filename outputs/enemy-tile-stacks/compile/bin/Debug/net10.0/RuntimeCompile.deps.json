@@ -83,6 +83,7 @@
           "Unity.VisualStudio.Editor": "0.0.0.0",
           "UnityEditor.AccessibilityModule": "0.0.0.0",
           "UnityEditor.AdaptivePerformanceModule": "0.0.0.0",
+          "UnityEditor.Apple.Extensions.Common": "1.0.0.0",
           "UnityEditor.AssetComplianceModule": "0.0.0.0",
           "UnityEditor.BuildProfileModule": "0.0.0.0",
           "UnityEditor.ClothModule": "0.0.0.0",
@@ -100,6 +101,8 @@
           "UnityEditor.GridModule": "0.0.0.0",
           "UnityEditor.HierarchyModule": "0.0.0.0",
           "UnityEditor.InAppPurchasingModule": "0.0.0.0",
+          "UnityEditor.iOS.Extensions.Common": "1.0.0.0",
+          "UnityEditor.iOS.Extensions.Xcode": "1.0.0.0",
           "UnityEditor.LevelPlayModule": "0.0.0.0",
           "UnityEditor.MediaModule": "0.0.0.0",
           "UnityEditor.MultiplayerModule": "0.0.0.0",
@@ -823,6 +826,14 @@
           }
         }
       },
+      "UnityEditor.Apple.Extensions.Common/1.0.0.0": {
+        "runtime": {
+          "UnityEditor.Apple.Extensions.Common.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "UnityEditor.AssetComplianceModule/0.0.0.0": {
         "runtime": {
           "UnityEditor.AssetComplianceModule.dll": {
@@ -956,6 +967,22 @@
           "UnityEditor.InAppPurchasingModule.dll": {
             "assemblyVersion": "0.0.0.0",
             "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "UnityEditor.iOS.Extensions.Common/1.0.0.0": {
+        "runtime": {
+          "UnityEditor.iOS.Extensions.Common.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "UnityEditor.iOS.Extensions.Xcode/1.0.0.0": {
+        "runtime": {
+          "UnityEditor.iOS.Extensions.Xcode.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
           }
         }
       },
@@ -1935,6 +1962,14 @@
           }
         }
       },
+      "IOSCommonPlayerBuildProgram.Data/0.0.0.0": {
+        "runtime": {
+          "IOSCommonPlayerBuildProgram.Data.dll": {
+            "assemblyVersion": "0.0.0.0",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
       "NiceIO/0.0.0.0": {
         "runtime": {
           "NiceIO.dll": {
@@ -2350,6 +2385,11 @@
       "serviceable": false,
       "sha512": ""
     },
+    "UnityEditor.Apple.Extensions.Common/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
     "UnityEditor.AssetComplianceModule/0.0.0.0": {
       "type": "reference",
       "serviceable": false,
@@ -2431,6 +2471,16 @@
       "sha512": ""
     },
     "UnityEditor.InAppPurchasingModule/0.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "UnityEditor.iOS.Extensions.Common/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "UnityEditor.iOS.Extensions.Xcode/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
@@ -3041,6 +3091,11 @@
       "sha512": ""
     },
     "Unity.Cecil/0.10.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "IOSCommonPlayerBuildProgram.Data/0.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

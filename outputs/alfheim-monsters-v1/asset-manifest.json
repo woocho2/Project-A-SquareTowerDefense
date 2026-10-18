@@ -1,0 +1,48 @@
+{
+  "assets": {
+    "Alfheim": "2e52f24625940b5a7fbc54ef4ac261b9",
+    "CorruptedElf_Character": "56813670e8e5c1b7032004718125625c",
+    "CorruptedElfCaptain_Character": "c5ffd8788bd52c0e2448132cefa56d74",
+    "CorruptedElfChief_Character": "7a260ed5a7c9c1c8ab6272ca7d4d5a5a",
+    "CorruptedElf_EquipmentMask": "3080b72317b6ff8e5a52bddf3a662768",
+    "CorruptedElf_Appearance": "a851200a6cbadf2807fb193fac534fd5",
+    "CorruptedElfCaptain_EquipmentMask": "d9410f1f836bb86dd90f4e9e8f9072d2",
+    "CorruptedElfCaptain_Appearance": "5510897d77e034bdf3fef91914ace385",
+    "CorruptedElfChief_EquipmentMask": "bc0280a41fb915f71c523d0423a0a4d6",
+    "CorruptedElfChief_Appearance": "15d172b50a74ed0a2fb3f48efc369361"
+  },
+  "bounds": {
+    "CorruptedElf": {
+      "left": 69,
+      "top": 115,
+      "width": 371,
+      "height": 373,
+      "bottom": 488
+    },
+    "CorruptedElfCaptain": {
+      "left": 54,
+      "top": 89,
+      "width": 425,
+      "height": 399,
+      "bottom": 488
+    },
+    "CorruptedElfChief": {
+      "left": 61,
+      "top": 96,
+      "width": 383,
+      "height": 392,
+      "bottom": 488
+    }
+  },
+  "faceLayout": {
+    "config": "../character-scale-alignment-v1/layout-config.json",
+    "logicalCanvas": 256,
+    "target": {
+      "eyeX": 128,
+      "eyeY": 160,
+      "eyeDistance": 39.5,
+      "chinY": 184,
+      "bodyBottomY": 244
+    }
+  }
+}

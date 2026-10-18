@@ -1,0 +1,1840 @@
+{
+  "cellSize": 512,
+  "pixelsPerUnit": 384,
+  "source": "Native larger originals, sampled directly through previous layout transforms without the 256px intermediate",
+  "portraits": [
+    {
+      "id": "53001",
+      "name": "Synergy_Odin_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/15_Synergy_A.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0,
+        "dy": -0.03125,
+        "fx": 1,
+        "fy": 1.0006249999999999,
+        "error": 9.393545505459318
+      },
+      "bounds": {
+        "left": 61,
+        "top": 127,
+        "right": 439,
+        "bottom": 487
+      },
+      "visiblePixels": 106135,
+      "edgePixels": 0
+    },
+    {
+      "id": "53002",
+      "name": "Synergy_Thor_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/15_Synergy_A.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": -0.03125,
+        "dy": 0,
+        "fx": 0.9993750000000001,
+        "fy": 0.999375,
+        "error": 7.7154985929180855
+      },
+      "bounds": {
+        "left": 64,
+        "top": 123,
+        "right": 449,
+        "bottom": 487
+      },
+      "visiblePixels": 98084,
+      "edgePixels": 0
+    },
+    {
+      "id": "53003",
+      "name": "Synergy_Loki_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/15_Synergy_A.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": -0.03125,
+        "dy": 0.03125,
+        "fx": 1.0003125,
+        "fy": 1,
+        "error": 8.015313579843244
+      },
+      "bounds": {
+        "left": 62,
+        "top": 139,
+        "right": 433,
+        "bottom": 487
+      },
+      "visiblePixels": 87912,
+      "edgePixels": 0
+    },
+    {
+      "id": "53004",
+      "name": "Synergy_Hel_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/15_Synergy_A.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0,
+        "dy": 0,
+        "fx": 1,
+        "fy": 0.9996875,
+        "error": 8.138299892187336
+      },
+      "bounds": {
+        "left": 74,
+        "top": 145,
+        "right": 435,
+        "bottom": 487
+      },
+      "visiblePixels": 93613,
+      "edgePixels": 0
+    },
+    {
+      "id": "53005",
+      "name": "Synergy_Surtr_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/16_Synergy_B.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0,
+        "dy": 0,
+        "fx": 1.0003125,
+        "fy": 1.000625,
+        "error": 6.025372698550099
+      },
+      "bounds": {
+        "left": 68,
+        "top": 116,
+        "right": 426,
+        "bottom": 487
+      },
+      "visiblePixels": 93618,
+      "edgePixels": 0
+    },
+    {
+      "id": "53006",
+      "name": "Synergy_Freyr_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/16_Synergy_B.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0,
+        "dy": -0.03125,
+        "fx": 1.0003125,
+        "fy": 1,
+        "error": 8.717144244959245
+      },
+      "bounds": {
+        "left": 79,
+        "top": 138,
+        "right": 433,
+        "bottom": 487
+      },
+      "visiblePixels": 82659,
+      "edgePixels": 0
+    },
+    {
+      "id": "53007",
+      "name": "Synergy_Baldr_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/16_Synergy_B.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0,
+        "dy": 0,
+        "fx": 0.9996875000000001,
+        "fy": 0.999375,
+        "error": 9.0952859933581
+      },
+      "bounds": {
+        "left": 62,
+        "top": 149,
+        "right": 434,
+        "bottom": 488
+      },
+      "visiblePixels": 85788,
+      "edgePixels": 0
+    },
+    {
+      "id": "53008",
+      "name": "Synergy_Skadi_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/16_Synergy_B.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0,
+        "dy": 0,
+        "fx": 1,
+        "fy": 1,
+        "error": 8.431294998846063
+      },
+      "bounds": {
+        "left": 68,
+        "top": 150,
+        "right": 442,
+        "bottom": 486
+      },
+      "visiblePixels": 90710,
+      "edgePixels": 0
+    },
+    {
+      "id": "53009",
+      "name": "Synergy_Freyja_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/17_Synergy_C.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0,
+        "dy": 0,
+        "fx": 1.0003125,
+        "fy": 0.9996875000000001,
+        "error": 9.567599979091156
+      },
+      "bounds": {
+        "left": 59,
+        "top": 136,
+        "right": 435,
+        "bottom": 487
+      },
+      "visiblePixels": 95444,
+      "edgePixels": 0
+    },
+    {
+      "id": "53010",
+      "name": "Synergy_Ymir_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/17_Synergy_C.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0,
+        "dy": 0,
+        "fx": 0.9996875,
+        "fy": 0.9996875000000001,
+        "error": 9.684061670423494
+      },
+      "bounds": {
+        "left": 59,
+        "top": 149,
+        "right": 438,
+        "bottom": 487
+      },
+      "visiblePixels": 92633,
+      "edgePixels": 0
+    },
+    {
+      "id": "53011",
+      "name": "Synergy_Ullr_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/17_Synergy_C.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0,
+        "dy": -0.03125,
+        "fx": 0.9996875,
+        "fy": 1.0003125000000002,
+        "error": 9.349368976505058
+      },
+      "bounds": {
+        "left": 60,
+        "top": 145,
+        "right": 420,
+        "bottom": 487
+      },
+      "visiblePixels": 94541,
+      "edgePixels": 0
+    },
+    {
+      "id": "53012",
+      "name": "Synergy_Brunhild_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/17_Synergy_C.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0,
+        "dy": 0,
+        "fx": 1,
+        "fy": 1.0003125000000002,
+        "error": 10.199466998788381
+      },
+      "bounds": {
+        "left": 71,
+        "top": 140,
+        "right": 443,
+        "bottom": 487
+      },
+      "visiblePixels": 95370,
+      "edgePixels": 0
+    },
+    {
+      "id": "53013",
+      "name": "Synergy_BrokEitri_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/18_Synergy_D.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.03125,
+        "dy": 0,
+        "fx": 1.0003125,
+        "fy": 1.000625,
+        "error": 8.271053645937636
+      },
+      "bounds": {
+        "left": 34,
+        "top": 157,
+        "right": 439,
+        "bottom": 487
+      },
+      "visiblePixels": 121343,
+      "edgePixels": 0
+    },
+    {
+      "id": "53014",
+      "name": "Synergy_Njord_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/18_Synergy_D.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0,
+        "dy": 0,
+        "fx": 1,
+        "fy": 1,
+        "error": 8.218844048381424
+      },
+      "bounds": {
+        "left": 83,
+        "top": 140,
+        "right": 439,
+        "bottom": 487
+      },
+      "visiblePixels": 88584,
+      "edgePixels": 0
+    },
+    {
+      "id": "52020",
+      "name": "Tower_Axe_Viking_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/02_Axe.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.71875,
+        "fx": 1.0521874999999998,
+        "fy": 1.053125,
+        "error": 9.329199238912041
+      },
+      "bounds": {
+        "left": 60,
+        "top": 137,
+        "right": 423,
+        "bottom": 487
+      },
+      "visiblePixels": 90173,
+      "edgePixels": 0
+    },
+    {
+      "id": "52021",
+      "name": "Tower_Axe_Berserker_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/02_Axe.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.6875,
+        "fx": 1.0528125000000002,
+        "fy": 1.0528125,
+        "error": 8.010457994725428
+      },
+      "bounds": {
+        "left": 56,
+        "top": 133,
+        "right": 434,
+        "bottom": 487
+      },
+      "visiblePixels": 107881,
+      "edgePixels": 0
+    },
+    {
+      "id": "52022",
+      "name": "Tower_Axe_Skald_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/02_Axe.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.6875,
+        "fx": 1.0528125000000002,
+        "fy": 1.053125,
+        "error": 10.0563642774466
+      },
+      "bounds": {
+        "left": 52,
+        "top": 145,
+        "right": 436,
+        "bottom": 487
+      },
+      "visiblePixels": 91339,
+      "edgePixels": 0
+    },
+    {
+      "id": "52023",
+      "name": "Tower_Axe_Executioner_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/02_Axe.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.71875,
+        "fx": 1.0521874999999998,
+        "fy": 1.050625,
+        "error": 7.822713095292906
+      },
+      "bounds": {
+        "left": 69,
+        "top": 156,
+        "right": 430,
+        "bottom": 487
+      },
+      "visiblePixels": 85473,
+      "edgePixels": 0
+    },
+    {
+      "id": "52030",
+      "name": "Tower_Bow_Ranger_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/03_Bow.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.8125,
+        "dy": 1.6875,
+        "fx": 1.0521875,
+        "fy": 1.053125,
+        "error": 8.135889148134794
+      },
+      "bounds": {
+        "left": 66,
+        "top": 119,
+        "right": 421,
+        "bottom": 487
+      },
+      "visiblePixels": 91101,
+      "edgePixels": 0
+    },
+    {
+      "id": "52031",
+      "name": "Tower_Bow_Hunter_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/03_Bow.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.65625,
+        "fx": 1.0531249999999999,
+        "fy": 1.0525,
+        "error": 8.731249204652825
+      },
+      "bounds": {
+        "left": 72,
+        "top": 120,
+        "right": 436,
+        "bottom": 488
+      },
+      "visiblePixels": 96090,
+      "edgePixels": 0
+    },
+    {
+      "id": "52032",
+      "name": "Tower_Bow_Elf_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/03_Bow.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.6875,
+        "fx": 1.0525,
+        "fy": 1.0546874999999998,
+        "error": 11.04523069291962
+      },
+      "bounds": {
+        "left": 66,
+        "top": 147,
+        "right": 419,
+        "bottom": 487
+      },
+      "visiblePixels": 91509,
+      "edgePixels": 0
+    },
+    {
+      "id": "52033",
+      "name": "Tower_Bow_Sniper_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/03_Bow.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.5625,
+        "fx": 1.05125,
+        "fy": 1.0531249999999999,
+        "error": 8.419157254244851
+      },
+      "bounds": {
+        "left": 85,
+        "top": 145,
+        "right": 433,
+        "bottom": 488
+      },
+      "visiblePixels": 88423,
+      "edgePixels": 0
+    },
+    {
+      "id": "52140",
+      "name": "Tower_Dark_DarkMage_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/14_Dark.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.8125,
+        "dy": 1.75,
+        "fx": 1.051875,
+        "fy": 1.0534375,
+        "error": 8.199635909633624
+      },
+      "bounds": {
+        "left": 66,
+        "top": 124,
+        "right": 432,
+        "bottom": 487
+      },
+      "visiblePixels": 85158,
+      "edgePixels": 0
+    },
+    {
+      "id": "52141",
+      "name": "Tower_Dark_Shade_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/14_Dark.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.625,
+        "fx": 1.0525,
+        "fy": 1.0534375,
+        "error": 8.355940091664793
+      },
+      "bounds": {
+        "left": 66,
+        "top": 119,
+        "right": 427,
+        "bottom": 487
+      },
+      "visiblePixels": 90833,
+      "edgePixels": 0
+    },
+    {
+      "id": "52142",
+      "name": "Tower_Dark_Heretic_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/14_Dark.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.75,
+        "dy": 1.71875,
+        "fx": 1.0534374999999998,
+        "fy": 1.054375,
+        "error": 11.162192346481373
+      },
+      "bounds": {
+        "left": 68,
+        "top": 142,
+        "right": 432,
+        "bottom": 488
+      },
+      "visiblePixels": 100876,
+      "edgePixels": 0
+    },
+    {
+      "id": "52143",
+      "name": "Tower_Dark_Wraith_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/14_Dark.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.6875,
+        "fx": 1.0528125000000002,
+        "fy": 1.0515624999999997,
+        "error": 10.130176031509638
+      },
+      "bounds": {
+        "left": 69,
+        "top": 135,
+        "right": 434,
+        "bottom": 488
+      },
+      "visiblePixels": 98961,
+      "edgePixels": 0
+    },
+    {
+      "id": "52090",
+      "name": "Tower_Earth_Druid_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/09_Earth.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.6875,
+        "fx": 1.0528125,
+        "fy": 1.0528125,
+        "error": 8.357907023342822
+      },
+      "bounds": {
+        "left": 76,
+        "top": 133,
+        "right": 427,
+        "bottom": 487
+      },
+      "visiblePixels": 85025,
+      "edgePixels": 0
+    },
+    {
+      "id": "52091",
+      "name": "Tower_Earth_Gnome_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/09_Earth.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.78125,
+        "dy": 1.71875,
+        "fx": 1.0546875,
+        "fy": 1.0534375,
+        "error": 7.836890252175783
+      },
+      "bounds": {
+        "left": 78,
+        "top": 89,
+        "right": 427,
+        "bottom": 487
+      },
+      "visiblePixels": 91274,
+      "edgePixels": 0
+    },
+    {
+      "id": "52092",
+      "name": "Tower_Earth_Oread_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/09_Earth.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.75,
+        "dy": 1.71875,
+        "fx": 1.0531249999999999,
+        "fy": 1.054375,
+        "error": 8.881028858991069
+      },
+      "bounds": {
+        "left": 67,
+        "top": 146,
+        "right": 432,
+        "bottom": 487
+      },
+      "visiblePixels": 91949,
+      "edgePixels": 0
+    },
+    {
+      "id": "52093",
+      "name": "Tower_Earth_Gorgon_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/09_Earth.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.8125,
+        "dy": 1.71875,
+        "fx": 1.053125,
+        "fy": 1.0525,
+        "error": 8.987617011094228
+      },
+      "bounds": {
+        "left": 64,
+        "top": 143,
+        "right": 437,
+        "bottom": 488
+      },
+      "visiblePixels": 97337,
+      "edgePixels": 0
+    },
+    {
+      "id": "52120",
+      "name": "Tower_Electric_Stormbringer_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/12_Electric.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.8125,
+        "dy": 1.65625,
+        "fx": 1.0525,
+        "fy": 1.0521874999999998,
+        "error": 9.742190509147841
+      },
+      "bounds": {
+        "left": 72,
+        "top": 137,
+        "right": 422,
+        "bottom": 488
+      },
+      "visiblePixels": 80958,
+      "edgePixels": 0
+    },
+    {
+      "id": "52121",
+      "name": "Tower_Electric_Thunderbird_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/12_Electric.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.59375,
+        "fx": 1.0528125,
+        "fy": 1.0531249999999999,
+        "error": 8.01668723458953
+      },
+      "bounds": {
+        "left": 115,
+        "top": 163,
+        "right": 392,
+        "bottom": 488
+      },
+      "visiblePixels": 60417,
+      "edgePixels": 0
+    },
+    {
+      "id": "52122",
+      "name": "Tower_Electric_Qilin_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/12_Electric.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.6875,
+        "fx": 1.0525,
+        "fy": 1.0528125,
+        "error": 10.496779143563982
+      },
+      "bounds": {
+        "left": 83,
+        "top": 158,
+        "right": 404,
+        "bottom": 488
+      },
+      "visiblePixels": 80719,
+      "edgePixels": 0
+    },
+    {
+      "id": "52123",
+      "name": "Tower_Electric_LightningWolf_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/12_Electric.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.75,
+        "fx": 1.0525,
+        "fy": 1.0521875,
+        "error": 7.500364640944042
+      },
+      "bounds": {
+        "left": 110,
+        "top": 177,
+        "right": 386,
+        "bottom": 488
+      },
+      "visiblePixels": 65859,
+      "edgePixels": 0
+    },
+    {
+      "id": "52070",
+      "name": "Tower_Fire_Pyromancer_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/07_Fire.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.6875,
+        "fx": 1.0528125,
+        "fy": 1.0521875,
+        "error": 8.773477893524445
+      },
+      "bounds": {
+        "left": 74,
+        "top": 136,
+        "right": 427,
+        "bottom": 487
+      },
+      "visiblePixels": 94065,
+      "edgePixels": 0
+    },
+    {
+      "id": "52071",
+      "name": "Tower_Fire_Salamander_Front_v2",
+      "source": "outputs/character-art-audit-v1/Salamander-generated.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0,
+        "dy": 0,
+        "fx": 1,
+        "fy": 1,
+        "error": 0
+      },
+      "bounds": {
+        "left": 115,
+        "top": 112,
+        "right": 429,
+        "bottom": 487
+      },
+      "visiblePixels": 73737,
+      "edgePixels": 0
+    },
+    {
+      "id": "52072",
+      "name": "Tower_Fire_Phoenix_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/07_Fire.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.78125,
+        "dy": 1.71875,
+        "fx": 1.0543749999999998,
+        "fy": 1.0543749999999998,
+        "error": 7.701133821336862
+      },
+      "bounds": {
+        "left": 100,
+        "top": 167,
+        "right": 395,
+        "bottom": 487
+      },
+      "visiblePixels": 70759,
+      "edgePixels": 0
+    },
+    {
+      "id": "52073",
+      "name": "Tower_Fire_Ifrit_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/07_Fire.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.71875,
+        "fx": 1.0531249999999999,
+        "fy": 1.053125,
+        "error": 8.168195242905698
+      },
+      "bounds": {
+        "left": 84,
+        "top": 141,
+        "right": 425,
+        "bottom": 487
+      },
+      "visiblePixels": 89732,
+      "edgePixels": 0
+    },
+    {
+      "id": "52060",
+      "name": "Tower_Hammer_Breaker_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/06_Hammer.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.8125,
+        "dy": 1.6875,
+        "fx": 1.0528125,
+        "fy": 1.0525,
+        "error": 9.04746817306726
+      },
+      "bounds": {
+        "left": 68,
+        "top": 141,
+        "right": 420,
+        "bottom": 487
+      },
+      "visiblePixels": 87158,
+      "edgePixels": 0
+    },
+    {
+      "id": "52061",
+      "name": "Tower_Hammer_Mason_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/06_Hammer.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.71875,
+        "fx": 1.051875,
+        "fy": 1.0531249999999999,
+        "error": 8.44315434531153
+      },
+      "bounds": {
+        "left": 91,
+        "top": 123,
+        "right": 420,
+        "bottom": 487
+      },
+      "visiblePixels": 83506,
+      "edgePixels": 0
+    },
+    {
+      "id": "52062",
+      "name": "Tower_Hammer_Blacksmith_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/06_Hammer.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.8125,
+        "dy": 1.6875,
+        "fx": 1.053125,
+        "fy": 1.053125,
+        "error": 8.168179378713699
+      },
+      "bounds": {
+        "left": 52,
+        "top": 149,
+        "right": 424,
+        "bottom": 486
+      },
+      "visiblePixels": 78094,
+      "edgePixels": 0
+    },
+    {
+      "id": "52063",
+      "name": "Tower_Hammer_Dwarf_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/06_Hammer.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.6875,
+        "fx": 1.0521874999999998,
+        "fy": 1.0525000000000002,
+        "error": 7.852173810698898
+      },
+      "bounds": {
+        "left": 62,
+        "top": 153,
+        "right": 443,
+        "bottom": 487
+      },
+      "visiblePixels": 90522,
+      "edgePixels": 0
+    },
+    {
+      "id": "52110",
+      "name": "Tower_Ice_Sorcerer_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/11_Ice.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.75,
+        "fx": 1.0528125000000002,
+        "fy": 1.05375,
+        "error": 8.752449761401902
+      },
+      "bounds": {
+        "left": 78,
+        "top": 131,
+        "right": 427,
+        "bottom": 487
+      },
+      "visiblePixels": 77655,
+      "edgePixels": 0
+    },
+    {
+      "id": "52111",
+      "name": "Tower_Ice_JackFrost_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/11_Ice.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.6875,
+        "fx": 1.0525,
+        "fy": 1.0528125,
+        "error": 9.13226631813603
+      },
+      "bounds": {
+        "left": 85,
+        "top": 119,
+        "right": 432,
+        "bottom": 487
+      },
+      "visiblePixels": 93064,
+      "edgePixels": 0
+    },
+    {
+      "id": "52112",
+      "name": "Tower_Ice_Glacier_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/edits/ice-creatures-approved/native-approved.png",
+      "sourceDimensions": [
+        1774,
+        887
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.6875,
+        "fx": 1.0521875,
+        "fy": 1.0531250000000003,
+        "error": 5.829898075657232
+      },
+      "bounds": {
+        "left": 96,
+        "top": 165,
+        "right": 404,
+        "bottom": 487
+      },
+      "visiblePixels": 70182,
+      "edgePixels": 0
+    },
+    {
+      "id": "52113",
+      "name": "Tower_Ice_Yeti_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/edits/ice-creatures-approved/native-approved.png",
+      "sourceDimensions": [
+        1774,
+        887
+      ],
+      "registration": {
+        "dx": 0.90625,
+        "dy": 1.6875,
+        "fx": 1.0528125,
+        "fy": 1.0528125000000002,
+        "error": 6.267895114870204
+      },
+      "bounds": {
+        "left": 93,
+        "top": 169,
+        "right": 409,
+        "bottom": 488
+      },
+      "visiblePixels": 79157,
+      "edgePixels": 0
+    },
+    {
+      "id": "52130",
+      "name": "Tower_Light_Archmage_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/13_Light.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.6875,
+        "fx": 1.0525,
+        "fy": 1.0534374999999998,
+        "error": 10.92053670412753
+      },
+      "bounds": {
+        "left": 69,
+        "top": 138,
+        "right": 428,
+        "bottom": 487
+      },
+      "visiblePixels": 92289,
+      "edgePixels": 0
+    },
+    {
+      "id": "52131",
+      "name": "Tower_Light_Wisp_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/13_Light.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.625,
+        "fx": 1.0528125000000002,
+        "fy": 1.0528125000000002,
+        "error": 7.1115217567942155
+      },
+      "bounds": {
+        "left": 106,
+        "top": 99,
+        "right": 391,
+        "bottom": 488
+      },
+      "visiblePixels": 62766,
+      "edgePixels": 0
+    },
+    {
+      "id": "52132",
+      "name": "Tower_Light_Bishop_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/13_Light.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.71875,
+        "fx": 1.0528125000000002,
+        "fy": 1.05375,
+        "error": 11.743510273974083
+      },
+      "bounds": {
+        "left": 63,
+        "top": 122,
+        "right": 437,
+        "bottom": 488
+      },
+      "visiblePixels": 88325,
+      "edgePixels": 0
+    },
+    {
+      "id": "52133",
+      "name": "Tower_Light_Lucifer_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/13_Light.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.8125,
+        "dy": 1.6875,
+        "fx": 1.0528125,
+        "fy": 1.053125,
+        "error": 11.593926925973747
+      },
+      "bounds": {
+        "left": 67,
+        "top": 135,
+        "right": 439,
+        "bottom": 486
+      },
+      "visiblePixels": 105332,
+      "edgePixels": 0
+    },
+    {
+      "id": "52050",
+      "name": "Tower_Shield_Sergeant_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/05_Shield.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.71875,
+        "fx": 1.0525,
+        "fy": 1.0528125000000002,
+        "error": 8.256048711642054
+      },
+      "bounds": {
+        "left": 70,
+        "top": 130,
+        "right": 433,
+        "bottom": 487
+      },
+      "visiblePixels": 85852,
+      "edgePixels": 0
+    },
+    {
+      "id": "52051",
+      "name": "Tower_Shield_Shieldmaiden_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/05_Shield.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.8125,
+        "dy": 1.625,
+        "fx": 1.0521874999999998,
+        "fy": 1.053125,
+        "error": 9.324078720454125
+      },
+      "bounds": {
+        "left": 81,
+        "top": 133,
+        "right": 441,
+        "bottom": 487
+      },
+      "visiblePixels": 84833,
+      "edgePixels": 0
+    },
+    {
+      "id": "52052",
+      "name": "Tower_Shield_Guardian_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/05_Shield.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.6875,
+        "fx": 1.051875,
+        "fy": 1.0525,
+        "error": 10.714710070093084
+      },
+      "bounds": {
+        "left": 62,
+        "top": 160,
+        "right": 432,
+        "bottom": 487
+      },
+      "visiblePixels": 84574,
+      "edgePixels": 0
+    },
+    {
+      "id": "52053",
+      "name": "Tower_Shield_Warden_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/05_Shield.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.75,
+        "dy": 1.625,
+        "fx": 1.05125,
+        "fy": 1.0515625000000002,
+        "error": 8.263633178394935
+      },
+      "bounds": {
+        "left": 73,
+        "top": 162,
+        "right": 432,
+        "bottom": 488
+      },
+      "visiblePixels": 77811,
+      "edgePixels": 0
+    },
+    {
+      "id": "52040",
+      "name": "Tower_Spear_Warlord_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/04_Spear.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.8125,
+        "dy": 1.71875,
+        "fx": 1.0528125000000002,
+        "fy": 1.0521875,
+        "error": 9.580002783141603
+      },
+      "bounds": {
+        "left": 56,
+        "top": 125,
+        "right": 430,
+        "bottom": 487
+      },
+      "visiblePixels": 92735,
+      "edgePixels": 0
+    },
+    {
+      "id": "52041",
+      "name": "Tower_Spear_SpearMaster_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/04_Spear.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.65625,
+        "fx": 1.0531249999999999,
+        "fy": 1.0525,
+        "error": 9.319777934402433
+      },
+      "bounds": {
+        "left": 74,
+        "top": 113,
+        "right": 437,
+        "bottom": 488
+      },
+      "visiblePixels": 87567,
+      "edgePixels": 0
+    },
+    {
+      "id": "52042",
+      "name": "Tower_Spear_Lancer_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/04_Spear.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.59375,
+        "fx": 1.0528125000000002,
+        "fy": 1.051875,
+        "error": 11.715788656331396
+      },
+      "bounds": {
+        "left": 40,
+        "top": 132,
+        "right": 440,
+        "bottom": 488
+      },
+      "visiblePixels": 101989,
+      "edgePixels": 0
+    },
+    {
+      "id": "52043",
+      "name": "Tower_Spear_Impaler_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/04_Spear.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.90625,
+        "dy": 1.65625,
+        "fx": 1.05375,
+        "fy": 1.0525,
+        "error": 9.715092446165464
+      },
+      "bounds": {
+        "left": 69,
+        "top": 148,
+        "right": 431,
+        "bottom": 488
+      },
+      "visiblePixels": 86925,
+      "edgePixels": 0
+    },
+    {
+      "id": "52010",
+      "name": "Tower_Sword_Hero_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/01_Sword.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.8125,
+        "dy": 1.71875,
+        "fx": 1.0525,
+        "fy": 1.0521874999999998,
+        "error": 8.773204419813244
+      },
+      "bounds": {
+        "left": 66,
+        "top": 118,
+        "right": 433,
+        "bottom": 487
+      },
+      "visiblePixels": 84001,
+      "edgePixels": 0
+    },
+    {
+      "id": "52011",
+      "name": "Tower_Sword_Swordsman_Front_v2",
+      "source": "outputs/portrait-refresh-v1/Swordsman_Generated.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0,
+        "dy": 0,
+        "fx": 1,
+        "fy": 1,
+        "error": 0
+      },
+      "bounds": {
+        "left": 55,
+        "top": 102,
+        "right": 463,
+        "bottom": 487
+      },
+      "visiblePixels": 101406,
+      "edgePixels": 0
+    },
+    {
+      "id": "52012",
+      "name": "Tower_Sword_Paladin_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/01_Sword.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.6875,
+        "fx": 1.0521874999999998,
+        "fy": 1.051875,
+        "error": 10.213035926977362
+      },
+      "bounds": {
+        "left": 67,
+        "top": 138,
+        "right": 437,
+        "bottom": 488
+      },
+      "visiblePixels": 82940,
+      "edgePixels": 0
+    },
+    {
+      "id": "52013",
+      "name": "Tower_Sword_DeathKnight_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/01_Sword.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.8125,
+        "dy": 1.6875,
+        "fx": 1.051875,
+        "fy": 1.054375,
+        "error": 9.614992858327327
+      },
+      "bounds": {
+        "left": 75,
+        "top": 141,
+        "right": 437,
+        "bottom": 487
+      },
+      "visiblePixels": 83069,
+      "edgePixels": 0
+    },
+    {
+      "id": "52080",
+      "name": "Tower_Water_TideMage_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/08_Water.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.75,
+        "fx": 1.0534375,
+        "fy": 1.0528125,
+        "error": 9.73881591579614
+      },
+      "bounds": {
+        "left": 73,
+        "top": 120,
+        "right": 431,
+        "bottom": 487
+      },
+      "visiblePixels": 86381,
+      "edgePixels": 0
+    },
+    {
+      "id": "52081",
+      "name": "Tower_Water_Undine_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/08_Water.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.8125,
+        "dy": 1.71875,
+        "fx": 1.0521875,
+        "fy": 1.0528125,
+        "error": 8.754644141947425
+      },
+      "bounds": {
+        "left": 75,
+        "top": 118,
+        "right": 430,
+        "bottom": 487
+      },
+      "visiblePixels": 88389,
+      "edgePixels": 0
+    },
+    {
+      "id": "52082",
+      "name": "Tower_Water_Naiad_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/08_Water.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.6875,
+        "fx": 1.0528125000000002,
+        "fy": 1.0525,
+        "error": 10.352877813057168
+      },
+      "bounds": {
+        "left": 65,
+        "top": 144,
+        "right": 435,
+        "bottom": 488
+      },
+      "visiblePixels": 95255,
+      "edgePixels": 0
+    },
+    {
+      "id": "52083",
+      "name": "Tower_Water_Siren_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/08_Water.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.84375,
+        "dy": 1.75,
+        "fx": 1.05375,
+        "fy": 1.0518750000000001,
+        "error": 10.174174169260072
+      },
+      "bounds": {
+        "left": 81,
+        "top": 154,
+        "right": 427,
+        "bottom": 487
+      },
+      "visiblePixels": 88140,
+      "edgePixels": 0
+    },
+    {
+      "id": "52100",
+      "name": "Tower_Wind_WeatherMage_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/10_Wind.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.65625,
+        "fx": 1.053125,
+        "fy": 1.0528125,
+        "error": 8.396114240298564
+      },
+      "bounds": {
+        "left": 69,
+        "top": 126,
+        "right": 428,
+        "bottom": 487
+      },
+      "visiblePixels": 85123,
+      "edgePixels": 0
+    },
+    {
+      "id": "52101",
+      "name": "Tower_Wind_Sylph_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/10_Wind.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.65625,
+        "fx": 1.053125,
+        "fy": 1.0521875,
+        "error": 10.587843241505464
+      },
+      "bounds": {
+        "left": 84,
+        "top": 119,
+        "right": 438,
+        "bottom": 488
+      },
+      "visiblePixels": 88635,
+      "edgePixels": 0
+    },
+    {
+      "id": "52102",
+      "name": "Tower_Wind_Aerial_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/10_Wind.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.875,
+        "dy": 1.6875,
+        "fx": 1.0525,
+        "fy": 1.0525,
+        "error": 10.523343166585267
+      },
+      "bounds": {
+        "left": 71,
+        "top": 149,
+        "right": 430,
+        "bottom": 487
+      },
+      "visiblePixels": 88694,
+      "edgePixels": 0
+    },
+    {
+      "id": "52103",
+      "name": "Tower_Wind_Harpy_Front_v2",
+      "source": "outputs/tower-front-portraits-v2/source/10_Wind.png",
+      "sourceDimensions": [
+        1254,
+        1254
+      ],
+      "registration": {
+        "dx": 0.8125,
+        "dy": 1.65625,
+        "fx": 1.0528125,
+        "fy": 1.0531249999999999,
+        "error": 8.194505851480914
+      },
+      "bounds": {
+        "left": 69,
+        "top": 152,
+        "right": 420,
+        "bottom": 486
+      },
+      "visiblePixels": 85164,
+      "edgePixels": 0
+    }
+  ],
+  "files": [
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Synergy_All14_Front_Atlas_v2.png",
+      "width": 2048,
+      "height": 2048,
+      "beforeSha256": "2d9732b67699e396def32634ece7dd2fffaed3699eed1354d19ecfc9840a63f7",
+      "sha256": "d1e5ebf030fa2e0f9cdc91877688b8341690c5d0600c88120cd9368e51c389f5",
+      "metadataBeforeSha256": "b2ed893cfac38b27483133f6b58ab1dd2b25a6d04658d7f8ad4958247d305e76",
+      "metadataSha256": "c815c4ccb4ce0b63adee74a0117a26b15f196e790b52cdcf38268959cc3bb5ea",
+      "spriteCount": 14
+    },
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Axe_Front_Atlas_v2.png",
+      "width": 1024,
+      "height": 1024,
+      "beforeSha256": "612606b5e11412c903955c558a3d77b632354064f2a2fd2c2ce0ea76aaa71ed2",
+      "sha256": "a23f3922a5e554efbc1e83abb33b8261b481191e5f5429e56784dfeb49b26637",
+      "metadataBeforeSha256": "3c0e5d57de58a3ce9b3e42e229ae7fec60470b7a94d7be05646ecc7f88dbca93",
+      "metadataSha256": "69e331951e3d851e775b20d70ad94acd1d738344314c0302db82767cdc90391f",
+      "spriteCount": 4
+    },
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Bow_Front_Atlas_v2.png",
+      "width": 1024,
+      "height": 1024,
+      "beforeSha256": "f9080ea684f4ec11e9792844b508138b2f957b12a677305d7301d404bc83d0a5",
+      "sha256": "635c2b9f81be430d35a0f91aff4e8455cccc58af43e18610554b25a034b4c4e0",
+      "metadataBeforeSha256": "3423efb426cdc23809061e85a1845a1fbc499be0117f45358d5cdcdfcdf74a3c",
+      "metadataSha256": "6cfe428dce1fc126550ba43d6bd42ba97915faa686da98cc96c5820179573118",
+      "spriteCount": 4
+    },
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Dark_Front_Atlas_v2.png",
+      "width": 1024,
+      "height": 1024,
+      "beforeSha256": "9e15e605856e6d7d58d7e7c05b43a40ce530b113e6f01de2c66231e9fdaf3c0c",
+      "sha256": "4a3356caf21e66f6029102e6f213974a96831df188ef8fce3f4b387394ea7ae9",
+      "metadataBeforeSha256": "f7c6a216dc6cf9ee0a0a8111512e4b92c5ab002b0222696bbd3a084c2ca2bfe0",
+      "metadataSha256": "c268e66707c738179fc3f7ba7c1482b783d8c2af07bfe4a9572b33520f06a96e",
+      "spriteCount": 4
+    },
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Earth_Front_Atlas_v2.png",
+      "width": 1024,
+      "height": 1024,
+      "beforeSha256": "47a4f934a6fdcea076cd64f4deae39b390b01d68b8a1046236c7a4fdd394f9aa",
+      "sha256": "f31aedd9433f99c52eb83a05f0f78ee0dccfc17f924ff79232371657d47c675c",
+      "metadataBeforeSha256": "dc8f050b3b9ab09152ff391f966deed6bfef84f0db2716d781b016b84f1944f5",
+      "metadataSha256": "a24f7c398ef137ad48a74ca0dd47f596f16963dc526dbf02627b139e8442319c",
+      "spriteCount": 4
+    },
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Electric_Front_Atlas_v2.png",
+      "width": 1024,
+      "height": 1024,
+      "beforeSha256": "3eb6cd55761e77d3241b517d917079f94ce044910052324ff354b7f4630510d6",
+      "sha256": "8966aba8ffe268280c02a676668c821a068aeae9c3828852f5c76e986d992e21",
+      "metadataBeforeSha256": "89ddd2b80ed705f0cc80eca3c258d92d6eacf78441a7544cc605ab486b6729f1",
+      "metadataSha256": "0039ad1234a063987813bbc02ae399fd2d342c6be98a4e93885c2825f8a5828b",
+      "spriteCount": 4
+    },
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Fire_Front_Atlas_v2.png",
+      "width": 1024,
+      "height": 1024,
+      "beforeSha256": "089ec05bfd943be8bfa6b69afb27a32d2e1132278abb424a60d252fb8752058f",
+      "sha256": "91a222226fbb80b40c94924aa9123c487cab18a1a3bc1c51d2908d427efa7d76",
+      "metadataBeforeSha256": "fdb1218dc8536c3d9432b33871a06cf1b5a0a2bfec54f681f6d72f57b08d588a",
+      "metadataSha256": "d8e57c819ccb0f4559d332b564ef52ab9d7eff38a9f8dc7fa505ae31934b8406",
+      "spriteCount": 4
+    },
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Hammer_Front_Atlas_v2.png",
+      "width": 1024,
+      "height": 1024,
+      "beforeSha256": "8f44788a04848d051fbee639005fa2de2abf1620c64189a156fc1879a8eb9e7b",
+      "sha256": "e04804f227583861bc981d6b4d0e623bdb5a9914b43726c188aa60979d3908fe",
+      "metadataBeforeSha256": "504cdfa3c2e2341ebbd99ce5c51a9fde9727c8acc8d97dc6da1657228024323b",
+      "metadataSha256": "ba18239b1e2c57d94bb769b59fbd392cecf2d01532876200d3f1b535980b4eff",
+      "spriteCount": 4
+    },
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Ice_Front_Atlas_v2.png",
+      "width": 1024,
+      "height": 1024,
+      "beforeSha256": "e51729ed642532d42c91634fdbeb7ff9dee66bca033a14694909a8364b871891",
+      "sha256": "7086fe5ce16051e102a5beb35f3d91088bcce6552a75627d34385b5bfd5b1b05",
+      "metadataBeforeSha256": "31e8f3d1c9a25ee60fbcc795c683726781ae1cabbcd1392ed253a5e415297197",
+      "metadataSha256": "8648f704bed78c341476cb7ae91f90b6bdf14bb6fd55d8d7766c41fea4cdf143",
+      "spriteCount": 4
+    },
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Light_Front_Atlas_v2.png",
+      "width": 1024,
+      "height": 1024,
+      "beforeSha256": "eb51d1d1ef3dd7b23a55c80273c5a7318083d1287051cc5b40dcd1cf66e9093d",
+      "sha256": "99c3cb534b15cd84be9bab26ba995ee4b61713fb67ce860b0cc9a336c6c37219",
+      "metadataBeforeSha256": "8cb9fa718cd346be251dc58240df7d8a175564a8b297c7648a17e33710e18e08",
+      "metadataSha256": "fd35f1c7d60d810cb61e9057c1a515bfe10d80bdec3f0e11c61254e9d716a23d",
+      "spriteCount": 4
+    },
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Shield_Front_Atlas_v2.png",
+      "width": 1024,
+      "height": 1024,
+      "beforeSha256": "e2917c6413e8316ba8866522720d8adbdabd8d2de59de82faad80b50f418c606",
+      "sha256": "9fd494b8e95dd64cb007b8c8f86b83585c62f6864c69143112783234cd335f72",
+      "metadataBeforeSha256": "096776fc7ec2a688e718edf216f2dbe6692fcb07a333a9ad4e94032bc1a1c584",
+      "metadataSha256": "7512a890a836c54c0ea5ea0ec7cc17f88d761371cbeb3c67b24c4ec00099b53c",
+      "spriteCount": 4
+    },
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Spear_Front_Atlas_v2.png",
+      "width": 1024,
+      "height": 1024,
+      "beforeSha256": "2cfda689154521ae0864c4d8e8bd00128ba5eb516521dea860c7c269c1886e27",
+      "sha256": "0ea07efe537cd1fc183c71800bc512c7803190348c02cf8859a70337009da555",
+      "metadataBeforeSha256": "67beda0353ce7421ebf70f828121a9662be3e07eac3dc936d7ae1a5bb30ae52d",
+      "metadataSha256": "0baac66cdb4315e9753bbd2c0e15faf841c103bd6ac2f8eb2e4cd8eff6a35563",
+      "spriteCount": 4
+    },
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Sword_Front_Atlas_v2.png",
+      "width": 1024,
+      "height": 1024,
+      "beforeSha256": "a62632b546b7a7b12fab1f6718b48aa13a982ffc6b35d1b9a9b7c214c47ddbab",
+      "sha256": "98fada99bf0b3f1bcf03ddc78dc26f42481b7f6d3dc469f198ce9a94e62de524",
+      "metadataBeforeSha256": "0143707c4e7d99467bc93c650f776599c7b5afecfcc59e08d3c7cdcc5a9284f7",
+      "metadataSha256": "8322cbda60d16cd73c444c2b3fa05cbb83863b51e3e4d174c9db608813520027",
+      "spriteCount": 4
+    },
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Water_Front_Atlas_v2.png",
+      "width": 1024,
+      "height": 1024,
+      "beforeSha256": "ff42e77288588abe41a1c0478234e2eeeca5ff199b1d43ecbea88458d7a03857",
+      "sha256": "c0ec96a540bc1cb49ea277500c62a77461d31951f31c2712cab86bee63f73032",
+      "metadataBeforeSha256": "f3604e0c4fa9df4799782c410318331f28c174778482e2a96dc612093120a8e5",
+      "metadataSha256": "f1db3756dac566ba6321eaf77fd4628776ef706751ffc620ec25cdd367f72112",
+      "spriteCount": 4
+    },
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Wind_Front_Atlas_v2.png",
+      "width": 1024,
+      "height": 1024,
+      "beforeSha256": "24612b8a9a7476af8ab4c503f540bfe06ce1c9ab23b495f6f1f7f1cdae52a599",
+      "sha256": "3b052cd5b136b3557c619ad8d16b45a7eed6f804ee0c642b34d1b0be57decc28",
+      "metadataBeforeSha256": "ecb9c9295f5cc782c70153f2ec74e4b88b2c8adf912d0b1cd8a8009bb63b8993",
+      "metadataSha256": "e6f1b3ca49c6ba10d6052cd33b3ccdbf31f9a305b0d8c1c5d157cbd88493dc43",
+      "spriteCount": 4
+    }
+  ],
+  "applied": true
+}

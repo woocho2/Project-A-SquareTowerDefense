@@ -1,0 +1,122 @@
+{
+  "icons": 8,
+  "atlasGuid": "b201a001000100010001000100010010",
+  "oldButtonGuid": "a59a7d01000100010001000100010099",
+  "size": [
+    2048,
+    1024
+  ],
+  "cellSize": 512,
+  "sourceSheets": [
+    {
+      "file": "resources-hires-generated.png",
+      "width": 1254,
+      "height": 1254,
+      "nativeCell": 627
+    },
+    {
+      "file": "buttons-hires-generated.png",
+      "width": 1254,
+      "height": 1254,
+      "nativeCell": 627
+    }
+  ],
+  "oldCombinedTexels": 4718592,
+  "newTexels": 2097152,
+  "texelReduction": 2.25,
+  "heartAlphaMismatch": 0,
+  "retired": [
+    {
+      "name": "Icon_Heart_Frame",
+      "fileID": "5461481920830446396"
+    },
+    {
+      "name": "Icon_Heart_Black",
+      "fileID": "4994548375073755933"
+    },
+    {
+      "name": "Icon_Deco_Star4",
+      "fileID": "7497349412364448170"
+    },
+    {
+      "name": "Icon_Deco_Star8",
+      "fileID": "-6844766390969816524"
+    }
+  ],
+  "sprites": [
+    {
+      "name": "Icon_Gold",
+      "fileID": "7065698758347700470",
+      "x": 0,
+      "y": 512,
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Icon_Gem",
+      "fileID": "1840065863300296980",
+      "x": 512,
+      "y": 512,
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Icon_Heart",
+      "fileID": "-4689701620175748947",
+      "x": 1024,
+      "y": 512,
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Icon_Heart_White",
+      "fileID": "-2039042661576874873",
+      "x": 1536,
+      "y": 512,
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Symbol_CreateTower",
+      "fileID": "100101",
+      "x": 0,
+      "y": 0,
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Symbol_TierUpgrade",
+      "fileID": "100102",
+      "x": 512,
+      "y": 0,
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Symbol_ColorUpgrade",
+      "fileID": "100103",
+      "x": 1024,
+      "y": 0,
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Symbol_MiddleBoss",
+      "fileID": "100104",
+      "x": 1536,
+      "y": 0,
+      "width": 512,
+      "height": 512
+    }
+  ],
+  "migrations": [
+    {
+      "path": "Assets/2. Prefab/Canvas.prefab",
+      "relinked": 3,
+      "disabledRetiredImages": 1,
+      "beforeHash": "29bfe84ac64b7c69c6ec6cf26dddf7e92ce311b01e1213dbb29cae9e8398ccb5",
+      "afterHash": "a90212c5c9a716817c51a909b48f387e10092d045005dad9ad5fc0fc3b809251"
+    }
+  ],
+  "atlasSha256": "9048c12c047adcdf01037791bccc4ca94986c3440719417f454948548fc6e7cd"
+}

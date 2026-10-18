@@ -1,0 +1,12 @@
+Use case: style-transfer. Edit the first reference, an existing Unity UI icon sprite atlas, into a softer pastel material style that matches a cream-and-copper tile game. Preserve the meaning, silhouette, identity, relative size, order and positions of all EIGHT icons. The second reference is the game's UI palette/context only, do not copy its panels or text.
+
+The output is ONE transparent sprite sheet with exactly FOUR columns and TWO rows, no gutters or labels, overall 2:1 aspect ratio. Each icon stays centered inside its own identical square cell with safe padding. No extra symbols. Real transparent background, no background cards, no shadows outside the icons, no checkerboard painted into the image.
+
+Exact content, reading order:
+Row 1: gold coin with raised crown; faceted blue diamond; filled coral-red heart; depleted/dark muted mauve heart.
+Row 2: ivory heart; depleted muted slate-blue heart; four-point gold sparkle; eight-point gold sparkle.
+Hearts remain clearly distinguishable as filled versus depleted, and ivory versus blue. Preserve the four-point versus eight-point distinction exactly.
+
+Style: crisp polished 2D fantasy game UI illustrations, cohesive with pastel tower tiles. Replace saturated yellow gold with warm champagne/sand gold, vivid cyan with dusty sky blue, scarlet with soft coral, near-black shadows with medium warm cocoa or muted mauve/slate. Soft cream highlights, satin surfaces with two or three readable shading levels. Restrained bevels, no mirror-like metallic shine, no huge white reflections. Clean medium-weight warm taupe/cocoa contours with modest contrast, never black. Maintain enough color separation and edge contrast to read at 24–48 pixels on an ivory UI. Not washed out and not white monochrome. No paint/paper texture, no noise, no watercolor blur. No words or numbers. These are game icons, not stickers with thick white borders.
+
+Suggested palette: champagne #D9BD91, gold shadow #B18A60, ivory #F2E6D5, warm highlight #FFF7E9, soft coral #D9979B, dusty blue #94BFCF, slate #8796AC, dark mauve #947C88, outline #826A5B. Faithfully retain all original icon identities while changing only the overall palette, harsh dark outlines and glossy rendering treatment.

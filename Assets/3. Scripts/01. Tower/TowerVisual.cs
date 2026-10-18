@@ -32,6 +32,7 @@ public class TowerVisual : MonoBehaviour
     private int m_appliedVisualID;
     private int m_colorTowerID;
     public bool UsesCharacterVisual { get; private set; }
+    public Sprite CharacterSprite => m_characterRenderer != null ? m_characterRenderer.sprite : null;
     // 투사체에는 초상 대신 문양을 사용합니다. 시너지의 VisualTowerID도 유지합니다.
     public Sprite ProjectileEmblemSprite => GetSprite(m_emblemSprites, m_appliedVisualID % 100);
     public Color ProjectileEmblemColor => GetEmblemColor((m_appliedVisualID % 1000) / 100);

@@ -1,0 +1,52 @@
+{
+  "assets": [
+    {
+      "name": "CorruptedElf",
+      "korean": "타락한 엘프",
+      "portrait": "512x512 RGBA",
+      "mask": "512x512 RGB binary linear uncompressed",
+      "maskSelectedPixels": 29613,
+      "referencesValid": true,
+      "bounds": {
+        "left": 69,
+        "top": 115,
+        "width": 371,
+        "height": 373,
+        "bottom": 488
+      }
+    },
+    {
+      "name": "CorruptedElfCaptain",
+      "korean": "타락한 엘프 부족장",
+      "portrait": "512x512 RGBA",
+      "mask": "512x512 RGB binary linear uncompressed",
+      "maskSelectedPixels": 33439,
+      "referencesValid": true,
+      "bounds": {
+        "left": 54,
+        "top": 89,
+        "width": 425,
+        "height": 399,
+        "bottom": 488
+      }
+    },
+    {
+      "name": "CorruptedElfChief",
+      "korean": "타락한 엘프 족장",
+      "portrait": "512x512 RGBA",
+      "mask": "512x512 RGB binary linear uncompressed",
+      "maskSelectedPixels": 33860,
+      "referencesValid": true,
+      "bounds": {
+        "left": 61,
+        "top": 96,
+        "width": 383,
+        "height": 392,
+        "bottom": 488
+      }
+    }
+  ],
+  "existingGameFilesModified": false,
+  "preview": "CPU composition from current shared textures/palette, not Unity runtime render",
+  "unityImportOrPlayTested": false
+}

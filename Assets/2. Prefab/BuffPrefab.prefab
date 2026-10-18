@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 733586646048920009}
   - component: {fileID: 9195856632278759071}
   - component: {fileID: 6879719365852497775}
+  - component: {fileID: 8800100000000000001}
   m_Layer: 5
   m_Name: BuffPrefab_BG
   m_TagString: Untagged
@@ -66,7 +67,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 2006, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -86,6 +87,7 @@ GameObject:
   - component: {fileID: 950816585294621843}
   - component: {fileID: 4125327816832084850}
   - component: {fileID: 7112944194798191742}
+  - component: {fileID: 8800100000000000002}
   m_Layer: 5
   m_Name: BuffPrefab_Frame
   m_TagString: Untagged
@@ -141,7 +143,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 2306, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -334,3 +336,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5361299268845553274}
   m_CullTransparentMesh: 1
+--- !u!114 &8800100000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 635517455377985449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 0
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 0
+  customColor: {r: 1, g: 0.988235294117647, b: 0.925490196078431, a: 1}
+--- !u!114 &8800100000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361427542996209198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f43424de21bfacd130bf5c0d3f0d9400, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSurface
+  skin: {fileID: 11400000, guid: 73bceaeac919eea6cf8c1c241a8bf627, type: 2}
+  colorRole: 3
+  frameStyle: 0
+  borderThickness: 2
+  useStageTheme: 0
+  customColor: {r: 0.925490196078431, g: 0.733333333333333, b: 0.254901960784314, a: 1}

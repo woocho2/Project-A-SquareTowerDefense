@@ -31,7 +31,7 @@ TextureImporter:
   cubemapConvolution: 0
   seamlessCubemap: 0
   textureFormat: 1
-  maxTextureSize: 4096
+  maxTextureSize: 1024
   textureSettings:
     serializedVersion: 2
     filterMode: 1
@@ -69,10 +69,10 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 4096
+    maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -82,10 +82,10 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: Standalone
-    maxTextureSize: 4096
+    maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -95,10 +95,10 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: WebGL
-    maxTextureSize: 4096
+    maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -108,10 +108,10 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: Android
-    maxTextureSize: 4096
+    maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -127,12 +127,12 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1024
-        width: 1024
-        height: 1024
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -148,13 +148,13 @@ TextureImporter:
       name: Shared_A_Btn_512
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 1536
-        width: 512
-        height: 512
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -170,13 +170,13 @@ TextureImporter:
       name: Shared_A_Btn_256
       rect:
         serializedVersion: 2
-        x: 1792
-        y: 1024
+        x: 0
+        y: 0
         width: 256
         height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -192,13 +192,13 @@ TextureImporter:
       name: Shared_A_Btn_128
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 1408
-        width: 128
-        height: 128
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -214,13 +214,13 @@ TextureImporter:
       name: Shared_A_Btn_128_B
       rect:
         serializedVersion: 2
-        x: 1664
-        y: 1280
-        width: 128
-        height: 128
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 48, y: 48, z: 48, w: 48}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -236,13 +236,13 @@ TextureImporter:
       name: Shared_A_MegaDock_768x128
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 1024
-        width: 768
-        height: 128
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -258,13 +258,13 @@ TextureImporter:
       name: Shared_A_MegaRail_128x768
       rect:
         serializedVersion: 2
-        x: 1920
-        y: 1280
-        width: 128
-        height: 768
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -280,13 +280,13 @@ TextureImporter:
       name: Shared_A_Capsule_512x128
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 1408
-        width: 512
-        height: 128
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -302,13 +302,13 @@ TextureImporter:
       name: Shared_A_TallBanner_128x512
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 1536
-        width: 128
-        height: 512
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -324,13 +324,13 @@ TextureImporter:
       name: Shared_A_Capsule_384x128
       rect:
         serializedVersion: 2
-        x: 1408
-        y: 1152
-        width: 384
-        height: 128
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -346,13 +346,13 @@ TextureImporter:
       name: Shared_A_Gauge_128x384
       rect:
         serializedVersion: 2
-        x: 1792
-        y: 1280
-        width: 128
-        height: 384
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -368,13 +368,13 @@ TextureImporter:
       name: Shared_A_Capsule_256x128
       rect:
         serializedVersion: 2
-        x: 1408
-        y: 1280
+        x: 0
+        y: 0
         width: 256
-        height: 128
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -390,13 +390,13 @@ TextureImporter:
       name: Shared_A_Capsule_128x256
       rect:
         serializedVersion: 2
-        x: 1664
-        y: 1408
-        width: 128
+        x: 0
+        y: 0
+        width: 256
         height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -412,13 +412,13 @@ TextureImporter:
       name: Shared_A_SkillCard_384x256
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 1152
-        width: 384
+        x: 0
+        y: 0
+        width: 256
         height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -434,13 +434,13 @@ TextureImporter:
       name: Shared_A_CharCard_256x384
       rect:
         serializedVersion: 2
-        x: 1664
-        y: 1664
+        x: 0
+        y: 0
         width: 256
-        height: 384
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -456,13 +456,13 @@ TextureImporter:
       name: Shared_B_Btn_1024
       rect:
         serializedVersion: 2
-        x: 2048
-        y: 1024
-        width: 1024
-        height: 1024
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -478,13 +478,13 @@ TextureImporter:
       name: Shared_B_Btn_512
       rect:
         serializedVersion: 2
-        x: 3072
-        y: 1536
-        width: 512
-        height: 512
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -500,13 +500,13 @@ TextureImporter:
       name: Shared_B_Btn_256
       rect:
         serializedVersion: 2
-        x: 3840
-        y: 1024
+        x: 0
+        y: 0
         width: 256
         height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -522,13 +522,13 @@ TextureImporter:
       name: Shared_B_Btn_128
       rect:
         serializedVersion: 2
-        x: 3584
-        y: 1408
-        width: 128
-        height: 128
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -544,13 +544,13 @@ TextureImporter:
       name: Shared_B_Btn_128_B
       rect:
         serializedVersion: 2
-        x: 3712
-        y: 1280
-        width: 128
-        height: 128
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 48, y: 48, z: 48, w: 48}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -566,13 +566,13 @@ TextureImporter:
       name: Shared_B_MegaDock_768x128
       rect:
         serializedVersion: 2
-        x: 3072
-        y: 1024
-        width: 768
-        height: 128
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -588,13 +588,13 @@ TextureImporter:
       name: Shared_B_MegaRail_128x768
       rect:
         serializedVersion: 2
-        x: 3968
-        y: 1280
-        width: 128
-        height: 768
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -610,13 +610,13 @@ TextureImporter:
       name: Shared_B_Capsule_512x128
       rect:
         serializedVersion: 2
-        x: 3072
-        y: 1408
-        width: 512
-        height: 128
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -632,13 +632,13 @@ TextureImporter:
       name: Shared_B_TallBanner_128x512
       rect:
         serializedVersion: 2
-        x: 3584
-        y: 1536
-        width: 128
-        height: 512
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -654,13 +654,13 @@ TextureImporter:
       name: Shared_B_Capsule_384x128
       rect:
         serializedVersion: 2
-        x: 3456
-        y: 1152
-        width: 384
-        height: 128
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -676,13 +676,13 @@ TextureImporter:
       name: Shared_B_Gauge_128x384
       rect:
         serializedVersion: 2
-        x: 3840
-        y: 1280
-        width: 128
-        height: 384
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -698,13 +698,13 @@ TextureImporter:
       name: Shared_B_Capsule_256x128
       rect:
         serializedVersion: 2
-        x: 3456
-        y: 1280
+        x: 0
+        y: 0
         width: 256
-        height: 128
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -720,13 +720,13 @@ TextureImporter:
       name: Shared_B_Capsule_128x256
       rect:
         serializedVersion: 2
-        x: 3712
-        y: 1408
-        width: 128
+        x: 0
+        y: 0
+        width: 256
         height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -742,13 +742,13 @@ TextureImporter:
       name: Shared_B_SkillCard_384x256
       rect:
         serializedVersion: 2
-        x: 3072
-        y: 1152
-        width: 384
+        x: 0
+        y: 0
+        width: 256
         height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -764,13 +764,13 @@ TextureImporter:
       name: Shared_B_CharCard_256x384
       rect:
         serializedVersion: 2
-        x: 3712
-        y: 1664
+        x: 0
+        y: 0
         width: 256
-        height: 384
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -788,11 +788,11 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1024
-        height: 1024
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -808,13 +808,13 @@ TextureImporter:
       name: Shared_C_Btn_512
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 512
-        width: 512
-        height: 512
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -830,13 +830,13 @@ TextureImporter:
       name: Shared_C_Btn_256
       rect:
         serializedVersion: 2
-        x: 1792
+        x: 0
         y: 0
         width: 256
         height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -852,13 +852,13 @@ TextureImporter:
       name: Shared_C_Btn_128
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 384
-        width: 128
-        height: 128
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -874,13 +874,13 @@ TextureImporter:
       name: Shared_C_Btn_128_B
       rect:
         serializedVersion: 2
-        x: 1664
-        y: 256
-        width: 128
-        height: 128
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 48, y: 48, z: 48, w: 48}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -896,13 +896,13 @@ TextureImporter:
       name: Shared_C_MegaDock_768x128
       rect:
         serializedVersion: 2
-        x: 1024
+        x: 0
         y: 0
-        width: 768
-        height: 128
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -918,13 +918,13 @@ TextureImporter:
       name: Shared_C_MegaRail_128x768
       rect:
         serializedVersion: 2
-        x: 1920
-        y: 256
-        width: 128
-        height: 768
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -940,13 +940,13 @@ TextureImporter:
       name: Shared_C_Capsule_512x128
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 384
-        width: 512
-        height: 128
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -962,13 +962,13 @@ TextureImporter:
       name: Shared_C_TallBanner_128x512
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 512
-        width: 128
-        height: 512
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -984,13 +984,13 @@ TextureImporter:
       name: Shared_C_Capsule_384x128
       rect:
         serializedVersion: 2
-        x: 1408
-        y: 128
-        width: 384
-        height: 128
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -1006,13 +1006,13 @@ TextureImporter:
       name: Shared_C_Gauge_128x384
       rect:
         serializedVersion: 2
-        x: 1792
-        y: 256
-        width: 128
-        height: 384
+        x: 0
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -1028,13 +1028,13 @@ TextureImporter:
       name: Shared_C_Capsule_256x128
       rect:
         serializedVersion: 2
-        x: 1408
-        y: 256
+        x: 0
+        y: 0
         width: 256
-        height: 128
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -1050,13 +1050,13 @@ TextureImporter:
       name: Shared_C_Capsule_128x256
       rect:
         serializedVersion: 2
-        x: 1664
-        y: 384
-        width: 128
+        x: 0
+        y: 0
+        width: 256
         height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -1072,13 +1072,13 @@ TextureImporter:
       name: Shared_C_SkillCard_384x256
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 128
-        width: 384
+        x: 0
+        y: 0
+        width: 256
         height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -1094,13 +1094,13 @@ TextureImporter:
       name: Shared_C_CharCard_256x384
       rect:
         serializedVersion: 2
-        x: 1664
-        y: 640
+        x: 0
+        y: 0
         width: 256
-        height: 384
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 32, y: 32, z: 32, w: 32}
       customData: 
       outline: []
       physicsShape: []
@@ -1116,13 +1116,13 @@ TextureImporter:
       name: Shared_Frame_Btn_1024
       rect:
         serializedVersion: 2
-        x: 2048
+        x: 256
         y: 0
-        width: 1024
-        height: 1024
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1138,13 +1138,13 @@ TextureImporter:
       name: Shared_Frame_Btn_512
       rect:
         serializedVersion: 2
-        x: 3072
-        y: 512
-        width: 512
-        height: 512
+        x: 256
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1160,13 +1160,13 @@ TextureImporter:
       name: Shared_Frame_Btn_256
       rect:
         serializedVersion: 2
-        x: 3840
+        x: 256
         y: 0
         width: 256
         height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1182,13 +1182,13 @@ TextureImporter:
       name: Shared_Frame_Btn_128
       rect:
         serializedVersion: 2
-        x: 3584
-        y: 384
-        width: 128
-        height: 128
+        x: 256
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1204,13 +1204,13 @@ TextureImporter:
       name: Shared_Frame_Btn_128_B
       rect:
         serializedVersion: 2
-        x: 3712
-        y: 256
-        width: 128
-        height: 128
+        x: 256
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 48, y: 48, z: 48, w: 48}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1226,13 +1226,13 @@ TextureImporter:
       name: Shared_Frame_MegaDock_768x128
       rect:
         serializedVersion: 2
-        x: 3072
+        x: 256
         y: 0
-        width: 768
-        height: 128
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1248,13 +1248,13 @@ TextureImporter:
       name: Shared_Frame_MegaRail_128x768
       rect:
         serializedVersion: 2
-        x: 3968
-        y: 256
-        width: 128
-        height: 768
+        x: 256
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1270,13 +1270,13 @@ TextureImporter:
       name: Shared_Frame_Capsule_512x128
       rect:
         serializedVersion: 2
-        x: 3072
-        y: 384
-        width: 512
-        height: 128
+        x: 256
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1292,13 +1292,13 @@ TextureImporter:
       name: Shared_Frame_TallBanner_128x512
       rect:
         serializedVersion: 2
-        x: 3584
-        y: 512
-        width: 128
-        height: 512
+        x: 256
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1314,13 +1314,13 @@ TextureImporter:
       name: Shared_Frame_Capsule_384x128
       rect:
         serializedVersion: 2
-        x: 3456
-        y: 128
-        width: 384
-        height: 128
+        x: 256
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1336,13 +1336,13 @@ TextureImporter:
       name: Shared_Frame_Gauge_128x384
       rect:
         serializedVersion: 2
-        x: 3840
-        y: 256
-        width: 128
-        height: 384
+        x: 256
+        y: 0
+        width: 256
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1358,13 +1358,13 @@ TextureImporter:
       name: Shared_Frame_Capsule_256x128
       rect:
         serializedVersion: 2
-        x: 3456
-        y: 256
+        x: 256
+        y: 0
         width: 256
-        height: 128
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1380,13 +1380,13 @@ TextureImporter:
       name: Shared_Frame_Capsule_128x256
       rect:
         serializedVersion: 2
-        x: 3712
-        y: 384
-        width: 128
+        x: 256
+        y: 0
+        width: 256
         height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1402,13 +1402,13 @@ TextureImporter:
       name: Shared_Frame_SkillCard_384x256
       rect:
         serializedVersion: 2
-        x: 3072
-        y: 128
-        width: 384
+        x: 256
+        y: 0
+        width: 256
         height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1424,13 +1424,13 @@ TextureImporter:
       name: Shared_Frame_CharCard_256x384
       rect:
         serializedVersion: 2
-        x: 3712
-        y: 640
+        x: 256
+        y: 0
         width: 256
-        height: 384
+        height: 256
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 96, y: 96, z: 96, w: 96}
       customData: 
       outline: []
       physicsShape: []
@@ -1438,6 +1438,72 @@ TextureImporter:
       bones: []
       spriteID: 7c2ecf4cf5a946dabb193af3d2269e46
       internalID: 2315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shared_A_Surface
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 32, y: 32, z: 32, w: 32}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cf153a6d2552d106ad4fa86eef8569c
+      internalID: 2401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shared_Frame_Decorated
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 96, y: 96, z: 96, w: 96}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3832aa58e8cdb4c046646fc23c9bcf9a
+      internalID: 2402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shared_Frame_Compact
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 0
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 32, y: 32, z: 32, w: 32}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e4fb095ad27c17b94341159b06a2f1f
+      internalID: 2403
       vertices: []
       indices: 
       edges: []
@@ -1513,6 +1579,9 @@ TextureImporter:
       Shared_Frame_Capsule_128x256: 2313
       Shared_Frame_SkillCard_384x256: 2314
       Shared_Frame_CharCard_256x384: 2315
+      Shared_A_Surface: 2401
+      Shared_Frame_Decorated: 2402
+      Shared_Frame_Compact: 2403
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

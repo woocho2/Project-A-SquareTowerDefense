@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2514f906c5fc403e64ba5a3b997f22d7, type: 3}
+  m_Name: UITileSkin
+  m_EditorClassIdentifier: Assembly-CSharp::UITileSkin
+  background: {fileID: 2401, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  decoratedFrame: {fileID: 2402, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  compactFrame: {fileID: 2403, guid: 8b158e0989f140a88351053d1be429f7, type: 3}
+  decoratedStrokePixels: 8
+  compactStrokePixels: 12

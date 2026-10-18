@@ -1,0 +1,1839 @@
+{
+  "assets": {
+    "Vanaheim": "83321db890dbcb0af50ea605143d4731",
+    "LowerSpirit_Character": "842029a3f14373a93ae28c4842b0461d",
+    "MiddleSpirit_Character": "bc3ffb2814f46b5de4ea081fcdf674dc",
+    "UpperSpirit_Character": "2bfbf17b1f32f76ca596b369d3e21fc3",
+    "Midgard": "74f2176488bfa69884c046044678d736",
+    "SeaSerpent_Character": "76866ba3f2477f74c365e2146606443f",
+    "GreatSeaSerpent_Character": "90eff9a25a6da890f0eae0618d4621e4",
+    "Jormungandr_Character": "f804ab7f1119a7f737f516ab2781c822",
+    "Jotunheim": "24e760ee49d42cb015d91b5ce21e8dc9",
+    "FrostGiant_Character": "c935d60a7aa3cf54cb980d6c194ec1ba",
+    "FrostGiantChief_Character": "b7092de576aa35c741c9b1526cc82edf",
+    "Ymir_Character": "e1d0dfb5712c5ac1bf8d2a9a859e9807",
+    "Nidavellir": "eeb28350a9dccefde20a8fa2a437fe7f",
+    "CorruptedDwarf_Character": "5a4c53ea86a718dd598b5248c11bc35a",
+    "CorruptedDwarfArtisan_Character": "e91e7aa24fa48ed1e4859f9a0bd40887",
+    "Fafnir_Character": "cd738bdf46c64fe1737446df2a910067",
+    "Niflheim": "c202d97df4230df65f381a6575dcf258",
+    "FrostWolf_Character": "c2d23c493cc9199417b0419146f04423",
+    "FrostWolfAlpha_Character": "50600409cebb5ab86db8002eaa4eb259",
+    "Fenrir_Character": "3922af69960de6ee10da2cfd3fba41cb",
+    "Muspelheim": "2512676be6288d9f5ce9dc990fb4d4b9",
+    "FireGiant_Character": "6e683c6100577ac176ae42e13797a252",
+    "FireGiantChief_Character": "38534f70b806fad77df3eba033fc9699",
+    "Surtr_Character": "cee76d7b0b57828caffb0cec382e76dc",
+    "Hel": "c403146b8ccf0204b5a7f26ce04dc216",
+    "Wight_Character": "2370dfbeb76b03765af1033667cb0089",
+    "Garm_Character": "bd79752d9d066efb0e72e6230e0ba223",
+    "HelQueen_Character": "f7720096fba9cfd162e0cf87f6307103",
+    "LowerSpirit_EquipmentMask": "4a5ac99c4a2db21211857e81b774c6af",
+    "LowerSpirit_Appearance": "69be192b26a33a82fd2b18d0d8e91198",
+    "MiddleSpirit_EquipmentMask": "1cc66eb65fc08d5dd677593733db4bf7",
+    "MiddleSpirit_Appearance": "df3d101b019355587d33c7ab00352644",
+    "UpperSpirit_EquipmentMask": "c0c1bb3cd2a2944382201277f4a7268f",
+    "UpperSpirit_Appearance": "5b585e18c8d33860ac5432c1b0b58e0b",
+    "SeaSerpent_EquipmentMask": "1fa7c145474bedaabbb1d3f2a4d09fad",
+    "SeaSerpent_Appearance": "03e1f270042db64ec01907fafa2b41f0",
+    "GreatSeaSerpent_EquipmentMask": "9795726a9b70b47c5f8b3d0fe41eb513",
+    "GreatSeaSerpent_Appearance": "22128430f29db3c99592d30ebf942df4",
+    "Jormungandr_EquipmentMask": "3c03244816cb9ae3852eefe8329146ec",
+    "Jormungandr_Appearance": "cc22dd4d97b9ed209d509f22d86c87fc",
+    "FrostGiant_EquipmentMask": "6b662b22044ffde759ef8a1d1f7a793b",
+    "FrostGiant_Appearance": "057b400fc1e943af7c12c75f989c4099",
+    "FrostGiantChief_EquipmentMask": "2c78c2091b80ac31e672cab6f41113e0",
+    "FrostGiantChief_Appearance": "71d0f611231ae027d2c4b28267184dbe",
+    "Ymir_EquipmentMask": "a18247c30b16bf155bbcec4bf7aa9167",
+    "Ymir_Appearance": "08ca9c5948bc99062d3ed3c7cd056daa",
+    "CorruptedDwarf_EquipmentMask": "c3646ed7491a3aec3771657afe82a52c",
+    "CorruptedDwarf_Appearance": "089a0b42dfa8ea90df9dd39b12d5c1b3",
+    "CorruptedDwarfArtisan_EquipmentMask": "57064aa764f4f9e86765c2d3621bfb17",
+    "CorruptedDwarfArtisan_Appearance": "44b697f4365fb7c73f2b97687b601936",
+    "Fafnir_EquipmentMask": "a6f08bf74d8506e1ac4eaf27a8cb8a1b",
+    "Fafnir_Appearance": "bb34d3c03760cf74fc7f75ffefdf69f7",
+    "FrostWolf_EquipmentMask": "579a949e00855c96233b2516307de309",
+    "FrostWolf_Appearance": "a3c38361cfe52221be31dadebe070997",
+    "FrostWolfAlpha_EquipmentMask": "056a650372c78a90dbcf20525d7024de",
+    "FrostWolfAlpha_Appearance": "5adf7c93cec72b691d82b18bfd749918",
+    "Fenrir_EquipmentMask": "a1f25d96c43c214ab07c053385937569",
+    "Fenrir_Appearance": "a031bad27329dc56a0e61a237e0387e9",
+    "FireGiant_EquipmentMask": "6d4b9584f267d7266649d422fe90091b",
+    "FireGiant_Appearance": "d065485135c7ed5fe7f43900c0c020fa",
+    "FireGiantChief_EquipmentMask": "97ad29d86ba70d1b769c9794be2e7b72",
+    "FireGiantChief_Appearance": "e61a1eb25017bfa8d6cb3b27cd6e65f8",
+    "Surtr_EquipmentMask": "7a5fa61cbda30969929ea3eeb3b17c6c",
+    "Surtr_Appearance": "3a160cde783c7bb3a70c37b537033af5",
+    "Wight_EquipmentMask": "357d9e592ef4b41f4beac08a9f035957",
+    "Wight_Appearance": "cfb9de39e2e29e75fc963d9ddcc33ee9",
+    "Garm_EquipmentMask": "85273708aca1483cbf3b52f61851bddf",
+    "Garm_Appearance": "4565cbad7a4f31d35457f6ae2cd9761a",
+    "HelQueen_EquipmentMask": "2285a581531219817784a6a3e7496b15",
+    "HelQueen_Appearance": "15cb10e47d7a7f0962b5aeb6dec68eed"
+  },
+  "portraits": {
+    "LowerSpirit": {
+      "stage": 3,
+      "realm": "Vanaheim",
+      "id": "LowerSpirit",
+      "name": "타락한 하급 정령",
+      "role": "normal",
+      "design": "A small youthful corrupted forest spirit, softly moss-green skin, short wavy pale leaf-green hair, tiny leaf-shaped spirit ears and antennae, clear GOLD eyes, small purple leaf-vein cheek mark. Simple neutral silver-white leaf collar, short gray vine mantle and small leaf shoulder plates. Lowest rank: no crown, no long antlers.",
+      "eyeColor": "gold",
+      "path": "Assets\\4. Asset\\4. Enemy\\Vanaheim\\LowerSpirit_Character.png",
+      "sourceLandmarks": {
+        "x": 130.20440074906367,
+        "y": 171.1451518934665,
+        "distance": 41.84213483146067,
+        "points": [
+          {
+            "x": 218.56666666666666,
+            "y": 342.3259259259259,
+            "pixels": 270,
+            "score": 8.724179274097613
+          },
+          {
+            "x": 302.250936329588,
+            "y": 342.25468164794006,
+            "pixels": 267,
+            "score": 9.653065432252749
+          }
+        ]
+      },
+      "sourceChin": 191,
+      "sourceBottom": 248.5,
+      "scale": {
+        "x": 0.9440244901247332,
+        "faceY": 1.208772782910512,
+        "bodyY": 1.0434782608695652
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "MiddleSpirit": {
+      "stage": 3,
+      "realm": "Vanaheim",
+      "id": "MiddleSpirit",
+      "name": "타락한 중급 정령",
+      "role": "middle",
+      "design": "A corrupted forest dryad spirit captain with pale pink-lavender skin, lavender hair in two compact twisted locks, clear BLUE eyes, tiny bark-like cheek markings. Low silver twig circlet, layered silver-gray leaf pauldrons and charcoal cloak. Botanical spirit, not an elf or Freyja; no pointed elf ears. Modest leaf-shaped spirit ears.",
+      "eyeColor": "blue",
+      "path": "Assets\\4. Asset\\4. Enemy\\Vanaheim\\MiddleSpirit_Character.png",
+      "sourceLandmarks": {
+        "x": 127.0767857142857,
+        "y": 156.99592857142858,
+        "distance": 41.95357142857142,
+        "points": [
+          {
+            "x": 212.2,
+            "y": 314.448,
+            "pixels": 125,
+            "score": 0.047107413273170806
+          },
+          {
+            "x": 296.10714285714283,
+            "y": 313.5357142857143,
+            "pixels": 112,
+            "score": -0.4421045819554452
+          }
+        ]
+      },
+      "sourceChin": 185,
+      "sourceBottom": 245.5,
+      "scale": {
+        "x": 0.9415169830595047,
+        "faceY": 0.8570182396947384,
+        "bodyY": 0.9917355371900827
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "UpperSpirit": {
+      "stage": 3,
+      "realm": "Vanaheim",
+      "id": "UpperSpirit",
+      "name": "타락한 상급 정령",
+      "role": "boss",
+      "design": "An ancient high forest spirit in compact chibi form, pearl green skin, long rich turquoise hair tucked behind shoulders, clear RUBY eyes, delicate purple corruption veins. Compact silver branching leaf crown and substantial neutral silver leaf carapace/collar, charcoal vine mantle. Powerful dryad spirit ruler, not Freyja; leaf spirit ears, no elf ears.",
+      "eyeColor": "red",
+      "path": "Assets\\4. Asset\\4. Enemy\\Vanaheim\\UpperSpirit_Character.png",
+      "sourceLandmarks": {
+        "x": 127.8100140839757,
+        "y": 166.0985469612565,
+        "distance": 40.347943362297684,
+        "points": [
+          {
+            "x": 215.27208480565372,
+            "y": 332.11660777385157,
+            "pixels": 283,
+            "score": 0.7052606990978294
+          },
+          {
+            "x": 295.9679715302491,
+            "y": 332.2775800711744,
+            "pixels": 281,
+            "score": 0.826713447778733
+          }
+        ]
+      },
+      "sourceChin": 189,
+      "sourceBottom": 250,
+      "scale": {
+        "x": 0.9789842234414846,
+        "faceY": 1.0479684393561415,
+        "bodyY": 0.9836065573770492
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "SeaSerpent": {
+      "stage": 4,
+      "realm": "Midgard",
+      "id": "SeaSerpent",
+      "name": "바다뱀",
+      "role": "normal",
+      "design": "One small sea-serpent HEAD with short visible upright neck, smooth pale teal-blue scales, one short dorsal fin crest, clear GOLD eyes. Closed short reptilian muzzle with two tiny fang tips. Small neutral silver-gray segmented neck band and tiny silver brow plate. No human hair, arms, legs, wings or full coiled body.",
+      "eyeColor": "gold",
+      "path": "Assets\\4. Asset\\4. Enemy\\Midgard\\SeaSerpent_Character.png",
+      "sourceLandmarks": {
+        "x": 130.54302394869757,
+        "y": 172.1113692469213,
+        "distance": 50.861713296634704,
+        "points": [
+          {
+            "x": 210.22433460076044,
+            "y": 344.27756653992395,
+            "pixels": 263,
+            "score": 10.993612344853858
+          },
+          {
+            "x": 311.94776119402985,
+            "y": 344.1679104477612,
+            "pixels": 268,
+            "score": 15.957566029931412
+          }
+        ]
+      },
+      "sourceChin": 202,
+      "sourceBottom": 250,
+      "scale": {
+        "x": 0.776615600218358,
+        "faceY": 0.8029809126511378,
+        "bodyY": 1.25
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "GreatSeaSerpent": {
+      "stage": 4,
+      "realm": "Midgard",
+      "id": "GreatSeaSerpent",
+      "name": "큰 바다뱀",
+      "role": "middle",
+      "design": "One imposing sea-serpent HEAD with short upright neck, deep navy-violet scales, a compact double fin crest, luminous MINT GREEN eyes, stronger brow and two small exposed fang tips in closed mouth. Neutral silver-gray temple plates and segmented neck guard. Rank above a small sea serpent. No legs, arms, wings, hair or full body.",
+      "eyeColor": "green",
+      "path": "Assets\\4. Asset\\4. Enemy\\Midgard\\GreatSeaSerpent_Character.png",
+      "sourceLandmarks": {
+        "x": 127.8164238410596,
+        "y": 162.0473123620309,
+        "distance": 50.9871523178808,
+        "points": [
+          {
+            "x": 204.6456953642384,
+            "y": 324.112582781457,
+            "pixels": 302,
+            "score": 3.0767236927992254
+          },
+          {
+            "x": 306.62,
+            "y": 324.07666666666665,
+            "pixels": 300,
+            "score": 2.391112676277446
+          }
+        ]
+      },
+      "sourceChin": 195,
+      "sourceBottom": 244,
+      "scale": {
+        "x": 0.774704963982616,
+        "faceY": 0.7283169210254786,
+        "bodyY": 1.2244897959183674
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "Jormungandr": {
+      "stage": 4,
+      "realm": "Midgard",
+      "id": "Jormungandr",
+      "name": "요르문간드",
+      "role": "boss",
+      "design": "The world serpent Jormungandr, one majestic broad serpent HEAD and short thick upright neck, dark emerald-and-charcoal scales, intense RUBY RED eyes, compact swept-back dorsal spines and two subtle fin-like horn ridges. Closed reptilian mouth with two small fangs. Heavy neutral silver runic neck collar and silver-gray brow/temple bands. Serpent not a winged dragon, no legs, arms or full world-encircling body.",
+      "eyeColor": "red",
+      "path": "Assets\\4. Asset\\4. Enemy\\Midgard\\Jormungandr_Character.png",
+      "sourceLandmarks": {
+        "x": 130.44752196145274,
+        "y": 146.90098225602028,
+        "distance": 57.49849219876752,
+        "points": [
+          {
+            "x": 203.39655172413794,
+            "y": 295.6666666666667,
+            "pixels": 174,
+            "score": 15.583577848253853
+          },
+          {
+            "x": 318.393536121673,
+            "y": 291.93726235741445,
+            "pixels": 526,
+            "score": 19.264542566436106
+          }
+        ]
+      },
+      "sourceChin": 184,
+      "sourceBottom": 247.5,
+      "scale": {
+        "x": 0.6869745360182972,
+        "faceY": 0.646917397264369,
+        "bodyY": 0.9448818897637795
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "FrostGiant": {
+      "stage": 5,
+      "realm": "Jotunheim",
+      "id": "FrostGiant",
+      "name": "서리 거인",
+      "role": "normal",
+      "design": "A stocky young-adult frost giant in compact chibi head-and-shoulders form, stone-blue skin, short dark slate hair, bushy eyebrows, clear EMERALD eyes, small ice-like cheek grooves and two tiny tusks. Neutral silver-gray simple shoulder armor, gray fur collar. Strong blunt humanoid giant face, not a human knight, no huge body.",
+      "eyeColor": "green",
+      "path": "Assets\\4. Asset\\4. Enemy\\Jotunheim\\FrostGiant_Character.png",
+      "sourceLandmarks": {
+        "x": 127.93030303030302,
+        "y": 173.2969696969697,
+        "distance": 39.16363636363636,
+        "points": [
+          {
+            "x": 216.6969696969697,
+            "y": 346.6848484848485,
+            "pixels": 165,
+            "score": 13.603152291532483
+          },
+          {
+            "x": 295.0242424242424,
+            "y": 346.5030303030303,
+            "pixels": 165,
+            "score": 13.478591561474593
+          }
+        ]
+      },
+      "sourceChin": 205,
+      "sourceBottom": 250,
+      "scale": {
+        "x": 1.0085886722376975,
+        "faceY": 0.757025425348882,
+        "bodyY": 1.3333333333333333
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "FrostGiantChief": {
+      "stage": 5,
+      "realm": "Jotunheim",
+      "id": "FrostGiantChief",
+      "name": "서리 거인 족장",
+      "role": "middle",
+      "design": "A stern adult frost giant clan chief, cold blue-gray skin, short pale auburn hair and compact braided auburn beard, clear GOLD eyes. Low compact ice-and-silver circlet, neutral silver-gray heavy pauldrons, gray fur cloak. Different hair and eye colors from the ordinary frost giant and white-haired Ymir. No oversize horns or weapon.",
+      "eyeColor": "gold",
+      "path": "Assets\\4. Asset\\4. Enemy\\Jotunheim\\FrostGiantChief_Character.png",
+      "sourceLandmarks": {
+        "x": 130.06602483164983,
+        "y": 164.33110620089786,
+        "distance": 39.33091329966331,
+        "points": [
+          {
+            "x": 220.80113636363637,
+            "y": 328.96022727272725,
+            "pixels": 176,
+            "score": 1.6257819194335692
+          },
+          {
+            "x": 299.462962962963,
+            "y": 328.3641975308642,
+            "pixels": 162,
+            "score": 0.8015466395052311
+          }
+        ]
+      },
+      "sourceChin": 190,
+      "sourceBottom": 247.5,
+      "scale": {
+        "x": 1.004299078921672,
+        "faceY": 0.9349838052171725,
+        "bodyY": 1.0434782608695652
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "Ymir": {
+      "stage": 5,
+      "realm": "Jotunheim",
+      "id": "Ymir",
+      "name": "이미르",
+      "role": "boss",
+      "design": "Ymir, the primordial frost giant; retain the identity of the extra Ymir reference: ice-blue skin, shaggy white hair, thick white mustache and short full white beard, BLUE eyes. More stern ancient boss expression, gray fur mantle, neutral silver/dark-gray heavy armor with small ice-blue crystals at shoulders. Keep ice crystals blue and hair white. No giant body or weapon.",
+      "eyeColor": "blue",
+      "path": "Assets\\4. Asset\\4. Enemy\\Jotunheim\\Ymir_Character.png",
+      "sourceLandmarks": {
+        "x": 130.24683925972136,
+        "y": 152.79518091079228,
+        "distance": 39.64605947182366,
+        "points": [
+          {
+            "x": 220.84761904761905,
+            "y": 305.75714285714287,
+            "pixels": 210,
+            "score": 4.484937631140818
+          },
+          {
+            "x": 300.1397379912664,
+            "y": 305.4235807860262,
+            "pixels": 229,
+            "score": 4.123491395513562
+          }
+        ]
+      },
+      "sourceChin": 180,
+      "sourceBottom": 249.5,
+      "scale": {
+        "x": 0.9963159145254407,
+        "faceY": 0.8821966402827841,
+        "bodyY": 0.8633093525179856
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "CorruptedDwarf": {
+      "stage": 6,
+      "realm": "Nidavellir",
+      "id": "CorruptedDwarf",
+      "name": "타락한 드워프",
+      "role": "normal",
+      "design": "A corrupted dwarf miner in compact chibi bust form: warm pale skin, short walnut-brown hair, short square brown beard, round broad nose, clear GOLD eyes. Small silver work helmet with raised goggles that never cover the eyes, plain neutral silver-gray riveted shoulder armor and charcoal work vest. Subtle purple corruption mark on cheek. One dwarf only, not two.",
+      "eyeColor": "gold",
+      "path": "Assets\\4. Asset\\4. Enemy\\Nidavellir\\CorruptedDwarf_Character.png",
+      "sourceLandmarks": {
+        "x": 128.77676205617382,
+        "y": 164.04606707547885,
+        "distance": 44.87784843667197,
+        "points": [
+          {
+            "x": 212.67567567567568,
+            "y": 348.75289575289577,
+            "pixels": 259,
+            "score": 13.772661216980604
+          },
+          {
+            "x": 302.4313725490196,
+            "y": 307.4313725490196,
+            "pixels": 51,
+            "score": 7.840723057831858
+          }
+        ]
+      },
+      "sourceChin": 192,
+      "sourceBottom": 245,
+      "scale": {
+        "x": 0.8801669727045681,
+        "faceY": 0.8585553977253494,
+        "bodyY": 1.1320754716981132
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "CorruptedDwarfArtisan": {
+      "stage": 6,
+      "realm": "Nidavellir",
+      "id": "CorruptedDwarfArtisan",
+      "name": "타락한 드워프 장인",
+      "role": "middle",
+      "design": "A corrupted master dwarf smith, pale skin, vivid copper-red hair, two short braided copper beard locks, broad nose, clear TURQUOISE BLUE eyes. Elaborate raised silver smith goggles on forehead, neutral silver-gray layered forge pauldrons, charcoal smith apron, silver collar clasps, small purple corruption cheek rune. More ornate than a miner but no crown, hammer or full body. One dwarf only.",
+      "eyeColor": "blue",
+      "path": "Assets\\4. Asset\\4. Enemy\\Nidavellir\\CorruptedDwarfArtisan_Character.png",
+      "sourceLandmarks": {
+        "x": 124.71670381721928,
+        "y": 156.6503204235163,
+        "distance": 39.91794371691279,
+        "points": [
+          {
+            "x": 209.51546391752578,
+            "y": 313.1958762886598,
+            "pixels": 97,
+            "score": 3.3272839008160524
+          },
+          {
+            "x": 289.35135135135135,
+            "y": 313.4054054054054,
+            "pixels": 74,
+            "score": 3.985387321278724
+          }
+        ]
+      },
+      "sourceChin": 180,
+      "sourceBottom": 249,
+      "scale": {
+        "x": 0.9895299286988145,
+        "faceY": 1.0278513639292615,
+        "bodyY": 0.8695652173913043
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "Fafnir": {
+      "stage": 6,
+      "realm": "Nidavellir",
+      "id": "Fafnir",
+      "name": "파프니르",
+      "role": "boss",
+      "design": "Fafnir, a dwarf transformed into a greedy GOLDEN DRAGON: a single compact dragon HEAD and upper neck/chest, warm golden-bronze scales, heavy low brow, sharp AMETHYST PURPLE eyes, short swept-back gold horn ridges, closed muzzle with tiny fangs. Neutral iron-gray runic neck guard and small silver temple fittings contrast with natural gold scales. Gold scales are not equipment. No human beard, wings, legs, hoard or coins.",
+      "eyeColor": "purple",
+      "path": "Assets\\4. Asset\\4. Enemy\\Nidavellir\\Fafnir_Character.png",
+      "sourceLandmarks": {
+        "x": 127.9487377855009,
+        "y": 157.3948422380652,
+        "distance": 52.748009378830986,
+        "points": [
+          {
+            "x": 203.14946619217082,
+            "y": 314.9572953736655,
+            "pixels": 281,
+            "score": 5.013992783274553
+          },
+          {
+            "x": 308.6454849498328,
+            "y": 314.6220735785953,
+            "pixels": 299,
+            "score": 4.6273589362696015
+          }
+        ]
+      },
+      "sourceChin": 200,
+      "sourceBottom": 243,
+      "scale": {
+        "x": 0.7488434249018746,
+        "faceY": 0.5633120791173923,
+        "bodyY": 1.3953488372093024
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "FrostWolf": {
+      "stage": 7,
+      "realm": "Niflheim",
+      "id": "FrostWolf",
+      "name": "서리 늑대",
+      "role": "normal",
+      "design": "A frontal frost wolf HEAD and upper chest: soft ivory-white and pale gray fur, compact pointed ears, BLUE eyes, short wolf muzzle, closed mouth, a small frosty forelock. Neutral gray leather collar with silver buckle and two small silver side plates. One animal head, no humanoid shoulders, arms, horns, long full body or snarl.",
+      "eyeColor": "blue",
+      "path": "Assets\\4. Asset\\4. Enemy\\Niflheim\\FrostWolf_Character.png",
+      "sourceLandmarks": {
+        "x": 128.3384231315083,
+        "y": 163.02753364225504,
+        "distance": 52.42186618333534,
+        "points": [
+          {
+            "x": 204.25498007968127,
+            "y": 325.7410358565737,
+            "pixels": 251,
+            "score": 4.5879150061811504
+          },
+          {
+            "x": 309.09871244635195,
+            "y": 326.3690987124464,
+            "pixels": 233,
+            "score": 6.3103674358548885
+          }
+        ]
+      },
+      "sourceChin": 195,
+      "sourceBottom": 249.5,
+      "scale": {
+        "x": 0.7535023621985603,
+        "faceY": 0.7506458754686054,
+        "bodyY": 1.1009174311926606
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "FrostWolfAlpha": {
+      "stage": 7,
+      "realm": "Niflheim",
+      "id": "FrostWolfAlpha",
+      "name": "대장 서리 늑대",
+      "role": "middle",
+      "design": "A commanding alpha frost wolf HEAD and upper chest: deep slate-blue fur with pale silver throat, GOLD eyes, compact pointed ears, fuller swept-back mane, closed wolf muzzle. Low neutral silver-gray brow plate and broad silver-gray collar with layered side plates. Distinct darker fur than the ordinary white frost wolf. No human hair, arms or horns, no full body.",
+      "eyeColor": "gold",
+      "path": "Assets\\4. Asset\\4. Enemy\\Niflheim\\FrostWolfAlpha_Character.png",
+      "sourceLandmarks": {
+        "x": 129.91061665488897,
+        "y": 162.6455908059657,
+        "distance": 45.93924573213819,
+        "points": [
+          {
+            "x": 213.88198757763976,
+            "y": 324.87577639751555,
+            "pixels": 161,
+            "score": -2.118368861143691
+          },
+          {
+            "x": 305.76047904191614,
+            "y": 325.7065868263473,
+            "pixels": 167,
+            "score": 4.19619481163835
+          }
+        ]
+      },
+      "sourceChin": 200,
+      "sourceBottom": 246,
+      "scale": {
+        "x": 0.8598312699846219,
+        "faceY": 0.6424944342000978,
+        "bodyY": 1.3043478260869565
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "Fenrir": {
+      "stage": 7,
+      "realm": "Niflheim",
+      "id": "Fenrir",
+      "name": "펜리르",
+      "role": "boss",
+      "design": "Fenrir, one fierce ancient wolf HEAD and upper chest, near-black midnight blue fur with silver-gray cheek tufts, intense RUBY RED eyes, compact pointed ears, closed long wolf muzzle with two tiny fang tips. Heavy neutral iron-gray broken chain collar with two short broken chain links resting inside shoulder width. Natural fur stays dark. No humanoid armor, horns, wings, full body or huge open mouth.",
+      "eyeColor": "red",
+      "path": "Assets\\4. Asset\\4. Enemy\\Niflheim\\Fenrir_Character.png",
+      "sourceLandmarks": {
+        "x": 128.1376578087755,
+        "y": 163.93467820252494,
+        "distance": 45.34170565904475,
+        "points": [
+          {
+            "x": 210.93360995850622,
+            "y": 327.9004149377593,
+            "pixels": 241,
+            "score": 0.03391296669365129
+          },
+          {
+            "x": 301.6170212765957,
+            "y": 327.83829787234043,
+            "pixels": 235,
+            "score": 0.46597024646032903
+          }
+        ]
+      },
+      "sourceChin": 199,
+      "sourceBottom": 250,
+      "scale": {
+        "x": 0.871162639910979,
+        "faceY": 0.684436895763157,
+        "bodyY": 1.1764705882352942
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "FireGiant": {
+      "stage": 8,
+      "realm": "Muspelheim",
+      "id": "FireGiant",
+      "name": "불 거인",
+      "role": "normal",
+      "design": "A young-adult fire giant compact chibi bust, burnt-umber reddish stone skin, short charcoal-black hair with tiny ember-red tips, clear CYAN BLUE eyes, subtle orange ember cracks at temples. Neutral silver/dark-gray simple forge collar and shoulder plates, charcoal short mantle. No floating flame effects, huge body or weapon.",
+      "eyeColor": "blue",
+      "path": "Assets\\4. Asset\\4. Enemy\\Muspelheim\\FireGiant_Character.png",
+      "sourceLandmarks": {
+        "x": 129.96017457719586,
+        "y": 169.76677577741407,
+        "distance": 47.35624659028913,
+        "points": [
+          {
+            "x": 212.56410256410257,
+            "y": 339.7692307692308,
+            "pixels": 39,
+            "score": 12.097324886739848
+          },
+          {
+            "x": 307.27659574468083,
+            "y": 339.29787234042556,
+            "pixels": 47,
+            "score": 14.919953010421384
+          }
+        ]
+      },
+      "sourceChin": 200,
+      "sourceBottom": 247.5,
+      "scale": {
+        "x": 0.8341032671305472,
+        "faceY": 0.7938286642306129,
+        "bodyY": 1.263157894736842
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "FireGiantChief": {
+      "stage": 8,
+      "realm": "Muspelheim",
+      "id": "FireGiantChief",
+      "name": "불 거인 족장",
+      "role": "middle",
+      "design": "An imposing adult fire giant clan chief, charcoal volcanic stone skin, compact copper-red hair and short copper beard, clear CYAN GREEN eyes, subtle natural ember-orange face cracks. Low dark metal circlet with two short volcanic spikes, neutral silver-gray layered shoulder armor and dark-gray collar, charcoal mantle. More ornate than ordinary fire giant, unlike Surtr's orange fire hair and amber eyes. No weapon or full body.",
+      "eyeColor": "green",
+      "path": "Assets\\4. Asset\\4. Enemy\\Muspelheim\\FireGiantChief_Character.png",
+      "sourceLandmarks": {
+        "x": 129.17118437118438,
+        "y": 169.3558608058608,
+        "distance": 38.08840048840048,
+        "points": [
+          {
+            "x": 220.25396825396825,
+            "y": 338.76190476190476,
+            "pixels": 63,
+            "score": 10.731759012913514
+          },
+          {
+            "x": 296.4307692307692,
+            "y": 338.66153846153844,
+            "pixels": 65,
+            "score": 9.971652442981412
+          }
+        ]
+      },
+      "sourceChin": 190,
+      "sourceBottom": 248,
+      "scale": {
+        "x": 1.0370611391788271,
+        "faceY": 1.162557555648216,
+        "bodyY": 1.0344827586206897
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "Surtr": {
+      "stage": 8,
+      "realm": "Muspelheim",
+      "id": "Surtr",
+      "name": "수르트",
+      "role": "boss",
+      "design": "Surtr the fire giant king; retain the identity of the extra Surtr reference: ember red-brown skin, vivid orange flame-shaped hair, two compact black volcanic horns with orange cracks, GOLD/AMBER eyes. Stern boss expression, neutral dark iron-gray armor and broad collar with silver-gray fittings, tiny natural orange ember cracks. Hair/fire and cracks stay orange; armor is neutral for state tinting. No huge sword, full body, flame cloud or wings.",
+      "eyeColor": "gold",
+      "path": "Assets\\4. Asset\\4. Enemy\\Muspelheim\\Surtr_Character.png",
+      "sourceLandmarks": {
+        "x": 133.15692119432208,
+        "y": 167.62127263827705,
+        "distance": 40.42837983357806,
+        "points": [
+          {
+            "x": 225.88546255506608,
+            "y": 335.4273127753304,
+            "pixels": 227,
+            "score": 7.685100488535408
+          },
+          {
+            "x": 306.7422222222222,
+            "y": 335.0577777777778,
+            "pixels": 225,
+            "score": 8.086363143767144
+          }
+        ]
+      },
+      "sourceChin": 193,
+      "sourceBottom": 245.5,
+      "scale": {
+        "x": 0.977036432392302,
+        "faceY": 0.9456738968005781,
+        "bodyY": 1.1428571428571428
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "Wight": {
+      "stage": 9,
+      "realm": "Hel",
+      "id": "Wight",
+      "name": "망자",
+      "role": "normal",
+      "design": "One undead wight in compact chibi head-and-shoulders form, pale cold gray skin, short ash-gray hair, clear spectral EMERALD GREEN eyes, small non-graphic dark cracks on cheek, a tired stern closed mouth. Tattered charcoal hood resting behind head, neutral silver-gray burial collar and small gray shoulder wraps/clasp. Recognizable humanoid ghost, not a gore zombie or bare skeleton. No blood, exposed flesh, huge glow cloud or weapon.",
+      "eyeColor": "green",
+      "path": "Assets\\4. Asset\\4. Enemy\\Hel\\Wight_Character.png",
+      "sourceLandmarks": {
+        "x": 133.35863159099364,
+        "y": 164.66578691385575,
+        "distance": 41.15705375790347,
+        "points": [
+          {
+            "x": 225.56020942408378,
+            "y": 329.4554973821989,
+            "pixels": 191,
+            "score": 4.9931696870589
+          },
+          {
+            "x": 307.8743169398907,
+            "y": 329.20765027322403,
+            "pixels": 183,
+            "score": 6.972522862033233
+          }
+        ]
+      },
+      "sourceChin": 187,
+      "sourceBottom": 248.5,
+      "scale": {
+        "x": 0.9597382804014425,
+        "faceY": 1.0745845357269015,
+        "bodyY": 0.975609756097561
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "Garm": {
+      "stage": 9,
+      "realm": "Hel",
+      "id": "Garm",
+      "name": "가름",
+      "role": "middle",
+      "design": "Garm, the single-headed hound guardian of Hel: one broad compact hellhound HEAD and upper chest, dark wine-maroon fur with charcoal muzzle and mane, bright GOLD/AMBER eyes, compact pointed ears, short broad canine muzzle with closed mouth and two tiny fang tips. Heavy neutral iron-gray spiked collar and two short chain ends within the silhouette. Stockier dog-like face than Fenrir's wolf. NO three heads, no horns, no wings, no flames or full body.",
+      "eyeColor": "gold",
+      "path": "Assets\\4. Asset\\4. Enemy\\Hel\\Garm_Character.png",
+      "sourceLandmarks": {
+        "x": 127.88007202131499,
+        "y": 162.01091074352638,
+        "distance": 48.65430462657157,
+        "points": [
+          {
+            "x": 207.1058394160584,
+            "y": 324.04744525547443,
+            "pixels": 274,
+            "score": 1.121445301412141
+          },
+          {
+            "x": 304.41444866920153,
+            "y": 323.99619771863115,
+            "pixels": 263,
+            "score": 0.8236548481653401
+          }
+        ]
+      },
+      "sourceChin": 193,
+      "sourceBottom": 245.5,
+      "scale": {
+        "x": 0.811850057321092,
+        "faceY": 0.774466129074329,
+        "bodyY": 1.1428571428571428
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    },
+    "HelQueen": {
+      "stage": 9,
+      "realm": "Hel",
+      "id": "HelQueen",
+      "name": "헬",
+      "role": "boss",
+      "design": "Hel, queen of the dead; retain the extra Hel reference's identity: young-adult female chibi face, one half pale porcelain skin and the other half cold charcoal-gray, long black hair with a narrow silver-white streak tucked behind shoulders, AMETHYST PURPLE eyes. Compact thornlike neutral silver-gray crown with purple gemstones, silver-gray gothic collar and armor clasps, charcoal feather mantle. A severe calm corrupted-enemy expression, not a smiling ally. No gore, weapon, huge crown or full body.",
+      "eyeColor": "purple",
+      "path": "Assets\\4. Asset\\4. Enemy\\Hel\\HelQueen_Character.png",
+      "sourceLandmarks": {
+        "x": 128.31878004629357,
+        "y": 165.24446554691673,
+        "distance": 40.49298177933409,
+        "points": [
+          {
+            "x": 216.14457831325302,
+            "y": 330.5542168674699,
+            "pixels": 415,
+            "score": -2.2687915033367947
+          },
+          {
+            "x": 297.1305418719212,
+            "y": 330.42364532019707,
+            "pixels": 406,
+            "score": -2.1756645882721477
+          }
+        ]
+      },
+      "sourceChin": 195,
+      "sourceBottom": 250,
+      "scale": {
+        "x": 0.9754776819167004,
+        "faceY": 0.8065726407247616,
+        "bodyY": 1.0909090909090908
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      },
+      "clippedPixels": 0
+    }
+  },
+  "masks": {
+    "LowerSpirit": {
+      "selectedPixels": 16539,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "MiddleSpirit": {
+      "selectedPixels": 23731,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "UpperSpirit": {
+      "selectedPixels": 41492,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "SeaSerpent": {
+      "selectedPixels": 6766,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "GreatSeaSerpent": {
+      "selectedPixels": 16298,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "Jormungandr": {
+      "selectedPixels": 9732,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "FrostGiant": {
+      "selectedPixels": 26122,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "FrostGiantChief": {
+      "selectedPixels": 38157,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "Ymir": {
+      "selectedPixels": 16325,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "CorruptedDwarf": {
+      "selectedPixels": 24500,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "CorruptedDwarfArtisan": {
+      "selectedPixels": 30117,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "Fafnir": {
+      "selectedPixels": 11177,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "FrostWolf": {
+      "selectedPixels": 4592,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "FrostWolfAlpha": {
+      "selectedPixels": 18242,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "Fenrir": {
+      "selectedPixels": 8605,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "FireGiant": {
+      "selectedPixels": 20015,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "FireGiantChief": {
+      "selectedPixels": 22911,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "Surtr": {
+      "selectedPixels": 23842,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "Wight": {
+      "selectedPixels": 22708,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "Garm": {
+      "selectedPixels": 8296,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    },
+    "HelQueen": {
+      "selectedPixels": 14938,
+      "format": "512x512 opaque binary RGB, linear, uncompressed",
+      "naturalColorProtection": "saturation + common face protection + head gear allow list"
+    }
+  },
+  "finalLayout": {
+    "LowerSpirit": {
+      "before": {
+        "eyes": {
+          "x": 128.01466453153836,
+          "y": 160.71493594615134,
+          "distance": 40.06575290413636,
+          "points": [
+            {
+              "x": 215.96357615894038,
+              "y": 321.4072847682119,
+              "count": 302,
+              "score": -4.0294872773396815
+            },
+            {
+              "x": 296.0950819672131,
+              "y": 321.45245901639345,
+              "count": 305,
+              "score": -3.9979877375713455
+            }
+          ]
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 0.9858793891758377,
+        "faceY": 1.030703628063809,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "MiddleSpirit": {
+      "before": {
+        "eyes": {
+          "x": 132.06906639265193,
+          "y": 159.95890303233654,
+          "distance": 40.24239818814745,
+          "points": [
+            {
+              "x": 223.8957345971564,
+              "y": 320.1232227488152,
+              "count": 211,
+              "score": 3.038560282280959
+            },
+            {
+              "x": 304.3805309734513,
+              "y": 319.71238938053096,
+              "count": 226,
+              "score": 4.373161445252778
+            }
+          ]
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 0.9815518403084112,
+        "faceY": 0.9982905535584029,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "UpperSpirit": {
+      "before": {
+        "eyes": {
+          "x": 128.04453796778492,
+          "y": 160.12537846675548,
+          "distance": 40.69353276008236,
+          "points": [
+            {
+              "x": 215.39554317548746,
+              "y": 320.2841225626741,
+              "count": 359,
+              "score": -4.559362812411081
+            },
+            {
+              "x": 296.7826086956522,
+              "y": 320.2173913043478,
+              "count": 345,
+              "score": -4.279322586889828
+            }
+          ]
+        },
+        "bottom": 491
+      },
+      "scale": {
+        "x": 0.9706702102489086,
+        "faceY": 1.0052515373523678,
+        "bodyY": 0.975609756097561
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "SeaSerpent": {
+      "before": {
+        "eyes": {
+          "x": 127.78005904455179,
+          "y": 160.21616680085884,
+          "distance": 39.41814278046161,
+          "points": [
+            {
+              "x": 216.14197530864197,
+              "y": 320.41358024691357,
+              "count": 162,
+              "score": -3.34467151105641
+            },
+            {
+              "x": 294.9782608695652,
+              "y": 320.45108695652175,
+              "count": 184,
+              "score": -3.4475709186202965
+            }
+          ]
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 1.0020766381611201,
+        "faceY": 1.0090888125160014,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "GreatSeaSerpent": {
+      "before": {
+        "eyes": {
+          "x": 127.9632860040568,
+          "y": 159.8254563894523,
+          "distance": 39.68519269776877,
+          "points": [
+            {
+              "x": 216.24137931034483,
+              "y": 319.67241379310343,
+              "count": 174,
+              "score": -3.600553316168062
+            },
+            {
+              "x": 295.61176470588236,
+              "y": 319.6294117647059,
+              "count": 170,
+              "score": -3.6119506717522385
+            }
+          ]
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 0.9953334560026168,
+        "faceY": 0.9927798591212481,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "Jormungandr": {
+      "before": {
+        "eyes": {
+          "x": 126.10888501742161,
+          "y": 158.89547038327527,
+          "distance": 43.77177700348433,
+          "points": [
+            {
+              "x": 208.44599303135888,
+              "y": 317.7317073170732,
+              "count": 287,
+              "score": 3.1493953832390744
+            },
+            {
+              "x": 295.98954703832754,
+              "y": 317.8501742160279,
+              "count": 287,
+              "score": -3.397272991556614
+            }
+          ]
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 0.9024079601990047,
+        "faceY": 0.9560027758501043,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "FrostGiant": {
+      "before": {
+        "eyes": {
+          "x": 127.94893617021276,
+          "y": 159.68530202983615,
+          "distance": 39.69787234042553,
+          "points": [
+            {
+              "x": 216.2,
+              "y": 319.3724137931035,
+              "count": 145,
+              "score": -3.0543128502610535
+            },
+            {
+              "x": 295.59574468085106,
+              "y": 319.36879432624113,
+              "count": 141,
+              "score": -3.0793133582538457
+            }
+          ]
+        },
+        "bottom": 495
+      },
+      "scale": {
+        "x": 0.9950155429306463,
+        "faceY": 0.9870572947050377,
+        "bodyY": 0.9448818897637795
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "FrostGiantChief": {
+      "before": {
+        "eyes": {
+          "x": 127.80607476635515,
+          "y": 161.07476635514018,
+          "distance": 39.00467289719627,
+          "points": [
+            {
+              "x": 216.60747663551402,
+              "y": 322.04672897196264,
+              "count": 107,
+              "score": -1.5644195004865835
+            },
+            {
+              "x": 294.61682242990656,
+              "y": 322.25233644859816,
+              "count": 107,
+              "score": -1.1970299958320543
+            }
+          ]
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 1.0126991733556965,
+        "faceY": 1.0468813697513248,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "Ymir": {
+      "before": {
+        "eyes": {
+          "x": 127.97264591883265,
+          "y": 159.78470132238942,
+          "distance": 39.538429092567256,
+          "points": [
+            {
+              "x": 216.40686274509804,
+              "y": 319.80392156862746,
+              "count": 204,
+              "score": -4.110785675708414
+            },
+            {
+              "x": 295.48372093023255,
+              "y": 319.33488372093024,
+              "count": 215,
+              "score": -3.899760725119135
+            }
+          ]
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 0.999028057172497,
+        "faceY": 0.9911089811248275,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "CorruptedDwarf": {
+      "before": {
+        "eyes": {
+          "x": 127.375,
+          "y": 166,
+          "distance": 39.25,
+          "method": "visually reviewed pupil centers"
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 1.0063694267515924,
+        "faceY": 1.3333333333333333,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "CorruptedDwarfArtisan": {
+      "before": {
+        "eyes": {
+          "x": 131.43670616113744,
+          "y": 159.7516943127962,
+          "distance": 39.9065876777251,
+          "points": [
+            {
+              "x": 222.96682464454977,
+              "y": 319.8767772511848,
+              "count": 211,
+              "score": 2.109733260696447
+            },
+            {
+              "x": 302.78,
+              "y": 319.13,
+              "count": 200,
+              "score": 3.066542321261309
+            }
+          ]
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 0.98981151480531,
+        "faceY": 0.9897598747555032,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "Fafnir": {
+      "before": {
+        "eyes": {
+          "x": 127.76604998774809,
+          "y": 159.35949113779304,
+          "distance": 40.09054153393775,
+          "points": [
+            {
+              "x": 215.44155844155844,
+              "y": 318.72727272727275,
+              "count": 154,
+              "score": -2.2976106999308827
+            },
+            {
+              "x": 295.62264150943395,
+              "y": 318.71069182389937,
+              "count": 159,
+              "score": -2.8081286919267527
+            }
+          ]
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 0.9852698040150483,
+        "faceY": 0.9740058589784502,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "FrostWolf": {
+      "before": {
+        "eyes": {
+          "x": 127.89902146464647,
+          "y": 160.30107323232323,
+          "distance": 39.361679292929296,
+          "points": [
+            {
+              "x": 216.43636363636364,
+              "y": 320.55151515151516,
+              "count": 165,
+              "score": -3.4350669323915253
+            },
+            {
+              "x": 295.15972222222223,
+              "y": 320.65277777777777,
+              "count": 144,
+              "score": -3.0037778884281865
+            }
+          ]
+        },
+        "bottom": 493
+      },
+      "scale": {
+        "x": 1.0035140956777104,
+        "faceY": 1.0127040872050743,
+        "bodyY": 0.96
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "FrostWolfAlpha": {
+      "before": {
+        "eyes": {
+          "x": 127.9374878664337,
+          "y": 160.0005581440497,
+          "distance": 39.62007377208309,
+          "points": [
+            {
+              "x": 216.2549019607843,
+              "y": 319.77450980392155,
+              "count": 102,
+              "score": -2.732069972052286
+            },
+            {
+              "x": 295.4950495049505,
+              "y": 320.2277227722772,
+              "count": 101,
+              "score": -2.844098875886548
+            }
+          ]
+        },
+        "bottom": 489
+      },
+      "scale": {
+        "x": 0.996969370305219,
+        "faceY": 1.0000232565429252,
+        "bodyY": 0.9917355371900827
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "Fenrir": {
+      "before": {
+        "eyes": {
+          "x": 127.93167701863354,
+          "y": 159.68788819875778,
+          "distance": 39.577639751552795,
+          "points": [
+            {
+              "x": 216.28571428571428,
+              "y": 319.3850931677019,
+              "count": 161,
+              "score": -3.2980405942305935
+            },
+            {
+              "x": 295.44099378881987,
+              "y": 319.3664596273292,
+              "count": 161,
+              "score": -3.327768215589303
+            }
+          ]
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 0.998038292529818,
+        "faceY": 0.9871622916267488,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "FireGiant": {
+      "before": {
+        "eyes": {
+          "x": 128.1825396825397,
+          "y": 163.05555555555554,
+          "distance": 35.084656084656075,
+          "points": [
+            {
+              "x": 221.2804232804233,
+              "y": 326.3968253968254,
+              "count": 189,
+              "score": 2.648391470121874
+            },
+            {
+              "x": 291.44973544973544,
+              "y": 325.8253968253968,
+              "count": 189,
+              "score": 1.83330052838419
+            }
+          ]
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 1.1258482883426335,
+        "faceY": 1.1458885941644554,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "FireGiantChief": {
+      "before": {
+        "eyes": {
+          "x": 128.04238634107602,
+          "y": 160.12303950764345,
+          "distance": 39.490569783601345,
+          "points": [
+            {
+              "x": 216.59420289855072,
+              "y": 320.231884057971,
+              "count": 69,
+              "score": -2.294199563745634
+            },
+            {
+              "x": 295.5753424657534,
+              "y": 320.26027397260276,
+              "count": 73,
+              "score": -2.353960433589906
+            }
+          ]
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 1.0002387966658959,
+        "faceY": 1.0051530640879873,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "Surtr": {
+      "before": {
+        "eyes": {
+          "x": 128,
+          "y": 158.5,
+          "distance": 40,
+          "method": "visually reviewed pupil centers"
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 0.9875,
+        "faceY": 0.9411764705882353,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "Wight": {
+      "before": {
+        "eyes": {
+          "x": 128.04120657925006,
+          "y": 160.18283442604096,
+          "distance": 39.54802162410857,
+          "points": [
+            {
+              "x": 216.53439153439155,
+              "y": 320.4867724867725,
+              "count": 189,
+              "score": -3.7576224472138806
+            },
+            {
+              "x": 295.6304347826087,
+              "y": 320.2445652173913,
+              "count": 184,
+              "score": -3.8443256361967064
+            }
+          ]
+        },
+        "bottom": 493
+      },
+      "scale": {
+        "x": 0.9987857389033261,
+        "faceY": 1.0076765820631848,
+        "bodyY": 0.96
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "Garm": {
+      "before": {
+        "eyes": {
+          "x": 127.92612347969491,
+          "y": 160.91107503607503,
+          "distance": 38.89265099979386,
+          "points": [
+            {
+              "x": 216.95959595959596,
+              "y": 321.85858585858585,
+              "count": 99,
+              "score": -1.5172104657911114
+            },
+            {
+              "x": 294.7448979591837,
+              "y": 321.7857142857143,
+              "count": 98,
+              "score": -1.4323617927371397
+            }
+          ]
+        },
+        "bottom": 489
+      },
+      "scale": {
+        "x": 1.015616035024441,
+        "faceY": 1.039459396117339,
+        "bodyY": 0.9917355371900827
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    },
+    "HelQueen": {
+      "before": {
+        "eyes": {
+          "x": 127.93468778696052,
+          "y": 159.63332185491277,
+          "distance": 39.51951331496787,
+          "points": [
+            {
+              "x": 216.34986225895318,
+              "y": 319.3388429752066,
+              "count": 363,
+              "score": -5.197669039985804
+            },
+            {
+              "x": 295.3888888888889,
+              "y": 319.19444444444446,
+              "count": 360,
+              "score": -5.077800968408856
+            }
+          ]
+        },
+        "bottom": 488
+      },
+      "scale": {
+        "x": 0.9995062359495082,
+        "faceY": 0.9849516564012578,
+        "bodyY": 1
+      },
+      "target": {
+        "eyeX": 128,
+        "eyeY": 160,
+        "eyeDistance": 39.5,
+        "chinY": 184,
+        "bodyBottomY": 244
+      }
+    }
+  }
+}

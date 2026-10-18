@@ -1,0 +1,174 @@
+{
+  "atlasPath": "Assets/4. Asset/5. UI/Tower_Card_Icon_Atlas_v1.png",
+  "atlasGuid": "a67d8bdf1e6e8cc2619cbd8c9aa63762",
+  "atlasSize": [
+    1536,
+    1536
+  ],
+  "atlasSha256": "ae0e59a315f76b80e3567919a12062e0e5e82807fe514f819d5581fec0db141d",
+  "icons": [
+    {
+      "key": "power",
+      "name": "CardStat_AttackPower",
+      "label": "공격력",
+      "id": 21300001,
+      "x": 0,
+      "y": 1024,
+      "size": [
+        512,
+        512
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "transparentPixels": 351060,
+      "sha256": "eb1a68544f3a08130f78ff6a4d6c762ec798fa888d41bad08453383c8d64da1d"
+    },
+    {
+      "key": "count",
+      "name": "CardStat_AttackCount",
+      "label": "공격 횟수",
+      "id": 21300002,
+      "x": 512,
+      "y": 1024,
+      "size": [
+        512,
+        512
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "transparentPixels": 667429,
+      "sha256": "99028de7bd393ecac575a5a5da8bc5e4a3c26fce8689d8e62b6e1f540fc79f99"
+    },
+    {
+      "key": "range",
+      "name": "CardStat_Range",
+      "label": "사거리",
+      "id": 21300003,
+      "x": 1024,
+      "y": 1024,
+      "size": [
+        512,
+        512
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "transparentPixels": 444318,
+      "sha256": "7fdf76797da4f85f4d758c9ac6b148a0da56adf1e640f5e15c4e5be8b4549544"
+    },
+    {
+      "key": "action",
+      "name": "CardStat_Action",
+      "label": "행동력",
+      "id": 21300004,
+      "x": 0,
+      "y": 512,
+      "size": [
+        512,
+        512
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "transparentPixels": 414237,
+      "sha256": "b23b6ca9ee9c67d4cb47626324ddccbcb7a7038f75d72a0d432e20b628e4df5e"
+    },
+    {
+      "key": "crit-rate",
+      "name": "CardStat_CriticalRate",
+      "label": "치명타 확률",
+      "id": 21300005,
+      "x": 512,
+      "y": 512,
+      "size": [
+        512,
+        512
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "transparentPixels": 420851,
+      "sha256": "145a3044e105eb66e3d8c20fc11e31731d5e1bc4740d566865ba76db4722e1c8"
+    },
+    {
+      "key": "crit-damage",
+      "name": "CardStat_CriticalDamage",
+      "label": "치명타 피해",
+      "id": 21300006,
+      "x": 1024,
+      "y": 512,
+      "size": [
+        512,
+        512
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "transparentPixels": 417502,
+      "sha256": "3d802afe85ec5db6e01e79b71438b776bbcb5f693ec6e5865f8715a14e8050f0"
+    },
+    {
+      "key": "emblem-sword",
+      "name": "CardBadge_EmblemSword",
+      "label": "검 문양",
+      "id": 21300007,
+      "x": 0,
+      "y": 0,
+      "size": [
+        512,
+        512
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "transparentPixels": 1079258,
+      "sha256": "401bf531a47006f92549261b9d384b7a0ab01974ac2f852d6ac5e0b9bf4bfe0b"
+    },
+    {
+      "key": "attack-splash",
+      "name": "CardBadge_AttackSplash",
+      "label": "광역 공격",
+      "id": 21300008,
+      "x": 512,
+      "y": 0,
+      "size": [
+        512,
+        512
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "transparentPixels": 701036,
+      "sha256": "3facd376bd733b699d2b3a1e8664f016e86396bcfda8e88150791a59bc5a11e1"
+    },
+    {
+      "key": "tier-bronze",
+      "name": "CardBadge_TierBronze",
+      "label": "브론즈 티어",
+      "id": 21300009,
+      "x": 1024,
+      "y": 0,
+      "size": [
+        512,
+        512
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "transparentPixels": 1051504,
+      "sha256": "9b5fd7ebc2a875b0ec5cd5c60b516427c39b1ce1e9dcc4ae8b8d6cd5d97c68d7"
+    }
+  ],
+  "previewOnly": true
+}

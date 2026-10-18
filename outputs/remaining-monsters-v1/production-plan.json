@@ -1,0 +1,196 @@
+{
+  "mode": "built-in image_gen; separate call per portrait and equipment mask",
+  "layout": "256 logical cell: eyeX128 eyeY160 eyeDistance39.5 chin184 bodyBottom244",
+  "commonPrompt": "Use case: stylized-concept.\nAsset type: ONE transparent front portrait texture for a 3D cube enemy in an existing 2D anime chibi tower-defense game.\nInput 1 is the game's GENERAL TOWER portrait style/scale reference. Input 2, if present, is an extra identity reference, not a second character to include.\nThe entire character must use the same facial size as the tower reference. EXACT front view, eyes level and looking at viewer, centered head and compact upper shoulders/chest only. One character only.\nProduction layout on a square canvas: center x=50%; eye centers approximately x=42.3% and 57.7%, eye baseline y=62.5%, chin or animal muzzle bottom around y=72%, chest bottom y=95%. Main facial region about one third of canvas width, NOT an enormous close-up face. Hair/crown/ears fit inside x=8..92% and top y>=18%, substantial empty transparent margin above. Ornaments must not force the face to become smaller. No full body, hands, scene, frame, tile, state badge, text, letters, captions, labels or watermark. Genuine alpha transparency.\nStyle: polished clean hand-drawn 2D anime SD game sprite, thin dark lineart, soft restrained cel shading, readable natural eyes with one pupil each, small matched highlights. Match the supplied tower reference, not realistic, not 3D, not pixel art.\nWearable armor/collar/cloth must be neutral WHITE/SILVER/GRAY/CHARCOAL for later state recoloring. Natural skin, hair, fur, scales, eyes, natural flames and purple corruption marks keep their own distinct colors. No excessive tiny ornaments.",
+  "assets": [
+    {
+      "stage": 3,
+      "realm": "Vanaheim",
+      "id": "LowerSpirit",
+      "name": "타락한 하급 정령",
+      "role": "normal",
+      "design": "A small youthful corrupted forest spirit, softly moss-green skin, short wavy pale leaf-green hair, tiny leaf-shaped spirit ears and antennae, clear GOLD eyes, small purple leaf-vein cheek mark. Simple neutral silver-white leaf collar, short gray vine mantle and small leaf shoulder plates. Lowest rank: no crown, no long antlers.",
+      "eyeColor": "gold"
+    },
+    {
+      "stage": 3,
+      "realm": "Vanaheim",
+      "id": "MiddleSpirit",
+      "name": "타락한 중급 정령",
+      "role": "middle",
+      "design": "A corrupted forest dryad spirit captain with pale pink-lavender skin, lavender hair in two compact twisted locks, clear BLUE eyes, tiny bark-like cheek markings. Low silver twig circlet, layered silver-gray leaf pauldrons and charcoal cloak. Botanical spirit, not an elf or Freyja; no pointed elf ears. Modest leaf-shaped spirit ears.",
+      "eyeColor": "blue"
+    },
+    {
+      "stage": 3,
+      "realm": "Vanaheim",
+      "id": "UpperSpirit",
+      "name": "타락한 상급 정령",
+      "role": "boss",
+      "design": "An ancient high forest spirit in compact chibi form, pearl green skin, long rich turquoise hair tucked behind shoulders, clear RUBY eyes, delicate purple corruption veins. Compact silver branching leaf crown and substantial neutral silver leaf carapace/collar, charcoal vine mantle. Powerful dryad spirit ruler, not Freyja; leaf spirit ears, no elf ears.",
+      "eyeColor": "red"
+    },
+    {
+      "stage": 4,
+      "realm": "Midgard",
+      "id": "SeaSerpent",
+      "name": "바다뱀",
+      "role": "normal",
+      "design": "One small sea-serpent HEAD with short visible upright neck, smooth pale teal-blue scales, one short dorsal fin crest, clear GOLD eyes. Closed short reptilian muzzle with two tiny fang tips. Small neutral silver-gray segmented neck band and tiny silver brow plate. No human hair, arms, legs, wings or full coiled body.",
+      "eyeColor": "gold"
+    },
+    {
+      "stage": 4,
+      "realm": "Midgard",
+      "id": "GreatSeaSerpent",
+      "name": "큰 바다뱀",
+      "role": "middle",
+      "design": "One imposing sea-serpent HEAD with short upright neck, deep navy-violet scales, a compact double fin crest, luminous MINT GREEN eyes, stronger brow and two small exposed fang tips in closed mouth. Neutral silver-gray temple plates and segmented neck guard. Rank above a small sea serpent. No legs, arms, wings, hair or full body.",
+      "eyeColor": "green"
+    },
+    {
+      "stage": 4,
+      "realm": "Midgard",
+      "id": "Jormungandr",
+      "name": "요르문간드",
+      "role": "boss",
+      "design": "The world serpent Jormungandr, one majestic broad serpent HEAD and short thick upright neck, dark emerald-and-charcoal scales, intense RUBY RED eyes, compact swept-back dorsal spines and two subtle fin-like horn ridges. Closed reptilian mouth with two small fangs. Heavy neutral silver runic neck collar and silver-gray brow/temple bands. Serpent not a winged dragon, no legs, arms or full world-encircling body.",
+      "eyeColor": "red"
+    },
+    {
+      "stage": 5,
+      "realm": "Jotunheim",
+      "id": "FrostGiant",
+      "name": "서리 거인",
+      "role": "normal",
+      "design": "A stocky young-adult frost giant in compact chibi head-and-shoulders form, stone-blue skin, short dark slate hair, bushy eyebrows, clear EMERALD eyes, small ice-like cheek grooves and two tiny tusks. Neutral silver-gray simple shoulder armor, gray fur collar. Strong blunt humanoid giant face, not a human knight, no huge body.",
+      "eyeColor": "green"
+    },
+    {
+      "stage": 5,
+      "realm": "Jotunheim",
+      "id": "FrostGiantChief",
+      "name": "서리 거인 족장",
+      "role": "middle",
+      "design": "A stern adult frost giant clan chief, cold blue-gray skin, short pale auburn hair and compact braided auburn beard, clear GOLD eyes. Low compact ice-and-silver circlet, neutral silver-gray heavy pauldrons, gray fur cloak. Different hair and eye colors from the ordinary frost giant and white-haired Ymir. No oversize horns or weapon.",
+      "eyeColor": "gold"
+    },
+    {
+      "stage": 5,
+      "realm": "Jotunheim",
+      "id": "Ymir",
+      "name": "이미르",
+      "role": "boss",
+      "design": "Ymir, the primordial frost giant; retain the identity of the extra Ymir reference: ice-blue skin, shaggy white hair, thick white mustache and short full white beard, BLUE eyes. More stern ancient boss expression, gray fur mantle, neutral silver/dark-gray heavy armor with small ice-blue crystals at shoulders. Keep ice crystals blue and hair white. No giant body or weapon.",
+      "eyeColor": "blue"
+    },
+    {
+      "stage": 6,
+      "realm": "Nidavellir",
+      "id": "CorruptedDwarf",
+      "name": "타락한 드워프",
+      "role": "normal",
+      "design": "A corrupted dwarf miner in compact chibi bust form: warm pale skin, short walnut-brown hair, short square brown beard, round broad nose, clear GOLD eyes. Small silver work helmet with raised goggles that never cover the eyes, plain neutral silver-gray riveted shoulder armor and charcoal work vest. Subtle purple corruption mark on cheek. One dwarf only, not two.",
+      "eyeColor": "gold"
+    },
+    {
+      "stage": 6,
+      "realm": "Nidavellir",
+      "id": "CorruptedDwarfArtisan",
+      "name": "타락한 드워프 장인",
+      "role": "middle",
+      "design": "A corrupted master dwarf smith, pale skin, vivid copper-red hair, two short braided copper beard locks, broad nose, clear TURQUOISE BLUE eyes. Elaborate raised silver smith goggles on forehead, neutral silver-gray layered forge pauldrons, charcoal smith apron, silver collar clasps, small purple corruption cheek rune. More ornate than a miner but no crown, hammer or full body. One dwarf only.",
+      "eyeColor": "blue"
+    },
+    {
+      "stage": 6,
+      "realm": "Nidavellir",
+      "id": "Fafnir",
+      "name": "파프니르",
+      "role": "boss",
+      "design": "Fafnir, a dwarf transformed into a greedy GOLDEN DRAGON: a single compact dragon HEAD and upper neck/chest, warm golden-bronze scales, heavy low brow, sharp AMETHYST PURPLE eyes, short swept-back gold horn ridges, closed muzzle with tiny fangs. Neutral iron-gray runic neck guard and small silver temple fittings contrast with natural gold scales. Gold scales are not equipment. No human beard, wings, legs, hoard or coins.",
+      "eyeColor": "purple"
+    },
+    {
+      "stage": 7,
+      "realm": "Niflheim",
+      "id": "FrostWolf",
+      "name": "서리 늑대",
+      "role": "normal",
+      "design": "A frontal frost wolf HEAD and upper chest: soft ivory-white and pale gray fur, compact pointed ears, BLUE eyes, short wolf muzzle, closed mouth, a small frosty forelock. Neutral gray leather collar with silver buckle and two small silver side plates. One animal head, no humanoid shoulders, arms, horns, long full body or snarl.",
+      "eyeColor": "blue"
+    },
+    {
+      "stage": 7,
+      "realm": "Niflheim",
+      "id": "FrostWolfAlpha",
+      "name": "대장 서리 늑대",
+      "role": "middle",
+      "design": "A commanding alpha frost wolf HEAD and upper chest: deep slate-blue fur with pale silver throat, GOLD eyes, compact pointed ears, fuller swept-back mane, closed wolf muzzle. Low neutral silver-gray brow plate and broad silver-gray collar with layered side plates. Distinct darker fur than the ordinary white frost wolf. No human hair, arms or horns, no full body.",
+      "eyeColor": "gold"
+    },
+    {
+      "stage": 7,
+      "realm": "Niflheim",
+      "id": "Fenrir",
+      "name": "펜리르",
+      "role": "boss",
+      "design": "Fenrir, one fierce ancient wolf HEAD and upper chest, near-black midnight blue fur with silver-gray cheek tufts, intense RUBY RED eyes, compact pointed ears, closed long wolf muzzle with two tiny fang tips. Heavy neutral iron-gray broken chain collar with two short broken chain links resting inside shoulder width. Natural fur stays dark. No humanoid armor, horns, wings, full body or huge open mouth.",
+      "eyeColor": "red"
+    },
+    {
+      "stage": 8,
+      "realm": "Muspelheim",
+      "id": "FireGiant",
+      "name": "불 거인",
+      "role": "normal",
+      "design": "A young-adult fire giant compact chibi bust, burnt-umber reddish stone skin, short charcoal-black hair with tiny ember-red tips, clear CYAN BLUE eyes, subtle orange ember cracks at temples. Neutral silver/dark-gray simple forge collar and shoulder plates, charcoal short mantle. No floating flame effects, huge body or weapon.",
+      "eyeColor": "blue"
+    },
+    {
+      "stage": 8,
+      "realm": "Muspelheim",
+      "id": "FireGiantChief",
+      "name": "불 거인 족장",
+      "role": "middle",
+      "design": "An imposing adult fire giant clan chief, charcoal volcanic stone skin, compact copper-red hair and short copper beard, clear CYAN GREEN eyes, subtle natural ember-orange face cracks. Low dark metal circlet with two short volcanic spikes, neutral silver-gray layered shoulder armor and dark-gray collar, charcoal mantle. More ornate than ordinary fire giant, unlike Surtr's orange fire hair and amber eyes. No weapon or full body.",
+      "eyeColor": "green"
+    },
+    {
+      "stage": 8,
+      "realm": "Muspelheim",
+      "id": "Surtr",
+      "name": "수르트",
+      "role": "boss",
+      "design": "Surtr the fire giant king; retain the identity of the extra Surtr reference: ember red-brown skin, vivid orange flame-shaped hair, two compact black volcanic horns with orange cracks, GOLD/AMBER eyes. Stern boss expression, neutral dark iron-gray armor and broad collar with silver-gray fittings, tiny natural orange ember cracks. Hair/fire and cracks stay orange; armor is neutral for state tinting. No huge sword, full body, flame cloud or wings.",
+      "eyeColor": "gold"
+    },
+    {
+      "stage": 9,
+      "realm": "Hel",
+      "id": "Wight",
+      "name": "망자",
+      "role": "normal",
+      "design": "One undead wight in compact chibi head-and-shoulders form, pale cold gray skin, short ash-gray hair, clear spectral EMERALD GREEN eyes, small non-graphic dark cracks on cheek, a tired stern closed mouth. Tattered charcoal hood resting behind head, neutral silver-gray burial collar and small gray shoulder wraps/clasp. Recognizable humanoid ghost, not a gore zombie or bare skeleton. No blood, exposed flesh, huge glow cloud or weapon.",
+      "eyeColor": "green"
+    },
+    {
+      "stage": 9,
+      "realm": "Hel",
+      "id": "Garm",
+      "name": "가름",
+      "role": "middle",
+      "design": "Garm, the single-headed hound guardian of Hel: one broad compact hellhound HEAD and upper chest, dark wine-maroon fur with charcoal muzzle and mane, bright GOLD/AMBER eyes, compact pointed ears, short broad canine muzzle with closed mouth and two tiny fang tips. Heavy neutral iron-gray spiked collar and two short chain ends within the silhouette. Stockier dog-like face than Fenrir's wolf. NO three heads, no horns, no wings, no flames or full body.",
+      "eyeColor": "gold"
+    },
+    {
+      "stage": 9,
+      "realm": "Hel",
+      "id": "HelQueen",
+      "name": "헬",
+      "role": "boss",
+      "design": "Hel, queen of the dead; retain the extra Hel reference's identity: young-adult female chibi face, one half pale porcelain skin and the other half cold charcoal-gray, long black hair with a narrow silver-white streak tucked behind shoulders, AMETHYST PURPLE eyes. Compact thornlike neutral silver-gray crown with purple gemstones, silver-gray gothic collar and armor clasps, charcoal feather mantle. A severe calm corrupted-enemy expression, not a smiling ally. No gore, weapon, huge crown or full body.",
+      "eyeColor": "purple"
+    }
+  ]
+}

@@ -1,0 +1,342 @@
+{
+  "unityVersion": "6000.3.9f1",
+  "scope": "Isolated project, production portrait/mask/appearance/mesh/material/shader and cube visual source copies; no stage scene or wave-spawn integration.",
+  "files": [
+    {
+      "path": "Assets/4. Asset/4. Enemy/Alfheim/CorruptedElfCaptain_Appearance.asset",
+      "sha256": "5a9f83680d29718c99443d114fd8e6fa3a33e084390b7d7faca9adff6ce6dc37"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Alfheim/CorruptedElfCaptain_Character.png",
+      "sha256": "f8171a6a76f27308aa6d2cf51624b3b837cc52f066ec56b31aca42bd5dcee1f3"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Alfheim/CorruptedElfCaptain_EquipmentMask.png",
+      "sha256": "7d45adefb0dea9412e0ded0229a6a1ab5b4b1be5df259b93e3551bbfa8494eb2"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Alfheim/CorruptedElfChief_Appearance.asset",
+      "sha256": "dd4a8567bf551995752442f9c75704fa6cfaeba524c79edc977058acda6ce6b1"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Alfheim/CorruptedElfChief_Character.png",
+      "sha256": "8bb0a799dba3ed5fb48129cf4cfb9cefc97e09ddc4d02ed667df918683cd6e55"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Alfheim/CorruptedElfChief_EquipmentMask.png",
+      "sha256": "547468ac90ba254db89e5e1932780eeb991d66f6190bf5d8f513c4b3a30c14f0"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Alfheim/CorruptedElf_Appearance.asset",
+      "sha256": "c2f1415fc19fcffd95588cbb09ee44e4a8831e579e981e7ba8af054fab73c152"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Alfheim/CorruptedElf_Character.png",
+      "sha256": "f33c31c3b4c5ea54a5f2d2e49ce14edaee97ac1833b727f0dea3ef605501f10f"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Alfheim/CorruptedElf_EquipmentMask.png",
+      "sha256": "57f9d8f9a22dbfa8fa88fa499e85b8cfc9419b33d11fc46ea75d9ab33fd34166"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Asgard/Brunhild_Appearance.asset",
+      "sha256": "ae48ee0615f1ff6f2a1bbe1e505d7a4179e83e69bcf716d1935269e22351df01"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Asgard/Brunhild_Character.png",
+      "sha256": "bd838c6a0ddb1ebfaf46f98dd85a9144a7eca2c43fb30f7fa93686f958c85de1"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Asgard/Brunhild_EquipmentMask.png",
+      "sha256": "35e0e3c9bc5d06303e16c8d86ed20624834ff6079d6d90647ab8f20596ff0612"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Asgard/Loki_Appearance.asset",
+      "sha256": "c86ca5e72642745e711514928e5eebddf788a90f78d6cc98d92acef2505f8395"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Asgard/Loki_Character.png",
+      "sha256": "2e211309483058a6c8a30ca162358e8efe83db42b6ef534e5d29e987e0b36863"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Asgard/Loki_EquipmentMask.png",
+      "sha256": "99cf6e00c078ac0e2e28f54d26babe4cb48db418a0a98cd0174460eb05bd6756"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Asgard/Valkyrie_Appearance.asset",
+      "sha256": "d33f0ec7de9ec6981b1675171f1dfe5269fe8e155a206d03cfe1b0b8e8df6f57"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Asgard/Valkyrie_Character.png",
+      "sha256": "62a905649e72b1e48b8aa67f55f337242d34638bf6a649fb395db581556d85f4"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Asgard/Valkyrie_EquipmentMask.png",
+      "sha256": "8ad533c1f3fb052346a5f059ee1d856dc7add3531cf60ddc1c2e991cfbce466e"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/EnemyCube_Shadow.mat",
+      "sha256": "2cd085c8cf9e57586906ccafbb4d3606e82cf70544dcaf4f26ca3e5ff5e20942"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Enemy_StateCube.asset",
+      "sha256": "cc6c2a13090e65d98fb09b7ba2b90f2568a72a12235c2b65627e01ac53eb65cc"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Enemy_State_Badges_Atlas.png",
+      "sha256": "f056d4a523888ed6de7cb97b814586e3c64a4bba66250711d8d47ae3d5124579"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Hel/Garm_Appearance.asset",
+      "sha256": "aef4c335d7dfc3d6f0c0b94e28cf75afe8a54d293ab2917103099f9f74a7de5b"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Hel/Garm_Character.png",
+      "sha256": "791c1fbedab3018be4dc05aea509dda7ef428666afee513a271a8a7626bc670f"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Hel/Garm_EquipmentMask.png",
+      "sha256": "0b7128820842f574286a256036794e3d431903eabb3ad9b50084a53d5537b102"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Hel/HelQueen_Appearance.asset",
+      "sha256": "1b8971c02738d9dc47ff8f1d10f34dbf4dcafebd0897ed3d581fe5e16b3cad65"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Hel/HelQueen_Character.png",
+      "sha256": "60b122ec94740de8bd942d2ad55e6cb6ddd3a98226f743e737cc909c1e9d1a34"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Hel/HelQueen_EquipmentMask.png",
+      "sha256": "ede29bd08b57c717dd82d458b6c8911c34e694b5aa795c0b0c4c30cd03ce4691"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Hel/Wight_Appearance.asset",
+      "sha256": "77d01dc450457767f827a256278643ce4f7fcba123daf68a683d7ba8ad0ed1d3"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Hel/Wight_Character.png",
+      "sha256": "ad301c26a0319b9af91afcffdd6befd77dfd9dabe7347bf09458baf48479544f"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Hel/Wight_EquipmentMask.png",
+      "sha256": "a2e649c80e7c24ed2f788b44b4920609804ba4322d4a8c45c9ec368de935968a"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Jotunheim/FrostGiantChief_Appearance.asset",
+      "sha256": "a104fbc064c7b3155e76df38935e9d3af25664b3c0012c2870c52e0fa5907e5b"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Jotunheim/FrostGiantChief_Character.png",
+      "sha256": "afa3826b2bdc8d17e48a9bf7296d970f1eccee855f90f433aa515a5227492192"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Jotunheim/FrostGiantChief_EquipmentMask.png",
+      "sha256": "3d9228879e5c45c1ac319bc9745fcbe498d49cd6d87ab21d96ceea0e7537102d"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Jotunheim/FrostGiant_Appearance.asset",
+      "sha256": "af4eb5fa325a49f0031fd81c441b6e6d835fd89d4698b45437023342d1facfeb"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Jotunheim/FrostGiant_Character.png",
+      "sha256": "e18f15b6a3813ead793229aa50166b3197d05940d009cb177425a17b41e1cc70"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Jotunheim/FrostGiant_EquipmentMask.png",
+      "sha256": "790163c2573f3fb4d33f8f66cd367ab2c6bfe70c57c3b763a1bbfd97a25c8699"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Jotunheim/Ymir_Appearance.asset",
+      "sha256": "068a38f9cb55abb596157bc24d0bac2cee914bc71f26a5999a4601adfe4d810c"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Jotunheim/Ymir_Character.png",
+      "sha256": "4c950df1de59f0f92ba5534df008c4df3d64d0cb823d79dfc32712901a7002a1"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Jotunheim/Ymir_EquipmentMask.png",
+      "sha256": "0b77ea302aeb5105379ada5e3ddb5d07d64e6c42cd12695ba4b590c51e3e74d6"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Midgard/GreatSeaSerpent_Appearance.asset",
+      "sha256": "a5c11dcd3e472084f08b536a1b83b85a9f08b9acd32c53664aa759ea6c0fa20a"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Midgard/GreatSeaSerpent_Character.png",
+      "sha256": "add67b0084c98f76f5b3f95b8ddbfd427f55b84ad46d6f01a6c89e22fbce901e"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Midgard/GreatSeaSerpent_EquipmentMask.png",
+      "sha256": "afb4e61a7e7cb7a015c3367fffced255b09ed646716c3cb27e7adbf4c036c010"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Midgard/Jormungandr_Appearance.asset",
+      "sha256": "db2d9333ad2b82f78bb0111c9caab61384fcdac572dc18a15771793220de77b6"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Midgard/Jormungandr_Character.png",
+      "sha256": "cb50d36382c9e91e1eede2ea7bac0da879d8a1124d559a3644ea5a71df70c24c"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Midgard/Jormungandr_EquipmentMask.png",
+      "sha256": "6db7c4f609db0770965f22b4f89096f8c1095d8d09d78f90b850db146ba94739"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Midgard/SeaSerpent_Appearance.asset",
+      "sha256": "7ff9c5aac99d9a6cd1366e7536babed42a6b00975975142243f9671f6d80e9d8"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Midgard/SeaSerpent_Character.png",
+      "sha256": "a0277fbeb8adff28b1849c602013d2c901673994e9f6d116b2ebd4b43e0915e5"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Midgard/SeaSerpent_EquipmentMask.png",
+      "sha256": "a65f4c5ae6b3a338051ff5a73e92e836eacbd301eda1ee4887c6c340fcd56006"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Muspelheim/FireGiantChief_Appearance.asset",
+      "sha256": "267df4bc2ec328743fa56840331f0aeb8b087cca63bdcc0f2ec084e35809af0b"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Muspelheim/FireGiantChief_Character.png",
+      "sha256": "eb56be57ca8c812bdb004aef12a94e9cc44b7ead04cebceaa4e9ef71688b9cf2"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Muspelheim/FireGiantChief_EquipmentMask.png",
+      "sha256": "6eda10ca872858d09d726736e313fa1c4f300ffbc0ad21140cf778874f7b14f8"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Muspelheim/FireGiant_Appearance.asset",
+      "sha256": "0730404a895b638ce80b40c104f8faf577d08b443862c4cfe8ae2d82bbcde05c"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Muspelheim/FireGiant_Character.png",
+      "sha256": "52e0873cc73efdc772d76535d0ca480d9e677b3dce422491f487060cc0d2d617"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Muspelheim/FireGiant_EquipmentMask.png",
+      "sha256": "ea8e0d8e1827ab2e9b83fcb6d015c94c858dc2bc48036b2909108b1cdf6a74a9"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Muspelheim/Surtr_Appearance.asset",
+      "sha256": "bb2e5e05ba36597ecaf937b56857ba508185051c4fec97f7ab61a35fff3939c6"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Muspelheim/Surtr_Character.png",
+      "sha256": "ea352368204baca0e988577e6165d0e138470de32829b48cfcaa1fc98ee753ed"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Muspelheim/Surtr_EquipmentMask.png",
+      "sha256": "9f5084dcf063c8051e8e57fa3d1f5fde35d0d35af0e50b4d50f848adb072c805"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Nidavellir/CorruptedDwarfArtisan_Appearance.asset",
+      "sha256": "8bac379702cf10e3111ffd00fba5eab321d4d1aedf52e39e5426205745308d72"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Nidavellir/CorruptedDwarfArtisan_Character.png",
+      "sha256": "13daf4b34971116907dae6b304b45136a0cb7fccd6eb48a59ba7a5b345c2d707"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Nidavellir/CorruptedDwarfArtisan_EquipmentMask.png",
+      "sha256": "2225c0ad05df8da1cfb7eaca104f9200f93a295995075006b047db1b6c083d26"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Nidavellir/CorruptedDwarf_Appearance.asset",
+      "sha256": "97ffd26a521a8dfedecab99f4097d94cee48848e9806acdc4b9738823222e090"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Nidavellir/CorruptedDwarf_Character.png",
+      "sha256": "cb2ef13262749808353d5dd6a6fa75f123f67f65a684313493a4fcaeb39b57bb"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Nidavellir/CorruptedDwarf_EquipmentMask.png",
+      "sha256": "b5ad85ac570e2c7050b61b9539c37fd2e4850de5680e71a73353710ecd466256"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Nidavellir/Fafnir_Appearance.asset",
+      "sha256": "d13b8604f8baf2f72432b3fef9befcd1a4ed002b1058aab8c6e6db969b86a153"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Nidavellir/Fafnir_Character.png",
+      "sha256": "5decb81ca92cb0b664c532d906773a589faac2da17a7e393b7751be9578c500e"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Nidavellir/Fafnir_EquipmentMask.png",
+      "sha256": "854b3d0987b4557bb6cb2361f4e8f5cfe33a882e6177f3265a0bd9c3dd6de135"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Niflheim/Fenrir_Appearance.asset",
+      "sha256": "f66c08a3173da9b534dfed012ee754e4d3cd27b4afa332b7cd140d3ebd50a06a"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Niflheim/Fenrir_Character.png",
+      "sha256": "b2c054bd4e7b82b3f5e25def2ee75d96f0dd785a3f81d796aecd125ba3d6c32b"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Niflheim/Fenrir_EquipmentMask.png",
+      "sha256": "f7515c8b8a7fd06bfec18f6f3c190035fc2dfaf236a76adf20d9ad521c7d2247"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Niflheim/FrostWolfAlpha_Appearance.asset",
+      "sha256": "8879047181deab22d5d9d894550fb10f2c192e78b68cc75ed64f4eb9b8ee71aa"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Niflheim/FrostWolfAlpha_Character.png",
+      "sha256": "a70d46f5b1ea18641fb8e674e389ea81a8590cfa3370069da7d923fc5e5c9c3d"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Niflheim/FrostWolfAlpha_EquipmentMask.png",
+      "sha256": "09133a52b815236f821d83eafe305a30ab2618401b8b90fb685749052da9f8b2"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Niflheim/FrostWolf_Appearance.asset",
+      "sha256": "f349357982a9727396d2267af73a0246e138858dc36679074c562505aaae591b"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Niflheim/FrostWolf_Character.png",
+      "sha256": "84849926475f8cb89e5057de904c8e457452d607c9d3ef60bda597e3108c925f"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Niflheim/FrostWolf_EquipmentMask.png",
+      "sha256": "5e9f37df793aa602f44722abad1d753396679ca1492aff3af77a2b9aca9a5376"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Vanaheim/LowerSpirit_Appearance.asset",
+      "sha256": "90217ee8c9a57f250c86aafa040b5c18634a151283f4f7e9b97b253936446dfa"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Vanaheim/LowerSpirit_Character.png",
+      "sha256": "795ce6bfe7d6b35943d34f312feb093ebc8ff4e45af01af08008fa7b0b1cb00c"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Vanaheim/LowerSpirit_EquipmentMask.png",
+      "sha256": "b6e1ec266c6526bcd320288c63383c69aba61cce9423c6b29f9e36489e08f9fc"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Vanaheim/MiddleSpirit_Appearance.asset",
+      "sha256": "b7fe53b330bd6a54aa76e4449e558bf95ae2d86cecc3cdb37a51dc2a2a5f0606"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Vanaheim/MiddleSpirit_Character.png",
+      "sha256": "be096cf6717f7ff750de8d137755a76d30b582d1073ee9142aeda5bab45425a5"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Vanaheim/MiddleSpirit_EquipmentMask.png",
+      "sha256": "e8ef717693ddc905388bf46bf96cb8ab9fd5acc0e2ab389e402a0042d8b131dd"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Vanaheim/UpperSpirit_Appearance.asset",
+      "sha256": "89e3b5390d396e8e14c8f212ec60f30f1b0b53cb33b8d1634daadd72d03d3b8c"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Vanaheim/UpperSpirit_Character.png",
+      "sha256": "a595eb3593e0a7b897bc3add52700d0fcbd10a1f470a31e7be6b6b7229692f92"
+    },
+    {
+      "path": "Assets/4. Asset/4. Enemy/Vanaheim/UpperSpirit_EquipmentMask.png",
+      "sha256": "2d3f6c3159c0219a1f6342e0bab95940a79b5c0a7bebefd9fcf12adecbf3fd62"
+    }
+  ]
+}

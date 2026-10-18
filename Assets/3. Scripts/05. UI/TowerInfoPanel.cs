@@ -4,6 +4,8 @@ using TMPro;
 
 public class TowerInfoPanel : MonoBehaviour
 {
+    [Header("수집형 정보 카드")]
+    [SerializeField] private TowerInfoCardView cardView;
     [Header("타워 정보")]
     [SerializeField] TextMeshProUGUI txt_level;
     [SerializeField] TextMeshProUGUI txt_name;
@@ -54,6 +56,8 @@ public class TowerInfoPanel : MonoBehaviour
 
     private void OnEnable()
     {
+        BindCardView();
+        if (cardView != null) cardView.ResetToFront();
         BoardInputController.OnTowerClickedAction += HandleTowerClicked;
 
         if (TowerManager.Instance != null)
@@ -82,6 +86,7 @@ public class TowerInfoPanel : MonoBehaviour
 
     private void Start()
     {
+        BindCardView();
         if (GameManager.Instance == null || TowerManager.Instance == null || UIManager.Instance == null)
         {
             Debug.LogError("TowerInfoPanel : GameManager/TowerManager/UIManager가 없습니다.");
@@ -140,6 +145,7 @@ public class TowerInfoPanel : MonoBehaviour
 
     private void HandleTowerClicked(TowerController tower)
     {
+        if (m_selectedTower != tower && cardView != null) cardView.ResetToFront();
         m_selectedTower = tower;
         UpdateTowerInfo();
     }
@@ -164,10 +170,15 @@ public class TowerInfoPanel : MonoBehaviour
         TowerData data = m_selectedTower.GetTowerData();
         int towerID = data != null ? data.towerID : stats.ID;
 
-        txt_level.text = $"{stats.Level}";
+        txt_level.text = cardView != null ? $"Lv.{stats.Level}" : $"{stats.Level}";
         txt_name.text = stats.Name;
 
         UpdateIdentityText(towerID);
+        if (cardView != null)
+        {
+            txt_color.text = GetAttackTypeName(data != null ? data.attackType : AttackType.None);
+            if (data != null) txt_emblem.text = GetEmblemName(data.VisualTowerID % 100);
+        }
         UpdateIdentityImage();
         UpdateTargetPriorityText();
         UpdateStatText(data, stats);
@@ -191,6 +202,25 @@ public class TowerInfoPanel : MonoBehaviour
     {
         TowerVisual towerVisual = m_selectedTower.GetComponentInChildren<TowerVisual>(true);
 
+        if (cardView != null)
+        {
+            TowerData data = m_selectedTower.GetTowerData();
+            int id = data != null ? data.VisualTowerID : m_selectedTower.BaseStats.ID;
+            int visualEmblem = id % 100;
+            int tier = data != null ? data.towerID / 1000 : id / 1000;
+            Sprite portrait = towerVisual != null ? towerVisual.CharacterSprite : null;
+            if (portrait == null)
+            {
+                if (tier == 6) portrait = Resources.Load<SynergyCharacterCatalog>("SynergyCharacterCatalog")?.GetFront(data != null ? data.towerID : id);
+                else portrait = Resources.Load<TowerCharacterCatalog>("TowerCharacterCatalog")?.GetCharacter(visualEmblem, (id % 1000) / 100);
+            }
+            cardView.SetArtwork(portrait, towerVisual != null ? towerVisual.ProjectileEmblemSprite : null,
+                towerVisual != null ? towerVisual.TierSprite : null, towerVisual != null ? towerVisual.TierColor : Color.white,
+                visualEmblem, tier, data != null ? (int)data.attackType : -1,
+                data != null && data.attackType == AttackType.Splash && visualEmblem == TowerEmblem.SWORD ? "엑스칼리버" : "스킬공격");
+            return;
+        }
+
         UpdateImage(img_tier, towerVisual != null ? towerVisual.TierSprite : null);
         if (img_tier != null) img_tier.color = towerVisual != null ? towerVisual.TierColor : Color.white;
         UpdateImage(img_color, towerVisual != null ? towerVisual.ColorSprite : null);
@@ -212,7 +242,7 @@ public class TowerInfoPanel : MonoBehaviour
 
     private void UpdateTargetPriorityText()
     {
-        bool canChange = m_selectedTower.CanChangeTargetPriority && GameManager.Instance.CanPerformPlayerAction;
+        bool canChange = m_selectedTower.CanChangeTargetPriority && GameManager.Instance != null && GameManager.Instance.CanPerformPlayerAction;
 
         btn_previousTarget.interactable = canChange;
         btn_nextTarget.interactable = canChange;
@@ -239,7 +269,7 @@ public class TowerInfoPanel : MonoBehaviour
         txt_criticalRate.text = isSupport ? UnusedStatText : $"{stats.CriticalRate * 100f:0.##}%";
         txt_criticalDamage.text = isSupport ? UnusedStatText : $"{(2f + stats.CriticalDamage) * 100f:F0}%";
 
-        SetStatText(txt_abilityValue, $"×{stats.AbilityValue:0.##}");
+        SetStatText(txt_abilityValue, cardView != null ? $"x{stats.AbilityValue:0.##}" : $"×{stats.AbilityValue:0.##}");
         SetStatText(txt_duration, GetDurationText(attackType, stats));
         SetStatText(txt_mastery, GetMasteryText(attackType, stats));
     }
@@ -272,7 +302,7 @@ public class TowerInfoPanel : MonoBehaviour
             case AttackType.Splash:
                 // 광역 범위 1 → 1×1, 2 → 3×3, 3 → 5×5
                 int side = Mathf.Max(1, stats.ProjectileRadius) * 2 - 1;
-                return $"{side}×{side}";
+                return cardView != null ? $"{side}x{side}" : $"{side}×{side}";
 
             case AttackType.Target:
                 return $"{1 + Mathf.Max(0, stats.AdditionalHitCount)}발";
@@ -320,6 +350,11 @@ public class TowerInfoPanel : MonoBehaviour
                 txt_default.text = $"디버프존 위 모든 적에게\n{BuffTargetNames.GetDebuffTargetName(data.debuffTarget)} 디버프 {stats.AttackPower:0.##} 부여 ({stats.Duration:0.##}턴)";
                 txt_skill.text = "스킬 미구현";
                 break;
+
+            default:
+                txt_default.text = "공격하지 않는 시너지 타워입니다.";
+                txt_skill.text = "스킬 정보가 없습니다.";
+                break;
         }
     }
 
@@ -327,9 +362,11 @@ public class TowerInfoPanel : MonoBehaviour
     {
         int spawnIndex = m_selectedTower.SpawnIndex;
 
-        btn_combineColor.interactable = TowerManager.Instance.CanCombine(spawnIndex, CombineMode.ColorMatch);
-        btn_combineEmblem.interactable = TowerManager.Instance.CanCombine(spawnIndex, CombineMode.EmblemMatch);
-        btn_combineExact.interactable = TowerManager.Instance.CanCombine(spawnIndex, CombineMode.ExactMatch);
+        bool canAct = GameManager.Instance != null && GameManager.Instance.CanPerformPlayerAction;
+        btn_combineColor.interactable = canAct && TowerManager.Instance != null && TowerManager.Instance.CanCombine(spawnIndex, CombineMode.ColorMatch);
+        btn_combineEmblem.interactable = canAct && TowerManager.Instance != null && TowerManager.Instance.CanCombine(spawnIndex, CombineMode.EmblemMatch);
+        btn_combineExact.interactable = canAct && TowerManager.Instance != null && TowerManager.Instance.CanCombine(spawnIndex, CombineMode.ExactMatch);
+        btn_sellTower.interactable = canAct;
     }
 
     private void HandlePreviousTargetClick()
@@ -416,6 +453,7 @@ public class TowerInfoPanel : MonoBehaviour
             3 => "골드",
             4 => "미스릴",
             5 => "다이아몬드",
+            6 => "시너지",
             _ => "-"
         };
     }
@@ -452,5 +490,29 @@ public class TowerInfoPanel : MonoBehaviour
             14 => "어둠",
             _ => "-"
         };
+    }
+
+    private static string GetAttackTypeName(AttackType attackType) => attackType switch
+    {
+        AttackType.Splash => "광역",
+        AttackType.Target => "단일",
+        AttackType.Buff => "버프",
+        AttackType.Debuff => "디버프",
+        _ => "시너지"
+    };
+
+    private void BindCardView()
+    {
+        if (cardView == null) cardView = GetComponentInChildren<TowerInfoCardView>(true);
+        if (cardView == null) return;
+        txt_level = cardView.Level; txt_name = cardView.TowerName; txt_tier = cardView.TierName;
+        txt_color = cardView.AttackName; txt_emblem = cardView.EmblemName;
+        txt_power = cardView.Power; txt_range = cardView.Range; txt_action = cardView.Action;
+        txt_attackCount = cardView.AttackCount; txt_criticalRate = cardView.CriticalRate; txt_criticalDamage = cardView.CriticalDamage;
+        txt_abilityValue = cardView.AbilityValue; txt_duration = cardView.Duration; txt_mastery = cardView.Mastery;
+        txt_default = cardView.BasicDescription; txt_skill = cardView.SkillDescription;
+        txt_targetPriority = cardView.TargetPriority; btn_previousTarget = cardView.PreviousTarget; btn_nextTarget = cardView.NextTarget;
+        btn_combineColor = cardView.CombineColor; btn_combineEmblem = cardView.CombineEmblem; btn_combineExact = cardView.CombineExact;
+        btn_sellTower = cardView.Sell; txt_sellTowerValue = cardView.SellValue;
     }
 }

@@ -359,6 +359,17 @@ public class UIStageThemeController : MonoBehaviour
         return end > 7 ? sprite.name.Substring(7, end - 7) : null;
     }
 
+    public static string GetImageLayer(Image image)
+    {
+        if (image == null) return null;
+        return image.TryGetComponent<UITileSurface>(out var surface) ? surface.ThemeLayer : GetSharedLayer(image.sprite);
+    }
+
+    public void ApplySurfaceColor(Image image, string layer)
+    {
+        if (image != null) ApplyColor(image, GetLayerColor(layer));
+    }
+
     public Color GetLayerColor(string layer) => GetLayerColor(currentRealm, layer);
 
     public Color GetLayerColor(StageRealm realm, string layer)
@@ -444,7 +455,8 @@ public class UIStageThemeController : MonoBehaviour
     {
         EnsureCanvasReference();
         return image != null && targetCanvas != null && image.transform.IsChildOf(targetCanvas.transform) &&
-               (GetSharedLayer(image.sprite) != null || IsBgName(image.name) || IsFrameName(image.name));
+               (!image.TryGetComponent<UITileSurface>(out var surface) || surface.UseStageTheme) &&
+               (GetImageLayer(image) != null || IsBgName(image.name) || IsFrameName(image.name));
     }
 
     public bool IsAutomaticColor(Image image) => lastAppliedColors.TryGetValue(image, out Color color) && color == image.color;
@@ -453,7 +465,7 @@ public class UIStageThemeController : MonoBehaviour
     /// <summary>선택한 이미지의 수동 색을 해제하고 레이어 테마색을 적용하며 알파는 유지합니다.</summary>
     public void ApplyImageThemeColor(Image image)
     {
-        string layer = image != null ? GetSharedLayer(image.sprite) : null;
+        string layer = GetImageLayer(image);
         if (layer == null || !ManagesImage(image)) return;
         imageColorOverrides.RemoveAll(item => item.image == image);
         Color color = GetLayerColor(layer);
@@ -562,7 +574,14 @@ public class UIStageThemeController : MonoBehaviour
             string objectName = graphic.gameObject.name;
             Image img = graphic as Image;
 
-            if (useSharedAtlas && img != null && GetSharedLayer(img.sprite) is string layer)
+            if (img != null && img.TryGetComponent<UITileSurface>(out var surface))
+            {
+                surface.RefreshGeometry();
+                if (surface.UseStageTheme) ApplyColor(graphic, GetLayerColor(surface.ThemeLayer));
+                continue;
+            }
+
+            if (useSharedAtlas && img != null && GetImageLayer(img) is string layer)
             {
                 if (img.type != Image.Type.Filled)
                 {

@@ -1,0 +1,29 @@
+Generate one polished landscape tower information panel concept for the existing Unity cube tower defense game. This is a finished 2D game UI mockup, not a diagram, not a web dashboard. Use a 3:2 landscape image. A single large card on a plain muted slate-blue background, fully visible with generous outside margins. No other panels, no alternate designs, no board, no hands, no perspective.
+
+REFERENCE ROLES: Reference 1 (Tower_1101.png) is the authoritative CURRENT Hero portrait and tile styling: detailed small anime chibi bust, brown tousled hair, amber eyes, little silver forehead guard with red jewel, red scarf, silver armor, sword behind shoulder. Preserve this identity and proportions. Reference 2 (old TowerInfoPanel_Card_Concept_v1.png) provides ONLY the warm ivory/copper game UI material language. Do not copy its obsolete giant helmet face, portrait orientation, huge ornamentation, six-stat layout, blue buttons, or sell button.
+
+Art direction: clear and charming premium fantasy mobile game UI; creamy ivory interiors, softly shaded bronze/copper rounded rectangular frames, restrained bevels, tiny knotwork corners, deep cocoa text, warm gold highlights, red skill accents. Consistent thick but refined icon outlines, almost no surface texture. Readable large Korean typography. Polished and balanced, not overloaded with gold filigree. Keep the portrait modest, about one sixth of the header width. Information-first composition, suitable for an in-game overlay.
+
+LAYOUT STRICT: The panel has a compact identity header, then EXACTLY TWO HORIZONTAL ROWS OF SIX equal-sized stat tiles (12 total), then a narrow price/footer strip. Do not turn the stat grid into three or four rows. Each tile contains one clear centered icon, a large numerical value or concise skill name BELOW the icon, and a small Korean label. Even spacing, common baselines, generous padding. No merge, upgrade, sell, or equip buttons. This card is for information only. The tiny X at the top right is the sole control.
+
+HEADER: framed square Hero portrait at left. To its right, a small 'Lv.1' above the large name '히어로'. Next to the name, four small square keyword badges in a horizontal row, containing icons ONLY: a faceted bronze diamond for tier; a red square with a small circular area burst for area attack; a sword emblem; and a curved slash mark. No written tier/class labels on these badges. A fine bronze divider below the header.
+
+STAT GRID, precise order left to right:
+Top row, six equal tiles:
+1 sword/impact icon, value '10', label '위력'.
+2 four-way range icon, value '2칸', label '사거리'.
+3 hourglass/action icon, value '2 / 3', label '행동력'.
+4 double strike icon, value '1회', label '공격 횟수'.
+5 crosshair spark icon, value '5%', label '치명타 확률'.
+6 bright critical burst icon, value '200%', label '치명타 피해'.
+Bottom row, six equal tiles:
+7 magical star icon, value '×2', label '스킬 계수'.
+8 small circular clock icon, value '5턴', label '스킬 주기'.
+9 3-by-3 small square grid icon, value '3×3', label '공격 범위'.
+10 layered stack icon, value '0 / 60', label '스택'.
+11 small silver sword icon, text '기본 공격', small label '스킬 1', subtle tiny chevron to indicate details.
+12 glowing red/gold holy sword icon, text '엑스칼리버', small secondary line '남은 2턴', small label '스킬 2', subtle tiny chevron to indicate details. The skill name must fit the same tile width without an oversized tile.
+
+FOOTER: bottom left small soft cocoa Korean helper text '아이콘을 누르면 자세한 정보를 볼 수 있어요'. Bottom right compact blue gem icon followed by '판매가 1'. This is a price display, NOT a button. Avoid any additional written text. All numbers are example values for this design concept.
+
+Output an elegant, legible game-ready looking UI concept with exactly one cohesive panel. No watermark, no annotations, no poster headline outside the panel.

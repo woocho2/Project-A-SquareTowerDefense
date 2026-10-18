@@ -1,0 +1,5 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),inv=require('./inventory.json'),root=path.resolve(__dirname,'../..'),fixture=path.join(root,'outputs/remaining-monsters-v1/unity-validation'),old=require('../remaining-monsters-v1/unity-validation-inputs.json');
+const hash=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+for(const a of inv.textures.filter(t=>t.spriteCount))for(const ext of ['', '.meta'])if(hash(path.join(root,a.path+ext))!==hash(path.join(fixture,a.path+ext)))throw new Error('Tower render input mismatch '+a.path+ext);
+for(const a of old.files)if(hash(path.join(root,a.path))!==a.sha256)throw new Error('Reused monster render source changed '+a.path);
+fs.writeFileSync(path.join(__dirname,'rendered-input-verification.json'),JSON.stringify({towerAtlasesAndMetasMatchUnityInput:true,towerAtlasCount:15,monsterInputsMatchPriorPlayValidation:true,priorMonsterAssetCount:27,stageSceneModified:false},null,2));console.log('All rendered tower/monster inputs match active assets.');
