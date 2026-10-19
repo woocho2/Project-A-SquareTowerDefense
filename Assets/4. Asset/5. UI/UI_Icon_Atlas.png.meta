@@ -170,8 +170,8 @@ TextureImporter:
       name: Icon_Heart
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 512
+        x: 0
+        y: 0
         width: 512
         height: 512
       alignment: 0
@@ -192,50 +192,6 @@ TextureImporter:
       name: Icon_Heart_White
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 512
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 784e7daa08dd3b3e0800000000000000
-      internalID: -2039042661576874873
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Symbol_CreateTower
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a59a7d01000100010001000100010001
-      internalID: 100101
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Symbol_TierUpgrade
-      rect:
-        serializedVersion: 2
         x: 512
         y: 0
         width: 512
@@ -248,52 +204,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a59a7d01000100010001000100010002
-      internalID: 100102
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Symbol_ColorUpgrade
-      rect:
-        serializedVersion: 2
-        x: 1024
-        y: 0
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a59a7d01000100010001000100010003
-      internalID: 100103
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Symbol_MiddleBoss
-      rect:
-        serializedVersion: 2
-        x: 1536
-        y: 0
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a59a7d01000100010001000100010004
-      internalID: 100104
+      spriteID: 784e7daa08dd3b3e0800000000000000
+      internalID: -2039042661576874873
       vertices: []
       indices: 
       edges: []
@@ -316,10 +228,6 @@ TextureImporter:
       Icon_Gem: 1840065863300296980
       Icon_Heart: -4689701620175748947
       Icon_Heart_White: -2039042661576874873
-      Symbol_CreateTower: 100101
-      Symbol_TierUpgrade: 100102
-      Symbol_ColorUpgrade: 100103
-      Symbol_MiddleBoss: 100104
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,0 +1,152 @@
+{
+    "size":  [
+                 1536,
+                 1536
+             ],
+    "generationMode":  "built-in imagegen",
+    "guid":  "cbf5f47cedd6412aac6c6d856d74ba73",
+    "source":  "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\outputs\\ui-action-atlas\\source.png",
+    "cellSize":  [
+                     512,
+                     512
+                 ],
+    "sprites":  [
+                    {
+                        "fileID":  21300001,
+                        "width":  512,
+                        "bounds":  [
+                                       32,
+                                       62,
+                                       448,
+                                       387
+                                   ],
+                        "y":  1024,
+                        "spriteID":  "2e78f928994e48d3974a45dff57afe1a",
+                        "x":  0,
+                        "name":  "Symbol_GameSpeed",
+                        "height":  512
+                    },
+                    {
+                        "fileID":  21300002,
+                        "width":  512,
+                        "bounds":  [
+                                       32,
+                                       46,
+                                       448,
+                                       420
+                                   ],
+                        "y":  1024,
+                        "spriteID":  "e18922f6762f425591b4a4d01267af15",
+                        "x":  512,
+                        "name":  "Symbol_Menu",
+                        "height":  512
+                    },
+                    {
+                        "fileID":  21300003,
+                        "width":  512,
+                        "bounds":  [
+                                       32,
+                                       32,
+                                       448,
+                                       448
+                                   ],
+                        "y":  1024,
+                        "spriteID":  "455001f28f3b4840935701d940146d99",
+                        "x":  1024,
+                        "name":  "ColorUpgrade_Splash",
+                        "height":  512
+                    },
+                    {
+                        "fileID":  21300004,
+                        "width":  512,
+                        "bounds":  [
+                                       32,
+                                       32,
+                                       448,
+                                       448
+                                   ],
+                        "y":  512,
+                        "spriteID":  "d872d189db0e48e09ba3212c0848d6a1",
+                        "x":  0,
+                        "name":  "ColorUpgrade_Single",
+                        "height":  512
+                    },
+                    {
+                        "fileID":  21300005,
+                        "width":  512,
+                        "bounds":  [
+                                       32,
+                                       32,
+                                       448,
+                                       448
+                                   ],
+                        "y":  512,
+                        "spriteID":  "723431f42176433994ecb6fcb9df0456",
+                        "x":  512,
+                        "name":  "ColorUpgrade_Buff",
+                        "height":  512
+                    },
+                    {
+                        "fileID":  21300006,
+                        "width":  512,
+                        "bounds":  [
+                                       32,
+                                       32,
+                                       448,
+                                       448
+                                   ],
+                        "y":  512,
+                        "spriteID":  "7cee4eedc5944ca4bc9f8c8b1cb150f3",
+                        "x":  1024,
+                        "name":  "ColorUpgrade_Debuff",
+                        "height":  512
+                    },
+                    {
+                        "fileID":  21300007,
+                        "width":  512,
+                        "bounds":  [
+                                       32,
+                                       32,
+                                       448,
+                                       448
+                                   ],
+                        "y":  0,
+                        "spriteID":  "b80d9fd4dd814d8b802fc1b0b0e3fdc3",
+                        "x":  0,
+                        "name":  "Symbol_CreateTower",
+                        "height":  512
+                    },
+                    {
+                        "fileID":  21300008,
+                        "width":  512,
+                        "bounds":  [
+                                       32,
+                                       42,
+                                       448,
+                                       428
+                                   ],
+                        "y":  0,
+                        "spriteID":  "55872d2bb5564836adbd4e1cb9d5dbf2",
+                        "x":  512,
+                        "name":  "Symbol_TierUpgrade",
+                        "height":  512
+                    },
+                    {
+                        "fileID":  21300009,
+                        "width":  512,
+                        "bounds":  [
+                                       32,
+                                       32,
+                                       448,
+                                       448
+                                   ],
+                        "y":  0,
+                        "spriteID":  "51646cc9dbcd40e0b20f75c76df4a696",
+                        "x":  1024,
+                        "name":  "Symbol_UpgradePlus",
+                        "height":  512
+                    }
+                ],
+    "atlas":  "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\5. UI\\UI_Action_Atlas.png",
+    "sha256":  "9AA03746B8A77B59C2CDD2F1EDA9BD09B7776C862F4F22F84F80B29F4C6D749E"
+}

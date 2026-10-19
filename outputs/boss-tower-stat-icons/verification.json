@@ -1,0 +1,182 @@
+{
+    "newSpriteCount":  10,
+    "existingAssetsUnchanged":  true,
+    "skillIconsCreated":  0,
+    "atlases":  [
+                    {
+                        "size":  [
+                                     1536,
+                                     1024
+                                 ],
+                        "sprites":  [
+                                        {
+                                            "fileID":  21300001,
+                                            "width":  512,
+                                            "bounds":  [
+                                                           32,
+                                                           32,
+                                                           448,
+                                                           448
+                                                       ],
+                                            "y":  512,
+                                            "spriteID":  "9acf739b1879455d909e617c41e8f781",
+                                            "x":  0,
+                                            "name":  "BossStat_Defense",
+                                            "height":  512
+                                        },
+                                        {
+                                            "fileID":  21300002,
+                                            "width":  512,
+                                            "bounds":  [
+                                                           32,
+                                                           32,
+                                                           448,
+                                                           448
+                                                       ],
+                                            "y":  512,
+                                            "spriteID":  "abc2295b841d417780108d34aee1a20a",
+                                            "x":  512,
+                                            "name":  "BossStat_Resistance",
+                                            "height":  512
+                                        },
+                                        {
+                                            "fileID":  21300003,
+                                            "width":  512,
+                                            "bounds":  [
+                                                           32,
+                                                           32,
+                                                           448,
+                                                           448
+                                                       ],
+                                            "y":  512,
+                                            "spriteID":  "96c34d01738e4a3c8977e4281931e089",
+                                            "x":  1024,
+                                            "name":  "BossStat_Movement",
+                                            "height":  512
+                                        },
+                                        {
+                                            "fileID":  21300004,
+                                            "width":  512,
+                                            "bounds":  [
+                                                           32,
+                                                           32,
+                                                           448,
+                                                           448
+                                                       ],
+                                            "y":  0,
+                                            "spriteID":  "7722faa4e93a49c2a8e705231624545f",
+                                            "x":  0,
+                                            "name":  "BossStat_DamageTaken",
+                                            "height":  512
+                                        },
+                                        {
+                                            "fileID":  21300005,
+                                            "width":  512,
+                                            "bounds":  [
+                                                           32,
+                                                           32,
+                                                           448,
+                                                           448
+                                                       ],
+                                            "y":  0,
+                                            "spriteID":  "2e9a121aa74f48fd9b88b331774aa796",
+                                            "x":  512,
+                                            "name":  "BossStat_Healing",
+                                            "height":  512
+                                        },
+                                        {
+                                            "fileID":  21300006,
+                                            "width":  512,
+                                            "bounds":  [
+                                                           32,
+                                                           32,
+                                                           448,
+                                                           448
+                                                       ],
+                                            "y":  0,
+                                            "spriteID":  "8cfbd86a0c0347009f63d35909a08db5",
+                                            "x":  1024,
+                                            "name":  "BossStat_Weight",
+                                            "height":  512
+                                        }
+                                    ],
+                        "sha256":  "13B1AC007A6571EDF6338262D9FDEF2D9F07A6CC96C173DE30FAF964610AF91E",
+                        "generationMode":  "built-in imagegen",
+                        "guid":  "1c3db74e369741b7b9ce610bdf33a544",
+                        "file":  "Boss_Stat_Icon_Atlas.png"
+                    },
+                    {
+                        "size":  [
+                                     1024,
+                                     1024
+                                 ],
+                        "sprites":  [
+                                        {
+                                            "fileID":  21300001,
+                                            "width":  512,
+                                            "bounds":  [
+                                                           32,
+                                                           32,
+                                                           448,
+                                                           448
+                                                       ],
+                                            "y":  512,
+                                            "spriteID":  "a9d956fdcd7746cfafb60db1554d3e0d",
+                                            "x":  0,
+                                            "name":  "AttackType_Splash",
+                                            "height":  512
+                                        },
+                                        {
+                                            "fileID":  21300002,
+                                            "width":  512,
+                                            "bounds":  [
+                                                           32,
+                                                           32,
+                                                           448,
+                                                           448
+                                                       ],
+                                            "y":  512,
+                                            "spriteID":  "b2c6730edad8460292c41628d624dcf0",
+                                            "x":  512,
+                                            "name":  "AttackType_Single",
+                                            "height":  512
+                                        },
+                                        {
+                                            "fileID":  21300003,
+                                            "width":  512,
+                                            "bounds":  [
+                                                           32,
+                                                           32,
+                                                           448,
+                                                           448
+                                                       ],
+                                            "y":  0,
+                                            "spriteID":  "6929b314a3e8443bb5e78b3af460e2ae",
+                                            "x":  0,
+                                            "name":  "AttackType_Buff",
+                                            "height":  512
+                                        },
+                                        {
+                                            "fileID":  21300004,
+                                            "width":  512,
+                                            "bounds":  [
+                                                           32,
+                                                           32,
+                                                           448,
+                                                           448
+                                                       ],
+                                            "y":  0,
+                                            "spriteID":  "e9525fb2db554db081263c7f0b0f74e2",
+                                            "x":  512,
+                                            "name":  "AttackType_Debuff",
+                                            "height":  512
+                                        }
+                                    ],
+                        "sha256":  "981C6EE72980D89B498C02EA6F6416D2C891EAD31CB6B925FCAB2F268D600EE4",
+                        "generationMode":  "built-in imagegen",
+                        "guid":  "b44a77bac8164160813ddaa75ef5c98c",
+                        "file":  "Tower_AttackType_Icon_Atlas.png"
+                    }
+                ],
+    "unityLaunched":  false
+}

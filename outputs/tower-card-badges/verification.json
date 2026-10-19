@@ -1,0 +1,530 @@
+{
+    "atlases":  [
+                    {
+                        "dimensions":  [
+                                           1024,
+                                           1024
+                                       ],
+                        "sprites":  [
+                                        {
+                                            "y":  512,
+                                            "height":  512,
+                                            "x":  0,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "d1e40085e4cae8637caf33c0f1edd7e1",
+                                            "name":  "CardBadge_AttackSplash",
+                                            "index":  1,
+                                            "visibleBounds":  [
+                                                                  32,
+                                                                  32,
+                                                                  448,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300001
+                                        },
+                                        {
+                                            "y":  512,
+                                            "height":  512,
+                                            "x":  512,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "b0ba944f281345f7c4c1a9027da1fd7f",
+                                            "name":  "CardBadge_AttackSingle",
+                                            "index":  2,
+                                            "visibleBounds":  [
+                                                                  32,
+                                                                  32,
+                                                                  448,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300002
+                                        },
+                                        {
+                                            "y":  0,
+                                            "height":  512,
+                                            "x":  0,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "6bb4d137a04f89568bde876d6c4e7d92",
+                                            "name":  "CardBadge_AttackBuff",
+                                            "index":  3,
+                                            "visibleBounds":  [
+                                                                  32,
+                                                                  32,
+                                                                  448,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300003
+                                        },
+                                        {
+                                            "y":  0,
+                                            "height":  512,
+                                            "x":  512,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "072ee960a66304930fbae65e927d3ebc",
+                                            "name":  "CardBadge_AttackDebuff",
+                                            "index":  4,
+                                            "visibleBounds":  [
+                                                                  32,
+                                                                  32,
+                                                                  448,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300004
+                                        }
+                                    ],
+                        "path":  "Assets/4. Asset/5. UI/Tower_Card_Attack_Atlas.png",
+                        "sha256":  "9BC345564496258FD4F60AB166C2A040FE3E89D82E890D733719073E65109132",
+                        "kind":  "Attack",
+                        "guid":  "19553626f4844d3f7eef9633c82b5e40"
+                    },
+                    {
+                        "dimensions":  [
+                                           1536,
+                                           1024
+                                       ],
+                        "sprites":  [
+                                        {
+                                            "y":  512,
+                                            "height":  512,
+                                            "x":  0,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "9b80bfd42a04dfc398e598dae6900bab",
+                                            "name":  "CardBadge_TierBronze",
+                                            "index":  1,
+                                            "visibleBounds":  [
+                                                                  32,
+                                                                  32,
+                                                                  448,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300001
+                                        },
+                                        {
+                                            "y":  512,
+                                            "height":  512,
+                                            "x":  512,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "cc437be6d85f8a9dab87a540fe461144",
+                                            "name":  "CardBadge_TierSilver",
+                                            "index":  2,
+                                            "visibleBounds":  [
+                                                                  32,
+                                                                  32,
+                                                                  448,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300002
+                                        },
+                                        {
+                                            "y":  512,
+                                            "height":  512,
+                                            "x":  1024,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "537b22612e129f8554a14a41d5389d3e",
+                                            "name":  "CardBadge_TierGold",
+                                            "index":  3,
+                                            "visibleBounds":  [
+                                                                  33,
+                                                                  32,
+                                                                  447,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300003
+                                        },
+                                        {
+                                            "y":  0,
+                                            "height":  512,
+                                            "x":  0,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "b937b8eafabd9b634595a997edeccf86",
+                                            "name":  "CardBadge_TierMithril",
+                                            "index":  4,
+                                            "visibleBounds":  [
+                                                                  32,
+                                                                  32,
+                                                                  448,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300004
+                                        },
+                                        {
+                                            "y":  0,
+                                            "height":  512,
+                                            "x":  512,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "67c1ccd6b9db3ea9cb41c50d12a7a438",
+                                            "name":  "CardBadge_TierDiamond",
+                                            "index":  5,
+                                            "visibleBounds":  [
+                                                                  32,
+                                                                  32,
+                                                                  448,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300005
+                                        },
+                                        {
+                                            "y":  0,
+                                            "height":  512,
+                                            "x":  1024,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "17736b99df6872e8b000a59777e73580",
+                                            "name":  "CardBadge_TierSynergy",
+                                            "index":  6,
+                                            "visibleBounds":  [
+                                                                  32,
+                                                                  32,
+                                                                  448,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300006
+                                        }
+                                    ],
+                        "path":  "Assets/4. Asset/5. UI/Tower_Card_Tier_Atlas.png",
+                        "sha256":  "CC5E0691F2B5C9805F3D65D5521A2D594B70A9884B14BAB6FBFDB671873F81D8",
+                        "kind":  "Tier",
+                        "guid":  "60fdae6670a86c8b4a9d4e44e2fe3af6"
+                    },
+                    {
+                        "dimensions":  [
+                                           2048,
+                                           2048
+                                       ],
+                        "sprites":  [
+                                        {
+                                            "y":  1536,
+                                            "height":  512,
+                                            "x":  0,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "87da702b5b5eec5b4e988adfecb9a81f",
+                                            "name":  "CardBadge_EmblemSword",
+                                            "index":  1,
+                                            "visibleBounds":  [
+                                                                  34,
+                                                                  32,
+                                                                  443,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300001
+                                        },
+                                        {
+                                            "y":  1536,
+                                            "height":  512,
+                                            "x":  512,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "16e513895a107347217bbb0c55f414e7",
+                                            "name":  "CardBadge_EmblemAxe",
+                                            "index":  2,
+                                            "visibleBounds":  [
+                                                                  50,
+                                                                  33,
+                                                                  412,
+                                                                  447
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300002
+                                        },
+                                        {
+                                            "y":  1536,
+                                            "height":  512,
+                                            "x":  1024,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "ab898a6bdfa45202e250154df814efbc",
+                                            "name":  "CardBadge_EmblemBow",
+                                            "index":  3,
+                                            "visibleBounds":  [
+                                                                  36,
+                                                                  32,
+                                                                  439,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300003
+                                        },
+                                        {
+                                            "y":  1536,
+                                            "height":  512,
+                                            "x":  1536,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "499c6b0bb153404661e891ec795f62ad",
+                                            "name":  "CardBadge_EmblemSpear",
+                                            "index":  4,
+                                            "visibleBounds":  [
+                                                                  48,
+                                                                  32,
+                                                                  416,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300004
+                                        },
+                                        {
+                                            "y":  1024,
+                                            "height":  512,
+                                            "x":  0,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "84d5f4f3f2b4430e2a3bcc997d1516e2",
+                                            "name":  "CardBadge_EmblemShield",
+                                            "index":  5,
+                                            "visibleBounds":  [
+                                                                  69,
+                                                                  32,
+                                                                  374,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300005
+                                        },
+                                        {
+                                            "y":  1024,
+                                            "height":  512,
+                                            "x":  512,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "78581dd72e78e8e25271d1c86be6aaef",
+                                            "name":  "CardBadge_EmblemHammer",
+                                            "index":  6,
+                                            "visibleBounds":  [
+                                                                  38,
+                                                                  32,
+                                                                  435,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300006
+                                        },
+                                        {
+                                            "y":  1024,
+                                            "height":  512,
+                                            "x":  1024,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "766309cafa02f2462b202b93861ba7dd",
+                                            "name":  "CardBadge_EmblemFire",
+                                            "index":  7,
+                                            "visibleBounds":  [
+                                                                  70,
+                                                                  32,
+                                                                  372,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300007
+                                        },
+                                        {
+                                            "y":  1024,
+                                            "height":  512,
+                                            "x":  1536,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "f339663f7663f0afa390baf1796a73d5",
+                                            "name":  "CardBadge_EmblemWater",
+                                            "index":  8,
+                                            "visibleBounds":  [
+                                                                  90,
+                                                                  32,
+                                                                  331,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300008
+                                        },
+                                        {
+                                            "y":  512,
+                                            "height":  512,
+                                            "x":  0,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "7e29a2e6111b73bd8a1c689ca85d07b4",
+                                            "name":  "CardBadge_EmblemEarth",
+                                            "index":  9,
+                                            "visibleBounds":  [
+                                                                  32,
+                                                                  37,
+                                                                  448,
+                                                                  437
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300009
+                                        },
+                                        {
+                                            "y":  512,
+                                            "height":  512,
+                                            "x":  512,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "067ae1352b8a4c6c03ce6a80cfc483dd",
+                                            "name":  "CardBadge_EmblemWind",
+                                            "index":  10,
+                                            "visibleBounds":  [
+                                                                  32,
+                                                                  39,
+                                                                  448,
+                                                                  433
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300010
+                                        },
+                                        {
+                                            "y":  512,
+                                            "height":  512,
+                                            "x":  1024,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "8764328a8c0abbc022342a86ec915e7e",
+                                            "name":  "CardBadge_EmblemIce",
+                                            "index":  11,
+                                            "visibleBounds":  [
+                                                                  46,
+                                                                  32,
+                                                                  419,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300011
+                                        },
+                                        {
+                                            "y":  512,
+                                            "height":  512,
+                                            "x":  1536,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "73964c1a61932946fa9d3d7fb79377da",
+                                            "name":  "CardBadge_EmblemElectricity",
+                                            "index":  12,
+                                            "visibleBounds":  [
+                                                                  92,
+                                                                  32,
+                                                                  327,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300012
+                                        },
+                                        {
+                                            "y":  0,
+                                            "height":  512,
+                                            "x":  0,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "d7ff628d4517f5812cf53d9860e5b040",
+                                            "name":  "CardBadge_EmblemLight",
+                                            "index":  13,
+                                            "visibleBounds":  [
+                                                                  32,
+                                                                  37,
+                                                                  448,
+                                                                  437
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300013
+                                        },
+                                        {
+                                            "y":  0,
+                                            "height":  512,
+                                            "x":  512,
+                                            "pivot":  [
+                                                          0.5,
+                                                          0.5
+                                                      ],
+                                            "spriteID":  "7da79acc61fa5aaa2ba2f3a962c6a6e8",
+                                            "name":  "CardBadge_EmblemDark",
+                                            "index":  14,
+                                            "visibleBounds":  [
+                                                                  40,
+                                                                  32,
+                                                                  432,
+                                                                  448
+                                                              ],
+                                            "width":  512,
+                                            "fileID":  21300014
+                                        }
+                                    ],
+                        "path":  "Assets/4. Asset/5. UI/Tower_Card_Emblem_Atlas.png",
+                        "sha256":  "A8B695ED8B29D221F272231D8D253A48FB8E93691DCFE4413C118B4B1FFF7253",
+                        "kind":  "Emblem",
+                        "guid":  "32d345500e722187021b31f6a2532e11"
+                    }
+                ],
+    "originalAtlasUnchanged":  true,
+    "spriteCount":  24,
+    "cellSize":  512,
+    "mode":  "built-in image_gen",
+    "pixelsPerUnit":  100,
+    "originalSha256":  [
+                           "AE0E59A315F76B80E3567919A12062E0E5E82807FE514F819D5581FEC0DB141D",
+                           "490FD27C119E84BFCFC741656195A98C24B02940815BA9D6F6C05994D44CF379"
+                       ],
+    "atlasCount":  3
+}

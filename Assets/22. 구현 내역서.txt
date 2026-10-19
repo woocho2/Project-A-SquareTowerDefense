@@ -552,7 +552,7 @@
 - 중간 보스가 웨이브 구성으로 자동 소환됨 (21번 1-4). 소환 버튼과 그 상태를 지움:
     WaveManager의 TrySpawnMiddleBoss·IsMiddleBossSummonWindow·CanSummonMiddleBoss·m_middleBossSpawned·MiddleBossSummonableChanged,
     PlayerTurnPanel의 btn_summonMiddleBoss·RefreshMiddleBossButton·HandleSummonMiddleBossClick, Canvas.prefab의 Group_SpawnMiddleBoss.
-    UIStageThemeController.cs의 "SpawnMiddleBoss" 이름 검사는 걸리는 오브젝트가 없어져 쓰이지 않음 (남겨 둠).
+    UIStageThemeController.cs의 "SpawnMiddleBoss" 이름 검사는 걸리는 오브젝트가 없어져 쓰이지 않았으며, 2026-10-19 기존 UI 테마 시스템과 함께 제거했다.
 - WaveManager.GetEnemyStatMultipliers: 순서 5의 체력 배율 3.0 → 1.0. 중간 보스가 사이클 배율만 받게.
 - WaveManager.GetKillReward: 상수 NormalGoldPerWave → NormalGoldPerCycle, 일반 적 골드 = 10 × cycle.
   GameRuleTests: 일반 적 기대값을 1 / 11 / 40웨이브에 10 / 20 / 40으로. 속도형·방어형 보상 테스트는 지움 (웨이브에 더는 안 나옴).
@@ -689,9 +689,9 @@
 - 공용 화살표 하나를 기존 그림에서 분리했다. Path Arrows 타일맵에서 다음 경로 칸 방향으로 회전한다.
   마지막 방문에는 화살표를 두지 않는다. 기존 Path Direction은 공용 장식이며 화살표와 함께 순서대로 발광한다.
   START/END/JUMP/RETURN 표시는 사용하지 않는다. 경로 인덱스와 적 이동의 순환 규칙은 그대로다.
-- Assets/Resources/SharedBoardVisuals.asset이 색상 원본이다.
-  Tools > Visuals > 공용 배경·장식 색상에서 스테이지별 스폰/패스/화살표, 타워 티어/개별 ID,
-  몬스터 면 유형/캐릭터별 배경·장식·장비색을 편집한다. TileManager의 Stage Realm으로 씬의 테마를 지정한다.
+- [2026-10-19 제거] SharedBoardVisuals.cs / TileManager.Visuals.cs와 공용 색상 편집 창을 삭제했다.
+  타일·타워·적의 공용 색상 자동 적용을 제거했으며, 이후 색상 지정은 사용자가 스크립트로 직접 구현한다.
+  기존 설정값은 outputs/removed-board-color-settings/SharedBoardVisuals.asset.txt에 참고용으로 보존했다.
 - 타워의 색상별 Sprite 배열을 제거했다. 실제 타워 ID의 색상과 VisualTowerID의 캐릭터 선택은 별도로 유지한다.
   큐브 적은 면별 MaterialPropertyBlock에 캐릭터 텍스처와 독립 색상을 함께 지정한다.
   기존 몬스터 머티리얼의 현재 색상을 설정 에셋에 옮겼고 동일한 캐릭터 값은 공통 기본값을 상속하게 했다.

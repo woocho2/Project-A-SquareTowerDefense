@@ -1,0 +1,74 @@
+[
+    {
+        "existingSpriteFileIDPreserved":  21300000,
+        "pngUnchanged":  true,
+        "sprites":  [
+                        {
+                            "fileID":  21300000,
+                            "spriteID":  "108d1c0b21c1be448f75ef020f38bfa1",
+                            "name":  "Board_Background_Single",
+                            "border":  0,
+                            "size":  512
+                        },
+                        {
+                            "fileID":  21300001,
+                            "spriteID":  "5b733665ad879659b8512494633e99bd",
+                            "name":  "Board_Background_Sliced",
+                            "border":  80,
+                            "size":  512
+                        }
+                    ],
+        "pngSha256":  "D83C7AA4EE6DB8BEECE68DF75D285F3E8B57F2792027924E6DA50FE083FA0D87",
+        "pixelsPerUnit":  384,
+        "asset":  "Assets/4. Asset/0. Common/Board_Background.png",
+        "guid":  "887a2b3fda8248ee8761c5268b098428"
+    },
+    {
+        "existingSpriteFileIDPreserved":  21300000,
+        "pngUnchanged":  true,
+        "sprites":  [
+                        {
+                            "fileID":  21300000,
+                            "spriteID":  "108d1c0b21c1be448f75ef020f38bfa1",
+                            "name":  "Board_Decoration_Single",
+                            "border":  0,
+                            "size":  512
+                        },
+                        {
+                            "fileID":  21300001,
+                            "spriteID":  "af7a778122a36f6a13dd56ae0c0c326d",
+                            "name":  "Board_Decoration_Sliced",
+                            "border":  160,
+                            "size":  512
+                        }
+                    ],
+        "pngSha256":  "30A97A1D32AA66680399136EDDFBEFAEB2C63A2C53137139579E90A7CD36E17B",
+        "pixelsPerUnit":  384,
+        "asset":  "Assets/4. Asset/0. Common/Board_Decoration.png",
+        "guid":  "fdea12801c584d78a0a6c49e41916f49"
+    },
+    {
+        "existingSpriteFileIDPreserved":  21300000,
+        "pngUnchanged":  true,
+        "sprites":  [
+                        {
+                            "fileID":  21300000,
+                            "spriteID":  "108d1c0b21c1be448f75ef020f38bfa1",
+                            "name":  "Board_Arrow_Single",
+                            "border":  0,
+                            "size":  256
+                        },
+                        {
+                            "fileID":  21300001,
+                            "spriteID":  "9dd47c59164d68790b3bebf3be96956f",
+                            "name":  "Board_Arrow_Sliced",
+                            "border":  96,
+                            "size":  256
+                        }
+                    ],
+        "pngSha256":  "7B08D435BE814BA41CCDA7F1BF33A4D8DDE9334D2B9CD02C55EF253CFD56F391",
+        "pixelsPerUnit":  192,
+        "asset":  "Assets/4. Asset/0. Common/Board_Arrow.png",
+        "guid":  "9b52863a276c47eea04ae0dc7a25d6a8"
+    }
+]

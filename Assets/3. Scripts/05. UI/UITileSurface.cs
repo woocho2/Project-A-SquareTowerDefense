@@ -13,11 +13,8 @@ public sealed class UITileSurface : MonoBehaviour
     [SerializeField] private UITileFrameStyle frameStyle;
     [Tooltip("화면 픽셀이 아닌 RectTransform의 UI 단위입니다. 작은 UI에서는 자동으로 줄입니다.")]
     [Min(0.25f), SerializeField] private float borderThickness = 2f;
-    [SerializeField] private bool useStageTheme = true;
-    [SerializeField] private Color customColor = Color.white;
     private Image target;
     public string ThemeLayer => colorRole.ToString();
-    public bool UseStageTheme => useStageTheme;
     public UITileFrameStyle FrameStyle => frameStyle;
     public float BorderThickness => borderThickness;
     public UITileSkin Skin => skin != null ? skin : UITileSkin.Default;
@@ -28,26 +25,14 @@ public sealed class UITileSurface : MonoBehaviour
             ? UITileFrameStyle.Compact : UITileFrameStyle.Decorated;
 
     public void Configure(UITileSkin value, UITileColorRole role, UITileFrameStyle style,
-        float thickness, bool stageColors, Color color)
+        float thickness)
     {
         skin = value; colorRole = role; frameStyle = style;
-        borderThickness = Mathf.Max(0.25f, thickness); useStageTheme = stageColors; customColor = color;
+        borderThickness = Mathf.Max(0.25f, thickness);
         Refresh();
     }
 
-    public void Refresh()
-    {
-        RefreshGeometry();
-        if (!useStageTheme) { Target.color = customColor; return; }
-        var theme = GetComponentInParent<UIStageThemeController>(true);
-        if (theme != null) theme.ApplySurfaceColor(Target, ThemeLayer);
-        else
-        {
-            Color color = UIStageThemeController.GetDefaultLayerColor(StageRealm.Asgard, ThemeLayer);
-            color.a = Target.color.a;
-            Target.color = color;
-        }
-    }
+    public void Refresh() => RefreshGeometry();
 
     public void RefreshGeometry()
     {

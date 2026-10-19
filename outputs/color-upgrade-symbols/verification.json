@@ -1,0 +1,90 @@
+{
+    "source":  "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\outputs\\color-upgrade-symbols\\source.png",
+    "cellSize":  [
+                     512,
+                     512
+                 ],
+    "size":  [
+                 1024,
+                 1024
+             ],
+    "guid":  "355c07fb26724b29ac98ee594f2122dc",
+    "atlas":  "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\4. Asset\\5. UI\\UI_Color_Upgrade_Atlas.png",
+    "sha256":  "A5A1AD46DC55F9DEA8F751EEED6FA06A6C4175C706A60BE0C0A1CAB24CF7473C",
+    "pivot":  [
+                  0.5,
+                  0.5
+              ],
+    "pixelsPerUnit":  100,
+    "sprites":  [
+                    {
+                        "y":  512,
+                        "height":  512,
+                        "x":  0,
+                        "bounds":  [
+                                       32,
+                                       32,
+                                       448,
+                                       448
+                                   ],
+                        "opaquePixels":  1087,
+                        "antialiasedPixels":  196422,
+                        "name":  "ColorUpgrade_Splash",
+                        "spriteID":  "68af30c1b20d4e5c8ba69bec172523eb",
+                        "width":  512,
+                        "fileID":  21300001
+                    },
+                    {
+                        "y":  512,
+                        "height":  512,
+                        "x":  512,
+                        "bounds":  [
+                                       32,
+                                       32,
+                                       448,
+                                       448
+                                   ],
+                        "opaquePixels":  1157,
+                        "antialiasedPixels":  196219,
+                        "name":  "ColorUpgrade_Single",
+                        "spriteID":  "b087d69d87024818b2e08927e0d5adaf",
+                        "width":  512,
+                        "fileID":  21300002
+                    },
+                    {
+                        "y":  0,
+                        "height":  512,
+                        "x":  0,
+                        "bounds":  [
+                                       32,
+                                       32,
+                                       448,
+                                       448
+                                   ],
+                        "opaquePixels":  1234,
+                        "antialiasedPixels":  197088,
+                        "name":  "ColorUpgrade_Buff",
+                        "spriteID":  "2218dc4b42f1471095b585ad76d9f26d",
+                        "width":  512,
+                        "fileID":  21300003
+                    },
+                    {
+                        "y":  0,
+                        "height":  512,
+                        "x":  512,
+                        "bounds":  [
+                                       32,
+                                       32,
+                                       448,
+                                       448
+                                   ],
+                        "opaquePixels":  1373,
+                        "antialiasedPixels":  196722,
+                        "name":  "ColorUpgrade_Debuff",
+                        "spriteID":  "caf4c11d29f248a0b5b8d4bd6aea03ee",
+                        "width":  512,
+                        "fileID":  21300004
+                    }
+                ],
+    "generationMode":  "built-in imagegen"
+}

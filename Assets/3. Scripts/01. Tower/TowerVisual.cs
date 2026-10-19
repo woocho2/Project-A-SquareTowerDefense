@@ -9,10 +9,6 @@ public class TowerVisual : MonoBehaviour
     [SerializeField] private SpriteRenderer m_characterRenderer;
     [SerializeField] private SpriteRenderer m_decorationRenderer;
     [SerializeField] private SpriteRenderer m_emblemRenderer;
-    [Header("공용 배경·장식과 색상표")]
-    [SerializeField] private SharedBoardVisuals m_sharedVisuals;
-    [Tooltip("플레이 전 공용 색상 미리보기에 사용할 타워 ID입니다.")]
-    [SerializeField] private int m_previewTowerID = 1101;
     [Header("정면 캐릭터")]
     [SerializeField] private TowerCharacterCatalog m_regularCharacters;
     [SerializeField] private SynergyCharacterCatalog m_synergyCharacters;
@@ -30,27 +26,25 @@ public class TowerVisual : MonoBehaviour
     [SerializeField] private Color m_debuffColor = new Color32(32, 32, 39, 255);
     private int m_appliedTowerID;
     private int m_appliedVisualID;
-    private int m_colorTowerID;
     public bool UsesCharacterVisual { get; private set; }
     public Sprite CharacterSprite => m_characterRenderer != null ? m_characterRenderer.sprite : null;
     // 투사체에는 초상 대신 문양을 사용합니다. 시너지의 VisualTowerID도 유지합니다.
     public Sprite ProjectileEmblemSprite => GetSprite(m_emblemSprites, m_appliedVisualID % 100);
     public Color ProjectileEmblemColor => GetEmblemColor((m_appliedVisualID % 1000) / 100);
     public Sprite TierSprite => m_appliedTowerID / 1000 == 6
-        ? Visuals?.Decoration : GetSprite(m_tierSprites, m_appliedTowerID / 1000);
-    public Color TierColor => m_appliedTowerID / 1000 == 6 && Visuals != null
-        ? Visuals.GetTower(m_colorTowerID).decoration : Color.white;
-    public Sprite ColorSprite => IsRegular ? Visuals?.Background : null;
+        ? (m_decorationRenderer != null ? m_decorationRenderer.sprite : null)
+        : GetSprite(m_tierSprites, m_appliedTowerID / 1000);
+    public Color TierColor => m_appliedTowerID / 1000 == 6 && m_decorationRenderer != null
+        ? m_decorationRenderer.color : Color.white;
+    public Sprite ColorSprite => IsRegular && m_backgroundRenderer != null ? m_backgroundRenderer.sprite : null;
     public Sprite EmblemSprite => IsRegular ? GetSprite(m_emblemSprites, m_appliedTowerID % 100) : null;
     public Color EmblemColor => GetEmblemColor((m_appliedTowerID % 1000) / 100);
     private bool IsRegular => m_appliedTowerID / 1000 >= 1 && m_appliedTowerID / 1000 <= 5;
-    private SharedBoardVisuals Visuals => m_sharedVisuals != null ? m_sharedVisuals : SharedBoardVisuals.Default;
 
     public void Apply(int towerID)
     {
         m_appliedTowerID = towerID;
         m_appliedVisualID = towerID;
-        m_colorTowerID = towerID;
         CacheRenderers();
         int tier = towerID / 1000;
         int attack = (towerID % 1000) / 100;
@@ -69,12 +63,11 @@ public class TowerVisual : MonoBehaviour
             if (m_regularCharacters != null) portrait = m_regularCharacters.GetCharacter(towerID % 100, attack);
         }
         float canvasSize = synergy ? m_synergyCanvasWorldSize : m_canvasWorldSize;
-        Sprite background = Visuals != null ? Visuals.Background : null;
-        Sprite decoration = Visuals != null ? Visuals.Decoration : null;
+        Sprite background = m_backgroundRenderer != null ? m_backgroundRenderer.sprite : null;
+        Sprite decoration = m_decorationRenderer != null ? m_decorationRenderer.sprite : null;
         ApplyLayer(m_backgroundRenderer, background, -1, canvasSize);
         ApplyLayer(m_characterRenderer, portrait, 0, canvasSize);
         ApplyLayer(m_decorationRenderer, decoration, 1, canvasSize);
-        ApplySharedColors();
         // 문양의 위치·크기는 프리팹 설정을 유지합니다. 초상은 원래 색상을 유지합니다.
         if (m_emblemRenderer != null)
         {
@@ -102,8 +95,6 @@ public class TowerVisual : MonoBehaviour
         }
         Apply(towerData.Tier == 6 ? towerData.towerID : towerData.VisualTowerID);
         m_appliedVisualID = towerData.VisualTowerID;
-        m_colorTowerID = towerData.towerID;
-        ApplySharedColors();
     }
 
     private void ApplyLayer(SpriteRenderer renderer, Sprite sprite, int orderOffset, float canvasSize)
@@ -111,10 +102,10 @@ public class TowerVisual : MonoBehaviour
         if (renderer == null) return;
         renderer.sprite = sprite;
         renderer.enabled = sprite != null;
-        renderer.color = Color.white;
+        if (renderer == m_characterRenderer) renderer.color = Color.white;
         renderer.flipX = false;
         renderer.flipY = false;
-        renderer.SetPropertyBlock(null);
+        if (renderer == m_characterRenderer) renderer.SetPropertyBlock(null);
         if (m_characterRenderer != null && renderer != m_characterRenderer)
         {
             renderer.transform.localPosition = m_characterRenderer.transform.localPosition;
@@ -138,28 +129,6 @@ public class TowerVisual : MonoBehaviour
         return sprites != null && index >= 0 && index < sprites.Length ? sprites[index] : null;
     }
     private void Awake() => CacheRenderers();
-    private void OnEnable() => SharedBoardVisuals.Changed += RefreshSharedVisuals;
-    private void OnDisable() => SharedBoardVisuals.Changed -= RefreshSharedVisuals;
-    public void RefreshSharedVisuals()
-    {
-        if (!Application.isPlaying && m_appliedTowerID == 0 && m_previewTowerID > 0) Apply(m_previewTowerID);
-        if (m_appliedTowerID > 0)
-        {
-            int visualID = m_appliedVisualID;
-            int colorID = m_colorTowerID;
-            Apply(m_appliedTowerID);
-            m_appliedVisualID = visualID;
-            m_colorTowerID = colorID;
-            ApplySharedColors();
-        }
-    }
-    private void ApplySharedColors()
-    {
-        if (Visuals == null) return;
-        BoardLayerColors colors = Visuals.GetTower(m_colorTowerID);
-        if (m_backgroundRenderer != null) m_backgroundRenderer.color = colors.background;
-        if (m_decorationRenderer != null) m_decorationRenderer.color = colors.decoration;
-    }
     private void OnValidate() => CacheRenderers();
     private void CacheRenderers()
     {

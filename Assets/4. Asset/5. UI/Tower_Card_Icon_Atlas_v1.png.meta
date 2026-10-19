@@ -45,7 +45,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1024
+        y: 512
         width: 512
         height: 512
       alignment: 0
@@ -67,7 +67,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 512
-        y: 1024
+        y: 512
         width: 512
         height: 512
       alignment: 0
@@ -89,7 +89,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1024
-        y: 1024
+        y: 512
         width: 512
         height: 512
       alignment: 0
@@ -111,7 +111,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 512
+        y: 0
         width: 512
         height: 512
       alignment: 0
@@ -133,7 +133,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 512
-        y: 512
+        y: 0
         width: 512
         height: 512
       alignment: 0
@@ -155,7 +155,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1024
-        y: 512
+        y: 0
         width: 512
         height: 512
       alignment: 0
@@ -168,72 +168,6 @@ TextureImporter:
       bones: []
       spriteID: 22404cdf80f645a8672e57389fadc6ba
       internalID: 21300006
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: CardBadge_EmblemSword
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f4540c5f9c072b8c3c39bdac2348e409
-      internalID: 21300007
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: CardBadge_AttackSplash
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f59bd5d5cbc2daa7309d8c714142f1fa
-      internalID: 21300008
-      vertices: []
-      indices:
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: CardBadge_TierBronze
-      rect:
-        serializedVersion: 2
-        x: 1024
-        y: 0
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e76ad85413b4de4f91ec6f252901bf98
-      internalID: 21300009
       vertices: []
       indices:
       edges: []
@@ -251,9 +185,6 @@ TextureImporter:
       CardStat_Action: 21300004
       CardStat_CriticalRate: 21300005
       CardStat_CriticalDamage: 21300006
-      CardBadge_EmblemSword: 21300007
-      CardBadge_AttackSplash: 21300008
-      CardBadge_TierBronze: 21300009
   userData: Generated card icon atlas - tower-info-shared-ui-v6
   assetBundleName:
   assetBundleVariant:

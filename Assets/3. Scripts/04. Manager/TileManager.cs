@@ -72,18 +72,14 @@ public partial class TileManager : MonoBehaviour
     [SerializeField] private Tilemap tilemap;
     [Header("타워 소환 타일맵")]
     [SerializeField] private Tilemap m_towerSpawnTilemap;
-    [Tooltip("Start(0번)부터 한 바퀴를 도는 순환 경로 좌표. 목록 순서가 이동 순서이고, 마지막 칸은 0번 칸과 이어집니다.")]
+    [Tooltip("0번부터 한 바퀴를 도는 순환 경로 좌표. 목록 순서가 이동 순서이고, 마지막 칸은 0번 칸과 이어집니다.")]
     [SerializeField] private List<Vector3Int> m_pathGridPositions = new List<Vector3Int>();
 
     public IReadOnlyList<Vector3Int> PathGridPositions => m_pathGridPositions;
     public Tilemap TowerSpawnTilemap => m_towerSpawnTilemap;
 
-    [Header("공용 배경·장식 / 스테이지 색상")]
-    [SerializeField] private SharedBoardVisuals m_sharedVisuals;
-    [SerializeField] private StageRealm m_stageRealm = StageRealm.Asgard;
-    [SerializeField] private Tilemap m_towerDecorationTilemap;
+    [Header("패스 화살표 타일맵")]
     [SerializeField] private Tilemap m_pathArrowTilemap;
-    public StageRealm StageRealm => m_stageRealm;
 
     [Header("패스 장식과 화살표 순차 발광")]
     [Tooltip("테두리 장식, 중앙 방향 화살표와 END 표시가 있는 Path Direction 타일맵입니다.")]
@@ -249,12 +245,10 @@ public partial class TileManager : MonoBehaviour
     private void OnEnable()
     {
         m_pathArrowElapsed = 0f;
-        SharedBoardVisuals.Changed += ApplySharedVisuals;
     }
 
     private void OnDisable()
     {
-        SharedBoardVisuals.Changed -= ApplySharedVisuals;
         RestorePathArrowColors();
     }
 
@@ -268,7 +262,7 @@ public partial class TileManager : MonoBehaviour
         if (tilemap == null) tilemap = GetComponent<Tilemap>();
         InitializePathTileIndices();
         InitializeTowerSpawnTileIndices();
-        ApplySharedVisuals();
+        InitializePathArrowPulse();
 
         AssignRandomSpecialTiles();
 
@@ -278,6 +272,18 @@ public partial class TileManager : MonoBehaviour
     #endregion
 
     #region 패스 장식과 화살표 순차 발광
+
+    private bool TryGetPathArrowRotation(int index, out Quaternion rotation)
+    {
+        rotation = Quaternion.identity;
+        if (index < 0 || index + 1 >= m_pathGridPositions.Count || tilemap == null) return false;
+        Vector3 direction = tilemap.GetCellCenterWorld(m_pathGridPositions[index + 1]) -
+                            tilemap.GetCellCenterWorld(m_pathGridPositions[index]);
+        if (m_pathArrowTilemap != null) direction = m_pathArrowTilemap.transform.InverseTransformVector(direction);
+        if (direction.sqrMagnitude < 0.0001f) return false;
+        rotation = Quaternion.AngleAxis(Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg, Vector3.forward);
+        return true;
+    }
 
     private void InitializePathArrowPulse()
     {

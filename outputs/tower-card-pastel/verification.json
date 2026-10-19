@@ -1,0 +1,440 @@
+[
+    {
+        "size":  [
+                     1024,
+                     1024
+                 ],
+        "sprites":  [
+                        {
+                            "name":  "CardBadge_AttackSplash",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_AttackSingle",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_AttackBuff",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_AttackDebuff",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        }
+                    ],
+        "metadataUnchanged":  true,
+        "sha256":  "B5665BBDBBA1D9DBBBEC653CD3C9B8554B1FDACCD6A8D8E4CE90A68890784FFC",
+        "kind":  "Attack",
+        "file":  "Tower_Card_Attack_Atlas.png"
+    },
+    {
+        "size":  [
+                     1536,
+                     1024
+                 ],
+        "sprites":  [
+                        {
+                            "name":  "CardStat_AttackPower",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardStat_AttackCount",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardStat_Range",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardStat_Action",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardStat_CriticalRate",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardStat_CriticalDamage",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        }
+                    ],
+        "metadataUnchanged":  true,
+        "sha256":  "2B8C2F6FB8ADF50DEDFFFA37778EC1FB704CF184E19CD0CC0D9D097A49881648",
+        "kind":  "Stat",
+        "file":  "Tower_Card_Icon_Atlas_v1.png"
+    },
+    {
+        "size":  [
+                     2048,
+                     2048
+                 ],
+        "sprites":  [
+                        {
+                            "name":  "CardBadge_EmblemSword",
+                            "bounds":  [
+                                           33,
+                                           32,
+                                           446,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_EmblemAxe",
+                            "bounds":  [
+                                           49,
+                                           32,
+                                           414,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_EmblemBow",
+                            "bounds":  [
+                                           33,
+                                           32,
+                                           445,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_EmblemSpear",
+                            "bounds":  [
+                                           58,
+                                           32,
+                                           396,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_EmblemShield",
+                            "bounds":  [
+                                           69,
+                                           32,
+                                           374,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_EmblemHammer",
+                            "bounds":  [
+                                           33,
+                                           32,
+                                           445,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_EmblemFire",
+                            "bounds":  [
+                                           62,
+                                           32,
+                                           388,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_EmblemWater",
+                            "bounds":  [
+                                           89,
+                                           32,
+                                           333,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_EmblemEarth",
+                            "bounds":  [
+                                           32,
+                                           38,
+                                           448,
+                                           435
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_EmblemWind",
+                            "bounds":  [
+                                           32,
+                                           39,
+                                           448,
+                                           433
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_EmblemIce",
+                            "bounds":  [
+                                           51,
+                                           32,
+                                           409,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_EmblemElectricity",
+                            "bounds":  [
+                                           90,
+                                           32,
+                                           332,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_EmblemLight",
+                            "bounds":  [
+                                           33,
+                                           32,
+                                           446,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_EmblemDark",
+                            "bounds":  [
+                                           37,
+                                           32,
+                                           437,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        }
+                    ],
+        "metadataUnchanged":  true,
+        "sha256":  "8CC78E760FB07834364DBCE87E41B3D17B99D582A1A8DA0B6F7C4CA56888E082",
+        "kind":  "Emblem",
+        "file":  "Tower_Card_Emblem_Atlas.png"
+    },
+    {
+        "size":  [
+                     1536,
+                     1024
+                 ],
+        "sprites":  [
+                        {
+                            "name":  "CardBadge_TierBronze",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_TierSilver",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_TierGold",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_TierMithril",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_TierDiamond",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        },
+                        {
+                            "name":  "CardBadge_TierSynergy",
+                            "bounds":  [
+                                           32,
+                                           32,
+                                           448,
+                                           448
+                                       ],
+                            "cellSize":  [
+                                             512,
+                                             512
+                                         ]
+                        }
+                    ],
+        "metadataUnchanged":  true,
+        "sha256":  "27AACB072E7BA95527C09B40D39C339022423B0DCCF6256ABF19631A3A6A4E8A",
+        "kind":  "Tier",
+        "file":  "Tower_Card_Tier_Atlas.png"
+    }
+]
