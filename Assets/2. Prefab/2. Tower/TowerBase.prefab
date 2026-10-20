@@ -251,8 +251,8 @@ MonoBehaviour:
   m_emblemRenderer: {fileID: 7100000000000001103}
   m_regularCharacters: {fileID: 11400000, guid: 24c24873dcee41018d2bd84bdbf9e2b5, type: 2}
   m_synergyCharacters: {fileID: 11400000, guid: 97fee378c3e247228e62e41bdd57fe2e, type: 2}
-  m_canvasWorldSize: 1.3333334
-  m_synergyCanvasWorldSize: 1.3333334
+  m_canvasWorldSize: 1
+  m_synergyCanvasWorldSize: 1
   m_emblemSprites:
   - {fileID: 1001, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
   - {fileID: 1005, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
@@ -546,7 +546,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.3333334, y: 1.3333334}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -668,8 +668,8 @@ Transform:
   m_GameObject: {fileID: 7100000000000001101}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.475, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 1}
+  m_LocalPosition: {x: 0, y: 0.35625, z: 0}
+  m_LocalScale: {x: 0.1875, y: 0.1875, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7922541315568409329}

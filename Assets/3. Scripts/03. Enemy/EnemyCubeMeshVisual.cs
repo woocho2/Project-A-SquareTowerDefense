@@ -14,7 +14,7 @@ public sealed class EnemyCubeMeshVisual : MonoBehaviour
     [SerializeField] private Material[] m_faceAssetPool;
     [Header("현재 면별 에셋 인덱스 (0 앞 / 1 뒤 / 2 왼쪽 / 3 오른쪽 / 4 위 / 5 아래)")]
     [SerializeField] private int[] m_faceAssetIndices = { 0, 1, 2, 3, 4, 5 };
-    [SerializeField, Min(0.01f)] private float m_sideLength = 256f / 192f;
+    [SerializeField, Min(0.01f)] private float m_sideLength = 1f;
     [SerializeField, Min(0f)] private float m_landingPause = 0.06f;
     [Header("세 번 굴러 한 타일 이동")]
     [SerializeField, Range(0.25f, 0.6f)] private float m_tileRollDuration = 0.4f;

@@ -10,15 +10,15 @@ public enum StatType { Armor }
 
 public static class TowerEmblem
 {
-    public const int SWORD = 1;
-    public const int AXE = 2;
-    public const int BOW = 3;
-    public const int SPEAR = 4;
-    public const int SHIELD = 5;
-    public const int HAMMER = 6;
-    public const int FIRE = 7;
-    public const int WATER = 8;
-    public const int EARTH = 9;
+    public const int SWORD = 01;
+    public const int AXE = 02;
+    public const int BOW = 03;
+    public const int SPEAR = 04;
+    public const int SHIELD = 05;
+    public const int HAMMER = 06;
+    public const int FIRE = 07;
+    public const int WATER = 08;
+    public const int EARTH = 09;
     public const int WIND = 10;
     public const int ICE = 11;
     public const int ELECTRICITY = 12;

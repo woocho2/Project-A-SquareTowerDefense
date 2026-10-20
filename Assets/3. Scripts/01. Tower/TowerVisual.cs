@@ -13,8 +13,8 @@ public class TowerVisual : MonoBehaviour
     [SerializeField] private TowerCharacterCatalog m_regularCharacters;
     [SerializeField] private SynergyCharacterCatalog m_synergyCharacters;
     [FormerlySerializedAs("m_swordCanvasWorldSize")]
-    [SerializeField, Min(0.01f)] private float m_canvasWorldSize = 256f / 192f;
-    [SerializeField, Min(0.01f)] private float m_synergyCanvasWorldSize = 256f / 192f;
+    [SerializeField, Min(0.01f)] private float m_canvasWorldSize = 1f;
+    [SerializeField, Min(0.01f)] private float m_synergyCanvasWorldSize = 1f;
     [Header("문양 / 정보 패널 아이콘")]
     [Tooltip("검, 도끼, 활, 창, 방패, 해머, 불, 물, 대지, 바람, 얼음, 전기, 빛, 어둠 순서.")]
     [SerializeField] private Sprite[] m_emblemSprites;

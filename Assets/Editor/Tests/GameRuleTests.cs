@@ -31,14 +31,14 @@ public class GameRuleTests
     }
 
     // ------------------------------------------------------------------
-    // 사거리: 월드 1.5 = 1칸 (20번 2장, 4장)
+    // 사거리: 월드 1 = 1칸 (20번 2장, 4장. 2026-10-20 칸 크기 1.5 → 1)
     // ------------------------------------------------------------------
 
-    [TestCase(1.5f, 1)]
-    [TestCase(3.0f, 2)]
-    [TestCase(4.5f, 3)]
-    [TestCase(15f, 10)]
-    public void 사거리는_월드_1점5마다_1칸(float worldRange, int expectedTiles)
+    [TestCase(1f, 1)]
+    [TestCase(2f, 2)]
+    [TestCase(3f, 3)]
+    [TestCase(10f, 10)]
+    public void 사거리는_월드_1마다_1칸(float worldRange, int expectedTiles)
     {
         Assert.AreEqual(expectedTiles, TowerAttackAction.ToTileRange(worldRange));
     }
@@ -50,10 +50,10 @@ public class GameRuleTests
         Assert.AreEqual(1, TowerAttackAction.ToTileRange(0.2f));
     }
 
-    [TestCase(1, 1.5f)]
-    [TestCase(2, 3.0f)]
-    [TestCase(5, 7.5f)]
-    public void 칸_수를_월드_거리로_바꾸면_1점5배(int tiles, float expectedWorld)
+    [TestCase(1, 1f)]
+    [TestCase(2, 2f)]
+    [TestCase(5, 5f)]
+    public void 칸_수를_월드_거리로_바꾸면_같은_값(int tiles, float expectedWorld)
     {
         Assert.AreEqual(expectedWorld, TowerAttackAction.ToWorldRange(tiles), 0.0001f);
     }

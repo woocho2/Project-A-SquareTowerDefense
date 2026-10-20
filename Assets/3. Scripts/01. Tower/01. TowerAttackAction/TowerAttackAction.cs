@@ -18,7 +18,7 @@ public struct ProjectileSatelliteSettings
 /// </summary>
 public abstract class TowerAttackAction
 {
-    public const float WorldUnitsPerTile = 1.5f;
+    public const float WorldUnitsPerTile = 1f;
 
     protected TowerData m_data;
     private TargetPriority m_targetPriority;
