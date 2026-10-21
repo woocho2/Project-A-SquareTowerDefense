@@ -4,9 +4,11 @@
 흐름: 20번 기획 → 23번 계획(이 문서, 남은 것만) → 24번 리팩토링 내역서(끝낸 것). 끝난 수업은 24번으로 옮기고 여기서 지움.
       수업 중·수업 뒤의 질문과 답은 25번 수업 질문 노트에 수업별로 그때그때 더함 (Claude가 따로 부탁받지 않아도).
 
->>> 다음 수업: 5 — 코드는 다 씀 (EnemyPool.cs, OnGetEnemy는 지우고 null). ★ 수업 6 전에 씬 테스트부터:
-    ===== New ===== 밑에 EnemyPool 오브젝트 → Prefab = 2. Prefab New/Enemy/Enemy, Container = 자기 자신 →
-    플레이, 게임 뷰 클릭 → K(만든 수 40) → L(보관 40) → K(40 그대로 = 재사용) → K(80). 통과하면 수업 5를 24번으로 옮기고 수업 6
+>>> 다음 수업: 9
+    ★ 수업 9 전에 먼저: 수업 8에서 옛 코드를 복사해 온 스크립트 4개 리뷰 (사용자가 읽고, AI가 설명하고 질문에 답함)
+      Assets/3. Scripts/New/06. Enemy/ — EnemyCubeMeshVisual.cs, EnemyCubeOrientation.cs, EnemyCubeRollGeometry.cs, EnemyCubeAppearance.cs
+      AI가 옮기기만 하고 사용자가 아직 읽지 않은 코드. 무엇을 하는지, 우리 코드(EnemyMovement·BoardPresenter)가 어디를 부르는지,
+      안 쓰는 함수가 남았는지(AnimateSpawn은 소환 낙하용으로 아직 안 부름)를 함께 봄. 리뷰가 끝나면 이 ★ 줄을 지우고 수업 9.
     수업 1에서 남긴 손질 (선택): TowerIdTest를 namespace SquareTD.Tests로 감싸면 SquareTD.TowerEmblem 대신 TowerEmblem만 써도 됨,
     함수 이름 GetEmblem_5305는_05 → _Shield, bool은 Assert.IsTrue / IsFalse
 
@@ -16,7 +18,7 @@
   2. 게임의 큰 그림
   3. 이 수업에서 배우는 패턴
   4. 전체 틀 — 미리 정해 두는 약속 (단계, 이벤트, 공용 자료형, 훅, 문양 56종이 들어가는 자리)
-  5. 스크립트 전체 목록 — 169개, 스크립트마다 기능과 만드는 수업
+  5. 스크립트 전체 목록 — 173개, 스크립트마다 기능과 만드는 수업
   (4장에 [4-7] 옛 코드에서 고친 버그를 다시 만들지 않기, [4-8] 여러 기능이 함께 동작하는지 보는 확인)
   6. 수업 목록 — 48수업 (UI는 맨 마지막 6부)
 
@@ -34,7 +36,8 @@
   1. 배울 것   새로 나오는 C#·Unity 개념과 패턴. 왜 필요한지부터.
   2. 기획      20번의 몇 장을 구현하는지. 먼저 그 장을 읽음.
   3. 설계      만들 파일, 그 안의 필드와 함수, 함수가 하는 일의 순서.
-  4. 직접 쓰기 사용자가 씀.
+  4. 직접 쓰기 사용자가 씀. 설계표만 주지 않고 처음부터 빈칸 뚫린 뼈대로 시작함 (2026-10-21, 표만으로는 막히는 시간이 길었음).
+               테스트와 확인용 임시 코드(시험 키)는 AI가 씀 (2026-10-21 사용자). 사용자는 Run All·키로 확인.
   5. 리뷰      Claude가 읽고 고칠 곳과 이유를 말함. 사용자가 고침.
   6. 확인      "확인" 칸에 적힌 방법으로 동작을 봄. 통과하면 맨 위의 "다음 수업" 번호를 올림.
 
@@ -70,10 +73,15 @@
    새 스크립트는 전부 namespace SquareTD { ... } 안에 씀.
    이유: 새 TowerManager와 옛 TowerManager가 같은 프로젝트에 함께 있으면 이름이 겹쳐 컴파일 에러가 남.
          namespace는 성(姓)과 같음. SquareTD.TowerManager와 옛 TowerManager는 다른 클래스가 됨.
-4) 그대로 가져다 쓰는 옛 스크립트 25개 (옛 시스템을 부르지 않아서 고칠 것이 없음. 2026-10-20 확인)
+4) 옛 시스템을 부르지 않는 옛 스크립트 25개 (2026-10-20 확인)
+   새 코드는 이것들도 직접 부르지 않음. 필요해지는 수업에서 New에 복사본을 만들어 namespace SquareTD로 씀 (2026-10-21 사용자).
+   무엇을 복사할지는 그 수업에서 사용자와 정함.
    연출   EnemyCubeVisual, EnemyCubeOrientation, EnemyCubeRollGeometry, EnemyCubeMeshVisual, EnemyCubeAppearance,
           EnemyUIController, HPBarSlider, DamageText, DamageTextPool, TowerSelectionVisual,
           TowerCharacterCatalog, SynergyCharacterCatalog
+          (EnemyUIController는 적 머리 위 HP 바용이라 쓰지 않게 됨 — 2026-10-21, HP 바는 UI 패널에서만. HPBarSlider는 패널의 HP 바로 쓸 수 있음)
+          (EnemyCubeMeshVisual은 사용자가 New/06. Enemy에 namespace SquareTD로 옮겨 씀 — 2026-10-21. 옛 것은 옛 게임용으로 둠.
+           새 적 프리팹의 CubeVisual3D에는 새 것을 붙임. 옛 것과 이름이 같으므로 namespace SquareTD 안에서는 새 것이 찾아짐)
    이펙트 EffectManager, EffectPool2D, EffectController, EffectLibrary (명중 이펙트)
    UI     TowerInfoCardView, TowerTierBadgeGraphic, UITilePanel, UITileSkin, UITileSurface, UIManager_Start, UIManager_Menu
    씬     SceneLoader, LoadingManager
@@ -248,7 +256,7 @@
   TowerManager                     SelectionChanged (타워)        TowerInfoPanel, TowerController(사거리 표시)
   ColorUpgradeState                LevelChanged (컬러, 레벨)      TowerManager(그 컬러의 타워 다시 계산), TowerInfoPanel
   TowerStack                       Full (타워)                    TowerController(수동 소모 타워 빛남), TowerInfoPanel(스택 소모 버튼)
-  PathOccupancy                    CellChanged (칸 번호)          BoardPresenter("x N", 맨 위 적의 HP 바)
+  PathOccupancy                    CellChanged (칸 번호)          BoardPresenter("x N")
   ZoneRegistry                     ZoneChanged (존)               ZoneInfoPanel, TurnManager(턴 종료 검사), (나중의 타일 이펙트)
   BoardManager                     LayoutGenerated                TileinfoPanel, (나중의 타일 이펙트)
   GroundEffectRegistry             GroundChanged (장판)           (나중의 타일 이펙트)
@@ -400,7 +408,7 @@ GroundEffect (장판)
   B15  장판을 옮길 때 일부 칸의 효과가 남음 [24-3-10]   존은 옮길 수 없음. 지울 때는 주인 단위로 전부 (RemoveByOwner)            26
   B16  불이 걸린 턴에 피해가 두 번 [23-2-8]             걸릴 때 따로 피해를 주지 않음. 매 턴 피해는 ⑤에서 한 번               25, 27
   B17  효과 목록을 도는 중에 목록이 바뀜 (G-1)          훅을 도는 동안 생긴 추가·제거는 모아 두었다가 다 돈 뒤에 반영 (또는 복사본을 돎)   25
-  B18  이동 때 칸 적 수 알림이 두 번                    Move는 알림을 한 번만 (두 칸의 번호를 함께)                           7
+  B18  이동 때 칸 적 수 알림이 두 번                    Move는 두 칸을 다 바꾼 뒤에 알림 (중간 상태를 듣지 않게)               7
   B19  턴 끝을 판 전체 투사체 수로 판정 (스킬 투사체를 숨겨 남김)  공격마다 AttackHandle. 턴은 그것만 기다림                        16
   B20  화면을 매 프레임 다시 그림                       UI는 이벤트를 받았을 때만 다시 그림                                     44 ~ 47
 
@@ -431,7 +439,7 @@ GroundEffect (장판)
    (옛 코드의 예: TowerController.s_nextCreationOrder, ProjectileHit2D의 static 투사체 목록)
 
 ======================================================================
-5. 스크립트 전체 목록 — 169개
+5. 스크립트 전체 목록 — 173개
 ======================================================================
 
 만든 것은 24번에 있고 이 목록에서 지움 (번호는 그대로 둠). 지금까지 만든 것: #2 TowerId, #4 Singleton, #19 BoardGrid(일부), #18 BoardManager(일부), #7 EnemyDefinition, #121 EnemyController(일부),
@@ -447,29 +455,29 @@ GroundEffect (장판)
   03. Wave         웨이브                        1          1 (WaveManager)
   04. Board        판·칸·타일·존·장판           12          1 (BoardManager)
   05. Tower        타워                         86          1 (TowerManager)   ← 그중 문양별 56
-  06. Enemy        적                           26          1 (EnemyManager)
+  06. Enemy        적                           30          1 (EnemyManager)
   07. Combat       전투 계산                     5
   08. Projectile   투사체                        5          1 (ProjectileManager)
   09. Economy      재화                          1          1 (CurrencyManager)
   10. UI           화면                         13          1 (UIManager)
   11. Input        입력                          2
   12. Dev          개발용 키와 검사              2
-  합계                                         169          9
+  합계                                         173          9
   + 에디터 2개 (옮김: BoardManagerEditor, ClickDebugWindow), + 테스트 8개 (Assets/Editor/Tests/New)
-  → 새로 쓰거나 옮기는 파일은 모두 179개
+  → 새로 쓰거나 옮기는 파일은 모두 183개
   그 밖에: 그대로 쓰는 옛 스크립트 25개 + 에디터 도구 2개(SharedVisual, UITilePanelEditor) + 옛 큐브 테스트 2개 (1장 4, 4-2),
            손대지 않고 남겨 두는 타일 이펙트 2개 (1장 4-1)
 
 종류별 (Unity에서 무엇인가)
   매니저 (싱글톤 MonoBehaviour)                  9
-  그 밖의 MonoBehaviour (프리팹·씬에 붙음)       24   ← 그중 지금 것을 옮겨 연결만 바꾸는 것 10 (매니저 UIManager까지 11)
+  그 밖의 MonoBehaviour (프리팹·씬에 붙음)       25   ← 그중 지금 것을 옮겨 연결만 바꾸는 것 10 (매니저 UIManager까지 11)
   MonoBehaviour 베이스 (Singleton<T>)            1
-  ScriptableObject                               2
-  static (상태 없는 계산·표)                    11
+  ScriptableObject                               3
+  static (상태 없는 계산·표)                    12
   enum 모음                                      1
   문양별 클래스 (스킬 28 + 규칙 28)              56
-  그 밖의 순수 C# 클래스·struct·interface        65
-  합계                                         169
+  그 밖의 순수 C# 클래스·struct·interface        66
+  합계                                         173
 
 파일 규칙: MonoBehaviour와 ScriptableObject는 반드시 파일 하나에 클래스 하나 (파일 이름 = 클래스 이름).
            순수 C# 클래스는 작은 것끼리 한 파일에 묶을 수 있음 (TurnState, PathTileEffects, TargetSelectors, InputModes).
@@ -526,7 +534,7 @@ GroundEffect (장판)
  26  ZoneRegistry.cs     [클래스]  (수업 26) 놓을 수 있는지(칸 종류, 비프로스트, 같은 문양 1·다른 문양 3), 칸·주인으로 찾기, 주인 제거, 미배치 검사
  27  GroundEffect.cs     [클래스]  (수업 29) 장판 베이스: 범위, 남은 턴, 소환 때 정해진 피해, OnTurn, GetPull
  28  GroundEffectRegistry.cs [클래스] (수업 29) 장판 목록(여러 개 따로), ⑤ 처리, 적의 이동에 가장 가까운 블랙홀의 끌어당김, GroundChanged
- 29  BoardPresenter.cs   [MB]      (수업 7)  칸별 적 수 "x N", 맨 위 아닌 적 HP 바 숨김, 씬 뷰 Gizmos로 특수 타일·존·장판 확인(개발용).
+ 29  BoardPresenter.cs   [MB]      (수업 7)  칸별 적 수 "x N", 씬 뷰 Gizmos로 특수 타일·존·장판 확인(개발용).
                                              타일 이펙트는 하지 않음 (1장 4-1)
 
 ----------------------------------------------------------------------
@@ -581,18 +589,16 @@ GroundEffect (장판)
 116  BlackHoleGround.cs  [클래스]  (수업 40) 블랙홀: 소환 때의 피해를 매 턴, 맵 전체 끌어당김 표, 막타 카운트 +5
 
 ----------------------------------------------------------------------
-06. Enemy — 26 (적 17, 상태 효과 9)
+06. Enemy — 30 (적 21, 상태 효과 9)
 ----------------------------------------------------------------------
 117  EnemyManager.cs     [매니저]  (수업 7)  살아 있는 적 목록(Registry)과 Spawner를 들고 있음, 모든 적 이동·③·⑤·⑥ 순회, CountChanged, EnemyDied
 118  EnemySpawner.cs     [클래스]  (수업 7)  웨이브 소환: 무작위 칸, 초기화 순서(비활성 → 초기화 → 위치 → 활성 → 등록), 낙하 연출 대기
 119  EnemyPool.cs        [MB]      (수업 5)  종류별 ObjectPool, 꺼내기(꺼진 채)·돌려받기
 120  EnemyRegistry.cs    [클래스]  (수업 7)  살아 있는 적·보스 목록, 등록·해제 짝, 읽기 전용으로만 보여 줌
-121  EnemyController.cs  남은 것: 부품을 붙임 — EnemyMovement(수업 8), EnemyHealth·HP 바·대미지 숫자(14), ITarget(15), EnemyStats(21),
+121  EnemyController.cs  남은 것: 부품을 붙임 — EnemyMovement(수업 8), EnemyHealth·대미지 숫자(14), ITarget(15), EnemyStats(21),
                                    상태 효과·저항(25). 부품 초기화·정리 순서. 확인용 임시 코드(m_testDefinition + Start)는 수업 7에서 지움
 122  EnemyHealth.cs      [클래스]  (수업 14) 현재·최대 체력, 피해 받기(DamageCalculator), 회복(치유 배율), 최대 체력 비율 유지, 사망 한 번
-123  EnemyMovement.cs    [MB]      (수업 8, 21) 행동 카운터, 주사위(최소 ~ 최대, 1 미만 보정, 음수 = 뒤로), 행동 불가, 이동 훅,
-                                             큐브 연출 연결(소환 낙하·착지 눌림·그림자, 한 칸에 세 번 구르기, 도착 뒤 정방향 찾기. 20번 3장 [외형과 이동 연출].
-                                             연출 자체는 그대로 쓰는 EnemyCube*. 옛 EnemyMoveController가 부르는 순서를 참고)
+123  EnemyMovement.cs    남은 것: (수업 21) 1 미만 보정, 음수 = 뒤로, 행동 불가, 이동 훅. 소환 낙하 연출(AnimateSpawn)은 아직 안 붙임
 124  EnemyStats.cs       [클래스]  (수업 21) 기본값과 지금 값, 수정자 합산(방어 음수 허용 …), 출처
 125  EnemyResistance.cs  [클래스]  (수업 25) 기본·지금 저항력, 강한 CC기 판정과 오르내림, 약한 CC기 계수, 정화로 초기화
 126  EnemyStatusEffects.cs [클래스] (수업 25) 걸린 효과 목록, 겹침 규칙, 훅을 목록 전체에 차례로, 효과가 바뀌면 수정자 다시 모음
@@ -603,6 +609,10 @@ GroundEffect (장판)
 131  BossTimer.cs        [클래스]  (수업 10) 제한 턴 20, ⑥에서 감소, 0이면 게임 오버 요청
 132  DeathResolver.cs    [클래스]  (수업 14) 사망 처리 순서: 보상(기본 + 보정) → 재화 → EnemyDied → 점유·목록 해제 → 더미 정리 → 풀 반환
 133  DummyTarget.cs      [MB]      (수업 39) 빛 디버프의 더미: ITarget, 움직이지 않음, 체력, 받은 피해 × 2 / × 4를 본체에, 본체와 함께 사라짐
+170  EnemyCubeMeshVisual.cs   [MB]      (수업 8, 옛 것의 복사본) 큐브 연출: 면 무작위, 구르기, 정방향 점프, 소환 낙하, 그리기 순서, 그림자
+171  EnemyCubeOrientation.cs  [struct]  (수업 8, 옛 것의 복사본) 큐브 자세(정수 세 축) + enum EnemyCubeFace·EnemyCubeFaceAsset·EnemyCubeRollDirection
+172  EnemyCubeRollGeometry.cs [static]  (수업 8, 옛 것의 복사본) 구르는 큐브 중심의 이동 비율
+173  EnemyCubeAppearance.cs   [SO]      (수업 8, 옛 것의 복사본) 캐릭터 그림·장비 마스크. 에셋: Valkyrie_Appearance (옛 것은 _Old)
 상태 효과 (StatusEffect를 상속)
 134  TimedModifierEffect.cs [클래스] (수업 25) 수정자 + 남은 행동 (파쇄, 100T 해머, 냉기·한기, 대지 단일, 쓰나미 아닌 보통의 시간 디버프)
 135  ImmobilizeEffect.cs [클래스]  (수업 25) 다음 행동 한 번 0 / 0 (기절, 속박). 걸 때 강한 CC기 판정, 이미 걸려 있으면 무시
@@ -672,7 +682,7 @@ GroundEffect (장판)
 ----------------------------------------------------------------------
 테스트 — 8 (Assets/Editor/Tests/New)
 ----------------------------------------------------------------------
-  T3 WaveTableTests (수업 6)  T4 DamageCalculatorTests (수업 14)
+  T3 WaveTableTest (수업 6)  T4 DamageCalculatorTests (수업 14)
   T5 TowerStatCalculatorTests (수업 20)  T6 EnemyStatsTests (수업 21, 25: 겹침·저항)  T7 SkillFormulaTests (수업 23)
   T8 EmblemExampleTests (수업 27 ~ 40: 기획서의 문양별 예시값을 하나씩 더함)
 
@@ -701,115 +711,6 @@ GroundEffect (장판)
 ######################################################################
 
 ----------------------------------------------------------------------
-수업 5. 오브젝트 풀 — #119 EnemyPool                          [패턴: 오브젝트 풀]
-----------------------------------------------------------------------
-배울 것
-  - UnityEngine.Pool.ObjectPool<T>: 만들기·꺼낼 때·돌려놓을 때·버릴 때 네 함수를 넘겨 줌.
-  - SetActive(false / true).
-  - 3장 [오브젝트 풀]을 먼저 읽음.
-설계
-  필드: [SerializeField] EnemyController prefab, Transform container, int defaultCapacity(40), int maxSize
-        ObjectPool<EnemyController> pool
-  Awake: pool = new ObjectPool<EnemyController>(만들기, 꺼낼 때, 돌려놓을 때, 버릴 때, collectionCheck: true, ...)
-    만들기         Instantiate(prefab, container) 하고 바로 SetActive(false)
-    꺼낼 때        아무것도 하지 않음  ← 이 프로젝트의 약속. 켜는 것은 초기화를 마친 뒤 Spawner가 함 (수업 7)
-    돌려놓을 때    SetActive(false)
-    버릴 때        Destroy
-  EnemyController Get(), void Release(EnemyController enemy)
-  종류별(일반·중간 보스·최종 보스)로 EnemyPool을 하나씩 둠
-함정
-  - 꺼낼 때 바로 켜면 초기화 전에 OnEnable이 돌아, 빈 데이터로 동작하는 코드가 생김.
-  - 같은 적을 두 번 Release하면 collectionCheck가 에러를 냄 (일부러 켜 둠. 버그를 빨리 찾게).
-  - maxSize는 "돌려받아 보관하는 수"의 한도라 Get은 실패하지 않음. 꺼낸 수를 직접 세어 막지 않음 (옛 코드는 20에서 막혀 게임이 안 끝났음. B4).
-확인: 키를 누르면 40마리 Get, 다시 누르면 전부 Release. 반복해도 하이어라키의 적 오브젝트 수가 40에서 늘지 않음.
-참고(옛 코드): EnemyObjectPool2D.cs (꺼낼 때 초기화까지 하는 점이 다름)
-
-----------------------------------------------------------------------
-수업 6. 웨이브 표 — #10 WaveTable, T3
-----------------------------------------------------------------------
-배울 것
-  - 계산만 하는 static 클래스를 따로 두는 이유: Unity를 켜지 않고 테스트로 표가 맞는지 확인.
-  - out 매개변수로 값 둘 돌려주기.
-기획: 20번 3장 [웨이브 구성], [웨이브별 능력치 배율], [중간 보스], 1장 [패배와 클리어](한도), 8장 [처치 보상], 9장 (모드 배율·한도)
-설계
-  int GetCycle(int wave)            1 ~ 10 → 1, 11 ~ 20 → 2 ...
-  int GetOrder(int wave)            사이클 안의 순서 1 ~ 10
-  int GetNormalCount(int wave)      순서 1 ~ 4: 8 × 사이클 / 5, 10: 0 / 6 ~ 9: 10 × 사이클
-  bool HasMiddleBoss(int wave), bool HasBoss(int wave)
-  float GetHpMultiplier(int wave, EnemyKind kind)       일반: 순서 배율 × 사이클 배율 / 보스·중간 보스: 사이클 배율만
-  float GetDefenseMultiplier(int wave, EnemyKind kind)  (같은 방식)
-  float GetModeStatMultiplier(GameMode mode)            스토리 0.75 / 노말 1 / 하드 1.5
-  int GetEnemyLimit(GameMode mode, int cycle)           노말·스토리 20 × 사이클 / 하드 15 × 사이클
-  void GetKillReward(EnemyKind kind, int spawnWave, out int gold, out int gem)   기본값만 (보정은 DeathResolver)
-함정
-  - 순서 배율 표의 순서 5(체력 3.0)는 일반 적이 없는 칸. 중간 보스는 사이클 배율만 받음.
-  - (wave - 1)을 먼저 빼야 10, 20웨이브가 다음 사이클로 넘어가지 않음.
-확인: T3 — GetNormalCount(1) == 8, GetNormalCount(16) == 20, 1 ~ 40웨이브의 일반 적 합 == 720,
-      GetHpMultiplier(9, Normal) == 5.0, GetHpMultiplier(19, Normal) == 10.0, 10웨이브 보스 보상 == 1000골드 20젬.
-참고(옛 코드): WaveManager.cs의 구성 부분과 GetKillReward
-
-----------------------------------------------------------------------
-수업 7. 소환 — #20 PathOccupancy, #117 EnemyManager, #118 EnemySpawner, #120 EnemyRegistry, #29 BoardPresenter(적 수 표시)
-----------------------------------------------------------------------
-배울 것
-  - 초기화 순서의 약속: 비활성 상태에서 초기화 → 위치 → 활성화 → 등록.
-  - 등록과 해제를 짝으로 만들기, 밖에는 IReadOnlyList로만 보여 주기 (남이 목록을 바꾸지 못하게).
-  - 매니저가 순수 클래스 부품을 만들어 들고 있는 모양 (BoardManager → PathOccupancy, EnemyManager → Registry·Spawner).
-  - Random.Range(int, int)는 뒤의 수를 포함하지 않음.
-기획: 20번 1장 [턴과 웨이브](전원 동시 소환), 2장 (전체 패스 인덱스 중 무작위, 한 칸 적 수 제한 없음, 먼저 온 적이 맨 위, "x N")
-설계
-  PathOccupancy (BoardManager가 들고 있음) — 누가 어느 길 칸에 있나
-    Dictionary<int, List<EnemyController>>   (수업 15에서 EnemyController → ITarget으로 넓힘)
-    Add(target, index)  리스트 끝에 붙임 (리스트[0] = 먼저 온 것 = 맨 위)
-    Remove(target, index), Move(target, from, to)
-    IReadOnlyList<...> GetAt(int index)
-    event Action<int> CellChanged
-  EnemyRegistry — 살아 있는 적 전부. Register / Unregister, IReadOnlyList Alive, int Count
-  EnemyManager (매니저) — Registry와 Spawner를 만들어 들고 있음, event Action<int> CountChanged
-  EnemySpawner
-    IEnumerator SpawnWave(int wave)   WaveTable로 마리 수를 받아 한 마리씩:
-      1. pool.Get()                    (꺼져 있음)
-      2. Setup(정의, 배율)
-      3. 무작위 인덱스 = Random.Range(0, PathCount)
-      4. 위치를 그 칸으로
-      5. SetActive(true)
-      6. occupancy.Add, registry.Register
-    (낙하 연출을 기다리는 것은 큐브 연출을 붙일 때 추가: 옛 EnemyMoveController.PlaySpawnDrop 참고)
-  BoardPresenter — CellChanged를 구독해 칸 오른쪽 아래에 "x N", 맨 위가 아닌 적은 HP 바 숨김
-함정
-  - 순서 5와 6을 바꾸면, 꺼진 적이 목록에 들어가 다른 시스템이 건드릴 수 있음.
-  - 한 마리가 실패(정의 없음 등)하면 그 마리만 건너뛰고 이유를 로그로. 소환 수·보스 상태는 성공한 것만 바꿈 (B3).
-  - PathOccupancy.Move는 두 칸의 번호를 담아 알림을 한 번만 (B18).
-확인: 웨이브 1 소환 → 8마리가 무작위 칸에 나타나고, 같은 칸의 적은 겹치고 "x 2"가 보임. Registry.Count == 8.
-참고(옛 코드): EnemyManager.SpawnWaveRoutine, WaveManager.SpawnWaveEnemies, TileManager.SetEnemyAtPathIndex
-
-----------------------------------------------------------------------
-수업 8. 이동 — #123 EnemyMovement
-----------------------------------------------------------------------
-배울 것
-  - 코루틴: 여러 프레임에 걸쳐 일하는 함수. IEnumerator, yield return null(한 프레임 쉼), StartCoroutine.
-  - 시간에 따라 움직이기: Vector3.Lerp(시작, 끝, t), t = 경과 시간 / 걸리는 시간.
-  - 행동 카운터: 적 턴마다 1 줄이고 0이면 행동하고 다시 채움.
-기획: 20번 3장 [이동], [외형과 이동 연출], 2장 [순환 구조의 첫 맵] (첫 이동은 무조건 한 칸)
-설계
-  필드: int PathIndex, int actionCounter, bool hasMadeFirstMove, float stepDuration
-  void Init(int startIndex)                 PathIndex, 카운터, 첫 이동 플래그 초기화 (풀에서 다시 나올 때마다 부름)
-  int RollDice()                            Random.Range(speedMin, speedMax + 1)
-  IEnumerator TakeTurn()                    한 번의 적 턴
-    1. 첫 이동 전이면 칸 수 = 1, 플래그를 켬
-    2. 아니면 카운터를 1 줄이고, 0이 아니면 끝 (이번 턴은 행동 안 함). 0이면 다시 채우고 칸 수 = 주사위
-    3. 칸 수만큼 한 칸씩: 다음 인덱스 = WrapPathIndex(지금 ± 1), 그 칸까지 Lerp
-    4. 도착하면 occupancy.Move 한 번
-  (음수 주사위, 1 미만 보정, 행동 불가, 훅 자리는 수업 21에서. 지금은 최소 1)
-  연출 붙이기: EnemyCubeVisual은 다른 스크립트에 기대지 않음. AnimateRoll(이전 면, 다음 면, 방향, 진행도 0 ~ 1)을
-              Lerp의 t와 함께 부르면 굴러감. 옛 EnemyMoveController가 부르는 곳을 참고해서 연결.
-함정
-  - Random.Range(int a, int b)는 b를 포함하지 않음. 최대 이동력까지 나오려면 +1.
-  - 점유는 도착해서 한 번만 옮김. 기획에서 의미가 있는 것은 "멈춘 칸"뿐.
-확인: 임시 키로 TakeTurn을 부름 → 소환 직후 첫 번째는 모두 한 칸, 그 뒤로는 행동 주기마다 주사위만큼. 마지막 번호 다음 0번으로 이어짐.
-참고(옛 코드): EnemyMoveController.ProcessTurnMoveRoutine
-
-----------------------------------------------------------------------
 수업 9. 턴의 흐름 — #12 TurnManager, #13 TurnState, #17 WaveManager, #37 DebugCheat(시작)    [패턴: 상태]
 ----------------------------------------------------------------------
 배울 것
@@ -823,6 +724,10 @@ GroundEffect (장판)
     interface ITurnState { bool CanPlayerAct { get; } bool CanConsumeStack { get; } void Enter(); void Exit(); }
     IdleState, PlayerTurnState, EnemyTurnState, GameOverState, GameClearState
   WaveManager: CurrentWave, Cycle, event WaveChanged, NextWave()
+  보스 소환 (수업 7에서 넘어옴): 지금 EnemySpawner는 일반 적만 냄
+    중간 보스·최종 보스 정의(지금은 EnemyManager의 SerializeField, 수업 42에서 StageDefinition)와 종류별 EnemyPool 셋
+    SpawnOne(정의, 풀, wave)로 풀도 받게 바꿈 → SpawnWave에 if (HasMiddleBoss) / if (HasFinalBoss)
+    EnemyManager의 Update(임시 J 키 = 1웨이브 소환, M 키 = 살아 있는 적 모두 TakeTurn)는 DebugCheat로 옮기거나 지움
   TurnManager
     ITurnState Current, event Action<ITurnState> StateChanged
     void ChangeState(ITurnState next)      지금 상태 Exit → 바꿈 → Enter → 이벤트
@@ -952,7 +857,7 @@ DebugCheat: R = 지금 씬 다시 불러오기 (재시작 확인용)
     관통 → 방어 계수 (방어력 ≥ 0: 1 ÷ (1 + 0.01 × 방어력) / 음수: 1 + 0.01 × |방어력|) → 받는 피해 배율 → 고정 피해 더하기. 상한 없음
   CriticalRoll: Roll(확률), Multiplier(CriticalDamage) = 2 + CriticalDamage
   EnemyHealth (EnemyController가 들고 있음): Current, Max, TakeDamage(DamageInfo), bool IsDead, event Died(KillInfo) (한 번만)
-    피해가 들어가면 EnemyController가 HP 바와 대미지 숫자(DamageTextPool)를 갱신
+    피해가 들어가면 EnemyController가 대미지 숫자(DamageTextPool)를 띄움. 적 머리 위 HP 바는 없음 (체력은 UI의 적 정보 패널에서, 수업 46)
   DeathResolver: Died를 받아 → 보상 = WaveTable 기본값 + 보정 (보정 자리는 지금 비어 있음: 4부에서 원석·금맥, 타격 시너지, 어둠 600, 뽑아찢기)
                  → CurrencyManager → EnemyManager.EnemyDied → 점유·목록 해제 → 풀 반환
 함정 (옛 코드에서 고친 것. 4장 4-7)

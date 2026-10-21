@@ -12,6 +12,8 @@ namespace SquareTD
 
         public BoardGrid Grid { get; private set; }
 
+        public PathOccupancy Occupancy { get; private set; }
+
         protected override void Awake()
         {
             base.Awake();
@@ -26,6 +28,7 @@ namespace SquareTD
 
             List<Vector3Int> spawnCells = CollectSpawnCells();
             Grid = new BoardGrid(m_pathCells, spawnCells);
+            Occupancy = new PathOccupancy();
         }
 
         private List<Vector3Int> CollectSpawnCells()

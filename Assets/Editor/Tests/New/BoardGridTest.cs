@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SquareTD.Tests
 {
-    public class BoardGridTests
+    public class BoardGridTest
     {
         // 테스트용 길 5칸: 0번 (0,0) → 1번 (1,0) → 2번 (2,1) → 3번 (1,1) → 4번 (2,-1) → 다시 0번
         private static BoardGrid MakeGrid()

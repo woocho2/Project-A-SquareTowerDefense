@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 1448361976983806495}
   - component: {fileID: 3916097739549632509}
   - component: {fileID: 4783573763937223543}
-  - component: {fileID: 8880933391387758543}
   - component: {fileID: 3091674021253108346}
+  - component: {fileID: 6542541817637584708}
   m_Layer: 8
   m_Name: 1. Valkyrie
   m_TagString: Untagged
@@ -109,19 +109,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &8880933391387758543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6143507821988592808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65cc9a8fce57b3b4aafabafb527baceb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyUIController
-  m_HPBarSlider: {fileID: 0}
 --- !u!114 &3091674021253108346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,7 +121,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 084d21096d4fbcb4fac0d7418dc2b6c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyController
-  m_testDefinition: {fileID: 11400000, guid: 2cdf232059db8e243aed27a8f66552fa, type: 2}
+--- !u!114 &6542541817637584708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6143507821988592808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b5f6f0e1e23f2540825377199028fd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyMovement
+  m_stepDuration: 0.6
+  m_cube: {fileID: 3439184341432815016}
 --- !u!1 &8851935862707142629
 GameObject:
   m_ObjectHideFlags: 0
@@ -146,7 +146,7 @@ GameObject:
   - component: {fileID: 9206132105379693727}
   - component: {fileID: 1242548267809813189}
   - component: {fileID: 2178990430585501220}
-  - component: {fileID: 1910288065190084560}
+  - component: {fileID: 3439184341432815016}
   m_Layer: 8
   m_Name: CubeVisual3D
   m_TagString: Untagged
@@ -231,7 +231,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1910288065190084560
+--- !u!114 &3439184341432815016
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -240,10 +240,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 8851935862707142629}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c4addbeb5994f00ae570f852388b10c, type: 3}
+  m_Script: {fileID: 11500000, guid: 84d130ef3b1fe754683ea39a88a3843d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyCubeMeshVisual
-  m_appearance: {fileID: 11400000, guid: fc98e507947c490b9aad3d78015f8c66, type: 2}
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyCubeMeshVisual
+  m_appearance: {fileID: 11400000, guid: 7aaec7ab7fa14108bcf5a106da2e1562, type: 2}
   m_faceAssetPool:
   - {fileID: 2100000, guid: 9df8be1bab4a2fc47921e74135f607a4, type: 2}
   - {fileID: 2100000, guid: b57563c28da8cb0478e2b83544d11bb6, type: 2}
@@ -253,13 +253,12 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 315bc2e23648b9d45aff503bbabe4cbc, type: 2}
   m_faceAssetIndices: 000000000100000002000000030000000400000005000000
   m_sideLength: 1
-  m_landingPause: 0.06
   m_tileRollDuration: 0.4
   m_shadowMaterial: {fileID: 2100000, guid: a55c819789d640e48b06cf0a34d2a726, type: 2}
   m_spawnFallDuration: 0.34
   m_spawnImpactDuration: 0.09
   m_spawnBounceDuration: 0.16
   m_spawnHeightInSides: 5
-  m_uprightHopDuration: 0.18
-  m_uprightHopHeight: 0.34
+  m_uprightHopDuration: 0.4
+  m_uprightHopHeight: 0.5
   m_uprightImpactDuration: 0.07

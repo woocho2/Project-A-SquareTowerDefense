@@ -123,7 +123,7 @@
     [CustomEditor(typeof(BoardManager))], 필드 이름 "m_pathCells", 타일맵은 FindProperty("m_pathTilemap").objectReferenceValue as Tilemap
     씬 뷰 Shift + 클릭 = 경로 끝에 칸 추가, Ctrl + 클릭 = 빼기, 인스펙터 버튼 "마지막 경로 타일 제거" / "경로 전체 초기화"
     #endif는 파일 맨 끝 (namespace의 } 다음)
-- Assets/Editor/Tests/New/BoardGridTests.cs — namespace SquareTD.Tests, 길 5칸 + 스폰 3칸의 가짜 판(MakeGrid)으로 16개
+- Assets/Editor/Tests/New/BoardGridTest.cs (2026-10-21 BoardGridTests에서 이름을 바꿈) — namespace SquareTD.Tests, 길 5칸 + 스폰 3칸의 가짜 판(MakeGrid)으로 16개
     PathCount 5, GetPathCell(2), Wrap(5) = 0, Wrap(-1) = 4, Wrap(-6) = 4, GetPathCell(7), TryGetPathIndex 있음/없음,
     SpawnCount 3, GetSpawnCell(1), TryGetSpawnIndex 있음/없음(길 칸은 스폰이 아님), 거리 2와 음수 방향 3, 비프로스트 1 → 3, 4 → 1
 씬
@@ -195,3 +195,193 @@
 - 20번 2장 "월드 1.5는 화면 표시용 값" → "칸 하나의 화면 크기(월드 1)는 표시용 값".
 - 새 코드는 칸 크기를 숫자로 박지 않고 타일맵에 물어봄(GetCellCenterWorld)이라 영향 없음.
 - 칸에 맞춰 둔 화면(카메라 크기·위치, 타워·적·이펙트 스프라이트 크기, 위성 반지름 0.9 같은 월드 단위 값)은 Unity에서 다시 맞춰야 함.
+
+======================================================================
+2026-10-21
+======================================================================
+
+[수업 5] 오브젝트 풀 — EnemyPool                                          확인 상태: 씬에서 확인
+만든 파일 (코드는 2026-10-20에 씀)
+- Assets/3. Scripts/New/06. Enemy/EnemyPool.cs — MonoBehaviour (싱글톤 아님, 종류별로 하나씩 둘 예정)
+    [SerializeField] m_prefab(EnemyController), m_container(Transform), m_defaultCapacity 40, m_maxSize 200
+    m_pool = new ObjectPool<EnemyController>(CreateEnemy, null, OnReleaseEnemy, OnDestroyEnemy, true, 40, 200)  (Awake)
+      CreateEnemy      Instantiate(m_prefab, m_container) → 바로 SetActive(false)
+      꺼낼 때          null (할 일 없음. 켜는 것은 값을 다 채운 뒤 Spawner가)
+      OnReleaseEnemy   SetActive(false)
+      OnDestroyEnemy   Destroy(enemy.gameObject)
+      collectionCheck true (같은 적을 두 번 돌려놓으면 에러)
+    public Get() => m_pool.Get(), public Release(enemy) => m_pool.Release(enemy). 나머지 셋은 private
+    확인용 임시 코드: K = 40마리 Get, L = 전부 Release (m_testTaken 목록). 수업 7에서 지울 것
+씬
+- 3. Stage1의 ===== New ===== 아래에 EnemyPool 오브젝트. Prefab = 2. Prefab New/Enemy/Enemy, Container = 자기 자신.
+확인
+- K → 만든 수 40 / L → 보관 40 / K → 만든 수 40 그대로(재사용) / K → 80. 계속 K를 눌러 320까지 → maxSize를 넘어도 Get은 막히지 않음 (B4 없음).
+
+수업 중에 정한 것
+- 꺼낼 때(actionOnGet)는 처음에 빈 함수 OnGetEnemy를 넣었다가 지우고 null + 주석으로.
+  적은 되돌리는 데 바깥 정보(정의, 웨이브 배율, 칸)가 필요해 풀이 할 수 있는 일이 없음.
+- 소환 순서는 Get(꺼진 채) → Setup → 위치 → SetActive(true). 켜기는 풀이 아니라 Spawner가 (수업 7).
+
+배운 것의 요점
+- 풀 = 껐다 켜며 다시 씀. Instantiate / Destroy를 줄여 GC 멈춤을 피함. 쓰는 곳은 많이 생기고 사라지는 것(적, 투사체, 이펙트, 대미지 숫자).
+- ObjectPool<T>는 "이럴 때 할 일" 칸 넷(만들 때·꺼낼 때·돌려놓을 때·버릴 때)에 함수를 넘겨받음. ( ) 없이 이름만 = 함수 자체를 넘김.
+  칸을 부르는 것은 풀 자신뿐이고, 비워 둘 칸은 null.
+- 밖에서 쓰는 창구는 Get(받기)과 Release(돌려주기) 둘. 죽은 적을 직접 SetActive(false)·Destroy 하면 풀이 돌아온 줄 몰라 다시 못 씀.
+- 끄기는 돌려받자마자 해도 안전(풀), 켜기는 준비가 끝나야 함(준비하는 쪽). 꺼내자마자 켜면 OnEnable이 빈 값으로 돎.
+- OnGet = 꺼낼 때 되돌리기 자리. 풀 혼자 되돌릴 수 있는 물건(투사체, 수업 16)은 거기에, 바깥 정보가 필요하면 꺼낸 쪽이 직접.
+- maxSize는 보관 한도. 꺼낸 수를 세어 막지 않음.
+- On~ 이름 = "~할 때 불리는 함수" (OnEnable, OnDestroy와 같은 이름 짓기).
+
+[수업 6] 웨이브 표 — WaveTable                                             확인 상태: 테스트 통과 (39개)
+만든 파일
+- Assets/3. Scripts/New/01. Data/WaveTable.cs — static class
+    배열 waveMulti(순서 배율 1.0 ~ 1.9, +0.1씩), cycleMulti(사이클 배율 1, 2, 4, 8). 안에서만 쓰는 이름은 Multi로 줄이고, public 함수 이름은 Multiplier 그대로
+    GetCycle(wave)              switch 범위 패턴 1 ~ 10 → 1 … 31 ~ 40 → 4, 그 밖 0
+    GetOrder(wave)              ((wave − 1) % 10) + 1
+    GetNormalCount(wave)        switch (GetOrder): 1 ~ 4 → 8 × 사이클, 6 ~ 9 → 10 × 사이클, 5·10 → 0
+    HasMiddleBoss / HasFinalBoss   GetOrder == 5 / == 10
+    GetHpMultiplier / GetDefenseMultiplier(wave, kind)   일반 = 순서 배율 × 사이클 배율, 보스·중간 보스 = 사이클 배율, None 0
+    GetModeStatMultiplier(mode)    스토리 0.75, 노말 1, 하드 1.5, None·그 밖 0
+    GetEnemyLimit(mode, cycle)     스토리 25 × 사이클, 노말 20 ×, 하드 15 ×, None·그 밖 0
+    GetKillReward(kind, spawnWave, out gold, out gem)   일반 10 × 사이클 골드 / 중간 보스 500·10 × 사이클² / 최종 보스 1000·20 × 사이클²
+- Assets/Editor/Tests/New/WaveTableTest.cs — namespace SquareTD.Tests, 39개
+    사이클·순서의 경계(1, 10, 11, 40), 마리 수, 1 ~ 40웨이브 일반 적 합 720(for문), 보스 여부, 체력·방어 배율(허용 오차 0.0001f),
+    모드 배율, 모드별 한도, 처치 보상(out 두 개)
+
+수업 중에 바꾼 기획 (20번을 먼저 고침)
+- 능력치 배율 (3장): 순서 배율 1.0 ~ 5.0(방어 1.0 ~ 2.6)·사이클 배율 1 ~ 4 → 순서 배율 1.0 ~ 1.9(체력·방어 같은 표)·사이클 배율 1 / 2 / 4 / 8.
+  사이클이 넘어갈 때 배율이 떨어지던 것(9웨이브 5.0 → 11웨이브 2.0)이 의도가 아니어서. 이제 9웨이브 1.8 → 11웨이브 2.0으로 이어짐.
+  최종 보스는 40웨이브에 8배.
+- 스토리 모드 한도 (9장): 노말과 같음(20 × 사이클) → 25 × 사이클. 스토리는 사실상 이지 모드.
+- 보스 처치 보상 (8장): 웨이브·기준 웨이브 × 사이클의 식 → 사이클²에 비례 (최종 보스 1000골드 20젬 × 사이클², 중간 보스 500골드 10젬 × 사이클²).
+  최종 보스는 예전과 같은 값, 중간 보스는 조금 오름. 8장 컬러 강화 목표의 누적 수입·남는 젬을 새 값(30 / 70 / 240 / 580, 14 / 18 / 92 / 192)으로 고침.
+  원본 표 Resources/WavePerEnemies&Gold&Gem.xlsx는 예전 식이라 20번에서 그 줄을 지움.
+- 함수 이름 HasBoss → HasFinalBoss (EnemyKind.FinalBoss에 맞춤).
+
+배운 것의 요점
+- 계산만 하는 static 클래스 → 테스트로 기획 표와 맞는지 바로 채점. 표를 쓰는 쪽(WaveManager, DeathResolver)은 부르기만 함.
+- 정수 나눗셈은 버림: (wave − 1) / 10 + 1. 1을 먼저 빼야 10웨이브가 다음 사이클로 안 넘어감. 계산 순서는 괄호 → / * % → + −.
+- 1부터 세는 수(웨이브, 순서, 사이클)와 0부터 세는 번호(배열)를 오갈 때 − 1. 배열에 없는 번호는 에러(IndexOutOfRangeException).
+- 배열 = 칸 수가 고정된 표. 밸런스로 칸 하나만 바꿀 일이 많으면 식보다 배열.
+- float 비교는 허용 오차(세 번째 칸). 소수 리터럴은 f.
+- out을 채우는 쪽: 함수가 끝나는 모든 길에서 out을 전부 채워야 컴파일됨.
+- 테스트가 초록 = 코드가 테스트의 정답과 같다는 뜻일 뿐. 정답은 기획서에서 가져옴 (보스 배율을 1로 오해한 정답이 함께 초록이었음).
+- 기획이 바뀌면 테스트의 정답도 바뀜. 테스트를 고치지 않고 속만 바꿨는데 초록이면 그게 리팩토링의 증명.
+- default는 enum에 없는 값이 왔을 때. 0을 돌려주면 빠뜨린 case가 눈에 띔 (None → 0과 같은 생각).
+
+[수업 7] 소환 — EnemyRegistry, PathOccupancy, EnemySpawner, EnemyManager, BoardPresenter     확인 상태: 씬에서 확인
+만든 파일
+- Assets/3. Scripts/New/06. Enemy/EnemyRegistry.cs — 순수 클래스. 살아 있는 적 명단
+    private readonly List m_alive, IReadOnlyList Alive => m_alive, Count
+    Register: Contains면 경고하고 넣지 않음 / Unregister: !m_alive.Remove(enemy)면 경고
+- Assets/3. Scripts/New/04. Board/PathOccupancy.cs — 순수 클래스. 길 칸마다 서 있는 적
+    Dictionary<int, List<EnemyController>> m_cells (칸 번호 → 목록, [0] = 먼저 온 적 = 맨 위), static Empty
+    event Action<int> CellChanged
+    Add(enemy, index)    GetOrCreateList(index).Add(enemy) → 알림
+    GetAt(index)         목록, 없으면 Empty (null을 돌려주지 않음)
+    Remove(enemy, index) TryGetValue && list.Remove 성공일 때만 알림, 아니면 경고
+    Move(enemy, from, to)  from == to면 끝 → from에서 빼기(실패하면 경고하고 아무것도 안 바꿈) → to에 넣기 → from, to 알림 (B18)
+    private GetOrCreateList(index)  찾고, 없으면 만들어 걸고, 돌려줌
+- Assets/3. Scripts/New/06. Enemy/EnemySpawner.cs — 순수 클래스. 생성자로 풀·BoardManager·Registry·일반 적 정의를 받음
+    SpawnWave(wave): WaveTable.GetNormalCount만큼 SpawnOne (지금은 일반 적만. 보스는 수업 9로 넘김)
+    SpawnOne: 정의가 null이면 경고하고 건너뜀(B3) → Get(꺼진 채) → Setup(정의, 체력·방어 배율 by definition.Kind)
+              → Random.Range(0, Grid.PathCount) → 위치 → SetActive(true) → Occupancy.Add → Registry.Register
+- Assets/3. Scripts/New/06. Enemy/EnemyManager.cs — Singleton<EnemyManager>
+    [SerializeField] m_normalPool, m_normalDefinition(임시), Registry(Awake에서 new), m_spawner(Start에서 new, BoardManager.Instance가 필요해서)
+    public SpawnWave(wave): m_spawner.SpawnWave → CountChanged(Registry.Count)를 웨이브당 한 번
+    확인용 임시 코드: J = SpawnWave(1) + 로그. 수업 9에서 DebugCheat로 옮기거나 지울 것
+- Assets/3. Scripts/New/04. Board/BoardPresenter.cs — MonoBehaviour
+    [SerializeField] m_labelPrefab(TextMeshPro), m_labelOffset, Dictionary<int, TextMeshPro> m_labels
+    Start에서 CellChanged += OnCellChanged, OnDestroy에서 BoardManager.Instance가 있을 때만 -=
+    OnCellChanged: GetAt(index).Count가 0이면 글자를 끄고, 아니면 "x{count}"
+    GetOrCreateLabel: GetOrCreateList와 같은 모양 (Instantiate(prefab, transform) → 칸의 화면 위치 + 오프셋)
+- BoardManager에 public PathOccupancy Occupancy, Awake에서 Grid 다음에 new
+- 임시 코드를 지움: EnemyController의 m_testDefinition·Start(수업 4), EnemyPool의 K·L Update(수업 5)와 안 쓰는 using
+에셋·씬
+- 2. Prefab New/Board/EnemyCountLabel — TextMeshPro(3D), Extra Settings에서 Sorting Layer Enemy, Order 30000
+- 씬 ===== New ===== 아래에 EnemyManager(Normal Pool = EnemyPool, Normal Definition = 1. Valkyrie), BoardPresenter(Label Prefab)
+- 수업 4에서 씬에 놓았던 시험용 Enemy를 지움
+확인
+- J → 일반 적 8마리가 무작위 길 칸에 나타나고 Registry.Count 8. 적이 선 칸마다 "x1", 겹친 칸은 "x2".
+
+수업 중에 정한 것
+- PathOccupancy는 Dictionary로. List<List>로 칸마다 미리 만드는 것(사용자 제안)과 견주어 봄:
+  List는 [5]가 "여섯 번째 자리"라 0 ~ 39를 처음에 다 만들어야 하고, Dictionary는 열쇠 = 칸 번호라 필요할 때 만들어도 안 꼬임.
+- SpawnWave는 코루틴이 아니라 void로 (코루틴은 수업 8). 낙하 연출을 붙일 때 IEnumerator로 바꿈.
+- 적 머리 위 HP 바를 없앰 (기획 변경, 20번 2장): 겹친 적의 HP 바가 어지러워서. 체력은 칸·적을 골랐을 때 UI 패널(수업 46)에서.
+  EnemyUIController는 쓰지 않게 됨 (파일은 둠). 새 적 프리팹에서 HP 바 자식과 EnemyUIController를 뗌.
+- 겹친 적의 그리기 순서는 수업 8로, 보스 소환(종류별 풀, HasMiddleBoss/HasFinalBoss)은 수업 9로 넘김 (23번에 적음).
+- B18(이동 알림 두 번)은 "두 칸을 다 바꾼 뒤에 from, to를 알림"으로 정함 (23번 4-7의 표현을 고침).
+
+배운 것의 요점
+- 초기화 순서: 꺼진 채 꺼냄 → 값 → 위치 → 켜기 → 등록. 켜기보다 등록이 먼저면 꺼진 적이 명단에 들어감.
+- 등록과 해제는 짝. 두 번 등록(Contains), 없는 것 해제(Remove의 bool)를 경고로 잡음. 밖에는 IReadOnlyList로만.
+- 함수 머리 끝의 ; 는 "몸통 없는 함수". 필드는 이름과 = new까지 있어야 씀 (없으면 null).
+- TryGetValue = 열쇠만 보고 "있나 + 있으면 값"을 한 번에. 없는 열쇠를 [ ]로 꺼내면 에러, [ ]로 넣는 것은 됨.
+- out = 값을 들고 나오는 매개변수 (수업 6의 GetKillReward는 채우는 쪽, TryGetValue는 받는 쪽).
+- Dictionary의 열쇠는 우리가 [ ] 안에 넣은 값 (List.Add는 자리를 못 고름).
+- return한 값은 부른 자리에 놓임: GetOrCreateList(to).Add(enemy).
+- public 창구(Add)는 규칙(넣으면 알림)을 지키고, private 안쪽 함수(GetOrCreateList)는 일만 함. EnemyPool의 Get / CreateEnemy와 같은 모양.
+- 같은 일은 한 곳에 (GetOrCreateList를 Add와 Move가 함께 씀).
+- 부품은 생성자로 받음 (Spawner). 다른 매니저는 Start에서 BoardManager.Instance로.
+- 이벤트: 알리는 쪽 event Action<int> + ?.Invoke, 듣는 쪽 += 함수 이름(괄호 없이), 해제 -=는 짝으로.
+- 알림은 묶어서 한 번 (웨이브 소환 뒤 CountChanged 한 번).
+- 조용한 return은 버그를 숨김 (Spawner가 null인데 return하면 "왜 안 되지?"만 남음).
+- TextMeshPro(3D, 월드·Sorting Layer) / TextMeshProUGUI(Canvas UI). 판·적 위의 글자는 TextMeshPro. Mesh Renderer는 인스펙터에 Sorting Layer 칸이 없음 (Debug 모드에서 보임).
+- MonoBehaviour는 new로 못 만듦 → Instantiate(프리팹, 부모). 두 번째 칸은 위치가 아니라 부모.
+- SOLID는 필요한 곳에: 단일 책임은 지금 지키고, 개방-폐쇄·인터페이스는 늘어나는 곳(수업 15, 27)에서.
+
+[수업 8] 이동 — EnemyMovement (+ 큐브 연출 복사본 4개)                     확인 상태: 씬에서 확인
+만든 파일
+- Assets/3. Scripts/New/06. Enemy/EnemyMovement.cs — MonoBehaviour (적 프리팹 본체)
+    [SerializeField] m_stepDuration(0.7), m_cube(자식 CubeVisual3D의 EnemyCubeMeshVisual)
+    PathIndex, m_actionCounter, m_controller(Awake에서 GetComponent), m_orientation(큐브 자세)
+    Init(startIndex): PathIndex, 카운터 = Definition.Action, m_orientation = m_cube.RandomizeForSpawn()
+    TakeTurn(): 카운터 −1 → 0보다 크면 yield break → 다시 Action으로 채움 → MoveSteps(RollDice())
+    RollDice(): Random.Range(SpeedMin, SpeedMax + 1)
+    MoveSteps(steps): 한 칸씩 WrapPathIndex(PathIndex + 1) → MoveOneTile → 다 오면 Occupancy.Move 한 번 → StandUpright
+    MoveOneTile(target): 진행도 t로 AnimateTileRoll(before, 방향, t, out travel, out m_orientation), 위치는 Lerp(start, target, travel)
+    GetRollDirection(move): 가로가 크면 Right/Left, 아니면 Up/Down
+    StandUpright(): CounterClockwiseQuarterTurns가 0이 될 때까지 90도 점프(3이면 +1, 아니면 −1), FromFace로 자세 확정
+    SetSortingOrder(order) => m_cube.SetSortingOrder(order)
+- 큐브 연출 복사본 (옛 코드를 New/06. Enemy로 복사, namespace SquareTD) — 아직 사용자가 읽지 않음, 수업 9 전에 리뷰
+    EnemyCubeMeshVisual.cs(사용자가 복사. AI가 LandingPause·AnimateWindUp을 지움), EnemyCubeOrientation.cs, EnemyCubeRollGeometry.cs,
+    EnemyCubeAppearance.cs(AI가 복사)
+- EnemyController: Movement { get; private set; } (Awake에서 GetComponent)
+- EnemySpawner.SpawnOne: Setup 다음에 index를 고르고 enemy.Movement.Init(index)
+- BoardPresenter.OnCellChanged: 그 칸의 목록 순서대로 SetSortingOrder((i + 1) × 2) → 나중에 온 적이 위 (그림자는 큐브 − 1이라 2씩 띄움)
+- 확인용 임시 코드(AI): EnemyManager.Update에 M = 살아 있는 적 모두 enemy.StartCoroutine(enemy.Movement.TakeTurn()). 수업 9에서 지울 것
+- New 스크립트의 설명 주석을 모두 지움 (사용자 요청)
+에셋
+- 적 프리팹 2. Prefab/3. Enemy/1. Valkyrie: 본체에 EnemyMovement, 자식 CubeVisual3D에 새 EnemyCubeMeshVisual(옛 것의 Script 칸을 바꿔 값 유지)
+- 4. Asset/4. Enemy/Asgard/Valkyrie_Appearance — 새 EnemyCubeAppearance의 에셋. 옛 것은 Valkyrie_Appearance_Old로 이름을 바꿔 옛 게임 프리팹이 씀
+확인
+- J → M: Action번째마다 주사위만큼 한 칸에 세 번씩 굴러감, 도착하면 "x N"이 따라 옮겨 가고 누운 그림이 점프로 일어섬,
+  같은 칸에 겹치면 나중에 온 적이 위. (Valkyrie의 Action이 10이라 M 10번에 한 번 움직임)
+
+수업 중에 바꾼 기획 (20번을 고침)
+- "소환된 적은 첫 적 턴에 무조건 한 칸"을 없앰 → 소환된 순간부터 행동 주기를 셈 (Action 3이면 세 번째 적 턴에 처음 움직임). 1·2·3장.
+- 같은 칸에 겹친 적: "먼저 온 적이 맨 위" → "나중에 온 적이 위, 적 목록(UI)은 먼저 온 순서". 2장.
+
+수업 중에 정한 것
+- 새 코드는 옛 스크립트를 부르지 않음. 필요하면 New에 복사본(namespace SquareTD)을 만들어 씀. AI가 묻지 않고 옛 EnemyCubeMeshVisual을
+  연결했다가 사용자가 바로잡음. 복사본이 쓰는 옛 타입(Orientation·RollGeometry·Appearance)도 복사함.
+- 복사한 스크립트가 SO면 에셋도 둘: 옛 것에 _Old, 새 것이 원래 이름.
+- 출발 전 움츠리기(AnimateWindUp)는 시험해 보고 뺌 ("들썩 살짝 하는 거네").
+- 테스트와 확인용 임시 코드는 AI가 씀. 그 밖의 파일은 사용자가 직접 씀. 사용자 코드에는 설명 주석을 남기지 않음.
+- 소환 낙하 연출(AnimateSpawn)은 아직 안 붙임.
+
+배운 것의 요점
+- 코루틴: IEnumerator, yield return null = 한 프레임 쉼, yield return 다른코루틴() = 끝날 때까지 기다림, yield break = 여기서 끝,
+  StartCoroutine으로 시작. 적 자신에게서 돌리면(enemy.StartCoroutine) 적이 꺼질 때 같이 멈춤.
+- Lerp(시작, 끝, t), t = 지난 시간 ÷ 걸리는 시간, Clamp01로 0 ~ 1. 마지막에 목표 위치로 딱 맞춤. 구르는 큐브는 연출이 준 travel을 t 대신.
+- 행동 카운터: 줄이고, 0보다 크면 이번 턴은 쉼, 0이 되면 다시 채움 (0으로 채우면 그 뒤 매 턴 행동하는 버그).
+- out에는 지역 변수와 필드를 넣을 수 있고(프로퍼티는 안 됨), out _는 "안 씀".
+- 조건 ? 참일 때 : 거짓일 때 (삼항 연산자).
+- 같은 이름의 클래스가 namespace 안팎에 있으면 namespace 안에서는 안쪽 것이 찾아짐 (수업 1의 TowerEmblem과 같은 함정).
+- 연출 스크립트는 자기가 붙은 오브젝트를 움직임 → 본체에 붙이면 본체가 통째로 끌려감 (모든 적이 풀 위치로 모였던 원인).
+- 컴파일 에러가 하나라도 있으면 Unity는 새 클래스를 모름 → 새 SO 에셋의 칸이 안 보이는 것처럼 엉뚱한 곳에서 증상이 나타남.
+- 에셋 하나는 클래스 하나에만 속함. 코드가 같아도 namespace가 다르면 다른 형식.
+- Order in Layer는 클수록 위. 그림자처럼 −1을 쓰는 것이 있으면 간격을 2로.
+- Mesh Renderer는 인스펙터에 Sorting Layer 칸이 없음 (Debug 모드에서 보임). TextMeshPro는 Extra Settings에 있음.
+- 같은 Order끼리는 Unity가 위아래를 보장하지 않음 → "자연스럽게 덮이게"도 Order를 매겨야 함.
