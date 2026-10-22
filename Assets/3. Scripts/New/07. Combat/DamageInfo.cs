@@ -16,4 +16,12 @@ namespace SquareTD
         public bool ChangesMovement;
         public bool ForceFixed;
     }
+
+    public struct KillInfo
+    {
+        public EnemyController Enemy;
+        public DamageInfo Damage;
+        public int SpawnWave;
+        public EnemyKind Kind;
+    }
 }

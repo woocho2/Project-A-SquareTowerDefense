@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -55,6 +56,39 @@ namespace SquareTD
             {
                 CurrencyManager.Instance.AddGold(1000);
             }
+
+            if (keyboard.kKey.wasPressedThisFrame)
+            {
+                HitFirstEnemy(60f);
+            }
+
+            if (keyboard.lKey.wasPressedThisFrame)
+            {
+                HitAllEnemies(99999f);
+            }
+        }
+
+        private void HitFirstEnemy(float damage)
+        {
+            IReadOnlyList<EnemyController> alive = EnemyManager.Instance.Registry.Alive;
+            if (alive.Count == 0)
+            {
+                Debug.Log("[DebugCheat] 때릴 적이 없음");
+                return;
+            }
+
+            EnemyController enemy = alive[0];
+            enemy.TakeDamage(new DamageInfo { Source = DamageSource.Basic, BaseDamage = damage });
+            Debug.Log($"[DebugCheat] {enemy.name} 체력 {enemy.Health.Current:0.0} / {enemy.Health.Max:0.0}");
+        }
+
+        private void HitAllEnemies(float damage)
+        {
+            foreach (EnemyController enemy in new List<EnemyController>(EnemyManager.Instance.Registry.Alive))
+            {
+                enemy.TakeDamage(new DamageInfo { Source = DamageSource.Basic, BaseDamage = damage });
+            }
+            Debug.Log($"[DebugCheat] 모든 적에게 {damage} / 남은 적 {EnemyManager.Instance.Registry.Count}, 보스 타이머 {EnemyManager.Instance.BossTimer.Count}");
         }
 
         private void OnEnemyCountChanged(int count)

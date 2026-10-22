@@ -190,6 +190,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfc1e2fe744d5ee4d84cfd4722a69926, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.TowerController
+--- !u!114 &3374333988479624537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 671948444447976635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea22b8b424007f419b5c0ac8650d790, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.TowerVisual
+  m_backgroundRenderer: {fileID: 69109820115675441}
+  m_characterRenderer: {fileID: 7911596970232653239}
+  m_decorationRenderer: {fileID: 652120831702425239}
+  m_emblemRenderer: {fileID: 7100000000000001103}
+  m_regularCharacters: {fileID: 11400000, guid: 2bbdf33a512848ef9a05770f2e7405ba, type: 2}
+  m_synergyCharacters: {fileID: 11400000, guid: 14e3d841de3f4ab19f6378951ea40e19, type: 2}
+  m_canvasWorldSize: 1
+  m_synergyCanvasWorldSize: 1
+  m_emblemSprites:
+  - {fileID: 1001, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1005, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1002, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1004, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1003, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1006, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1007, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1014, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1011, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1010, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1008, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1009, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1012, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1013, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  m_tierSprites:
+  - {fileID: 21300000, guid: 55d2755de365407b8991219295c20e37, type: 3}
+  - {fileID: 21300000, guid: 5df8b50a9f824c2bad2ee26b1f3f40bb, type: 3}
+  - {fileID: 21300000, guid: f8dfdf61b6094c37b646ecd95ae3a14b, type: 3}
+  - {fileID: 21300000, guid: 6d2a38d11b9246deb88024059d29b69e, type: 3}
+  - {fileID: 21300000, guid: 28a604edf9364dd48e60d0708a8b3c26, type: 3}
+  m_splashColor: {r: 0.8862745, g: 0.3647059, b: 0.38431373, a: 1}
+  m_targetColor: {r: 0.3254902, g: 0.5411765, b: 0.8039216, a: 1}
+  m_buffColor: {r: 0.8352941, g: 0.6784314, b: 0.15686275, a: 1}
+  m_debuffColor: {r: 0.1254902, g: 0.1254902, b: 0.15294118, a: 1}
 --- !u!1 &2127725103623809396
 GameObject:
   m_ObjectHideFlags: 0
@@ -967,48 +1012,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5068304872690208081, guid: c8e1a2b3d4e5f60718293a4b5c6d7e8f, type: 3}
   m_PrefabInstance: {fileID: 7564851656657052633}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3374333988479624537
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 671948444447976635}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ea22b8b424007f419b5c0ac8650d790, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.TowerVisual
-  m_backgroundRenderer: {fileID: 69109820115675441}
-  m_characterRenderer: {fileID: 7911596970232653239}
-  m_decorationRenderer: {fileID: 652120831702425239}
-  m_emblemRenderer: {fileID: 7100000000000001103}
-  m_regularCharacters: {fileID: 11400000, guid: 2bbdf33a512848ef9a05770f2e7405ba, type: 2}
-  m_synergyCharacters: {fileID: 11400000, guid: 14e3d841de3f4ab19f6378951ea40e19, type: 2}
-  m_canvasWorldSize: 1
-  m_synergyCanvasWorldSize: 1
-  m_emblemSprites:
-  - {fileID: 1001, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1005, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1002, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1004, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1003, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1006, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1007, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1014, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1011, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1010, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1008, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1009, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1012, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  - {fileID: 1013, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
-  m_tierSprites:
-  - {fileID: 21300000, guid: 55d2755de365407b8991219295c20e37, type: 3}
-  - {fileID: 21300000, guid: 5df8b50a9f824c2bad2ee26b1f3f40bb, type: 3}
-  - {fileID: 21300000, guid: f8dfdf61b6094c37b646ecd95ae3a14b, type: 3}
-  - {fileID: 21300000, guid: 6d2a38d11b9246deb88024059d29b69e, type: 3}
-  - {fileID: 21300000, guid: 28a604edf9364dd48e60d0708a8b3c26, type: 3}
-  m_splashColor: {r: 0.8862745, g: 0.3647059, b: 0.38431373, a: 1}
-  m_targetColor: {r: 0.3254902, g: 0.5411765, b: 0.8039216, a: 1}
-  m_buffColor: {r: 0.8352941, g: 0.6784314, b: 0.15686275, a: 1}
-  m_debuffColor: {r: 0.1254902, g: 0.1254902, b: 0.15294118, a: 1}

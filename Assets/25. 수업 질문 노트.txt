@@ -1123,3 +1123,28 @@ A. 0 ~ 1 사이 수 하나를 뽑아 확률보다 작으면 치명 (길이 1인 
    제안한 식은 뽑는 범위가 확률에 따라 바뀌고 비교 기준이 없어 치명 여부가 안 나옴. 범위는 고정, 비교 기준이 확률.
    100칸 버전 Random.Range(0, 100) < rate × 100도 맞지만 소수 퍼센트가 틀어짐: CSV의 0.055(5.5%)가 0 ~ 5 = 6칸 = 6%.
    Random.value < rate는 정확히 5.5%이고 100을 곱했다 나누는 단계도 없음.
+
+Q. (DeathResolver 생성자) 이렇게 지정하는 이유가 뭐야?
+A. 매개변수는 생성자가 끝나면 사라지는 택배 상자 → Resolve(적이 죽을 때, 한참 뒤)에 쓰려고 필드(책장, m_)에 옮겨 둠 (수업 3).
+   readonly = 한 번 받은 부품을 다른 것으로 바꾸지 않음.
+   안에서 CurrencyManager.Instance를 바로 써도 동작은 같음. 생성자로 받는 까닭: 필요한 부품이 생성자 한 줄에 다 보이고,
+   매니저를 찾는 일(Instance)은 EnemyManager.Start 한 곳에서만 하고, 테스트에서 가짜를 넣을 수 있음 (수업 10 BossTimer에서 정한 "부품은 생성자로").
+   new는 EnemyManager.Start에서: 모든 매니저가 Awake에서 Instance를 준비한 뒤라 null이 아님 (B5).
+
+Q. 그러면 readonly로 적어 놓으면 Instance가 아니고, SerializeField로 컴포넌트를 붙이지 않아도 가져온다는 건가?
+A. 아님. readonly는 가져오는 기능이 없음. "한 번 넣은 뒤 다른 것으로 못 바꿈"이라는 잠금일 뿐.
+   부품을 손에 넣는 길은 셋: [SerializeField](사람이 인스펙터에 끌어다 놓음, MB·SO만), Instance(싱글톤을 찾음), 생성자 매개변수(만드는 쪽이 건네줌).
+   DeathResolver는 컴포넌트가 아닌 순수 클래스라 인스펙터 칸이 없음 → 생성자로 받음. 실제로 찾는 일은 new 하는 EnemyManager.Start가 Instance로 함.
+   즉 Instance를 안 쓰는 게 아니라, 찾는 곳이 EnemyManager 한 곳으로 옮겨 간 것.
+
+Q. 함수 이름을 Resolve로, KillInfo의 칸을 Victim으로 쓴 이유?
+A. Resolve = "일어난 일을 규칙대로 끝까지 처리하다". 보드게임·카드게임에서 효과를 처리하는 것을 resolve라고 함 (damage resolution).
+   Die가 아닌 까닭: 죽는 건 이미 EnemyHealth에서 일어났고, 여기서는 그 뒤의 정리(보상·명단·풀)를 함. 클래스 이름 DeathResolver와 짝,
+   수업 16의 ProjectileHitResolver(명중 처리)도 같은 이름 짓기.
+   Victim = 당한 쪽. DamageInfo의 Attacker(때린 쪽)와 짝. 형식(EnemyController)이 아니라 이 사건에서의 역할로 이름을 지음
+   (Attacker도 TowerController지만 Tower라고 안 함). enemy라고 하면 "어느 적?"이 되고, Victim이면 "이 죽음의 주인공"이 바로 읽힘.
+
+Q. Victim 말고 다른 단어 없나?
+A. Enemy(가장 쉬움, KillInfo는 진짜 적만 담으니 맞음), DeadEnemy(죽은 적인 게 이름에 보임), Killed(당한 쪽, 짧음).
+   Target은 피함: 수업 15의 ITarget·타겟 고르기와 헷갈림. Deceased는 너무 딱딱함.
+   → Enemy로 정함 (KillInfo.Victim → KillInfo.Enemy).

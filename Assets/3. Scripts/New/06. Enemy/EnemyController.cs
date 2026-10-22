@@ -32,7 +32,14 @@ namespace SquareTD
             float damage = DamageCalculator.Calculate(info, Defense, 1f, 0f);
             if (Health.TakeDamage(damage))
             {
-                Debug.Log($"[EnemyController] {name} 죽음");
+                KillInfo kill = new KillInfo
+                {
+                    Enemy = this,
+                    Damage = info,
+                    SpawnWave = SpawnWave,
+                    Kind = Definition.Kind,
+                };
+                EnemyManager.Instance.HandleDeath(kill);
             }
         }
     }

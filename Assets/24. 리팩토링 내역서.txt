@@ -648,3 +648,48 @@
 - continue = 이번 칸은 건너뜀. || 는 앞이 true면 뒤를 안 봄 → null 검사를 앞에 (tower == null || tower.X).
 - 비슷한 두 함수도 곧 달라질 거라면 미리 합치지 않음 (④는 투사체를 기다리게 됨).
 - 숫자로 따라가기: Action 3 → 2 → 3 → 2 …로 0에 닿지 않는 것을 표로 보면 조건이 뒤집힌 게 보임.
+
+[수업 14] 피해와 죽음 — DamageInfo·KillInfo, DamageCalculator, CriticalRoll, EnemyHealth, DeathResolver
+                                       확인 상태: 테스트 통과 (31개: 16 + 8 + 7), 씬에서 확인
+만든 파일
+- Assets/3. Scripts/New/07. Combat/DamageInfo.cs (AI) — enum DamageSource(None, Basic, Skill, Dot, Ground, Tile, Relay),
+    struct DamageInfo(Attacker, Source, Emblem, Attribute, BaseDamage, IsCritical, CritMultiplier, ArmorPenetration, Distance, ChangesMovement, ForceFixed),
+    struct KillInfo(Enemy, Damage, SpawnWave, Kind)
+- Assets/3. Scripts/New/07. Combat/DamageCalculator.cs — static
+    GetOutgoing(Power, 거리 보너스, 치명 배율) = 셋을 곱함 (B10)
+    ApplyPenetration(방어, 관통): 양수면 × (1 − 관통), 음수면 + 방어 × 관통 (더 음수로)
+    GetDefenseCoefficient(방어): 0 이상 1 ÷ (1 + 0.01 × 방어), 음수 1 + 0.01 × |방어|
+    Calculate(info, 방어, 받는 피해 배율, 고정 전환율): 고정 피해(ForceFixed면 전부) → 관통 → 방어 계수 × 받는 피해 배율 → + 고정 피해. 상한 없음
+- Assets/3. Scripts/New/07. Combat/CriticalRoll.cs — static. Roll(확률) → Roll(확률, Random.value)에 넘기기만.
+    Roll(확률, 굴린 수): 0 이하 false, 1 이상 true, 그 밖 굴린 수 < 확률 (B11). Multiplier(치명 피해) = 2 + 치명 피해
+- Assets/3. Scripts/New/06. Enemy/EnemyHealth.cs — 순수 클래스. Max, Current, IsDead. Reset(max), TakeDamage(양) → 이번에 죽었을 때만 true (B9)
+- Assets/3. Scripts/New/06. Enemy/DeathResolver.cs — 순수 클래스. 생성자(BoardManager, EnemyRegistry, BossTimer, CurrencyManager, GameSession)
+    Resolve(kill): GetKillReward → AddGold·AddGem → 보스면 BossTimer.Remove(적) → 40웨이브(WaveManager.LastWave)에 소환된 최종 보스면 GameClear (B8)
+                   → Occupancy.Remove(적, 적.Movement.PathIndex) → Registry.Unregister → Pool.Release (맨 마지막)
+- EnemyController: Health(new EnemyHealth), Pool, SpawnWave. Setup(정의, 풀, 웨이브)이 배율을 직접 계산(Defense, Health.Reset).
+    TakeDamage(info): Calculate(info, Defense, 1, 0) → Health.TakeDamage가 true면 KillInfo { Enemy, Damage, SpawnWave, Kind } → EnemyManager.HandleDeath
+    (EnemyHealth·Setup·Spawner의 Setup 한 줄은 앞 시간에, 사망 연결 부분은 "네가 해"로 AI가 씀)
+- EnemyManager: event Action<KillInfo> EnemyDied, m_deathResolver(Start에서 new), HandleDeath(kill): Resolve → EnemyDied → CountChanged
+- TowerController에 [RequireComponent(typeof(TowerVisual))] (24번 수업 13에 적음)
+- 테스트 (AI): DamageCalculatorTest 16개(먼저 써 두고 빨강 → 초록), CriticalRollTest 8개, EnemyHealthTest 7개
+- 확인용 임시 코드 (AI): DebugCheat의 K = 맨 앞 적에게 60, L = 모든 적에게 99999 (명단 복사본을 돎). 수업 15에서 지움 (23번 수업 15)
+에셋
+- 적 프리팹·에셋 이름을 바꿈 (사용자): 2. Prefab/3. Enemy/1. Enemy_normal(.prefab·.asset, 예전 1. Valkyrie, GUID 그대로), 2. Enemy_middleBoss.asset,
+  3. Enemy_FinalBoss.asset, 3. Enemy_boss.prefab / 옛 것은 앞에 Old_
+확인
+- K 두 번 → 체력 100 → 42.9(60 ÷ 1.05) → 죽음, 골드 +10, 적 수 −1, 그 칸의 "x N"이 줄고 적 오브젝트가 꺼짐. L → 남은 적 0, 보스 타이머 0.
+
+수업 중에 정한 것
+- KillInfo의 죽은 적 칸 이름은 Enemy (Victim에서 바꿈). 23번 4-3도 고침.
+- EnemyDied·CountChanged는 DeathResolver가 아니라 EnemyManager.HandleDeath가 Resolve 다음에 알림 (듣는 쪽이 정리가 끝난 명단을 봄). 23번 4-3·수업 14 설계를 이 순서로.
+- 문서 규칙: 23 · 24 · 25 · 26번이 최신. 20번이 이것들과 다르면 20번을 고침 (26번 7장). 20번의 옛 숫자를 고침:
+  일반 적 450 → 720마리(4-16장), 한 판 젬 약 850 → 900(4-8장), 한 판 골드·살 수 있는 타워 수를 지금 보상 식으로 다시 계산(8장 [타워 생성]).
+
+배운 것의 요점
+- 공식은 테스트로 먼저 고정 (숫자로 따라가면 틀린 곳이 보임: 음수 관통, 방어력은 빼지 않고 계수로 곱함, 관통 뒤의 방어로 계수).
+- 확률 판정은 0 ~ 1 사이 수를 굴려 "굴린 수 < 확률". Random.Range(0, 1)은 int 버전이라 늘 0. float을 ==로 비교하지 않음.
+- 굴린 수를 밖에서 받는 오버로드를 두면 테스트가 정답을 적을 수 있음. 그 함수는 테스트 전용이 아니라 게임도 거치는 진짜 판정.
+- "한 번만"은 IsDead 플래그 한 곳에서 (사망 처리 재진입 B9).
+- 죽은 뒤의 일은 한 곳(DeathResolver)에서 정해진 순서로. 적의 값을 읽는 일은 전부 Release 전에 (풀로 돌아가면 다른 적이 됨).
+- 부품을 손에 넣는 길 셋: [SerializeField](인스펙터, MB·SO), Instance(싱글톤), 생성자 매개변수(만드는 쪽이 건넴). readonly는 가져오는 기능이 아니라 잠금.
+- 이름은 형식이 아니라 역할로 (Attacker, Resolve). 객체 초기화자 new X { 칸 = 값, … }.

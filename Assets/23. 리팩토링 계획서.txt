@@ -4,13 +4,8 @@
 흐름: 20번 기획 → 23번 계획(이 문서, 남은 것만) → 24번 리팩토링 내역서(끝낸 것). 끝난 수업은 24번으로 옮기고 여기서 지움.
       수업 중·수업 뒤의 질문과 답은 25번 수업 질문 노트에 수업별로 그때그때 더함 (Claude가 따로 부탁받지 않아도).
 
->>> 다음 수업: 14 — 4단계(DeathResolver)부터 (2026-10-22 퇴근 때 멈춤)
-    끝난 것: 1단계 DamageInfo(AI)·DamageCalculator(테스트 16개 먼저), 2단계 CriticalRoll(테스트 8개),
-             3단계 EnemyHealth(테스트 7개)·EnemyController(Health, Pool, SpawnWave, Setup(정의, 풀, 웨이브), TakeDamage)·Spawner의 Setup 한 줄.
-             TowerController에 [RequireComponent(typeof(TowerVisual))]
-    남은 것: 4단계 KillInfo + DeathResolver (EnemyController.TakeDamage의 "죽음" 로그 자리를 사망 처리로), 5단계 임시 키로 적을 때려 확인
-    적 프리팹·에셋 이름이 바뀜 (사용자): 새 것 2. Prefab/3. Enemy/1. Enemy_Normal(.prefab·.asset, 예전 1. Valkyrie, GUID 그대로),
-      2. Enemy_MiddleBoss.asset, 3. Enemy_FinalBoss.asset / 옛 것은 Old_Enemy_Normal·Old_Enemy_MiddleBoss·Old_Enemy_FinalBoss 등 (앞에 Old_)
+>>> 다음 수업: 15 — 공격 방식과 맞을 대상 (ITarget, TowerAction, TargetAction)
+    수업 14는 2026-10-22에 끝남 (24번). DebugCheat의 K·L 임시 키는 수업 15에서 지움 (수업 15 설명)
     수업 1에서 남긴 손질 (선택): TowerIdTest를 namespace SquareTD.Tests로 감싸면 SquareTD.TowerEmblem 대신 TowerEmblem만 써도 됨,
     함수 이름 GetEmblem_5305는_05 → _Shield, bool은 Assert.IsTrue / IsFalse
 
@@ -60,7 +55,8 @@
    Assets/3. Scripts/New/는 옛 스크립트 폴더 안에 있으므로, 수업 48에서 옛 스크립트를 지울 때 New 폴더는 남길 것
    에디터 도구는 Assets/Editor/New/, 테스트는 Assets/Editor/Tests/New/
    새 프리팹과 에셋은 New 폴더를 따로 만들지 않고 지금의 Assets/2. Prefab/ 아래(1. Manager, 2. Tower, 3. Enemy, 4. Effect)에 둠 (2026-10-22 사용자).
-     만든 것: 2. Prefab/3. Enemy/1. Valkyrie(적 프리팹과 EnemyDefinition 에셋), 2. Prefab/EnemyCountLabel
+     만든 것: 2. Prefab/3. Enemy/1. Enemy_normal(적 프리팹과 EnemyDefinition 에셋), 2. Enemy_middleBoss·3. Enemy_FinalBoss(에셋), 3. Enemy_boss(프리팹),
+             2. Prefab/2. Tower/Tower, 2. Prefab/EnemyCountLabel (옛 것은 앞에 Old_)
      옛 프리팹과 같은 폴더에 섞이므로, 수업 48에서 옛 프리팹을 지울 때 새 것(새 스크립트가 붙은 것)을 가려낼 것
    아직 만들 것 (그 폴더의 첫 파일을 만드는 수업에서):
      05. Tower/  Actions, Targeting, Skills(+ Splash, Target), Rules(+ Buff, Debuff), Ground
@@ -289,7 +285,7 @@ DamageInfo — 한 번의 피해 (struct)
   Attacker(타워, 없으면 null), Source(Basic 기본 공격 / Skill 스킬 / Dot 매 턴 / Ground 장판 / Tile 맵 / Relay 더미 → 본체),
   Emblem, Attribute(베기·찌르기·타격), BaseDamage, IsCritical, CritMultiplier, ArmorPenetration, Distance(날아간 칸),
   ChangesMovement(이동력을 바꾸거나 멈추게 한 공격), ForceFixed(어둠 900: 전부 고정 피해)
-KillInfo — 막타 (struct): Victim, 막타의 DamageInfo, SpawnWave, Kind
+KillInfo — 막타 (struct): Enemy(죽은 적), Damage(막타의 DamageInfo), SpawnWave, Kind
 
 StatType — 스탯 이름 (enum)
   타워  Power, Range, MaxAction, ActionGainPerTurn, AttackCount, Mastery, CritRate, CritDamage, AbilityValue, Duration,
@@ -458,7 +454,8 @@ GroundEffect (장판)
 ======================================================================
 
 만든 것은 24번에 있고 이 목록에서 지움 (번호는 그대로 둠). 지금까지 만든 것: #2 TowerId, #4 Singleton, #19 BoardGrid(일부), #18 BoardManager(일부), #7 EnemyDefinition, #121 EnemyController(일부),
-#1 GameEnums(일부), 테스트 T1·T2, 에디터 E1. 프리팹: 2. Prefab/3. Enemy/1. Valkyrie, 2. Prefab/EnemyCountLabel, 에셋: 1. Valkyrie.
+#1 GameEnums(일부), 테스트 T1·T2, 에디터 E1. #144 DamageInfo, #145 DamageCalculator, #146 CriticalRoll, #122 EnemyHealth, #132 DeathResolver (수업 14까지는 24번).
+프리팹: 2. Prefab/3. Enemy/1. Enemy_normal·3. Enemy_boss, 2. Prefab/EnemyCountLabel, 에셋: 1. Enemy_normal, 2. Enemy_middleBoss, 3. Enemy_FinalBoss.
 새 매니저 9개는 ": Singleton<자기 이름>"으로 물려받음. 자식이 Awake·OnDestroy를 덮어쓸 때는 base.Awake() / base.OnDestroy()를 꼭 부름.
 형식 이름: 이 문서에 "Emblem"으로 적힌 문양 enum의 실제 이름은 TowerEmblem. 컬러는 Red·Blue·Yellow·Purple. 적 종류는 Normal·MiddleBoss·FinalBoss.
 
@@ -732,32 +729,6 @@ GroundEffect (장판)
 ######################################################################
 
 ----------------------------------------------------------------------
-수업 14. 피해와 죽음 — #144 DamageInfo, #145 DamageCalculator, #146 CriticalRoll, #122 EnemyHealth, #132 DeathResolver, T4
-----------------------------------------------------------------------
-배울 것: 공식을 테스트로 먼저 고정하기, struct로 정보 묶기, "한 번만" 플래그, 사망 뒤의 처리 순서를 한곳에 모으기.
-기획: 20번 4장 [피해 계산 순서], 3장 [받는 피해 계산], 8장 [처치 보상]
-설계
-  DamageInfo: 4장 4-3의 칸을 처음부터 전부 둠 (지금 안 쓰는 칸도. 4부의 문양이 씀)
-  DamageCalculator.Calculate(DamageInfo, 방어력, 받는 피해 배율, 고정 피해 전환율) → 최종 피해
-    관통 → 방어 계수 (방어력 ≥ 0: 1 ÷ (1 + 0.01 × 방어력) / 음수: 1 + 0.01 × |방어력|) → 받는 피해 배율 → 고정 피해 더하기. 상한 없음
-  CriticalRoll: Roll(확률), Multiplier(CriticalDamage) = 2 + CriticalDamage
-  EnemyHealth (EnemyController가 들고 있음): Current, Max, TakeDamage(DamageInfo), bool IsDead, event Died(KillInfo) (한 번만)
-    피해가 들어가면 EnemyController가 대미지 숫자(DamageTextPool)를 띄움. 적 머리 위 HP 바는 없음 (체력은 UI의 적 정보 패널에서, 수업 46)
-  DeathResolver: Died를 받아 → 보상 = WaveTable 기본값 + 보정 (보정 자리는 지금 비어 있음: 4부에서 원석·금맥, 타격 시너지, 어둠 600, 뽑아찢기)
-                 → CurrencyManager → EnemyManager.EnemyDied → 점유·목록 해제 → 풀 반환
-함정 (옛 코드에서 고친 것. 4장 4-7)
-  - 사망은 한 번만. 즉사 뒤에는 그 피해 처리를 바로 끝냄 (B9)
-  - Power × 거리 보너스 × 치명 배율의 순서. 치명이 거리 보너스를 지우지 않음 (B10)
-  - 치명 판정은 Random.value < 확률. 확률 0이면 절대 치명이 아님 (B11)
-(수업 10에서 넘어옴)
-  - DeathResolver에서 보스가 죽으면 EnemyManager.BossTimer.Remove(보스). 빠뜨리면 죽은 보스의 제한 턴이 계속 흘러 게임 오버가 됨.
-  - 40웨이브에 소환된 최종 보스(KillInfo.SpawnWave == 40)가 죽으면 GameSession.GameClear() (B8). TurnManager.GameLoop의 ② IsOver 검사로 루프가 끝남.
-확인: T4 — 방어력 100이면 피해 절반, −100이면 2배, 관통 20%면 방어력 100 → 80, −100 → −120,
-           거리 보너스 1.1에 치명 2배 → 2.2배, 치명 확률 0으로 1000번 굴려 치명 0번.
-      씬 — 임시 키로 적에게 피해 → 죽으면 골드가 들어오고 적이 풀로 돌아감 (하이어라키에서 꺼짐).
-참고(옛 코드): EnemyHealthController.ApplyDamage / Die (보상·클리어·풀 반환을 다 하는 점이 다름)
-
-----------------------------------------------------------------------
 수업 15. 공격 방식과 맞을 대상 — #143 ITarget, #46 TowerAction, #48 TargetAction   [패턴: 인터페이스, 전략]
 ----------------------------------------------------------------------
 배울 것: interface와 abstract class의 차이 (약속만 / 공통 코드도), 3장 [인터페이스]·[전략 패턴],
@@ -770,6 +741,8 @@ GroundEffect (장판)
   TargetAction: 사거리 안의 ITarget 중 하나 → AttackCount × 발 수 만큼 피해 (지금은 투사체 없이 바로)
   TowerController.Init에서 컬러에 맞는 Action을 하나 만들어 들고 있음. 그 뒤로는 Action만 부름
 확인: 블루 타워가 사거리 안의 적에게 피해를 주고 적이 죽음.
+(수업 14에서 넘어옴) 지울 임시 코드: DebugCheat의 K(맨 앞 적에게 60)·L(모든 적에게 99999) 키와 HitFirstEnemy·HitAllEnemies, using System.Collections.Generic.
+  타워가 적을 때리게 되면 지움. 대신 두고 싶으면 수업 24의 개발용 키로 옮겨도 됨 (사용자가 정함)
 참고(옛 코드): TowerAttackAction.cs, TargetAttackAction.cs
 
 ----------------------------------------------------------------------
@@ -786,6 +759,8 @@ GroundEffect (장판)
   AttackHandle: 한 번의 공격이 쏜 탄 목록. 모두 도착하면 IsDone
   SatelliteLauncher: 탄을 타워 둘레에 띄웠다가 차례로 발사하는 연출 (설정값 5개는 TowerController의 인스펙터). DOTween Sequence로
   TowerTurnRunner: ④ 보드 순서로 한 기씩, 앞 타워의 AttackHandle이 끝난 뒤 다음 타워. TurnManager의 ④가 이것을 부름
+(수업 14에서 넘어옴) 대미지 숫자: 명중해서 피해가 들어가면 적 위에 숫자를 띄움 (옛 DamageText·DamageTextPool을 New에 복사할지 사용자와 정함, 연출은 DOTween).
+  EnemyController.TakeDamage가 계산한 최종 피해를 띄움. 적 머리 위 HP 바는 없음 (체력은 UI의 적 정보 패널, 수업 46)
 함정: 옛 코드는 판 전체의 투사체 수로 턴 끝을 판정해서, 스킬 투사체를 보이지 않게 남겨 두는 꼼수가 필요했음. AttackHandle이 그 이유를 없앰.
 함정
   - 탄이 날아가는 중에 대상이 죽거나 풀로 돌아가면: 탄은 그 자리까지 날아가 사라지고(피해 없음) 풀로 돌아감. AttackHandle은 그래도 끝남
