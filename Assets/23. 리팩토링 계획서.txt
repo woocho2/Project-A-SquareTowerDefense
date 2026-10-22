@@ -4,11 +4,13 @@
 흐름: 20번 기획 → 23번 계획(이 문서, 남은 것만) → 24번 리팩토링 내역서(끝낸 것). 끝난 수업은 24번으로 옮기고 여기서 지움.
       수업 중·수업 뒤의 질문과 답은 25번 수업 질문 노트에 수업별로 그때그때 더함 (Claude가 따로 부탁받지 않아도).
 
->>> 다음 수업: 9
-    ★ 수업 9 전에 먼저: 수업 8에서 옛 코드를 복사해 온 스크립트 4개 리뷰 (사용자가 읽고, AI가 설명하고 질문에 답함)
-      Assets/3. Scripts/New/06. Enemy/ — EnemyCubeMeshVisual.cs, EnemyCubeOrientation.cs, EnemyCubeRollGeometry.cs, EnemyCubeAppearance.cs
-      AI가 옮기기만 하고 사용자가 아직 읽지 않은 코드. 무엇을 하는지, 우리 코드(EnemyMovement·BoardPresenter)가 어디를 부르는지,
-      안 쓰는 함수가 남았는지(AnimateSpawn은 소환 낙하용으로 아직 안 부름)를 함께 봄. 리뷰가 끝나면 이 ★ 줄을 지우고 수업 9.
+>>> 다음 수업: 14 — 4단계(DeathResolver)부터 (2026-10-22 퇴근 때 멈춤)
+    끝난 것: 1단계 DamageInfo(AI)·DamageCalculator(테스트 16개 먼저), 2단계 CriticalRoll(테스트 8개),
+             3단계 EnemyHealth(테스트 7개)·EnemyController(Health, Pool, SpawnWave, Setup(정의, 풀, 웨이브), TakeDamage)·Spawner의 Setup 한 줄.
+             TowerController에 [RequireComponent(typeof(TowerVisual))]
+    남은 것: 4단계 KillInfo + DeathResolver (EnemyController.TakeDamage의 "죽음" 로그 자리를 사망 처리로), 5단계 임시 키로 적을 때려 확인
+    적 프리팹·에셋 이름이 바뀜 (사용자): 새 것 2. Prefab/3. Enemy/1. Enemy_Normal(.prefab·.asset, 예전 1. Valkyrie, GUID 그대로),
+      2. Enemy_MiddleBoss.asset, 3. Enemy_FinalBoss.asset / 옛 것은 Old_Enemy_Normal·Old_Enemy_MiddleBoss·Old_Enemy_FinalBoss 등 (앞에 Old_)
     수업 1에서 남긴 손질 (선택): TowerIdTest를 namespace SquareTD.Tests로 감싸면 SquareTD.TowerEmblem 대신 TowerEmblem만 써도 됨,
     함수 이름 GetEmblem_5305는_05 → _Shield, bool은 Assert.IsTrue / IsFalse
 
@@ -57,11 +59,13 @@
 1) 새 폴더 (만든 것: Assets/3. Scripts/New/의 00. Core ~ 12. Dev, Assets/Editor/Tests/New/, Assets/Editor/New/ — 24번)
    Assets/3. Scripts/New/는 옛 스크립트 폴더 안에 있으므로, 수업 48에서 옛 스크립트를 지울 때 New 폴더는 남길 것
    에디터 도구는 Assets/Editor/New/, 테스트는 Assets/Editor/Tests/New/
-   Assets/2. Prefab New/Enemy/ (적 프리팹과 EnemyDefinition 에셋)도 만듦
+   새 프리팹과 에셋은 New 폴더를 따로 만들지 않고 지금의 Assets/2. Prefab/ 아래(1. Manager, 2. Tower, 3. Enemy, 4. Effect)에 둠 (2026-10-22 사용자).
+     만든 것: 2. Prefab/3. Enemy/1. Valkyrie(적 프리팹과 EnemyDefinition 에셋), 2. Prefab/EnemyCountLabel
+     옛 프리팹과 같은 폴더에 섞이므로, 수업 48에서 옛 프리팹을 지울 때 새 것(새 스크립트가 붙은 것)을 가려낼 것
    아직 만들 것 (그 폴더의 첫 파일을 만드는 수업에서):
      05. Tower/  Actions, Targeting, Skills(+ Splash, Target), Rules(+ Buff, Debuff), Ground
      06. Enemy/  Effects
-     2. Prefab New/  Tower(수업 12), Projectile(16), Dummy(39)
+     프리팹      타워(수업 12, 2. Tower), 투사체(16), 더미(39)
    빈 폴더는 git에 올라가지 않으므로(폴더 .meta만 올라가 경고가 남), 폴더는 그 폴더의 첫 파일을 만드는 수업에서 만들어도 됨.
 2) 씬은 지금의 Assets/1. Scenes/3. Stage1.unity를 그대로 씀
    - 타일맵, 카메라, 배경, UI 캔버스는 그대로 둠.
@@ -80,8 +84,8 @@
           EnemyUIController, HPBarSlider, DamageText, DamageTextPool, TowerSelectionVisual,
           TowerCharacterCatalog, SynergyCharacterCatalog
           (EnemyUIController는 적 머리 위 HP 바용이라 쓰지 않게 됨 — 2026-10-21, HP 바는 UI 패널에서만. HPBarSlider는 패널의 HP 바로 쓸 수 있음)
-          (EnemyCubeMeshVisual은 사용자가 New/06. Enemy에 namespace SquareTD로 옮겨 씀 — 2026-10-21. 옛 것은 옛 게임용으로 둠.
-           새 적 프리팹의 CubeVisual3D에는 새 것을 붙임. 옛 것과 이름이 같으므로 namespace SquareTD 안에서는 새 것이 찾아짐)
+          (적 큐브 연출은 New/06. Enemy의 EnemyCubeMeshVisual·EnemyCubeAppearance로 대신함 — 2026-10-22 DOTween으로 다시 씀.
+           옛 EnemyCube* 다섯은 옛 게임용으로 둠. 이름이 같으므로 namespace SquareTD 안에서는 새 것이 찾아짐)
    이펙트 EffectManager, EffectPool2D, EffectController, EffectLibrary (명중 이펙트)
    UI     TowerInfoCardView, TowerTierBadgeGraphic, UITilePanel, UITileSkin, UITileSurface, UIManager_Start, UIManager_Menu
    씬     SceneLoader, LoadingManager
@@ -127,6 +131,8 @@
    - 게임 로직은 UI를 모르게 만듦 (UI는 이벤트를 듣고 매니저에 요청만). 그래서 UI를 마지막에 붙여도 로직을 고치지 않음.
 6) 다 만들면 (수업 48)
    꺼 둔 옛 매니저 오브젝트, 옛 프리팹, 옛 스크립트 59개(86 − 그대로 쓰는 25 − 남겨 두는 타일 이펙트 2)를 지움. namespace는 그대로 둠.
+   옛 스크립트 폴더의 셰이더도 확인: RoundedCharacterSprite + CharacterCornerMask.cginc는 Resources/CharacterRounded.mat(타워 캐릭터)가 씀 →
+   타워 수업에서 New로 옮기거나 남김. EnemyEquipmentPalette는 쓰는 재질이 없음 (2026-10-22 확인). 적 큐브 셰이더 둘은 이미 New/06. Enemy로 옮김.
 
 ======================================================================
 2. 게임의 큰 그림 — 먼저 머릿속에 넣을 것
@@ -220,6 +226,14 @@
 
 쓰지 않는 것: 커맨드(되돌리기가 없음), 데코레이터(버프가 곱이 아니라 합), DI 컨테이너·ECS(이 규모에선 읽기만 어려워짐).
 
+[연출은 전부 DOTween] (2026-10-22 사용자가 정함)
+  움직임·회전·크기·튀기·눌림 같은 연출은 while + Lerp 코루틴으로 직접 쓰지 않고 DOTween(Assets/Plugins/Demigiant/DOTween)으로 씀.
+  적 큐브(수업 8을 다시 씀), 투사체 비행·위성 발사(수업 16), 대미지 숫자, 소환 낙하, UI 연출 모두.
+  약속: 규칙 코드는 트윈을 기다리기만 함 (yield return tween.WaitForCompletion()). 피해·점유 같은 규칙은 트윈의 콜백이 아니라 규칙 코드가 정함.
+        풀에서 꺼내 쓰는 것(적, 투사체)은 트윈에 SetLink(gameObject, LinkBehaviour.KillOnDisable) → 풀로 돌아가 꺼지면 트윈도 꺼짐.
+        꺼낼 때 트윈이 바꿔 둔 값(크기·위치·회전)을 되돌림 (풀의 "지난번 상태가 남는" 버그).
+        회전을 90°씩 쌓는 것은 끝난 뒤 가장 가까운 각도로 맞춤 (EnemyCubeMeshVisual.SnapRotation).
+
 ======================================================================
 4. 전체 틀 — 미리 정해 두는 약속
 ======================================================================
@@ -251,6 +265,7 @@
   EnemyManager                     EnemyDied (KillInfo)           EmblemSharedState(어둠 카운트), WaveManager(최종 보스), EnemyInfoPanel
   WaveManager                      WaveChanged (웨이브)           GameSession(한도의 사이클), GameInfoPanel
   TurnManager                      StateChanged (상태)            UIManager, BoardInputController, PlayerTurnPanel
+  TurnManager                      EnemyTurnEnded (적 턴 번호)    InvariantChecker
   TowerManager                     TowerAdded / TowerRemoved (타워)  SynergyService, GameSession(한도 보정), BoardPresenter, TowerInfoPanel
   TowerManager                     BuildCostChanged (비용)        PlayerTurnPanel
   TowerManager                     SelectionChanged (타워)        TowerInfoPanel, TowerController(사거리 표시)
@@ -443,7 +458,7 @@ GroundEffect (장판)
 ======================================================================
 
 만든 것은 24번에 있고 이 목록에서 지움 (번호는 그대로 둠). 지금까지 만든 것: #2 TowerId, #4 Singleton, #19 BoardGrid(일부), #18 BoardManager(일부), #7 EnemyDefinition, #121 EnemyController(일부),
-#1 GameEnums(일부), 테스트 T1·T2, 에디터 E1. 프리팹: 2. Prefab New/Enemy/Enemy, 에셋: 1. Valkyrie.
+#1 GameEnums(일부), 테스트 T1·T2, 에디터 E1. 프리팹: 2. Prefab/3. Enemy/1. Valkyrie, 2. Prefab/EnemyCountLabel, 에셋: 1. Valkyrie.
 새 매니저 9개는 ": Singleton<자기 이름>"으로 물려받음. 자식이 Awake·OnDestroy를 덮어쓸 때는 base.Awake() / base.OnDestroy()를 꼭 부름.
 형식 이름: 이 문서에 "Emblem"으로 적힌 문양 enum의 실제 이름은 TowerEmblem. 컬러는 Red·Blue·Yellow·Purple. 적 종류는 Normal·MiddleBoss·FinalBoss.
 
@@ -697,7 +712,7 @@ GroundEffect (장판)
 6. 수업 목록
 ======================================================================
 
-1부  판의 뼈대         수업 5 ~ 10   타워 없이 웨이브가 돌고 게임 오버까지 (수업 1 ~ 4는 끝남: 24번)
+1부  판의 뼈대         수업 5 ~ 10   타워 없이 웨이브가 돌고 게임 오버까지 (1부 끝남: 24번)
 2부  타워의 기본       수업 11 ~ 17  타워가 적을 잡고 골드가 들어옴. 한 판을 끝까지 해 볼 수 있음
 3부  성장              수업 18 ~ 24  조작, 합성·강화, 스탯 완성, 특수 타일, 스택과 스킬 2의 틀, 개발용 도구 정리
 4부  존과 문양         수업 25 ~ 40  상태 효과, 존, 규칙의 틀, 문양 14종
@@ -710,141 +725,11 @@ GroundEffect (장판)
 1부. 판의 뼈대
 ######################################################################
 
-----------------------------------------------------------------------
-수업 9. 턴의 흐름 — #12 TurnManager, #13 TurnState, #17 WaveManager, #37 DebugCheat(시작)    [패턴: 상태]
-----------------------------------------------------------------------
-배울 것
-  - 코루틴이 코루틴을 기다리기: yield return StartCoroutine(다른 코루틴).
-  - 여러 코루틴을 동시에 시작하고 전부 끝날 때까지 기다리기 (남은 수를 세거나 WaitUntil).
-  - 상태 패턴 (3장).
-  - 아직 없는 단계도 빈 함수로 먼저 자리를 잡아 두기: 순서가 규칙이므로 뼈대부터 (4장 4-1).
-기획: 20번 1장 [턴과 웨이브], [적 1턴의 순서]
-설계
-  TurnState.cs
-    interface ITurnState { bool CanPlayerAct { get; } bool CanConsumeStack { get; } void Enter(); void Exit(); }
-    IdleState, PlayerTurnState, EnemyTurnState, GameOverState, GameClearState
-  WaveManager: CurrentWave, Cycle, event WaveChanged, NextWave()
-  보스 소환 (수업 7에서 넘어옴): 지금 EnemySpawner는 일반 적만 냄
-    중간 보스·최종 보스 정의(지금은 EnemyManager의 SerializeField, 수업 42에서 StageDefinition)와 종류별 EnemyPool 셋
-    SpawnOne(정의, 풀, wave)로 풀도 받게 바꿈 → SpawnWave에 if (HasMiddleBoss) / if (HasFinalBoss)
-    EnemyManager의 Update(임시 J 키 = 1웨이브 소환, M 키 = 살아 있는 적 모두 TakeTurn)는 DebugCheat로 옮기거나 지움
-  TurnManager
-    ITurnState Current, event Action<ITurnState> StateChanged
-    void ChangeState(ITurnState next)      지금 상태 Exit → 바꿈 → Enter → 이벤트
-    IEnumerator GameLoop()
-      웨이브 1 ~ 40:
-        소환 전 판정 (수업 10. 지금은 통과)
-        yield EnemyManager.SpawnWave
-        플레이어 턴: ChangeState(Player), 턴 종료 버튼이 눌릴 때까지 기다림
-        적 턴 10번 (40웨이브는 최대 20번): yield EnemyTurn()
-        WaveManager.NextWave()
-    IEnumerator EnemyTurn() — 4장 4-1의 ⓪ ~ ⑥을 함수로 전부 만들어 두고, 지금은 ①만 채움
-      ⓪ EnemyTurnStart()  ① yield MoveAllEnemies()  ② SupportTowersPhase()  ③ TileEffectsPhase()
-      ④ yield AttackTowersPhase()  ⑤ DebuffPhase()  ⑥ BossTimerPhase()
-    void OnClickEndTurn()        플레이어 턴일 때만 받음 (Current.CanPlayerAct)
-  DebugCheat (개발용 키, 이번에 만들고 수업마다 키를 하나씩 더함): Space = TurnManager.OnClickEndTurn
-    (지금 UI의 턴 종료 버튼은 6부에서 연결. 그때까지 UI 캔버스는 꺼 둠. 1장 5)
-  상태가 바뀔 때마다 Debug.Log로 "플레이어 턴 / 적 턴 n / 웨이브 n"
-함정
-  - 루프 도중 적 목록을 돌다가 적이 사라지면 에러. 목록을 복사해 돌거나, 사라지는 것은 턴 끝에 모아서 처리.
-  - GameLoop를 두 번 시작하면 둘이 함께 돎. 시작 전에 이미 돌고 있는지 확인.
-  - GameLoop는 Awake가 아니라 Start에서, BoardManager·EnemyManager가 준비됐는지 확인한 뒤 시작 (B5: 옛 코드는 길이 준비되기 전에 소환해 0마리).
-  - 적 턴 도중에 턴 종료가 또 들어오면 무시 (상태가 플레이어 턴일 때만 받음).
-InvariantChecker(#169) 시작: 적 턴이 끝날 때마다 "GameLoop가 하나", "켜진 적 수 = Registry 수", "점유 수 = Registry 수"를 검사 (4장 4-8)
-DebugCheat: A = 자동 진행 켜고 끄기 (플레이어 턴이 오면 바로 턴 종료)
-확인: 실행 → 소환 → Space → 적이 10번 움직임 → 다음 웨이브 소환이 더해짐. 이걸 몇 웨이브 반복.
-      시나리오 S1: Space를 빠르게 여러 번 → 적 턴은 한 번씩만. 자동 진행으로 5웨이브 → InvariantChecker 오류 0.
-참고(옛 코드): GameManager.TurnLoopRoutine / EnemyWaveRoutine / EnemyTurnRoutine, GameTurnState.cs
-
-----------------------------------------------------------------------
-수업 10. 한도와 게임의 끝 — #11 GameSession, #131 BossTimer   [패턴: 옵저버]
-----------------------------------------------------------------------
-배울 것
-  - C# event와 Action<T>: 알리기(Invoke)와 구독(+=)·해제(-=).
-  - OnEnable에서 구독, OnDisable에서 해제하는 습관.
-  - 3장 [옵저버]와 4장 4-2를 먼저 읽음.
-기획: 20번 1장 [패배와 클리어 — 적 수 한도]
-설계
-  GameSession
-    GameMode Mode
-    int BaseLimit (WaveTable.GetEnemyLimit), Dictionary<object, int> limitModifiers (방패 +, 도끼 −. 지금은 비어 있음)
-    int CurrentLimit                         기본 + 보정의 합
-    void SetLimitModifier(object source, int value), void RemoveLimitModifier(object source)
-    event Action<int> LimitChanged
-    bool CheckBeforeSpawn(int aliveCount)    aliveCount > CurrentLimit 이면 게임 오버 (같으면 통과)
-    void GameOver(), void GameClear()        TurnManager의 상태를 바꾸고 루프를 멈춤
-    WaveChanged를 구독: 사이클이 바뀌면 BaseLimit이 바뀜 → LimitChanged
-  BossTimer: 보스·중간 보스가 소환될 때 20으로, ⑥에서 1씩, 0이면 GameSession.GameOver
-  이벤트 연습: DebugCheat(또는 작은 시험 스크립트)가 LimitChanged·CountChanged·WaveChanged를 구독해 Debug.Log로 찍음
-              (6부에서 GameInfoPanel이 같은 이벤트를 구독하게 됨. 듣는 쪽만 바뀌고 알리는 쪽은 그대로인 것을 그때 확인)
-함정
-  - 판정은 "소환 직전"에만. 소환 직후나 웨이브 도중에는 한도를 넘어도 패배가 아님.
-  - 비교는 > (초과). 20마리면 통과, 21마리부터 게임 오버.
-  - 한도는 진짜 적만 셈 (EnemyManager의 목록). 점유 수로 세지 않음 (나중에 더미가 점유에 들어오므로).
-  - 한도와 게임 오버를 계산하는 곳은 GameSession 하나. 다른 곳에서 따로 세지 않음 (B7).
-  - 클리어는 "40웨이브에 소환된" 최종 보스가 죽었을 때만. 앞 웨이브의 보스가 40웨이브에 죽은 것은 아님 (B8. KillInfo가 생기는 수업 14에서 연결).
-  - static 필드에 판의 상태를 두지 않음 (4장 4-8의 3). 재시작 때 이전 판의 값이 남음.
-DebugCheat: R = 지금 씬 다시 불러오기 (재시작 확인용)
-확인: 한도를 임시로 5로 → 몇 웨이브 뒤 소환 직전에 "게임 오버" 로그와 함께 루프가 멈춤. 적 수·한도·웨이브가 바뀔 때마다 로그가 찍힘.
-      구독한 오브젝트를 꺼도 에러가 나지 않음 (해제가 짝으로 되어 있음).
-      시나리오 S7: 게임 오버 뒤 R → 웨이브 1부터 다시, 로그가 두 번씩 찍히지 않음(구독이 두 겹이 아님), 매니저가 하나씩.
-참고(옛 코드): GameManager.CheckEnemyLimit / RefreshEnemyLimit / EnemyLimitChanged, GameInfoPanel.cs
-
 >>> 1부 끝: 타워가 없어도 웨이브가 돌고, 적이 고리를 돌고, 한도를 넘으면 게임 오버가 됨.
 
 ######################################################################
 2부. 타워의 기본
 ######################################################################
-
-----------------------------------------------------------------------
-수업 11. 타워 데이터 — #5 TowerDefinition, #6 TowerDatabase, #3 EmblemNames
-----------------------------------------------------------------------
-배울 것: TextAsset으로 CSV 읽기, string.Split, 헤더 이름 → 열 번호 Dictionary, float.Parse와 CultureInfo.InvariantCulture,
-         읽을 때 검증하고 잘못된 줄은 이유를 Debug.LogError로, 읽기 전용 속성 { get; private set; }.
-기획: 20번 4장 [스탯 — TowerDataCSV의 열], [타워의 컨셉 — 56종의 이름], [문양별 이름]
-설계
-  TowerDefinition: 기획의 열 그대로 + TowerId로 계산한 Tier, Color, Emblem, Attribute
-  TowerDatabase: Load(TextAsset csv), Get(int id), TryGet, GetAll(조건: 티어, 컬러, 문양 목록)
-  EmblemNames: 문양·컬러·티어 이름, (문양, 컬러) → 컨셉 이름 56개, (문양, 컬러, 스킬 1/2) → 스킬 이름
-  CSV: 옛 Resources/TowerDataCSV.csv를 복사해 새 열(Mastery, Stack)을 넣은 새 파일. 수치는 임시 (20번 12장).
-함정: 열 번호(숫자 인덱스)로 읽으면 열 하나를 추가할 때 전부 밀림 → 헤더 이름으로 찾는 이유.
-확인: 280줄을 읽고 Get(2107).Emblem == Fire, 없는 ID는 TryGet이 false, EmblemNames로 (검, 레드) == "히어로".
-참고(옛 코드): TowerManager.LoadTowerDataFromCSV, BuffTargetNames.cs
-
-----------------------------------------------------------------------
-수업 12. 재화와 타워 생성 — #153 CurrencyManager, #21 TowerSlots, #30 TowerManager, #31 TowerFactory, #37 DebugCheat(키 더하기)
-----------------------------------------------------------------------
-배울 것: "시도하고 성공 여부를 돌려주기"(bool TrySpend), Instantiate로 프리팹 만들기, 조작의 순서(조건 → 재화 → 실행 → 알림).
-기획: 20번 8장 [재화], [타워 생성]
-설계
-  CurrencyManager: Gold, Gem, Add, bool TrySpendGold / TrySpendGem (모자라면 false, 아무것도 빼지 않음), event Changed
-  TowerSlots (BoardManager가 들고 있음): Place, Remove, Get, TryGetFirstEmpty, Move, Swap
-  TowerFactory: Create(TowerDefinition, 칸) → 프리팹 생성, Init, 칸에 놓기 / Destroy(타워)
-  TowerManager.TryBuild() — 재화는 맨 마지막에 뺌 (4장 4-7 B1)
-    1. 확인: 플레이어 턴인가, 빈 칸이 있나, 골드가 비용 이상인가(아직 빼지 않음)
-    2. 1티어 무작위(고른 문양 × 4컬러) → 정의·프리팹·TowerController 컴포넌트가 있는지 확인
-    3. Create: 생성 → 칸에 놓기 → Init. 어느 하나라도 실패하면 만든 것을 지우고 false (골드·비용 그대로)
-    4. 전부 성공하면 TrySpendGold → 비용 +5 (최대 1500) → TowerAdded, BuildCostChanged
-  DebugCheat에 키 더하기: B = TryBuild, 숫자 키 = 원하는 ID의 타워, G / J = 골드·젬 더하기. Changed·BuildCostChanged를 로그로
-  타워 프리팹 (2. Prefab New/Tower): 옛 TowerBase를 복제해 옛 TowerController를 떼고 새 TowerController(수업 13)를 붙일 자리
-함정: "돈부터 빼고 만들기"는 옛 코드의 버그(B1). 만들다 실패하면 돈만 사라짐.
-확인: B → 첫 빈 칸에 1티어 타워, 골드가 50 줄고 다음 비용 55 (로그).
-      시나리오 S5: 골드 0에서 B / 빈 칸이 없을 때 B / 타워 프리팹 칸을 일부러 비우고 B → 셋 다 골드·비용·칸이 그대로.
-참고(옛 코드): CurrencyManager.cs, TowerManager.BuildTower, TileManager.TryPlaceTowerAt
-
-----------------------------------------------------------------------
-수업 13. 타워 한 기 — #38 TowerController, #39 TowerState, #42 TowerStatCalculator(기본), #43 TowerFinalStats, #45 TowerVisual(옮김)
-----------------------------------------------------------------------
-배울 것: 계산 결과를 만든 뒤 바꾸지 못하게 하기(읽기 전용), 행동력 (적 턴마다 1, 0이면 행동, 공격 타워는 사거리에 적이 없으면 0인 채로 대기).
-기획: 20번 4장 [행동력], [사거리]
-설계
-  TowerState: RemainingAction, TargetPriority, 고른 공격 칸 (스택·버프·스킬 진행은 뒤 수업에서 칸을 더함)
-  TowerStatCalculator.Calculate(정의, 상태) → TowerFinalStats   지금은 정의 값 그대로 (표·버프는 수업 20)
-  TowerController: Init(정의), bool TickAction() (1 줄이고 0인가), 한 번 행동에 최종 스탯을 한 번만 계산
-  TowerVisual (옮김): Apply(TowerData) → Apply(TowerDefinition). 안에서 쓰는 것은 ID에서 나온 티어·컬러·문양뿐이라 한 줄만 바뀜
-  ClickDebugWindow (E2, 옮김): 판의 줄을 그리는 부분이 새 BoardManager·TowerSlots·TowerController를 읽게
-확인: 적 턴마다 타워의 남은 행동력이 줄고 0이 되면 "행동" 로그 후 다시 채워짐. 타워 그림이 지금과 똑같이 나옴.
-참고(옛 코드): TowerController.ExecuteTurnAction / GetFinalStats, TowerStats, TowerVisual.Apply
 
 ----------------------------------------------------------------------
 수업 14. 피해와 죽음 — #144 DamageInfo, #145 DamageCalculator, #146 CriticalRoll, #122 EnemyHealth, #132 DeathResolver, T4
@@ -864,6 +749,9 @@ DebugCheat: R = 지금 씬 다시 불러오기 (재시작 확인용)
   - 사망은 한 번만. 즉사 뒤에는 그 피해 처리를 바로 끝냄 (B9)
   - Power × 거리 보너스 × 치명 배율의 순서. 치명이 거리 보너스를 지우지 않음 (B10)
   - 치명 판정은 Random.value < 확률. 확률 0이면 절대 치명이 아님 (B11)
+(수업 10에서 넘어옴)
+  - DeathResolver에서 보스가 죽으면 EnemyManager.BossTimer.Remove(보스). 빠뜨리면 죽은 보스의 제한 턴이 계속 흘러 게임 오버가 됨.
+  - 40웨이브에 소환된 최종 보스(KillInfo.SpawnWave == 40)가 죽으면 GameSession.GameClear() (B8). TurnManager.GameLoop의 ② IsOver 검사로 루프가 끝남.
 확인: T4 — 방어력 100이면 피해 절반, −100이면 2배, 관통 20%면 방어력 100 → 80, −100 → −120,
            거리 보너스 1.1에 치명 2배 → 2.2배, 치명 확률 0으로 1000번 굴려 치명 0번.
       씬 — 임시 키로 적에게 피해 → 죽으면 골드가 들어오고 적이 풀로 돌아감 (하이어라키에서 꺼짐).
@@ -892,11 +780,11 @@ DebugCheat: R = 지금 씬 다시 불러오기 (재시작 확인용)
 기획: 20번 4장 [피해 계산 순서] (피해는 명중하는 순간), 1장 ④ (투사체가 끝난 뒤 다음 타워)
 설계
   ProjectileManager: 컬러 + 문양 번호(Resources/Projectiles)마다 풀, Spawn(번호, 위치)
-  Projectile: 날아가기·회전·수명만. 도착하면 HitResolver 부르고 풀로
+  Projectile: 날아가기·회전·수명만. 도착하면 HitResolver 부르고 풀로. 날아가기·회전은 DOTween (3장 [연출은 전부 DOTween])
   ProjectileHitResolver: 명중 순간 대상에게 DamageInfo, 공격 타워에게 적중 알림, 명중 이펙트(EffectManager.PlayEffect(HitEffectID))
   ProjectileVfx: 트레일·파티클·색 (옛 ProjectileHit2D의 연출 부분, Gradient·Curve는 한 번만 만듦)
   AttackHandle: 한 번의 공격이 쏜 탄 목록. 모두 도착하면 IsDone
-  SatelliteLauncher: 탄을 타워 둘레에 띄웠다가 차례로 발사하는 연출 (설정값 5개는 TowerController의 인스펙터)
+  SatelliteLauncher: 탄을 타워 둘레에 띄웠다가 차례로 발사하는 연출 (설정값 5개는 TowerController의 인스펙터). DOTween Sequence로
   TowerTurnRunner: ④ 보드 순서로 한 기씩, 앞 타워의 AttackHandle이 끝난 뒤 다음 타워. TurnManager의 ④가 이것을 부름
 함정: 옛 코드는 판 전체의 투사체 수로 턴 끝을 판정해서, 스킬 투사체를 보이지 않게 남겨 두는 꼼수가 필요했음. AttackHandle이 그 이유를 없앰.
 함정
@@ -933,6 +821,8 @@ InvariantChecker에 더함: 적 턴 끝에 날아가는 투사체 0, 끝나지 �
 배울 것: 화면 좌표 → 월드 → 칸 (Camera.ScreenToWorldPoint, Tilemap.WorldToCell), UI 위 클릭 거르기
          (EventSystem.current.IsPointerOverGameObject), 입력 모드를 상태로.
 기획: 20번 1장 플레이어 턴, 4장 [타겟 우선순위] 공격할 칸 고르기, 8장 [판매], [타워 생성] 이동·교환 무료
+(수업 12에서 넘어옴) TowerSlots에 Move·Swap이 아직 없음 (TryPlace, Remove, Get, IsEmpty, TryGetFirstEmpty만). 이동·교환에서 더함.
+  TowerController.SlotIndex도 함께 바꿔야 함 (칸과 타워가 서로 가리킴). 판매는 TowerFactory.Destroy + TowerRemoved 이벤트.
 설계
   IInputMode: Enter, Exit, OnPointerDown(칸), OnPointerDrag(월드), OnPointerUp(칸), OnCancel
   IdleMode         타워 칸 → 선택(SelectionChanged), 길 칸 → 적 정보, 존이 있는 칸 → 존 정보. 타워를 누른 채 움직이면 DragTowerMode
@@ -1076,6 +966,10 @@ InvariantChecker에 더함: 적 턴 끝에 날아가는 투사체 0, 끝나지 �
   DebugCheat: 지금까지 수업마다 더한 임시 키를 한 표로 정리 (키 목록을 화면 왼쪽 위에 OnGUI로 작게 띄움)
     선택한 타워에: 합성(완전·컬러·문양), 티어 강화, 판매, 스택 소모(적 턴에도: CanConsumeStack), 우선순위 바꾸기, 공격 칸 고르기
     전체: 턴 종료, 생성, 컬러 강화(컬러 넷), 골드·젬, 원하는 타워
+    (수업 9·10에서 넘어옴) 지금 있는 키: Space 턴 종료, A 자동 진행, R 씬 다시 불러오기. CountChanged를 "적 n / 한도 m" 로그로.
+    (수업 12에서 넘어옴) B 생성, G 골드 +1000, Currency Changed 로그. 숫자 키(원하는 ID의 타워)와 젬 더하기 키는 아직 없음.
+  (수업 13에서 넘어옴) ClickDebugWindow(E2) 옮기기: 옛 TileManager·옛 TowerController를 읽는 부분을 새 BoardManager·TowerSlots·TowerController로
+      InvariantChecker에 "GameLoop가 하나" 검사를 더할지 여기서 정함 (지금은 TurnManager.Start에서 한 번만 시작하고 S7 재시작에서 문제없음)
   ClickDebugWindow (Tools/Click Debug):
     누른 타워: 12칸의 값(카드와 같은 뜻, 버프·디버프 타워의 안 쓰는 칸은 "-")과 칸마다의 출처 "기본 xx + 맵 버프 xx + ○○ 타워의 버프 xx"
     누른 칸: 특수 타일, 존(스택·단계), 장판, 서 있는 대상 목록
@@ -1143,6 +1037,8 @@ InvariantChecker에 더함: 적 턴 끝에 날아가는 투사체 0, 끝나지 �
   BuffRule: 4장 4-4의 BuffRule 훅 전부 virtual + 공통 식 도우미
   DebuffRule: CreateEffect(단계, 값, 출처) + 적 쪽 훅 전부 virtual + 저항 적용 도우미
   SkillRegistry: (컬러, 문양) → 스킬 생성 함수 / 버프 규칙 / 디버프 규칙, 타워 ID → (시너지용, 비어 있음). 없으면 null → 기본 공격만
+  (수업 11에서 넘어옴) EmblemNames에 스킬 이름 표: (문양, 컬러, 단계) → 20번 4장 [문양별 이름]. 전기 버프는 단계가 셋(충전·과충전·방전).
+    스킬 이름은 컨셉에 맞춰 나중에 바뀔 수 있음 (20번 4장 "컨셉이 먼저")
   TowerController가 Init에서 SkillRegistry로 스킬을 받음. 버프·디버프 존이 SkillRegistry로 규칙을 받음
   불 넷 (4장 4-5의 불 줄)
     FireSplashSkill   맵 전체, 화상 +50% 연소 +100% (ModifyOutgoingDamage), 같은 적은 한 번만
@@ -1166,6 +1062,9 @@ InvariantChecker에 더함: 적 턴 끝에 날아가는 투사체 0, 끝나지 �
                        확인: 찌르기 방어 관통 카우치 15%·랜스 차지 30%, 뽑아찢기 저항 50%면 2.5% 미만
   수업 31 도끼 (4-4장) #60 #74 #88 #102 + #41 TimedTowerBuff
                        처음 쓰는 것: 시간 버프(쪼개기), GetLimitModifier(한도 감소, 최고 티어 하나), OnDamageTaken(처형)
+                       (수업 10에서 넘어옴) GameSession의 한도 보정: 지금은 CurrentLimit = 사이클의 기본 한도뿐.
+                         BaseLimit + 보정의 합(SetLimitModifier / RemoveLimitModifier, 출처별)으로 늘림. 방패(수업 32)의 방어막도 같은 자리.
+                         보정이 바뀌면 값과 LimitChanged는 바로, 패배 판정은 여전히 소환 직전만 (20번 1장)
                        확인: 사이클 1 한도 감소 브론즈 −10·다이아 −0, 하드 브론즈 −7; 브론즈 처형 + 베기 → 11.2%
   수업 32 방패 (4-7장) #63 #77 #91 #105             처음 쓰는 것: 버프 타워 자기 스택(GetSelfStackMode), 방어막(한도 +), ImmobilizeEffect(기절)
                        확인: 방어막 사이클 1 다이아 +10, 방패 돌격 기절 20% → 방패벽 25% → 저지선 30%
@@ -1215,6 +1114,9 @@ InvariantChecker에 더함: 적 턴 끝에 날아가는 투사체 0, 끝나지 �
 기획: 20번 9장 [스테이지의 적과 해금], 모드 셋, 8장 [타워 생성](고른 문양만)
 설계
   StageDefinition 10개 에셋 (적 정의 셋, 여는 문양·시너지, 라그나로크는 사이클별 적 넷)
+  (수업 9에서 넘어옴) 적 프리팹은 하나로 돌려 쓰고 정의만 셋(일반·중간 보스·최종 보스). 그림도 데이터로:
+    EnemyDefinition에 Appearance(EnemyCubeAppearance) 칸 → EnemySpawner.SpawnOne에서 SetAppearance(definition.Appearance).
+    지금 EnemyManager의 세 Entry는 같은 EnemyPool을 써도 됨. 보스 외형이 큐브가 아니게 정해지면(20번 3장) 보스 프리팹·풀만 그 칸에
   ProgressSave: 깬 스테이지, 열린 문양·시너지, 저장·읽기
   StartSettings (씬을 건너는 보관 객체, GameSession 파일 안): 모드, 스테이지, 고른 문양. 지금은 GameSession 인스펙터 값으로 채움
     (고르는 화면 EmblemSelectPanel은 6부 수업 47)

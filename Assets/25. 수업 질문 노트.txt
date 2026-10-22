@@ -865,3 +865,261 @@ A. SerializeField 문제가 아님. EnemyMovement에 뼈대의 빈칸 ___ 두 �
    Unity는 컴파일 에러가 하나라도 있으면 프로젝트 전체를 새로 컴파일하지 않음 → 새로 만든 SquareTD.EnemyCubeAppearance가
    Unity에게는 "아직 없는 클래스" → 그 에셋의 스크립트를 못 읽어 인스펙터에 칸이 안 나옴.
    그래서 이상한 증상이 보이면 먼저 콘솔의 빨간 컴파일 에러부터 봄. 빈칸 코드를 붙여 넣었으면 채우거나 주석 처리한 뒤 저장.
+
+======================================================================
+수업 9 전. 복사해 온 큐브 스크립트 리뷰 (2026-10-22)
+======================================================================
+
+Q. (EnemyCubeRollGeometry.Sample) progress를 0 ~ 1로 고정하고 각도를 계산하는데, 파이가 각도 계산에 들어가면 어떻게 되는 거야?
+A. 각도를 "라디안"이라는 단위로 바꾸는 것. Math.Cos·Math.Sin(Mathf.Cos·Sin도)은 도(°)가 아니라 라디안을 받음 (cm와 인치처럼 단위만 다름).
+   180° = π. 그래서 90° = π × 0.5, 45° = π × 0.25, 360° = π × 2.
+   progress * Math.PI * 0.5 = "몇 % 돌았나(0 ~ 1)"를 "실제 각도 0° ~ 90°(라디안)"로 바꿈. 큐브는 한 번에 90° 넘어가므로 끝이 π × 0.5.
+   π 없이 Math.Cos(90)이라고 쓰면 90라디안(약 5157°)으로 계산되어 엉뚱한 값 — 흔한 실수.
+   Unity의 변환: 각도 * Mathf.Deg2Rad (도 → 라디안), Mathf.Rad2Deg (라디안 → 도).
+   Quaternion.AngleAxis는 반대로 도를 받음 → EnemyCubeMeshVisual에서는 π 없이 progress * 90f.
+
+Q. 코사인이 가로선, 사인이 세로선이잖아? 이걸로 뭘 구하는 거야? (Travel = 0.5 × (1 − cos + sin))
+A. 구르는 동안 큐브 중심의 가로 위치. 큐브(한 변 1)가 오른쪽으로 구르면 오른쪽 아래 모서리가 바닥에 붙은 축이 되고 큐브가 그 점을 돌아 90° 넘어감.
+   축에서 중심까지를 두 팔로 나눔: 왼쪽 0.5, 위 0.5. θ만큼 기울면
+     왼쪽 팔의 가로 = −0.5 cos θ (점점 짧아짐) / 위 팔의 가로 = +0.5 sin θ (오른쪽으로 눕으며 나감)
+   축에서 본 중심 = −0.5cos + 0.5sin, 출발 때는 −0.5 → 움직인 거리 = 0.5 × (1 − cos + sin). θ = 90°면 1 = 한 칸.
+   같은 두 팔의 세로 성분이 EnemyCubeMeshVisual.AnimateRoll의 lift = 0.5 × (cos + sin − 1) (중간에 들리는 높이, 45°에서 약 0.21).
+   Travel = 가로, lift = 세로.
+
+Q. progress를 외부에서 어떻게 전달하지?
+A. 수업 8의 EnemyMovement.MoveOneTile에서 시작해 세 단계를 거침.
+     EnemyMovement        t = elapsed / m_stepDuration (시간 비율) → m_cube.AnimateTileRoll(before, direction, t, out travel, …)
+     AnimateTileRoll      turn = SmoothStep(0, 1, t / 0.86) (회전 비율) → EnemyCubeRollGeometry.Sample(turn).Travel
+     Sample               turn → Travel (가로로 온 비율) → out travel로 돌아감 → EnemyMovement가 Lerp(start, target, travel)
+   / 0.86 (flightFraction): 앞 86% 시간에 다 구르고 뒤 14%는 착지 눌림 (그동안 travel = 1).
+   SmoothStep: 0 ~ 1을 "천천히 출발 → 빨라짐 → 천천히 멈춤" 곡선으로 바꿈.
+   숫자 (0.7초): 0.3초 → t 0.43 → turn 0.5 → Travel 0.5 / 0.6초 → 1 / 0.6 ~ 0.7초 착지.
+   요점: EnemyMovement는 시간만 넘기고, 그림을 어떻게 그릴지는 연출 쪽이 정함.
+
+Q. 부드러운 연출이 아니라 그냥 시간에 맞게 정확하게 이동하게 하려면 코드를 어떻게 고쳐야 해?
+A. 위치가 시간과 안 맞는 곳은 셋: ① / flightFraction (앞 86%에 도착, 뒤는 착지 눌림) ② SmoothStep (느리게-빠르게-느리게)
+   ③ Sample().Travel (회전 각도 → 실제 구르는 가로 위치, cos·sin).
+   방법 1  EnemyMovement에서 Lerp(start, target, t) (travel 대신 t). 가장 간단하지만 회전은 여전히 곡선이라
+           위치와 회전이 어긋나 모서리가 미끄러지거나 뜨는 것처럼 보임.
+   방법 2  AnimateTileRoll에서 turn = local / flightFraction (SmoothStep 뺌), travel = (rollIndex + turn) / RollsPerTile (Sample 뺌).
+           회전과 이동이 함께 일정. ③을 뺀 차이는 한 칸의 2% 정도 (0.25에서 0.23 대신 0.25).
+   ①은 남김: flightFraction = 1f면 (1f − flightFraction) = 0으로 나눠 NaN. 착지 눌림까지 없애려면 else 쪽을 고쳐야 함.
+   연출 곡선은 "그럴듯해 보이게"일 뿐 규칙(몇 칸, 몇 초)과 무관 → 바꿔도 EnemyMovement의 규칙 코드는 그대로.
+   (→ S/H 키로 둘을 견줘 본 뒤 부드러운 연출을 유지: "코드가 더 복잡해도 쓰는 맛이 있네". 연출 코드를 따로 떼어 둔 덕에
+      연출을 세 번 바꾸는 동안 EnemyMovement의 규칙 줄은 그대로였음)
+
+Q. Frame의 안 쓰는 값 네 개가 코사인이랑 사인 값만 하는 거야? 원래 어디에 쓰던 기능이야?
+A. 맞음. DepartingWidth = cos, ArrivingWidth = sin, DepartingOffset = 0.5 sin, ArrivingOffset = −0.5 cos.
+   옛 2D 큐브(EnemyCubeVisual)가 썼음. 진짜 정육면체가 아니라 납작한 스프라이트 두 장으로 구르는 "척"을 함:
+     떠나는 면은 기울어 정면에서 좁아 보임(폭 cos), 새 면은 일어서며 넓어짐(폭 sin). 45°에서 둘 다 0.71.
+     Offset 둘은 두 장의 맞닿은 모서리가 벌어지지 않게 미는 위치. 기울어지는 면은 m_faceShade로 어둡게 칠함.
+   길이 1인 면이 θ만큼 누우면 정면에서 보이는 가로 길이 = cos θ ("cos = 가로선"과 같음).
+   지금의 3D 메시는 진짜로 돌리므로 폭과 그늘을 Unity가 그림 → 남는 건 중심의 가로 이동(Travel)뿐.
+   (→ 사용자가 넷을 지움. 에러가 없음 = 읽는 코드가 없었다는 증거. 단, 컴파일러는 코드로 부르는 것만 잡음:
+      글자로 찾는 것(FindProperty)·인스펙터에 저장된 [SerializeField] 값은 지워도 에러 없이 조용히 끊김)
+
+Q. (EnemyCubeMeshVisual.Awake 해석) 위치·회전·크기를 저장하고, 메시 필터와 렌더러를 저장하고, 면 수만큼 얼굴을 넣고,
+   GetPropertyBlock은 뭔지 모르겠지만 에셋을 넣는 것 같고, 색을 바꾸고, 얼굴도 오브젝트 풀로 관리하나? 재질과 그림자를 넣고.
+A. 대부분 맞음. 보충:
+   local 위치·회전·크기 = 부모(적 본체) 기준의 "기본자세". 연출이 흔들림을 더했다가 ShowOrientation에서 이 값으로 되돌림.
+   메시는 지역 변수(검사에 한 번), 렌더러는 필드(계속 씀).
+   _EquipmentMask: 여기서 색을 바꾸지 않음. "어디를 바꿀지" 그림만 셰이더에 넘김 (없으면 검은 그림 = 바꿀 곳 없음).
+   m_faceAssetPool은 오브젝트 풀이 아니라 "후보 목록" (면 효과 6종의 재질). 소환할 때 면마다 하나씩 뽑음. 꺼내고 돌려놓기가 없음.
+   MaterialPropertyBlock = 이 렌더러에만 붙이는 메모지. 재질은 모든 적이 함께 씀(sharedMaterials) → 재질을 고치면 40마리가 다 바뀜,
+     적마다 복사하면 메모리. 메모지로 "이 면만 이 그림"을 덮어씀. Get(읽어 옴, 다른 값을 안 지우려고) → SetTexture(적음) → Set(붙임).
+     수업 4의 "정의는 함께, 마리마다 다른 건 따로"와 같은 생각.
+   m_hasAllFaces: 6면 메시·재질 6칸·후보 6개·빈 칸 없음을 검사. 틀리면 RandomizeForSpawn이 면을 섞지 않고 Identity만 → 설정이 틀려도 안 멈춤.
+   그림자는 자식이 아니라 형제(부모 = 적 본체): 자식이면 큐브가 구를 때 같이 돎. 그래서 OnDestroy에서 직접 지움.
+   static Mesh s_shadowMesh = 모든 적이 함께 쓰는 그림자 네모. 판의 상태가 아니라 모양 데이터라 static 약속(4-8)에 안 걸림.
+
+Q. 3D라서 메테리얼을 적용하는 건가?
+A. 반만 맞음. 2D든 3D든 화면에 그리는 것은 전부 재질을 씀. 차이는 직접 만지느냐.
+     SpriteRenderer  Unity가 기본 재질(Sprites-Default)을 알아서 붙임. 그림은 renderer.sprite, 색은 renderer.color (옛 2D 큐브가 이 방식)
+     MeshRenderer    재질을 직접 넣어야 함(없으면 분홍). 서브메시마다 재질 칸 하나. 그림·색은 재질(이나 PropertyBlock)의 값으로
+   재질 = 셰이더(어떻게 칠할지 정하는 작은 프로그램) + 값(_MainTex, _EquipmentMask, _Color 같은 텍스처·색·숫자).
+   이 큐브: 서브메시 6개 = 재질 칸 6개. 면마다 다른 재질 = 면 효과의 배경색·심볼(소환 때 후보에서 뽑음),
+            모든 면이 같은 캐릭터 그림은 PropertyBlock으로 덮어씀, 둘을 합치는 건 셰이더.
+   → "3D라서 재질을 직접 다룬다"가 더 정확.
+
+Q. 면마다 이미 메테리얼로 캐릭터 에셋이 그려져 있으면 왜 또 따로 그리는 것 같지? 기분 탓인가?
+A. 기분 탓 아님. 면 재질(0. Common/Enemy_State_*.mat)의 _MainTex에 이미 Valkyrie_Character가 들어 있고, ApplyAppearance가 PropertyBlock으로
+   _MainTex를 또 넣음. 단 두 번 그리는 게 아니라, 그리기 전에 재질의 값을 바꿔치기 → 화면에는 한 번.
+   재질의 캐릭터는 기본값: 편집 중 미리보기, m_appearance가 비었을 때의 대비책(86줄 if). Appearance가 있으면 덮어씀.
+   이유: 면 재질 6개는 모든 적 종류가 함께 쓰는 공용. 2스테이지 적은 Appearance 에셋만 새로 만들면 됨 (재질을 종류마다 6개씩 복사하지 않음).
+   재질 한 장의 층 (EnemyCubeUnlit 셰이더, 아래부터): 배경(_BackgroundTex × _BackgroundColor, 면 재질) → 캐릭터(_MainTex, 장비만
+   _EquipmentColor, Appearance) → 테두리 장식(_DecorationTex × _DecorationColor, 면 재질) → 심볼(_BadgeTex 아틀라스의 한 칸, 면 재질).
+   "면마다 색과 심볼만 바꾼다" = 배경·장식·심볼 층.
+
+Q. 메테리얼 그림을 우리가 다시 채울 거면 메테리얼을 굳이 프리팹에 붙여 넣는 이유가 뭐야?
+A. 다시 채우는 건 재질의 일부(_MainTex, _EquipmentMask)뿐. 셰이더·배경색·테두리 장식·심볼은 재질에만 있음 → 메모지(PropertyBlock)는
+   재질 위에 붙이는 것이지 재질을 대신하지 못함. 재질 없이 메모지만 있으면 칠할 셰이더가 없어 분홍.
+   프리팹에는 같은 재질 6개가 두 군데:
+     Mesh Renderer의 Materials   지금 실제로 칠하는 재질 (편집 중 미리보기도). Awake가 m_faceMaterials로 받아 작업용으로 씀
+     m_faceAssetPool             소환할 때 뽑을 후보. 뽑은 결과를 위 칸에 넣음
+   후보가 비면 Awake가 렌더러 칸을 복사해 후보로 씀 (m_faceAssetPool = (Material[])m_faceMaterials.Clone()) → 둘이 같으면 후보는 비워도 됨.
+   렌더러 칸이 비면 m_hasAllFaces = false → RandomizeForSpawn이 면을 안 섞음. 렌더러 칸은 꼭 채움.
+
+Q. 기존 재질이 있어야 재질에 맞게 소환해서 그런 거라고?
+A. 반만 맞음. 소환에 진짜 필요한 건 후보(m_faceAssetPool). 렌더러 칸의 처음 재질은 소환할 때 덮임.
+   RandomizeForSpawn: 면마다 후보에서 무작위로 하나씩(중복 가능) → 작업용 배열 → renderer.sharedMaterials = 배열 (렌더러 칸이 통째로 바뀜)
+                      → ApplyAppearance로 캐릭터 메모지를 다시 붙임.
+   후보        없으면 뽑을 게 없음(Awake가 렌더러 칸을 복사해 대신 씀). 소환 뒤에도 남아 다음 소환에 씀
+   렌더러 칸   없으면 편집 중 분홍 + m_hasAllFaces false로 면을 안 섞음. 첫 소환에서 덮임
+   → 렌더러 칸의 처음 재질은 "무엇을 소환할지"가 아니라 "소환 전까지 멀쩡히 보이고 6칸 검사를 통과하기 위한 것". 6칸만 차 있으면 무엇이든 결과가 같음.
+
+Q. 내 의도는 게임을 시작하면 큐브의 각 면에 역할을 정하고, 역할에 맞게 색을 바꾸고 아이콘을 교체하면 끝 아니야? 왜 이렇게 붙은 코드가 많아?
+A. 의도한 부분은 RandomizeForSpawn 15줄 정도가 전부. 다른 점 하나: 색과 아이콘을 따로 바꾸지 않고, 색·아이콘이 묶인 재질 6개 중 하나로 통째로 갈아 끼움.
+   (기획의 면 6종: 자가치유·방어·이동력·행동력·자물쇠·모래시계)
+   나머지는 "3D 큐브가 굴러가는 것" 때문: 구르기·눌림·점프·소환 낙하, 자세 → 회전 계산(RotationFor 등). 구르면 보이는 면과 그림의 기울기가
+   계속 바뀌어 그것을 따라감 → "어느 면이 보이나"를 알아야 나중에 면 효과(모래시계 면 동안 면역 등)를 붙임.
+   아무도 안 쓰는 것: m_tileRollDuration·TileRollDuration(구르는 시간은 EnemyMovement.m_stepDuration이 정함), m_uprightImpactDuration·
+     UprightImpactDuration(점프 뒤 눌림을 안 가져옴), HasAllFaces(옛 EnemyMoveController용) → 앞으로도 안 씀.
+     SpawnDuration·AnimateSpawn·소환 칸(낙하 연출), SetAppearance(적 종류별 그림), GetFaceAssetIndex·GetFaceAsset(면 효과) → 나중에 쓸 자리.
+   재질 1개 + 메모지로 배경색·아이콘 칸을 면마다 바꾸는 방식도 됨. 재질은 6 → 1개로 줄지만 "역할마다 색·아이콘 칸" 표를 따로 둬야 함.
+   코드 양은 비슷. 지금 방식은 그 표를 재질 6개가 대신함.
+
+Q. (함수 설명 요청) ApplyAppearance / RandomizeForSpawn / ShowOrientation / AnimateSpawn
+A. ApplyAppearance   6면 모두에 이 적의 캐릭터 그림·장비 마스크를 메모지로 붙임. Awake, SetAppearance, RandomizeForSpawn(재질을 바꾼 뒤)에서 부름.
+   RandomizeForSpawn 면마다 역할을 무작위로(후보 수 범위) + 처음 보이는 물리 면을 무작위로(면 수 범위) 골라 정방향으로 세우고 그 자세를 돌려줌.
+                     무작위가 둘: 각 면의 "역할"과 어느 "면"이 앞에 보이나.
+   ShowOrientation   기본자세(Awake에서 찍어 둔 위치·회전·크기)로 되돌리고 받은 자세로 돌려 놓음. 연출은 매 프레임 "되돌리기 → 흔들림 더하기"를
+                     반복해서 흔들림이 쌓이지 않음 (수업 8에서 마지막에 target으로 딱 맞추던 것과 같은 생각).
+   AnimateSpawn      소환 낙하. 낙하(1 − t², 가속) → 착지 눌림(Sin 0 → π) → 튀어 오름(4t(1 − t), 포물선) → 작은 눌림. elapsed에서 구간 시간을
+                     하나씩 빼며 지금이 몇 번째 구간인지 찾음.
+   (→ 이 함수들은 그 뒤 DOTween으로 다시 쓰여 없어짐. 24번 2026-10-22 [수업 8 보충])
+
+Q. 지금 코드가 너무 길고 복잡해서, 완벽하게 이해한 코드만 쓰고 싶다. 연출은 DOTween을 쓰면 될 거라고 생각했다.
+A. 꼭 필요한 건 셋: 면 역할 정하기, 구른 뒤 보이는 면 알기, 90°씩 돌리기. 나머지는 꾸밈·대비책이고 어려운 건 축 계산·쿼터니언.
+   DOTween은 이미 프로젝트에 있음. 지금 코드의 while + Lerp + SmoothStep → DOMove(...).SetEase, 90° 굴리기 → DORotate(..., WorldAxisAdd),
+   눌림 → DOPunchScale, 점프 → DOJump, 소환 4구간 → Sequence, 기다리기 → yield return tween.WaitForCompletion().
+   DOTween이 못 하는 것: "지금 어느 면이 보이나" (움직이기만 하고 면은 모름) → 우리 코드로 남김.
+   풀과 함께 쓸 때: 꺼질 때 트윈을 멈추고(SetLink KillOnDisable / DOKill), 꺼낼 때 트윈이 바꿔 둔 값을 되돌림.
+   (→ AI가 DOTween으로 다시 씀. 앞으로 모든 연출은 DOTween)
+
+Q. (스크린샷) 계속 이동시켜 보니 큐브가 "x1"과 다른 칸에 있고, 45° 돌아가고, 눌린 채 멈춤.
+A. M 연타로 한 적의 이동이 끝나기 전에 다음 이동이 시작돼 겹친 것.
+     위치    두 이동이 같은 PathIndex에서 출발해 서로 위치를 뺏고, Occupancy.Move는 엉뚱한 칸에서 빼려다 실패
+     45°     DORotate(WorldAxisAdd)는 "지금 회전에 더하기"라 겹치면 섞임. 반쯤 돈 자세를 SnapRotation이 엉뚱하게 맞춤
+     눌림    DOPunchScale은 "시작할 때 크기로 돌아옴". 이미 눌린 순간에 시작하면 눌린 크기로 돌아감
+   옛 코드는 매 프레임 기본자세로 되돌려서 티가 덜 났고, DOTween은 값을 더해 가서 겹치면 바로 망가짐.
+   고침: EnemyMovement.IsMoving, 임시 M 키는 이동 중이면 무시. 진짜 턴은 TurnManager(수업 9)가 이동이 다 끝나길 기다림.
+
+======================================================================
+수업 9. 턴의 흐름 (2026-10-22)
+======================================================================
+
+Q. 에셋만 바꿔 끼는 거라면 적도 데이터 그릇만 일반·중간 보스·최종 보스로 만들고 프리팹은 하나로 돌려 쓰면 되겠네? 보스들도?
+A. 맞음. 큐브라면 Appearance(그림) + EnemyDefinition(데이터)만 갈아 끼우면 됨. 지금 코드 그대로 세 Entry에 같은 EnemyPool을 넣으면 됨
+   (풀은 꺼낼 때마다 Setup으로 정의를 새로 채움). Entry에 Pool 칸이 있어서, 보스가 큐브가 아닌 모양으로 정해지면 그 칸만 바꿈.
+   보스만 다를 것도 데이터로: 기믹 칸, 크기 배율 칸. 그림을 정의에 넣고 소환 때 SetAppearance(definition.Appearance)는 수업 42.
+
+Q. (TurnManager) 적긴 했는데 오류 부분은 모르겠다. (Current.Name(next); / while (PlayerTurnState.Exit()))
+A. "바꿈" = 값을 넣기 → Current = next; . Current.Name은 이름을 읽는 프로퍼티라 ( )를 붙여 부를 수 없음.
+   while 괄호에는 true/false가 나오는 것만. Exit()는 void라 조건이 못 됨 → while (!m_endTurnRequested) yield return null;
+   "턴 종료 요청이 아닌 동안 한 프레임씩 쉼". Space가 눌리면 OnClickEndTurn이 true로 → 다음 프레임에 빠져나감.
+   using Unity.VisualScripting은 편집기가 자동으로 넣은 것 → 지움. 숫자 20·10 대신 상수 LastWaveEnemyTurns·EnemyTurnsPerWave.
+
+Q. 상수로 바꾸라는 게 무슨 말이야?
+A. 숫자 20·10을 직접 쓰지 말고 파일 맨 위에 이름을 붙여 둔 const를 씀: wave.IsLastWave ? LastWaveEnemyTurns : EnemyTurnsPerWave.
+   const = 절대 안 바뀌는 값에 붙인 이름. 결과는 같고, 읽을 때 이름으로 뜻이 보이고, 기획이 바뀌면 한 곳만 고침
+   (숫자를 여러 곳에 쓰면 하나를 빠뜨려도 에러가 안 남). WaveManager.LastWave = 40도 같은 이유.
+
+Q. (EnemyTurn의 ①·④ 빈칸에 yield return (0.5f);를 씀) 흠..
+A. 빈칸은 "몇 초"가 아니라 "무엇이 끝날 때까지"를 기다리는 자리 → yield return MoveAllEnemies(); / yield return AttackTowersPhase();
+   GameLoop의 yield return EnemyTurn(turn);과 같은 모양 = 이 코루틴을 실행하고 끝날 때까지 기다림.
+   yield return 0.5f는 0.5초를 기다리지 않음 (숫자를 받으면 한 프레임만 쉼). 초 단위는 yield return new WaitForSeconds(0.5f).
+   List는 using System.Collections.Generic이 있어야 보임. 다른 클래스에서 부를 함수는 public.
+
+Q. (InvariantChecker를 돌려 보니) DOTween 경고 "Max Tweens reached: capacity has automatically been increased from 200/50 to 200/125" 말곤 뜬 게 없네.
+A. 해가 없는 알림. DOTween이 처음에 트윈 200·시퀀스 50개만 준비해 뒀는데, 적 수십 마리가 한꺼번에 구르며 시퀀스가 모자라 자동으로 125개로 늘렸다는 뜻.
+   판을 시작할 때 DOTween.SetTweensCapacity(500, 200)으로 미리 넉넉히 잡으면 안 뜸 (수업 10의 GameSession.Awake에 넣음).
+
+======================================================================
+수업 10. 한도와 게임의 끝 (2026-10-22)
+======================================================================
+
+Q. EndGame에서 오류가 떠.
+A. GameSession이 TurnManager.Instance.EndGame(...)을 부르는데 TurnManager에 그 함수가 아직 없어서 ("정의가 없다").
+   ChangeState는 private이라 밖에서 못 부름 → public void EndGame(ITurnState endState) { ChangeState(endState); } 창구를 엶
+   (수업 7의 Add(public 창구) / GetOrCreateList(private)와 같은 모양). GameClear에 복사하다 남은 GameOverState도 GameClearState로.
+
+Q. (BossTimer 연결) 스크립트까지 수정했어. (EnemySpawnEntry에 BossTimer를 넣고, SpawnOne에서 BossTimer.Add(enemy))
+A. Entry = 인스펙터에서 넣는 데이터 묶음(정의 + 풀). BossTimer는 게임에 하나뿐이고 EnemyManager가 new로 만드는 물건 → Entry에 넣으면 셋이 되고,
+   순수 클래스라 인스펙터에서 넣을 수도 없음.
+   대문자 BossTimer는 클래스 이름(설계도). 클래스 이름으로 부르는 건 static 함수만(TowerId.GetTier). Add는 static이 아니라 "어느 타이머?" 에러.
+   Registry를 받아 온 것과 똑같이: 필드 m_bossTimer, 생성자 매개변수, m_bossTimer = bossTimer;, m_bossTimer.Add(enemy). EnemyManager의 new에도 넘김.
+
+Q. (EnemyManager.Instance.BossTimer.Add로 고친 뒤) 이럼 됐나?
+A. 동작은 됨. 생성자로 받는 방식과의 차이: Instance는 한 줄로 짧지만, Registry(생성자)와 모양이 섞이고, 생성자만 보고는 필요한 것을 모르고,
+   EnemyManager → Spawner → EnemyManager로 서로 부르며, 씬 없이 테스트할 수 없음. 수업 7의 약속 "부품은 생성자로" 쪽은 생성자.
+   (→ 사용자가 생성자로 고침)
+
+======================================================================
+수업 11. 타워 데이터 (2026-10-22)
+======================================================================
+
+Q. (TowerDatabase.ReadHeader) columns[names] = ; 이거 모르겠다.
+A. 만들 표는 "이름 → 몇 번째 칸". 헤더 ["ID", "Name", "Power", …]에서 i = 2일 때 열쇠는 names[2] = "Power", 값은 2 = i
+   → columns[names[i]] = i; . names만 쓰면 배열 통째라 열쇠가 못 됨. [ ] 안이 열쇠, = 오른쪽이 값 (수업 7의 m_cells[index] = list).
+   ReadInt를 ReadFloat에서 복사하며 돌려주는 형식이 float로 남으면 생성자의 int 칸에 못 넣는다는 에러가 줄줄이 뜸 → int ReadInt.
+   m_byId.Equals(id)는 "Dictionary 자체가 이 숫자와 같나" → 늘 false. 열쇠가 있나는 ContainsKey.
+   (Equals로 두면 같은 ID가 Add에서 throw되고 catch가 영어 에러 문구로 찍음 — 우연히 막히지만 로그가 불친절)
+
+Q. (private static float ReadInt …) 여기서 뭐가 문제지?
+A. 함수 이름 앞의 형식 = 돌려주는 형식. 안에서 int로 읽어도 머리가 float면 float로 나감 → 생성자의 int 칸에 못 넣음
+   (C#은 float → int를 자동으로 안 바꿈. 소수가 몰래 잘리지 않게). ReadFloat를 복사할 때 맨 앞 형식만 남은 실수 → int ReadInt.
+
+Q. 테스트는 초록색인데 로그에 에러가 떠.
+A. 정상. "틀린 줄" 테스트들이 일부러 잘못된 CSV를 넣어 TowerDatabase가 진짜로 에러를 찍음. LogAssert.Expect는 그 에러를 예상한 것으로 쳐서
+   통과시킬 뿐 콘솔에 찍히는 건 막지 않음. 예상한 다섯 개 말고 다른 [TowerDatabase] 에러가 있으면 그게 진짜 문제.
+
+======================================================================
+수업 12. 재화와 타워 생성 (2026-10-22)
+======================================================================
+
+Q. B를 눌렀더니 NullReferenceException (TowerManager.cs:53, CurrencyManager.Instance.Gold)
+A. 그 앞 줄(TurnManager, BoardManager)은 지나갔으니 CurrencyManager.Instance가 null → 씬에 새 CurrencyManager가 없음.
+   오브젝트를 안 만들었거나, 옛 CurrencyManager(04. Manager)를 붙였거나, 씬을 저장 안 함.
+   읽는 법: 맨 위 줄이 터진 곳. 그 줄에서 "." 앞의 것 중 하나가 null. 매니저 Instance가 null이면 대개 씬에 그 매니저가 없다는 뜻.
+
+======================================================================
+수업 13. 타워 한 기 (2026-10-22)
+======================================================================
+
+Q. (TickAction의 if (State.RemainingAction == 0) return false; 를 고친 뒤) 이렇게?
+A. == 0이면 Action 3이 3 → 2 → (행동) 3 → 2 …로 0에 닿지 않아 매 턴 행동. 물어야 할 것은 "아직 남았나?" → if (> 0) return false;
+   (수업 8 EnemyMovement.TakeTurn의 첫 두 줄과 같은 모양). 숫자로 표를 그려 보면 조건이 뒤집힌 게 보임.
+
+======================================================================
+수업 14. 피해와 죽음 (2026-10-22)
+======================================================================
+
+Q. (DamageCalculator) 초록색이 안 되는데. / fixedDamage가 고정 피해인지 몰랐네.
+A. 틀린 곳 셋을 테스트 숫자로 따라감:
+     음수 방어력 관통: −100 × 0.2 = −20 (기대 −120). "20%만큼 더 음수" = × (1 + 0.2). 양수 쪽 × (1 − 0.2)와 짝
+     (원래 피해 − 방어력): 방어 100이면 (100 − 100) = 0 (기대 50). 빼는 건 고정 피해. 방어력은 빼는 게 아니라 계수로 곱함
+     GetDefenseCoefficient(defense): 관통 전 값을 써서 관통이 안 먹음 → defenseAfter
+   Mathf.Abs(-defense) = Mathf.Abs(defense) (절댓값이라 같음).
+   영어 이름: fixed 고정, ratio 비율, penetration 관통, coefficient 계수, multiplier 배율, outgoing/incoming 나가는/들어오는, critical 치명.
+
+Q. 데미지 계산기는 맞고 6개짜리(TowerControllerTest)는 틀렸다고 나와.
+A. TowerController.Init에 GetComponent<TowerVisual>().Apply를 넣은 뒤라, TowerController만 붙인 테스트 오브젝트에서 GetComponent가 null → NullReference.
+   [RequireComponent(typeof(TowerVisual))]를 class 위에: AddComponent<TowerController>가 TowerVisual도 자동으로 붙이고, 인스펙터에서 TowerVisual을 못 지움.
+   테스트만 고치는 것보다 진짜 프리팹의 실수까지 막음. (그림 자식이 없어 뜨는 노란 경고는 테스트를 실패시키지 않음)
+
+Q. (CriticalRoll) Random.Range(0,1)과 randomValue == rate로 씀
+A. Random.Range(0, 1)은 정수라 int 버전 → 뒤의 수가 빠져 늘 0. 소수는 Random.value 또는 Random.Range(0f, 1f).
+   확률 판정은 "굴린 수 < 확률": 30%면 0 ~ 0.3 구간이 치명. == 는 정확히 0.3이 나올 때만이라 사실상 0%.
+   float을 == 로 비교하는 건 거의 늘 위험 (0.1 + 0.2 ≠ 정확히 0.3).
+   Random.value는 0과 1을 둘 다 포함 → 0 이하·1 이상은 따로 막음 (B11: 확률 0인데 치명).
+
+Q. 지금 Roll이 두 개잖아. 밑에 거가 테스트니까 RollTest로 하면 되지?
+A. 넘긴 값의 개수·형식으로 고름 (오버로드): Roll(0.3f) → 위, Roll(0.3f, 0.12f) → 아래.
+   위쪽은 Random.value를 굴려 아래쪽에 넘기기만, 판정 규칙은 아래쪽에만. 나눈 이유: 굴린 수를 밖에서 받아야 테스트가 정답을 적을 수 있음.
+   아래쪽은 테스트 전용이 아니라 게임도 매번 거치는 진짜 판정 → 이름에 Test를 붙이면 "지워도 되는 함수"로 오해. 다른 이름이면 IsCritical, Judge 등.
+
+Q. 어떻게 돌아가는 거야? 그냥 Random.Range(0 ~ (criticalRate × 100) + 1) 하면 안 돼?
+A. 0 ~ 1 사이 수 하나를 뽑아 확률보다 작으면 치명 (길이 1인 자에서 앞 0.3 구간에 떨어지면 30%).
+   제안한 식은 뽑는 범위가 확률에 따라 바뀌고 비교 기준이 없어 치명 여부가 안 나옴. 범위는 고정, 비교 기준이 확률.
+   100칸 버전 Random.Range(0, 100) < rate × 100도 맞지만 소수 퍼센트가 틀어짐: CSV의 0.055(5.5%)가 0 ~ 5 = 6칸 = 6%.
+   Random.value < rate는 정확히 5.5%이고 100을 곱했다 나누는 단계도 없음.

@@ -1,0 +1,27 @@
+{
+    "Catalogs":  [
+                     {
+                         "Name":  "TowerCharacterCatalog",
+                         "OldPath":  "Assets/Resources/TowerCharacterCatalog_Old.asset",
+                         "OldGuid":  "24c24873dcee41018d2bd84bdbf9e2b5",
+                         "NewGuid":  "2bbdf33a512848ef9a05770f2e7405ba",
+                         "ScriptGuid":  "de646ff01ec41b348a3669d53f14d4d2"
+                     },
+                     {
+                         "Name":  "SynergyCharacterCatalog",
+                         "OldPath":  "Assets/Resources/SynergyCharacterCatalog_Old.asset",
+                         "OldGuid":  "97fee378c3e247228e62e41bdd57fe2e",
+                         "NewGuid":  "14e3d841de3f4ab19f6378951ea40e19",
+                         "ScriptGuid":  "1ad1ac4e3e19ea442ad0a8145c452d6c"
+                     }
+                 ],
+    "Prefab":  "Assets/2. Prefab/2. Tower/Tower.prefab",
+    "VisualScriptGuid":  "1ea22b8b424007f419b5c0ac8650d790",
+    "VisualComponentId":  "3374333988479624537",
+    "RendererMap":  {
+                        "m_emblemRenderer":  "7100000000000001103",
+                        "m_backgroundRenderer":  "69109820115675441",
+                        "m_characterRenderer":  "7911596970232653239",
+                        "m_decorationRenderer":  "652120831702425239"
+                    }
+}

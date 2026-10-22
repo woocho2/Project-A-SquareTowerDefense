@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f28733cd52344c294fdd092f7f2a9d2, type: 3}
+  m_Script: {fileID: 11500000, guid: 1ad1ac4e3e19ea442ad0a8145c452d6c, type: 3}
   m_Name: SynergyCharacterCatalog
-  m_EditorClassIdentifier: Assembly-CSharp::SynergyCharacterCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.SynergyCharacterCatalog
   m_entries:
   - towerID: 6001
     characterName: 오딘

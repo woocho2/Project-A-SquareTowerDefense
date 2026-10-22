@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cce1b56f7f3448b976ca68afe4b0bf9, type: 3}
+  m_Name: TowerCharacterCatalog_Old
+  m_EditorClassIdentifier: Assembly-CSharp::TowerCharacterCatalog
+  m_entries:
+  - emblemId: 1
+    emblemName: 검
+    characters:
+    - {fileID: 52010, guid: 69ef51cd58244ba0b749572a967a4d02, type: 3}
+    - {fileID: 52011, guid: 69ef51cd58244ba0b749572a967a4d02, type: 3}
+    - {fileID: 52012, guid: 69ef51cd58244ba0b749572a967a4d02, type: 3}
+    - {fileID: 52013, guid: 69ef51cd58244ba0b749572a967a4d02, type: 3}
+  - emblemId: 2
+    emblemName: 도끼
+    characters:
+    - {fileID: 52020, guid: 38dd808fe99a439d8843a95932730424, type: 3}
+    - {fileID: 52021, guid: 38dd808fe99a439d8843a95932730424, type: 3}
+    - {fileID: 52022, guid: 38dd808fe99a439d8843a95932730424, type: 3}
+    - {fileID: 52023, guid: 38dd808fe99a439d8843a95932730424, type: 3}
+  - emblemId: 3
+    emblemName: 활
+    characters:
+    - {fileID: 52030, guid: e6e5c445463b4dd4a9288d13ab488f8e, type: 3}
+    - {fileID: 52031, guid: e6e5c445463b4dd4a9288d13ab488f8e, type: 3}
+    - {fileID: 52032, guid: e6e5c445463b4dd4a9288d13ab488f8e, type: 3}
+    - {fileID: 52033, guid: e6e5c445463b4dd4a9288d13ab488f8e, type: 3}
+  - emblemId: 4
+    emblemName: 창
+    characters:
+    - {fileID: 52040, guid: 8afebe18f45b43e8beeca6d3bf595c4e, type: 3}
+    - {fileID: 52041, guid: 8afebe18f45b43e8beeca6d3bf595c4e, type: 3}
+    - {fileID: 52042, guid: 8afebe18f45b43e8beeca6d3bf595c4e, type: 3}
+    - {fileID: 52043, guid: 8afebe18f45b43e8beeca6d3bf595c4e, type: 3}
+  - emblemId: 5
+    emblemName: 방패
+    characters:
+    - {fileID: 52050, guid: dad3e683a34749cf8b77273c00554807, type: 3}
+    - {fileID: 52051, guid: dad3e683a34749cf8b77273c00554807, type: 3}
+    - {fileID: 52052, guid: dad3e683a34749cf8b77273c00554807, type: 3}
+    - {fileID: 52053, guid: dad3e683a34749cf8b77273c00554807, type: 3}
+  - emblemId: 6
+    emblemName: 해머
+    characters:
+    - {fileID: 52060, guid: 7f1926df052b4b21835940e0c831f4bb, type: 3}
+    - {fileID: 52061, guid: 7f1926df052b4b21835940e0c831f4bb, type: 3}
+    - {fileID: 52062, guid: 7f1926df052b4b21835940e0c831f4bb, type: 3}
+    - {fileID: 52063, guid: 7f1926df052b4b21835940e0c831f4bb, type: 3}
+  - emblemId: 7
+    emblemName: 불
+    characters:
+    - {fileID: 52070, guid: 4b7ae037348c4e1fb2b07ef4e812345a, type: 3}
+    - {fileID: 52071, guid: 4b7ae037348c4e1fb2b07ef4e812345a, type: 3}
+    - {fileID: 52072, guid: 4b7ae037348c4e1fb2b07ef4e812345a, type: 3}
+    - {fileID: 52073, guid: 4b7ae037348c4e1fb2b07ef4e812345a, type: 3}
+  - emblemId: 8
+    emblemName: 물
+    characters:
+    - {fileID: 52080, guid: e93520a891c74b879b9906b1be2b09ff, type: 3}
+    - {fileID: 52081, guid: e93520a891c74b879b9906b1be2b09ff, type: 3}
+    - {fileID: 52082, guid: e93520a891c74b879b9906b1be2b09ff, type: 3}
+    - {fileID: 52083, guid: e93520a891c74b879b9906b1be2b09ff, type: 3}
+  - emblemId: 9
+    emblemName: 대지
+    characters:
+    - {fileID: 52090, guid: 8390fb07d78842e5bd54661b86f954b3, type: 3}
+    - {fileID: 52091, guid: 8390fb07d78842e5bd54661b86f954b3, type: 3}
+    - {fileID: 52092, guid: 8390fb07d78842e5bd54661b86f954b3, type: 3}
+    - {fileID: 52093, guid: 8390fb07d78842e5bd54661b86f954b3, type: 3}
+  - emblemId: 10
+    emblemName: 바람
+    characters:
+    - {fileID: 52100, guid: fdb92e0d3d25433194d359753018fcbe, type: 3}
+    - {fileID: 52101, guid: fdb92e0d3d25433194d359753018fcbe, type: 3}
+    - {fileID: 52102, guid: fdb92e0d3d25433194d359753018fcbe, type: 3}
+    - {fileID: 52103, guid: fdb92e0d3d25433194d359753018fcbe, type: 3}
+  - emblemId: 11
+    emblemName: 얼음
+    characters:
+    - {fileID: 52110, guid: 538a88213ca7412fb8598d7eeb49b43a, type: 3}
+    - {fileID: 52111, guid: 538a88213ca7412fb8598d7eeb49b43a, type: 3}
+    - {fileID: 52112, guid: 538a88213ca7412fb8598d7eeb49b43a, type: 3}
+    - {fileID: 52113, guid: 538a88213ca7412fb8598d7eeb49b43a, type: 3}
+  - emblemId: 12
+    emblemName: 전기
+    characters:
+    - {fileID: 52120, guid: adde8ba3d8f748ee86bd238829b414e1, type: 3}
+    - {fileID: 52121, guid: adde8ba3d8f748ee86bd238829b414e1, type: 3}
+    - {fileID: 52122, guid: adde8ba3d8f748ee86bd238829b414e1, type: 3}
+    - {fileID: 52123, guid: adde8ba3d8f748ee86bd238829b414e1, type: 3}
+  - emblemId: 13
+    emblemName: 빛
+    characters:
+    - {fileID: 52130, guid: 9fd282ad393245f582b02e8677341e08, type: 3}
+    - {fileID: 52131, guid: 9fd282ad393245f582b02e8677341e08, type: 3}
+    - {fileID: 52132, guid: 9fd282ad393245f582b02e8677341e08, type: 3}
+    - {fileID: 52133, guid: 9fd282ad393245f582b02e8677341e08, type: 3}
+  - emblemId: 14
+    emblemName: 어둠
+    characters:
+    - {fileID: 52140, guid: 953a471c72b546ad9068c0faea033d7d, type: 3}
+    - {fileID: 52141, guid: 953a471c72b546ad9068c0faea033d7d, type: 3}
+    - {fileID: 52142, guid: 953a471c72b546ad9068c0faea033d7d, type: 3}
+    - {fileID: 52143, guid: 953a471c72b546ad9068c0faea033d7d, type: 3}

@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 namespace SquareTD
@@ -6,11 +7,12 @@ namespace SquareTD
     public class EnemyMovement : MonoBehaviour
     {
         [SerializeField] private float m_stepDuration = 0.7f;
+        [SerializeField] private float m_landDuration = 0.1f;
         [SerializeField] private EnemyCubeMeshVisual m_cube;
         public int PathIndex { get; private set; }
+        public bool IsMoving { get; private set; }
         private int m_actionCounter;
         private EnemyController m_controller;
-        private EnemyCubeOrientation m_orientation;
 
         private void Awake()
         {
@@ -19,9 +21,11 @@ namespace SquareTD
 
         public void Init(int startIndex)
         {
+            transform.localScale = Vector3.one;
+            IsMoving = false;
             PathIndex = startIndex;
             m_actionCounter = m_controller.Definition.Action;
-            m_orientation = m_cube.RandomizeForSpawn();
+            m_cube.RandomizeForSpawn();
         }
 
         public IEnumerator TakeTurn()
@@ -35,6 +39,7 @@ namespace SquareTD
 
         private IEnumerator MoveSteps(int steps)
         {
+            IsMoving = true;
             BoardManager board = BoardManager.Instance;
             int fromIndex = PathIndex;
 
@@ -47,36 +52,35 @@ namespace SquareTD
             }
 
             board.Occupancy.Move(m_controller, fromIndex, PathIndex);
-            yield return StandUpright();
+
+            Tween upright = m_cube.StandUpright();
+            if (upright != null)
+            {
+                yield return upright.WaitForCompletion();
+                m_cube.SnapRotation();
+            }
+            IsMoving = false;
         }
 
         private IEnumerator MoveOneTile(Vector3 target)
         {
-            Vector3 start = transform.position;
-            EnemyCubeRollDirection direction = GetRollDirection(target - start);
-            EnemyCubeOrientation before = m_orientation;
-            float elapsed = 0f;
+            Vector3 direction = GetRollDirection(target - transform.position);
 
-            while (elapsed < m_stepDuration)
-            {
-                elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsed / m_stepDuration);
+            Sequence roll = DOTween.Sequence();
+            roll.Append(transform.DOMove(target, m_stepDuration).SetEase(Ease.InOutSine));
+            roll.Join(m_cube.Roll(direction, m_stepDuration));
+            roll.Append(transform.DOPunchScale(new Vector3(0.1f, -0.1f, 0f), m_landDuration, 1, 0f));
+            roll.SetLink(gameObject, LinkBehaviour.KillOnDisable);
 
-                m_cube.AnimateTileRoll(before, direction, t, out float travel, out m_orientation);
-                transform.position = Vector3.Lerp(start, target, travel);
-                yield return null;
-            }
-
-            m_cube.AnimateTileRoll(before, direction, 1f, out _, out m_orientation);
-            transform.position = target;
-            m_cube.ShowOrientation(m_orientation);
+            yield return roll.WaitForCompletion();
+            m_cube.SnapRotation();
         }
 
-        private EnemyCubeRollDirection GetRollDirection(Vector3 move)
+        private Vector3 GetRollDirection(Vector3 move)
         {
             if (Mathf.Abs(move.x) >= Mathf.Abs(move.y))
-                return move.x >= 0f ? EnemyCubeRollDirection.Right : EnemyCubeRollDirection.Left;
-            return move.y >= 0f ? EnemyCubeRollDirection.Up : EnemyCubeRollDirection.Down;
+                return move.x >= 0f ? Vector3.right : Vector3.left;
+            return move.y >= 0f ? Vector3.up : Vector3.down;
         }
 
         private int RollDice()
@@ -86,27 +90,5 @@ namespace SquareTD
         }
 
         public void SetSortingOrder(int order) => m_cube.SetSortingOrder(order);
-
-        private IEnumerator StandUpright()
-        {
-            while (m_orientation.CounterClockwiseQuarterTurns != 0)
-            {
-                EnemyCubeOrientation before = m_orientation;
-                int direction = before.CounterClockwiseQuarterTurns == 3 ? 1 : -1;
-
-                float elapsed = 0f;
-                while (elapsed < m_cube.UprightHopDuration)
-                {
-                    elapsed += Time.deltaTime;
-                    m_cube.AnimateUprightHop(before, direction, elapsed / m_cube.UprightHopDuration);
-                    yield return null;
-                }
-
-                m_orientation = EnemyCubeOrientation.FromFace(before.VisibleFace,
-                                                              before.CounterClockwiseQuarterTurns + direction);
-                m_cube.ShowOrientation(m_orientation);
-            }
-        }
-
     }
 }

@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f28733cd52344c294fdd092f7f2a9d2, type: 3}
+  m_Name: SynergyCharacterCatalog_Old
+  m_EditorClassIdentifier: Assembly-CSharp::SynergyCharacterCatalog
+  m_entries:
+  - towerID: 6001
+    characterName: 오딘
+    front: {fileID: 53001, guid: 51c06b39b3eb456ca1078f566804ea92, type: 3}
+  - towerID: 6002
+    characterName: 토르
+    front: {fileID: 53002, guid: 51c06b39b3eb456ca1078f566804ea92, type: 3}
+  - towerID: 6003
+    characterName: 로키
+    front: {fileID: 53003, guid: 51c06b39b3eb456ca1078f566804ea92, type: 3}
+  - towerID: 6004
+    characterName: 헬
+    front: {fileID: 53004, guid: 51c06b39b3eb456ca1078f566804ea92, type: 3}
+  - towerID: 6005
+    characterName: 수르트
+    front: {fileID: 53005, guid: 51c06b39b3eb456ca1078f566804ea92, type: 3}
+  - towerID: 6006
+    characterName: 프레이
+    front: {fileID: 53006, guid: 51c06b39b3eb456ca1078f566804ea92, type: 3}
+  - towerID: 6007
+    characterName: 발드르
+    front: {fileID: 53007, guid: 51c06b39b3eb456ca1078f566804ea92, type: 3}
+  - towerID: 6008
+    characterName: 스카디
+    front: {fileID: 53008, guid: 51c06b39b3eb456ca1078f566804ea92, type: 3}
+  - towerID: 6009
+    characterName: 프레이야
+    front: {fileID: 53009, guid: 51c06b39b3eb456ca1078f566804ea92, type: 3}
+  - towerID: 6010
+    characterName: 이미르
+    front: {fileID: 53010, guid: 51c06b39b3eb456ca1078f566804ea92, type: 3}
+  - towerID: 6011
+    characterName: 울르
+    front: {fileID: 53011, guid: 51c06b39b3eb456ca1078f566804ea92, type: 3}
+  - towerID: 6012
+    characterName: 브륀힐드
+    front: {fileID: 53012, guid: 51c06b39b3eb456ca1078f566804ea92, type: 3}
+  - towerID: 6013
+    characterName: 브록 & 에이트리
+    front: {fileID: 53013, guid: 51c06b39b3eb456ca1078f566804ea92, type: 3}
+  - towerID: 6014
+    characterName: 뇨르드
+    front: {fileID: 53014, guid: 51c06b39b3eb456ca1078f566804ea92, type: 3}

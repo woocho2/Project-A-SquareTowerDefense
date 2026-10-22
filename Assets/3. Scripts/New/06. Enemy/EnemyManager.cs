@@ -1,14 +1,13 @@
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace SquareTD
 {
     public class EnemyManager : Singleton<EnemyManager>
     {
-        [SerializeField] EnemyPool m_normalPool;
-        [SerializeField] EnemyDefinition m_normalDefinition;
+        [SerializeField] EnemySpawnEntry m_normal, m_middleBoss, m_finalBoss;
         public EnemyRegistry Registry { get; private set; }
+        public BossTimer BossTimer { get; private set; }
         private EnemySpawner m_spawner;
         public event Action<int> CountChanged;
 
@@ -19,11 +18,12 @@ namespace SquareTD
             if (Instance != this) return;
 
             Registry = new EnemyRegistry();
+            BossTimer = new BossTimer();
         }
 
         private void Start()
         {
-            m_spawner = new EnemySpawner(m_normalPool, BoardManager.Instance, Registry, m_normalDefinition);
+            m_spawner = new EnemySpawner(BoardManager.Instance, Registry, m_normal, m_middleBoss, m_finalBoss, BossTimer);
         }
 
         public void SpawnWave(int wave)
@@ -32,25 +32,13 @@ namespace SquareTD
             CountChanged?.Invoke(Registry.Count);
         }
 
-        private void Update()
+        public bool IsAnyEnemyMoving()
         {
-            var keyboard = Keyboard.current;
-            if (keyboard == null) return;
-
-            if (keyboard.jKey.wasPressedThisFrame)
+            foreach (EnemyController enemy in Registry.Alive)
             {
-                SpawnWave(1);
-                Debug.Log($"[EnemyManager] 1웨이브 소환/ 살아 있는 적 {Registry.Count}");
+                if (enemy.Movement.IsMoving) return true;
             }
-
-            if (keyboard.mKey.wasPressedThisFrame)
-            {
-                foreach (EnemyController enemy in Registry.Alive)
-                {
-                    enemy.StartCoroutine(enemy.Movement.TakeTurn());
-                }
-                Debug.Log($"[EnemyManager] 적 턴 / 적 {Registry.Count}마리");
-            }
+            return false;
         }
     }
 }

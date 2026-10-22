@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!114 &11400000
 MonoBehaviour:
@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cce1b56f7f3448b976ca68afe4b0bf9, type: 3}
+  m_Script: {fileID: 11500000, guid: de646ff01ec41b348a3669d53f14d4d2, type: 3}
   m_Name: TowerCharacterCatalog
-  m_EditorClassIdentifier: Assembly-CSharp::TowerCharacterCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.TowerCharacterCatalog
   m_entries:
   - emblemId: 1
     emblemName: 검

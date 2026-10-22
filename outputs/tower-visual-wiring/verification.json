@@ -1,0 +1,28 @@
+﻿{
+    "Catalogs":  [
+                     {
+                         "Name":  "TowerCharacterCatalog",
+                         "EntriesPreserved":  true,
+                         "OldGuidPreserved":  true,
+                         "NewScriptConnected":  true
+                     },
+                     {
+                         "Name":  "SynergyCharacterCatalog",
+                         "EntriesPreserved":  true,
+                         "OldGuidPreserved":  true,
+                         "NewScriptConnected":  true
+                     }
+                 ],
+    "RegularEntries":  14,
+    "PortraitsPerEntry":  4,
+    "SynergyEntries":  14,
+    "PortraitSpriteReferencesResolved":  70,
+    "PrefabNewComponentOnly":  true,
+    "RendererReferencesValid":  true,
+    "SettingsMatchTowerBase":  true,
+    "OldTowerBaseAndScenesUnchanged":  true,
+    "ConcurrentSourceEditsObserved":  [
+                                          "Assets\\3. Scripts\\New\\07. Combat\\DamageCalculator.cs"
+                                      ],
+    "PlayModeVerification":  "Blocked by existing/in-progress DamageCalculator.cs compile errors; no C# files edited by this task."
+}

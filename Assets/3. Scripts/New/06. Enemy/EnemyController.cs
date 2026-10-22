@@ -6,8 +6,11 @@ namespace SquareTD
     {
         public EnemyDefinition Definition { get; private set; }
         public EnemyMovement Movement { get; private set; }
+        public EnemyHealth Health { get; } = new EnemyHealth();
+        public EnemyPool Pool { get; private set; }
+        public int SpawnWave { get; private set; }
 
-        public float MaxHp { get; private set; }
+        public float MaxHp => Health.Max;
         public float Defense { get; private set; }
 
         private void Awake()
@@ -15,11 +18,22 @@ namespace SquareTD
             Movement = GetComponent<EnemyMovement>();
         }
 
-        public void Setup(EnemyDefinition definition, float hpMultiplier, float defenseMultiplier)
+        public void Setup(EnemyDefinition definition, EnemyPool pool, int spawnWave)
         {
             Definition = definition;
-            MaxHp = definition.MaxHP * hpMultiplier;
-            Defense = definition.Defense * defenseMultiplier;
-        }        
+            Pool = pool;
+            SpawnWave = spawnWave;
+            Defense = definition.Defense * WaveTable.GetDefenseMultiplier(spawnWave, definition.Kind);
+            Health.Reset(definition.MaxHP * WaveTable.GetHpMultiplier(spawnWave, definition.Kind));
+        }
+
+        public void TakeDamage(DamageInfo info)
+        {
+            float damage = DamageCalculator.Calculate(info, Defense, 1f, 0f);
+            if (Health.TakeDamage(damage))
+            {
+                Debug.Log($"[EnemyController] {name} 죽음");
+            }
+        }
     }
 }
