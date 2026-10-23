@@ -37,7 +37,7 @@ AnimationClip:
     - time: 0.5833333
       value: {fileID: 21301007, guid: 0b6f7f695ce7c17a4da280a199ac0c60, type: 3}
     attribute: m_Sprite
-    path: 
+    path: OrbVisual
     classID: 212
     script: {fileID: 0}
     flags: 2
@@ -49,7 +49,7 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 0
+      path: 1222197203
       attribute: 0
       script: {fileID: 0}
       typeID: 212

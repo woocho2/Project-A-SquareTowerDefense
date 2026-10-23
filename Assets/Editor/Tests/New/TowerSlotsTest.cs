@@ -101,5 +101,106 @@ namespace SquareTD.Tests
             Assert.IsTrue(slots.TryGetFirstEmpty(out int index));
             Assert.AreEqual(0, index);
         }
+
+        [Test]
+        public void 빈_칸으로_옮기면_새_칸에_있고_원래_칸은_빔()
+        {
+            var slots = new TowerSlots(3);
+            TowerController tower = MakeTower();
+            slots.TryPlace(tower, 0);
+
+            Assert.IsTrue(slots.TryMove(0, 2));
+            Assert.AreSame(tower, slots.Get(2));
+            Assert.IsTrue(slots.IsEmpty(0));
+        }
+
+        [Test]
+        public void 영번이_아닌_칸에서도_옮김()
+        {
+            var slots = new TowerSlots(3);
+            TowerController tower = MakeTower();
+            slots.TryPlace(tower, 1);
+
+            Assert.IsTrue(slots.TryMove(1, 2));
+            Assert.AreSame(tower, slots.Get(2));
+            Assert.IsTrue(slots.IsEmpty(1));
+        }
+
+        [Test]
+        public void 다른_칸이_비어도_빈_칸에서는_옮기지_않음()
+        {
+            var slots = new TowerSlots(4);
+            slots.TryPlace(MakeTower(), 0);
+
+            Assert.IsFalse(slots.TryMove(2, 3));
+            Assert.IsTrue(slots.IsEmpty(3));
+        }
+
+        [Test]
+        public void 타워가_있는_칸으로는_옮기지_않음()
+        {
+            var slots = new TowerSlots(3);
+            TowerController first = MakeTower();
+            TowerController second = MakeTower();
+            slots.TryPlace(first, 0);
+            slots.TryPlace(second, 1);
+
+            Assert.IsFalse(slots.TryMove(0, 1));
+            Assert.AreSame(first, slots.Get(0));
+            Assert.AreSame(second, slots.Get(1));
+        }
+
+        [Test]
+        public void 빈_칸에서는_옮길_것이_없음()
+        {
+            var slots = new TowerSlots(3);
+            Assert.IsFalse(slots.TryMove(0, 1));
+            Assert.IsTrue(slots.IsEmpty(1));
+        }
+
+        [Test]
+        public void 같은_칸으로는_옮기지_않음()
+        {
+            var slots = new TowerSlots(3);
+            TowerController tower = MakeTower();
+            slots.TryPlace(tower, 0);
+
+            Assert.IsFalse(slots.TryMove(0, 0));
+            Assert.AreSame(tower, slots.Get(0));
+        }
+
+        [Test]
+        public void 두_칸의_타워를_바꿈()
+        {
+            var slots = new TowerSlots(3);
+            TowerController first = MakeTower();
+            TowerController second = MakeTower();
+            slots.TryPlace(first, 0);
+            slots.TryPlace(second, 2);
+
+            Assert.IsTrue(slots.TrySwap(0, 2));
+            Assert.AreSame(second, slots.Get(0));
+            Assert.AreSame(first, slots.Get(2));
+        }
+
+        [Test]
+        public void 한쪽이_비면_바꾸지_않음()
+        {
+            var slots = new TowerSlots(3);
+            TowerController tower = MakeTower();
+            slots.TryPlace(tower, 0);
+
+            Assert.IsFalse(slots.TrySwap(0, 1));
+            Assert.AreSame(tower, slots.Get(0));
+            Assert.IsTrue(slots.IsEmpty(1));
+        }
+
+        [Test]
+        public void 같은_칸끼리는_바꾸지_않음()
+        {
+            var slots = new TowerSlots(3);
+            slots.TryPlace(MakeTower(), 0);
+            Assert.IsFalse(slots.TrySwap(0, 0));
+        }
     }
 }

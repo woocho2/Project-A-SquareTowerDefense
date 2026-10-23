@@ -1,3 +1,4 @@
+using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -5,15 +6,68 @@ namespace SquareTD.Tests
 {
     public class TowerControllerTest
     {
+        // 판 없이 "쏠 대상이 있나"만 정해 주는 가짜 공격 방식
+        private class FakeAction : TowerAction
+        {
+            public bool HasTarget = true;
+
+            public FakeAction() : base(null, null, null) { }
+
+            public override bool CanAct(TowerController tower, TowerFinalStats stats) => HasTarget;
+
+            public override IEnumerator Act(TowerController tower, TowerFinalStats stats, AttackHandle handle)
+            {
+                yield break;
+            }
+        }
+
         private GameObject m_go;
 
-        private TowerController MakeTower(int id, int action)
+        private TowerController MakeTower(int id, int action, TowerAction towerAction = null)
         {
             m_go = new GameObject("TestTower");
             var tower = m_go.AddComponent<TowerController>();
             var definition = new TowerDefinition(id, 10f, 2, action, 1, 0f, 0f, 1, 60, 5, 2f, 5f, TargetPriority.Closest);
-            tower.Init(definition, 0);
+            tower.Init(definition, 0, towerAction);
             return tower;
+        }
+
+        [Test]
+        public void 대상이_없으면_0에서_기다림()
+        {
+            var action = new FakeAction { HasTarget = false };
+            TowerController tower = MakeTower(1201, 2, action);
+
+            Assert.IsFalse(tower.TickAction());
+            Assert.AreEqual(1, tower.State.RemainingAction);
+            Assert.IsFalse(tower.TickAction());
+            Assert.AreEqual(0, tower.State.RemainingAction);
+            Assert.IsFalse(tower.TickAction());
+            Assert.AreEqual(0, tower.State.RemainingAction);
+        }
+
+        [Test]
+        public void 기다리다_대상이_들어온_턴에_바로_행동()
+        {
+            var action = new FakeAction { HasTarget = false };
+            TowerController tower = MakeTower(1201, 2, action);
+            tower.TickAction();
+            tower.TickAction();
+            tower.TickAction();
+
+            action.HasTarget = true;
+            Assert.IsTrue(tower.TickAction());
+            Assert.AreEqual(2, tower.State.RemainingAction);
+        }
+
+        [Test]
+        public void 대상이_있으면_기다리지_않고_Action마다_행동()
+        {
+            TowerController tower = MakeTower(1201, 2, new FakeAction());
+            Assert.IsFalse(tower.TickAction());
+            Assert.IsTrue(tower.TickAction());
+            Assert.IsFalse(tower.TickAction());
+            Assert.IsTrue(tower.TickAction());
         }
 
         [TearDown]
@@ -71,6 +125,22 @@ namespace SquareTD.Tests
             Assert.IsFalse(MakeTower(1301, 3).IsAttackTower);
             CleanUp();
             Assert.IsFalse(MakeTower(1401, 3).IsAttackTower);
+        }
+
+        [Test]
+        public void 공격_칸은_고르지_않은_채로_시작()
+        {
+            TowerController tower = MakeTower(1201, 3);
+            Assert.AreEqual(-1, tower.State.AttackCellIndex);
+        }
+
+        [Test]
+        public void 옮기면_고른_공격_칸이_풀림()
+        {
+            TowerController tower = MakeTower(1201, 3);
+            tower.State.AttackCellIndex = 5;
+            tower.SetSlot(2, Vector3.zero);
+            Assert.AreEqual(-1, tower.State.AttackCellIndex);
         }
 
         [Test]

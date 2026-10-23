@@ -70,6 +70,20 @@ namespace SquareTD
             return Mathf.Max(dx, dy);
         }
 
+        public List<int> GetPathIndicesInSquare(Vector3Int center, int radius)
+        {
+            var result = new List<int>();
+
+            for (int i = 0; i < PathCount; i++)
+            {
+                if (GetTileDistance(m_pathCells[i], center) <= radius)
+                {
+                    result.Add(i);
+                }
+            }
+            return result;
+        }
+
         public int GetBifrostPartner(int index)
         {
             return WrapPathIndex(index + (PathCount/2));

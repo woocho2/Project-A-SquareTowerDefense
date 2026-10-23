@@ -25,13 +25,13 @@ namespace SquareTD
 
         private void OnCellChanged(int index)
         {
-            IReadOnlyList<EnemyController> enemies = BoardManager.Instance.Occupancy.GetAt(index);
-            for (int i = 0; i < enemies.Count; i++)
+            IReadOnlyList<ITarget> targets = BoardManager.Instance.Occupancy.GetAt(index);
+            for (int i = 0; i < targets.Count; i++)
             {
-                enemies[i].Movement.SetSortingOrder((i + 1) * 2);
+                targets[i].SetSortingOrder((i + 1) * 2);
             }
 
-            int count = enemies.Count;
+            int count = targets.Count;
             TextMeshPro label = GetOrCreateLabel(index);
 
             if (count == 0)

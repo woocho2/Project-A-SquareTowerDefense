@@ -17,6 +17,8 @@ namespace SquareTD
 
         private void OnEnemyTurnEnded(int turn)
         {
+            if (ProjectileManager.Instance.FlyingCount > 0)
+                Debug.LogError($"[InvariantChecker] 적 턴이 끝났는데 날아가는 탄 {ProjectileManager.Instance.FlyingCount}발");
             EnemyRegistry registry = EnemyManager.Instance.Registry;
             PathOccupancy occupancy = BoardManager.Instance.Occupancy;
             int pathCount = BoardManager.Instance.Grid.PathCount;

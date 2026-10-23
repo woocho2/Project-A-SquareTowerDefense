@@ -2,16 +2,24 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    public class EnemyController : MonoBehaviour
+    public class EnemyController : MonoBehaviour, ITarget
     {
         public EnemyDefinition Definition { get; private set; }
         public EnemyMovement Movement { get; private set; }
         public EnemyHealth Health { get; } = new EnemyHealth();
         public EnemyPool Pool { get; private set; }
         public int SpawnWave { get; private set; }
-
         public float MaxHp => Health.Max;
         public float Defense { get; private set; }
+        public Transform Transform => transform;
+        public int PathIndex => Movement.PathIndex;
+        public bool IsAlive => !Health.IsDead;
+        public bool IsBoss => Definition.Kind != EnemyKind.Normal;
+        public bool IsDummy => false;
+        public EnemyController Body => this;
+        public float CurrentHp => Health.Current;
+        public float PreviewDamage(DamageInfo info) => DamageCalculator.Calculate(info, Defense, 1f, 0f);
+        public void SetSortingOrder(int order) => Movement.SetSortingOrder(order);
 
         private void Awake()
         {
@@ -29,7 +37,7 @@ namespace SquareTD
 
         public void TakeDamage(DamageInfo info)
         {
-            float damage = DamageCalculator.Calculate(info, Defense, 1f, 0f);
+            float damage = PreviewDamage(info);
             if (Health.TakeDamage(damage))
             {
                 KillInfo kill = new KillInfo

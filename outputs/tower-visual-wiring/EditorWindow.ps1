@@ -1,6 +1,6 @@
 param(
-    [ValidateSet('Focus','Refresh','PlayToggle','BuildTower','Capture','Click')][string]$Action='Capture',
-    [string]$OutputName='editor.png', [int]$X=0, [int]$Y=0
+    [ValidateSet('Focus','Refresh','PlayToggle','BuildTower','Capture','Click','Keys')][string]$Action='Capture',
+    [string]$OutputName='editor.png', [int]$X=0, [int]$Y=0, [string]$Keys
 )
 $ErrorActionPreference='Stop'
 Add-Type -AssemblyName System.Windows.Forms
@@ -36,6 +36,7 @@ Start-Sleep -Milliseconds 250
 $rect=New-Object ProjectEditorWindow+Rect
 [void][ProjectEditorWindow]::GetWindowRect($handle,[ref]$rect)
 switch($Action) {
+ 'Keys' { [Windows.Forms.SendKeys]::SendWait($Keys) }
  'Refresh' { [Windows.Forms.SendKeys]::SendWait('^r') }
  'PlayToggle' { [Windows.Forms.SendKeys]::SendWait('^p') }
  'BuildTower' { [Windows.Forms.SendKeys]::SendWait('b') }

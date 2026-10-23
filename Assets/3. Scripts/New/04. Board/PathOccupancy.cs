@@ -6,55 +6,55 @@ namespace SquareTD
 {
     public class PathOccupancy
     {
-        private readonly Dictionary<int, List<EnemyController>> m_cells = new Dictionary<int, List<EnemyController>>();
-        private static readonly List<EnemyController> Empty = new List<EnemyController>();
+        private readonly Dictionary<int, List<ITarget>> m_cells = new Dictionary<int, List<ITarget>>();
+        private static readonly List<ITarget> Empty = new List<ITarget>();
 
         public event Action<int> CellChanged;
 
-        public void Add(EnemyController enemy, int index)
+        public void Add(ITarget target, int index)
         {
-            GetOrCreateList(index).Add(enemy);
+            GetOrCreateList(index).Add(target);
             CellChanged?.Invoke(index);
         }
 
-        public IReadOnlyList<EnemyController> GetAt(int index)
+        public void Remove(ITarget target, int index)
         {
-            if (m_cells.TryGetValue(index, out List<EnemyController> list)) return list;
-            return Empty;
-        }
-
-        public void Remove(EnemyController enemy, int index)
-        {
-            if (m_cells.TryGetValue(index, out List<EnemyController> list) && list.Remove(enemy))
+            if (m_cells.TryGetValue(index, out List<ITarget> list) && list.Remove(target))
             {
                 CellChanged?.Invoke(index);
                 return;
             }
-            Debug.LogWarning($"[PathOccupancy]  {index}번 칸에 없는 적: {enemy.name}");
+            Debug.LogWarning($"[PathOccupancy]  {index}번 칸에 없는 적: {target.Transform.name}");
         }
 
-        public void Move(EnemyController enemy, int from, int to)
+        public IReadOnlyList<ITarget> GetAt(int index)
+        {
+            if (m_cells.TryGetValue(index, out List<ITarget> list)) return list;
+            return Empty;
+        }
+
+        public void Move(ITarget target, int from, int to)
         {
             if (from == to) return;
 
-            if (!(m_cells.TryGetValue(from, out List<EnemyController> fromlist) && fromlist.Remove(enemy)))
+            if (!(m_cells.TryGetValue(from, out List<ITarget> fromlist) && fromlist.Remove(target)))
             {
-                Debug.LogWarning($"[PathOccupancy] {from}번 칸에 없는 적: {enemy.name}");
+                Debug.LogWarning($"[PathOccupancy] {from}번 칸에 없는 적: {target.Transform.name}");
                 return;
             }
 
-            List<EnemyController> toList = GetOrCreateList(to);
-            toList.Add(enemy);            
+            List<ITarget> toList = GetOrCreateList(to);
+            toList.Add(target);
 
             CellChanged?.Invoke(from);
             CellChanged?.Invoke(to);
         }
 
-        private List<EnemyController> GetOrCreateList(int index)
+        private List<ITarget> GetOrCreateList(int index)
         {
-            if (!m_cells.TryGetValue(index, out List<EnemyController> list))
+            if (!m_cells.TryGetValue(index, out List<ITarget> list))
             {
-                list = new List<EnemyController>();
+                list = new List<ITarget>();
                 m_cells[index] = list;
             }
             return list;

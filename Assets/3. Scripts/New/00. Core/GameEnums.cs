@@ -62,4 +62,22 @@ namespace SquareTD
         MostCrowded = 5,
         Boss = 6
     }
+
+    // 수정자가 바꾸는 스탯 (23번 4-3). 쓰는 수업에서 맨 뒤에 더함
+    public enum StatType
+    {
+        None = 0,
+        Power = 1,
+        Range = 2,
+        MaxAction = 3,
+        AttackCount = 4,
+        Mastery = 5,
+        CritRate = 6,
+        CritDamage = 7,
+        AbilityValue = 8,
+        Duration = 9,
+        MaxStack = 10,
+        StackValue = 11,
+        ColorLevelBonus = 12,       // 대지의 만개: 쓸 컬러 레벨 +1 (최대 6)
+    }
 }

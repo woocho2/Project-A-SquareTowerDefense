@@ -1,0 +1,1401 @@
+﻿{
+    "Head":  "b5a2c4f5dbe55a6c474f31a55e032c776187bbc7",
+    "RestoredFromHead":  [
+                             "Assets/4. Asset/6. Effect/Hit_Axe_Splash_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Axe_Target_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Bow_Splash_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Bow_Target_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Dark_Splash_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Dark_Target_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Earth_Splash_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Earth_Target_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Electric_Splash_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Electric_Target_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Fire_Splash_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Fire_Target_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Hammer_Splash_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Hammer_Target_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Ice_Splash_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Ice_Target_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Light_Splash_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Light_Target_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Shield_Splash_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Shield_Target_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Spear_Splash_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Spear_Target_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Water_Splash_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Water_Target_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Wind_Splash_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Hit_Wind_Target_30_v4.prefab",
+                             "Assets/4. Asset/6. Effect/Sword_Splash_30_v3.prefab",
+                             "Assets/4. Asset/6. Effect/Sword_Target_30_v3.prefab",
+                             "Assets/4. Asset/3. Projectile/Target/1. Sword_Projectile_Animation_Fly.anim",
+                             "Assets/4. Asset/3. Projectile/Target/1. Sword_Projectile_Animation_Idle.anim",
+                             "Assets/4. Asset/3. Projectile/Target/10. Wind_Projectile_Animation_Fly.anim",
+                             "Assets/4. Asset/3. Projectile/Target/10. Wind_Projectile_Animation_Idle.anim",
+                             "Assets/4. Asset/3. Projectile/Target/11. Ice_Projectile_Animation_Fly.anim",
+                             "Assets/4. Asset/3. Projectile/Target/11. Ice_Projectile_Animation_Idle.anim",
+                             "Assets/4. Asset/3. Projectile/Target/12. Electric_Projectile_Animation_Fly.anim",
+                             "Assets/4. Asset/3. Projectile/Target/12. Electric_Projectile_Animation_Idle.anim",
+                             "Assets/4. Asset/3. Projectile/Target/13. Light_Projectile_Animation_Fly.anim",
+                             "Assets/4. Asset/3. Projectile/Target/13. Light_Projectile_Animation_Idle.anim",
+                             "Assets/4. Asset/3. Projectile/Target/14. Dark_Projectile_Animation_Fly.anim",
+                             "Assets/4. Asset/3. Projectile/Target/14. Dark_Projectile_Animation_Idle.anim",
+                             "Assets/4. Asset/3. Projectile/Target/2. Axe_Projectile_Animation_Fly.anim",
+                             "Assets/4. Asset/3. Projectile/Target/2. Axe_Projectile_Animation_Idle.anim",
+                             "Assets/4. Asset/3. Projectile/Target/3. Bow_Projectile_Animation_Fly.anim",
+                             "Assets/4. Asset/3. Projectile/Target/3. Bow_Projectile_Animation_Idle.anim",
+                             "Assets/4. Asset/3. Projectile/Target/4. Spear_Projectile_Animation_Fly.anim",
+                             "Assets/4. Asset/3. Projectile/Target/4. Spear_Projectile_Animation_Idle.anim",
+                             "Assets/4. Asset/3. Projectile/Target/5. Shield_Projectile_Animation_Fly.anim",
+                             "Assets/4. Asset/3. Projectile/Target/5. Shield_Projectile_Animation_Idle.anim",
+                             "Assets/4. Asset/3. Projectile/Target/6. Hammer_Projectile_Animation_Fly.anim",
+                             "Assets/4. Asset/3. Projectile/Target/6. Hammer_Projectile_Animation_Idle.anim",
+                             "Assets/4. Asset/3. Projectile/Target/7. Fire_Projectile_Animation_Fly.anim",
+                             "Assets/4. Asset/3. Projectile/Target/7. Fire_Projectile_Animation_Idle.anim",
+                             "Assets/4. Asset/3. Projectile/Target/8. Water_Projectile_Animation_Fly.anim",
+                             "Assets/4. Asset/3. Projectile/Target/8. Water_Projectile_Animation_Idle.anim",
+                             "Assets/4. Asset/3. Projectile/Target/9. Earth_Projectile_Animation_Fly.anim",
+                             "Assets/4. Asset/3. Projectile/Target/9. Earth_Projectile_Animation_Idle.anim"
+                         ],
+    "Files":  [
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Axe_Splash_30_v4.prefab",
+                      "Hash":  "51ADCD1A0F207F4230DD4E4DF52E2694F50DA62108861B309E671322D327E10E"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Axe_Splash_30_v4.prefab.meta",
+                      "Hash":  "65988E14D12FB830D418F392B8587B6899450C577E7091AEBD51A21990697C99"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Axe_Target_30_v4.prefab",
+                      "Hash":  "FE8C0F933DA1BB8B54DA2FC262142EF6C3A18AA227D87F02CB65D52CD5FA397D"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Axe_Target_30_v4.prefab.meta",
+                      "Hash":  "A8B79090209B27D521263D0781A1B3C836683165F732BDFCFD0D7491892EE7CF"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Bow_Splash_30_v4.prefab",
+                      "Hash":  "B032283CECAB5F0C05EF26E3E27F612148F01D5ACAD87397AF4BD97A851802DF"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Bow_Splash_30_v4.prefab.meta",
+                      "Hash":  "F094B9E796326832F8843E84067C9524AEBFFD95B0CA979703CE3240F70DB925"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Bow_Target_30_v4.prefab",
+                      "Hash":  "13650E2BD19FC6A2C600AE9C17D8362FAAAEBF8F404C6D0D93C0D0D24444EE04"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Bow_Target_30_v4.prefab.meta",
+                      "Hash":  "FE7880EE0D0F6BB2ED32AB3399BFC49857188686A153F0AC2E693264059D1D19"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Dark_Splash_30_v4.prefab",
+                      "Hash":  "C42FE56AA378E91C1F87228A608AB30FA27E39881355C7B018B9064C27F14204"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Dark_Splash_30_v4.prefab.meta",
+                      "Hash":  "0FC22AF192DF4F1F39D84E5C4693443D7425A8BD9E9DDEC929BEA887A385CCD3"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Dark_Target_30_v4.prefab",
+                      "Hash":  "22B480A6944029D1B7B071E2D263D75A73916733219D169430DCE845CC7C361E"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Dark_Target_30_v4.prefab.meta",
+                      "Hash":  "CE3D7970B735C8A0C7270E1E526FA13629F521934CA605E9C1B6342617CBF5F3"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Earth_Splash_30_v4.prefab",
+                      "Hash":  "061D1F6CAA1FFC8C54365269BD791611747615D969744FE050806F155B0D51DF"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Earth_Splash_30_v4.prefab.meta",
+                      "Hash":  "1BFA042DCE8BDB316A31248D93D687073E8E54F6A66763939E9B49219AE6923B"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Earth_Target_30_v4.prefab",
+                      "Hash":  "FD15B793FE316C705B2FBECB142EBAC893A2B63973EE906EBBF63BF402070C67"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Earth_Target_30_v4.prefab.meta",
+                      "Hash":  "29978DC231B250E7504564E124FB01516ECFBBC6DD7407CA5167820E47426819"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Electric_Splash_30_v4.prefab",
+                      "Hash":  "A22C3A77D114733AD0CA4533363F795E53DEA2206109E2F7ABFF980A9C957B9F"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Electric_Splash_30_v4.prefab.meta",
+                      "Hash":  "7252CF96E52DBF60657D6916061BC3841D0123D00C6D2FE32DBAD5892262D77A"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Electric_Target_30_v4.prefab",
+                      "Hash":  "5B715AC12D1FF3B4D1E6493CE5A2F1C197B41DA25466A24CB05DE8CC801E7470"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Electric_Target_30_v4.prefab.meta",
+                      "Hash":  "8A48F7506238A06D493BA939C4673C6A6F086E06DC805BA5BC51202436239A5C"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Fire_Splash_30_v4.prefab",
+                      "Hash":  "7090CE98837897A5876095EBD96F8D0FFEC7B0B4D84888BE852505D14D7C0D0D"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Fire_Splash_30_v4.prefab.meta",
+                      "Hash":  "8F71417A0222B10F60B1E54AF58E32F72B961FC7DF868BADF26E505EA9FFD9F3"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Fire_Target_30_v4.prefab",
+                      "Hash":  "9C85EDF4DC4A676ADB933F9726F5952007A6F3ABDCFB3A6D5DE842E5B420EF09"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Fire_Target_30_v4.prefab.meta",
+                      "Hash":  "7F27F9E2246DA689487CB03C9C5221F5985DECFB9A448B6DC778B1831C1EE9A4"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Hammer_Splash_30_v4.prefab",
+                      "Hash":  "4E93B230097AB88C70C6BE7F91FD914B42199379CAB9FF360D5158DC62918BD7"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Hammer_Splash_30_v4.prefab.meta",
+                      "Hash":  "C45B6275541FE8C0C322A9852D9F3415B4ACE90B6775E25F6490AE680B1BFFC8"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Hammer_Target_30_v4.prefab",
+                      "Hash":  "050DD466C7E76A8B8B91C9185EBA2B88523261116B1C1EFA19EA7B652A7F4544"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Hammer_Target_30_v4.prefab.meta",
+                      "Hash":  "9938C208299965202C3718C3EE6E7FCB5B20CB1727D9FEBD1B4D1EA93446B02A"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Ice_Splash_30_v4.prefab",
+                      "Hash":  "85E899A3C11A89D976B18BF34451FB4A3347866A0FD2351F99B3B006F3BAA97C"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Ice_Splash_30_v4.prefab.meta",
+                      "Hash":  "7DAE50CCB150054DCA6BBB2AB17E0FE696BBCED66E31FE11DDD103BC2A639B97"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Ice_Target_30_v4.prefab",
+                      "Hash":  "E17026796A47AAD47393B7693C67825D39F79F5C801C7B8C3B0175A375192D52"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Ice_Target_30_v4.prefab.meta",
+                      "Hash":  "D20E050C971F6849C007CF5EFEBB85FF7F74F2418CFBBD7026A27A4A88BA3045"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Light_Splash_30_v4.prefab",
+                      "Hash":  "B80E8F63289CDD4D4763C62AB7AF4D45A32105785353054C7811F313C4E313FE"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Light_Splash_30_v4.prefab.meta",
+                      "Hash":  "49310C0B86D84FA891160C10660EB0AAC452F1C63F0CCF8D42BF6F9BC2A1E40C"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Light_Target_30_v4.prefab",
+                      "Hash":  "7F2E0F1D9DC6BA0D31E1417B3C4C926CE6C6C9F0CEB94AC637F0ABAC351F7E3D"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Light_Target_30_v4.prefab.meta",
+                      "Hash":  "E344940C20C2CE129E852B3A74849877C11F0810E9C63AFAB5D554FC3AEA362B"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Shield_Splash_30_v4.prefab",
+                      "Hash":  "66C34E7447719FF14182BD31E0638D34A36979A85D88275FF5C53BDE468120B5"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Shield_Splash_30_v4.prefab.meta",
+                      "Hash":  "656141C271F4B11AE9C220D821E0315C9DF89BC76D18431C7E981AD10F43571C"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Shield_Target_30_v4.prefab",
+                      "Hash":  "DB9E0DDC07F5B8219A7289A41F4C25B74B045184B3DFC6660F5858876336FCD2"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Shield_Target_30_v4.prefab.meta",
+                      "Hash":  "CAFDF8A485D5FD3E365D1D5E2270838326158E8E21026A8341F864B7AA9017DD"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Spear_Splash_30_v4.prefab",
+                      "Hash":  "C4DE5A11E27BB0C0941516C9D5174572ABF831104165EE37811EE1C76B3D534E"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Spear_Splash_30_v4.prefab.meta",
+                      "Hash":  "DAC9917FE284DAD4052869F69B7CB1ECE15AACE40FC51520EE608433AFB4E15A"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Spear_Target_30_v4.prefab",
+                      "Hash":  "395507189F274E46BC68F8A875388A6CC871455506646BEA08822295B4768AB0"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Spear_Target_30_v4.prefab.meta",
+                      "Hash":  "E360EDD2081AFC6FE00B4973564350565DBBFEF772A690C7ABBA38D21DF98F89"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Water_Splash_30_v4.prefab",
+                      "Hash":  "3C9FBE140458814DEC00AB2B53E23F3D4B3C46A2B7D0C32BD65A583FFBA721B4"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Water_Splash_30_v4.prefab.meta",
+                      "Hash":  "3CAB7934A23FBB5C8033749784F2F81CB1ED2CE37F5C9F25226EBD5D15328721"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Water_Target_30_v4.prefab",
+                      "Hash":  "FEFECB51BA6A34C1EA97792609A8BFD44E2B928F6482BF77091E8837C2B41E2D"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Water_Target_30_v4.prefab.meta",
+                      "Hash":  "89F18072C212B3DAA85CBCE4702F05CFB85627139AAE4434FBC9320564F6E288"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Wind_Splash_30_v4.prefab",
+                      "Hash":  "CDB03E285EA0B224267B0B78F7C158610555D120344D453659B20D3DA57D3E10"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Wind_Splash_30_v4.prefab.meta",
+                      "Hash":  "6E4CBD0BE5CA91B89BAED75297A4388D1B09D43D18D532D46B6A92B6590FA9CF"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Wind_Target_30_v4.prefab",
+                      "Hash":  "C7B55E0B6CA2431E720071FA588CB9A6EFE736ED42275C48BC13A3151078055F"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Hit_Wind_Target_30_v4.prefab.meta",
+                      "Hash":  "02C8650FA8341F8A02C2663681ECBDC2D19C004BAB51A62BE3557AFD7CA7D04C"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Sword_Splash_30_v3.prefab",
+                      "Hash":  "8FD90D3ED71DE63D933B0C5ADD486DEE15E2783B94015865E9061C015C67C179"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Sword_Splash_30_v3.prefab.meta",
+                      "Hash":  "A4863C8BC20CFB0ABF4D5AAAFF8CE42A71147265C3AD27E212A4D9E52868283A"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Sword_Target_30_v3.prefab",
+                      "Hash":  "1235DA95889597D2D0AA417B927BC79EAC835FE1FEC4288C70C895E940BC8407"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/6. Effect/Sword_Target_30_v3.prefab.meta",
+                      "Hash":  "A6334CA68963BB8C2AB6090E7B1A5942046F30ADAA092D908FCFB00122FC6386"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/1. Sword_Projectile_Animation_Fly.anim",
+                      "Hash":  "6A00362082B4EE8FBBE74E7AC7EBC81A7A11440B486D49F1D04B41C306F8D06B"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/1. Sword_Projectile_Animation_Fly.anim.meta",
+                      "Hash":  "9B501CCB0D3B8790CEAFD09C0BE4AABE010CB3BDC346924D5BD3A2E9FB739A25"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/1. Sword_Projectile_Animation_Idle.anim",
+                      "Hash":  "932ABBE457025A72177E00A61282A5B40679808F47B75616FA004758B314D94A"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/1. Sword_Projectile_Animation_Idle.anim.meta",
+                      "Hash":  "529A5271F7CABB03447233D245C7AC9335E6A22271CAD0E310D4A2291A8ECDED"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/10. Wind_Projectile_Animation_Fly.anim",
+                      "Hash":  "B51F78CA075AE9088804FF8E31822A61F993B2E4399790EFB72F1578B24AF828"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/10. Wind_Projectile_Animation_Fly.anim.meta",
+                      "Hash":  "493C3470766E917D92CB068004D131E0C6C460600F2913BA13CCE69B26F57E13"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/10. Wind_Projectile_Animation_Idle.anim",
+                      "Hash":  "26706F5602ABDADF23F3517FD4FB56235767E290E679E386260554F7B368D0E9"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/10. Wind_Projectile_Animation_Idle.anim.meta",
+                      "Hash":  "3DE55323F2F0ED5B036C8869F7307DE458DCF52B8D51D353526CBAE5F016586E"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/11. Ice_Projectile_Animation_Fly.anim",
+                      "Hash":  "1C9F30927ABC3B35BC9934D196072C99D9F387FE903F1663F41FE2F3EE48EE1A"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/11. Ice_Projectile_Animation_Fly.anim.meta",
+                      "Hash":  "FE4D910F9C68BB8683A4DF7D982AE48CCDB5072C8E96D4B7B5E37215A0052871"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/11. Ice_Projectile_Animation_Idle.anim",
+                      "Hash":  "66C34A4ABD7809BC34FD80699B425739B359E5098661398718C20A15527D6F34"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/11. Ice_Projectile_Animation_Idle.anim.meta",
+                      "Hash":  "F3187B06C0A05A1DF3E00AB9409BACFEA836D89E82A91C01DC5775DF4F8CECDA"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/12. Electric_Projectile_Animation_Fly.anim",
+                      "Hash":  "E425C557FE6871B82F03C93EA7557EE46AE98454C18D65A99810EC0BDB8011A4"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/12. Electric_Projectile_Animation_Fly.anim.meta",
+                      "Hash":  "7A67F4C325DF8475B92B0348560614A10CF41B83D47262D775E896DA5470871F"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/12. Electric_Projectile_Animation_Idle.anim",
+                      "Hash":  "5E5E38D549DD447DBA47628AD8D9636EBDB5ED37725D5D26452A6530794EB2E6"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/12. Electric_Projectile_Animation_Idle.anim.meta",
+                      "Hash":  "0B79CC1845AD8B1DF1D5C9D7B7A98E53171300553034B707F401B5375697FB58"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/13. Light_Projectile_Animation_Fly.anim",
+                      "Hash":  "BDACFAAF9978C8DBC7130FA7CAB10570192FDE5A685833F07B1088AA8B540385"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/13. Light_Projectile_Animation_Fly.anim.meta",
+                      "Hash":  "87EBFFD22D57DAFF4FC7D3BBB523EF07E78CE4EEF196B26FF729BEDCD151627B"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/13. Light_Projectile_Animation_Idle.anim",
+                      "Hash":  "6EF76CBDC6951A9DE17AF3AF4F276853803A33BEB47519C9CEFCA231A2BB69F9"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/13. Light_Projectile_Animation_Idle.anim.meta",
+                      "Hash":  "F2B64AD9A77A348FF3310EE183A355E501DA6D83706BC0528171FDF5D7C1CB4F"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/14. Dark_Projectile_Animation_Fly.anim",
+                      "Hash":  "4A84254BAE869FB6F6EAEC7A6C7105C9F2656224BD0A3C6A217B0F962A2C930C"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/14. Dark_Projectile_Animation_Fly.anim.meta",
+                      "Hash":  "20E4510A547D6D37E8C47ACAF4BAB7F693E63B024F6FEA666AE064AB7B5B25F8"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/14. Dark_Projectile_Animation_Idle.anim",
+                      "Hash":  "2F33224943B655F33F435A6E863F1D828BDF9101EB18621E3734D2A9162D801D"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/14. Dark_Projectile_Animation_Idle.anim.meta",
+                      "Hash":  "0E13374FF24567B75CFBE8543EB4866F0E769BB9D9BDC90BC373C89F4AEB40AA"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/2. Axe_Projectile_Animation_Fly.anim",
+                      "Hash":  "84AE921A661C7A7E5FE8556EE7E831BB7E54BD80E7668185789BD4F107577391"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/2. Axe_Projectile_Animation_Fly.anim.meta",
+                      "Hash":  "B6FBD61002090E9CB11F4D3B3F03C7C13C47A890010ED2A98E9F723CEDDF2BE1"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/2. Axe_Projectile_Animation_Idle.anim",
+                      "Hash":  "EE08B58EBFDEDADE5365A4FEBB263CB84A18E07D9F6B36A2BD8835A31620ECC0"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/2. Axe_Projectile_Animation_Idle.anim.meta",
+                      "Hash":  "EA2C959F00983D5E3D2F1C5AA79F7A100194E6E38DFC04D8A31757D753017236"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/3. Bow_Projectile_Animation_Fly.anim",
+                      "Hash":  "7574CE403471F2859BAC61DF8078F03E04AA3D7CA13E186BCB6D64ADF38DE234"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/3. Bow_Projectile_Animation_Fly.anim.meta",
+                      "Hash":  "341D738483850493A0E0DCA596AD3A2E34B60C732F594447FBE29129FC4BD4F2"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/3. Bow_Projectile_Animation_Idle.anim",
+                      "Hash":  "72A91998BB0CEBC01FA8E23C533DD2A41FD9FB932228EF8392469E1D98C8BD46"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/3. Bow_Projectile_Animation_Idle.anim.meta",
+                      "Hash":  "6B1926C20B758E0C15A1E83318943BA3BF809653E5FE1F063BA90B59CD979DDB"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/4. Spear_Projectile_Animation_Fly.anim",
+                      "Hash":  "62ED779DC5F61F13D1451A65F9C90E6137B7E40C16F630591C77F535C537D132"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/4. Spear_Projectile_Animation_Fly.anim.meta",
+                      "Hash":  "C6DA9106DBBC6DDE724DDAAB3B6D93FE4A067121912327C48266EC8A396DD33A"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/4. Spear_Projectile_Animation_Idle.anim",
+                      "Hash":  "08963A1264E6FB28679AF161C0BA3A3BE571038840804AE79E78DEFB8277078C"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/4. Spear_Projectile_Animation_Idle.anim.meta",
+                      "Hash":  "7EC95577CFB7FCA7422D8BDF191D429A13AFFFDDA6516AB8A57BC6B0C5A2A777"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/5. Shield_Projectile_Animation_Fly.anim",
+                      "Hash":  "197D4C2DCE764625316776ED13EFCE2F615E709A98408560026B96B7014A7A57"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/5. Shield_Projectile_Animation_Fly.anim.meta",
+                      "Hash":  "8A49B96EA8421FBFAC50FE5379F49DA416B448D837470ED2808FF33BF1CEE955"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/5. Shield_Projectile_Animation_Idle.anim",
+                      "Hash":  "317F3B239E488AD0809B0DABC1988491066F90B56230C7A06C7BD625B8793D3F"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/5. Shield_Projectile_Animation_Idle.anim.meta",
+                      "Hash":  "B89329CEE15F4C3B8970E704AB26EF31E3479C4EF439467E363CDE111F7B3F6A"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/6. Hammer_Projectile_Animation_Fly.anim",
+                      "Hash":  "067395F4C777CA20377DFC702C98D2C8BA1315C27E0A09E372B9777CEEBF0577"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/6. Hammer_Projectile_Animation_Fly.anim.meta",
+                      "Hash":  "78FCB05BCF514488F89F06E91DBE76DBA9BB7F728D01420E7D48B4C462B07F5C"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/6. Hammer_Projectile_Animation_Idle.anim",
+                      "Hash":  "D8BDCEA89AFDE8AD22D4F933B02CCFD7CEE839F1EA4163EF755D06058CAA336B"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/6. Hammer_Projectile_Animation_Idle.anim.meta",
+                      "Hash":  "3F0F125E8878B1ADB661AE21D69515E4702E8252C27143AAA79E109196F71E10"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/7. Fire_Projectile_Animation_Fly.anim",
+                      "Hash":  "C2BD6F7E0FADF0932F12032873DE3E6A7C4B30F878E180C9C7D168195A8C6093"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/7. Fire_Projectile_Animation_Fly.anim.meta",
+                      "Hash":  "3BCA7AF1647F809FB4FCE5AF0F39F47FD32AD1F2E880F334DF4343D78F6D680D"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/7. Fire_Projectile_Animation_Idle.anim",
+                      "Hash":  "8FD80C5C97AC45FF21851ED98F054123EFA7A275FE8F6B4F8BA48647D133B644"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/7. Fire_Projectile_Animation_Idle.anim.meta",
+                      "Hash":  "5D7D98423257F16D32A79DEAAF09D0D0572751058FDF90A8AA50832AB88F3A36"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/8. Water_Projectile_Animation_Fly.anim",
+                      "Hash":  "1B861BF41F20C76A24FBDC4AE3AB55527DD1B00933BF58108E34CCBF520A08CF"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/8. Water_Projectile_Animation_Fly.anim.meta",
+                      "Hash":  "F302D51F6B03E14E6DEE39B32C63E7ACE546BCC594D10A353E5F22A1910F798A"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/8. Water_Projectile_Animation_Idle.anim",
+                      "Hash":  "E44C46D2B55BCEE5F659ED1E6A048FC1ACEA870177F678AEE32906D0EECF3B99"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/8. Water_Projectile_Animation_Idle.anim.meta",
+                      "Hash":  "1A9EBC145653A778170F0DEC57408E8607D5142CF43B4B0A03762F932CDE947B"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/9. Earth_Projectile_Animation_Fly.anim",
+                      "Hash":  "7BEBB60A66E76504E2D8EACC5D0639F7F2C48284233864BF0803B63CDE50FBD8"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/9. Earth_Projectile_Animation_Fly.anim.meta",
+                      "Hash":  "A4176C698805960683D360880258270A444AC2346C0614EF5A15AB47049B46C4"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/9. Earth_Projectile_Animation_Idle.anim",
+                      "Hash":  "5961D1B5F8779FEEFBAAD323DB16173C2B2981AE59B218C09F899523257560E6"
+                  },
+                  {
+                      "Path":  "Assets/4. Asset/3. Projectile/Target/9. Earth_Projectile_Animation_Idle.anim.meta",
+                      "Hash":  "6E6AD892E63A6DC5CAB4050C440B19317AF7A53C5436FFB4C096EEFBA6C66E41"
+                  },
+                  {
+                      "Path":  "Assets/1. Scenes/3. Stage1.unity",
+                      "Hash":  "29DEF443C82AC4B93ED7C573BA817D45708BB240F8723E2B41A304518CBB8667"
+                  },
+                  {
+                      "Path":  "Assets/1. Scenes/3. Stage1.unity.meta",
+                      "Hash":  "D4A30A2DD8322CA15C8C0FE5D67E72608515FBAC5D5F6E3D98D6ABC5DD586B09"
+                  },
+                  {
+                      "Path":  "Assets/3. Scripts/05. UI/TowerInfoPanel.cs",
+                      "Hash":  "4B4AF71318B2C9220004FBCD8297DC0D150B7ADC327F9C16BA71BBA185163463"
+                  },
+                  {
+                      "Path":  "Assets/3. Scripts/05. UI/TowerInfoPanel.cs.meta",
+                      "Hash":  "45E046C35C328877FCF6F0FB2EECA5F27CC795DC53FFF1E27DEF11DA10FD7F9C"
+                  },
+                  {
+                      "Path":  "Assets/3. Scripts/05. UI/PlayerTurnPanel.cs",
+                      "Hash":  "31372DF708B45BC394B1BA612AAD63806415372E6E7C86404BD5B63B9072AC20"
+                  },
+                  {
+                      "Path":  "Assets/3. Scripts/05. UI/PlayerTurnPanel.cs.meta",
+                      "Hash":  "BDA575B66F499A94DAB817BAA08A234CA9A8F1321ED4BB308C56F15CAF5AED2E"
+                  },
+                  {
+                      "Path":  "Assets/3. Scripts/05. UI/UIManager.cs",
+                      "Hash":  "3743297909B0084A615A7E7100B02B24FE9798210E20BE72F32C6104304D9CFE"
+                  },
+                  {
+                      "Path":  "Assets/3. Scripts/05. UI/UIManager.cs.meta",
+                      "Hash":  "DD4778F2C6CB2FC8DD8F3755D66852DB4819B49D593D3FBC2EC2B7F01230C387"
+                  },
+                  {
+                      "Path":  "Assets/3. Scripts/05. UI/EnemyInfoPanel.cs",
+                      "Hash":  "56DA2FF7A5473EFE036212B83FF047287FA12436CBA7B6382C3AF41058BAEB9F"
+                  },
+                  {
+                      "Path":  "Assets/3. Scripts/05. UI/EnemyInfoPanel.cs.meta",
+                      "Hash":  "25D0739657954ADE0F4CE8533BD8ABCF66806742D08AAC300387073C1464CA38"
+                  }
+              ],
+    "Protected":  [
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\00. Core.meta",
+                          "Hash":  "84E8FBAE3FE4CE0FC3E5DB88CAEFC4FCD5866B8106313F5147441DD7618C152D"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\01. Data.meta",
+                          "Hash":  "DEAC75DA731B5CBBFDA088C9F59AD5B821880BC36C6F2B381C276A61999239D8"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\02. Flow.meta",
+                          "Hash":  "13405884CA62850B804913721EAC94695BBC7E5FC82FF2122686643F66B4C96C"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\03. Wave.meta",
+                          "Hash":  "211CEC6FC1E3BE554983B6D981E04FE7C3E335F1A9C3E3F1BBED7E6DB3503CDD"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\04. Board.meta",
+                          "Hash":  "7BE1C7A5FAC5672AF9D9BFB3FBAD1C99E89AD1C7995539259A73C12518C46121"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower.meta",
+                          "Hash":  "B4BDAC552163925B21776A2BBF92E4C8D16C9472BEF6EEAA0E57CF04D1EECD06"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy.meta",
+                          "Hash":  "01AA254673423BB1E3A7ACD15263CFE2408ECF69CC1BFFF2274A32EA7F4E01F5"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\07. Combat.meta",
+                          "Hash":  "F73AA7D6B5B0A5AC0DAA81ACC1F812E22BD23CDA2777AD18CAE5F832AB6C84C2"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile.meta",
+                          "Hash":  "186A802CE45E7B7E76100ACA98D60BB9F522FFFCBC1F65042A333AA07B0EAE1C"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\09. Economy.meta",
+                          "Hash":  "14B471EE7DF5DD37329FB756388BBB440BE207319BB9178A88CD2A3E36D468A7"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI.meta",
+                          "Hash":  "FC4FAF252AF51D7A4DDD0D2B649806E31D5ABD1852859A4C0E4CF52CB9652642"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\11. Input.meta",
+                          "Hash":  "4A98A3BE11D9F2592A250E454C774A46A0F0DBB33221B202A4884B4882EE75B0"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\12. Dev.meta",
+                          "Hash":  "D6DDAD102F93DA1B0681EE722701DB2578FAD6B4576E1BA7FF3AF94F93C936EB"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\00. Core\\EmblemNames.cs",
+                          "Hash":  "285C306DC39DA0E5669A6AA3B757629835BF324EEDE62FB394D5929B2A419623"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\00. Core\\EmblemNames.cs.meta",
+                          "Hash":  "A4B6CBDD402A753E0259D95813C28D8466E25D3AAD3778665EBE7717CB57752E"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\00. Core\\GameEnums.cs",
+                          "Hash":  "94CAE53FF78A5B3B60C29BA0B274B47E02EB889F0839AACC0D936BBC0DEE5680"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\00. Core\\GameEnums.cs.meta",
+                          "Hash":  "35E5F9F0CA3E2DB0E980172BB15190B307EAB77EA1155F11E73B28513207AFED"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\00. Core\\Singleton.cs",
+                          "Hash":  "62086C761060F19B7BA5CEADCFFEEB7D13FA35756CB7BD7F0B98F862234FF95E"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\00. Core\\Singleton.cs.meta",
+                          "Hash":  "6308DD50F8C9554D77D67E0F60845A39F4C2E53029467619F2EC98C48197FC31"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\00. Core\\TowerId.cs",
+                          "Hash":  "1004A44C32E08BF40D81C491124967AF0506BAD44F17E92D93BD4D51FD076E31"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\00. Core\\TowerId.cs.meta",
+                          "Hash":  "3AAF235E9E09DEDA6A893A69DE0D083003088A1D5F552B9ABCCDA8FD38FF7080"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\01. Data\\EnemyDefinition.cs",
+                          "Hash":  "7B6FE53097164EF459D3CAA9DF4E9B37CDDF7E9FDAC84195FA15A78ACEBCF200"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\01. Data\\EnemyDefinition.cs.meta",
+                          "Hash":  "00AC3D2E1A9D8C8F4F6CF44E794178D7B91B1B7115E824DA80C04CF713EE4F7B"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\01. Data\\TowerDatabase.cs",
+                          "Hash":  "2AF832975A3560F13AD6F400078259B9654375F15AF92EE50A284EE1D172AB39"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\01. Data\\TowerDatabase.cs.meta",
+                          "Hash":  "49CEB9552C61B29833F151F18DFBFCB1B05EE26366800D37EE72FE3DD63CD82B"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\01. Data\\TowerDefinition.cs",
+                          "Hash":  "94569793E92D5AA1C13FF0C3C38A878F7F1AB15166D827D02EE80CD6D85B8DFC"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\01. Data\\TowerDefinition.cs.meta",
+                          "Hash":  "AE62CA3FEBCFE6C8920C8F2FFCD858D7EC814DF8F1BDA2DB16AE4C37685DD0BE"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\01. Data\\WaveTable.cs",
+                          "Hash":  "503C44FB3803DBFFB80B90DD97B96B1271775B48C2D87E7A5A4BF9CD11535068"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\01. Data\\WaveTable.cs.meta",
+                          "Hash":  "D4AC45D2B9C3F7CDADCFF7F9EE2B3C0D40B2782FF041710107C679AA08303EAC"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\02. Flow\\GameSession.cs",
+                          "Hash":  "2148A6D9559E391F88AFB12B38E93DBADC0C4B25A7AF5899EAAEF3C5CD9CDE60"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\02. Flow\\GameSession.cs.meta",
+                          "Hash":  "5471C712D5DE36CD3767CCE1C1705D5CC8C4F2D67777F523773A909B9C21557E"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\02. Flow\\TurnManager.cs",
+                          "Hash":  "628D1C66EAFB4E115C3BC595DB9F84E92937154BA11519F4C6AAF1E90A5AB896"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\02. Flow\\TurnManager.cs.meta",
+                          "Hash":  "F5992572B7E70938BF97E0A02FE4C05464CE59E4F119FE2321E24436E444536A"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\02. Flow\\TurnState.cs",
+                          "Hash":  "55B1C3D4207309BD023542D202039354BF318E1B28C0DFEF604CAD7FABE789F0"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\02. Flow\\TurnState.cs.meta",
+                          "Hash":  "8CEEC9BBF36616F44BA8F5B757623A6C405AA939C67778DE4483F5EEC697451B"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\03. Wave\\WaveManager.cs",
+                          "Hash":  "08264E9233CE8F9464675981FCD38274EB30966801CE25BB1026FDB0438CB17E"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\03. Wave\\WaveManager.cs.meta",
+                          "Hash":  "C97D537F2A76FFFDE61AAB8E023DF48A862CBF10F6F8EF775F927A1937B4A2C1"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\04. Board\\BoardGrid.cs",
+                          "Hash":  "3DA89243BC81E350EBB11809DF8FCB327F6346501486D4E03D642299714579B2"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\04. Board\\BoardGrid.cs.meta",
+                          "Hash":  "C57D9024260FB4F99CF393F84F765541B5D3ECBD902613A640B9707E528AE3A4"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\04. Board\\BoardManager.cs",
+                          "Hash":  "B985151D9D9AA4C107560339A0F588C997C70C2D726CC261251D297616B9FF7E"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\04. Board\\BoardManager.cs.meta",
+                          "Hash":  "408143C113E1819864213E8322E89F747368D240DC80D3FA9FBEFE28F1FE396F"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\04. Board\\BoardPresenter.cs",
+                          "Hash":  "0B47745A6D74016CE32E937D139CECBF087B483759586BA92A98048A8B3BE918"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\04. Board\\BoardPresenter.cs.meta",
+                          "Hash":  "31DBE1CBE068714691A4A9BBAD32C2EE8F4F815D329FEAAC8CF15575E029B73A"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\04. Board\\PathOccupancy.cs",
+                          "Hash":  "37EE7C913B5D40341A4D2DFE51863BA9BD933BAED8747C5AA0B3C9670A5DE706"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\04. Board\\PathOccupancy.cs.meta",
+                          "Hash":  "C0FD1048761EB8B30265236E5B3A1396200A25DFCDE446F7FD28DFA13AE24362"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\04. Board\\TowerSlots.cs",
+                          "Hash":  "5CC24800967754D051F2C2D1E91A1CE30D08398912914CE9669A9F739AD7FAF0"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\04. Board\\TowerSlots.cs.meta",
+                          "Hash":  "86168B2C02D03190CA539BBEBFEDCFA8FFE2691405380B3C95109D663069962C"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\Actions.meta",
+                          "Hash":  "F336E35C1A756772064E6ACB3401F5D7E1C75448ED975C52A47E1475B1C7B7F8"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\SynergyCharacterCatalog.cs",
+                          "Hash":  "4001B22B02A2DF449A7303DC2F06D111A5820A21E9E1131EB2B46A5C616CA7D6"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\SynergyCharacterCatalog.cs.meta",
+                          "Hash":  "5D2B653094A25741F0934A51A7F4D5C8ADC2DF70A33A78C6E31E14D0AA0610A9"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\Targeting.meta",
+                          "Hash":  "C563D386BA31F01253840D9917146DE07F7CFD918F99EC40A234D5A09C72D0E3"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerCharacterCatalog.cs",
+                          "Hash":  "070EAFA92476299A1E82F2C955BDD4D0B190A86C208C46B8345AC8AC1009A060"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerCharacterCatalog.cs.meta",
+                          "Hash":  "E4CF07933EE07036A90FA61B9FD7F4961F3ECC99C9CCA097B45A449DFA7BB6D3"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerController.cs",
+                          "Hash":  "F386D0771B8FA57C9F78E02A5FCF10ED93551CAADFCB760801736C2A82C288BD"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerController.cs.meta",
+                          "Hash":  "DF0631C5FDA96A5D5140C982D5993C0BEE2DC1DB70EBA0E21E991DBAEBC64381"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerFactory.cs",
+                          "Hash":  "4EA5170DFD4582E9983B3BA70C233F15EE7959E02712092C3C481AEA64C86024"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerFactory.cs.meta",
+                          "Hash":  "B71FF358790A80461C011B8272D39B7797D70847C4B8D01EFFCCD039C913E418"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerFinalStats.cs",
+                          "Hash":  "DED211C36BBB7059B286773E81CF21F91C89B25893FB9D7E8F9DC29A85AE47C1"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerFinalStats.cs.meta",
+                          "Hash":  "7FE3F68A7664E153066198C1F87ED660EE50D27C56392FA9E27FCA1B270F2BAF"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerManager.cs",
+                          "Hash":  "A2A4F219BE6955E08889EDCB56D5E2AA3D48E00E16A1BB73D5492F569473BF94"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerManager.cs.meta",
+                          "Hash":  "38E0789DF1A006ABD0513461AC0335EFE0BB5763F30ABCB20A6F6A4F2AFBD321"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerStatCalculator.cs",
+                          "Hash":  "38361E631CDA880CF6B4934FC9D3FFED632B1F04504BA9D11CBAFF4487B3358D"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerStatCalculator.cs.meta",
+                          "Hash":  "E1F51E58E4B62F3988168B7B79CC3D256307628C9A7056ACD46CA03933E7BCB5"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerState.cs",
+                          "Hash":  "702D978207309C0AE00848BBA25832D90728E129496F5400697AA6F92D38D23D"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerState.cs.meta",
+                          "Hash":  "89B402D280BBFF46D78527493FB13D2884D24351066F6D21CCAC0D8A44931331"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerTurnRunner.cs",
+                          "Hash":  "1C52F4E1A7363BCC173826E7F8BED14601FE2D7E23313602CD15AB271FAE6F49"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerTurnRunner.cs.meta",
+                          "Hash":  "7C61CF09F9BB51AB328E6F3DFF654DBDD59050A40B92D83E58D9674D039C02E0"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerVisual.cs",
+                          "Hash":  "46F3B09F6D6CDA0ECAE9B4EA9A583D7B71BEABD35AE070F11C5C60221A5958B5"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\TowerVisual.cs.meta",
+                          "Hash":  "90C7F42B0087880DF2E6FAFFAEBBA46528980FB7F140BA6DAFF18B7DF9E60E79"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\Actions\\SplashAction.cs",
+                          "Hash":  "19FF3FD0C0501937C43735B1C2E58EC51A7C687903F65C437BAE3C5198EEFE46"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\Actions\\SplashAction.cs.meta",
+                          "Hash":  "250974F5A4FE6162D58C1BABC4EB9EC2576994E4F389CCAA69B921848AB44D49"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\Actions\\TargetAction.cs",
+                          "Hash":  "5C6EADCE3C9559C822DA456C0BD807AC312C04AC50CF91845AB1A9D67D39E714"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\Actions\\TargetAction.cs.meta",
+                          "Hash":  "35CFA5479B1E3E0C0D27F5237833CEBAAC751C859F3047D0EE8B2515C04464E1"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\Actions\\TowerAction.cs",
+                          "Hash":  "CF5ECC36B70967A034A04752DC1F6CCFCD80C1BEFDDE17CF34B382D03A6DB7DC"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\Actions\\TowerAction.cs.meta",
+                          "Hash":  "716033643E97E57E0D702BE5D6C735C664E84EB4B49E0CEDE13CA8610FDBAF75"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\Targeting\\TargetSelectors.cs",
+                          "Hash":  "2936D0FE04251BFFD652CA6BE45C8610BAFA37D5173DED10D05433019E0D8B0F"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\05. Tower\\Targeting\\TargetSelectors.cs.meta",
+                          "Hash":  "5876EAF3C274C2496BAFBE5C98FAFE7E9CC0182C541BA88BA1973943421B3FC2"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\BossTimer.cs",
+                          "Hash":  "32871C3648A40A8015310D8BADEECD3B191D5B692911D0B0256968FB53BD5E8C"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\BossTimer.cs.meta",
+                          "Hash":  "EAFC89ADF6C8ABD6A74EC30976440CFCB72DEFE874DB1F1D001F293168470C10"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\DeathResolver.cs",
+                          "Hash":  "773DA8986025E451A67809B73635021A68252DDD6D0368B27681C92F39D04344"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\DeathResolver.cs.meta",
+                          "Hash":  "A822F6CD63D95BD6EAF4ED15D261291BB8D134680EDA01FA5167CF096E436D79"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyController.cs",
+                          "Hash":  "E46B2201EEB39884B3D0A696631A61CF8759BC4F962C6EF7882E5691CCADA757"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyController.cs.meta",
+                          "Hash":  "40203788E63442F48DB0C41E4B55D94A380BFA11521B03CF4C9B452BC93669CD"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyCubeAppearance.cs",
+                          "Hash":  "BAC75F937BB75522148A98BDF61ED287AFD124B8B9305D779C36F8CCAEC70BFA"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyCubeAppearance.cs.meta",
+                          "Hash":  "F8E38D482E16EBEFCE463DB4B4FAAE244A208FF84941D34E7AF988DE5DB718EA"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyCubeMeshVisual.cs",
+                          "Hash":  "EAA03527C5ED35F1374CDAD059A10C865A51F4D5C62DCFA1DC696EC434C17B33"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyCubeMeshVisual.cs.meta",
+                          "Hash":  "73DBF8EECAFBD57018E2D0136DCBABA327476E618E87BF29C53982860CAEE6BA"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyCubeUnlit.shader",
+                          "Hash":  "1958C9948ADAC2C54D2F8AF55C2D7B6DF88468AE834228947663818D455D3192"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyCubeUnlit.shader.meta",
+                          "Hash":  "511B38744A6257884DCD04B40B4AD0607280C4B7B0F78ACB35E2F66C3F222BDF"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyHealth.cs",
+                          "Hash":  "390DE47154F499306FD5BD22C4B75ECD6EF29BFABBE99B17E2790BA7EB89F252"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyHealth.cs.meta",
+                          "Hash":  "FB087FA5D56B11D84D1C57E8DBC87D4F2530972B3DA264E1698E8D16EBA4D47A"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyManager.cs",
+                          "Hash":  "BA662A0D977BD66D899E649E4139342EDB356D32288488326FBD8E5BA097B7FA"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyManager.cs.meta",
+                          "Hash":  "2C0F7A237A3FC5FE5E3E3C34C180115DB25EEBB139220BDFC05324D048E57FD9"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyMovement.cs",
+                          "Hash":  "722B2A28A92CADEEB442A4A0BCEB3A4B28B5168E2693EA55B67BB10073790877"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyMovement.cs.meta",
+                          "Hash":  "1D75C4F5948AFE09CC0DA0B924DB531D065FDA7E53B034801185AB452EB93DBA"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyPool.cs",
+                          "Hash":  "D3CAF886E5111333E1BDCA80502E0BEA26ADF1DB220BD335968B849DDDC8B257"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyPool.cs.meta",
+                          "Hash":  "AA3C42FDF1449CE1A1E4F7BE451523990B7E02D38FBAB231770876EE075F8174"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyRegistry.cs",
+                          "Hash":  "922EE5742E599AFF0A0B99884B5C44B568BDA49ED7A2D1CF07258F404472604C"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemyRegistry.cs.meta",
+                          "Hash":  "CB507D7D192073E16B6C94A1DC295F46F30E384FAAC04281B5C16908C36205A6"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemySpawner.cs",
+                          "Hash":  "CF3CA7B87E91979911C97E6C645D95493F66A036FB8D6A800E1632FF86032940"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\06. Enemy\\EnemySpawner.cs.meta",
+                          "Hash":  "98B8712D1187C485422FFC2BFB741DE2FE20DC0F73000CA15CBF9F0E0BBF03B0"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\07. Combat\\CriticalRoll.cs",
+                          "Hash":  "F6C24726D3D6340EF215C6B62A1365D18FDDCAFF0DC556CECC6D725517025B9D"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\07. Combat\\CriticalRoll.cs.meta",
+                          "Hash":  "73D7A62FF8B22DA261CE5929CA6ED446C426AFFEE1EDBF26980AFEBEC75E0D5A"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\07. Combat\\DamageCalculator.cs",
+                          "Hash":  "4AA52829942649060D3E53746627D6A3B48A4F130ADCDE9CAB43330AD80C85D7"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\07. Combat\\DamageCalculator.cs.meta",
+                          "Hash":  "4F018783D674611D1F3E069C7F06EE10114114D92C96B207140203CA271DE3C1"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\07. Combat\\DamageInfo.cs",
+                          "Hash":  "CA43F019BB6316BD662BBD8DBE283D5B413BB9CBC60C7B45BAFFD21C6F4FF4C7"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\07. Combat\\DamageInfo.cs.meta",
+                          "Hash":  "2EFC74299EEE4F08DE9795E82EB1D0B824BFF3E2D9F7C10E5CF042816F0D6E34"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\07. Combat\\ITarget.cs",
+                          "Hash":  "143042A30C82DFD63FF24900EE14BFA3E5909B4E9A3F0591226BA1B7254500DA"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\07. Combat\\ITarget.cs.meta",
+                          "Hash":  "DEE0547053187F5B42E10E8F14D8880CEE835C6197065B8464DA674BF2D43F36"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\AttackHandle.cs",
+                          "Hash":  "FBAAFDB6CA0AFB53013B62B243E8D379620B1CD0D66AA871FB3E800F2900EED9"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\AttackHandle.cs.meta",
+                          "Hash":  "07457D7DD0A0334FB700BB1E649E31F440271F68448A811E3894E5FE51F58C87"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\HitEffect.cs",
+                          "Hash":  "7E6B6A4B1BEBC608439E16DEEF999970E469CB8F92E798C4155BD2AEE7835C74"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\HitEffect.cs.meta",
+                          "Hash":  "68A7719A031195BCD77FCF52198FACE98A99704BEEBF50EECAADEA8E7BC6B307"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\IProjectileLauncher.cs",
+                          "Hash":  "B41974DD3ACEED6D04002BBA3BF1E39DFB8183EB75C2A162DB8A74334677A3F0"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\IProjectileLauncher.cs.meta",
+                          "Hash":  "8E8346633EE1D9208D6C70A8915EBC92126C66EDDF1F53B08DA7B4700D3F38E4"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\Projectile.cs",
+                          "Hash":  "BA8CE1A97B2EA28A71C006440519250022F2722B3BC3852A17D6DE707AD9F241"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\Projectile.cs.meta",
+                          "Hash":  "169F8FA10D4FCDA9C85A29B3E2D00476FC67F0A332ED68AC083D33FFBC7DE17A"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\ProjectileCatalog.cs",
+                          "Hash":  "00D8521F983C6B1A4B8E45551C9F4C74B9383AE800678C6B9A46C8A18457C611"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\ProjectileCatalog.cs.meta",
+                          "Hash":  "D8F8295AB7660F6E746BEA884E5D69E9FDF96A9D4E01B03DF415E618F997A26D"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\ProjectileHitResolver.cs",
+                          "Hash":  "4B035E2A20B4885D758A3BD1CC1B206D665757A38B5652797BDC242BB4EFF66F"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\ProjectileHitResolver.cs.meta",
+                          "Hash":  "D0EA8AC6088C3840263E1B033828126815AD210F9C741395E0828BA0DF604784"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\ProjectileManager.cs",
+                          "Hash":  "C963A7E20F8FA3F10DDA36D552A1D7D844B0BA2DF6AC7110AD43D59E7250ACA4"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\ProjectileManager.cs.meta",
+                          "Hash":  "4E5B48EBA8C0B9D64D42BE1CAF862B2FC06D12265F24FC857566C74E37DEDD2A"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\ProjectileVfx.cs",
+                          "Hash":  "AF3DFA847A991B2B14E4B51501A47185B352011E54A36240A14A4843EBF72E1D"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\ProjectileVfx.cs.meta",
+                          "Hash":  "EA6E9FC66B4067D1C7D56687234C453BA180733E52DE84718E8520B277F1C0C0"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\SatelliteLayout.cs",
+                          "Hash":  "DD3A42569F5436CDAF792095109656F89C2227B90BACC43C8A1E8AEAD4FDAD03"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\08. Projectile\\SatelliteLayout.cs.meta",
+                          "Hash":  "7E7882CF27F804797CC179F876A925A6F8CA8DDBFA9B1F6E4F319FDBD6BC1785"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\09. Economy\\CurrencyManager.cs",
+                          "Hash":  "F05F5EDF6693A631F79D94A452998C5D080A3196A75DDBECB1B1082C700389A7"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\09. Economy\\CurrencyManager.cs.meta",
+                          "Hash":  "C0E7DF0F4DBF6DAA3BF27C4C4D09DC68BBD4A495CA12712421E75D6286595D04"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\EmblemSelectPanel.cs",
+                          "Hash":  "7B5B285DEB7E5FE8EB656E9BC419FF2F659EA1C1DE39F6CED2E591B3033EECC3"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\EmblemSelectPanel.cs.meta",
+                          "Hash":  "23B4A95BF7DA1DBD7A22086C8F637F0926177D4B16E4FC69329DD99FF1302424"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\EnemyInfoPanel.cs",
+                          "Hash":  "988A7F6517AEF5B7F24F337567B8E2EE8989DD3E0925D5AD10BDA5C75C4EFDA2"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\EnemyInfoPanel.cs.meta",
+                          "Hash":  "D049BC38C1BE5B2D6CE105B99084C5F8A2E4E6F3AF8E9507C2DF1FC71D8BCBC4"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\EnemyListItemUI.cs",
+                          "Hash":  "984DB7290D4C716BA3BEF4A9E4FECABA5C6A7FC1BFA454B7639EF06F13FE4186"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\EnemyListItemUI.cs.meta",
+                          "Hash":  "EBBB4A4BB8121D8F68FEC84BC26EFD1EDBE7B24C1F0F70208A9448A8663A5C1D"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\GameClearPanel.cs",
+                          "Hash":  "92BD28FBC564369140389B39A8C1147BDB44A10E4E2AC2BBECEC3E5B00AF0C89"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\GameClearPanel.cs.meta",
+                          "Hash":  "FE03EF3529AC54D7A58C95A24E61BEFF35F12A6D00E59187038A764EBDB66ED9"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\GameInfoPanel.cs",
+                          "Hash":  "5B24B145CC189F57FFAA167F6948E2A4FE8E612BCB55FE7088B6A319C1AD20F4"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\GameInfoPanel.cs.meta",
+                          "Hash":  "BE792D302D03B21C5E23F38C2B388B95968873789F59BE34FCEA6C94B80A93B8"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\GameOverPanel.cs",
+                          "Hash":  "9970C8D104A929A5C10C1E09D6CAE236CB6E7FEA908893543618C35CDEE15A79"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\GameOverPanel.cs.meta",
+                          "Hash":  "A344EF56DFE3A5823191677252482AB2E18EF2D021225A8D91FA5F354A1B6774"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\OptionPanel.cs",
+                          "Hash":  "F1E1162ED167BB2FDE81FD4CC3CB05318D26EDA559E74CD9EB39A5C79BDE2B1B"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\OptionPanel.cs.meta",
+                          "Hash":  "7C24A0D845A164307C3044ABCBAC816E182CA7BAE43700B7ABC9835BAE1B7F6F"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\PlayerTurnPanel.cs",
+                          "Hash":  "7137D18529B7F9702F69642CCBD2BFC3F481F73EE4228E8F03BE5696E3B81DF4"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\PlayerTurnPanel.cs.meta",
+                          "Hash":  "DF4BE7E510CE984D4FE029313216AC0409A0F75E870CB772C41CD72CF4237C88"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\SceneFlow.cs",
+                          "Hash":  "7F5699A01E5817E5A95A1CF6F9F26A1F2392D0E55A350EAE516B20B639BEE008"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\SceneFlow.cs.meta",
+                          "Hash":  "CCDD920916A995382F7D412E61C5699BF405ACF38A03BFD598388EBC1388B254"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\TileinfoPanel.cs",
+                          "Hash":  "A758030677D71D95559E963E729AD984C2B8989AF61333B174EF5A513033E845"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\TileinfoPanel.cs.meta",
+                          "Hash":  "313C09A365660DBBD210824D27F4551ABC8B9C6401CBA46BDFC650909D36D76A"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\TowerInfoCardView.cs",
+                          "Hash":  "DD6B717E5544C6B92B19597F017D62994485FA77C392A9FF12A8AC1CA129B748"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\TowerInfoCardView.cs.meta",
+                          "Hash":  "B16F91748ED2397227941DF1E1D3112A795A56D7BE149254BB8AC16403DC87B3"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\TowerInfoPanel.cs",
+                          "Hash":  "278EC8049E124D68E2C7CD9101715F1B6370F338FC9F80CE0CF6832F6A869506"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\TowerInfoPanel.cs.meta",
+                          "Hash":  "0FC7DF6E725183747100BE228DF3528E5695E102E8CF027C35A0F3CE9DB41861"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\TowerTierBadgeGraphic.cs",
+                          "Hash":  "D417795629C87B1D185123E13EE3456C1304DBF444BB01A9F1B3EA1F629D3024"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\TowerTierBadgeGraphic.cs.meta",
+                          "Hash":  "4AF740622CD952046088F38DC6A94C4D9E3011414FD28267E531646350336FE8"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\UIManager.cs",
+                          "Hash":  "B7794491410D723500F524A5E6AC8A77446CD94FB3F18DCA812BDEB35D37B2D3"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\UIManager.cs.meta",
+                          "Hash":  "AD0A9294AAFA8B5819555FF8B918DC8FE79B87226E3D3341E547B2FA70BAD562"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\ZoneInfoPanel.cs",
+                          "Hash":  "09936539283596BD552FBF3EC88D9692E7CFD7BA28D995186E5888F98E5B2DBA"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\10. UI\\ZoneInfoPanel.cs.meta",
+                          "Hash":  "B3E5869A1175DC3DFEAEAA51A645BEA89ADF261E388A21CCE22A5E74F22FA244"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\12. Dev\\DebugCheat.cs",
+                          "Hash":  "1D42A5A78AB0ED01B19EDFC004776C476106259CE69A8F3E6EF605290E0B5DD4"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\12. Dev\\DebugCheat.cs.meta",
+                          "Hash":  "4FF08C38B720316ACE04A6784FBCDE9DE63807875E7B331002BE2638400A6AE9"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\12. Dev\\InvariantChecker.cs",
+                          "Hash":  "126A04C08E56A87DACDD219892E25074978977B605E7B1200FFF4C983636BD5B"
+                      },
+                      {
+                          "Path":  "Assets\\3. Scripts\\New\\12. Dev\\InvariantChecker.cs.meta",
+                          "Hash":  "ECD35886DE4BDA45C24C8B09A487CB1C6A51581EF768A9F633A61335EA14C2D9"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\AttackHandleTest.cs",
+                          "Hash":  "6C26D307E14531C8534A69EF0DBE17BB56320407249873AB321A073C6A362C38"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\AttackHandleTest.cs.meta",
+                          "Hash":  "054914B2E7DEA07419CBA574FEFDBCE51B9A56F3D13C1B021291F7FADA7E87B5"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\BoardGridTest.cs",
+                          "Hash":  "32890ADBAD47D1B648DEFA5EC6E753FB733767B75F8317105B03B9A9875B93B1"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\BoardGridTest.cs.meta",
+                          "Hash":  "2699CD1FAB2FAE76FE9F14801D9060E0FABDF2B6BB8E0D5C0371A1FA2DE9DB88"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\BossTimerTest.cs",
+                          "Hash":  "166D5D292CF723FCACA6052FB5CA2DBB882A46DAA8AAACC2B484DF93A1D05E66"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\BossTimerTest.cs.meta",
+                          "Hash":  "23A38F5291FDF16E6526C5F3A6CB7D51CBDB6B9AEA98D3475773E5875A2124EA"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\CriticalRollTest.cs",
+                          "Hash":  "9E02F53A8062BE340B035AE6B8BF50BC73D7DE673CBFFA0AF14EEF4D330303A5"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\CriticalRollTest.cs.meta",
+                          "Hash":  "C54AE24BA49D2FC72955929023B7D65E05CC57AB036050C85D261858DD8B3D7F"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\DamageCalculatorTest.cs",
+                          "Hash":  "F78085083865AB1BA04E7920A088AFA43C5E4C7811B02D5D1583F5986092B30D"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\DamageCalculatorTest.cs.meta",
+                          "Hash":  "55B4C75626A67CEDF0A1B9A674101DB3A7528555CCDBF3DA7BF6D349FEFF7011"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\EmblemNamesTest.cs",
+                          "Hash":  "F16A5F54578D04B7EA980B38C31414691D1952B430A0BB41D0115115A354294B"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\EmblemNamesTest.cs.meta",
+                          "Hash":  "4D58F9764A60A086873069D46B9AC9EA8427A7608FAB68CF623B65B1F6EE1D78"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\EnemyHealthTest.cs",
+                          "Hash":  "4F4313DBA088B4D6B23BE86B9548430111FC581705FE3166A7124623206AFD11"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\EnemyHealthTest.cs.meta",
+                          "Hash":  "1D2693B2E5C59774E2D49D10DD38A7176AA4674D72B65D6E3F964E23E41009AB"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\SatelliteLayoutTest.cs",
+                          "Hash":  "B23C30CFEA5BAFA01883577DD5647FD7C41B7B1883CAE7FF92225AE44C7A913F"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\SatelliteLayoutTest.cs.meta",
+                          "Hash":  "3B35DD7235948902C0275062A6AFBD9E157B39BD59AFA2E2E075B0704C40231F"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\SplashActionTest.cs",
+                          "Hash":  "C3C3E434A9EC84C4975CAE3C5CD86560515E678BA94E3E5A93D92B5A72CD6CF4"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\SplashActionTest.cs.meta",
+                          "Hash":  "F266692CB2711CE490E0C9E05C15F62B0020222AEDD714258CD70920724B1BDB"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TargetActionTest.cs",
+                          "Hash":  "9EB836B0973F463FEFA782DF457545938A1A5DE3C5A9F1FC050B7EA853985DFD"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TargetActionTest.cs.meta",
+                          "Hash":  "03934FE69767694A38EEF0E7397A171DB12F0C7B739B4123A31D21D4BE969F68"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TargetSelectorsTest.cs",
+                          "Hash":  "3932A88D847A17E7C9CBFE88AE0D4DFD7A6B9E4AE81A431A7C6AF72935684A83"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TargetSelectorsTest.cs.meta",
+                          "Hash":  "7CF9EFDFABCD63FCE370596AAD2BF51067F9029372EB3F3E63C6160F63876A9F"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TestFakes.cs",
+                          "Hash":  "8B6578FAD85CE03CE936F3A04DC5C857B26552BF59AE51C71589BA8F5F5AE801"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TestFakes.cs.meta",
+                          "Hash":  "E234E667C2B721F652794D6E6E35E0071FCC3C631EA799EF66D2FCE00B057B5B"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TowerControllerTest.cs",
+                          "Hash":  "489C5BC384ADBCD1672DA8529D1E15C2E387DABA767E6D7E72D2494CE3E6165A"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TowerControllerTest.cs.meta",
+                          "Hash":  "E200AA0A49D428275D13473A58AF499C9A808BABC2F309D7F1195A6671512B1A"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TowerDatabaseTest.cs",
+                          "Hash":  "6021431A7D2031EB44A140D46D98FEAF65CCBDF4DE55AEC4F36197D0898B1EDE"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TowerDatabaseTest.cs.meta",
+                          "Hash":  "0FA49CF80F55273B43AA0FCF34ED14B51B94632B3FE3316E8376A27749F59080"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TowerIdTest.cs",
+                          "Hash":  "1B2D32EF72C190C077CEEF977FCE67BDCD9EEB0C60EB01B0F22F25C296250E88"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TowerIdTest.cs.meta",
+                          "Hash":  "FF5F0D7E442A1860FBEA600950ED76FCFE304E70975EF5A196BA6BA3D8B3A5AE"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TowerManagerTest.cs",
+                          "Hash":  "3E6187AED29699C452AC5EF90A961266D08246997A74A2C5CF32C8CBE15B9ED0"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TowerManagerTest.cs.meta",
+                          "Hash":  "5AFCB0F04EA4D2577588CA67FB3D6224ECB5C9F565F700765BE1BF2AB088A85D"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TowerSlotsTest.cs",
+                          "Hash":  "B007551BD1EB1F6BB438E47B0AC039C7B4940F97A8FC0AE3F5D840D8A62C7B3E"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TowerSlotsTest.cs.meta",
+                          "Hash":  "9CB140D9161F6EBDB208DCEEBD22BF3DCF21C5C24EFA753482B744BAA1D5AA5D"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TowerTurnRunnerTest.cs",
+                          "Hash":  "0CF8059B3242E2EA6F5A8712AEDBD6959DAAB00E93E474B64EB1A9FBA1ABFE02"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TowerTurnRunnerTest.cs.meta",
+                          "Hash":  "CC74D7475FD620EE8CEE05C97841219A526BFB833E497125B0D51412A7D4EDCD"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TurnStateTest.cs",
+                          "Hash":  "C9CA6E50E2B74082916ECA7C3E14E96ECDFB842D11AAEAE4C594D145FE7F463C"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\TurnStateTest.cs.meta",
+                          "Hash":  "C6EEE52EFA0C155E8C3D4A1F29FAF91006EDAD37672FDE63C8A8FA974BBBC10E"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\WaveTableTest.cs",
+                          "Hash":  "DECFDE9E7CA3F5BA87E3E66767068B4D9BF4D11FB56242C3C0253B8527834555"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\Tests\\New\\WaveTableTest.cs.meta",
+                          "Hash":  "50153DDCE2154F16B75A7C26DB323DD1B61FDC6CC4FCBBE98755EE7E9BB8BFE2"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\New\\BoardManagerEditor.cs",
+                          "Hash":  "8CDC93A43DD75F97EB9F8A03021FF227959FF6E119C97C3D333793EFF0018681"
+                      },
+                      {
+                          "Path":  "Assets\\Editor\\New\\BoardManagerEditor.cs.meta",
+                          "Hash":  "70805B8F70DFDA3554EA423254EB059F65C2F9A7643548CCBDC5F8326B42F076"
+                      },
+                      {
+                          "Path":  "Assets\\20. 통합 기획서.txt",
+                          "Hash":  "D0F2B13F3BA029AE31FF8B2B3E986319ADD6EBD2DCCD0F55C037E0EC275311E6"
+                      },
+                      {
+                          "Path":  "Assets\\21. 구현 계획서.txt",
+                          "Hash":  "2A029ABFD0EFB3FB2F56ACCFB724437E0EF4CF99F3B5AD1F129EDA61CC7D5E91"
+                      },
+                      {
+                          "Path":  "Assets\\22. 구현 내역서.txt",
+                          "Hash":  "3C025F9FB7933B4249AFF4FF2A48810A87D4B6B2BAB3B75B529BEA5A62D618EF"
+                      },
+                      {
+                          "Path":  "Assets\\23. 리팩토링 계획서.txt",
+                          "Hash":  "E58FDEABE90E10B5FFF2250654ECF4AFF21555C0F5905E87BD8757DF97AD3205"
+                      },
+                      {
+                          "Path":  "Assets\\24. 리팩토링 내역서.txt",
+                          "Hash":  "E340D1E4D26F9469319DC26264608481C271AA7FCED4062C2D3B77F94EEF9044"
+                      },
+                      {
+                          "Path":  "Assets\\25. 수업 질문 노트.txt",
+                          "Hash":  "66E2A6CA50FF2246D16A7FDF4127D446A4A43819C577E2F383E58144A7C8CFAA"
+                      },
+                      {
+                          "Path":  "Assets\\26. Claude 작업 메모.txt",
+                          "Hash":  "1B1A5915AEC5957C3A419A3F164279EB324135B32FF854DDB3CF01761F476890"
+                      }
+                  ]
+}

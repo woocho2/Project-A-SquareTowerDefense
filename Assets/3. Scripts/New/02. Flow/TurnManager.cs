@@ -12,13 +12,18 @@ namespace SquareTD
         public const int LastWaveEnemyTurns = 20;
 
         public ITurnState Current { get; private set; } = new IdleState();
+                
         public event Action<ITurnState> StateChanged;
         public event Action<int> EnemyTurnEnded;
 
         private bool m_endTurnRequested;
+        [SerializeField] private float m_attackSafetySeconds = 10f;
+
+        private TowerTurnRunner m_towerRunner;
 
         private void Start()
         {
+            m_towerRunner = new TowerTurnRunner(BoardManager.Instance.Slots, m_attackSafetySeconds);
             StartCoroutine(GameLoop());
         }
 
@@ -96,30 +101,9 @@ namespace SquareTD
             while (EnemyManager.Instance.IsAnyEnemyMoving()) yield return null;
         }
 
-        private void SupportTowersPhase()
-        {
-            TowerSlots slots = BoardManager.Instance.Slots;
-            for (int i = 0; i < slots.Count; i++)
-            {
-                TowerController tower = slots.Get(i);
-                if (tower == null || tower.IsAttackTower) continue;
-
-                if (tower.TickAction()) Debug.Log($"[TurnManager] ② {tower.name} 행동");
-            }
-        }
-        private void TileEffectsPhase() { }
-        private IEnumerator AttackTowersPhase()
-        {
-            TowerSlots slots = BoardManager.Instance.Slots;
-            for (int i = 0; i < slots.Count; i++)
-            {
-                TowerController tower = slots.Get(i);
-                if (tower == null || !tower.IsAttackTower) continue;
-
-                if (tower.TickAction()) Debug.Log($"[TurnManager] ② {tower.name} 행동");
-            }
-            yield break;
-        }
+        private IEnumerator AttackTowersPhase() { yield return m_towerRunner.RunAttackTowers(); }
+        private void SupportTowersPhase() => m_towerRunner.RunSupportTowers();
+        private void TileEffectsPhase() { }  
         private void DebuffPhase() { }
         private void BossTimerPhase()
         {

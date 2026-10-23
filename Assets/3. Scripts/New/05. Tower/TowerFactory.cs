@@ -33,14 +33,49 @@ namespace SquareTD
                 return null;
             }
 
-            tower.Init(definition, slotIndex);
+            tower.Init(definition, slotIndex, CreateAction(definition.Color));
             return tower;
+        }
+
+        private TowerAction CreateAction(TowerColor color)
+        {
+            switch (color)
+            {
+                case TowerColor.Red:
+                    return new SplashAction(m_board.Grid, m_board.Occupancy, ProjectileManager.Instance);
+
+                case TowerColor.Blue:
+                    return new TargetAction(m_board.Grid, m_board.Occupancy, ProjectileManager.Instance);
+
+                default:
+                    return null;
+            }
         }
 
         public void Destroy(TowerController tower)
         {
             m_board.Slots.Remove(tower.SlotIndex);
             Object.Destroy(tower.gameObject);
+        }
+
+        public TowerController Replace(TowerController old, TowerDefinition newDefinition, bool inheritState)
+        {
+            if (m_prefab == null)
+            {
+                Debug.LogError("[TowerFactory] 타워 프리팹이 비어 있음");
+                return null;
+            }
+
+            int slot = old.SlotIndex;
+            TowerController created = Object.Instantiate(m_prefab, old.transform.position, Quaternion.identity, m_parent);
+            created.Init(newDefinition, slot, CreateAction(newDefinition.Color));
+            if (inheritState) created.State.CopyInheritedFrom(old.State);
+
+            old.OnRemoved();
+            m_board.Slots.Remove(slot);
+            m_board.Slots.TryPlace(created, slot);
+            Object.Destroy(old.gameObject);
+            return created;
         }
     }
 }

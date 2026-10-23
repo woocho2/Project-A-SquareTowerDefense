@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2251480429831068931}
   - component: {fileID: 2154042018020393128}
   - component: {fileID: 1250209071967395350}
-  - component: {fileID: 214838648453714470}
   m_Layer: 7
   m_Name: Hit_Earth_Splash_30_v4
   m_TagString: Untagged
@@ -125,19 +124,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5220447335354414950}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0facfe5cc7365d469d252cf7019ef98, type: 3}
+  m_Script: {fileID: 11500000, guid: 6d4ee95372d7d7c41acc79f5a819c17c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EffectController
---- !u!114 &214838648453714470
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5220447335354414950}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c2ef45af8816d443ac4d1e3a1a9778a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EffectPool2D
-  m_particleSystem: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.HitEffect
+  m_safetyLifetime: 2

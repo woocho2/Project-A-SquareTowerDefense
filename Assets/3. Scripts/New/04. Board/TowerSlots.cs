@@ -40,5 +40,23 @@ namespace SquareTD
         {
             m_slots[index] = null;
         }
+
+        public bool TryMove(int from, int to)
+        {
+            if (IsEmpty(from) || !IsEmpty(to)) return false;
+            m_slots[to] = m_slots[from];
+            m_slots[from] = null;
+            return true;
+        }
+
+        public bool TrySwap(int a, int b)
+        {
+            if (a == b || IsEmpty(a) || IsEmpty(b)) return false;
+            TowerController temp = m_slots[a];
+            m_slots[a] = m_slots[b];
+            m_slots[b] = temp;
+            return true;
+        }
+
     }
 }

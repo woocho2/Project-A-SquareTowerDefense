@@ -693,3 +693,230 @@
 - 죽은 뒤의 일은 한 곳(DeathResolver)에서 정해진 순서로. 적의 값을 읽는 일은 전부 Release 전에 (풀로 돌아가면 다른 적이 됨).
 - 부품을 손에 넣는 길 셋: [SerializeField](인스펙터, MB·SO), Instance(싱글톤), 생성자 매개변수(만드는 쪽이 건넴). readonly는 가져오는 기능이 아니라 잠금.
 - 이름은 형식이 아니라 역할로 (Attacker, Resolve). 객체 초기화자 new X { 칸 = 값, … }.
+
+[수업 15] 공격 방식과 맞을 대상 — ITarget, TowerAction, TargetAction, BoardGrid 범위 조회   (2026-10-23)
+                                       확인 상태: 테스트 통과 (새 18개: BoardGrid 5 + TargetAction 10 + TowerController 3), 씬에서 확인(행동 로그, 체력 감소)
+만든 파일
+- Assets/3. Scripts/New/07. Combat/ITarget.cs — interface. Transform, PathIndex, IsAlive, IsBoss, IsDummy, Body(EnemyController), CurrentHp, MaxHp,
+    TakeDamage(DamageInfo), SetSortingOrder(int). Stats·Status는 자료형이 생기는 수업 21·25에서 더함
+- EnemyController : MonoBehaviour, ITarget — Transform => transform, PathIndex => Movement.PathIndex, IsAlive => !Health.IsDead,
+    IsBoss => Kind != Normal, IsDummy => false, Body => this, CurrentHp => Health.Current, SetSortingOrder → Movement.SetSortingOrder
+- PathOccupancy: EnemyController → ITarget (목록·매개변수·GetAt). 로그는 target.Transform.name. 이제 이 파일은 적을 모름
+- BoardPresenter: IReadOnlyList<ITarget>, targets[i].SetSortingOrder
+- BoardGrid.GetPathIndicesInSquare(center, radius) → List<int>: 길 칸 전부를 0번부터 돌며 타일 거리 <= radius인 번호 (작은 번호부터)
+- Assets/3. Scripts/New/05. Tower/Actions/TowerAction.cs — abstract. 생성자(BoardGrid, PathOccupancy)를 protected 필드에.
+    abstract CanAct(타워, 스탯), abstract IEnumerator Act(타워, 스탯).
+    protected CollectTargetsInRange(타워, 사거리): 타워 칸(GetSpawnCell(SlotIndex)) 둘레의 길 칸마다 AddRange(점유) — 복사본이라 쏘다가 죽어도 안전
+    protected MakeBasicHit(타워, 스탯, 대상, 치명 여부): 치명 배율, GetOutgoing(Power, 거리 보너스 1, 배율), Source Basic, 문양·속성, Distance(타워 칸 ↔ 대상 칸)
+- Assets/3. Scripts/New/05. Tower/Actions/TargetAction.cs — : TowerAction, 생성자 : base(grid, occupancy). static GetShotsPerAttack(mastery) = mastery × 2.
+    CanAct = 사거리 안 대상 수 > 0. Act: AttackCount × 발 수만큼, 대상이 없거나 죽었으면 다시 찾고(맨 앞), 없으면 break. 탄마다 CriticalRoll. 끝에 yield break
+    (확인용 임시 로그 (AI): 한 발마다 "→ N번 칸 (치명) 체력 현재 / 최대". 수업 16에서 지움)
+- TowerFactory.CreateAction(컬러): switch에 Blue → new TargetAction(m_board.Grid, m_board.Occupancy), 나머지 null. Create가 Init에 넘김
+- TowerController: m_action, Init(정의, 칸, action).
+    TickAction: 0보다 크면 −1 → 아직 남았으면 false → Stats 다시 계산 → Action이 있고 CanAct가 false면 0인 채로 false(대기) → 채우고 true.
+    IEnumerator Act(): Action이 없으면 yield break, 있으면 yield return m_action.Act(this, Stats)
+- TurnManager ④ AttackTowersPhase: TickAction이 false면 continue → "④ … 행동" 로그 → yield return tower.Act()
+- DebugCheat: K·L 임시 키와 HitFirstEnemy·HitAllEnemies, using System.Collections.Generic 지움 (사용자가 지우기로 정함, 마무리는 AI)
+- 테스트 (AI): BoardGridTest +5 (사거리 1·2·0, 대각선, 빈 목록), TargetActionTest 10 (FakeTarget : ITarget — 죽으면 점유에서 빠짐),
+    TowerControllerTest +3 (FakeAction : TowerAction — 대기, 들어온 턴에 바로 행동). 기존 테스트는 Init에 null
+에셋
+- EnemyCountLabel 프리팹의 Sorting Layer Enemy → UI (사용자). 라벨 Order 1이 적 Order 2, 4, 6 …에 가려지던 것 (수업 7부터 그랬음)
+확인
+- Run All 통과. B로 블루 타워 → Space → 사거리 안에 적이 있을 때만 "④ … 행동", 한 발마다 적 체력이 줄어듦.
+- 1티어 블루는 한 발 2 ~ 5라 1웨이브 적(체력 100, 방어 5)을 잡는 데 10턴 넘게 걸림 → 처치까지는 보지 않음 (수업 16의 S3에서 다시)
+
+수업 중에 정한 것
+- ITarget에 SetSortingOrder를 더함 (BoardPresenter가 칸 위 대상들의 그리는 순서를 정함, 더미도 칸 위에 섬). 23번 4-3도 고침.
+- Action은 TowerController.Init이 아니라 TowerFactory가 골라서 넘김: 컬러 switch는 공장 한 곳, 테스트에서 가짜 Action을 넣을 수 있음.
+- TowerAction은 BoardManager가 아니라 BoardGrid·PathOccupancy를 받음 (순수 클래스라 테스트에서 new).
+- MakeBasicHit는 치명 여부를 인자로: 단일은 탄마다, 광역(수업 17)은 투사체마다 굴리므로 굴리는 일은 자식이.
+- AttackHandle 인자는 수업 16, OnMoved·OnRemoved는 수업 18 · 26으로 미룸 (부르는 곳이 생길 때). 23번 #46·수업 16·18·26에 적음.
+- 대상 고르기는 지금 "모은 목록의 맨 앞". 우선순위·탄 미리 분배는 수업 17.
+
+배운 것의 요점
+- interface = 약속만, abstract class = 약속 + 공통 코드. EnemyController는 부모 자리를 MonoBehaviour가 차지해서 ITarget은 interface여야 함.
+- abstract 함수는 몸통 없이 ;, 자식이 override로 반드시 채움. protected = 나와 자식만. 자식 생성자 : base(값들)로 부모 생성자에 넘김 (형식 없이 이름만).
+- 받는 쪽을 interface로 넓히면 넘기는 쪽은 안 고쳐도 됨 (암시적 변환). 넣는 값을 좁히지(.Body) 말고 목록을 넓힘.
+- IReadOnlyList<적>은 IReadOnlyList<ITarget>에 담김 (읽기만 하니까). List는 안 됨.
+- 전부 돌며 조건으로 거름. for 안에서 "지금 몇 번째"는 그 for의 i (radius·PathCount처럼 안 바뀌는 값이 아님).
+- yield return null은 한 프레임 쉬고 다음 줄로, yield break는 코루틴 전체를 끝냄, break는 for만, continue는 이번 바퀴만.
+- "묻는" 것처럼 보여도 상태를 바꾸는 함수(TickAction)는 한 번만 부름.
+- interface·abstract가 있으면 테스트에서 가짜(FakeTarget, FakeAction)를 넣어 씬 없이 확인할 수 있음.
+- F2(이름 바꾸기)는 프로젝트 전체의 그 이름을 바꿈.
+
+[수업 16] 투사체 — AttackHandle, ProjectileCatalog, Projectile, ProjectileVfx, ProjectileManager, IProjectileLauncher, ProjectileHitResolver,
+                    HitEffect, SatelliteLayout, TowerTurnRunner   (2026-10-23)
+                                       확인 상태: 테스트 통과 (새 33개: AttackHandle 8, SatelliteLayout 9, TargetAction +6(탄·위성), TowerTurnRunner 5 … ),
+                                       플레이로 탄·명중 이펙트·위성 확인. 시나리오 S2·S3은 따로 안 봄 (2부 끝에서)
+만든 파일 (Assets/3. Scripts/New/08. Projectile, TowerTurnRunner만 05. Tower)
+- AttackHandle — 공격 한 번의 영수증. PendingShots, IsDone(== 0), AddShot(++), CompleteShot(--, 0 아래로 안 감 + 경고), ForceComplete(0으로 + 남은 발 수 경고)
+- ProjectileCatalog (SO) — Entry(Id, Sprite, EffectColor, Animation 컨트롤러, HitEffect, HitEffectScale), GetLookId(타워 ID) = ID % 1000, TryGet(번호, out 줄)
+- Projectile — ApplyLook(표의 줄: 회전 되돌림, 그림, 컨트롤러, 색, 꼬리 끔), FlyTo(도착, 속력, 기다릴 시간) → Sequence(AppendInterval → Launch(방향 돌리기,
+    IsFlying = true, 꼬리 켬) → DOMove Linear), SetLink KillOnDisable
+- ProjectileVfx — SetColor(꼬리·파티클 그라디언트, 옛 코드에서 옮김(AI)), Play, Stop(Clear로 풀의 긴 꼬리 막기)
+- ProjectileManager — Singleton, IProjectileLauncher. 탄 프리팹 하나·풀 하나, FlyingCount.
+    Fire(모양, 어디서, 어디로, 속력, 기다릴 시간, 닿으면 할 일): 표에 없으면 경고 + 바로 onArrived (턴이 멈추지 않게) → 꺼내기 → 모양 → FlyTo().OnComplete(
+    FlyingCount--, 풀로, 명중 이펙트, onArrived). 명중 이펙트는 모양 번호마다 풀(Dictionary<int, ObjectPool<HitEffect>>, 처음 쓸 때 만듦)
+- IProjectileLauncher (AI 만듦, 사용자 파일이 없어져서) — Fire 하나. 테스트의 가짜 발사기(InstantLauncher, DelayedLauncher)가 지킴
+- ProjectileHitResolver — static HitSingle(대상, 피해): 살아 있지 않으면 무시 → TakeDamage → 임시 체력 로그 "[Hit] …"
+- HitEffect — Play(끝나면 할 일): 안전 시간 2초 DOVirtual.DelayedCall(KillOnDisable). DestroyEffect()(애니메이션 이벤트의 옛 이름): 한 번만 → 풀로
+- SatelliteLayout — static. SatelliteSettings(struct: Interval 0.3, LaunchDelay 0.5, Radius 0.9, GroupSpacing 0.12, Default).
+    GetOffset(i, N, 반지름) = (sin θ, cos θ) × r, θ = 360° × i ÷ N (12시부터 시계 방향). GetSpread: 한 자리의 여러 발을 시계 방향 옆쪽으로 벌림
+    (설정 칸 주석은 사용자가 일부러 남김)
+- TowerTurnRunner — 생성자(TowerSlots, 안전 시간). RunSupportTowers(②), RunAttackTowers(④: TickAction → 영수증 → Act → WaitForHandle).
+    WaitForHandle: 안전 시간(Time.deltaTime, 멈추면 안 흐름)이 지나면 경고 → ForceComplete
+- TowerAction: 생성자에 IProjectileLauncher, Act에 AttackHandle. TowerController: Act(handle), 인스펙터의 SatelliteSettings(m_satellite, Satellite)
+- TargetAction.Act: 위성 수 = AttackCount, 자리마다 발 수 = Mastery × 2. 모든 탄이 같은 H = (N − 1) × 간격 + 발사 대기를 기다림 → 띄운 순서대로 발사.
+    위성마다 WaitForSeconds(간격). 대상이 없으면 yield break. 람다가 for 바깥 변수를 기억하지 않게 shotTarget·hit은 for 안에서
+- TowerFactory: TargetAction(Grid, Occupancy, ProjectileManager.Instance). TurnManager: ②·④를 TowerTurnRunner로 (m_attackSafetySeconds 10)
+- InvariantChecker: 적 턴 끝에 FlyingCount > 0이면 에러
+- 테스트 (AI): AttackHandleTest 8, SatelliteLayoutTest 9, TargetActionTest(가짜 발사기 둘, 탄·영수증·위성 자리·같은 기다림), TowerTurnRunnerTest 5,
+    TowerControllerTest의 FakeAction 맞춤
+에셋 (Codex)
+- 2. Prefab/4. Effect/Projectile.prefab (루트: Animator·꼬리·파티클, 크기 0.5 / 자식 OrbVisual: 그림), ProjectileCatalog.asset 28줄
+- 블루 투사체 애니메이션 클립 28개의 경로를 루트 → OrbVisual (옛 Resources/Projectiles 2xx는 애니메이션이 안 먹게 됨, 옛 게임은 꺼 둠)
+- 명중 이펙트 프리팹 28개(4. Asset/6. Effect)의 EffectPool2D·EffectController → HitEffect, 표에 이펙트·크기(4.5, 104·204는 1.5, 202는 2.25)
+확인
+- 블루 타워: 12시부터 시계 방향으로 위성이 뜨고(자리마다 2발), 띄운 순서대로 날아가 명중 이펙트, 다음 타워는 앞 타워의 탄이 다 닿은 뒤
+
+수업 중에 정한 것
+- 투사체 프리팹 28개 대신 프리팹 하나 + 표, 풀 하나 (사용자: 타워마다 같은 방식으로 쏨). 옛 프리팹엔 Animator가 있었음 (처음에 AI가 없다고 잘못 말함)
+- 202·205의 코드 회전은 빼고 애니메이션에 맡김. 104·204 명중 이펙트의 탄 방향 회전도 뺌 (어색하면 표에 칸을 더함)
+- 대미지 숫자는 뺌 → 6부(AI). 명중 이펙트는 옛 Effect* 4개를 복사하지 않고 새로 씀
+- 위성 배치: 위성 수만큼 원을 고르게, 12시부터 시계 방향 (3발 12·4·8시, 많아도 원 하나)
+- 피해는 쏠 때 정하고(치명 포함) 닿을 때 넣음. 대상은 쏠 때 정함 (미리 분배는 수업 17)
+
+배운 것의 요점
+- 영수증(AttackHandle): 판 전체의 탄 수가 아니라 내 공격의 탄 수만 셈. 0 아래로 안 내려가게 막아야 턴이 안 멈춤.
+- 콜백(Action): "끝나면 이걸 해 줘"를 함수로 건넴. 람다 () => { }는 바깥 변수를 값이 아니라 변수째로 기억 → 루프 안에서 따로 받아 둠.
+  Action<T>는 인자 하나. 함수 이름만(괄호 없이) 넘기면 "부르기"가 아니라 "건네기".
+- interface는 그 일을 하는 쪽이 지킴 (발사기 = ProjectileManager). 받는 쪽은 받아서 쓰기만. override는 부모와 매개변수가 똑같아야.
+- 같은 형식의 인자 둘(float 속력·기다릴 시간, int 발 번호·모양 번호)은 순서가 바뀌어도 에러가 안 남 → 선언과 같은 순서로.
+- 풀의 지난 상태: 회전·꼬리·그림을 꺼낼 때 되돌림. 처음 쓸 때 풀을 만들어 사전에 넣어 둠.
+- (sin θ, cos θ)가 12시에서 시계 방향, Mathf.Sin은 라디안, 360f의 f(정수 나눗셈은 소수를 버림). 함수 이름은 숫자로 시작할 수 없음.
+- 진행(TurnManager)과 세부(TowerTurnRunner)를 나눔. 생성자로 받은 부품을 두고 Instance를 또 찾지 않음.
+- Unity 밖에서 만든 파일은 Unity가 Import해야 csproj에 들어가 VS Code가 읽음.
+
+[수업 17] 광역과 타겟 우선순위 — TargetSelectors, TargetAction 보강(미리 나눔), SplashAction   (2026-10-23)
+                                       확인 상태: 테스트 통과 (TargetSelectors 13, TargetAction 미리 나눔·우선순위 +5, SplashAction 11), 플레이로 블루·레드 확인
+만든 파일
+- Assets/3. Scripts/New/05. Tower/Targeting/TargetSelectors.cs — abstract TargetSelector: static For(우선순위)(선택자 6개를 static readonly로 하나씩, switch는 여기 한 곳),
+    abstract Select(후보, 타워 칸, 판), protected static DistanceTo(타일 거리).
+    ClosestSelector(<, MaxValue), FarthestSelector(>, MinValue), MostHpSelector, LeastHpSelector, MostCrowdedSelector(칸별 수 Dictionary, 같은 수면 앞쪽),
+    BossSelector(보스 중 체력 많은 쪽, 없으면 For(MostHP)에 맡김). 같으면 목록의 앞쪽
+- ITarget.PreviewDamage(피해) — 깎지 않고 예상만. EnemyController: DamageCalculator.Calculate(info, Defense, 1, 0), TakeDamage도 이걸 부름 (계산식 한 곳)
+- TargetAction.Act: 쏠 때마다 선택자 = For(State.TargetPriority), 탄마다 CollectTargetsInRange → PickTarget → 치명 → 피해 정보 → 예상 피해를 incoming에 더함
+    → 닿으면 incoming에서 빼고 HitSingle. PickTarget: 체력 − 날아가는 피해 > 0 인 후보만, 없으면 사거리 안 전부(원래 우선순위). FindTarget 지움
+    (뼈대는 사용자 요청으로 AI가 파일에 넣고 사용자가 빈칸을 채움)
+- TowerAction: CollectTargetsInSquare(가운데 칸, 반지름)로 꺼내고 CollectTargetsInRange는 그걸 부름 (타워 칸, 사거리)
+- Assets/3. Scripts/New/05. Tower/Actions/SplashAction.cs (뼈대 AI, 빈칸 사용자) — GetAreaRadius = Mastery − 1, GetAreaSide = 반지름 × 2 + 1.
+    위성 수 = AttackCount(한 자리 1발), 위성마다 선택자로 고른 적의 칸 = 착탄 칸, 치명은 투사체마다, 닿으면 착탄 칸 둘레의 대상 모두에게 MakeBasicHit(같은 치명)
+- IProjectileLauncher·ProjectileManager.Fire에 effectScale(명중 이펙트 배율). 단일은 1, 광역은 범위 한 변. PlayHitEffect: 표 크기 × 배율
+- TowerFactory: case Red → SplashAction
+- 테스트 (AI): TargetSelectorsTest 13, TestFakes.cs(OccupyingFakeTarget·InstantLauncher·DelayedLauncher·TestBoards를 테스트들이 같이 씀),
+    TargetActionTest(미리 나눔 4 + 2, 치명이면 덜 쏨, 다 죽을 예정이면 원래 대상, 우선순위 2), SplashActionTest 11
+에셋 (AI가 숫자만)
+- ProjectileCatalog HitEffectScale: 레드 101 ~ 114는 1.5(104는 1.8, 옛 "범위 한 변 × 1.5"), 블루 201 ~ 214는 1 (사용자: "한 칸 정도", 그림 256px = PPU 256 = 1유닛 = 한 칸)
+    레드도 1로 맞출지는 물어 둠 (답 없음, 지금은 1.5)
+확인
+- 블루가 우선순위대로 쏘고 탄을 죽을 만큼만 나눔, 레드가 위성을 띄워 착탄 칸 둘레를 맞힘
+
+수업 중에 정한 것
+- 선택자는 상태가 없어 static으로 하나씩 같이 씀. 우선순위는 쏠 때마다 읽음 (런타임에 갈아 끼우기)
+- 미리 나눔은 "날아가는 예상 피해"로: 쏠 때 더하고 닿을 때 뺌 (바로 닿는 경우 두 번 세지 않게)
+- 광역 범위의 대상은 닿는 순간의 점유에서 (④ 동안 적이 안 움직임). 사거리 밖이어도 범위 안이면 맞음
+- 고른 공격 칸 먼저는 수업 18로 (TowerState에 칸이 없어서)
+
+배운 것의 요점
+- 가장 작은 것은 < 와 MaxValue, 가장 큰 것은 > 와 MinValue로 시작. 개수 세기는 + 1.
+- 다른 선택자에게 맡기기(BossSelector → For(MostHP)): 규칙을 두 번 쓰지 않음.
+- default는 목록에서 null. 함수의 받는 칸을 늘리면 부르는 곳도 같이.
+- 같은 모양의 코드(타워 칸 둘레 / 착탄 칸 둘레)는 가운데만 매개변수로 받는 부모 함수 하나로.
+
+[수업 18] 입력과 조작 — TowerSlots 옮기기·바꾸기, TowerManager 선택·판매·이동·교환, BoardInputController·InputModes, 공격 칸   (2026-10-23)
+                                       확인 상태: 테스트 통과 (TowerSlots +9, TowerManager 2, 선택자·단일·광역·타워 공격 칸 +8), 플레이로 끌기·판매·공격 칸 확인
+만든 파일
+- TowerSlots: TryMove(from, to)(옮길 타워가 있고 갈 칸이 비었을 때), TrySwap(a, b)(같은 칸 아님, 둘 다 있음, temp로 바꿈)
+- TowerAction: virtual OnMoved(타워)·OnRemoved(타워) 빈 몸통. TowerController: SetSlot(칸, 자리)(공격 칸 풀고 OnMoved), OnRemoved()
+- TowerManager (함수 뼈대는 사용자 요청으로 AI가 파일에): Selected·SelectionChanged·TowerRemoved, GetSellGem(티어) 1·3·9·27·81,
+    Select(타워/null), TrySell(플레이어 턴, 시너지 불가: 선택 해제 → OnRemoved → Destroy → 젬 → TowerRemoved), TryMoveOrSwap(타워, 칸), PlaceAt
+- BoardManager: GetSpawnWorldPosition(칸), TryGetPoint(월드, out BoardPoint)(Tilemap.WorldToCell → 길·스폰 번호)
+- Assets/3. Scripts/New/11. Input/InputModes.cs (뼈대 AI, 빈칸 사용자) — readonly struct BoardPoint(월드, 길 번호, 스폰 번호, IsPath, IsSpawn),
+    IInputMode(Enter, Exit, OnPointerDown, OnPointerDrag, OnPointerUp, OnCancel), IdleMode(누르면 선택 + Clicked 알림, 0.2 넘게 끌면 DragTowerMode),
+    DragTowerMode(따라옴, 스폰 칸에 떼면 TryMoveOrSwap, 아니면 제자리), PickAttackCellMode(사거리 안 길 칸만, 같은 칸이면 해제 −1)
+- Assets/3. Scripts/New/11. Input/BoardInputController.cs — Mouse.current, ScreenToWorldPoint(z = 0), UI 위 클릭 거르기, 뗌을 누른 채보다 먼저 검사,
+    ChangeMode, Clicked 이벤트(NotifyClicked), 적 턴이 되면 Current.OnCancel. 씬: 새 오브젝트 InputController (옛 루트 BoardInputController는 끔)
+- TowerState.AttackCellIndex(−1). TargetSelector.PreferAttackCell(후보, 칸). TargetAction: 살아남을 후보 → 공격 칸 거르기 → 우선순위.
+    SplashAction: 공격 칸 거르기 → 우선순위로 고른 적의 칸이 착탄 칸
+- DebugCheat: X = 선택한 타워 판매, C = 선택한 공격 타워의 공격 칸 고르기 (UI 버튼이 붙기 전까지)
+- UI (AI): UIManager가 SelectionChanged·TowerRemoved·판 Clicked를 듣고 패널을 엶 (빈 스폰·빈 길 → 타일, 적이 선 길 → 적 정보, 판 밖 → 닫기).
+    TowerInfoPanel의 판매·공격 칸 버튼, 우선순위 글자에 "· N번 칸 먼저"
+- 테스트 (AI): TowerSlotsTest +9, TowerManagerTest(판매 젬), TargetSelectors·TargetAction·SplashAction·TowerController 공격 칸 +8
+확인
+- 클릭으로 선택, 끌어서 이동·교환, 판 밖에 놓으면 제자리, 적 턴엔 안 끌림, X로 판매(젬 +1), C → 길 칸 클릭으로 공격 칸
+- 옛 "타워 생성" 버튼(옛 UI)으로 만든 타워는 새 입력으로 안 끌림 → 옛 Manager·Pool·UICanvas를 꺼야 함 (제출용 되돌림 뒤 켜져 있었음)
+
+수업 중에 정한 것
+- 판매·이동은 TowerManager 한 창구 (칸 목록, 위치, SlotIndex를 함께). 판매 젬은 기획의 고정 수치라 코드에
+- 입력은 UI를 모름: 눌렸다는 Clicked만 알리고 UIManager가 패널을 정함
+- 타워를 옮기면 고른 공격 칸은 풂 (새 자리에선 사거리 밖일 수 있음)
+- 2026-10-23 제출을 위해 Codex가 옛 게임용으로 에셋을 되돌렸다가 outputs/submission-backup으로 복원함 (README)
+
+배운 것의 요점
+- 입력 모드 = 상태 패턴: 같은 "누름"의 뜻을 모드가 정함. 새 모드는 클래스만 더함 (컨트롤러 안 고침)
+- 화면 → 월드 → 칸: Camera.ScreenToWorldPoint, Tilemap.WorldToCell ("무엇To무엇"이 방향)
+- &&의 양쪽은 bool. 묻는 것(IsSpawn)과 넘기는 것(SpawnIndex)을 구별. "안 고름"은 0이 아니라 −1
+- 매개변수 대신 숫자(IsEmpty(0))를 쓰면 테스트가 같은 숫자만 쓸 때 놓침
+- 바꾸기에는 temp가 필요함 (덮어쓰기 전에 들고 있기)
+
+[수업 19] 합성과 티어 강화 — TowerProgression, TowerFactory.Replace, TowerManager.TryMerge·TryTierUpgrade   (2026-10-23)
+                                       확인 상태: 테스트 통과 (TowerProgression 15, TowerState 2), 플레이로 합성·티어 강화·자동 진행 확인
+만든 파일
+- Assets/3. Scripts/New/05. Tower/TowerProgression.cs (뼈대 AI, 빈칸 사용자) — enum MergeMode(Exact, Color, Emblem), static:
+    GetTierUpgradeCost 5·15·45·135(5티어 이상 0), CanMergeFrom(1 ~ 4티어, 시너지 아님), Matches(같은 티어 + 모드별 컬러·문양),
+    TryFindMaterials(대상, 모드, 칸 목록, 결과 목록)(보드 순서로 2기, 자기 제외), GetResultCandidates(정의, 모드, DB, 고른 문양)(CSV에 있는 것만)
+- TowerState.CopyInheritedFrom(옛 상태): 우선순위·공격 칸 (남은 행동력은 새 것). 스택·스킬 진행은 그 수업에서 여기에 더함
+- TowerFactory.Replace(옛 타워, 새 정의, 이어받기): 새 타워를 옛 자리에 만들고 Init → (이어받기) → 옛 것 OnRemoved → 칸 교체 → 옛 오브젝트 지움
+- TowerManager: TowerReplaced(옛, 새) 이벤트, RemoveTower(판매·재료가 같이 씀),
+    TryMerge(대상, 모드): 재료 → 후보 → 무작위 하나 → Replace(이어받지 않음) → 재료 지움(맨 마지막, B2) → 알림·선택,
+    TryTierUpgrade(타워): 비용·젬·다음 티어 확인 → Replace(이어받음) → 젬 차감(맨 마지막) → 알림·선택
+- TowerVisual (AI): 장식 테두리를 티어 색으로 (m_tierColors, 카드 배지와 같은 색) — 판 위에서 티어가 안 보인다는 사용자 요청
+- DebugCheat (AI): 1·2·3 = 선택한 타워 확정·컬러·문양 합성, U = 티어 강화, H = 젬 +100.
+    자동 진행(A)의 플레이어 턴: 돈만큼 생성 → 확정 → 컬러 → 문양 순서로 될 때까지 합성 → 칸이 비면 다시 (사용자 요청). 젬 컬러 강화는 수업 20
+- UI (AI): PlayerTurnPanel 티어 강화 비용·버튼(젬이 모자라면 끔), 교체·제거된 타워 따라가기. UIManager TowerReplaced → 새 타워 패널.
+    TowerInfoPanel 합성 버튼 3개(재료가 있으면 켜짐, 판의 타워가 바뀌면 다시 봄), 누르면 TryMerge
+- 테스트 (AI): TowerProgressionTest 15, TowerStateTest 2
+
+수업 중에 정한 것
+- 결과는 후보 목록까지만 계산(테스트 가능), 무작위 뽑기는 TowerManager에서
+- 합성은 이어받지 않고, 티어 강화만 이어받음 (20번 8장)
+- 판 위 타워의 티어는 장식 테두리 색으로 보임
+
+배운 것의 요점
+- "확인 → 새 것을 만들기 → 옛 것 지우기 → 재화 차감" 순서면 중간에 실패해도 잃는 게 없음 (B2)
+- foreach가 꺼낸 하나의 이름(emblem)과 목록 이름(selectedEmblems)을 구별. MergeCount − 1의 1과 i를 혼동하지 않기
+- 같은 형식(bool, int)의 인자는 틀려도 에러가 안 남 (합성 true/false, 비용 vs 티어)
+- 테스트가 실패하면 실패한 테스트 이름이 가리키는 함수 전체를 다시 읽기
+
+[UI 스크립트] 수업 44 ~ 47 대신 AI가 미리 씀   (2026-10-23, 사용자: "UI는 수업 안 들어도 될 정도로 마스터해서 너가 해주면 됨")
+                                       확인 상태: 스크립트만. 프로젝트 파일 복사본으로 컴파일해 UI 파일의 오류 0 확인. 씬 연결·플레이 확인은 아직
+만든 파일 (Assets/3. Scripts/New/10. UI, 전부 AI)
+- UIManager — Singleton. TurnManager.StateChanged로 플레이어 턴 패널·게임 오버·클리어 패널. 정보 패널은 한 번에 하나
+    (ShowTowerPanel(타워), ShowTileInfoPanel(길 번호, 스폰 번호), ShowEnemyInfoPanel(길 번호), ShowZoneInfoPanel), SelectedTowerChanged·SelectedTileChanged 이벤트,
+    타워/타일 전환 버튼, 옵션 패널을 열면 시간 멈춤(Pause·Resume)
+- GameInfoPanel — 웨이브, 적 수 / 한도, 골드·젬, 보스 남은 턴(새 칸 txt_bossTurns: 살아 있는 보스 중 가장 적은 남은 턴). 이벤트를 받을 때만 다시 그림 (B20)
+- PlayerTurnPanel — 생성 버튼(비용·골드가 모자라면 끔), 턴 종료. 컬러·티어 강화는 주석(수업 19 · 20)
+- TowerInfoPanel — 카드 12칸 중 지금 있는 값(위력, 사거리, 남은/최대 행동력, 공격 횟수, 치명, 스킬 계수, Duration, Mastery, 스택 최대), 컨셉 이름,
+    티어·컬러·문양, 판매 젬(3^(티어−1)), 우선순위 6종을 플레이어 턴에 바꿈(State.TargetPriority). 합성·판매·스택 소모·공격 칸 버튼은 주석
+- TileinfoPanel — 선택한 칸. 특수 타일·존·장판은 주석(수업 22 · 26 · 29)
+- EnemyInfoPanel — 칸의 ITarget 목록(목록 항목을 다시 씀, 매번 만들고 지우지 않음), 상세(체력, 방어, 행동 주기, 이동력, 기본 저항, 적중 수 칸).
+    점유 CellChanged·EnemyDied·EnemyTurnEnded로만 다시 그림 (옛 것의 Update 폴링을 없앰)
+- EnemyListItemUI — ITarget을 받음. 이름 앞에 [BOSS] / [잔상]
+- OptionPanel, GameOverPanel, GameClearPanel — 계속·재시작·메뉴·끝내기. 스택 자동/수동 토글은 주석(수업 23 · 47)
+- ZoneInfoPanel(새), EmblemSelectPanel(새: 모드별 6 / 8 / 6개 문양 고르기, 설정 넘기기는 주석 수업 42)
+- TowerInfoCardView·TowerTierBadgeGraphic — 옛 것의 복사본 (카드 뒤집기 코루틴 → DOTween Sequence, SetUpdate(true)로 멈춘 동안에도)
+- SceneFlow — static. Reload·Load(시간 배율 1로 되돌린 뒤)·Quit. 옛 SceneLoader를 복사하기 전까지
+정한 것
+- 아직 없는 시스템은 "// 수업 N: …" 주석. 수업 N에서 그 시스템을 만들 때 AI가 찾아 풀어 연결함 (23번 6부 앞 설명)
+- 옛 [SerializeField] 이름과 버튼 함수 이름은 그대로 (Debug 인스펙터에서 Script 칸만 갈아 끼우면 연결이 남게)
+- 남은 일: 씬에서 Script 갈아 끼우기, 새 칸 만들기, 캔버스 켜기 (AI)

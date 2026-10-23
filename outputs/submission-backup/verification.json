@@ -1,0 +1,39 @@
+﻿{
+    "VerifiedAt":  "2026-10-23T14:19:20.7016736+09:00",
+    "Head":  "b5a2c4f5dbe55a6c474f31a55e032c776187bbc7",
+    "HeadUnchanged":  true,
+    "BackupFileCount":  122,
+    "BackupHashFailures":  [
+
+                           ],
+    "ProtectedFileCount":  212,
+    "ProtectedChanges":  [
+
+                         ],
+    "RestoredAssetCount":  56,
+    "RestoredAssetsMatchHead":  true,
+    "EffectPrefabsWithOldComponents":  28,
+    "InvalidEffectPrefabs":  [
+
+                             ],
+    "TargetClipsWithRootSpriteCurve":  28,
+    "InvalidTargetClips":  [
+
+                           ],
+    "NewManagersStillDisabled":  true,
+    "RuntimeVerified":  [
+                            "Wave 1 spawned 8 enemies",
+                            "Tower creation button",
+                            "Turn progression and enemy movement",
+                            "Tower attacks, enemy deaths and gold rewards; reached Wave 2",
+                            "Tower info character portrait and name",
+                            "Options open and continue",
+                            "No red Console errors in final play run"
+                        ],
+    "RuntimeLimitations":  [
+                               "No exhaustive test of all 28 projectile/effect types",
+                               "Other info panels outside final acceptance per user clarification",
+                               "Existing GameManager DontDestroyOnLoad warning remains",
+                               "No standalone build or full-stage clear test"
+                           ]
+}

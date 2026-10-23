@@ -140,5 +140,40 @@ namespace SquareTD.Tests
             BoardGrid grid = MakeGrid();
             Assert.AreEqual(1, grid.GetBifrostPartner(4));
         }
+
+        [Test]
+        public void 사거리1_3_0_0_은_2번과_4번()
+        {
+            BoardGrid grid = MakeGrid();
+            CollectionAssert.AreEqual(new[] { 2, 4 }, grid.GetPathIndicesInSquare(new Vector3Int(3, 0, 0), 1));
+        }
+
+        [Test]
+        public void 사거리1_0_1_0_은_대각선도_포함해_0번_1번_3번()
+        {
+            BoardGrid grid = MakeGrid();
+            CollectionAssert.AreEqual(new[] { 0, 1, 3 }, grid.GetPathIndicesInSquare(new Vector3Int(0, 1, 0), 1));
+        }
+
+        [Test]
+        public void 사거리2_3_0_0_은_1번부터_4번()
+        {
+            BoardGrid grid = MakeGrid();
+            CollectionAssert.AreEqual(new[] { 1, 2, 3, 4 }, grid.GetPathIndicesInSquare(new Vector3Int(3, 0, 0), 2));
+        }
+
+        [Test]
+        public void 사거리0_길_칸_위면_그_칸만()
+        {
+            BoardGrid grid = MakeGrid();
+            CollectionAssert.AreEqual(new[] { 3 }, grid.GetPathIndicesInSquare(new Vector3Int(1, 1, 0), 0));
+        }
+
+        [Test]
+        public void 사거리_안에_길이_없으면_빈_목록()
+        {
+            BoardGrid grid = MakeGrid();
+            CollectionAssert.IsEmpty(grid.GetPathIndicesInSquare(new Vector3Int(0, 1, 0), 0));
+        }
     }
 }

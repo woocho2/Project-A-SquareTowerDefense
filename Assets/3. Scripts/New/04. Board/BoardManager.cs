@@ -58,6 +58,17 @@ namespace SquareTD
             return m_pathTilemap.GetCellCenterWorld(cell);
         }
 
+        public Vector3 GetSpawnWorldPosition(int slot) => GetWorldPosition(Grid.GetSpawnCell(slot));
+
+        public bool TryGetPoint(Vector3 world, out BoardPoint point)
+        {
+            Vector3Int cell = m_pathTilemap.WorldToCell(world);
+            int pathIndex = Grid.TryGetPathIndex(cell, out int foundPath) ? foundPath : -1;
+            int spawnIndex = Grid.TryGetSpawnIndex(cell, out int foundSpawn) ? foundSpawn : -1;
+            point = new BoardPoint(world, pathIndex, spawnIndex);
+            return pathIndex >= 0 || spawnIndex >= 0;
+        }
+
         #if UNITY_EDITOR
         private void OnDrawGizmos()
         {

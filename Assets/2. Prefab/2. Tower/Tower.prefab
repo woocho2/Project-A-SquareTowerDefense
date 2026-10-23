@@ -190,6 +190,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfc1e2fe744d5ee4d84cfd4722a69926, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.TowerController
+  m_satellite:
+    Interval: 0.3
+    LaunchDelay: 0.5
+    Radius: 0.9
+    GroupSpacing: 0.12
 --- !u!114 &3374333988479624537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -235,6 +240,12 @@ MonoBehaviour:
   m_targetColor: {r: 0.3254902, g: 0.5411765, b: 0.8039216, a: 1}
   m_buffColor: {r: 0.8352941, g: 0.6784314, b: 0.15686275, a: 1}
   m_debuffColor: {r: 0.1254902, g: 0.1254902, b: 0.15294118, a: 1}
+  m_tierColors:
+  - {r: 0.78, g: 0.46, b: 0.24, a: 1}
+  - {r: 0.77, g: 0.85, b: 0.92, a: 1}
+  - {r: 1, g: 0.78, b: 0.27, a: 1}
+  - {r: 0.56, g: 0.91, b: 0.8, a: 1}
+  - {r: 0.32, g: 0.8, b: 1, a: 1}
 --- !u!1 &2127725103623809396
 GameObject:
   m_ObjectHideFlags: 0

@@ -25,6 +25,12 @@ namespace SquareTD
         [SerializeField] private Color m_targetColor = new Color32(83, 138, 205, 255);
         [SerializeField] private Color m_buffColor = new Color32(213, 173, 40, 255);
         [SerializeField] private Color m_debuffColor = new Color32(32, 32, 39, 255);
+        [Header("티어 색상 (장식 테두리, 1 브론즈 ~ 5 다이아)")]
+        [SerializeField] private Color[] m_tierColors =
+        {
+            new Color(0.78f, 0.46f, 0.24f), new Color(0.77f, 0.85f, 0.92f), new Color(1f, 0.78f, 0.27f),
+            new Color(0.56f, 0.91f, 0.80f), new Color(0.32f, 0.80f, 1f)
+        };
         private int m_appliedTowerID;
         private int m_appliedVisualID;
         public bool UsesCharacterVisual { get; private set; }
@@ -34,8 +40,7 @@ namespace SquareTD
         public Sprite TierSprite => m_appliedTowerID / 1000 == 6
             ? (m_decorationRenderer != null ? m_decorationRenderer.sprite : null)
             : GetSprite(m_tierSprites, m_appliedTowerID / 1000);
-        public Color TierColor => m_appliedTowerID / 1000 == 6 && m_decorationRenderer != null
-            ? m_decorationRenderer.color : Color.white;
+        public Color TierColor => m_decorationRenderer != null ? m_decorationRenderer.color : Color.white;
         public Sprite ColorSprite => IsRegular && m_backgroundRenderer != null ? m_backgroundRenderer.sprite : null;
         public Sprite EmblemSprite => IsRegular ? GetSprite(m_emblemSprites, m_appliedTowerID % 100) : null;
         public Color EmblemColor => GetEmblemColor((m_appliedTowerID % 1000) / 100);
@@ -68,6 +73,8 @@ namespace SquareTD
             ApplyLayer(m_backgroundRenderer, background, -1, canvasSize);
             ApplyLayer(m_characterRenderer, portrait, 0, canvasSize);
             ApplyLayer(m_decorationRenderer, decoration, 1, canvasSize);
+            if (m_decorationRenderer != null && !synergy && tier >= 1 && m_tierColors != null && tier <= m_tierColors.Length)
+                m_decorationRenderer.color = m_tierColors[tier - 1];
             if (m_emblemRenderer != null)
             {
                 m_emblemRenderer.sprite = synergy ? null : GetSprite(m_emblemSprites, towerID % 100);

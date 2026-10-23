@@ -1,11 +1,15 @@
-23. 리팩토링 계획서 — 처음부터 다시 만들며 배우는 수업
+﻿23. 리팩토링 계획서 — 처음부터 다시 만들며 배우는 수업
 작성일: 2026-10-20
 바탕: 20. 통합 기획서(2026-10-16 확정), 지금 스크립트 86개(Assets/3. Scripts)
 흐름: 20번 기획 → 23번 계획(이 문서, 남은 것만) → 24번 리팩토링 내역서(끝낸 것). 끝난 수업은 24번으로 옮기고 여기서 지움.
       수업 중·수업 뒤의 질문과 답은 25번 수업 질문 노트에 수업별로 그때그때 더함 (Claude가 따로 부탁받지 않아도).
 
->>> 다음 수업: 15 — 공격 방식과 맞을 대상 (ITarget, TowerAction, TargetAction)
-    수업 14는 2026-10-22에 끝남 (24번). DebugCheat의 K·L 임시 키는 수업 15에서 지움 (수업 15 설명)
+>>> 다음 수업: 20 — 타워 스탯 완성 (BalanceTables, ColorUpgradeState, StatModifier, TowerStatCalculator 완성)
+>>> 진행 중: 1·2단계 끝 → 2단계 테스트 돌리기부터, 그다음 3단계 (수업 20의 "진행" 칸에 이어서 할 것을 적어 둠)
+    수업 19는 2026-10-23에 끝남 (24번).
+    수업 18은 2026-10-23에 끝남 (24번).
+    수업 17은 2026-10-23에 끝남 (24번). 2부 끝 시나리오(S1 · S2 · S3 · S5 · S7 · S8)는 아직 안 함 (2부 끝 칸).
+    수업 16은 2026-10-23에 끝남 (24번). 명중 때의 체력 로그(ProjectileHitResolver의 "[Hit] …", 임시)는 대미지 숫자가 생길 때 지움 (6부)
     수업 1에서 남긴 손질 (선택): TowerIdTest를 namespace SquareTD.Tests로 감싸면 SquareTD.TowerEmblem 대신 TowerEmblem만 써도 됨,
     함수 이름 GetEmblem_5305는_05 → _Shield, bool은 Assert.IsTrue / IsFalse
 
@@ -15,7 +19,7 @@
   2. 게임의 큰 그림
   3. 이 수업에서 배우는 패턴
   4. 전체 틀 — 미리 정해 두는 약속 (단계, 이벤트, 공용 자료형, 훅, 문양 56종이 들어가는 자리)
-  5. 스크립트 전체 목록 — 173개, 스크립트마다 기능과 만드는 수업
+  5. 스크립트 전체 목록 — 179개, 스크립트마다 기능과 만드는 수업
   (4장에 [4-7] 옛 코드에서 고친 버그를 다시 만들지 않기, [4-8] 여러 기능이 함께 동작하는지 보는 확인)
   6. 수업 목록 — 48수업 (UI는 맨 마지막 6부)
 
@@ -59,7 +63,7 @@
              2. Prefab/2. Tower/Tower, 2. Prefab/EnemyCountLabel (옛 것은 앞에 Old_)
      옛 프리팹과 같은 폴더에 섞이므로, 수업 48에서 옛 프리팹을 지울 때 새 것(새 스크립트가 붙은 것)을 가려낼 것
    아직 만들 것 (그 폴더의 첫 파일을 만드는 수업에서):
-     05. Tower/  Actions, Targeting, Skills(+ Splash, Target), Rules(+ Buff, Debuff), Ground
+     05. Tower/  Targeting, Skills(+ Splash, Target), Rules(+ Buff, Debuff), Ground   (Actions는 수업 15에서 만듦)
      06. Enemy/  Effects
      프리팹      타워(수업 12, 2. Tower), 투사체(16), 더미(39)
    빈 폴더는 git에 올라가지 않으므로(폴더 .meta만 올라가 경고가 남), 폴더는 그 폴더의 첫 파일을 만드는 수업에서 만들어도 됨.
@@ -73,7 +77,7 @@
    새 스크립트는 전부 namespace SquareTD { ... } 안에 씀.
    이유: 새 TowerManager와 옛 TowerManager가 같은 프로젝트에 함께 있으면 이름이 겹쳐 컴파일 에러가 남.
          namespace는 성(姓)과 같음. SquareTD.TowerManager와 옛 TowerManager는 다른 클래스가 됨.
-4) 옛 시스템을 부르지 않는 옛 스크립트 25개 (2026-10-20 확인)
+4) 옛 시스템을 부르지 않는 옛 스크립트 25개 (2026-10-20 확인. 그중 이펙트 4개는 수업 16에서 새로 쓰기로 해 그대로 쓰는 것은 21개)
    새 코드는 이것들도 직접 부르지 않음. 필요해지는 수업에서 New에 복사본을 만들어 namespace SquareTD로 씀 (2026-10-21 사용자).
    무엇을 복사할지는 그 수업에서 사용자와 정함.
    연출   EnemyCubeVisual, EnemyCubeOrientation, EnemyCubeRollGeometry, EnemyCubeMeshVisual, EnemyCubeAppearance,
@@ -83,7 +87,9 @@
           (적 큐브 연출은 New/06. Enemy의 EnemyCubeMeshVisual·EnemyCubeAppearance로 대신함 — 2026-10-22 DOTween으로 다시 씀.
            옛 EnemyCube* 다섯은 옛 게임용으로 둠. 이름이 같으므로 namespace SquareTD 안에서는 새 것이 찾아짐)
    이펙트 EffectManager, EffectPool2D, EffectController, EffectLibrary (명중 이펙트)
+          → 수업 16에서 복사하지 않고 새로 쓰기로 함 (#176 HitEffect + ProjectileManager). 이 넷은 수업 48에서 옛 스크립트와 함께 지움
    UI     TowerInfoCardView, TowerTierBadgeGraphic, UITilePanel, UITileSkin, UITileSurface, UIManager_Start, UIManager_Menu
+          (TowerInfoCardView·TowerTierBadgeGraphic은 2026-10-23에 New/10. UI로 복사함 → 그대로 쓰는 것은 19개)
    씬     SceneLoader, LoadingManager
    Codex가 만든 연출 스크립트는 요청 없이 고치지 않음.
 4-1) 타일 이펙트는 이 계획에서 뺌 (2026-10-20 사용자: 이펙트는 나중에 새로 바꿈)
@@ -126,7 +132,7 @@
      Debug.Log, 씬 뷰 Gizmos, Click Debug 창(타워·칸·적·존 정보). 수업 24에서 이 도구를 한 번에 정리함.
    - 게임 로직은 UI를 모르게 만듦 (UI는 이벤트를 듣고 매니저에 요청만). 그래서 UI를 마지막에 붙여도 로직을 고치지 않음.
 6) 다 만들면 (수업 48)
-   꺼 둔 옛 매니저 오브젝트, 옛 프리팹, 옛 스크립트 59개(86 − 그대로 쓰는 25 − 남겨 두는 타일 이펙트 2)를 지움. namespace는 그대로 둠.
+   꺼 둔 옛 매니저 오브젝트, 옛 프리팹, 옛 스크립트 65개(86 − 그대로 쓰는 19 − 남겨 두는 타일 이펙트 2)를 지움. namespace는 그대로 둠.
    옛 스크립트 폴더의 셰이더도 확인: RoundedCharacterSprite + CharacterCornerMask.cginc는 Resources/CharacterRounded.mat(타워 캐릭터)가 씀 →
    타워 수업에서 New로 옮기거나 남김. EnemyEquipmentPalette는 쓰는 재질이 없음 (2026-10-22 확인). 적 큐브 셰이더 둘은 이미 New/06. Enemy로 옮김.
 
@@ -278,7 +284,8 @@
 ----------------------------------------------------------------------
 ITarget — 맞을 수 있는 대상 (적과 더미가 지킴)
   위치(Transform), PathIndex, IsAlive, IsBoss, IsDummy, Body(본체 적. 적이면 자기 자신),
-  Stats(EnemyStats), Status(EnemyStatusEffects), CurrentHp, MaxHp, TakeDamage(DamageInfo)
+  Stats(EnemyStats, 수업 21에서 더함), Status(EnemyStatusEffects, 수업 25에서 더함), CurrentHp, MaxHp, TakeDamage(DamageInfo),
+  SetSortingOrder(int) (같은 칸에 선 대상들의 그리는 순서. BoardPresenter가 부름. 더미도 칸 위에 서므로 약속에 넣음)
   점유(PathOccupancy)와 타겟 고르기는 ITarget으로. 적 수 한도·보상은 EnemyManager의 목록(진짜 적만)으로.
 
 DamageInfo — 한 번의 피해 (struct)
@@ -450,11 +457,14 @@ GroundEffect (장판)
    (옛 코드의 예: TowerController.s_nextCreationOrder, ProjectileHit2D의 static 투사체 목록)
 
 ======================================================================
-5. 스크립트 전체 목록 — 173개
+5. 스크립트 전체 목록 — 179개
 ======================================================================
 
 만든 것은 24번에 있고 이 목록에서 지움 (번호는 그대로 둠). 지금까지 만든 것: #2 TowerId, #4 Singleton, #19 BoardGrid(일부), #18 BoardManager(일부), #7 EnemyDefinition, #121 EnemyController(일부),
-#1 GameEnums(일부), 테스트 T1·T2, 에디터 E1. #144 DamageInfo, #145 DamageCalculator, #146 CriticalRoll, #122 EnemyHealth, #132 DeathResolver (수업 14까지는 24번).
+#1 GameEnums(일부), 테스트 T1·T2, 에디터 E1. #144 DamageInfo, #145 DamageCalculator, #146 CriticalRoll, #122 EnemyHealth, #132 DeathResolver,
+#143 ITarget, #46 TowerAction(일부), #48 TargetAction(일부),
+#148 ~ #152·#174 ~ #176 투사체 8개, #51 SatelliteLayout, #34 TowerTurnRunner, 10. UI 16개(스크립트만, AI),
+#47 SplashAction, #52 TargetSelectors, #48 TargetAction, #167 BoardInputController, #168 InputModes(일부), #32 TowerProgression, #31 TowerFactory(Replace) (수업 19까지는 24번).
 프리팹: 2. Prefab/3. Enemy/1. Enemy_normal·3. Enemy_boss, 2. Prefab/EnemyCountLabel, 에셋: 1. Enemy_normal, 2. Enemy_middleBoss, 3. Enemy_FinalBoss.
 새 매니저 9개는 ": Singleton<자기 이름>"으로 물려받음. 자식이 Awake·OnDestroy를 덮어쓸 때는 base.Awake() / base.OnDestroy()를 꼭 부름.
 형식 이름: 이 문서에 "Emblem"으로 적힌 문양 enum의 실제 이름은 TowerEmblem. 컬러는 Red·Blue·Yellow·Purple. 적 종류는 Normal·MiddleBoss·FinalBoss.
@@ -469,27 +479,27 @@ GroundEffect (장판)
   05. Tower        타워                         86          1 (TowerManager)   ← 그중 문양별 56
   06. Enemy        적                           30          1 (EnemyManager)
   07. Combat       전투 계산                     5
-  08. Projectile   투사체                        5          1 (ProjectileManager)
+  08. Projectile   투사체                        8          1 (ProjectileManager)
   09. Economy      재화                          1          1 (CurrencyManager)
-  10. UI           화면                         13          1 (UIManager)
+  10. UI           화면                         16          1 (UIManager)
   11. Input        입력                          2
   12. Dev          개발용 키와 검사              2
-  합계                                         173          9
+  합계                                         179          9
   + 에디터 2개 (옮김: BoardManagerEditor, ClickDebugWindow), + 테스트 8개 (Assets/Editor/Tests/New)
-  → 새로 쓰거나 옮기는 파일은 모두 183개
-  그 밖에: 그대로 쓰는 옛 스크립트 25개 + 에디터 도구 2개(SharedVisual, UITilePanelEditor) + 옛 큐브 테스트 2개 (1장 4, 4-2),
+  → 새로 쓰거나 옮기는 파일은 모두 189개
+  그 밖에: 그대로 쓰는 옛 스크립트 19개 + 에디터 도구 2개(SharedVisual, UITilePanelEditor) + 옛 큐브 테스트 2개 (1장 4, 4-2),
            손대지 않고 남겨 두는 타일 이펙트 2개 (1장 4-1)
 
 종류별 (Unity에서 무엇인가)
   매니저 (싱글톤 MonoBehaviour)                  9
-  그 밖의 MonoBehaviour (프리팹·씬에 붙음)       25   ← 그중 지금 것을 옮겨 연결만 바꾸는 것 10 (매니저 UIManager까지 11)
+  그 밖의 MonoBehaviour (프리팹·씬에 붙음)       28   ← 그중 지금 것을 옮겨 연결만 바꾸는 것 10 (매니저 UIManager까지 11)
   MonoBehaviour 베이스 (Singleton<T>)            1
-  ScriptableObject                               3
-  static (상태 없는 계산·표)                    12
+  ScriptableObject                               4
+  static (상태 없는 계산·표)                    15
   enum 모음                                      1
   문양별 클래스 (스킬 28 + 규칙 28)              56
-  그 밖의 순수 C# 클래스·struct·interface        66
-  합계                                         173
+  그 밖의 순수 C# 클래스·struct·interface        65
+  합계                                         179
 
 파일 규칙: MonoBehaviour와 ScriptableObject는 반드시 파일 하나에 클래스 하나 (파일 이름 = 클래스 이름).
            순수 C# 클래스는 작은 것끼리 한 파일에 묶을 수 있음 (TurnState, PathTileEffects, TargetSelectors, InputModes).
@@ -536,7 +546,7 @@ GroundEffect (장판)
 ----------------------------------------------------------------------
  18  BoardManager.cs     남은 것: 뒤 수업에서 부품을 만들어 들게 됨 — PathOccupancy(수업 7), TowerSlots(12), SpecialTileLayout과
                                    특수 타일 개수 인스펙터(22), ZoneRegistry(26), GroundEffectRegistry(29). Awake에서 Grid 다음에 만듦
- 19  BoardGrid.cs        남은 것: 범위 조회 GetPathIndicesInSquare(중심 칸, 반지름) — 수업 15. 가로·세로줄·맵 전체 — 수업 23(SkillArea)
+ 19  BoardGrid.cs        남은 것: 가로·세로줄·맵 전체 — 수업 23(SkillArea)
  20  PathOccupancy.cs    [클래스]  (수업 7)  길 칸마다 ITarget 목록(먼저 온 것이 맨 위), 등록·해제·이동, CellChanged
  21  TowerSlots.cs       [클래스]  (수업 12) 스폰 칸마다 타워 하나, 놓기·치우기·이동·교환, 첫 빈 칸
  22  SpecialTileLayout.cs [클래스] (수업 22) 판 시작 배치(비프로스트 먼저, 나머지 섞기), 칸 → 특수 타일 종류
@@ -554,10 +564,8 @@ GroundEffect (장판)
 ----------------------------------------------------------------------
 관리
  30  TowerManager.cs     [매니저]  (수업 12) 생성·판매·이동·교환·합성·티어 강화·컬러 강화의 창구, 타워 목록(보드 순서), 선택, 이벤트
- 31  TowerFactory.cs     [클래스]  (수업 12) 프리팹 생성·파괴, 정의·상태 연결, Replace(같은 칸, 이어받기)
- 32  TowerProgression.cs [클래스]  (수업 19) 합성 재료 찾기와 결과 뽑기(완전·컬러·문양, 5티어·시너지 불가), 티어 강화 비용
  33  ColorUpgradeState.cs [클래스] (수업 20) 컬러별 강화 레벨 1 ~ 5, 강화(젬), LevelChanged
- 34  TowerTurnRunner.cs  [클래스]  (수업 16) ② 지원 타워, ④ 공격 타워를 보드 순서로 한 기씩, AttackHandle 대기
+ 34  TowerTurnRunner.cs  남은 것: ② 지원 타워의 Act(수업 26)
  35  SynergyService.cs   [클래스]  (수업 41) 조합표 14종, 4티어 이상 문양 3종이면 생성·깨지면 제거,
                                              시너지 타워의 TowerDefinition을 조합표로 만듦 (CSV에 없음. ID 6001 ~ 6014가 외형 ID)
  36  StackModeSettings.cs [클래스] (수업 23) 스택 자동/수동: 전체 + 타워 종류(문양 + 컬러)별 예외
@@ -572,14 +580,10 @@ GroundEffect (장판)
  44  StatModifier.cs     [클래스]  (수업 20) StatModifier + 수정자 목록(출처별 등록·해제·합산). 타워와 적이 함께 씀
  45  TowerVisual.cs      [MB 옮김] (수업 13) 외형 고르기(지금 것). Apply가 옛 TowerData 대신 TowerDefinition을 받게만
 공격 방식 (스킬 1)
- 46  TowerAction.cs      [클래스]  (수업 15) 베이스: CanAct, Act(코루틴 + AttackHandle), OnMoved, OnRemoved
- 47  SplashAction.cs     [클래스]  (수업 17) 착탄점, Mastery 범위, AttackCount발, 투사체마다 치명 1번
- 48  TargetAction.cs     [클래스]  (수업 15, 17) 대상 하나에 AttackCount × 발 수, 탄 미리 분배, 탄마다 치명
+ 46  TowerAction.cs      남은 것: OnMoved(이동·교환, 수업 18)·OnRemoved(판매·교체, 수업 18 · 26)
  49  BuffZoneAction.cs   [클래스]  (수업 26) 존마다 스택 → 단계 → 규칙의 OnBuffTowerActed → 존 위 타워에게 버프 (방패는 자기 스택)
  50  DebuffZoneAction.cs [클래스]  (수업 26) 존마다 저점 스택 → 단계
- 51  SatelliteLauncher.cs [클래스] (수업 16) 위성 투사체 연출(타워 둘레에 띄웠다가 발사). 지금 TowerAttackAction.SatelliteAttackRoutine에서 옮김
 타겟
- 52  TargetSelectors.cs  [클래스]  (수업 17) 베이스(고른 공격 칸 먼저) + 6종(가까운, 먼, 체력 많은, 체력 적은, 가장 많은 칸, 보스)
 스킬 공용
  53  AttackSkill.cs      [클래스]  (수업 23) 스킬 2의 베이스(템플릿): 발동 조건, 스택 사용, 공통 식, 치명 1번, 범위·부가 효과는 빈칸, 4장 4-4의 훅
  54  SkillArea.cs        [static]  (수업 23) 범위 모양: 착탄(Mastery), 맵 전체, 가로·세로줄, 하나, 연쇄(가까운 순 → 전하 높은 순)
@@ -607,7 +611,7 @@ GroundEffect (장판)
 118  EnemySpawner.cs     [클래스]  (수업 7)  웨이브 소환: 무작위 칸, 초기화 순서(비활성 → 초기화 → 위치 → 활성 → 등록), 낙하 연출 대기
 119  EnemyPool.cs        [MB]      (수업 5)  종류별 ObjectPool, 꺼내기(꺼진 채)·돌려받기
 120  EnemyRegistry.cs    [클래스]  (수업 7)  살아 있는 적·보스 목록, 등록·해제 짝, 읽기 전용으로만 보여 줌
-121  EnemyController.cs  남은 것: 부품을 붙임 — EnemyMovement(수업 8), EnemyHealth·대미지 숫자(14), ITarget(15), EnemyStats(21),
+121  EnemyController.cs  남은 것: 부품을 붙임 — 대미지 숫자(뒤로 미룸, 6부), EnemyStats·ITarget.Stats(21),
                                    상태 효과·저항(25). 부품 초기화·정리 순서. 확인용 임시 코드(m_testDefinition + Start)는 수업 7에서 지움
 122  EnemyHealth.cs      [클래스]  (수업 14) 현재·최대 체력, 피해 받기(DamageCalculator), 회복(치유 배율), 최대 체력 비율 유지, 사망 한 번
 123  EnemyMovement.cs    남은 것: (수업 21) 1 미만 보정, 음수 = 뒤로, 행동 불가, 이동 훅. 소환 낙하 연출(AnimateSpawn)은 아직 안 붙임
@@ -639,21 +643,15 @@ GroundEffect (장판)
 ----------------------------------------------------------------------
 07. Combat — 5
 ----------------------------------------------------------------------
-143  ITarget.cs          [interface] (수업 15) 맞을 수 있는 대상 (4장 4-3)
 144  DamageInfo.cs       [struct]  (수업 14) DamageInfo + KillInfo (4장 4-3)
 145  DamageCalculator.cs [static]  (수업 14) 거리 보너스 × 치명 → 관통 → 방어 계수(음수 포함) → 받는 피해 배율 → 고정 피해. 상한 없음
 146  CriticalRoll.cs     [static]  (수업 14) 치명 판정, 배율 2 + CriticalDamage
 147  SkillFormula.cs     [static]  (수업 23) 공통 식 넷, StackValue, 저항 적용
 
 ----------------------------------------------------------------------
-08. Projectile — 5
+08. Projectile — 8 (수업 16에서 다 만듦, 24번)
 ----------------------------------------------------------------------
-148  ProjectileManager.cs [매니저] (수업 16) 컬러 + 문양 번호(Resources/Projectiles)마다 풀, 발사
-149  Projectile.cs       [MB]      (수업 16) 이동·회전·수명만, 도착하면 HitResolver → 풀로
-150  ProjectileHitResolver.cs [클래스] (수업 16) 명중 순간 대상(하나·범위)에 DamageInfo, 적중 알림(스킬 2 집계, OnBasicHit),
-                                             명중 이펙트 재생(그대로 쓰는 EffectManager.PlayEffect, 번호 = HitEffectID)
-151  ProjectileVfx.cs    [MB]      (수업 16) 트레일, 파티클, 원소별 색 (한 번만 만들어 둠)
-152  AttackHandle.cs     [클래스]  (수업 16) 한 번의 공격이 쏜 탄 목록, 전부 도착하면 끝. 턴은 이것만 기다림
+150  ProjectileHitResolver.cs  남은 것: 단일 스킬 2의 적중 수(수업 23), OnBasicHit(수업 27 ~ 40)
 
 ----------------------------------------------------------------------
 09. Economy — 1
@@ -661,7 +659,10 @@ GroundEffect (장판)
 153  CurrencyManager.cs  [매니저]  (수업 12) 골드·젬, Add, TrySpend(모자라면 false), Changed
 
 ----------------------------------------------------------------------
-10. UI — 13 (옮김 10, 새 3)
+10. UI — 16 (옮김 10, 새 3, 옛 것의 복사본 2, 씬 이동 1) — 스크립트는 2026-10-23에 AI가 다 씀 (6부 앞 설명). 연결은 각 수업에서
+177  SceneFlow.cs        [static]  씬 다시 불러오기·메뉴·끝내기 (시간 배율을 1로 되돌린 뒤). 옛 SceneLoader를 복사하면 그쪽으로
+178  TowerInfoCardView.cs [MB 복사] 카드 앞뒤 뒤집기(DOTween)와 칸 연결
+179  TowerTierBadgeGraphic.cs [MB 복사] 티어 그림이 없을 때의 보석 배지
 ----------------------------------------------------------------------
 154  UIManager.cs        [매니저 옮김] (수업 44) 패널 켜고 끄기, 턴 상태를 구독
 155  GameInfoPanel.cs    [MB 옮김] (수업 44) 적 수 / 한도, 웨이브, 골드·젬, 게임 속도, 보스 남은 턴
@@ -680,8 +681,7 @@ GroundEffect (장판)
 ----------------------------------------------------------------------
 11. Input — 2
 ----------------------------------------------------------------------
-167  BoardInputController.cs [MB]  (수업 18) 화면 → 칸, UI 위 클릭 거르기, 지금 입력 모드에 넘김, 턴 상태 구독
-168  InputModes.cs       [클래스]  (수업 18, 26) IInputMode + Idle / DragTower / PlaceZone / PickAttackCell
+168  InputModes.cs       남은 것: PlaceZoneMode(수업 26)
 
 ----------------------------------------------------------------------
 12. Dev — 2 (개발할 때만 쓰는 것. 출시 빌드에서는 끔)
@@ -728,125 +728,22 @@ GroundEffect (장판)
 2부. 타워의 기본
 ######################################################################
 
-----------------------------------------------------------------------
-수업 15. 공격 방식과 맞을 대상 — #143 ITarget, #46 TowerAction, #48 TargetAction   [패턴: 인터페이스, 전략]
-----------------------------------------------------------------------
-배울 것: interface와 abstract class의 차이 (약속만 / 공통 코드도), 3장 [인터페이스]·[전략 패턴],
-         TowerController가 "무슨 공격인지 모른 채" 부르게 하기, 이미 쓴 코드를 인터페이스로 넓히기(리팩토링 연습).
-기획: 20번 4-1장 [컬러별 틀], 5장 [블루 — 단일]
-설계
-  ITarget: 4장 4-3. EnemyController가 지킴 (Stats·Status는 수업 21·25 전까지 null 허용)
-  PathOccupancy를 EnemyController → ITarget으로 바꿈 (수업 7의 코드를 고치는 것)
-  TowerAction: bool CanAct(타워, 최종 스탯), IEnumerator Act(타워, 최종 스탯, AttackHandle), OnMoved(), OnRemoved()
-  TargetAction: 사거리 안의 ITarget 중 하나 → AttackCount × 발 수 만큼 피해 (지금은 투사체 없이 바로)
-  TowerController.Init에서 컬러에 맞는 Action을 하나 만들어 들고 있음. 그 뒤로는 Action만 부름
-확인: 블루 타워가 사거리 안의 적에게 피해를 주고 적이 죽음.
-(수업 14에서 넘어옴) 지울 임시 코드: DebugCheat의 K(맨 앞 적에게 60)·L(모든 적에게 99999) 키와 HitFirstEnemy·HitAllEnemies, using System.Collections.Generic.
-  타워가 적을 때리게 되면 지움. 대신 두고 싶으면 수업 24의 개발용 키로 옮겨도 됨 (사용자가 정함)
-참고(옛 코드): TowerAttackAction.cs, TargetAttackAction.cs
-
-----------------------------------------------------------------------
-수업 16. 투사체 — #148 ProjectileManager, #149 Projectile, #150 ProjectileHitResolver, #151 ProjectileVfx, #152 AttackHandle,
-                 #51 SatelliteLauncher, #34 TowerTurnRunner   [패턴: 오브젝트 풀 다시]
-----------------------------------------------------------------------
-배울 것: 콜백(Action)으로 "끝나면 알려 줘", 여러 개가 다 끝났는지 세기, 풀을 종류(프리팹)별로 여러 개 두기 (Dictionary<int, ObjectPool>).
-기획: 20번 4장 [피해 계산 순서] (피해는 명중하는 순간), 1장 ④ (투사체가 끝난 뒤 다음 타워)
-설계
-  ProjectileManager: 컬러 + 문양 번호(Resources/Projectiles)마다 풀, Spawn(번호, 위치)
-  Projectile: 날아가기·회전·수명만. 도착하면 HitResolver 부르고 풀로. 날아가기·회전은 DOTween (3장 [연출은 전부 DOTween])
-  ProjectileHitResolver: 명중 순간 대상에게 DamageInfo, 공격 타워에게 적중 알림, 명중 이펙트(EffectManager.PlayEffect(HitEffectID))
-  ProjectileVfx: 트레일·파티클·색 (옛 ProjectileHit2D의 연출 부분, Gradient·Curve는 한 번만 만듦)
-  AttackHandle: 한 번의 공격이 쏜 탄 목록. 모두 도착하면 IsDone
-  SatelliteLauncher: 탄을 타워 둘레에 띄웠다가 차례로 발사하는 연출 (설정값 5개는 TowerController의 인스펙터). DOTween Sequence로
-  TowerTurnRunner: ④ 보드 순서로 한 기씩, 앞 타워의 AttackHandle이 끝난 뒤 다음 타워. TurnManager의 ④가 이것을 부름
-(수업 14에서 넘어옴) 대미지 숫자: 명중해서 피해가 들어가면 적 위에 숫자를 띄움 (옛 DamageText·DamageTextPool을 New에 복사할지 사용자와 정함, 연출은 DOTween).
-  EnemyController.TakeDamage가 계산한 최종 피해를 띄움. 적 머리 위 HP 바는 없음 (체력은 UI의 적 정보 패널, 수업 46)
-함정: 옛 코드는 판 전체의 투사체 수로 턴 끝을 판정해서, 스킬 투사체를 보이지 않게 남겨 두는 꼼수가 필요했음. AttackHandle이 그 이유를 없앰.
-함정
-  - 탄이 날아가는 중에 대상이 죽거나 풀로 돌아가면: 탄은 그 자리까지 날아가 사라지고(피해 없음) 풀로 돌아감. AttackHandle은 그래도 끝남
-  - 탄이 끝내 도착하지 못하는 경우(대상이 사라짐, 오류)를 위해 AttackHandle에 안전 시간. 넘으면 남은 탄을 회수하고 끝냄 + 경고 로그
-InvariantChecker에 더함: 적 턴 끝에 날아가는 투사체 0, 끝나지 않은 AttackHandle 0
-확인: 타워가 차례로 쏘고, 앞 타워의 탄이 다 닿은 뒤에 다음 타워가 쏨. 위성 연출이 지금과 같음.
-      시나리오 S2: 자동 진행 10웨이브 → 오류 0, 하이어라키의 투사체 오브젝트 수가 일정 수에서 더 늘지 않음.
-      시나리오 S3: 한 대 맞으면 죽는 적에게 다발 공격 → 턴이 멈추지 않고 다음 타워로 넘어감.
-참고(옛 코드): GlobalProjectileManager, ProjectileObjectPool2D, ProjectileHit2D, TowerAttackAction.SatelliteAttackRoutine
-
-----------------------------------------------------------------------
-수업 17. 광역과 타겟 우선순위 — #47 SplashAction, #52 TargetSelectors, #48 TargetAction 보강   [패턴: 전략 다시]
-----------------------------------------------------------------------
-배울 것: 같은 패턴을 두 번째로 써 보기 (수업 15와 비교), 런타임에 전략 갈아 끼우기.
-기획: 20번 4장 [타겟 우선순위], 5장 [레드 — 광역], [블루 — 단일] (탄 미리 분배)
-설계
-  TargetSelector (베이스): 사거리 안 후보들 → 하나 고르기. 고른 공격 칸에 대상이 있으면 그 칸 먼저(베이스가 처리)
-    6종: 가까운(타일 거리), 먼, 체력 많은(보스도 예외 없이), 체력 적은, 가장 많은 칸(칸 하나), 보스(없으면 체력 많은)
-  SplashAction: 착탄점 = 고른 대상의 칸, Mastery 범위(1단계 1×1, 2단계 3×3, 3단계 5×5)의 모든 대상, AttackCount발, 투사체마다 치명 1번
-  TargetAction 보강: 쏘기 전에 탄 나누기 (예상 피해로 죽을 만큼만, 남는 탄은 다음 우선순위. 다 죽을 예정이면 원래 대상에게)
-확인: 우선순위를 바꾸면 노리는 적이 바뀜. 광역 탄이 범위의 모든 적에게 피해. 4발에 죽는 적에게 6발 → 4발 + 다음 적 2발.
-
 >>> 2부 끝: 타워를 사고, 타워가 차례로 쏘고, 적이 죽으면 골드가 들어옴. 한 판을 끝까지 해 볼 수 있음.
     시나리오 S1 · S2 · S3 · S5 · S7 · S8을 한 번씩 (4장 4-8). 3부부터는 부가 끝날 때마다 전부 다시.
+    (2026-10-23 수업 17을 마칠 때 아직 안 함. 수업 16의 S2·S3도 "대충 되나 봄"으로 넘어옴)
 
 ######################################################################
 3부. 성장
 ######################################################################
 
 ----------------------------------------------------------------------
-수업 18. 입력과 조작 — #167 BoardInputController, #168 InputModes, TowerManager 보강(판매·이동·교환)   [패턴: 상태 다시]
-----------------------------------------------------------------------
-배울 것: 화면 좌표 → 월드 → 칸 (Camera.ScreenToWorldPoint, Tilemap.WorldToCell), UI 위 클릭 거르기
-         (EventSystem.current.IsPointerOverGameObject), 입력 모드를 상태로.
-기획: 20번 1장 플레이어 턴, 4장 [타겟 우선순위] 공격할 칸 고르기, 8장 [판매], [타워 생성] 이동·교환 무료
-(수업 12에서 넘어옴) TowerSlots에 Move·Swap이 아직 없음 (TryPlace, Remove, Get, IsEmpty, TryGetFirstEmpty만). 이동·교환에서 더함.
-  TowerController.SlotIndex도 함께 바꿔야 함 (칸과 타워가 서로 가리킴). 판매는 TowerFactory.Destroy + TowerRemoved 이벤트.
-설계
-  IInputMode: Enter, Exit, OnPointerDown(칸), OnPointerDrag(월드), OnPointerUp(칸), OnCancel
-  IdleMode         타워 칸 → 선택(SelectionChanged), 길 칸 → 적 정보, 존이 있는 칸 → 존 정보. 타워를 누른 채 움직이면 DragTowerMode
-  DragTowerMode    놓은 칸이 빈 칸 → Move, 타워 칸 → Swap, 그 밖 → 제자리. 시너지 타워는 끌 수 없음
-  PlaceZoneMode    틀만 (수업 26에서 채움)
-  PickAttackCellMode  사거리 안 길 칸만 받음, 누르면 고름, 같은 칸 다시 누르면 해제 (플레이어 턴마다 바꿀 수 있음)
-                      칸 강조는 타일 이펙트라 뺌 (1장 4-1). 고른 칸은 카드에 글자로, 개발 중에는 Gizmos로
-  BoardInputController: 지금 모드, ChangeMode, StateChanged 구독 → 플레이어 턴이 아니면 Idle로 + 보드 조작 막기
-  TowerManager: Sell(타워) (시너지 불가, 젬 = BalanceTables 판매표, 존 제거, TowerRemoved), Move/Swap (플레이어 턴만)
-함정: UI 버튼 클릭이 보드까지 내려가 타워가 선택됨. 드래그 중 턴이 바뀌면 OnCancel.
-확인: 타워 끌어서 이동·교환, 타워를 누른 뒤 DebugCheat 키로 판매 → 젬 증가 (판매 버튼은 6부).
-참고(옛 코드): BoardInputController.cs, TowerManager.SellTower / MoveTowerOnGrid
-
-----------------------------------------------------------------------
-수업 19. 합성과 티어 강화 — #32 TowerProgression, #31 TowerFactory.Replace
-----------------------------------------------------------------------
-배울 것: "할 수 있나"(Can)와 "한다"(Do)를 나누기, 조건으로 목록 거르기 (foreach + if, 또는 LINQ의 Where), 이어받기 = 상태 객체 넘기기.
-기획: 20번 8장 [합성], [티어 강화], 4-1장 [Stack](미스릴에서 넘치는 스택), [존]
-설계
-  TowerProgression
-    bool TryFindMergeMaterials(target, MergeMode, List<TowerController> result)
-      같은 티어, 조건(완전: 컬러·문양 / 컬러 / 문양), target을 빼고 보드 순서로 2기, 5티어·시너지 불가
-    TowerDefinition PickMergeResult(target, mode)
-      완전: 같은 컬러·문양 다음 티어 / 컬러: 같은 컬러 다음 티어 중 고른 문양 안에서 무작위 / 문양: 같은 문양 다음 티어 4컬러 중 무작위
-    int GetTierUpgradeCost(int tier)      5 · 15 · 45 · 135
-  TowerManager
-    TryMerge(target, mode) — 재료는 맨 마지막에 지움 (4장 4-7 B2). 무료
-      1. 재료 2기 찾기 → 결과 정의 뽑기 → 결과의 프리팹·컴포넌트 확인. 하나라도 없으면 아무것도 지우지 않고 false
-      2. 결과 타워를 만들어 둠(아직 칸에 놓지 않음). 실패하면 지우고 false
-      3. 재료 3기(target 포함) 제거 (존과 한도 보정도 사라짐) → 결과를 target 칸에 놓고 Init (이어받지 않음) → 이벤트
-    TryTierUpgrade(tower) — 젬은 맨 마지막에 뺌
-      1. 5티어가 아닌가, 젬이 비용 이상인가, 다음 티어 정의·프리팹이 있나
-      2. TowerFactory.Replace: 새 타워를 만들고 상태를 넘기고 같은 칸에 세운 뒤에 옛 타워 제거. 실패하면 옛 타워 그대로
-      3. 성공하면 TrySpendGem
-  TowerFactory.Replace(old, newDef): 같은 칸에 새 타워
-    공격 타워: TowerState를 그대로 넘김 (우선순위, 스택, 스킬 진행, 시간 버프, 대지 성장. 같은 칸이라 받던 존 버프도 그대로)
-    버프·디버프 타워: 존 제거, 스택 0, 우선순위만 넘김
-함정
-  - "재료부터 지우고 결과 만들기"는 옛 코드의 버그(B2). 결과를 못 만들면 재료만 사라짐.
-  - 재료를 지우는 도중 목록을 돌면 에러 → 먼저 다 고르고 나서 지움.
-  - 시나리오 S5·S6: 재료가 모자란 합성, 결과가 없는 합성(정의를 일부러 비움) → 재료 그대로. 판 버프·디버프 타워를 합성 → 그 존이 남지 않음.
-확인: 같은 1티어 세 기 → 2티어 한 기, 컬러 일치는 같은 컬러 중 무작위, 티어 강화 뒤 우선순위 유지, 5티어는 막힘.
-참고(옛 코드): TowerManager.CanCombine / ExecuteCombine / GetMergeResultData / UpgradeTowerTier
-
-----------------------------------------------------------------------
 수업 20. 타워 스탯 완성 — #9 BalanceTables, #33 ColorUpgradeState, #44 StatModifier, #42 TowerStatCalculator 완성, T5   [스탯 수정자]
 ----------------------------------------------------------------------
 배울 것: 표를 코드로 옮기기, 계산을 단계로 나누기(파이프라인), 출처를 남기는 계산, enum StatType 더하기.
 기획: 20번 10장 [티어가 올리는 스탯], 8장 [컬러 강화](레벨 6 포함), 3장 [버프와 디버프가 겹칠 때], 4장 [타워 정보 카드](출처)
+(수업 19 중에 정함, 2026-10-23 사용자) DebugCheat 자동 진행(A)의 플레이어 턴: 돈이 있는 만큼 생성 → 확정 → 컬러 → 문양 순서로 합성 (AI가 씀).
+  젬은 "3티어 타워가 처음 나온 시점에 그 타워의 컬러를 컬러 강화" — 컬러 강화가 생기면 DebugCheat.AutoPlayerTurn의 "// 수업 20:" 자리에 AI가 넣음
+(수업 19 중에 AI) TowerVisual: 장식(Decoration) 테두리를 티어 색으로 칠함 (m_tierColors, 카드 배지와 같은 색. 판 위에서 티어가 안 보인다는 사용자 요청)
 정한 것: 스탯은 "1티어의 CSV 값 × 티어 표"로 계산함. CSV의 2 ~ 5티어 줄은 이름·투사체·이펙트 번호만 씀.
          이유: 기획 10장의 티어 표가 네 컬러 공용 규칙이고, CSV의 수치는 참고용(20번 머리말). 표 하나를 고치면 280종에 다 반영됨.
 설계
@@ -865,6 +762,36 @@ InvariantChecker에 더함: 적 턴 끝에 날아가는 투사체 0, 끝나지 �
       버프 +50%와 +25% → ×1.75 (곱하면 ×1.875라 틀림). 컬러 강화 버튼(임시 키) → 같은 컬러 타워가 다 바뀜.
 참고(옛 코드): TowerManager.GetGlobalStats / UpgradeTower, TowerController.GetFinalStats
 
+진행 (2026-10-23 퇴근 때 멈춤 — 집에서 이어서)
+  1단계 BalanceTables — 끝. BalanceTablesTest 초록 (01. Data/BalanceTables.cs)
+        TierRow 생성자 순서는 사용자가 바꿈: (Action, Power, AttackCount, MaxStack, StackValue, Mastery)
+        ColorLevelRow 순서: (AttackCount, AbilityValue, StackValue, MaxStack, Mastery). 블루는 GetColorLevelRow가 AttackCount ×2
+        판매표·티어 강화 비용은 옮기지 않음 (TowerManager.GetSellGem, TowerProgression.GetTierUpgradeCost에 그대로).
+        도끼·방패 비율, 모드 배율은 쓰는 수업에서
+  2단계 StatType + StatModifier — 코드는 다 씀, 테스트(StatModifierListTest 9개) 아직 안 돌림
+        StatType은 GameEnums 맨 뒤 (None ~ ColorLevelBonus 12개). 옛 전역 StatType { Armor }와는 namespace가 달라 안 부딪힘
+        05. Tower/StatModifier.cs: StatModifier.Percent / Flat(출처, 스탯, 값), StatModifierList.Add / RemoveBySource / Sum / Apply / Changed
+        집에서 처음 할 일: RemoveBySource 43번 줄 변수 이름 remove → removed (44·45줄과 맞춤) 고쳤는지 보고 테스트 돌리기
+  3단계 TowerStatCalculator — 아직. AI가 정해 둔 모양 (뼈대는 AI가 만듦)
+        TowerFinalStats: "만든 뒤 바꾸지 않음". 값은 StatType 순서의 배열로 들고 Get(StatType), 지금 속성 이름(Power, Action,
+          CriticalRate, Stack …)은 그대로 둠 (TargetAction·SplashAction이 씀). 더할 것: StackValue(기본 1), ColorLevel(쓴 레벨), 출처 목록
+        Calculate(정의, 1티어 정의, 상태, 컬러 레벨): 1티어 정의가 null이면 정의 자신. 티어 표는 정의의 티어로 (6티어 = Identity)
+          1 레벨 = 컬러 레벨 + ColorLevelBonus 수정자 (최대 6) → 2 티어 표 → 3 컬러 표 → 4 (공격 타워만) 수정자 Apply
+          → 5 한도: Action 최소 1, 치명 확률 최대 1, Duration 최소 1(기획에 없음, 안전용), 최대 스택은 반올림·최소 1 → 6 결과 + 출처
+        출처: 스탯마다 "기본(티어·컬러 반영 값)" + 수정자마다 (출처, 붙은 양 = 기본 × % 또는 정수). 카드의 "위력 = 기본 xx + ○○ xx"
+        TowerState에 Modifiers(StatModifierList) 더함. CopyInheritedFrom의 존 버프 이어받기는 존이 생기는 수업(26)에서
+  4단계 ColorUpgradeState + 연결 — 아직
+        ColorUpgradeState(순수 C#): GetLevel(컬러) (처음 1), GetCost(컬러) = BalanceTables.GetColorUpgradeCost, TryUpgrade(컬러)(레벨 5면 false),
+          LevelChanged(컬러, 레벨). 젬 확인·차감은 TowerManager.TryUpgradeColor(컬러) (B2 순서: 확인 → 올림 → 젬)
+        TowerManager.ColorLevels 소유, LevelChanged → 판의 그 컬러 타워 RecalculateStats
+        TowerController: Init(정의, 칸, 공격 방식, 1티어 정의 = null, ColorUpgradeState = null) — 기존 테스트가 안 깨지게 기본값
+          RecalculateStats(): 최종 Action이 바뀌면 그 차이를 남은 행동력에 바로 더하거나 뺌(최소 0). State.Modifiers.Changed를 들음
+          Init에서 남은 행동력 = 계산된 Action (CSV Action이 아님. 다이아는 1티어 Action − 5)
+        TowerFactory: 생성자에 TowerDatabase, ColorUpgradeState 더함. 1티어 = Database.TryGet(TowerId.Make(1, 컬러, 문양))
+        AI가 할 것: 테스트(T5 계산기·ColorUpgradeState·TowerController 행동력 차이), DebugCheat 임시 키 L(선택한 타워의 컬러 강화),
+          DebugCheat.AutoPlayerTurn의 "// 수업 20:" (판에 3티어 이상이 있는 컬러를 젬이 되는 만큼 강화),
+          UI "// 수업 20:" 주석 풀기 (PlayerTurnPanel 컬러 강화 비용·버튼, TowerInfoPanel LevelChanged·레벨 글자)
+
 ----------------------------------------------------------------------
 수업 21. 적 스탯과 이동 규칙 완성 — #124 EnemyStats, #123 EnemyMovement 보강, #129 EnemyCubeFaces, T6
 ----------------------------------------------------------------------
@@ -880,7 +807,8 @@ InvariantChecker에 더함: 적 턴 끝에 날아가는 투사체 0, 끝나지 �
     - 훅 자리 두 개를 만들어 둠: "다음 이동을 정할 때"(범위를 바꿀 수 있게), "이동한 뒤"(칸 수를 알림) — 상태 효과가 수업 25부터 씀
     - 행동 카운트: 턴마다 1 + ActionGainPerTurn
   EnemyCubeFaces: 6면 무작위 배정(중복 허용, 재소환 때도), 지금 위 면, 면 → 수정자 (수치 미정이라 0)
-  EnemyController가 ITarget.Stats로 EnemyStats를 내줌. DamageCalculator는 Stats의 방어력·받는 피해 배율을 씀
+  EnemyController가 ITarget.Stats로 EnemyStats를 내줌 (ITarget에 Stats를 이 수업에서 더함 → TargetActionTest의 FakeTarget에도 더함).
+  DamageCalculator는 Stats의 방어력·받는 피해 배율을 씀
 확인: T6 — 방어 +20%와 −50% → ×0.7, 이동력 2 ~ 4에 −3 → 1 ~ 1 & Action +2. 씬 — 임시로 행동 불가를 걸면 제자리에 멈춤.
 참고(옛 코드): EnemyMoveController.ProcessTurnMoveRoutine, EnemyHealthController의 Set 함수들
 
@@ -969,6 +897,7 @@ InvariantChecker에 더함: 적 턴 끝에 날아가는 투사체 0, 끝나지 �
   EnemyStatusEffects: Add(효과) — 같은 Key가 있으면 규칙대로(센 것 우선 / 다시 걸면 유지만 새로 / 스킬 2가 있으면 스킬 1 무시),
                       Remove, RemoveAll(정화), 훅을 목록 전체에 차례로, 효과가 바뀌면 EnemyStats 수정자 다시 모음
     EnemyMovement의 두 훅 자리, DamageCalculator 앞뒤(OnBeforeHit, ModifyIncomingDamage, OnDamageTaken), ⑤, 사망에 연결
+    ITarget에 Status(EnemyStatusEffects)를 이 수업에서 더함 (TargetActionTest의 FakeTarget에도)
     훅을 도는 동안 효과가 추가·제거되면 모아 두었다가 다 돈 뒤에 반영 (B17). 도는 중에 그 적이 죽으면 남은 훅은 부르지 않음
     효과가 걸리는 순간에 따로 피해를 주지 않음. 매 턴 피해는 ⑤에서 한 번 (B16)
   TimedModifierEffect: 수정자 + 남은 행동 수
@@ -995,6 +924,9 @@ InvariantChecker에 더함: 적 턴 끝에 날아가는 투사체 0, 끝나지 �
   Mastery가 늘면 새 존만 고름(0스택). 타워가 사라지면 RemoveByOwner. 컬러 강화 레벨 4가 되면 스킬 1 단계 존은 0스택부터
   PlaceZoneMode: 놓을 수 있는 칸을 누르면 확정(이후 못 옮김). TurnManager.OnClickEndTurn이 HasUnplaced를 검사
   존 고르기 시작: 타워를 누른 뒤 DebugCheat 키(Z) → PlaceZoneMode (6부에서 버튼으로)
+  (수업 15에서 넘어옴) TowerFactory.CreateAction에 case Yellow → BuffZoneAction, Purple → DebuffZoneAction.
+    네 컬러가 다 생기면 TowerController.TickAction·Act의 "m_action != null / == null" 검사를 지움 (Action이 없는 컬러가 없어짐).
+    TurnManager ②도 ④처럼 TickAction → yield return tower.Act()로. 존은 TowerAction.OnRemoved에서 RemoveByOwner
   존의 스택과 단계는 Click Debug 창, 자리는 씬 뷰 Gizmos로 확인 (존 정보 패널은 6부, 존 빛남은 타일 이펙트라 뺌. 1장 4-1)
   PlaceZoneMode의 "놓을 수 있는 칸 강조"도 타일 이펙트라 뺌. 대신 놓을 수 없는 칸을 누르면 아무 일도 없고 이유를 로그로
   이 수업은 시험 규칙 둘(공격력 +10% 버프, 방어 −10% 디버프)로 확인. 문양은 수업 27부터
@@ -1111,6 +1043,19 @@ InvariantChecker에 더함: 적 턴 끝에 날아가는 투사체 0, 끝나지 �
 ######################################################################
 6부. UI와 정리 — 지금 UI를 그대로 두고 연결만 (1장 5)
 ######################################################################
+2026-10-23 사용자: "UI는 수업 안 들어도 될 정도로 마스터해서 너가 해주면 됨" → 수업 44 ~ 47은 수업으로 하지 않고 AI가 함.
+  스크립트는 2026-10-23에 AI가 미리 써 둠: New/10. UI의 UIManager, GameInfoPanel, PlayerTurnPanel, TowerInfoPanel, TileinfoPanel,
+    EnemyInfoPanel, EnemyListItemUI, OptionPanel, GameOverPanel, GameClearPanel, ZoneInfoPanel, EmblemSelectPanel,
+    TowerInfoCardView·TowerTierBadgeGraphic(옛 것의 복사본, 카드 뒤집기는 DOTween으로), SceneFlow(씬 이동 static, SceneLoader 복사 전까지)
+  아직 없는 시스템을 부르는 곳은 "// 수업 N: …" 주석으로 남김. 그 수업에서 시스템을 만들 때 AI가 New/10. UI에서 "// 수업 N:"을 찾아 풀어 연결함.
+    수업 17 우선순위 표시 · 18 입력·선택·판매·공격 칸 · 19 합성·티어 강화 · 20 컬러 레벨·강화 · 21 적 스탯 · 22 특수 타일 · 23 스택·적중 수
+    · 25 상태 효과·저항 · 26 존 · 27 ~ 40 스킬 2 이름·설명 · 31 · 32 방어막 · 42 문양 선택 넘기기 · 43 게임 속도
+  대미지 숫자 (수업 16에서 뺌, 2026-10-23 사용자. 연출이라 UI와 함께 AI가): 명중해서 피해가 들어가면 적 위에 숫자 (DOTween, 풀).
+    EnemyController.TakeDamage가 계산한 최종 피해를 띄움. 옛 DamageText·DamageTextPool을 복사할지 새로 쓸지 그때 정함.
+    생기면 ProjectileHitResolver의 임시 체력 로그("[Hit] …")를 지움. 적 머리 위 HP 바는 없음 (체력은 적 정보 패널)
+  남은 일 (AI): 씬에서 패널마다 Script 칸 갈아 끼우기(1장 5), 새 칸 만들어 붙이기(GameInfoPanel의 txt_bossTurns, TowerInfoPanel의 txt_stack·btn_consumeStack·
+    btn_pickAttackCell, EnemyInfoPanel의 m_txtHitCount(없으면 스스로 만듦), OptionPanel의 tgl_autoConsumeStack, UIManager의 m_zoneInfoPanelUI,
+    ZoneInfoPanel·EmblemSelectPanel 오브젝트), UI 캔버스 켜기. 옛 UI 스크립트가 남은 채로 캔버스를 켜면 꺼 둔 옛 매니저를 불러 에러가 나므로 갈아 끼운 뒤에 켬.
 공통: UI 캔버스를 켜고, 패널마다 스크립트를 복사해 데이터 출처만 바꾼 뒤 Debug 인스펙터에서 Script 칸을 갈아 끼움.
       지금 UI에 없는 칸·버튼·패널(1장 5의 목록)은 지금 UI와 같은 모양으로 만들어 붙임.
       버튼은 DebugCheat의 키가 부르던 TowerManager·TurnManager의 함수를 그대로 부름 (로직은 고치지 않음).
@@ -1151,7 +1096,7 @@ InvariantChecker에 더함: 적 턴 끝에 날아가는 투사체 0, 끝나지 �
 ----------------------------------------------------------------------
 수업 48. 정리
 ----------------------------------------------------------------------
-  - 꺼 둔 옛 매니저·풀 오브젝트, 옛 프리팹(새 프리팹으로 바꾼 것), 옛 스크립트 59개, 옛 TileManagerEditor·GameRuleTests 삭제
+  - 꺼 둔 옛 매니저·풀 오브젝트, 옛 프리팹(새 프리팹으로 바꾼 것), 옛 스크립트 65개, 옛 TileManagerEditor·GameRuleTests 삭제
   - 남기는 것: 타일 이펙트 둘(TileSatelliteOrbiter, PathTileBubbleEffect)과 그 프리팹(MapBuff, DebuffZone), 그것이 쓰는 DebuffTarget enum,
     에디터 도구 SharedVisual·UITilePanelEditor
   - 재시작·재시도·메뉴 버튼과 씬 이동(SceneLoader, LoadingManager)
