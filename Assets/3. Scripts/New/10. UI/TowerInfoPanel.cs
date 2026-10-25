@@ -121,7 +121,7 @@ namespace SquareTD
             TurnManager.Instance.EnemyTurnEnded += HandleEnemyTurnEnded;
             TowerManager.Instance.TowerAdded += HandleBoardChanged;
             TowerManager.Instance.TowerRemoved += HandleBoardChanged;
-            // 수업 20: ColorUpgradeState.LevelChanged += (컬러, 레벨) => UpdateTowerInfo()
+            TowerManager.Instance.ColorLevels.LevelChanged += HandleColorLevelChanged;
             // 수업 23: TowerStack.Full += 스택 소모 버튼 켜기
             m_subscribed = true;
         }
@@ -140,11 +140,14 @@ namespace SquareTD
             {
                 TowerManager.Instance.TowerAdded -= HandleBoardChanged;
                 TowerManager.Instance.TowerRemoved -= HandleBoardChanged;
+                TowerManager.Instance.ColorLevels.LevelChanged -= HandleColorLevelChanged;
             }
             m_subscribed = false;
         }
 
         private void HandleBoardChanged(TowerController tower) => UpdateTowerInfo();   // 판의 타워가 바뀌면 합성 버튼이 켜질지 다시 봄
+
+        private void HandleColorLevelChanged(TowerColor color, int level) => UpdateTowerInfo();   // TowerManager가 Awake에서 먼저 구독해 타워를 다시 계산한 뒤에 불림
 
         private void HandleTowerSelected(TowerController tower)
         {
@@ -167,8 +170,7 @@ namespace SquareTD
             TowerFinalStats stats = m_selectedTower.Stats;
             int towerId = definition.Id;
 
-            // 수업 20: 컬러 강화 레벨 = ColorUpgradeState.GetLevel(definition.Color)
-            int colorLevel = 1;
+            int colorLevel = stats.ColorLevel;                  // 쓴 레벨 (대지의 만개면 +1)
             if (txt_level != null) txt_level.text = cardView != null ? $"Lv.{colorLevel}" : $"{colorLevel}";
             if (txt_name != null) txt_name.text = EmblemNames.GetConceptName(towerId);
 

@@ -7,12 +7,25 @@ namespace SquareTD
         private readonly TowerController m_prefab;
         private readonly Transform m_parent;
         private readonly BoardManager m_board;
+        private readonly TowerDatabase m_database;
+        private readonly ColorUpgradeState m_colorLevels;
 
-        public TowerFactory(TowerController prefab, Transform parent, BoardManager board)
+        public TowerFactory(TowerController prefab, Transform parent, BoardManager board,
+                            TowerDatabase database, ColorUpgradeState colorLevels)
         {
             m_prefab = prefab;
             m_parent = parent;
             m_board = board;
+            m_database = database;
+            m_colorLevels = colorLevels;
+        }
+
+        private TowerDefinition FindTier1(TowerDefinition definition)
+        {
+            int tier1Id = TowerId.Make(1, definition.Color, definition.Emblem);
+
+            if (m_database.TryGet(tier1Id, out TowerDefinition tier1)) return tier1;
+            return null;
         }
 
         public TowerController Create(TowerDefinition definition, int slotIndex)
@@ -33,7 +46,7 @@ namespace SquareTD
                 return null;
             }
 
-            tower.Init(definition, slotIndex, CreateAction(definition.Color));
+            tower.Init(definition, slotIndex, CreateAction(definition.Color), FindTier1(definition), m_colorLevels);
             return tower;
         }
 
@@ -68,7 +81,7 @@ namespace SquareTD
 
             int slot = old.SlotIndex;
             TowerController created = Object.Instantiate(m_prefab, old.transform.position, Quaternion.identity, m_parent);
-            created.Init(newDefinition, slot, CreateAction(newDefinition.Color));
+            created.Init(newDefinition, slot, CreateAction(newDefinition.Color), FindTier1(newDefinition), m_colorLevels);
             if (inheritState) created.State.CopyInheritedFrom(old.State);
 
             old.OnRemoved();

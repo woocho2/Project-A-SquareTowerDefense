@@ -518,12 +518,20 @@ namespace SquareTD
 
             if (definition == null) return;
 
-            // 수업 21: EnemyStats가 생기면 "지금 (기본 n)" 꼴로. 지금은 웨이브 배율만 붙은 값
-            if (m_txtDefend != null) m_txtDefend.text = $"방어력: {body.Defense:0.#}";
-            // 수업 21: 남은 행동 카운트 (EnemyMovement)와 최대 Action의 변화
-            if (m_txtAction != null) m_txtAction.text = $"행동력: {definition.Action}턴 주기";
-            // 수업 21: 이동력 디버프가 생기면 "지금 (기본)"
-            if (m_txtSpeed != null) m_txtSpeed.text = $"이동력: 주사위 {definition.SpeedMin} ~ {definition.SpeedMax}칸";
+            EnemyStats stats = body.Stats;
+            float defense = stats.Get(StatType.Defense);
+            float baseDefense = stats.GetBase(StatType.Defense);
+            if (m_txtDefend != null)
+                m_txtDefend.text = Mathf.Approximately(defense, baseDefense) ? $"방어력: {defense:0.#}" : $"방어력: {defense:0.#} (기본 {baseDefense:0.#})";
+
+            MoveRange range = stats.GetMoveRange();
+            // 수업 21: 남은 행동 카운트 (EnemyMovement)
+            if (m_txtAction != null)
+                m_txtAction.text = range.Action == definition.Action ? $"행동력: {range.Action}턴 주기" : $"행동력: {range.Action}턴 주기 (기본 {definition.Action})";
+            bool speedChanged = range.Min != definition.SpeedMin || range.Max != definition.SpeedMax;
+            if (m_txtSpeed != null)
+                m_txtSpeed.text = speedChanged ? $"이동력: 주사위 {range.Min} ~ {range.Max}칸 (기본 {definition.SpeedMin} ~ {definition.SpeedMax})"
+                                               : $"이동력: 주사위 {range.Min} ~ {range.Max}칸";
             // 수업 25: EnemyResistance의 "기본 / 지금"
             if (m_txtResistance != null) m_txtResistance.text = $"저항력: {definition.BaseResistance:0.#}%";
             // 수업 23: EnemyHitCounter — 단일 타워 문양별로 이 적이 맞은 횟수

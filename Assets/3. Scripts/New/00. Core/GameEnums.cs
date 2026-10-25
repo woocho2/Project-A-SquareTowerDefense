@@ -79,5 +79,11 @@ namespace SquareTD
         MaxStack = 10,
         StackValue = 11,
         ColorLevelBonus = 12,       // 대지의 만개: 쓸 컬러 레벨 +1 (최대 6)
+        Defense = 13,
+        SpeedMin = 14,
+        SpeedMax = 15,
+        ActionGainPerTurn = 16,     // 매 턴 행동 카운트를 더 받음 (행동 카운트 타일, 바람의 순풍)
+        DamageTaken = 17,           // 받는 피해 배율 (기본 1)
+        FixedDamageRatio = 18,      // 피해 중 방어를 무시하는 비율 (검 디버프, 어둠 900)
     }
 }

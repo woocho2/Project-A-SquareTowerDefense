@@ -13,6 +13,7 @@ namespace SquareTD
         public bool IsMoving { get; private set; }
         private int m_actionCounter;
         private EnemyController m_controller;
+        private void ApplyFace() => EnemyCubeFaces.Apply(m_controller.Stats, m_cube.GetFaceAsset(m_cube.VisibleFace));
 
         private void Awake()
         {
@@ -23,29 +24,44 @@ namespace SquareTD
         {
             transform.localScale = Vector3.one;
             IsMoving = false;
-            PathIndex = startIndex;
-            m_actionCounter = m_controller.Definition.Action;
+            PathIndex = startIndex;            
+            m_actionCounter = m_controller.Stats.GetMoveRange().Action;
             m_cube.RandomizeForSpawn();
+            ApplyFace();
         }
 
         public IEnumerator TakeTurn()
         {
-            m_actionCounter--;
+            EnemyStats stats = m_controller.Stats;            
+            m_actionCounter -= 1 + Mathf.RoundToInt(stats.Get(StatType.ActionGainPerTurn));
             if (m_actionCounter > 0) yield break;
 
-            m_actionCounter = m_controller.Definition.Action;
-            yield return MoveSteps(RollDice());
+            MoveRange range = DecideMove(stats.GetMoveRange());
+            m_actionCounter = range.Action;
+
+            int steps = RollDice(range);
+            yield return MoveSteps(steps);
+            ApplyFace();
+            OnMoved(steps);
         }
+
+        // 수업 25: 상태 효과의 "다음 이동을 정할 때" 훅 (행동 불가 0 / 0, 역풍 최소 = −최대, 급류 뒤로 1칸). 지금은 받은 그대로
+        private MoveRange DecideMove(MoveRange range) => range;
+
+        // 수업 25: 상태 효과의 "이동한 뒤" 훅 (난기류 칸 수 × 피해, 프리즘 감소). 지금은 빈 자리
+        private void OnMoved(int steps) { }
 
         private IEnumerator MoveSteps(int steps)
         {
             IsMoving = true;
             BoardManager board = BoardManager.Instance;
-            int fromIndex = PathIndex;
+            int fromIndex = PathIndex;            
+            int direction = steps >= 0 ? 1 : -1;            
+            int count = Mathf.Abs(steps);
 
-            for (int i = 0; i < steps; i++)
+            for (int i = 0; i < count; i++)
             {
-                int nextIndex = board.Grid.WrapPathIndex(PathIndex + 1);
+                int nextIndex = board.Grid.WrapPathIndex(PathIndex + direction);
                 Vector3 target = board.GetWorldPosition(board.Grid.GetPathCell(nextIndex));
                 yield return MoveOneTile(target);
                 PathIndex = nextIndex;
@@ -83,10 +99,9 @@ namespace SquareTD
             return move.y >= 0f ? Vector3.up : Vector3.down;
         }
 
-        private int RollDice()
-        {
-            EnemyDefinition definition = m_controller.Definition;
-            return Random.Range(definition.SpeedMin, definition.SpeedMax + 1);
+        private int RollDice(MoveRange range)
+        {            
+            return Random.Range(range.Min, range.Max + 1);
         }
 
         public void SetSortingOrder(int order) => m_cube.SetSortingOrder(order);

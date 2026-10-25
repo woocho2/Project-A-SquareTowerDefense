@@ -18,15 +18,40 @@ namespace SquareTD
         public int SlotIndex { get; private set; }
         public bool IsAttackTower => Definition.Color == TowerColor.Red || Definition.Color == TowerColor.Blue;
 
-        public void Init(TowerDefinition definition, int slotIndex, TowerAction action)
+        private TowerDefinition m_tier1Definition;
+        private ColorUpgradeState m_colorLevels;
+
+        public void Init(TowerDefinition definition, int slotIndex, TowerAction action,
+                         TowerDefinition tier1Definition = null, ColorUpgradeState colorLevels = null)
         {
             Definition = definition;
             SlotIndex = slotIndex;
+            m_tier1Definition = tier1Definition;
+            m_colorLevels = colorLevels;
             State = new TowerState(definition);
-            Stats = TowerStatCalculator.Calculate(definition, State);
+            Stats = CalculateStats();            
+            State.RemainingAction = Stats.Action;            
+            State.Modifiers.Changed += RecalculateStats;
             name = $"{definition.Id} {EmblemNames.GetConceptName(definition.Id)}";
             GetComponent<TowerVisual>().Apply(definition);
             m_action = action;
+        }
+
+        public void RecalculateStats()
+        {
+            int oldAction = Stats.Action;
+            Stats = CalculateStats();
+            
+            int diff = Stats.Action - oldAction;            
+            State.RemainingAction = Mathf.Max(0, State.RemainingAction + diff);
+        }
+
+        private TowerFinalStats CalculateStats()
+        {
+            int level = 1;            
+            if (m_colorLevels != null) level = m_colorLevels.GetLevel(Definition.Color);
+
+            return TowerStatCalculator.Calculate(Definition, m_tier1Definition, State, level);
         }
 
         public bool TickAction()
@@ -34,7 +59,6 @@ namespace SquareTD
             if (State.RemainingAction > 0) State.RemainingAction--;
             if (State.RemainingAction > 0) return false;
 
-            Stats = TowerStatCalculator.Calculate(Definition, State);
             if (m_action != null && !m_action.CanAct(this, Stats)) return false;
 
             State.RemainingAction = Stats.Action;

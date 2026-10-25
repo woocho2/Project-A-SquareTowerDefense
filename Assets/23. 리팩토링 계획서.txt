@@ -4,8 +4,9 @@
 흐름: 20번 기획 → 23번 계획(이 문서, 남은 것만) → 24번 리팩토링 내역서(끝낸 것). 끝난 수업은 24번으로 옮기고 여기서 지움.
       수업 중·수업 뒤의 질문과 답은 25번 수업 질문 노트에 수업별로 그때그때 더함 (Claude가 따로 부탁받지 않아도).
 
->>> 다음 수업: 20 — 타워 스탯 완성 (BalanceTables, ColorUpgradeState, StatModifier, TowerStatCalculator 완성)
->>> 진행 중: 1·2단계 끝 → 2단계 테스트 돌리기부터, 그다음 3단계 (수업 20의 "진행" 칸에 이어서 할 것을 적어 둠)
+>>> 다음 수업: 21 — 적 스탯과 이동 규칙 완성 (EnemyStats, EnemyMovement 보강, EnemyCubeFaces)
+>>> 진행 중: 1 ~ 4단계 코드·테스트 끝, 3단계 씬 확인(DebugCheat N·P 키)만 남음 (수업 21의 "진행" 칸)
+    수업 20은 2026-10-23에 끝남 (24번). 같은 날 UI 일부를 먼저 연결함 (6부 수업 44 칸).
     수업 19는 2026-10-23에 끝남 (24번).
     수업 18은 2026-10-23에 끝남 (24번).
     수업 17은 2026-10-23에 끝남 (24번). 2부 끝 시나리오(S1 · S2 · S3 · S5 · S7 · S8)는 아직 안 함 (2부 끝 칸).
@@ -103,11 +104,11 @@
      새 이펙트 스크립트가 이것을 구독하기만 하면 됨. 게임 로직은 고치지 않음.
    - TileSatelliteOrbiter는 옛 enum DebuffTarget을 씀. 파일이 남아 있으므로 수업 48에서 옛 TowerDataSO.cs를 지울 때 DebuffTarget enum은 남겨 둠.
 4-2) 에디터 도구는 그대로 씀
-   그대로    SharedVisual (Tools/Visuals/테마 색상: 타일맵·UI의 테마 색 바꾸기), UITilePanelEditor (UI 타일 패널 만들기),
-             테스트 EnemyCubeOrientationTests, EnemyCubeRollGeometryTests
+   그대로    SharedVisual (Tools/Visuals/테마 색상: 타일맵·UI의 테마 색 바꾸기), UITilePanelEditor (UI 타일 패널 만들기)
    옮김      TileManagerEditor → BoardManagerEditor (경로 칸 편집, 수업 3), ClickDebugWindow (새 매니저를 읽게, 수업 13)
              둘 다 옛 TileManager를 부르므로, 옛 것을 지우면 깨짐 → 새 쪽으로 옮겨 같은 기능을 유지
-   지움      GameRuleTests (옛 규칙의 테스트. 새 테스트 T1 ~ T8이 대신함, 수업 48)
+   지움      옛 테스트 셋 (GameRuleTests, EnemyCubeOrientationTests, EnemyCubeRollGeometryTests) — 2026-10-23 수업 21 중에 지움 (사용자).
+             옛 규칙·옛 큐브 스크립트를 보던 것. 새 테스트는 Editor/Tests/New에만 있음
 5) UI는 지금 만들어진 것을 그대로 씀
    캔버스, 패널, 버튼, 레이아웃, UI 프리팹은 손대지 않음. 바꾸는 것은 UI 스크립트가 "데이터를 어디서 읽어 오는가"뿐.
    옛 매니저를 부르는 UI 스크립트 9개 + 옛 클래스를 한 곳씩 부르는 TowerVisual·EnemyListItemUI는 "연결만 바꾸는 것"(5장의 "옮김").
@@ -737,62 +738,6 @@ GroundEffect (장판)
 ######################################################################
 
 ----------------------------------------------------------------------
-수업 20. 타워 스탯 완성 — #9 BalanceTables, #33 ColorUpgradeState, #44 StatModifier, #42 TowerStatCalculator 완성, T5   [스탯 수정자]
-----------------------------------------------------------------------
-배울 것: 표를 코드로 옮기기, 계산을 단계로 나누기(파이프라인), 출처를 남기는 계산, enum StatType 더하기.
-기획: 20번 10장 [티어가 올리는 스탯], 8장 [컬러 강화](레벨 6 포함), 3장 [버프와 디버프가 겹칠 때], 4장 [타워 정보 카드](출처)
-(수업 19 중에 정함, 2026-10-23 사용자) DebugCheat 자동 진행(A)의 플레이어 턴: 돈이 있는 만큼 생성 → 확정 → 컬러 → 문양 순서로 합성 (AI가 씀).
-  젬은 "3티어 타워가 처음 나온 시점에 그 타워의 컬러를 컬러 강화" — 컬러 강화가 생기면 DebugCheat.AutoPlayerTurn의 "// 수업 20:" 자리에 AI가 넣음
-(수업 19 중에 AI) TowerVisual: 장식(Decoration) 테두리를 티어 색으로 칠함 (m_tierColors, 카드 배지와 같은 색. 판 위에서 티어가 안 보인다는 사용자 요청)
-정한 것: 스탯은 "1티어의 CSV 값 × 티어 표"로 계산함. CSV의 2 ~ 5티어 줄은 이름·투사체·이펙트 번호만 씀.
-         이유: 기획 10장의 티어 표가 네 컬러 공용 규칙이고, CSV의 수치는 참고용(20번 머리말). 표 하나를 고치면 280종에 다 반영됨.
-설계
-  BalanceTables: GetTierRow(tier, color), GetColorLevelRow(level, color), 비용표, 판매표, 도끼·방패 비율, 모드 배율
-  ColorUpgradeState: GetLevel(컬러), TryUpgrade(컬러) (젬 4 · 12 · 48 · 240), LevelChanged → TowerManager가 그 컬러 타워를 다시 계산
-  StatModifier + 수정자 목록: Add(출처, ...), RemoveBySource(출처), Sum(StatType) → (%의 합, 정수의 합)
-  TowerStatCalculator.Calculate(정의, 상태, RuleContext 또는 레벨 조회) 순서
-    1. 쓸 레벨 = 컬러 레벨 + ColorLevelBonus 수정자 (대지 만개. 최대 6)
-    2. 1티어 값 × 티어 표 (Action −, Power ×, Mastery +, AttackCount +, 최대 Stack ×, StackValue ×, Duration은 컬러마다 방향이 다름)
-    3. 컬러 강화 표 (AbilityValue ×, AttackCount + (단일 두 배), StackValue ×, 최대 Stack ×, Mastery +)
-    4. (공격 타워만) 수정자 합산: 스폰 칸 효과, 받는 존 버프, 시간 버프, 자기 강화 → 기본 × (1 + %의 합) + 정수의 합
-    5. 한도: Action 최소 1, 치명 확률·관통 100% (20번 3장)
-    6. TowerFinalStats + 출처 목록
-  TowerController: 최종 MaxAction이 바뀌면 남은 행동력에 차이를 바로 더하거나 뺌 (20번 4-1장 [버프의 규칙] 4)
-확인: T5 — 다이아 Power ×15 · Action −5(최소 1) · Mastery +3, 레벨 5 AbilityValue ×4, 레벨 6 ×6,
-      버프 +50%와 +25% → ×1.75 (곱하면 ×1.875라 틀림). 컬러 강화 버튼(임시 키) → 같은 컬러 타워가 다 바뀜.
-참고(옛 코드): TowerManager.GetGlobalStats / UpgradeTower, TowerController.GetFinalStats
-
-진행 (2026-10-23 퇴근 때 멈춤 — 집에서 이어서)
-  1단계 BalanceTables — 끝. BalanceTablesTest 초록 (01. Data/BalanceTables.cs)
-        TierRow 생성자 순서는 사용자가 바꿈: (Action, Power, AttackCount, MaxStack, StackValue, Mastery)
-        ColorLevelRow 순서: (AttackCount, AbilityValue, StackValue, MaxStack, Mastery). 블루는 GetColorLevelRow가 AttackCount ×2
-        판매표·티어 강화 비용은 옮기지 않음 (TowerManager.GetSellGem, TowerProgression.GetTierUpgradeCost에 그대로).
-        도끼·방패 비율, 모드 배율은 쓰는 수업에서
-  2단계 StatType + StatModifier — 코드는 다 씀, 테스트(StatModifierListTest 9개) 아직 안 돌림
-        StatType은 GameEnums 맨 뒤 (None ~ ColorLevelBonus 12개). 옛 전역 StatType { Armor }와는 namespace가 달라 안 부딪힘
-        05. Tower/StatModifier.cs: StatModifier.Percent / Flat(출처, 스탯, 값), StatModifierList.Add / RemoveBySource / Sum / Apply / Changed
-        집에서 처음 할 일: RemoveBySource 43번 줄 변수 이름 remove → removed (44·45줄과 맞춤) 고쳤는지 보고 테스트 돌리기
-  3단계 TowerStatCalculator — 아직. AI가 정해 둔 모양 (뼈대는 AI가 만듦)
-        TowerFinalStats: "만든 뒤 바꾸지 않음". 값은 StatType 순서의 배열로 들고 Get(StatType), 지금 속성 이름(Power, Action,
-          CriticalRate, Stack …)은 그대로 둠 (TargetAction·SplashAction이 씀). 더할 것: StackValue(기본 1), ColorLevel(쓴 레벨), 출처 목록
-        Calculate(정의, 1티어 정의, 상태, 컬러 레벨): 1티어 정의가 null이면 정의 자신. 티어 표는 정의의 티어로 (6티어 = Identity)
-          1 레벨 = 컬러 레벨 + ColorLevelBonus 수정자 (최대 6) → 2 티어 표 → 3 컬러 표 → 4 (공격 타워만) 수정자 Apply
-          → 5 한도: Action 최소 1, 치명 확률 최대 1, Duration 최소 1(기획에 없음, 안전용), 최대 스택은 반올림·최소 1 → 6 결과 + 출처
-        출처: 스탯마다 "기본(티어·컬러 반영 값)" + 수정자마다 (출처, 붙은 양 = 기본 × % 또는 정수). 카드의 "위력 = 기본 xx + ○○ xx"
-        TowerState에 Modifiers(StatModifierList) 더함. CopyInheritedFrom의 존 버프 이어받기는 존이 생기는 수업(26)에서
-  4단계 ColorUpgradeState + 연결 — 아직
-        ColorUpgradeState(순수 C#): GetLevel(컬러) (처음 1), GetCost(컬러) = BalanceTables.GetColorUpgradeCost, TryUpgrade(컬러)(레벨 5면 false),
-          LevelChanged(컬러, 레벨). 젬 확인·차감은 TowerManager.TryUpgradeColor(컬러) (B2 순서: 확인 → 올림 → 젬)
-        TowerManager.ColorLevels 소유, LevelChanged → 판의 그 컬러 타워 RecalculateStats
-        TowerController: Init(정의, 칸, 공격 방식, 1티어 정의 = null, ColorUpgradeState = null) — 기존 테스트가 안 깨지게 기본값
-          RecalculateStats(): 최종 Action이 바뀌면 그 차이를 남은 행동력에 바로 더하거나 뺌(최소 0). State.Modifiers.Changed를 들음
-          Init에서 남은 행동력 = 계산된 Action (CSV Action이 아님. 다이아는 1티어 Action − 5)
-        TowerFactory: 생성자에 TowerDatabase, ColorUpgradeState 더함. 1티어 = Database.TryGet(TowerId.Make(1, 컬러, 문양))
-        AI가 할 것: 테스트(T5 계산기·ColorUpgradeState·TowerController 행동력 차이), DebugCheat 임시 키 L(선택한 타워의 컬러 강화),
-          DebugCheat.AutoPlayerTurn의 "// 수업 20:" (판에 3티어 이상이 있는 컬러를 젬이 되는 만큼 강화),
-          UI "// 수업 20:" 주석 풀기 (PlayerTurnPanel 컬러 강화 비용·버튼, TowerInfoPanel LevelChanged·레벨 글자)
-
-----------------------------------------------------------------------
 수업 21. 적 스탯과 이동 규칙 완성 — #124 EnemyStats, #123 EnemyMovement 보강, #129 EnemyCubeFaces, T6
 ----------------------------------------------------------------------
 배울 것: 같은 수정자 구조를 적 쪽에 다시 쓰기, 기본값과 지금 값 둘 다 보여 주기, 경계값 처리.
@@ -810,6 +755,25 @@ GroundEffect (장판)
   EnemyController가 ITarget.Stats로 EnemyStats를 내줌 (ITarget에 Stats를 이 수업에서 더함 → TargetActionTest의 FakeTarget에도 더함).
   DamageCalculator는 Stats의 방어력·받는 피해 배율을 씀
 확인: T6 — 방어 +20%와 −50% → ×0.7, 이동력 2 ~ 4에 −3 → 1 ~ 1 & Action +2. 씬 — 임시로 행동 불가를 걸면 제자리에 멈춤.
+진행 (2026-10-23 시작)
+  1단계 StatType에 적 스탯 6개(Defense, SpeedMin, SpeedMax, ActionGainPerTurn, DamageTaken, FixedDamageRatio) + 06. Enemy/EnemyStats.cs
+        — 끝. EnemyStatsTest 10개 초록 (AI, T6). 같은 때 옛 테스트 3개를 지움 (1장 4-2)
+        EnemyStats(순수 C#): 기본값 배열(웨이브 배율 적용한 방어력, Action, Speed, DamageTaken 1), Modifiers, GetBase / Get(= Apply),
+        GetMoveRange() → MoveRange(최소, 최대, 행동 주기): 1 아래로 모자란 만큼 행동 주기에 더함. 소환마다 new (풀의 옛 수정자가 남지 않게)
+  2단계 EnemyController.Stats, ITarget.Stats, DamageCalculator가 Stats의 방어력·받는 피해 배율·고정 피해 전환율을 씀
+        — 코드 끝(사용자, 한 번에 정답). AI: 가짜 대상 둘의 Stats => null, EnemyInfoPanel의 방어력·행동 주기·이동력을 "지금 (기본)"으로,
+          EnemyControllerTest 5개(방어 수정자, 받는 피해 ×1.1, 고정 피해 50%, 다시 소환하면 수정자 없음) 초록 — 끝
+  3단계 EnemyMovement: MoveRange로 주사위, 행동 카운트 1 + ActionGainPerTurn, 음수면 뒤로, 훅 자리 둘(다음 이동을 정할 때, 이동한 뒤) ← 지금
+        뼈대 AI(파일에 직접): Init의 처음 카운트, TakeTurn(DecideMove → 카운트 = range.Action → RollDice → MoveSteps → OnMoved),
+        DecideMove / OnMoved는 빈 자리(수업 25), MoveSteps의 direction(삼항 연산자)·count(Mathf.Abs), RollDice(range).
+        행동한 뒤 카운트는 range.Action으로 다시 채움 (넘친 만큼 이어받지 않음). 0 / 0이면 제자리에 다시 멈춤
+        — 코드 끝 (사용자). 테스트 대신 씬 확인 (사용자가 고름). 확인용 임시 키: DebugCheat N(적 전부 이동력 −3), P(행동 카운트 +1),
+          "── 수업 21 확인용 임시 코드 ──" ToggleEnemyModifier → 수업 22에서 특수 타일이 생기면 지움
+  4단계 EnemyCubeFaces: 6면 무작위, 지금 위 면, 면 → 수정자 자리 (수치 0) ← 지금 (3단계 씬 확인은 나중에, 사용자)
+        6면 무작위 배정과 보이는 면(VisibleFace)·면의 에셋(GetFaceAsset)은 EnemyCubeMeshVisual에 이미 있음 (수업 8을 DOTween으로 다시 쓸 때)
+        → 새로 만드는 것은 06. Enemy/EnemyCubeFaces.cs(static): 면 → 수정자 표(StatModifier[][], 출처 "큐브 면"), GetModifiers, Apply(지우고 더하기)
+        EnemyMovement: 소환(Init 끝)과 이동한 뒤(MoveSteps 다음)에 Apply(Stats, 보이는 면의 에셋)
+        — 끝. EnemyCubeFacesTest 6개 초록. 남은 것: 3단계 씬 확인(N·P 키)으로 수업 21 마침
 참고(옛 코드): EnemyMoveController.ProcessTurnMoveRoutine, EnemyHealthController의 Set 함수들
 
 ----------------------------------------------------------------------
@@ -817,6 +781,7 @@ GroundEffect (장판)
                                                                                                   [패턴: 전략 세 번째]
 ----------------------------------------------------------------------
 배울 것: 섞기(Fisher–Yates), 같은 패턴을 데이터 쪽에 쓰기, "멈춰 있는 동안"과 "멈춘 순간"의 차이.
+(수업 21에서 넘어옴) DebugCheat의 N·P 키와 ToggleEnemyModifier("── 수업 21 확인용 임시 코드 ──")를 지울 것
 기획: 20번 2장 [길 위의 특수 타일], [타워 스폰 타일의 특수 타일], 배치·비프로스트·정화, 1장 끝줄(치유 감소 먼저)
 설계
   SpecialTileLayout (BoardManager가 들고 있음, 개수는 BoardManager 인스펙터)
@@ -871,6 +836,11 @@ GroundEffect (장판)
     전체: 턴 종료, 생성, 컬러 강화(컬러 넷), 골드·젬, 원하는 타워
     (수업 9·10에서 넘어옴) 지금 있는 키: Space 턴 종료, A 자동 진행, R 씬 다시 불러오기. CountChanged를 "적 n / 한도 m" 로그로.
     (수업 12에서 넘어옴) B 생성, G 골드 +1000, Currency Changed 로그. 숫자 키(원하는 ID의 타워)와 젬 더하기 키는 아직 없음.
+    (수업 19 · 20에서 넘어옴) 1·2·3 합성, U 티어 강화, H 젬 +100, L 선택한 타워의 컬러 강화. 자동 진행(A) 중 3티어 타워가 생기면(TowerAdded) 그 컬러를 한 번 강화 (젬이 되면, 2026-10-23 사용자).
+      자동 진행의 합성은 칸이 꽉 찼을 때만 (생성 → 꽉 차면 합성 → 빈 칸에 다시 생성, 남은 칸이 있으면 다음 턴까지 기다림. 사용자)
+      자동 진행의 자리 잡기 (사용자): 공격 타워를 높은 티어부터, Range 3 이상(AutoLongRange)은 사거리 안 길 칸이 가장 많은 칸,
+        2 이하는 길에 가장 가까운 칸으로 TryMoveOrSwap. 수업 26(존)이 생기면 존 위 자리와 부딪히는지 다시 볼 것
+      L 키 안의 "── 수업 20 확인용 임시 코드 ──"(강화 뒤 판의 타워마다 Lv·AbilityValue 로그)는 ClickDebugWindow가 타워 스탯을 보여 주면 지움
   (수업 13에서 넘어옴) ClickDebugWindow(E2) 옮기기: 옛 TileManager·옛 TowerController를 읽는 부분을 새 BoardManager·TowerSlots·TowerController로
       InvariantChecker에 "GameLoop가 하나" 검사를 더할지 여기서 정함 (지금은 TurnManager.Start에서 한 번만 시작하고 S7 재시작에서 문제없음)
   ClickDebugWindow (Tools/Click Debug):
@@ -955,6 +925,17 @@ GroundEffect (장판)
     FireDebuffRule    화상·연소: 매 턴 최대 체력 % + 받는 치유 감소, 연소는 같은 칸 적에게 임시 화상(다시 번지지 않음)
 확인: T8 — 브론즈 불씨 0 ~ 1.2%, 다이아 18%. 씬 — 메테오가 연소 적에게 2배, 불길이 끝나면 불씨로.
 참고(옛 코드): FireSplashSkill, FireTargetSkill, FireBuffStatus, FireDebuffRule
+
+----------------------------------------------------------------------
+수업 27을 마치면 — 옛 코드 정리 (수업 48의 정리를 당겨 옴, 2026-10-24 사용자)
+----------------------------------------------------------------------
+이유: 수업 27(불)까지 마치면 새 코드가 옛 게임이 하던 일을 전부 함 (옛 코드의 문양은 불 하나뿐이었음). 그 뒤는 옛 게임에 없던 새 기능.
+할 것 (AI가 목록을 만들고 사용자가 확인한 뒤 지움)
+  - 옛 스크립트 (그대로 쓰는 것 빼고), 옛 프리팹(Old_…), 옛 클래스의 ScriptableObject 에셋(_Old), 씬의 꺼 둔 옛 매니저·풀 오브젝트, 옛 TileManagerEditor
+    → 지우기 전에 Missing Script가 남는 곳(씬·프리팹)을 먼저 찾음. 수업 48의 "남기는 것" 목록은 그대로 지킴
+  - 문서 21. 구현 계획서, 22. 구현 내역서 지움 (22번의 옛 버그 기록은 4장 [4-7]에 이미 옮겨 둠). 남는 문서: 20 · 23 · 24 · 25 · 26
+  - 23번의 옛 코드 언급("참고(옛 코드): …", 1장의 옛 스크립트 목록)과 26번 7장의 21·22번 설명을 정리
+  - 지운 뒤 Run All 초록 + 씬 플레이 한 번
 
 ----------------------------------------------------------------------
 수업 28 ~ 40. 나머지 문양 13종 — 한 수업에 파일 넷 (+ 그 문양이 처음 쓰는 공용)
@@ -1066,6 +1047,19 @@ GroundEffect (장판)
   UIManager: TurnManager.StateChanged를 구독해 패널을 켜고 끔 (옛 코드는 상태 클래스가 UIManager를 직접 부름)
   GameInfoPanel: GameSession.LimitChanged, EnemyManager.CountChanged, WaveManager.WaveChanged, CurrencyManager.Changed 구독. 새로: 보스 남은 턴
   PlayerTurnPanel: 생성(TryBuild, BuildCostChanged), 컬러 강화·티어 강화, 턴 종료(OnClickEndTurn)
+    (2026-10-23 사용자 요청으로 먼저 함) Canvas.prefab에서 GameInfoPanel · PlayerTurnPanel의 Script를 새 것으로 바꿈 (프리팹 YAML의 guid,
+      PlayerTurnPanel은 m_colorUpgrades 4칸까지 연결). PlayerTurnPanel의 선택은 UIManager 대신 TowerManager.SelectionChanged를 들음.
+      아직: 생성 비용 글자(txt_createTowerValue)는 씬의 UICanvas 덮어쓰기가 비워 둠 → 연결할 것은 Group_CreateTower/…/Txt_A_TargetUpValue(이름이 잘못 붙음),
+      GameInfoPanel의 txt_bossTurns는 칸(글자 오브젝트)이 없음
+    (같은 날, 사용자: "옛날거 붙어있으면 그거 떼도 됨") Canvas.prefab의 GameOver·GameClear·Option·Tileinfo·TowerInfo 패널도 새 Script로 바꿈.
+      EnemyInfoPanel 오브젝트에 잘못 붙어 있던 빈 옛 TowerInfoPanel은 뗌. 이제 Canvas.prefab에 옛 UI 스크립트는 없음 (UITileSurface는 그대로 쓰는 것).
+      남은 것: 씬의 TileInfoPanel 오브젝트(UICanvas 밖, 씬에만 있는 것)에 붙은 빈 옛 TowerInfoPanel → 사용자가 Remove Component,
+        새 UIManager를 씬에 두고 패널 연결 (없으면 TowerInfo·TileInfo 패널은 아무것도 안 함, 에러는 없음),
+        TowerInfoPanel은 옛 것도 txt_name·합성 버튼·판매 젬만 연결돼 있었음 → 나머지 칸 연결, EnemyInfoPanel 오브젝트에 새 EnemyInfoPanel 붙이기
+    컬러 강화는 컬러마다 버튼 하나 (2026-10-23 사용자: 지금 UI가 그렇게 생김). 스크립트는 m_colorUpgrades 칸 4개(컬러, 버튼, 레벨 글자, 비용 글자)로 고쳐 둠.
+    옛 btn_colorUpgrade · txt_colorUpgradeValue 칸은 없앰 → 씬에서 Script를 갈아 끼운 뒤 4칸을 직접 연결:
+      Red  ← Btn_SplashUp, Txt_B_SplashUpLv, Txt_A_SplashUpValue    Blue   ← Btn_TargetUp, Txt_B_TargetUpLv, Txt_A_TargetUpValue
+      Yellow ← Btn_BuffUp, Txt_B_BuffUpLv, Txt_A_BuffUpValue        Purple ← Btn_DebuffUp, Txt_B_DebuffUpLv, Txt_A_DebuffUpValue   (Canvas.prefab의 이름)
   GameOverPanel, GameClearPanel
 확인: 지금 화면 그대로 값이 실시간으로 바뀜, 버튼이 키와 같은 일을 함, 갈아 끼운 패널의 인스펙터에 빈 칸이 없음.
 
@@ -1096,7 +1090,8 @@ GroundEffect (장판)
 ----------------------------------------------------------------------
 수업 48. 정리
 ----------------------------------------------------------------------
-  - 꺼 둔 옛 매니저·풀 오브젝트, 옛 프리팹(새 프리팹으로 바꾼 것), 옛 스크립트 65개, 옛 TileManagerEditor·GameRuleTests 삭제
+  - (수업 27 뒤로 당김) 꺼 둔 옛 매니저·풀 오브젝트, 옛 프리팹(새 프리팹으로 바꾼 것), 옛 스크립트 65개, 옛 TileManagerEditor 삭제
+    → 여기서는 그때 남겨 둔 것만 다시 확인
   - 남기는 것: 타일 이펙트 둘(TileSatelliteOrbiter, PathTileBubbleEffect)과 그 프리팹(MapBuff, DebuffZone), 그것이 쓰는 DebuffTarget enum,
     에디터 도구 SharedVisual·UITilePanelEditor
   - 재시작·재시도·메뉴 버튼과 씬 이동(SceneLoader, LoadingManager)

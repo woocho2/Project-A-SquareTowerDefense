@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,10 +7,25 @@ namespace SquareTD
 {
     public class PlayerTurnPanel : MonoBehaviour
     {
+        // 컬러마다 강화 칸 하나 (광역·단일·버프·디버프). 선택한 타워와 상관없이 플레이어가 고른 컬러를 강화
+        [Serializable]
+        private class ColorUpgradeSlot
+        {
+            public TowerColor color;
+            public Button button;                   // Btn_SplashUp / Btn_TargetUp / Btn_BuffUp / Btn_DebuffUp
+            public TextMeshProUGUI txt_level;       // Txt_B_…UpLv
+            public TextMeshProUGUI txt_cost;        // Txt_A_…UpValue
+        }
+
         [SerializeField] Button btn_createTower;
         [SerializeField] TextMeshProUGUI txt_createTowerValue;
-        [SerializeField] Button btn_colorUpgrade;
-        [SerializeField] TextMeshProUGUI txt_colorUpgradeValue;
+        [SerializeField] ColorUpgradeSlot[] m_colorUpgrades =
+        {
+            new ColorUpgradeSlot { color = TowerColor.Red },
+            new ColorUpgradeSlot { color = TowerColor.Blue },
+            new ColorUpgradeSlot { color = TowerColor.Yellow },
+            new ColorUpgradeSlot { color = TowerColor.Purple },
+        };
         [SerializeField] Button btn_tierUpgrade;
         [SerializeField] TextMeshProUGUI txt_tierUpgradeValue;
         [SerializeField] Button btn_turnEnd;
@@ -20,13 +36,17 @@ namespace SquareTD
         {
             TowerManager.Instance.BuildCostChanged += HandleBuildCostChanged;
             CurrencyManager.Instance.Changed += HandleCurrencyChanged;
-            if (UIManager.Instance != null) UIManager.Instance.SelectedTowerChanged += HandleTowerSelected;
-            // 수업 20: ColorUpgradeState.LevelChanged += HandleUpgradeChanged
+            TowerManager.Instance.SelectionChanged += HandleTowerSelected;
+            TowerManager.Instance.ColorLevels.LevelChanged += HandleColorLevelChanged;
             TowerManager.Instance.TowerReplaced += HandleTowerReplaced;
             TowerManager.Instance.TowerRemoved += HandleTowerRemoved;
 
             if (btn_createTower != null) btn_createTower.onClick.AddListener(HandleCreateTowerClick);
-            if (btn_colorUpgrade != null) btn_colorUpgrade.onClick.AddListener(HandleColorUpgradeClick);
+            foreach (ColorUpgradeSlot slot in m_colorUpgrades)
+            {
+                TowerColor color = slot.color;
+                if (slot.button != null) slot.button.onClick.AddListener(() => HandleColorUpgradeClick(color));
+            }
             if (btn_tierUpgrade != null) btn_tierUpgrade.onClick.AddListener(HandleTierUpgradeClick);
             if (btn_turnEnd != null) btn_turnEnd.onClick.AddListener(HandleTurnEndClick);
 
@@ -43,14 +63,18 @@ namespace SquareTD
             if (TowerManager.Instance != null)
             {
                 TowerManager.Instance.BuildCostChanged -= HandleBuildCostChanged;
+                TowerManager.Instance.SelectionChanged -= HandleTowerSelected;
+                TowerManager.Instance.ColorLevels.LevelChanged -= HandleColorLevelChanged;
                 TowerManager.Instance.TowerReplaced -= HandleTowerReplaced;
                 TowerManager.Instance.TowerRemoved -= HandleTowerRemoved;
             }
             if (CurrencyManager.Instance != null) CurrencyManager.Instance.Changed -= HandleCurrencyChanged;
-            if (UIManager.Instance != null) UIManager.Instance.SelectedTowerChanged -= HandleTowerSelected;
 
             if (btn_createTower != null) btn_createTower.onClick.RemoveListener(HandleCreateTowerClick);
-            if (btn_colorUpgrade != null) btn_colorUpgrade.onClick.RemoveListener(HandleColorUpgradeClick);
+            foreach (ColorUpgradeSlot slot in m_colorUpgrades)
+            {
+                if (slot.button != null) slot.button.onClick.RemoveAllListeners();     // 람다로 붙여서 하나씩 뗄 수 없음
+            }
             if (btn_tierUpgrade != null) btn_tierUpgrade.onClick.RemoveListener(HandleTierUpgradeClick);
             if (btn_turnEnd != null) btn_turnEnd.onClick.RemoveListener(HandleTurnEndClick);
         }
@@ -58,6 +82,8 @@ namespace SquareTD
         private void HandleBuildCostChanged(int cost) => Refresh();
 
         private void HandleCurrencyChanged(int gold, int gem) => Refresh();
+
+        private void HandleColorLevelChanged(TowerColor color, int level) => Refresh();
 
         private void HandleTowerSelected(TowerController tower)
         {
@@ -85,15 +111,26 @@ namespace SquareTD
             if (txt_createTowerValue != null) txt_createTowerValue.text = $"{buildCost}";
             if (btn_createTower != null) btn_createTower.interactable = CurrencyManager.Instance.Gold >= buildCost;
 
-            RefreshUpgradeCostTexts();
+            RefreshColorUpgrades();
+            RefreshTierUpgrade();
         }
 
-        private void RefreshUpgradeCostTexts()
+        private void RefreshColorUpgrades()
         {
-            // 수업 20: 컬러 강화 비용 = ColorUpgradeState.GetCost(선택한 타워의 컬러), 레벨 5면 "MAX", 젬이 모자라면 버튼을 끔
-            if (txt_colorUpgradeValue != null) txt_colorUpgradeValue.text = "-";
-            if (btn_colorUpgrade != null) btn_colorUpgrade.interactable = false;
+            ColorUpgradeState levels = TowerManager.Instance.ColorLevels;
+            int gem = CurrencyManager.Instance.Gem;
 
+            foreach (ColorUpgradeSlot slot in m_colorUpgrades)
+            {
+                int cost = levels.GetCost(slot.color);
+                if (slot.txt_level != null) slot.txt_level.text = $"Lv.{levels.GetLevel(slot.color)}";
+                if (slot.txt_cost != null) slot.txt_cost.text = FormatUpgradeCost(cost);
+                if (slot.button != null) slot.button.interactable = cost > 0 && gem >= cost;
+            }
+        }
+
+        private void RefreshTierUpgrade()
+        {
             if (m_selectedTower == null)
             {
                 if (txt_tierUpgradeValue != null) txt_tierUpgradeValue.text = "-";
@@ -116,15 +153,9 @@ namespace SquareTD
             TowerManager.Instance.TryBuild();
         }
 
-        private void HandleColorUpgradeClick()
+        private void HandleColorUpgradeClick(TowerColor color)
         {
-            if (m_selectedTower == null)
-            {
-                Debug.LogWarning("[PlayerTurnPanel] 컬러 강화할 타워가 선택되지 않음");
-                return;
-            }
-
-            // 수업 20: TowerManager.Instance.TryUpgradeColor(m_selectedTower.Definition.Color)
+            TowerManager.Instance.TryUpgradeColor(color);
         }
 
         private void HandleTierUpgradeClick()

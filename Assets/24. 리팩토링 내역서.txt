@@ -920,3 +920,45 @@
 - 아직 없는 시스템은 "// 수업 N: …" 주석. 수업 N에서 그 시스템을 만들 때 AI가 찾아 풀어 연결함 (23번 6부 앞 설명)
 - 옛 [SerializeField] 이름과 버튼 함수 이름은 그대로 (Debug 인스펙터에서 Script 칸만 갈아 끼우면 연결이 남게)
 - 남은 일: 씬에서 Script 갈아 끼우기, 새 칸 만들기, 캔버스 켜기 (AI)
+
+[수업 20] 타워 스탯 완성 — BalanceTables, StatType·StatModifier, TowerFinalStats·TowerStatCalculator, ColorUpgradeState, 연결   (2026-10-23)
+                                       확인 상태: 테스트 통과 (BalanceTables, StatModifierList 9, TowerStatCalculator 18),
+                                                  ColorUpgradeState 6 · TowerController 6(새로 더함)은 Run All 결과를 따로 듣지 못함, 플레이로 동작 확인
+만든 파일
+- 01. Data/BalanceTables.cs — TierRow(Action, Power, AttackCount, MaxStack, StackValue, Mastery), ColorLevelRow(AttackCount, AbilityValue, StackValue, MaxStack, Mastery),
+    GetTierRow, GetTierDurationDelta(티어, 컬러: 레드·블루 −, 퍼플 +, 옐로우 0), GetColorLevelRow(레벨 1 ~ 6, 블루는 AttackCount ×2), GetColorUpgradeCost(4·12·48·240)
+- 00. Core/GameEnums.cs — StatType (None ~ ColorLevelBonus)
+- 05. Tower/StatModifier.cs — StatModifier.Percent / Flat(출처, 스탯, 값), StatModifierList.Add / RemoveBySource / Sum(→ percent, flat) / Apply / Changed
+- 05. Tower/TowerFinalStats.cs — 값을 StatType 번호의 배열로 (Clone으로 복사본, 만든 뒤 바뀌지 않음), Get / GetBase, 옛 속성 이름(Power, Action …) 유지,
+    StackValue, ColorLevel(쓴 레벨), Sources(StatSource: 출처, 스탯, 붙은 양)
+- 05. Tower/TowerStatCalculator.cs — Calculate(정의, 1티어 정의, 상태, 컬러 레벨) 파이프라인:
+    GetUsedLevel(만개 +, 최대 6) → ReadBase(1티어 CSV) → ApplyTier → ApplyColorLevel → (공격 타워만) ApplyModifiers + BuildSources → ApplyLimits
+    (정수 스탯 반올림, Action·Duration·MaxStack 최소 1, CritRate 최대 1)
+- 05. Tower/ColorUpgradeState.cs — 레벨 int[] (컬러 번호 = 칸 번호), GetLevel, GetCost, CanUpgrade, TryUpgrade, LevelChanged(컬러, 레벨)
+- TowerState.Modifiers, TowerController.Init(…, 1티어 정의 = null, 강화 상태 = null) · RecalculateStats(Action이 바뀐 만큼 남은 행동력에 더함, 최소 0) ·
+    CalculateStats, Modifiers.Changed 구독, TickAction의 다시 계산은 지움
+- TowerFactory(DB, 강화 상태, FindTier1), TowerManager.ColorLevels(Awake에서 만들고 LevelChanged 구독), TryUpgradeColor(확인 → 올림 → 젬), HandleColorLevelChanged
+- 테스트 (AI): StatModifierListTest 9, TowerStatCalculatorTest 18 (T5), ColorUpgradeStateTest 6, TowerControllerTest +6 (행동력 차이)
+- DebugCheat (AI): L = 선택한 타워의 컬러 강화 (+ 확인용 임시 로그, 수업 24에서 지움).
+    자동 진행(사용자가 규칙을 정함): 생성 → 칸이 꽉 차면 합성 → 빈 칸에 다시 생성, 3티어가 생기면 그 컬러를 한 번 컬러 강화,
+    턴 끝에 공격 타워 자리 잡기(높은 티어부터, Range 3 이상은 사거리 안 길 칸이 많은 곳, 2 이하는 길에 가까운 곳)
+- UI (AI): PlayerTurnPanel을 컬러마다 강화 버튼 4개로(m_colorUpgrades), TowerInfoPanel 레벨 글자 = stats.ColorLevel·LevelChanged
+- Canvas.prefab (AI, 사용자 요청): 옛 UI 스크립트 7개를 새 것으로 갈아 끼움 (GameInfo, PlayerTurn 4칸 연결, GameOver, GameClear, Option, Tileinfo, TowerInfo),
+    EnemyInfoPanel 오브젝트의 빈 옛 TowerInfoPanel을 뗌. 남은 일은 23번 수업 44 칸
+
+수업 중에 정한 것 (바꾼 기획 포함)
+- 스탯은 "1티어 CSV 값 × 티어 표 × 컬러 표 + 수정자". CSV의 2 ~ 5티어 수치는 쓰지 않음
+- 버프·디버프 타워는 수정자와 만개를 받지 않음 (계산기가 막음)
+- 컬러 강화 버튼은 컬러마다 하나, 타워를 고르지 않아도 됨 (20번 8장에 더함)
+- 자동 진행은 밸런스용 봇. 기능이 생길 때마다 사용자의 플레이 규칙으로 넣음 (26번 1장)
+- 집 컴퓨터의 플레이 끊김은 에디터 D3D12 때문 → Hub 인자 -force-d3d11 (26번 8장)
+
+배운 것의 요점
+- enum → (int) → 배열 번호. "번호(i, (int)stat)"와 "배열[번호]에 든 값"을 구별 (세 번 나옴)
+- 배열은 넘기면 같은 공책을 고침(void로 고치기) / 같이 바뀌는 게 싫으면 Clone. 형식 바꾸기는 (float[])x.Clone()
+- 파이프라인: 단계마다 한 가지만 고치고, 한도는 맨 끝에 한 번
+- (percent, flat) 같은 두 칸 상자에서 .flat으로 하나 꺼내기
+- 함수가 자기 이름을 다시 부르면 끝없이 불러 멈춤 (GetLevel → GetLevel)
+- 최소는 Max, 최대는 Min. if 안의 로그 뒤에 return false가 없으면 확인을 통과한 것처럼 계속 감
+- 이벤트를 듣는 쪽이 여럿이면 먼저 구독한 쪽이 먼저 불림 → 계산하는 쪽은 Awake에서 구독
+- 기본값 인자(= null)는 기존 호출을 안 깨뜨리지만 빠뜨린 곳(Replace의 Init)도 숨김

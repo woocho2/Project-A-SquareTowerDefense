@@ -15,5 +15,6 @@ namespace SquareTD
         float PreviewDamage(DamageInfo info);
         void TakeDamage(DamageInfo info);
         void SetSortingOrder(int order);
+        EnemyStats Stats { get; }
     }
 }

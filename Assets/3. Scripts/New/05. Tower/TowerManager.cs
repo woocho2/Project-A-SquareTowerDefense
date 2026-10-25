@@ -18,6 +18,7 @@ namespace SquareTD
         [SerializeField] private List<TowerEmblem> m_selectedEmblems = new List<TowerEmblem>();
 
         public TowerDatabase Database { get; private set; }
+        public ColorUpgradeState ColorLevels { get; private set; }
         public int BuildCost { get; private set; } = StartBuildCost;
         public TowerController Selected { get; private set; }
 
@@ -27,7 +28,7 @@ namespace SquareTD
         public event Action<int> BuildCostChanged;
         public event Action<TowerController> SelectionChanged;
         public event Action<TowerController> TowerRemoved;
-        public event Action<TowerController, TowerController> TowerReplaced;      // (옛 타워, 새 타워) — 합성·티어 강화
+        public event Action<TowerController, TowerController> TowerReplaced;
 
         private TowerFactory m_factory;
 
@@ -38,11 +39,14 @@ namespace SquareTD
 
             Database = new TowerDatabase();
             Database.Load(m_towerCsv.text);
+            ColorLevels = new ColorUpgradeState();
+
+            ColorLevels.LevelChanged += HandleColorLevelChanged;
         }
 
         private void Start()
         {
-            m_factory = new TowerFactory(m_towerPrefab, m_towerParent, BoardManager.Instance);
+            m_factory = new TowerFactory(m_towerPrefab, m_towerParent, BoardManager.Instance, Database, ColorLevels);
         }
 
         public bool TryBuild()
@@ -194,6 +198,40 @@ namespace SquareTD
             TowerReplaced?.Invoke(tower, created);
             if (Selected == tower) Select(created);
             return true;
+        }
+
+        public bool TryUpgradeColor(TowerColor color)
+        {
+            if (!TurnManager.Instance.Current.CanPlayerAct) return false;
+            if (!ColorLevels.CanUpgrade(color))
+            {
+                Debug.Log($"[TowerManager] {color}는 이미 최대 레벨");
+                return false;
+            }
+
+            int cost = ColorLevels.GetCost(color);
+            if (cost <= 0 || CurrencyManager.Instance.Gem < cost)
+            {
+                Debug.Log($"[TowerManager] 젬이 모자람 ({CurrencyManager.Instance.Gem} / {cost})");
+                return false;
+            }
+
+            ColorLevels.TryUpgrade(color);
+            CurrencyManager.Instance.TrySpendGem(cost);
+            Debug.Log($"[TowerManager] {color} 컬러 강화 → 레벨 {ColorLevels.GetLevel(color)}, 젬 −{cost}");
+            return true;
+        }
+
+        private void HandleColorLevelChanged(TowerColor color, int level)
+        {
+            TowerSlots slots = BoardManager.Instance.Slots;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                TowerController tower = slots.Get(i);
+                if (tower == null || tower.Definition.Color != color) continue;
+
+                tower.RecalculateStats();
+            }
         }
 
         public bool TryMoveOrSwap(TowerController tower, int toSlot)

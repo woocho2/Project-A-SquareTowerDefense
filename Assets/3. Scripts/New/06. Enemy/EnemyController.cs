@@ -10,7 +10,7 @@ namespace SquareTD
         public EnemyPool Pool { get; private set; }
         public int SpawnWave { get; private set; }
         public float MaxHp => Health.Max;
-        public float Defense { get; private set; }
+        public EnemyStats Stats { get; private set; }
         public Transform Transform => transform;
         public int PathIndex => Movement.PathIndex;
         public bool IsAlive => !Health.IsDead;
@@ -18,7 +18,7 @@ namespace SquareTD
         public bool IsDummy => false;
         public EnemyController Body => this;
         public float CurrentHp => Health.Current;
-        public float PreviewDamage(DamageInfo info) => DamageCalculator.Calculate(info, Defense, 1f, 0f);
+        public float PreviewDamage(DamageInfo info) => DamageCalculator.Calculate(info, Stats.Get(StatType.Defense), Stats.Get(StatType.DamageTaken), Stats.Get(StatType.FixedDamageRatio));
         public void SetSortingOrder(int order) => Movement.SetSortingOrder(order);
 
         private void Awake()
@@ -31,7 +31,7 @@ namespace SquareTD
             Definition = definition;
             Pool = pool;
             SpawnWave = spawnWave;
-            Defense = definition.Defense * WaveTable.GetDefenseMultiplier(spawnWave, definition.Kind);
+            Stats = new EnemyStats(definition, spawnWave);
             Health.Reset(definition.MaxHP * WaveTable.GetHpMultiplier(spawnWave, definition.Kind));
         }
 

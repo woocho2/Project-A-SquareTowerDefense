@@ -25,6 +25,7 @@ namespace SquareTD.Tests
             public EnemyController Body => null;
             public float CurrentHp { get; }
             public float MaxHp { get; }
+            public EnemyStats Stats => null;
             public float PreviewDamage(DamageInfo info) => info.BaseDamage;
             public void TakeDamage(DamageInfo info) { }
             public void SetSortingOrder(int order) { }

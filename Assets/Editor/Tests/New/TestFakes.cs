@@ -35,6 +35,7 @@ namespace SquareTD.Tests
         public EnemyController Body => null;
         public float CurrentHp { get; private set; }
         public float MaxHp { get; }
+        public EnemyStats Stats => null;                                // 가짜 대상은 스탯 없이 받은 피해 그대로
 
         public float PreviewDamage(DamageInfo info) => info.BaseDamage;
 

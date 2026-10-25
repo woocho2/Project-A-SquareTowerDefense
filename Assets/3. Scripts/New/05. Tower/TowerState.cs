@@ -5,6 +5,8 @@ namespace SquareTD
         public int RemainingAction { get; set; }
         public int AttackCellIndex { get; set; } = -1;
         public TargetPriority TargetPriority { get; set; }
+        public StatModifierList Modifiers { get; } = new StatModifierList();
+
 
         public TowerState(TowerDefinition definition)
         {
