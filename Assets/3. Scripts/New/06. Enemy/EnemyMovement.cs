@@ -11,6 +11,9 @@ namespace SquareTD
         [SerializeField] private EnemyCubeMeshVisual m_cube;
         public int PathIndex { get; private set; }
         public bool IsMoving { get; private set; }
+        public bool ActedThisTurn { get; private set; }
+        public int ActionStartIndex { get; private set; } = -1;
+        public int ActionCounter => m_actionCounter;
         private int m_actionCounter;
         private EnemyController m_controller;
         private void ApplyFace() => EnemyCubeFaces.Apply(m_controller.Stats, m_cube.GetFaceAsset(m_cube.VisibleFace));
@@ -24,7 +27,9 @@ namespace SquareTD
         {
             transform.localScale = Vector3.one;
             IsMoving = false;
-            PathIndex = startIndex;            
+            ActedThisTurn = false;
+            ActionStartIndex = -1;
+            PathIndex = startIndex;
             m_actionCounter = m_controller.Stats.GetMoveRange().Action;
             m_cube.RandomizeForSpawn();
             ApplyFace();
@@ -32,10 +37,13 @@ namespace SquareTD
 
         public IEnumerator TakeTurn()
         {
-            EnemyStats stats = m_controller.Stats;            
+            EnemyStats stats = m_controller.Stats;
+            ActedThisTurn = false;
             m_actionCounter -= 1 + Mathf.RoundToInt(stats.Get(StatType.ActionGainPerTurn));
             if (m_actionCounter > 0) yield break;
 
+            ActedThisTurn = true;
+            ActionStartIndex = PathIndex;
             MoveRange range = DecideMove(stats.GetMoveRange());
             m_actionCounter = range.Action;
 
@@ -43,13 +51,18 @@ namespace SquareTD
             yield return MoveSteps(steps);
             ApplyFace();
             OnMoved(steps);
+
+            
+            m_controller.Status.OnActed();
+            m_controller.Resistance.OnActed();
+        }
+        
+        private MoveRange DecideMove(MoveRange range)
+        {
+            return m_controller.Status.DecideMove(range);
         }
 
-        // 수업 25: 상태 효과의 "다음 이동을 정할 때" 훅 (행동 불가 0 / 0, 역풍 최소 = −최대, 급류 뒤로 1칸). 지금은 받은 그대로
-        private MoveRange DecideMove(MoveRange range) => range;
-
-        // 수업 25: 상태 효과의 "이동한 뒤" 훅 (난기류 칸 수 × 피해, 프리즘 감소). 지금은 빈 자리
-        private void OnMoved(int steps) { }
+        private void OnMoved(int steps) => m_controller.Status.OnMoved(steps);
 
         private IEnumerator MoveSteps(int steps)
         {
@@ -102,6 +115,17 @@ namespace SquareTD
         private int RollDice(MoveRange range)
         {            
             return Random.Range(range.Min, range.Max + 1);
+        }
+
+        public void AddActionProgress(int amount) => m_actionCounter -= amount;
+
+        public void TeleportTo(int pathIndex)
+        {
+            BoardManager board = BoardManager.Instance;
+            int fromIndex = PathIndex;
+            PathIndex = board.Grid.WrapPathIndex(pathIndex);
+            transform.position = board.GetWorldPosition(board.Grid.GetPathCell(PathIndex));
+            board.Occupancy.Move(m_controller, fromIndex, PathIndex);
         }
 
         public void SetSortingOrder(int order) => m_cube.SetSortingOrder(order);

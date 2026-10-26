@@ -9,8 +9,14 @@ namespace SquareTD
         [SerializeField] private Tilemap m_pathTilemap;
         [SerializeField] private Tilemap m_spawnTilemap;
         [SerializeField] private List<Vector3Int> m_pathCells = new List<Vector3Int>();
+        [SerializeField] private SpecialTileCounts m_tileCounts = new SpecialTileCounts();
+        [SerializeField] private int m_layoutSeed;
 
         public BoardGrid Grid { get; private set; }
+
+        public SpecialTileLayout Tiles { get; private set; }
+
+        public ZoneRegistry Zones { get; private set; }
 
         public PathOccupancy Occupancy { get; private set; }
 
@@ -21,7 +27,7 @@ namespace SquareTD
             base.Awake();
 
             if (Instance != this) return;
-            
+
             if (m_pathTilemap.transform.position != m_spawnTilemap.transform.position ||
              m_pathTilemap.layoutGrid != m_spawnTilemap.layoutGrid)
             {
@@ -32,6 +38,13 @@ namespace SquareTD
             Grid = new BoardGrid(m_pathCells, spawnCells);
             Occupancy = new PathOccupancy();
             Slots = new TowerSlots(Grid.SpawnCount);
+
+            System.Random random = m_layoutSeed == 0 ? new System.Random() : new System.Random(m_layoutSeed);
+
+            Tiles = new SpecialTileLayout();
+            Tiles.Generate(Grid, m_tileCounts, random);
+
+            Zones = new ZoneRegistry(Grid, Tiles);
         }
 
         private List<Vector3Int> CollectSpawnCells()
@@ -69,7 +82,7 @@ namespace SquareTD
             return pathIndex >= 0 || spawnIndex >= 0;
         }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             if (m_pathTilemap == null) return;
@@ -81,7 +94,10 @@ namespace SquareTD
             for (int i = 0; i < m_pathCells.Count; i++)
             {
                 Vector3 pos = GetWorldPosition(m_pathCells[i]);
-                UnityEditor.Handles.Label(pos, i.ToString(), pathStyle);
+                PathTileType tile = Tiles != null ? Tiles.GetPathTile(i) : PathTileType.None;
+                string label = tile == PathTileType.None ? i.ToString() : $"{i} {tile}";
+                if (Zones != null) label += ZoneLabel(Zones.GetAtPath(i));
+                UnityEditor.Handles.Label(pos, label, pathStyle);
             }
 
             if (Grid == null) return;
@@ -92,8 +108,22 @@ namespace SquareTD
             for (int i = 0; i < Grid.SpawnCount; i++)
             {
                 Vector3 pos = GetWorldPosition(Grid.GetSpawnCell(i));
-                UnityEditor.Handles.Label(pos, i.ToString(), spawnStyle);
+                SpawnTileType tile = Tiles != null ? Tiles.GetSpawnTile(i) : SpawnTileType.None;
+                string label = tile == SpawnTileType.None ? i.ToString() : $"{i} {tile}";
+                if (Zones != null) label += ZoneLabel(Zones.GetAtSpawn(i));
+                UnityEditor.Handles.Label(pos, label, spawnStyle);
             }
+        }
+        
+        private static string ZoneLabel(List<Zone> zones)
+        {
+            string text = "";
+            foreach (Zone zone in zones)
+            {
+                string name = EmblemNames.GetEmblemName(zone.Emblem);
+                text += zone.Stage == ZoneStage.Skill2 ? $"\n[{name} ★]" : $"\n[{name} {zone.Stack:0}/{zone.Owner.Stats.Stack}]";
+            }
+            return text;
         }
 #endif
     }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 버프·디버프 한 줄: (출처, 스탯, 값, % 인지 정수인지)
     public readonly struct StatModifier
     {
         public readonly string Source;      // 카드에 보일 이름이자 지울 때 쓰는 열쇠 (예: "공격력 타일", "기사의 검 (12번 타워)")
@@ -23,13 +22,12 @@ namespace SquareTD
         public static StatModifier Flat(string source, StatType stat, float value) => new StatModifier(source, stat, value, false);
     }
 
-    // 한 대상(타워·적)이 받는 수정자 전부. 20번 3장: 최종값 = 기본값 × (1 + %의 합) + 정수의 합. 곱하지 않고 더함
     public class StatModifierList
     {
         private readonly List<StatModifier> m_modifiers = new List<StatModifier>();
 
-        public IReadOnlyList<StatModifier> All => m_modifiers;      // 카드의 "어디서 얼마" 표시용
-        public event Action Changed;                                // 더하거나 지우면 → 타워가 스탯을 다시 계산
+        public IReadOnlyList<StatModifier> All => m_modifiers;
+        public event Action Changed;
 
         public void Add(StatModifier modifier)
         {

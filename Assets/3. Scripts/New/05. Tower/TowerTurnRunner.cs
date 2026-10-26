@@ -7,21 +7,38 @@ namespace SquareTD
     {
         private readonly TowerSlots m_slots;
         private readonly float m_safetySeconds;
+        private readonly ZoneRegistry m_zones;
 
-        public TowerTurnRunner(TowerSlots slots, float safetySeconds)
+        public TowerTurnRunner(TowerSlots slots, float safetySeconds, ZoneRegistry zones = null)
         {
             m_slots = slots;
             m_safetySeconds = safetySeconds;
+            m_zones = zones;
         }
 
-        public void RunSupportTowers()
+        public IEnumerator RunSupportTowers()
         {
             for (int i = 0; i < m_slots.Count; i++)
             {
                 TowerController tower = m_slots.Get(i);
                 if (tower == null || tower.IsAttackTower) continue;
+                if (!tower.TickAction()) continue;
 
-                if (tower.TickAction()) Debug.Log($"[TowerTurnRunner] ② {tower.name} 행동");
+                Debug.Log($"[TowerTurnRunner] ② {tower.name} 행동");
+                yield return tower.Act(new AttackHandle());
+            }
+        }
+
+        public void RunEnemyTurnStart()
+        {
+            for (int i = 0; i < m_slots.Count; i++)
+            {
+                TowerController tower = m_slots.Get(i);
+                if (tower == null || !tower.IsAttackTower) continue;
+
+                if (m_zones != null) BuffZoneAction.RefreshReceived(tower, m_zones);
+
+                tower.OnEnemyTurnStart();
             }
         }
 
@@ -31,13 +48,19 @@ namespace SquareTD
             {
                 TowerController tower = m_slots.Get(i);
                 if (tower == null || !tower.IsAttackTower) continue;
-                if (!tower.TickAction()) continue;
+
+                bool acts = tower.TickAction();
+
+                if (tower.TryFireTurnSkill())
+                    Debug.Log($"[Skill] {tower.name} 스킬 2 발동 (주기 {tower.Stats.Duration}턴)");   // ── 수업 23 확인용 임시 로그 ──
+
+                if (!acts) continue;
 
                 Debug.Log($"[TowerTurnRunner] ④ {tower.name} 행동");
                 var handle = new AttackHandle();
                 yield return tower.Act(handle);
                 yield return WaitForHandle(tower, handle);
-            }            
+            }
         }
 
         private IEnumerator WaitForHandle(TowerController tower, AttackHandle handle)

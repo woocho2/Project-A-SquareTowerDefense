@@ -26,6 +26,7 @@ namespace SquareTD.Tests
             public float CurrentHp { get; }
             public float MaxHp { get; }
             public EnemyStats Stats => null;
+            public EnemyStatusEffects Status => null;
             public float PreviewDamage(DamageInfo info) => info.BaseDamage;
             public void TakeDamage(DamageInfo info) { }
             public void SetSortingOrder(int order) { }

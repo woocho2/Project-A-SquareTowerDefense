@@ -46,6 +46,7 @@ namespace SquareTD
                                     foreach (ITarget target in CollectTargetsInSquare(impactCell, radius))
                                     {
                                         ProjectileHitResolver.HitSingle(target, MakeBasicHit(tower, stats, target, isCritical));
+                                        tower.OnBasicHitLanded(target);
                                     }
                                     handle.CompleteShot();
                                 });

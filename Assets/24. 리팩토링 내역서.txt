@@ -962,3 +962,201 @@
 - 최소는 Max, 최대는 Min. if 안의 로그 뒤에 return false가 없으면 확인을 통과한 것처럼 계속 감
 - 이벤트를 듣는 쪽이 여럿이면 먼저 구독한 쪽이 먼저 불림 → 계산하는 쪽은 Awake에서 구독
 - 기본값 인자(= null)는 기존 호출을 안 깨뜨리지만 빠뜨린 곳(Replace의 Init)도 숨김
+
+[수업 21] 적 스탯과 이동 규칙 완성 — EnemyStats, ITarget.Stats, DamageCalculator, EnemyMovement 보강, EnemyCubeFaces   (2026-10-23 ~ 2026-10-26)
+                                       확인 상태: 테스트 통과 (EnemyStats 10, EnemyController 5, EnemyCubeFaces 6),
+                                                  씬에서 확인 (N 이동력 −3 → 1 ~ 1 · 행동 주기 +2, P 행동 카운트 +1, 끄면 원래대로, 2026-10-26)
+만든 파일
+- 00. Core/GameEnums.cs — StatType에 적 스탯 6개 (Defense, SpeedMin, SpeedMax, ActionGainPerTurn, DamageTaken, FixedDamageRatio)
+- 06. Enemy/EnemyStats.cs (순수 C#) — 기본값 배열(웨이브 배율을 곱한 방어력, Action, Speed, DamageTaken 1), Modifiers(수업 20의 StatModifierList 재사용),
+    GetBase / Get(= Apply). 값을 덮어쓰는 Set이 없음 (B13). 소환마다 new (풀에서 다시 꺼낸 적에 옛 수정자가 남지 않게)
+    GetMoveRange() → MoveRange(최소, 최대, 행동 주기): 최소가 1 아래로 깎이려던 만큼 행동 주기에 더함 (2 ~ 4에 −3 → 1 ~ 1, Action +2)
+- EnemyController.Stats, ITarget.Stats (가짜 대상 둘은 Stats => null). DamageCalculator가 Stats의 방어력·받는 피해 배율·고정 피해 전환율을 씀
+- EnemyMovement — TakeTurn: DecideMove(빈 자리, 수업 25) → 카운트 = range.Action → RollDice(range) → MoveSteps(음수면 뒤로) → OnMoved(빈 자리, 수업 25)
+    행동 카운트는 턴마다 1 + ActionGainPerTurn. 행동한 뒤 range.Action으로 다시 채움 (넘친 만큼 이어받지 않음). 0 / 0이면 제자리에 다시 멈춤
+- 06. Enemy/EnemyCubeFaces.cs (static) — 면 → 수정자 표(StatModifier[][], 출처 "큐브 면", 수치는 기획 미정이라 0), GetModifiers, Apply(지우고 더하기).
+    EnemyMovement가 소환(Init 끝)과 이동한 뒤에 보이는 면으로 Apply. 6면 무작위 배정·보이는 면은 EnemyCubeMeshVisual에 이미 있던 것을 씀
+- UI (AI): EnemyInfoPanel의 방어력·행동 주기·이동력을 "지금 (기본)"으로
+- 테스트 (AI): EnemyStatsTest 10 (T6: 방어 +20%와 −50% → ×0.7 등), EnemyControllerTest 5, EnemyCubeFacesTest 6. 옛 테스트 3개 지움
+- DebugCheat 확인용 임시 키 (AI): N 살아 있는 적 전부 이동력 −3, P 행동 카운트 +1 (둘 다 켜고 끄기, 키를 누른 뒤 소환된 적에겐 안 걸림).
+    "── 수업 21 확인용 임시 코드 ──" ToggleEnemyModifier → 수업 22에서 특수 타일이 생기면 지움
+
+수업 중에 정한 것
+- 3단계(EnemyMovement)는 테스트 대신 씬 확인 (사용자가 고름)
+
+배운 것의 요점
+- 같은 수정자 구조(StatModifierList)를 타워와 적이 함께 씀. 효과는 덮어쓰지 않고 출처별로 더함
+- 경계값: 최소를 1로 막을 때 버려지는 양을 다른 값(행동 주기)으로 옮김
+
+[수업 22] 특수 타일 — SpecialTileLayout, PathTileEffects, EnemyTileEffectApplier, SpawnTileEffects   (2026-10-26)
+                                       확인 상태: 테스트 통과 (SpecialTileLayout 14, PathTileEffects 12, SpawnTileEffects 13, TowerController),
+                                                  씬에서 확인 (깔림, 방어·이동력 칸, 행동 카운트, 비프로스트, 정화 로그).
+                                                  UI 확인(타일 정보 패널 글자, 스폰 타일 위 타워의 스탯)은 아직 — UI 씬 연결을 같은 날 해서 함께 볼 것
+만든 파일
+- 00. Core/GameEnums.cs — PathTileType(방어·이동력·행동 카운트·회복·정화·비프로스트), SpawnTileType(공격력·행동 카운트·공격 횟수·마스터리)
+- 04. Board/SpecialTileLayout.cs — SpecialTileCounts(BoardManager 인스펙터 개수, 비프로스트는 켜고 끄기), Generate(grid, counts, System.Random):
+    비프로스트 첫 칸 무작위 → 맞은편(GetBifrostPartner) → 나머지 칸 섞어 차례로 → 스폰 칸도 같은 방식 → LayoutGenerated.
+    Shuffle(Fisher–Yates, Next(i + 1)), GetPathTile / GetSpawnTile(판 밖은 None)
+- BoardManager — Tiles, m_tileCounts, m_layoutSeed(0이면 판마다 다르게), OnDrawGizmos의 칸 번호 옆에 타일 종류(플레이 중 씬 뷰)
+- 04. Board/PathTileEffects.cs — PathTileEffect 베이스(GetStandingModifiers 멈춰 있는 동안 / OnTurnStanding 매 턴 / OnStopped 멈춘 순간) + 6종,
+    종류 → 효과 표(Dictionary). 방어 +20%, 이동력 최소·최대 +2, 행동 카운트 +2, 회복 5%, 정화(로그만, 디버프는 수업 25), 비프로스트
+- 비프로스트 규칙 (AI가 정함): "이번 행동을 비프로스트 칸에서 시작했으면 건너지 않음" 하나로 기획의 두 예외(건너온 뒤 또 비프로스트, 행동 불가)를 막음
+- EnemyHealth.Heal(실제로 찬 양을 돌려줌), EnemyMovement.ActedThisTurn · ActionStartIndex · ActionCounter · AddActionProgress · TeleportTo(즉시, 연출 없음)
+- 06. Enemy/EnemyTileEffectApplier.cs (③) — 지난 칸 수정자 걷기 → (수업 26 디버프존) → 지금 칸 수정자 → 행동한 적만 멈춘 순간 효과 → 매 턴 효과(회복 마지막).
+    TurnManager.TileEffectsPhase 한 곳에서만 부름 (B12)
+- 04. Board/SpawnTileEffects.cs — 네 종류 모두 스탯 수정자라 베이스 클래스 대신 표 하나(StatModifier[][], 출처 "스폰 특수 타일"). Apply = 지우고 더하기.
+    TowerController.SetSpawnTile, 거는 곳: TowerFactory.Create · Replace, TowerManager.PlaceAt. 버프·디버프 타워 막기는 계산기가 이미 함
+- TowerController.TickAction — 매 턴 1 + ActionGainPerTurn 만큼 줄임 (행동 카운트 타일 위 Action 6이면 3턴마다)
+- UI (AI): 10. UI/SpecialTileText.cs(타일 이름·설명), TileinfoPanel 스폰·길 칸 설명, EnemyInfoPanel 버프 목록에 서 있는 칸의 타일과 "다음 행동까지 n"
+- DebugCheat: 수업 21의 N·P 임시 키 지움
+- 테스트 (AI): SpecialTileLayoutTest 14, PathTileEffectsTest 12, SpawnTileEffectsTest 13
+
+수업 중에 정한 것
+- 화면 연출(비프로스트 건너가기, 타일 이펙트)은 나중에 (사용자: "이펙트는 나중에")
+- 특수 타일 배치는 System.Random을 넘겨받음 (시드로 같은 배치를 다시 보고, 테스트에서 고정하려고)
+
+배운 것의 요점
+- Fisher–Yates: 뒤에서부터, 자기 자신까지 포함한 앞쪽 중 하나와 바꿈. Next(i)로 쓰면 제자리에 남지 못해 고르게 안 섞임
+- Next(최소, 최대)도 최대를 뺌 → 마지막 칸이 안 나오는 실수
+- 배열 칸에 대입하는 것이 "깔기". 깐 칸은 후보 목록에서 빼야 겹치지 않음
+- 전략 패턴: 타일마다 필요한 자리만 덮어씀 → 적용하는 쪽(Applier)에 타일 종류를 따지는 if가 하나도 없음
+- 매 턴 "걷고 다시 담기"로 칸을 떠났는지 따로 따지지 않음
+- 값이 덮어써지는 실수(남은 행동력 = gain)와 빼는 것(남은 행동력 − (1 + gain))의 차이
+- 실제로 찬 양 = 회복 뒤 − 회복 전 (넘친 양은 빠짐)
+
+같은 날 함께 한 것 (수업 밖)
+- UI 씬 연결 (AI, 사용자 요청): Canvas.prefab에 새 UIManager·EnemyInfoPanel, TowerInfoPanel·PlayerTurnPanel 빈 칸 연결, 씬의 옛 컴포넌트·덮어쓰기 정리 (23번 6부 수업 44 칸)
+- 적 큐브의 장비 마스크 색 바꾸기를 새 코드에서 지움 (사용자 요청, 에셋은 Codex): EnemyCubeAppearance.m_equipmentMask,
+  EnemyCubeMeshVisual의 _EquipmentMask 넘기기, EnemyCubeUnlit 셰이더의 _EquipmentMask · _EquipmentColor · _RecolorEquipment · Recolor. 옛 03. Enemy는 그대로
+
+[수업 23] 스택과 스킬 2의 틀 — SkillFormula, TowerStack, StackModeSettings, EnemyHitCounter, SkillArea, AttackSkill, DamageOnlySkill   (2026-10-26)
+                                       확인 상태: 테스트 통과 (SkillFormula 15, TowerStack 19, StackModeSettings 11, TowerStackConnection 8, TowerState +2,
+                                                  EnemyHitCounter 11, AttackSkill 13, SkillTrigger 11), 씬에서 확인 (스택 로그, 적중 수 로그, [Skill] 발동)
+만든 파일
+- 07. Combat/SkillFormula.cs — AttackSkill(P × AV), WithStack(× (1 + Stack × 0.01 × StackValue)), SupportSkill1/2(비율로 돌려줌: 1.2% → 0.012),
+    Resist(값 × (1 − Min(저항, 100) / 100)), DefaultDuration(레벨 × 2)
+- 05. Tower/TowerStack.cs — Current(소수)·Max·IsFull·ManualRequested·Full(막 다 찬 순간 한 번), Add(다 찬 뒤는 버림), Consume(0 / 해류 절반),
+    SetMax(넘치면 깎음, 늘어도 개수 그대로), RequestManualConsume(다 찼을 때만), CopyFrom(티어 강화, 새 최대를 넘는 만큼 버림)
+- 05. Tower/StackModeSettings.cs — ManualByDefault(기본 자동) + (컬러, 문양) 예외, IsManual, ShouldUseStack. TowerManager.StackModes가 판 전체에 하나
+- 연결: TowerState.Stack(생성자에서 CSV 최대, Init·RecalculateStats에서 SetMax(Stats.Stack)) · CopyInheritedFrom, 공격 타워가 행동할 때 Add(AttackCount)
+- 06. Enemy/EnemyHitCounter.cs — 문양 → 적중 수 Dictionary, Get / Add(올린 뒤의 수) / Reset(그 문양만) / Clear. EnemyController.HitCounter, Setup에서 Clear.
+    단일 타워 기본 공격이 맞으면 TargetAction 도착 콜백에서 Add
+- 05. Tower/Skills/SkillArea.cs — WholeMap, Impact(Mastery 범위), Single. 가로·세로줄(수업 30)·연쇄(수업 38)는 그 수업에서
+- 05. Tower/Skills/AttackSkill.cs — 템플릿 메서드 Fire: 스택을 쓸지 → 공통 식 → 치명 1번 → GetArea → 대상마다 MakeSkillHit · OnHitTarget → 스택 비우기.
+    맞힌 수를 돌려주고 0이면 스택을 비우지 않음. abstract 빈칸 GetArea·OnHitTarget, virtual 훅 RollCritical·ModifyOutgoingDamage·OnBasicHit·OnOwnerActed·OnEnemyTurnStart
+- 05. Tower/Skills/DamageOnlySkill.cs — 시험 스킬 (광역: 맵 전체, 단일: 발동시킨 적). 수업 27부터 문양 스킬로 바뀜
+- 발동: TowerState.SkillTurnCount(이어받음), TowerController.OnEnemyTurnStart(⓪ 광역 +1) · TryFireTurnSkill(④ Duration 이상, 맞힌 적이 없으면 다음 턴) ·
+    OnBasicHitLanded(단일: 적중 수 ≥ Duration → Reset 먼저 → Fire). TowerTurnRunner ⓪ RunEnemyTurnStart, ④ "TickAction → TryFireTurnSkill → 기본 공격".
+    TowerFactory.CreateSkill(공격 타워 = DamageOnlySkill), 생성자에 StackModeSettings
+- UI (AI): TowerInfoPanel 스택 "지금 / 최대"·스택 소모 버튼(적 턴에도)·Stack.Full 구독, EnemyInfoPanel 적중 수 글자(칸은 아직 없음), OptionPanel 자동/수동 토글
+- DebugCheat K: "[Skill]" 로그만 보기 (TagLogFilter). 임시 로그 [Skill]은 남김 (수업 24 ClickDebugWindow 때 지움)
+- 테스트 (AI): 위 8개 파일
+
+수업 중에 정한 것
+- 수업 방식이 두 번 바뀜 (26번 10장): 빈칸 뼈대 → 완성 코드 + 💬 주석 → "AI가 거의 채우고 아주 쉬운 한 줄 빈칸만 [A] [B]" (사용자: 시간이 없음.
+  타워디펜스는 이렇게 가고, 다음 프로젝트에서 하나하나 직접 쓰겠다). 빈칸 표시는 TODO·①② 대신 [A] [B], 순서 번호와 섞지 않음
+- 맵에 적이 없을 때 광역 스킬 2와 다 찬 스택을 버리지 않고 다음 턴에 다시 (AI가 정함, 기획에 없음)
+- 광역 기본 공격도 OnBasicHitLanded를 부름 (훅용, 발동은 단일만)
+
+배운 것의 요점
+- 계산한 값은 대입해야 바뀜 (Current = …, damage = …) — 이번 수업에서 가장 많이 나옴
+- 0.01은 double, 0.01f가 float. "최소 n"은 Mathf.Max, "최대 n"은 Mathf.Min
+- 딕셔너리: TryGetValue(읽기), d[k] = v(쓰기), Remove, Clear. = 는 오른쪽을 왼쪽에
+- Is… · Should… 함수는 답만 하고 아무것도 바꾸지 않음
+- 여러 칸짜리 상자(스택)를 옮기는 규칙은 그 상자의 함수(CopyFrom)에 맡김
+- 템플릿 메서드: 순서는 베이스가 쥐고 자식은 빈칸(abstract)과 훅(virtual)만
+
+[수업 24] 개발용 도구 정리 — ClickDebugWindow(새), DebugCheat 정리   (2026-10-26)
+                                       확인 상태: 씬에서 확인 (Click Debug 창의 타워·길 칸·적, 키 목록). Unity 없이 컴파일 에러 0
+만든 파일
+- Editor/New/ClickDebugWindow.cs (namespace SquareTD, Tools > Click Debug) — 누른 칸 번호만 기억하고 그릴 때마다 지금 값을 읽음 (OnInspectorUpdate)
+    스폰 칸: 특수 타일, 타워 12칸(카드와 같은 뜻) + 스택 모드·스킬 2 진행·우선순위, 출처 "기본 x + 출처 +y = z"
+    길 칸: 특수 타일(비프로스트 맞은편), 서 있는 적마다 체력·방어(기본)·받는 피해·이동력·행동·저항·적중 수·수정자
+    존(26)·장판(29·40)·상태 효과(25) 자리는 주석. 옛 Editor/ClickDebugWindow.cs는 메뉴만 "Tools/Click Debug (옛 게임)"으로
+- DebugCheat — L의 수업 20 임시 로그 지움, T 우선순위 다음, V 수동 스택 소모(적 턴에도), F1 키 목록(OnGUI, 왼쪽 위), K [Skill] 로그만
+- 사용자: ClickDebugWindow의 위력·사거리·체력 세 줄
+
+수업 중에 정한 것
+- DebugCheat와 에디터 창 같은 개발용 도구는 AI가 다 씀, 빈칸 없음 (사용자: "디버그 치트는 너가 해")
+- [Skill] 로그는 개발용으로 남김 (K로 걸러 봄). InvariantChecker의 "GameLoop가 하나" 검사는 더하지 않음
+- 문양 순서: 첫 문양은 검(수업 27), 불은 수업 28. 옛 코드 정리는 수업 28 뒤 (사용자: "불이 아니라 검부터 시작해보자")
+
+배운 것의 요점
+- 화면(창·UI)은 값을 읽기만 함. 누른 것의 번호만 기억하고 그릴 때마다 지금 값을 다시 읽으면 따로 갱신할 필요가 없음
+- definition(CSV 원래 값)과 stats(티어·강화·수정자까지 계산한 지금 값)는 다름. 보여 줄 것은 stats
+- stats.Get(…)의 괄호에는 스탯 이름(StatType)이 들어감. 체력은 적이 바로 들고 있는 값(enemy.CurrentHp)
+
+[수업 25] 저항과 상태 효과 — EnemyResistance, StatusEffect, EnemyStatusEffects, TimedModifierEffect, ImmobilizeEffect, StatusTextFormatter   (2026-10-26)
+                                       확인 상태: 테스트 통과 (EnemyResistance 10, EnemyStatusEffects 19, StatusWiring 6), 씬에서 확인 (J 기절, Click Debug 창)
+만든 파일
+- 06. Enemy/EnemyResistance.cs — Base·Current(% 숫자), TryStrongCC(roll: Current% 확률로 막힘, 걸리면 +Base 최대 100), OnActed(−Base/2, Base 아래로 안 감),
+    ResistWeak(언제나 Base로, SkillFormula.Resist), Reset(정화)
+- 06. Enemy/Status/StatusEffect.cs — Key, IsPermanent, IsStrongCC, Strength, RemainingActions·CountDown(행동마다)·IsExpired, 적 쪽 훅 11개(virtual), Describe
+- 06. Enemy/Status/EnemyStatusEffects.cs — 효과 목록. Add의 겹침 규칙(영구가 있으면 스킬 1 무시 / 영구가 스킬 1을 밀어냄 / 세거나 같으면 바꿈 / 약하면 무시,
+    강한 CC는 이미 걸렸으면 무시·저항 판정), Remove, RemoveAll(정화 전용), Has, Find, RebuildModifiers(붙인 출처만 떼고 다시 담기),
+    ForEach(목록을 도는 중엔 m_iterating, 추가·제거는 m_pending에 모았다가 FlushPending, 적이 죽으면 멈춤, try/finally), OnActed(줄이고 끝난 것 OnExpire)
+- 06. Enemy/Status/TimedModifierEffect.cs (수정자 + 남은 행동), ImmobilizeEffect.cs (다음 행동 한 번 0 / 0, Key "행동 불가"), StatusTextFormatter.cs
+- 연결: ITarget.Status (가짜 대상은 null), EnemyController.Resistance·Status(소환마다 새로), PreviewDamage에 ModifyIncomingDamage,
+    TakeDamage = OnBeforeHit → 피해 → OnDamageTaken → OnDeath → HandleDeath. EnemyMovement: DecideMove·OnMoved·행동 끝 OnActed(효과 + 저항)
+    TurnManager ⓪ OnEnemyTurnStart, ⑤ DebuffPhase OnTurn. 정화 타일: RemoveAll + Resistance.Reset
+- UI·도구 (AI): Click Debug 창 저항 지금(기본)·효과 줄, EnemyInfoPanel 저항 "지금 (기본)"·뒷면 디버프 목록. DebugCheat J 전부 기절 (임시, 수업 32에서 지움)
+- 사용자: 저항 OnActed·올리기, OnDecideMove 0 / 0, CountDown, Has, EnemyMovement.DecideMove, 정화 두 줄
+
+수업 중에 정한 것
+- 겹침 규칙의 세부(영구 우선, 같은 세기면 유지만 새로)는 AI가 기획 4-1장을 읽고 정함
+- 도는 중의 추가·제거는 모았다가 (B17), 매 턴 피해는 ⑤에서 한 번 (B16)
+
+배운 것의 요점
+- 상태 효과도 전략 패턴: 효과마다 클래스, 적은 목록만 들고 정해진 때 목록 전체에 훅
+- 수정자 = "이 스탯을 이만큼 바꿔라" 쪽지 (출처, 스탯, 값). 원래 값은 두고 쪽지만 붙이고 뗌. Source = 뗄 때 찾는 이름표
+- foreach 도중에 그 목록을 바꾸면 에러 → 메모해 두었다가 다 돈 뒤에. finally는 에러가 나도 꼭 실행
+- Has는 Find(…) != null을 읽기 쉽게. RemoveAll은 정화 전용
+- 순수 C# 클래스는 한 파일에 여럿 둘 수 있음 (MonoBehaviour·ScriptableObject는 파일 하나에 하나)
+- 설명은 표·코드보다 일상 비유(종이, 출석부, 메모장)가 먼저
+
+[수업 26] 존 — Zone, ZoneRegistry, BuffZoneAction, DebuffZoneAction, EmblemDebuffEffect, PlaceZoneMode   (2026-10-26)
+                                       확인 상태: 테스트 통과 (ZoneRegistry 14, ZoneAction 19), 씬에서 확인 (Z로 존 놓기, 턴 종료 막힘, 버프·디버프 값, Gizmos)
+만든 파일
+- 04. Board/Zone.cs — ZoneStage(None·Skill1·Skill2), Owner·IsBuff·Emblem·CellIndex·Stack·Stage, AddStack(스킬 2면 멈춤, 문턱이면 스킬 2), ResetIfSkill1
+- 04. Board/ZoneRegistry.cs — EnsureZones·EnsureZonesFor(Mastery만큼), RemoveByOwner, GetByOwner·GetAtSpawn·GetAtPath, CanPlace(버프=스폰, 디버프=길·비프로스트 빼고,
+    같은 문양 하나, 다른 문양 3개까지, 이유 문구)·TryPlace, HasPlaceableCell, HasUnplaced(놓을 칸 없는 존은 빼고), ZoneChanged
+- 05. Tower/Actions/BuffZoneAction.cs — ② 존마다 스택 → 단계 → 존 위 공격 타워에 버프(GiveBuff), OnRemoved에서 주던 버프 떼고 존 지움,
+    RefreshReceived(⓪ 벗어났거나 존이 사라졌으면 끝). TowerState.ReceivedZoneBuffs(존 → 출처), 티어 강화로 수정자째 이어받음
+- 05. Tower/Actions/DebuffZoneAction.cs — ② 저점 보장 스택, Step(③ 멈출 때만: 스택 + 디버프), OnRemoved는 존만 (걸린 디버프는 남음)
+- 06. Enemy/Status/EmblemDebuffEffect.cs — Key = 문양 디버프(겹치지 않음), 스킬 2면 영구. 05. Tower/ZoneTestRules.cs — 시험 규칙(위력 +10%, 방어 −10%, 스킬 2면 두 배)
+- 연결: BoardManager.Zones, TowerFactory(Yellow → BuffZoneAction, Purple → DebuffZoneAction, Create·Replace 뒤 EnsureZonesFor),
+    TowerManager(컬러 레벨 4 ResetIfSkill1, EnsureZonesFor), TowerTurnRunner(② 코루틴 TickAction → Act, ⓪ RefreshReceived), TurnManager(턴 종료에 HasUnplaced),
+    EnemyTileEffectApplier(디버프존 밟기), InputModes.PlaceZoneMode, DebugCheat Z + 자동 진행 AutoPlaceZones(임시 규칙)
+- 도구 (AI): 씬 뷰 Gizmos 존 글자 "[검 12/60]"·"[검 ★]", Click Debug 창의 칸 존·내 존·받는 존 버프
+- 사용자: 스택 멈춤·스킬 2, HasUnplaced 조건, 버프·디버프 AddStack, RefreshReceived 조건, Factory Yellow, 턴 종료 검사, ⓪ RefreshReceived
+
+수업 중에 정한 것
+- 존 빛남·놓을 칸 강조 같은 화면 효과는 만들지 않음 — 사용자가 다른 것으로 바꿈 ("붙이는 건 코드만 구현하고 이펙트는 다른 걸로 교체할 거야")
+- 자동 진행의 존 놓기 규칙은 AI 임시 (사용자가 봇 규칙을 정하면 바꿈)
+- 시너지 타워(색 None)는 아직 Action이 없어 TickAction·Act의 m_action null 검사는 남김 (수업 41)
+
+배운 것의 요점
+- 한 데이터(존)를 두 쪽이 읽음: 버프 타워가 쌓고, 존 위 타워가 받고 / 디버프 타워가 쌓고, 멈춘 적이 받음
+- 조건 여러 개의 배치 판정은 "안 되는 이유"를 하나씩 return false로 거름
+- 코루틴 안에서 yield return으로 넘긴 코루틴은 손으로 MoveNext하면 안 돌아감 (테스트 헬퍼 RunToEnd)
+- IReadOnlyList.Contains는 using System.Linq가 있어야 함
+
+[정리] 옛 코드 지움 (2026-10-26, 사용자: "이제 옛날껀 다 삭제하려고 해" — 수업 28 뒤에서 당김)
+                                       확인 상태: 컴파일 확인 (Unity 없이 dotnet, 런타임·에디터 에러 0), 유니티 검증 필요 (정리 도구 실행, Stage1 플레이)
+지운 것
+- 옛 스크립트 폴더 01. Map ~ 08.Common의 스크립트 전부 (86개 + 셰이더 EnemyEquipmentPalette·RoundedCharacterSprite, CharacterCornerMask.cginc)
+  — 시작·메뉴·로딩 씬용(UIManager_Start·UIManager_Menu·LoadingManager·SceneLoader), UI 프레임(UITileSurface·UITileSkin·UITilePanel),
+    타일 이펙트(TileSatelliteOrbiter·PathTileBubbleEffect)도 함께 (사용자가 고름)
+- 옛 에디터 도구 ClickDebugWindow(옛 게임)·TileManagerEditor·UITilePanelEditor
+남긴 것
+- 06. Effect/AreaSlashEffect.cs — Codex가 만든 화면 참격 시험, DebugCheat 8키가 씀 (사용자: "일단 무시해")
+- Editor/SharedVisual.cs — 테마 색상 도구 (옛 게임 코드를 부르지 않음)
+- 옛 스크립트만 쓰던 에셋(옛 매니저·풀 프리팹, Old_ 프리팹·데이터, 이펙트 E101 ~ E309·EffectLibrary, Resources/Projectiles, _Old 카탈로그,
+  Txt_Damage, DebuffZone·MapBuff·PathMapBuff_Bubbles, UITileSkin, CharacterRounded.mat) — 스크립트가 빠진 채 남음, 에셋 정리는 Codex
+함께 고친 것
+- 적 모습 에셋 27개(4. Asset/4. Enemy/*_Appearance)가 옛 EnemyCubeAppearance를 가리키던 것을 새 SquareTD.EnemyCubeAppearance로 (칸 이름이 같아 그림이 그대로 남음)
+- Editor/New/OldObjectCleanup.cs (한 번만 쓰는 도구, Tools > 옛 오브젝트 정리): Stage1에서 빈 스크립트만 남은 루트(옛 Manager·Pool·BoardInputController)를 지우고
+  남은 오브젝트의 빈 스크립트를 뗌, Canvas.prefab의 빈 UITileSurface를 뗌, Tower.prefab의 옛 DebuffZone 자식(위성 그림)을 지움 → 실행 확인 뒤 지움
+- 23번 1장을 지금 상태로 줄임 (옛 스크립트 목록·꺼 둔 옛 매니저·연결만 바꾸는 법 등), 26번 8장·10장
+지금 안 되는 것
+- 1. Start · 2. Menu · LoadingScene1·2 씬 → 수업 42·47·48에서 새로. 그때까지 Stage1을 바로 열어 테스트

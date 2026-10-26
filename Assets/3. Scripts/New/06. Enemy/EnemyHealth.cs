@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace SquareTD
 {
     public class EnemyHealth
@@ -23,6 +25,18 @@ namespace SquareTD
             Current = 0f;
             IsDead = true;
             return true;
+        }
+
+        public float Heal(float amount)
+        {
+            if (IsDead || amount <= 0)
+            {
+                return 0f;
+            }
+
+            float before = Current;
+            Current = Mathf.Min(before + amount, Max);
+            return Current - before;
         }
     }
 }

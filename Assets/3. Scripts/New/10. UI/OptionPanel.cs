@@ -23,10 +23,17 @@ namespace SquareTD
             if (btn_restart != null) btn_restart.onClick.AddListener(HandleRestartClick);
             if (btn_menu != null) btn_menu.onClick.AddListener(HandleQuitClick);
 
-            // 수업 23 · 47: StackModeSettings — 전체 자동/수동 토글과 타워 종류(문양 + 컬러)별 예외 목록
-            //   tgl_autoConsumeStack.isOn = StackModeSettings.Instance.DefaultAuto;
-            //   tgl_autoConsumeStack.onValueChanged.AddListener(StackModeSettings.Instance.SetDefaultAuto);
-            if (tgl_autoConsumeStack != null) tgl_autoConsumeStack.interactable = false;
+            // 스택 전체 자동/수동 (켜짐 = 자동). 타워 종류(문양 + 컬러)별 예외 목록은 수업 47
+            if (tgl_autoConsumeStack != null && TowerManager.Instance != null)
+            {
+                tgl_autoConsumeStack.isOn = !TowerManager.Instance.StackModes.ManualByDefault;
+                tgl_autoConsumeStack.onValueChanged.AddListener(HandleAutoConsumeChanged);
+            }
+        }
+
+        private void HandleAutoConsumeChanged(bool isAuto)
+        {
+            if (TowerManager.Instance != null) TowerManager.Instance.StackModes.ManualByDefault = !isAuto;
         }
 
         private void OnDestroy()
@@ -34,6 +41,7 @@ namespace SquareTD
             if (btn_resume != null) btn_resume.onClick.RemoveListener(HandleResumeClick);
             if (btn_restart != null) btn_restart.onClick.RemoveListener(HandleRestartClick);
             if (btn_menu != null) btn_menu.onClick.RemoveListener(HandleQuitClick);
+            if (tgl_autoConsumeStack != null) tgl_autoConsumeStack.onValueChanged.RemoveListener(HandleAutoConsumeChanged);
         }
 
         private void HandleResumeClick()

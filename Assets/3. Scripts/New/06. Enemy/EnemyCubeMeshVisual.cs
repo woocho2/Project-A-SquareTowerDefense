@@ -53,12 +53,10 @@ namespace SquareTD
         {
             if (m_appearance == null || m_appearance.CharacterTexture == null) return;
 
-            Texture mask = m_appearance.EquipmentMask != null ? m_appearance.EquipmentMask : Texture2D.blackTexture;
             for (int face = 0; face < m_faceMaterials.Length; face++)
             {
                 m_renderer.GetPropertyBlock(m_appearanceProperties, face);
                 m_appearanceProperties.SetTexture("_MainTex", m_appearance.CharacterTexture);
-                m_appearanceProperties.SetTexture("_EquipmentMask", mask);
                 m_renderer.SetPropertyBlock(m_appearanceProperties, face);
             }
         }

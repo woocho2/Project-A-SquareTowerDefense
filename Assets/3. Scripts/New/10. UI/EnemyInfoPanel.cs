@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,6 +28,11 @@ namespace SquareTD
         [SerializeField] private TextMeshProUGUI m_txtSpeed;
         [SerializeField] private TextMeshProUGUI m_txtResistance;
         [SerializeField] private TextMeshProUGUI m_txtHitCount;
+        [SerializeField] private Slider m_hpSlider;                     // 체력 막대 (없으면 글자만)
+        [SerializeField] private TextMeshProUGUI m_txtEnemyType;        // 일반 / 중간 보스 / 최종 보스
+        [SerializeField] private TextMeshProUGUI m_txtDamageTaken;      // 받는 피해 증감 (%)
+        [SerializeField] private TextMeshProUGUI[] m_unusedValueTexts = new TextMeshProUGUI[0];   // 아직 쓰는 시스템이 없는 칸 → "-"
+        [SerializeField] private bool m_compactValues;                  // 칸 이름 글자가 따로 있는 레이아웃이면 값만 씀 ("방어력:" 없이)
 
         [Header("Buff & Debuff Rects")]
         [SerializeField] private RectTransform m_buffContent;
@@ -34,6 +40,14 @@ namespace SquareTD
         [SerializeField] private ScrollRect m_buffScrollRect;
         [SerializeField] private ScrollRect m_debuffScrollRect;
         [SerializeField] private GameObject m_buffEntryPrefab;
+
+        [Header("Detail Flip (앞: 스탯 / 뒤: 버프·디버프 목록)")]
+        [SerializeField] private GameObject m_detailFront;
+        [SerializeField] private GameObject m_detailBack;
+        [SerializeField] private Button m_btnFlipDetail;                // 비어 있으면 상세 화면 가운데 줄에 작은 버튼을 만듦
+        [SerializeField] private Vector2 m_flipButtonPosition = new Vector2(0f, 0.5f);
+        [SerializeField] private Vector2 m_flipButtonSize = new Vector2(46f, 35f);
+        [SerializeField, Min(0.05f)] private float m_flipDuration = 0.2f;
 
         private const float ListStartY = -45f;
         private const float ListSpacing = 82f;
@@ -46,6 +60,9 @@ namespace SquareTD
         private ITarget m_selectedTarget;
         private TMP_FontAsset m_cachedFont;
         private bool m_subscribed;
+        private bool m_showingBack;
+        private TextMeshProUGUI m_txtFlipDetail;
+        private Sequence m_flipTween;
 
         public int CurrentPathIndex => m_currentPathIndex;
         public ITarget SelectedTarget => m_selectedTarget;
@@ -62,6 +79,13 @@ namespace SquareTD
                 m_btnBackToList.onClick.RemoveAllListeners();
                 m_btnBackToList.onClick.AddListener(BackToList);
             }
+            if (m_btnFlipDetail != null) m_btnFlipDetail.onClick.AddListener(FlipDetail);
+        }
+
+        private void OnDestroy()
+        {
+            if (m_btnFlipDetail != null) m_btnFlipDetail.onClick.RemoveListener(FlipDetail);
+            m_flipTween?.Kill();
         }
 
         private void OnEnable()
@@ -138,6 +162,104 @@ namespace SquareTD
             }
 
             EnsureViewHierarchy();
+
+            foreach (TextMeshProUGUI text in m_unusedValueTexts)
+            {
+                if (text != null) text.text = "-";
+            }
+
+            EnsureFlipButton();
+            SetDetailFace(false);
+        }
+
+        // ── 상세 화면 뒤집기 (스탯 ↔ 버프·디버프 목록) ──
+
+        private void EnsureFlipButton()
+        {
+            if (m_detailFront == null || m_detailBack == null || m_viewEnemyDetail == null) return;
+
+            if (m_btnFlipDetail == null)
+            {
+                var obj = new GameObject("Btn_FlipDetail", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+                obj.transform.SetParent(m_viewEnemyDetail.transform, false);
+                RectTransform rect = obj.GetComponent<RectTransform>();
+                rect.anchoredPosition = m_flipButtonPosition;
+                rect.sizeDelta = m_flipButtonSize;
+
+                Image image = obj.GetComponent<Image>();
+                Image sample = FindSampleImage();
+                if (sample != null)
+                {
+                    image.sprite = sample.sprite;
+                    image.type = sample.type;
+                    image.color = sample.color;
+                }
+                else image.color = new Color(0.25f, 0.35f, 0.45f, 0.95f);
+
+                m_btnFlipDetail = obj.GetComponent<Button>();
+                m_txtFlipDetail = CreateText(obj.transform, "Txt_FlipDetail", "", Vector2.zero, m_flipButtonSize,
+                    14, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
+            }
+            else if (m_txtFlipDetail == null)
+            {
+                m_txtFlipDetail = m_btnFlipDetail.GetComponentInChildren<TextMeshProUGUI>(true);
+            }
+        }
+
+        private Image FindSampleImage()
+        {
+            foreach (Image image in m_viewEnemyDetail.GetComponentsInChildren<Image>(true))
+            {
+                if (image.name.EndsWith("_BG") && image.sprite != null) return image;
+            }
+            return null;
+        }
+
+        public void FlipDetail()
+        {
+            if (m_detailFront == null || m_detailBack == null) return;
+
+            m_flipTween?.Kill(true);
+            GameObject from = m_showingBack ? m_detailBack : m_detailFront;
+            GameObject to = m_showingBack ? m_detailFront : m_detailBack;
+            m_showingBack = !m_showingBack;
+            UpdateFlipLabel();
+
+            float half = m_flipDuration * 0.5f;
+            m_flipTween = DOTween.Sequence()
+                .Append(from.transform.DOScaleX(0f, half).SetEase(Ease.InSine))
+                .AppendCallback(() =>
+                {
+                    from.SetActive(false);
+                    from.transform.localScale = Vector3.one;
+                    to.transform.localScale = new Vector3(0f, 1f, 1f);
+                    to.SetActive(true);
+                })
+                .Append(to.transform.DOScaleX(1f, half).SetEase(Ease.OutSine))
+                .SetUpdate(true)
+                .SetLink(gameObject, LinkBehaviour.KillOnDisable);
+        }
+
+        private void SetDetailFace(bool showBack)
+        {
+            m_flipTween?.Kill();
+            m_showingBack = showBack;
+            if (m_detailFront != null)
+            {
+                m_detailFront.transform.localScale = Vector3.one;
+                m_detailFront.SetActive(!showBack);
+            }
+            if (m_detailBack != null)
+            {
+                m_detailBack.transform.localScale = Vector3.one;
+                m_detailBack.SetActive(showBack);
+            }
+            UpdateFlipLabel();
+        }
+
+        private void UpdateFlipLabel()
+        {
+            if (m_txtFlipDetail != null) m_txtFlipDetail.text = m_showingBack ? "스탯" : "버프";
         }
 
         private void FindExistingScrollRects()
@@ -163,11 +285,18 @@ namespace SquareTD
 
         private void EnsureViewHierarchy()
         {
-            Transform listTr = transform.Find("View_EnemyList");
-            m_viewEnemyList = listTr != null ? listTr.gameObject : CreateEnemyListViewObject();
+            // 인스펙터에 연결한 화면이 있으면 그것을 씀. 없을 때만 찾거나 만듦
+            if (m_viewEnemyList == null)
+            {
+                Transform listTr = transform.Find("View_EnemyList");
+                m_viewEnemyList = listTr != null ? listTr.gameObject : CreateEnemyListViewObject();
+            }
 
-            Transform detailTr = transform.Find("View_EnemyDetail");
-            m_viewEnemyDetail = detailTr != null ? detailTr.gameObject : CreateEnemyDetailViewObject();
+            if (m_viewEnemyDetail == null)
+            {
+                Transform detailTr = transform.Find("View_EnemyDetail");
+                m_viewEnemyDetail = detailTr != null ? detailTr.gameObject : CreateEnemyDetailViewObject();
+            }
 
             if (m_btnBackToList == null)
             {
@@ -359,6 +488,7 @@ namespace SquareTD
         {
             if (m_viewEnemyList != null) m_viewEnemyList.SetActive(false);
             if (m_viewEnemyDetail != null) m_viewEnemyDetail.SetActive(true);
+            SetDetailFace(false);                                       // 다른 적을 고르면 앞면(스탯)부터
         }
 
         public void RefreshListEntries()
@@ -383,7 +513,7 @@ namespace SquareTD
                 if (!targets[i].IsAlive) continue;
 
                 EnemyListItemUI item = GetOrCreateListItem(shown, content);
-                PlaceListItem(item, shown);
+                PlaceListItem(item, shown, GetEntryWidth(content));
                 item.Init(targets[i], SelectTarget);
                 shown++;
             }
@@ -419,14 +549,22 @@ namespace SquareTD
             return item;
         }
 
-        private static void PlaceListItem(EnemyListItemUI item, int index)
+        private static void PlaceListItem(EnemyListItemUI item, int index, float width)
         {
             RectTransform rect = item.GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(0.5f, 1f);
             rect.anchorMax = new Vector2(0.5f, 1f);
             rect.pivot = new Vector2(0.5f, 1f);
             rect.anchoredPosition = new Vector2(0f, ListStartY - index * ListSpacing);
-            rect.sizeDelta = new Vector2(330f, 74f);
+            rect.sizeDelta = new Vector2(width, 74f);
+        }
+
+        // 목록 칸의 너비에 맞춤 (옛 레이아웃은 330 고정이라 좁은 목록에서 잘렸음)
+        private static float GetEntryWidth(RectTransform content)
+        {
+            Transform viewport = content.parent;
+            float width = viewport is RectTransform viewportRect ? viewportRect.rect.width : content.rect.width;
+            return width > 20f ? width - 10f : 330f;
         }
 
         private GameObject CreateDefaultListItemObject(RectTransform parent, int index)
@@ -513,29 +651,81 @@ namespace SquareTD
             if (body != null && body.IsBoss) title += $" 남은 턴 {EnemyManager.Instance.BossTimer.GetRemaining(body)}";
             if (m_txtDetailTitle != null) m_txtDetailTitle.text = title;
 
-            if (m_txtHP != null)
-                m_txtHP.text = $"체력: {Mathf.CeilToInt(m_selectedTarget.CurrentHp)} / {Mathf.CeilToInt(m_selectedTarget.MaxHp)}";
+            int hp = Mathf.CeilToInt(m_selectedTarget.CurrentHp);
+            int maxHp = Mathf.CeilToInt(m_selectedTarget.MaxHp);
+            if (m_txtHP != null) m_txtHP.text = m_compactValues ? $"{hp} / {maxHp}" : $"체력: {hp} / {maxHp}";
+            if (m_hpSlider != null)
+            {
+                m_hpSlider.minValue = 0f;
+                m_hpSlider.maxValue = Mathf.Max(1f, m_selectedTarget.MaxHp);
+                m_hpSlider.value = m_selectedTarget.CurrentHp;
+            }
 
             if (definition == null) return;
+
+            if (m_txtEnemyType != null) m_txtEnemyType.text = GetKindName(definition.Kind);
 
             EnemyStats stats = body.Stats;
             float defense = stats.Get(StatType.Defense);
             float baseDefense = stats.GetBase(StatType.Defense);
-            if (m_txtDefend != null)
-                m_txtDefend.text = Mathf.Approximately(defense, baseDefense) ? $"방어력: {defense:0.#}" : $"방어력: {defense:0.#} (기본 {baseDefense:0.#})";
+            string defenseText = Mathf.Approximately(defense, baseDefense) ? $"{defense:0.#}" : $"{defense:0.#} (기본 {baseDefense:0.#})";
+            if (m_txtDefend != null) m_txtDefend.text = m_compactValues ? defenseText : $"방어력: {defenseText}";
 
             MoveRange range = stats.GetMoveRange();
-            // 수업 21: 남은 행동 카운트 (EnemyMovement)
+            int left = Mathf.Max(0, body.Movement.ActionCounter);
             if (m_txtAction != null)
-                m_txtAction.text = range.Action == definition.Action ? $"행동력: {range.Action}턴 주기" : $"행동력: {range.Action}턴 주기 (기본 {definition.Action})";
+            {
+                string cycle = range.Action == definition.Action ? $"{range.Action}턴 주기" : $"{range.Action}턴 주기 (기본 {definition.Action})";
+                m_txtAction.text = m_compactValues ? $"{left}/{range.Action}" : $"행동력: {cycle}, 다음 행동까지 {left}";
+            }
             bool speedChanged = range.Min != definition.SpeedMin || range.Max != definition.SpeedMax;
             if (m_txtSpeed != null)
-                m_txtSpeed.text = speedChanged ? $"이동력: 주사위 {range.Min} ~ {range.Max}칸 (기본 {definition.SpeedMin} ~ {definition.SpeedMax})"
-                                               : $"이동력: 주사위 {range.Min} ~ {range.Max}칸";
-            // 수업 25: EnemyResistance의 "기본 / 지금"
-            if (m_txtResistance != null) m_txtResistance.text = $"저항력: {definition.BaseResistance:0.#}%";
-            // 수업 23: EnemyHitCounter — 단일 타워 문양별로 이 적이 맞은 횟수
-            if (m_txtHitCount != null) m_txtHitCount.text = "적중 수: -";
+            {
+                if (m_compactValues) m_txtSpeed.text = $"{range.Min}~{range.Max}";
+                else m_txtSpeed.text = speedChanged ? $"이동력: 주사위 {range.Min} ~ {range.Max}칸 (기본 {definition.SpeedMin} ~ {definition.SpeedMax})"
+                                                    : $"이동력: 주사위 {range.Min} ~ {range.Max}칸";
+            }
+            if (m_txtResistance != null)
+            {
+                EnemyResistance resistance = body.Resistance;
+                string text = Mathf.Approximately(resistance.Current, resistance.Base)
+                    ? $"{resistance.Current:0.#}%"
+                    : $"{resistance.Current:0.#}% (기본 {resistance.Base:0.#}%)";          // 강한 CC로 올라 있으면 기본도 함께 (20번 3장)
+                m_txtResistance.text = m_compactValues ? text : $"저항력: {text}";
+            }
+            if (m_txtDamageTaken != null)
+            {
+                float extra = (stats.Get(StatType.DamageTaken) - 1f) * 100f;
+                m_txtDamageTaken.text = Mathf.Approximately(extra, 0f) ? "0%" : $"{extra:+0.#;-0.#}%";
+            }
+            if (m_txtHitCount != null)
+            {
+                string hits = GetHitCountText(body.HitCounter);
+                m_txtHitCount.text = m_compactValues ? hits : $"적중 수: {hits}";
+            }
+        }
+
+        // 단일 타워 문양별로 이 적이 맞은 횟수 (20번 4장: 적이 몇 회 맞았는지는 적 쪽에서 보여 줌). 예: "검 3, 활 1"
+        private static string GetHitCountText(EnemyHitCounter counter)
+        {
+            var parts = new List<string>();
+            foreach (TowerEmblem emblem in System.Enum.GetValues(typeof(TowerEmblem)))
+            {
+                if (emblem == TowerEmblem.None) continue;
+                int count = counter.Get(emblem);
+                if (count > 0) parts.Add($"{EmblemNames.GetEmblemName(emblem)} {count}");
+            }
+            return parts.Count > 0 ? string.Join(", ", parts) : "-";
+        }
+
+        private static string GetKindName(EnemyKind kind)
+        {
+            switch (kind)
+            {
+                case EnemyKind.MiddleBoss: return "중간 보스";
+                case EnemyKind.FinalBoss: return "최종 보스";
+                default: return "일반";
+            }
         }
 
         private void RefreshBuffEntries()
@@ -546,8 +736,10 @@ namespace SquareTD
             if (content == null) return;
 
             var descriptions = new List<string>();
-            // 수업 22: 지금 서 있는 칸의 특수 타일 효과 (방어, 이동력, 행동 카운트, 회복)
-            // 수업 21: 큐브 윗면의 효과 (EnemyCubeFaces)
+            BoardManager board = BoardManager.Instance;
+            PathTileType tile = board.Tiles.GetPathTile(m_selectedTarget.PathIndex);
+            if (SpecialTileText.IsStandingBuff(tile)) descriptions.Add(SpecialTileText.Describe(tile, m_selectedTarget.PathIndex, board.Grid));
+            // 수업 21: 큐브 윗면의 효과 (EnemyCubeFaces) — 면의 수치가 정해지면 (지금은 전부 0)
             if (descriptions.Count == 0) descriptions.Add("적용 중인 버프 없음\n현재 적에게 적용된 버프가 없습니다.");
 
             CreateEntries(content, descriptions, m_spawnedBuffEntries);
@@ -562,7 +754,7 @@ namespace SquareTD
             if (content == null) return;
 
             var descriptions = new List<string>();
-            // 수업 25: foreach (StatusEffect effect in m_selectedTarget.Status.Effects) descriptions.Add(StatusTextFormatter.Describe(effect));
+            descriptions.AddRange(StatusTextFormatter.DescribeAll(m_selectedTarget.Status));
             if (descriptions.Count == 0) descriptions.Add("적용 중인 디버프 없음\n현재 적에게 적용된 디버프가 없습니다.");
 
             CreateEntries(content, descriptions, m_spawnedDebuffEntries);
@@ -584,7 +776,7 @@ namespace SquareTD
                 rect.anchorMax = new Vector2(0.5f, 1f);
                 rect.pivot = new Vector2(0.5f, 1f);
                 rect.anchoredPosition = new Vector2(0f, startY - i * spacing);
-                rect.sizeDelta = new Vector2(330f, 70f);
+                rect.sizeDelta = new Vector2(GetEntryWidth(content), 70f);
 
                 TextMeshProUGUI txt = entry.GetComponentInChildren<TextMeshProUGUI>(true);
                 if (txt != null) txt.text = descriptions[i];

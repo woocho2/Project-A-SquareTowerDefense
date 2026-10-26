@@ -19,6 +19,7 @@ namespace SquareTD
 
         public TowerDatabase Database { get; private set; }
         public ColorUpgradeState ColorLevels { get; private set; }
+        public StackModeSettings StackModes { get; private set; } = new StackModeSettings();
         public int BuildCost { get; private set; } = StartBuildCost;
         public TowerController Selected { get; private set; }
 
@@ -46,7 +47,7 @@ namespace SquareTD
 
         private void Start()
         {
-            m_factory = new TowerFactory(m_towerPrefab, m_towerParent, BoardManager.Instance, Database, ColorLevels);
+            m_factory = new TowerFactory(m_towerPrefab, m_towerParent, BoardManager.Instance, Database, ColorLevels, StackModes);   // 💬 맨 뒤에 StackModes를 더 넘김
         }
 
         public bool TryBuild()
@@ -231,6 +232,13 @@ namespace SquareTD
                 if (tower == null || tower.Definition.Color != color) continue;
 
                 tower.RecalculateStats();
+                
+                ZoneRegistry zones = BoardManager.Instance.Zones;
+                if (level == 4)
+                {
+                    foreach (Zone zone in zones.GetByOwner(tower)) zone.ResetIfSkill1();
+                }
+                zones.EnsureZonesFor(tower);
             }
         }
 
@@ -263,6 +271,7 @@ namespace SquareTD
         {
             BoardManager board = BoardManager.Instance;
             tower.SetSlot(slot, board.GetWorldPosition(board.Grid.GetSpawnCell(slot)));
+            tower.SetSpawnTile(board.Tiles.GetSpawnTile(slot));            
         }
     }
 }

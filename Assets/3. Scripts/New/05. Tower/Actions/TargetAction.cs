@@ -48,6 +48,8 @@ namespace SquareTD
                     {
                         AddIncoming(incoming, shotTarget, -expected);
                         ProjectileHitResolver.HitSingle(shotTarget, hit);
+                        if (shotTarget.IsAlive && shotTarget.Body != null) shotTarget.Body.HitCounter.Add(tower.Definition.Emblem);
+                        tower.OnBasicHitLanded(shotTarget);     // 💬 센 바로 뒤에: 적중 수가 Duration에 닿았으면 그 적에게 스킬 2
                         handle.CompleteShot();
                     });
                 }

@@ -70,18 +70,17 @@ namespace SquareTD
 
         private void AddTowerTileDescriptions(int spawnIndex, List<string> buffDescriptions)
         {
-            // 수업 22: 스폰 칸의 특수 타일 (공격력, 행동 카운트, 공격 횟수, 마스터리)
-            //   SpawnTileEffect effect = BoardManager.Instance.SpecialTiles.GetSpawnEffect(spawnIndex);
-            //   if (effect != null) buffDescriptions.Add(effect.Describe());
+            string tile = SpecialTileText.Describe(BoardManager.Instance.Tiles.GetSpawnTile(spawnIndex));
+            if (tile != null) buffDescriptions.Add(tile);
             // 수업 26: 이 칸의 버프존들 (문양, 단계, 스택)
             //   foreach (Zone zone in BoardManager.Instance.Zones.GetAtSpawn(spawnIndex)) buffDescriptions.Add(StatusTextFormatter.Describe(zone));
         }
 
         private void AddPathTileDescriptions(int pathIndex, List<string> buffDescriptions, List<string> debuffDescriptions)
         {
-            // 수업 22: 길 칸의 특수 타일 (방어, 이동력, 행동 카운트, 회복, 정화, 비프로스트)
-            //   PathTileEffect effect = BoardManager.Instance.SpecialTiles.GetPathEffect(pathIndex);
-            //   if (effect != null) buffDescriptions.Add(effect.Describe());
+            BoardManager board = BoardManager.Instance;
+            string tile = SpecialTileText.Describe(board.Tiles.GetPathTile(pathIndex), pathIndex, board.Grid);
+            if (tile != null) buffDescriptions.Add(tile);
             // 수업 26: 이 칸의 디버프존들
             //   foreach (Zone zone in BoardManager.Instance.Zones.GetAtPath(pathIndex)) debuffDescriptions.Add(StatusTextFormatter.Describe(zone));
             // 수업 29 · 40: 이 칸에 깔린 장판 (화살비, 블랙홀)

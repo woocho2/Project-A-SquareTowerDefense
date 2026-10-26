@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d9ddb7ed8c944e18f4fb4c34ab15720, type: 3}
+  m_Script: {fileID: 11500000, guid: 160144c0ce3146e2927d5fff510428ad, type: 3}
   m_Name: FrostWolf_Appearance
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyCubeAppearance
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyCubeAppearance
   m_characterTexture: {fileID: 2800000, guid: c2d23c493cc9199417b0419146f04423, type: 3}
-  m_equipmentMask: {fileID: 2800000, guid: 579a949e00855c96233b2516307de309, type: 3}
+  m_equipmentMask: {fileID: 0}

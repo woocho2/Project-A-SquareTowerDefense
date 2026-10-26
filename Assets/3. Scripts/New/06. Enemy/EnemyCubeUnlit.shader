@@ -7,10 +7,7 @@ Shader "SquareTowerDefense/EnemyCubeUnlit"
         [Toggle] _UseLayers ("Compose Separate Layers", Float) = 0
         _BackgroundTex ("Shared Background / Outer Mask", 2D) = "white" {}
         _BackgroundColor ("Background Color", Color) = (1,1,1,1)
-        _EquipmentMask ("Character Equipment Mask", 2D) = "black" {}
-        _EquipmentColor ("Equipment Color", Color) = (1,1,1,1)
         _DecorationColor ("Decoration Color", Color) = (1,1,1,1)
-        [Toggle] _RecolorEquipment ("Recolor Equipment", Float) = 0
         _DecorationTex ("Shared Decoration", 2D) = "black" {}
         _BadgeTex ("Shared State Badge Atlas", 2D) = "black" {}
         _BadgeRect ("Badge Placement (UV x y width height)", Vector) = (0.375,0.75,0.25,0.25)
@@ -31,10 +28,10 @@ Shader "SquareTowerDefense/EnemyCubeUnlit"
             sampler2D _MainTex;
             float4 _MainTex_ST;
             fixed4 _Color;
-            sampler2D _BackgroundTex, _EquipmentMask, _DecorationTex, _BadgeTex;
+            sampler2D _BackgroundTex, _DecorationTex, _BadgeTex;
             float4 _DecorationTex_ST, _BadgeTex_ST, _BadgeRect;
-            fixed4 _BackgroundColor, _EquipmentColor, _DecorationColor;
-            float _UseLayers, _RecolorEquipment;
+            fixed4 _BackgroundColor, _DecorationColor;
+            float _UseLayers;
             struct appdata { float4 vertex : POSITION; float2 uv : TEXCOORD0; float3 normal : NORMAL; };
             struct v2f { float4 vertex : SV_POSITION; float2 uv : TEXCOORD0; float shade : TEXCOORD1; float2 faceUV : TEXCOORD2; };
             v2f vert(appdata v)
@@ -48,19 +45,6 @@ Shader "SquareTowerDefense/EnemyCubeUnlit"
                 o.shade = lerp(0.72, 1.0, saturate(abs(dot(normalize(normal), view))));
                 return o;
             }
-            float3 Recolor(float3 source, float3 target)
-            {
-                // Neutral white/gray equipment keeps its shading under a pastel mask tint.
-                #ifndef UNITY_COLORSPACE_GAMMA
-                    source = LinearToGammaSpace(source);
-                    target = LinearToGammaSpace(target);
-                #endif
-                float3 result = source * target;
-                #ifndef UNITY_COLORSPACE_GAMMA
-                    result = GammaToLinearSpace(result);
-                #endif
-                return result;
-            }
             void Over(inout float3 rgb, inout float alpha, float4 layer)
             {
                 rgb = layer.rgb * layer.a + rgb * (1.0 - layer.a);
@@ -72,14 +56,11 @@ Shader "SquareTowerDefense/EnemyCubeUnlit"
                 if (_UseLayers > 0.5)
                 {
                     float4 background = tex2D(_BackgroundTex, i.faceUV) * _BackgroundColor;
-                    float mask = tex2D(_EquipmentMask, i.uv).r * _RecolorEquipment;
-                    color.rgb = lerp(color.rgb, Recolor(color.rgb, _EquipmentColor.rgb), saturate(mask));
                     float3 rgb = background.rgb * background.a;
                     float alpha = background.a;
                     Over(rgb, alpha, color);
                     float4 decoration = tex2D(_DecorationTex, TRANSFORM_TEX(i.faceUV, _DecorationTex));
                     // Neutral grayscale carries depth; alpha is the frame's color mask.
-                    // Decoration and equipment colors are independently authored in the shared palette.
                     decoration *= _DecorationColor;
                     Over(rgb, alpha, decoration);
                     float2 badgeUV = (i.faceUV - _BadgeRect.xy) / max(_BadgeRect.zw, float2(0.00001,0.00001));

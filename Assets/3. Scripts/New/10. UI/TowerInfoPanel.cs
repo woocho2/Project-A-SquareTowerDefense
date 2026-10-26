@@ -74,6 +74,7 @@ namespace SquareTD
             Subscribe();
 
             if (UIManager.Instance != null) m_selectedTower = UIManager.Instance.SelectedTower;
+            WatchStack(m_selectedTower);
             UpdateTowerInfo();
         }
 
@@ -122,12 +123,12 @@ namespace SquareTD
             TowerManager.Instance.TowerAdded += HandleBoardChanged;
             TowerManager.Instance.TowerRemoved += HandleBoardChanged;
             TowerManager.Instance.ColorLevels.LevelChanged += HandleColorLevelChanged;
-            // 수업 23: TowerStack.Full += 스택 소모 버튼 켜기
             m_subscribed = true;
         }
 
         private void Unsubscribe()
         {
+            WatchStack(null);
             if (!m_subscribed) return;
 
             if (UIManager.Instance != null) UIManager.Instance.SelectedTowerChanged -= HandleTowerSelected;
@@ -153,6 +154,7 @@ namespace SquareTD
         {
             if (m_selectedTower != tower && cardView != null) cardView.ResetToFront();
             m_selectedTower = tower;
+            WatchStack(tower);
             UpdateTowerInfo();
         }
 
@@ -293,10 +295,11 @@ namespace SquareTD
             }
         }
 
-        private static string GetStackText(bool isSupport, TowerFinalStats stats)
+        private string GetStackText(bool isSupport, TowerFinalStats stats)
         {
-            // 수업 23: 공격 타워는 TowerStack의 "지금 / 최대"
-            return isSupport ? $"{stats.Stack}" : $"0 / {stats.Stack}";
+            if (isSupport) return $"{stats.Stack}";                     // 버프·디버프는 최대 스택만 (지금 스택은 존이 가짐, 4장 [타워 정보 카드])
+            TowerStack stack = m_selectedTower.State.Stack;
+            return $"{stack.Current:0.#} / {stack.Max}";
         }
 
         private void UpdateDescriptionText(TowerDefinition definition, TowerFinalStats stats)
@@ -332,8 +335,7 @@ namespace SquareTD
             if (btn_combineEmblem != null) btn_combineEmblem.interactable = CanMerge(MergeMode.Emblem);
             if (btn_combineExact != null) btn_combineExact.interactable = CanMerge(MergeMode.Exact);
             if (btn_sellTower != null) btn_sellTower.interactable = CanPlayerAct && !TowerId.IsSynergy(m_selectedTower.Definition.Id);
-            // 수업 23: 다 찼고 수동 소모일 때만. 적 턴에도 누를 수 있음 (TurnManager.Current.CanConsumeStack)
-            if (btn_consumeStack != null) btn_consumeStack.interactable = false;
+            if (btn_consumeStack != null) btn_consumeStack.interactable = CanRequestConsume();
             if (btn_pickAttackCell != null) btn_pickAttackCell.interactable = CanPlayerAct && m_selectedTower.IsAttackTower;
         }
 
@@ -378,9 +380,31 @@ namespace SquareTD
             if (TowerManager.Instance.TrySell(m_selectedTower)) CloseAfterTowerRemoved();
         }
 
+        // 스택 소모 버튼: 다 찼고, 이 종류가 수동 소모이고, 아직 누르지 않았을 때. 적 턴에도 누를 수 있음 (20번 4-1장 [Stack])
+        private bool CanRequestConsume()
+        {
+            if (m_selectedTower == null || !m_selectedTower.IsAttackTower) return false;
+            if (TurnManager.Instance == null || !TurnManager.Instance.Current.CanConsumeStack) return false;
+
+            TowerStack stack = m_selectedTower.State.Stack;
+            return stack.IsFull && !stack.ManualRequested && TowerManager.Instance.StackModes.IsManual(m_selectedTower.Definition);
+        }
+
         private void HandleConsumeStackClick()
         {
-            // 수업 23: m_selectedTower.Stack.RequestConsume();
+            if (!CanRequestConsume()) return;
+            m_selectedTower.State.Stack.RequestManualConsume();         // 다음 스킬 2가 스택을 씀
+            UpdateTowerInfo();
+        }
+
+        // 고른 타워의 스택이 막 다 차면 카드를 다시 그림 (적 턴 중에도 버튼이 켜지게)
+        private TowerStack m_watchedStack;
+
+        private void WatchStack(TowerController tower)
+        {
+            if (m_watchedStack != null) m_watchedStack.Full -= UpdateTowerInfo;
+            m_watchedStack = tower != null ? tower.State.Stack : null;
+            if (m_watchedStack != null) m_watchedStack.Full += UpdateTowerInfo;
         }
 
         private void HandlePickAttackCellClick()
