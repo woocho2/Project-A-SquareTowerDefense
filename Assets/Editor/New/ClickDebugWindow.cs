@@ -150,7 +150,7 @@ namespace SquareTD
                 bool manual = TowerManager.Instance != null && TowerManager.Instance.StackModes.IsManual(definition);
                 Row("스택 소모", manual ? (state.Stack.ManualRequested ? "수동 · 눌림 (다음 스킬 2에 씀)" : "수동 · 안 눌림") : "자동");
                 Row("스킬 2", tower.Skill == null ? "없음" : tower.IsSplash
-                    ? $"{tower.Skill.GetType().Name} · 주기 {state.SkillTurnCount} / {stats.Duration}턴"
+                    ? $"{tower.Skill.GetType().Name} · 착탄 {state.SkillShotCount} / {stats.Duration}발"
                     : $"{tower.Skill.GetType().Name} · 같은 적 {stats.Duration}회 적중");
                 Row("우선순위", $"{state.TargetPriority}{(state.AttackCellIndex >= 0 ? $" · 공격 칸 {state.AttackCellIndex}" : "")}");
 

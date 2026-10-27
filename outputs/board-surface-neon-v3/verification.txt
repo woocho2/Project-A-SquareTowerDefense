@@ -1,0 +1,6 @@
+﻿PASS: C# runtime source compilation.
+PASS: base surface and neon shaders compile for linear and gamma colour spaces.
+PASS: base surface gray 255; edge gray 180.
+PASS: every authored scene tile coordinate preserved.
+PASS: separate neon component and material connected to BoardTile.
+NOT RUN: Unity gameplay/render validation.

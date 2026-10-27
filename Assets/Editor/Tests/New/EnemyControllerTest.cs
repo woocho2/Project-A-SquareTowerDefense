@@ -66,7 +66,7 @@ namespace SquareTD.Tests
         public void 고정_피해_비율만큼은_방어를_무시함()
         {
             EnemyController enemy = MakeEnemy(100f);
-            enemy.Stats.Modifiers.Add(StatModifier.Flat("망령의 검", StatType.FixedDamageRatio, 0.5f));
+            enemy.Stats.Modifiers.Add(StatModifier.Flat("귀기", StatType.FixedDamageRatio, 0.5f));
 
             Assert.AreEqual(75f, enemy.PreviewDamage(Hit(100f)), 0.0001f, "고정 50 + 나머지 50 × 0.5");
         }

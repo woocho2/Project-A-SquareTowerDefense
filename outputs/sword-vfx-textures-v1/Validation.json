@@ -1,0 +1,242 @@
+﻿{
+    "textures":  [
+                     {
+                         "Name":  "FX_SlashTrail.png",
+                         "Width":  1024,
+                         "Height":  256,
+                         "AlphaMin":  0,
+                         "AlphaMax":  252,
+                         "TransparentPixels":  206387,
+                         "PartialAlphaPixels":  55757,
+                         "ColoredPixels":  0,
+                         "EdgeAlphaMax":  0,
+                         "CenterAlpha":  238,
+                         "NoiseEdgeDifference":  0,
+                         "Grayscale":  true
+                     },
+                     {
+                         "Name":  "FX_SlashLine.png",
+                         "Width":  1024,
+                         "Height":  64,
+                         "AlphaMin":  0,
+                         "AlphaMax":  249,
+                         "TransparentPixels":  37649,
+                         "PartialAlphaPixels":  27887,
+                         "ColoredPixels":  0,
+                         "EdgeAlphaMax":  0,
+                         "CenterAlpha":  249,
+                         "NoiseEdgeDifference":  0,
+                         "Grayscale":  true
+                     },
+                     {
+                         "Name":  "FX_SwordQi.png",
+                         "Width":  512,
+                         "Height":  256,
+                         "AlphaMin":  0,
+                         "AlphaMax":  255,
+                         "TransparentPixels":  107403,
+                         "PartialAlphaPixels":  23628,
+                         "ColoredPixels":  0,
+                         "EdgeAlphaMax":  0,
+                         "CenterAlpha":  0,
+                         "NoiseEdgeDifference":  0,
+                         "Grayscale":  true
+                     },
+                     {
+                         "Name":  "FX_Glow.png",
+                         "Width":  256,
+                         "Height":  256,
+                         "AlphaMin":  0,
+                         "AlphaMax":  251,
+                         "TransparentPixels":  36638,
+                         "PartialAlphaPixels":  28898,
+                         "ColoredPixels":  0,
+                         "EdgeAlphaMax":  0,
+                         "CenterAlpha":  250,
+                         "NoiseEdgeDifference":  0,
+                         "Grayscale":  true
+                     },
+                     {
+                         "Name":  "FX_Flare.png",
+                         "Width":  256,
+                         "Height":  256,
+                         "AlphaMin":  0,
+                         "AlphaMax":  253,
+                         "TransparentPixels":  56313,
+                         "PartialAlphaPixels":  9223,
+                         "ColoredPixels":  0,
+                         "EdgeAlphaMax":  0,
+                         "CenterAlpha":  251,
+                         "NoiseEdgeDifference":  0,
+                         "Grayscale":  true
+                     },
+                     {
+                         "Name":  "FX_Spark.png",
+                         "Width":  64,
+                         "Height":  16,
+                         "AlphaMin":  0,
+                         "AlphaMax":  255,
+                         "TransparentPixels":  930,
+                         "PartialAlphaPixels":  91,
+                         "ColoredPixels":  0,
+                         "EdgeAlphaMax":  0,
+                         "CenterAlpha":  85,
+                         "NoiseEdgeDifference":  0,
+                         "Grayscale":  true
+                     },
+                     {
+                         "Name":  "FX_Ring.png",
+                         "Width":  512,
+                         "Height":  512,
+                         "AlphaMin":  0,
+                         "AlphaMax":  255,
+                         "TransparentPixels":  258553,
+                         "PartialAlphaPixels":  3159,
+                         "ColoredPixels":  0,
+                         "EdgeAlphaMax":  0,
+                         "CenterAlpha":  0,
+                         "NoiseEdgeDifference":  0,
+                         "Grayscale":  true
+                     },
+                     {
+                         "Name":  "FX_Noise.png",
+                         "Width":  256,
+                         "Height":  256,
+                         "AlphaMin":  255,
+                         "AlphaMax":  255,
+                         "TransparentPixels":  0,
+                         "PartialAlphaPixels":  0,
+                         "ColoredPixels":  0,
+                         "EdgeAlphaMax":  255,
+                         "CenterAlpha":  255,
+                         "NoiseEdgeDifference":  0,
+                         "Grayscale":  true
+                     },
+                     {
+                         "Name":  "FX_PlumPetal.png",
+                         "Width":  64,
+                         "Height":  64,
+                         "AlphaMin":  0,
+                         "AlphaMax":  255,
+                         "TransparentPixels":  2459,
+                         "PartialAlphaPixels":  1504,
+                         "ColoredPixels":  1637,
+                         "EdgeAlphaMax":  0,
+                         "CenterAlpha":  253,
+                         "NoiseEdgeDifference":  0,
+                         "Grayscale":  false
+                     },
+                     {
+                         "Name":  "FX_PlumBlossom.png",
+                         "Width":  256,
+                         "Height":  256,
+                         "AlphaMin":  0,
+                         "AlphaMax":  255,
+                         "TransparentPixels":  28835,
+                         "PartialAlphaPixels":  35921,
+                         "ColoredPixels":  36692,
+                         "EdgeAlphaMax":  0,
+                         "CenterAlpha":  253,
+                         "NoiseEdgeDifference":  0,
+                         "Grayscale":  false
+                     }
+                 ],
+    "importers":  [
+                      {
+                          "name":  "FX_SlashTrail.png",
+                          "guid":  "a755684f9fc141638c12910aa0b41563",
+                          "texture_type":  "Default",
+                          "alpha_is_transparency":  true,
+                          "wrap":  "Clamp",
+                          "mipmaps":  false,
+                          "compression":  "None"
+                      },
+                      {
+                          "name":  "FX_SlashLine.png",
+                          "guid":  "afa5c26b50b74d79be33d56b9be6b235",
+                          "texture_type":  "Default",
+                          "alpha_is_transparency":  true,
+                          "wrap":  "Clamp",
+                          "mipmaps":  false,
+                          "compression":  "None"
+                      },
+                      {
+                          "name":  "FX_SwordQi.png",
+                          "guid":  "148b79806e5943cebacca3f6dc4fd3ef",
+                          "texture_type":  "Default",
+                          "alpha_is_transparency":  true,
+                          "wrap":  "Clamp",
+                          "mipmaps":  false,
+                          "compression":  "None"
+                      },
+                      {
+                          "name":  "FX_Glow.png",
+                          "guid":  "7e5fe3ddd37245adbd1b22980c3d4ec7",
+                          "texture_type":  "Default",
+                          "alpha_is_transparency":  true,
+                          "wrap":  "Clamp",
+                          "mipmaps":  false,
+                          "compression":  "None"
+                      },
+                      {
+                          "name":  "FX_Flare.png",
+                          "guid":  "c1952830ffff4cf2801ddddd31b75c62",
+                          "texture_type":  "Default",
+                          "alpha_is_transparency":  true,
+                          "wrap":  "Clamp",
+                          "mipmaps":  false,
+                          "compression":  "None"
+                      },
+                      {
+                          "name":  "FX_Spark.png",
+                          "guid":  "1fedbc7536b74403aa7263972684d0e8",
+                          "texture_type":  "Default",
+                          "alpha_is_transparency":  true,
+                          "wrap":  "Clamp",
+                          "mipmaps":  false,
+                          "compression":  "None"
+                      },
+                      {
+                          "name":  "FX_Ring.png",
+                          "guid":  "43b1075370a9440684212b5d7d3a17a1",
+                          "texture_type":  "Default",
+                          "alpha_is_transparency":  true,
+                          "wrap":  "Clamp",
+                          "mipmaps":  false,
+                          "compression":  "None"
+                      },
+                      {
+                          "name":  "FX_Noise.png",
+                          "guid":  "868fe65185944affbd46d3044e57c075",
+                          "texture_type":  "Default",
+                          "alpha_is_transparency":  true,
+                          "wrap":  "Repeat",
+                          "mipmaps":  true,
+                          "compression":  "None"
+                      },
+                      {
+                          "name":  "FX_PlumPetal.png",
+                          "guid":  "3454660bcab1448c8bf54e506aac299f",
+                          "texture_type":  "Default",
+                          "alpha_is_transparency":  true,
+                          "wrap":  "Clamp",
+                          "mipmaps":  false,
+                          "compression":  "None"
+                      },
+                      {
+                          "name":  "FX_PlumBlossom.png",
+                          "guid":  "36fdc7926305418db6e6a77c841fdcde",
+                          "texture_type":  "Default",
+                          "alpha_is_transparency":  true,
+                          "wrap":  "Clamp",
+                          "mipmaps":  false,
+                          "compression":  "None"
+                      }
+                  ],
+    "script_hashes_checked":  133,
+    "changed_script_paths":  [
+                                 "D:\\MyGitHub\\ProjectA\\Project-A-SquareTowerDefense\\Assets\\3. Scripts\\05. Tower\\TowerFactory.cs"
+                             ],
+    "source_art":  "built-in image_gen",
+    "destination":  "Assets/Resources/Effects"
+}

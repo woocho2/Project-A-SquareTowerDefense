@@ -318,7 +318,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 192
+  spritePixelsToUnits: 278.666666667
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -397,13 +397,13 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 960
-        width: 192
-        height: 192
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -411,21 +411,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fa1
       internalID: 4001
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Asgard_T
       rect:
         serializedVersion: 2
-        x: 192
-        y: 960
-        width: 192
-        height: 192
+        x: 418
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -433,21 +433,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fa2
       internalID: 4002
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Asgard_TR
       rect:
         serializedVersion: 2
-        x: 384
-        y: 960
-        width: 192
-        height: 192
+        x: 836
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -455,7 +455,7 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fa3
       internalID: 4003
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
@@ -463,13 +463,13 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 768
-        width: 192
-        height: 192
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -477,21 +477,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fa4
       internalID: 4004
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Asgard_C
       rect:
         serializedVersion: 2
-        x: 192
-        y: 768
-        width: 192
-        height: 192
+        x: 418
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -499,21 +499,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fa5
       internalID: 4005
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Asgard_R
       rect:
         serializedVersion: 2
-        x: 384
-        y: 768
-        width: 192
-        height: 192
+        x: 836
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -521,7 +521,7 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fa6
       internalID: 4006
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
@@ -529,13 +529,13 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 576
-        width: 192
-        height: 192
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -543,21 +543,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fa7
       internalID: 4007
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Asgard_B
       rect:
         serializedVersion: 2
-        x: 192
-        y: 576
-        width: 192
-        height: 192
+        x: 418
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -565,21 +565,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fa8
       internalID: 4008
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Asgard_BR
       rect:
         serializedVersion: 2
-        x: 384
-        y: 576
-        width: 192
-        height: 192
+        x: 836
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -587,21 +587,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fa9
       internalID: 4009
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Vanaheim_TL
       rect:
         serializedVersion: 2
-        x: 576
-        y: 960
-        width: 192
-        height: 192
+        x: 0
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -609,21 +609,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00faa
       internalID: 4010
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Vanaheim_T
       rect:
         serializedVersion: 2
-        x: 768
-        y: 960
-        width: 192
-        height: 192
+        x: 418
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -631,21 +631,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fab
       internalID: 4011
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Vanaheim_TR
       rect:
         serializedVersion: 2
-        x: 960
-        y: 960
-        width: 192
-        height: 192
+        x: 836
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -653,21 +653,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fac
       internalID: 4012
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Vanaheim_L
       rect:
         serializedVersion: 2
-        x: 576
-        y: 768
-        width: 192
-        height: 192
+        x: 0
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -675,21 +675,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fad
       internalID: 4013
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Vanaheim_C
       rect:
         serializedVersion: 2
-        x: 768
-        y: 768
-        width: 192
-        height: 192
+        x: 418
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -697,21 +697,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fae
       internalID: 4014
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Vanaheim_R
       rect:
         serializedVersion: 2
-        x: 960
-        y: 768
-        width: 192
-        height: 192
+        x: 836
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -719,21 +719,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00faf
       internalID: 4015
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Vanaheim_BL
       rect:
         serializedVersion: 2
-        x: 576
-        y: 576
-        width: 192
-        height: 192
+        x: 0
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -741,21 +741,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fb0
       internalID: 4016
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Vanaheim_B
       rect:
         serializedVersion: 2
-        x: 768
-        y: 576
-        width: 192
-        height: 192
+        x: 418
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -763,21 +763,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fb1
       internalID: 4017
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Vanaheim_BR
       rect:
         serializedVersion: 2
-        x: 960
-        y: 576
-        width: 192
-        height: 192
+        x: 836
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -785,21 +785,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fb2
       internalID: 4018
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Alfheim_TL
       rect:
         serializedVersion: 2
-        x: 1152
-        y: 960
-        width: 192
-        height: 192
+        x: 0
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -807,21 +807,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fb3
       internalID: 4019
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Alfheim_T
       rect:
         serializedVersion: 2
-        x: 1344
-        y: 960
-        width: 192
-        height: 192
+        x: 418
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -829,21 +829,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fb4
       internalID: 4020
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Alfheim_TR
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 960
-        width: 192
-        height: 192
+        x: 836
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -851,21 +851,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fb5
       internalID: 4021
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Alfheim_L
       rect:
         serializedVersion: 2
-        x: 1152
-        y: 768
-        width: 192
-        height: 192
+        x: 0
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -873,21 +873,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fb6
       internalID: 4022
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Alfheim_C
       rect:
         serializedVersion: 2
-        x: 1344
-        y: 768
-        width: 192
-        height: 192
+        x: 418
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -895,21 +895,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fb7
       internalID: 4023
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Alfheim_R
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 768
-        width: 192
-        height: 192
+        x: 836
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -917,21 +917,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fb8
       internalID: 4024
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Alfheim_BL
       rect:
         serializedVersion: 2
-        x: 1152
-        y: 576
-        width: 192
-        height: 192
+        x: 0
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -939,21 +939,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fb9
       internalID: 4025
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Alfheim_B
       rect:
         serializedVersion: 2
-        x: 1344
-        y: 576
-        width: 192
-        height: 192
+        x: 418
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -961,21 +961,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fba
       internalID: 4026
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Alfheim_BR
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 576
-        width: 192
-        height: 192
+        x: 836
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -983,21 +983,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fbb
       internalID: 4027
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Jotunheim_TL
       rect:
         serializedVersion: 2
-        x: 1728
-        y: 960
-        width: 192
-        height: 192
+        x: 0
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1005,21 +1005,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fbc
       internalID: 4028
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Jotunheim_T
       rect:
         serializedVersion: 2
-        x: 1920
-        y: 960
-        width: 192
-        height: 192
+        x: 418
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1027,21 +1027,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fbd
       internalID: 4029
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Jotunheim_TR
       rect:
         serializedVersion: 2
-        x: 2112
-        y: 960
-        width: 192
-        height: 192
+        x: 836
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1049,21 +1049,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fbe
       internalID: 4030
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Jotunheim_L
       rect:
         serializedVersion: 2
-        x: 1728
-        y: 768
-        width: 192
-        height: 192
+        x: 0
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1071,21 +1071,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fbf
       internalID: 4031
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Jotunheim_C
       rect:
         serializedVersion: 2
-        x: 1920
-        y: 768
-        width: 192
-        height: 192
+        x: 418
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1093,21 +1093,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fc0
       internalID: 4032
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Jotunheim_R
       rect:
         serializedVersion: 2
-        x: 2112
-        y: 768
-        width: 192
-        height: 192
+        x: 836
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1115,21 +1115,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fc1
       internalID: 4033
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Jotunheim_BL
       rect:
         serializedVersion: 2
-        x: 1728
-        y: 576
-        width: 192
-        height: 192
+        x: 0
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1137,21 +1137,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fc2
       internalID: 4034
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Jotunheim_B
       rect:
         serializedVersion: 2
-        x: 1920
-        y: 576
-        width: 192
-        height: 192
+        x: 418
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1159,21 +1159,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fc3
       internalID: 4035
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Jotunheim_BR
       rect:
         serializedVersion: 2
-        x: 2112
-        y: 576
-        width: 192
-        height: 192
+        x: 836
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1181,21 +1181,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fc4
       internalID: 4036
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Midgard_TL
       rect:
         serializedVersion: 2
-        x: 2304
-        y: 960
-        width: 192
-        height: 192
+        x: 0
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1203,21 +1203,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fc5
       internalID: 4037
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Midgard_T
       rect:
         serializedVersion: 2
-        x: 2496
-        y: 960
-        width: 192
-        height: 192
+        x: 418
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1225,21 +1225,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fc6
       internalID: 4038
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Midgard_TR
       rect:
         serializedVersion: 2
-        x: 2688
-        y: 960
-        width: 192
-        height: 192
+        x: 836
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1247,21 +1247,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fc7
       internalID: 4039
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Midgard_L
       rect:
         serializedVersion: 2
-        x: 2304
-        y: 768
-        width: 192
-        height: 192
+        x: 0
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1269,21 +1269,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fc8
       internalID: 4040
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Midgard_C
       rect:
         serializedVersion: 2
-        x: 2496
-        y: 768
-        width: 192
-        height: 192
+        x: 418
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1291,21 +1291,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fc9
       internalID: 4041
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Midgard_R
       rect:
         serializedVersion: 2
-        x: 2688
-        y: 768
-        width: 192
-        height: 192
+        x: 836
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1313,21 +1313,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fca
       internalID: 4042
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Midgard_BL
       rect:
         serializedVersion: 2
-        x: 2304
-        y: 576
-        width: 192
-        height: 192
+        x: 0
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1335,21 +1335,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fcb
       internalID: 4043
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Midgard_B
       rect:
         serializedVersion: 2
-        x: 2496
-        y: 576
-        width: 192
-        height: 192
+        x: 418
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1357,21 +1357,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fcc
       internalID: 4044
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Midgard_BR
       rect:
         serializedVersion: 2
-        x: 2688
-        y: 576
-        width: 192
-        height: 192
+        x: 836
+        y: 0
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1379,7 +1379,7 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fcd
       internalID: 4045
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
@@ -1387,13 +1387,13 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 384
-        width: 192
-        height: 192
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1401,21 +1401,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fce
       internalID: 4046
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Nidavellir_T
       rect:
         serializedVersion: 2
-        x: 192
-        y: 384
-        width: 192
-        height: 192
+        x: 418
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1423,21 +1423,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fcf
       internalID: 4047
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Nidavellir_TR
       rect:
         serializedVersion: 2
-        x: 384
-        y: 384
-        width: 192
-        height: 192
+        x: 836
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1445,7 +1445,7 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fd0
       internalID: 4048
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
@@ -1453,13 +1453,13 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 192
-        width: 192
-        height: 192
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1467,21 +1467,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fd1
       internalID: 4049
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Nidavellir_C
       rect:
         serializedVersion: 2
-        x: 192
-        y: 192
-        width: 192
-        height: 192
+        x: 418
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1489,21 +1489,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fd2
       internalID: 4050
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Nidavellir_R
       rect:
         serializedVersion: 2
-        x: 384
-        y: 192
-        width: 192
-        height: 192
+        x: 836
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1511,7 +1511,7 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fd3
       internalID: 4051
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
@@ -1520,12 +1520,12 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1533,21 +1533,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fd4
       internalID: 4052
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Nidavellir_B
       rect:
         serializedVersion: 2
-        x: 192
+        x: 418
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1555,21 +1555,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fd5
       internalID: 4053
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Nidavellir_BR
       rect:
         serializedVersion: 2
-        x: 384
+        x: 836
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1577,21 +1577,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fd6
       internalID: 4054
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Niflheim_TL
       rect:
         serializedVersion: 2
-        x: 576
-        y: 384
-        width: 192
-        height: 192
+        x: 0
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1599,21 +1599,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fd7
       internalID: 4055
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Niflheim_T
       rect:
         serializedVersion: 2
-        x: 768
-        y: 384
-        width: 192
-        height: 192
+        x: 418
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1621,21 +1621,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fd8
       internalID: 4056
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Niflheim_TR
       rect:
         serializedVersion: 2
-        x: 960
-        y: 384
-        width: 192
-        height: 192
+        x: 836
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1643,21 +1643,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fd9
       internalID: 4057
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Niflheim_L
       rect:
         serializedVersion: 2
-        x: 576
-        y: 192
-        width: 192
-        height: 192
+        x: 0
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1665,21 +1665,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fda
       internalID: 4058
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Niflheim_C
       rect:
         serializedVersion: 2
-        x: 768
-        y: 192
-        width: 192
-        height: 192
+        x: 418
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1687,21 +1687,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fdb
       internalID: 4059
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Niflheim_R
       rect:
         serializedVersion: 2
-        x: 960
-        y: 192
-        width: 192
-        height: 192
+        x: 836
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1709,21 +1709,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fdc
       internalID: 4060
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Niflheim_BL
       rect:
         serializedVersion: 2
-        x: 576
+        x: 0
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1731,21 +1731,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fdd
       internalID: 4061
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Niflheim_B
       rect:
         serializedVersion: 2
-        x: 768
+        x: 418
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1753,21 +1753,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fde
       internalID: 4062
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Niflheim_BR
       rect:
         serializedVersion: 2
-        x: 960
+        x: 836
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1775,21 +1775,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fdf
       internalID: 4063
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Hel_TL
       rect:
         serializedVersion: 2
-        x: 1152
-        y: 384
-        width: 192
-        height: 192
+        x: 0
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1797,21 +1797,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fe0
       internalID: 4064
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Hel_T
       rect:
         serializedVersion: 2
-        x: 1344
-        y: 384
-        width: 192
-        height: 192
+        x: 418
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1819,21 +1819,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fe1
       internalID: 4065
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Hel_TR
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 384
-        width: 192
-        height: 192
+        x: 836
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1841,21 +1841,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fe2
       internalID: 4066
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Hel_L
       rect:
         serializedVersion: 2
-        x: 1152
-        y: 192
-        width: 192
-        height: 192
+        x: 0
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1863,21 +1863,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fe3
       internalID: 4067
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Hel_C
       rect:
         serializedVersion: 2
-        x: 1344
-        y: 192
-        width: 192
-        height: 192
+        x: 418
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1885,21 +1885,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fe4
       internalID: 4068
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Hel_R
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 192
-        width: 192
-        height: 192
+        x: 836
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1907,21 +1907,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fe5
       internalID: 4069
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Hel_BL
       rect:
         serializedVersion: 2
-        x: 1152
+        x: 0
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1929,21 +1929,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fe6
       internalID: 4070
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Hel_B
       rect:
         serializedVersion: 2
-        x: 1344
+        x: 418
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1951,21 +1951,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fe7
       internalID: 4071
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Hel_BR
       rect:
         serializedVersion: 2
-        x: 1536
+        x: 836
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1973,21 +1973,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fe8
       internalID: 4072
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Muspelheim_TL
       rect:
         serializedVersion: 2
-        x: 1728
-        y: 384
-        width: 192
-        height: 192
+        x: 0
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -1995,21 +1995,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fe9
       internalID: 4073
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Muspelheim_T
       rect:
         serializedVersion: 2
-        x: 1920
-        y: 384
-        width: 192
-        height: 192
+        x: 418
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2017,21 +2017,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fea
       internalID: 4074
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Muspelheim_TR
       rect:
         serializedVersion: 2
-        x: 2112
-        y: 384
-        width: 192
-        height: 192
+        x: 836
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2039,21 +2039,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00feb
       internalID: 4075
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Muspelheim_L
       rect:
         serializedVersion: 2
-        x: 1728
-        y: 192
-        width: 192
-        height: 192
+        x: 0
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2061,21 +2061,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fec
       internalID: 4076
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Muspelheim_C
       rect:
         serializedVersion: 2
-        x: 1920
-        y: 192
-        width: 192
-        height: 192
+        x: 418
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2083,21 +2083,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fed
       internalID: 4077
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Muspelheim_R
       rect:
         serializedVersion: 2
-        x: 2112
-        y: 192
-        width: 192
-        height: 192
+        x: 836
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2105,21 +2105,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fee
       internalID: 4078
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Muspelheim_BL
       rect:
         serializedVersion: 2
-        x: 1728
+        x: 0
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2127,21 +2127,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00fef
       internalID: 4079
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Muspelheim_B
       rect:
         serializedVersion: 2
-        x: 1920
+        x: 418
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2149,21 +2149,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00ff0
       internalID: 4080
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Muspelheim_BR
       rect:
         serializedVersion: 2
-        x: 2112
+        x: 836
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2171,21 +2171,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00ff1
       internalID: 4081
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Ragnarok_TL
       rect:
         serializedVersion: 2
-        x: 2304
-        y: 384
-        width: 192
-        height: 192
+        x: 0
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2193,21 +2193,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00ff2
       internalID: 4082
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Ragnarok_T
       rect:
         serializedVersion: 2
-        x: 2496
-        y: 384
-        width: 192
-        height: 192
+        x: 418
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2215,21 +2215,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00ff3
       internalID: 4083
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Ragnarok_TR
       rect:
         serializedVersion: 2
-        x: 2688
-        y: 384
-        width: 192
-        height: 192
+        x: 836
+        y: 836
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2237,21 +2237,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00ff4
       internalID: 4084
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Ragnarok_L
       rect:
         serializedVersion: 2
-        x: 2304
-        y: 192
-        width: 192
-        height: 192
+        x: 0
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2259,21 +2259,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00ff5
       internalID: 4085
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Ragnarok_C
       rect:
         serializedVersion: 2
-        x: 2496
-        y: 192
-        width: 192
-        height: 192
+        x: 418
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2281,21 +2281,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00ff6
       internalID: 4086
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Ragnarok_R
       rect:
         serializedVersion: 2
-        x: 2688
-        y: 192
-        width: 192
-        height: 192
+        x: 836
+        y: 418
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2303,21 +2303,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00ff7
       internalID: 4087
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Ragnarok_BL
       rect:
         serializedVersion: 2
-        x: 2304
+        x: 0
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2325,21 +2325,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00ff8
       internalID: 4088
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Ragnarok_B
       rect:
         serializedVersion: 2
-        x: 2496
+        x: 418
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2347,21 +2347,21 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00ff9
       internalID: 4089
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     - serializedVersion: 2
       name: Board_Ragnarok_BR
       rect:
         serializedVersion: 2
-        x: 2688
+        x: 836
         y: 0
-        width: 192
-        height: 192
+        width: 418
+        height: 418
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      customData:
+      customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
@@ -2369,113 +2369,115 @@ TextureImporter:
       spriteID: 6c579fae2b1d423bb4578c410fa00ffa
       internalID: 4090
       vertices: []
-      indices:
+      indices: 
       edges: []
       weights: []
     outline: []
-    customData:
+    customData: 
     physicsShape: []
     bones: []
-    spriteID:
+    spriteID: 
     internalID: 0
     vertices: []
-    indices:
+    indices: 
     edges: []
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Board_Asgard_TL: 4001
-      Board_Asgard_T: 4002
-      Board_Asgard_TR: 4003
-      Board_Asgard_L: 4004
-      Board_Asgard_C: 4005
-      Board_Asgard_R: 4006
-      Board_Asgard_BL: 4007
-      Board_Asgard_B: 4008
-      Board_Asgard_BR: 4009
-      Board_Vanaheim_TL: 4010
-      Board_Vanaheim_T: 4011
-      Board_Vanaheim_TR: 4012
-      Board_Vanaheim_L: 4013
-      Board_Vanaheim_C: 4014
-      Board_Vanaheim_R: 4015
-      Board_Vanaheim_BL: 4016
-      Board_Vanaheim_B: 4017
-      Board_Vanaheim_BR: 4018
-      Board_Alfheim_TL: 4019
-      Board_Alfheim_T: 4020
-      Board_Alfheim_TR: 4021
-      Board_Alfheim_L: 4022
-      Board_Alfheim_C: 4023
-      Board_Alfheim_R: 4024
-      Board_Alfheim_BL: 4025
       Board_Alfheim_B: 4026
+      Board_Alfheim_BL: 4025
       Board_Alfheim_BR: 4027
-      Board_Jotunheim_TL: 4028
-      Board_Jotunheim_T: 4029
-      Board_Jotunheim_TR: 4030
-      Board_Jotunheim_L: 4031
-      Board_Jotunheim_C: 4032
-      Board_Jotunheim_R: 4033
-      Board_Jotunheim_BL: 4034
-      Board_Jotunheim_B: 4035
-      Board_Jotunheim_BR: 4036
-      Board_Midgard_TL: 4037
-      Board_Midgard_T: 4038
-      Board_Midgard_TR: 4039
-      Board_Midgard_L: 4040
-      Board_Midgard_C: 4041
-      Board_Midgard_R: 4042
-      Board_Midgard_BL: 4043
-      Board_Midgard_B: 4044
-      Board_Midgard_BR: 4045
-      Board_Nidavellir_TL: 4046
-      Board_Nidavellir_T: 4047
-      Board_Nidavellir_TR: 4048
-      Board_Nidavellir_L: 4049
-      Board_Nidavellir_C: 4050
-      Board_Nidavellir_R: 4051
-      Board_Nidavellir_BL: 4052
-      Board_Nidavellir_B: 4053
-      Board_Nidavellir_BR: 4054
-      Board_Niflheim_TL: 4055
-      Board_Niflheim_T: 4056
-      Board_Niflheim_TR: 4057
-      Board_Niflheim_L: 4058
-      Board_Niflheim_C: 4059
-      Board_Niflheim_R: 4060
-      Board_Niflheim_BL: 4061
-      Board_Niflheim_B: 4062
-      Board_Niflheim_BR: 4063
-      Board_Hel_TL: 4064
-      Board_Hel_T: 4065
-      Board_Hel_TR: 4066
-      Board_Hel_L: 4067
-      Board_Hel_C: 4068
-      Board_Hel_R: 4069
-      Board_Hel_BL: 4070
+      Board_Alfheim_C: 4023
+      Board_Alfheim_L: 4022
+      Board_Alfheim_R: 4024
+      Board_Alfheim_T: 4020
+      Board_Alfheim_TL: 4019
+      Board_Alfheim_TR: 4021
+      Board_Asgard_B: 4008
+      Board_Asgard_BL: 4007
+      Board_Asgard_BR: 4009
+      Board_Asgard_C: 4005
+      Board_Asgard_L: 4004
+      Board_Asgard_R: 4006
+      Board_Asgard_T: 4002
+      Board_Asgard_TL: 4001
+      Board_Asgard_TR: 4003
       Board_Hel_B: 4071
+      Board_Hel_BL: 4070
       Board_Hel_BR: 4072
-      Board_Muspelheim_TL: 4073
-      Board_Muspelheim_T: 4074
-      Board_Muspelheim_TR: 4075
-      Board_Muspelheim_L: 4076
-      Board_Muspelheim_C: 4077
-      Board_Muspelheim_R: 4078
-      Board_Muspelheim_BL: 4079
+      Board_Hel_C: 4068
+      Board_Hel_L: 4067
+      Board_Hel_R: 4069
+      Board_Hel_T: 4065
+      Board_Hel_TL: 4064
+      Board_Hel_TR: 4066
+      Board_Jotunheim_B: 4035
+      Board_Jotunheim_BL: 4034
+      Board_Jotunheim_BR: 4036
+      Board_Jotunheim_C: 4032
+      Board_Jotunheim_L: 4031
+      Board_Jotunheim_R: 4033
+      Board_Jotunheim_T: 4029
+      Board_Jotunheim_TL: 4028
+      Board_Jotunheim_TR: 4030
+      Board_Midgard_B: 4044
+      Board_Midgard_BL: 4043
+      Board_Midgard_BR: 4045
+      Board_Midgard_C: 4041
+      Board_Midgard_L: 4040
+      Board_Midgard_R: 4042
+      Board_Midgard_T: 4038
+      Board_Midgard_TL: 4037
+      Board_Midgard_TR: 4039
       Board_Muspelheim_B: 4080
+      Board_Muspelheim_BL: 4079
       Board_Muspelheim_BR: 4081
-      Board_Ragnarok_TL: 4082
-      Board_Ragnarok_T: 4083
-      Board_Ragnarok_TR: 4084
-      Board_Ragnarok_L: 4085
-      Board_Ragnarok_C: 4086
-      Board_Ragnarok_R: 4087
-      Board_Ragnarok_BL: 4088
+      Board_Muspelheim_C: 4077
+      Board_Muspelheim_L: 4076
+      Board_Muspelheim_R: 4078
+      Board_Muspelheim_T: 4074
+      Board_Muspelheim_TL: 4073
+      Board_Muspelheim_TR: 4075
+      Board_Nidavellir_B: 4053
+      Board_Nidavellir_BL: 4052
+      Board_Nidavellir_BR: 4054
+      Board_Nidavellir_C: 4050
+      Board_Nidavellir_L: 4049
+      Board_Nidavellir_R: 4051
+      Board_Nidavellir_T: 4047
+      Board_Nidavellir_TL: 4046
+      Board_Nidavellir_TR: 4048
+      Board_Niflheim_B: 4062
+      Board_Niflheim_BL: 4061
+      Board_Niflheim_BR: 4063
+      Board_Niflheim_C: 4059
+      Board_Niflheim_L: 4058
+      Board_Niflheim_R: 4060
+      Board_Niflheim_T: 4056
+      Board_Niflheim_TL: 4055
+      Board_Niflheim_TR: 4057
       Board_Ragnarok_B: 4089
+      Board_Ragnarok_BL: 4088
       Board_Ragnarok_BR: 4090
+      Board_Ragnarok_C: 4086
+      Board_Ragnarok_L: 4085
+      Board_Ragnarok_R: 4087
+      Board_Ragnarok_T: 4083
+      Board_Ragnarok_TL: 4082
+      Board_Ragnarok_TR: 4084
+      Board_Vanaheim_B: 4017
+      Board_Vanaheim_BL: 4016
+      Board_Vanaheim_BR: 4018
+      Board_Vanaheim_C: 4014
+      Board_Vanaheim_L: 4013
+      Board_Vanaheim_R: 4015
+      Board_Vanaheim_T: 4011
+      Board_Vanaheim_TL: 4010
+      Board_Vanaheim_TR: 4012
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

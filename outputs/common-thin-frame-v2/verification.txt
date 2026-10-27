@@ -1,0 +1,4 @@
+﻿PASS: existing and plain frame straight-edge thickness both 20px.
+PASS: straight top-edge colours and alpha match the existing frame pixel-for-pixel.
+PASS: former corner ornament is removed; centre remains transparent.
+PASS: Sprite rect is 484x484 at 484 PPU, matching the existing frame display size.

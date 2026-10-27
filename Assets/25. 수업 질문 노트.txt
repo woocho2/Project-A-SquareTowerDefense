@@ -1441,3 +1441,29 @@ A. 함수가 자기 이름을 다시 부르면 끝없이 불러 StackOverflow(�
      public int GetCost(TowerColor color) => BalanceTables.GetColorUpgradeCost(GetLevel(color));  // 지금 레벨 → 비용표
      m_levels[(int)color]++;                                                                       // 배열 통째가 아니라 그 칸 하나를 올림
    배열 이름만 쓰면 "칸 5개 묶음 전체", 배열[번호]를 써야 "칸 하나".
+
+======================================================================
+수업 27. 규칙의 틀과 검 (2026-10-27)
+======================================================================
+
+Q. (SwordSplashSkill [A] [B]) "모르겠어.."
+A. 천지일섬 = "피해만 주는 시험 스킬(DamageOnlySkill)의 광역 쪽"과 똑같음. 거기서 두 줄을 그대로 가져오면 됨.
+     [A] return SkillArea.WholeMap(m_grid, m_occupancy);      // 어디를: 맵 전체의 적 목록
+     [B] ProjectileHitResolver.HitSingle(target, hit);        // 맞으면: 그 적에게 피해 한 번
+   GetArea는 List<ITarget>를 돌려주는 함수라 return이 꼭 있어야 함 (없으면 "값을 돌려주지 않음" 에러).
+   m_grid·m_occupancy는 부모(AttackSkill)가 가진 칸 정보 — protected라 자식도 그냥 씀.
+   피해 식·스택·치명은 부모의 Fire가 이미 계산해서 hit에 담아 줌. 문양 스킬은 "어디를"과 "맞으면 무엇을"만 정함.
+
+Q. (SwordTargetSkill [D]) HitSingle(target, slice/SliceCount)로 씀 — "d는 진짜 모르겠는데"
+A. slice는 숫자 하나가 아니라 꾸러미(struct): 공격자, 피해, 치명 여부, 속성 … 이 들어 있음. 꾸러미 통째로는 나눌 수 없음 (컴파일 에러).
+   나누는 것은 꾸러미 안의 피해 칸 하나 → 그게 [C]: slice.BaseDamage = hit.BaseDamage / SliceCount;
+   [C]에서 미리 잘라 뒀으니 [D]는 자른 꾸러미를 그대로 줌: ProjectileHitResolver.HitSingle(target, slice);
+   순서: 복사(slice = hit) → 피해 칸만 ÷24 ([C]) → 24번 주기 ([D]).
+   ("나.. 완전 초보라고.." → 설명이 또 너무 많았음. 비유 하나 + 칠 줄 두 개만으로 다시 설명함)
+   비유: slice는 택배 상자, 안에 "피해 20" 쪽지. 상자를 24로 자를 수는 없고, 쪽지의 숫자만 20/24로 고쳐 씀([C]). 그 상자를 24번 보냄([D]).
+
+Q. (SwordBuffRule [F]) 치명 블록(if (IsSynergy …) { … })을 통째로 복사해 FinalDamage로 바꿈 — "다 됐나?"
+A. 컴파일은 되지만 조건이 다름. 최종 피해 +10%는 "검강일 때(isSkill2)" 누구에게나, 치명 보너스는 "베기 타워일 때(IsSynergy)".
+   복사한 블록은 조건이 IsSynergy라 검기(스킬 1)인데도 베기 타워에 최종 피해가 붙고, 검강인데 활 타워에는 안 붙음.
+     if (isSkill2) modifiers.Add(StatModifier.Flat(source, StatType.FinalDamage, 0.1f));
+   따라 쓸 것은 modifiers.Add(…) 부분만, 앞의 조건은 빈칸 힌트에 적힌 것 (if (isSkill2)).

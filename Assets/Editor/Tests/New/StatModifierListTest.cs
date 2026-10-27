@@ -66,11 +66,11 @@ namespace SquareTD.Tests
         public void 출처로_지우면_그_출처의_것만_전부_지워짐()
         {
             var list = new StatModifierList();
-            list.Add(StatModifier.Percent("기사의 검", StatType.Power, 0.5f));
-            list.Add(StatModifier.Percent("기사의 검", StatType.CritRate, 0.1f));
+            list.Add(StatModifier.Percent("검기", StatType.Power, 0.5f));
+            list.Add(StatModifier.Percent("검기", StatType.CritRate, 0.1f));
             list.Add(StatModifier.Percent("공격력 타일", StatType.Power, 0.2f));
 
-            Assert.AreEqual(2, list.RemoveBySource("기사의 검"));
+            Assert.AreEqual(2, list.RemoveBySource("검기"));
             Assert.AreEqual(1, list.All.Count);
             Assert.AreEqual(12f, list.Apply(StatType.Power, 10f), 0.0001f);
             Assert.AreEqual(0f, list.Sum(StatType.CritRate).percent);

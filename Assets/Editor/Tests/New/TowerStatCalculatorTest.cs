@@ -170,14 +170,14 @@ namespace SquareTD.Tests
         [Test]
         public void 출처_퍼센트는_기본값_x_비율()
         {
-            TowerFinalStats stats = Calc(Def(5101), Def(1101), 1, StatModifier.Percent("기사의 검", StatType.Power, 0.5f));
+            TowerFinalStats stats = Calc(Def(5101), Def(1101), 1, StatModifier.Percent("검기", StatType.Power, 0.5f));
 
             Assert.AreEqual(150f, stats.GetBase(StatType.Power), 0.0001f);
             Assert.AreEqual(225f, stats.Power, 0.0001f);
             Assert.AreEqual(1, stats.Sources.Count);
-            Assert.AreEqual("기사의 검", stats.Sources[0].Source);
+            Assert.AreEqual("검기", stats.Sources[0].Source);
             Assert.AreEqual(StatType.Power, stats.Sources[0].Stat);
-            Assert.AreEqual(75f, stats.Sources[0].Amount, 0.0001f, "위력 225 = 기본 150 + 기사의 검 75");
+            Assert.AreEqual(75f, stats.Sources[0].Amount, 0.0001f, "위력 225 = 기본 150 + 검기 75");
         }
 
         [Test]

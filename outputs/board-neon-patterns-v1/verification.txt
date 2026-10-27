@@ -1,0 +1,7 @@
+﻿PASS: runtime C# source compilation.
+PASS: neon vertex/pixel shader compilation.
+CONFIG: 11 patterns; shuffled bags of 11; adjacent repeats prevented across bags.
+CONFIG: 6 seconds per pattern, 1-second smooth transition.
+CONFIG: directional brightness waves, world-circular radial waves, curved/interfering water waves.
+CONFIG: animation uses unscaled real time and per-renderer property blocks.
+NOT RUN: Unity playback/render validation.

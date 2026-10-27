@@ -1,0 +1,21 @@
+﻿{
+    "master":  "Axe_Base_Approved.png",
+    "master_canvas":  {
+                          "origin":  "top-left",
+                          "width":  1254,
+                          "height":  1254
+                      },
+    "source_landmarks":  {
+                             "bust_baseline_y":  1136
+                         },
+    "sprite_mapping":  {
+                           "uniform_scale":  0.38277511961722488,
+                           "padding_minimum":  16,
+                           "offset_x":  16,
+                           "offset_y":  47.167464114832512,
+                           "target_bust_baseline_y":  482,
+                           "cell_size":  512,
+                           "allow_independent_x_y_scale":  false
+                       },
+    "source_note":  "Exact user attachment is authoritative. Same canvas mapping as the sword atlas. Read-only patch comparison includes beard tip, not an inferred hidden chin."
+}

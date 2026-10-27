@@ -126,10 +126,10 @@ TextureImporter:
       name: Board_Decoration_Tower_Single
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 13
+        y: 13
+        width: 486
+        height: 486
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,13 +148,13 @@ TextureImporter:
       name: Board_Decoration_Tower_Sliced
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 13
+        y: 13
+        width: 486
+        height: 486
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 160, y: 160, z: 160, w: 160}
+      border: {x: 147, y: 147, z: 147, w: 147}
       customData: 
       outline: []
       physicsShape: []

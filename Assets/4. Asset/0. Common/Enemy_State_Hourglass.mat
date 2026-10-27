@@ -26,16 +26,16 @@ Material:
     m_TexEnvs:
     - _BackgroundTex:
         m_Texture: {fileID: 2800000, guid: 887a2b3fda8248ee8761c5268b098428, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+        m_Scale: {x: 0.9453125, y: 0.9453125}
+        m_Offset: {x: 0.02734375, y: 0.02734375}
     - _BadgeTex:
         m_Texture: {fileID: 2800000, guid: d3aff716901d4f9b8ebceb216533c91c, type: 3}
         m_Scale: {x: 0.33333334, y: 0.5}
         m_Offset: {x: 0.6666667, y: 0}
     - _DecorationTex:
         m_Texture: {fileID: 2800000, guid: fdea12801c584d78a0a6c49e41916f49, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+        m_Scale: {x: 0.9453125, y: 0.9453125}
+        m_Offset: {x: 0.02734375, y: 0.02734375}
     - _EquipmentMask:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}

@@ -78,7 +78,7 @@ namespace SquareTD.Tests
         public void 다른_출처의_수정자는_건드리지_않음()
         {
             var list = new StatModifierList();
-            list.Add(StatModifier.Percent("기사의 검", StatType.Power, 0.5f));
+            list.Add(StatModifier.Percent("검기", StatType.Power, 0.5f));
             SpawnTileEffects.Apply(list, SpawnTileType.Power);
             SpawnTileEffects.Apply(list, SpawnTileType.None);
 

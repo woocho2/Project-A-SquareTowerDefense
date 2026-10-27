@@ -1,0 +1,59 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace SquareTD
+{
+    public abstract class TowerAction
+    {
+        protected readonly BoardGrid m_grid;
+        protected readonly PathOccupancy m_occupancy;
+        protected readonly IProjectileLauncher m_launcher;
+        public virtual void OnMoved(TowerController tower) { }
+        public virtual void OnRemoved(TowerController tower) { }
+
+        protected TowerAction(BoardGrid grid, PathOccupancy occupancy, IProjectileLauncher launcher)
+        {
+            m_grid = grid;
+            m_occupancy = occupancy;
+            m_launcher = launcher;
+        }
+
+        public abstract bool CanAct(TowerController tower, TowerFinalStats stats);
+        public abstract IEnumerator Act(TowerController tower, TowerFinalStats stats, AttackHandle handle);
+
+        protected List<ITarget> CollectTargetsInRange(TowerController tower, int range)
+        {
+            return CollectTargetsInSquare(m_grid.GetSpawnCell(tower.SlotIndex), range);
+        }
+
+        protected List<ITarget> CollectTargetsInSquare(Vector3Int center, int radius)
+        {
+            var targets = new List<ITarget>();
+            foreach (int index in m_grid.GetPathIndicesInSquare(center, radius))
+            {
+                targets.AddRange(m_occupancy.GetAt(index));
+            }
+            return targets;
+        }
+
+        protected DamageInfo MakeBasicHit(TowerController tower, TowerFinalStats stats, ITarget target, bool isCritical)
+        {
+            float critMultiplier = isCritical ? CriticalRoll.Multiplier(stats.CriticalDamage) : 1f;
+            Vector3Int from = m_grid.GetSpawnCell(tower.SlotIndex);
+            Vector3Int to = m_grid.GetPathCell(target.PathIndex);
+
+            return new DamageInfo
+            {
+                Attacker = tower,
+                Source = DamageSource.Basic,
+                Emblem = tower.Definition.Emblem,
+                Attribute = tower.Definition.Attribute,
+                BaseDamage = DamageCalculator.GetOutgoing(stats.Power, 1f, critMultiplier) * stats.FinalDamageMultiplier,
+                IsCritical = isCritical,
+                CritMultiplier = critMultiplier,
+                Distance = BoardGrid.GetTileDistance(from, to),
+            };
+        }
+    }
+}

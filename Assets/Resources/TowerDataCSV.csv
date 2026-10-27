@@ -1,5 +1,5 @@
 ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCount,criticalRate,criticalDamage,duration,abilityValue,attackType,buffTarget,debuffTarget,Speed,HitEffectID,TargetPriority
-1101,히어로,1.4,1,3,1,1,0,0.05,0.7,5,1.5,Splash,None,None,5,101,Closest
+1101,검성,1.4,1,3,1,1,0,0.05,0.7,5,1.5,Splash,None,None,5,101,Closest
 1102,바이킹,2.1,1,5,1,1,0,0.03,1.05,5,1.5,Splash,None,None,5,102,Closest
 1103,레인저,0.98,4,3,1,1,0,0.055,0.49,5,1.5,Splash,None,None,5,103,Closest
 1104,워로드,1.12,3,3,1,1,0,0.075,0.42,5,1.5,Splash,None,None,5,104,Closest
@@ -27,7 +27,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 1212,썬더버드,2.66,3,2,1,0,1,0.12,0.135,8,1.5,Target,None,None,10,212,Closest
 1213,위습,2.28,4,1,1,0,1,0.195,0.09,8,1.5,Target,None,None,10,213,Closest
 1214,셰이드,4.94,2,3,1,0,1,0.15,0.195,8,1.5,Target,None,None,10,214,Closest
-1301,팔라딘,2,1,3,1,0,0,0,0,3,10,Buff,Sword,None,0,301,Closest
+1301,검선,2,1,3,1,0,0,0,0,3,10,Buff,Sword,None,0,301,Closest
 1302,스칼드,3,1,5,1,0,0,0,0,3,10,Buff,Axe,None,0,302,Closest
 1303,엘프,1.4,4,3,1,0,0,0,0,3,10,Buff,Bow,None,0,303,Closest
 1304,랜서,1.6,3,3,1,0,0,0,0,3,10,Buff,Spear,None,0,304,Closest
@@ -41,7 +41,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 1312,키린,1.4,3,2,1,0,0,0,0,3,10,Buff,Electricity,None,0,312,Closest
 1313,비숍,1.2,4,1,1,0,0,0,0,3,10,Buff,Light,None,0,313,Closest
 1314,헬레틱,2.6,2,3,1,0,0,0,0,3,10,Buff,Darkness,None,0,314,Closest
-1401,데스나이트,2,1,3,1,0,0,0,0,3,10,Debuff,None,Sword,0,401,Closest
+1401,검귀,2,1,3,1,0,0,0,0,3,10,Debuff,None,Sword,0,401,Closest
 1402,집행관,3,1,5,1,0,0,0,0,3,10,Debuff,None,Axe,0,402,Closest
 1403,스나이퍼,1.4,4,3,1,0,0,0,0,3,10,Debuff,None,Bow,0,403,Closest
 1404,임페일러,1.6,3,3,1,0,0,0,0,3,10,Debuff,None,Spear,0,404,Closest
@@ -55,7 +55,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 1412,라이트닝 울프,1.4,3,2,1,0,0,0,0,3,10,Debuff,None,Electricity,0,412,Closest
 1413,루시퍼,1.2,4,1,1,0,0,0,0,3,10,Debuff,None,Light,0,413,Closest
 1414,레이스,2.6,2,3,1,0,0,0,0,3,10,Debuff,None,Darkness,0,414,Closest
-2101,히어로,1.4,1,2,1,1,0,0.05,0.7,5,1.5,Splash,None,None,5,101,Closest
+2101,검성,1.4,1,2,1,1,0,0.05,0.7,5,1.5,Splash,None,None,5,101,Closest
 2102,바이킹,2.1,1,4,1,1,0,0.03,1.05,5,1.5,Splash,None,None,5,102,Closest
 2103,레인저,0.98,4,2,1,1,0,0.055,0.49,5,1.5,Splash,None,None,5,103,Closest
 2104,워로드,1.12,3,2,1,1,0,0.075,0.42,5,1.5,Splash,None,None,5,104,Closest
@@ -83,7 +83,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 2212,썬더버드,2.66,3,1,1,0,1,0.12,0.135,8,1.5,Target,None,None,10,212,Closest
 2213,위습,2.28,4,1,1,0,1,0.195,0.09,8,1.5,Target,None,None,10,213,Closest
 2214,셰이드,4.94,2,2,1,0,1,0.15,0.195,8,1.5,Target,None,None,10,214,Closest
-2301,팔라딘,2,1,2,1,0,0,0,0,3,10,Buff,Sword,None,0,301,Closest
+2301,검선,2,1,2,1,0,0,0,0,3,10,Buff,Sword,None,0,301,Closest
 2302,스칼드,3,1,4,1,0,0,0,0,3,10,Buff,Axe,None,0,302,Closest
 2303,엘프,1.4,4,2,1,0,0,0,0,3,10,Buff,Bow,None,0,303,Closest
 2304,랜서,1.6,3,2,1,0,0,0,0,3,10,Buff,Spear,None,0,304,Closest
@@ -97,7 +97,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 2312,키린,1.4,3,1,1,0,0,0,0,3,10,Buff,Electricity,None,0,312,Closest
 2313,비숍,1.2,4,1,1,0,0,0,0,3,10,Buff,Light,None,0,313,Closest
 2314,헬레틱,2.6,2,2,1,0,0,0,0,3,10,Buff,Darkness,None,0,314,Closest
-2401,데스나이트,2,1,2,1,0,0,0,0,3,10,Debuff,None,Sword,0,401,Closest
+2401,검귀,2,1,2,1,0,0,0,0,3,10,Debuff,None,Sword,0,401,Closest
 2402,집행관,3,1,4,1,0,0,0,0,3,10,Debuff,None,Axe,0,402,Closest
 2403,스나이퍼,1.4,4,2,1,0,0,0,0,3,10,Debuff,None,Bow,0,403,Closest
 2404,임페일러,1.6,3,2,1,0,0,0,0,3,10,Debuff,None,Spear,0,404,Closest
@@ -111,7 +111,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 2412,라이트닝 울프,1.4,3,1,1,0,0,0,0,3,10,Debuff,None,Electricity,0,412,Closest
 2413,루시퍼,1.2,4,1,1,0,0,0,0,3,10,Debuff,None,Light,0,413,Closest
 2414,레이스,2.6,2,2,1,0,0,0,0,3,10,Debuff,None,Darkness,0,414,Closest
-3101,히어로,2.8,2,2,1,1,0,0.05,0.7,5,1.5,Splash,None,None,5,101,Closest
+3101,검성,2.8,2,2,1,1,0,0.05,0.7,5,1.5,Splash,None,None,5,101,Closest
 3102,바이킹,4.2,2,4,1,1,0,0.03,1.05,5,1.5,Splash,None,None,5,102,Closest
 3103,레인저,1.96,5,2,1,1,0,0.055,0.49,5,1.5,Splash,None,None,5,103,Closest
 3104,워로드,2.24,4,2,1,1,0,0.075,0.42,5,1.5,Splash,None,None,5,104,Closest
@@ -139,7 +139,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 3212,썬더버드,5.32,4,1,1,0,1,0.12,0.135,8,1.5,Target,None,None,10,212,Closest
 3213,위습,4.56,5,1,1,0,1,0.195,0.09,8,1.5,Target,None,None,10,213,Closest
 3214,셰이드,9.88,3,2,1,0,1,0.15,0.195,8,1.5,Target,None,None,10,214,Closest
-3301,팔라딘,4,1,2,1,0,0,0,0,3,10,Buff,Sword,None,0,301,Closest
+3301,검선,4,1,2,1,0,0,0,0,3,10,Buff,Sword,None,0,301,Closest
 3302,스칼드,6,1,4,1,0,0,0,0,3,10,Buff,Axe,None,0,302,Closest
 3303,엘프,2.8,4,2,1,0,0,0,0,3,10,Buff,Bow,None,0,303,Closest
 3304,랜서,3.2,3,2,1,0,0,0,0,3,10,Buff,Spear,None,0,304,Closest
@@ -153,7 +153,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 3312,키린,2.8,3,1,1,0,0,0,0,3,10,Buff,Electricity,None,0,312,Closest
 3313,비숍,2.4,4,1,1,0,0,0,0,3,10,Buff,Light,None,0,313,Closest
 3314,헬레틱,5.2,2,2,1,0,0,0,0,3,10,Buff,Darkness,None,0,314,Closest
-3401,데스나이트,4,1,2,1,0,0,0,0,3,10,Debuff,None,Sword,0,401,Closest
+3401,검귀,4,1,2,1,0,0,0,0,3,10,Debuff,None,Sword,0,401,Closest
 3402,집행관,6,1,4,1,0,0,0,0,3,10,Debuff,None,Axe,0,402,Closest
 3403,스나이퍼,2.8,4,2,1,0,0,0,0,3,10,Debuff,None,Bow,0,403,Closest
 3404,임페일러,3.2,3,2,1,0,0,0,0,3,10,Debuff,None,Spear,0,404,Closest
@@ -167,7 +167,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 3412,라이트닝 울프,2.8,3,1,1,0,0,0,0,3,10,Debuff,None,Electricity,0,412,Closest
 3413,루시퍼,2.4,4,1,1,0,0,0,0,3,10,Debuff,None,Light,0,413,Closest
 3414,레이스,5.2,2,2,1,0,0,0,0,3,10,Debuff,None,Darkness,0,414,Closest
-4101,히어로,2.8,2,2,1,1,0,0.1,1.4,5,1.5,Splash,None,None,5,101,Closest
+4101,검성,2.8,2,2,1,1,0,0.1,1.4,5,1.5,Splash,None,None,5,101,Closest
 4102,바이킹,4.2,2,4,1,1,0,0.06,2.1,5,1.5,Splash,None,None,5,102,Closest
 4103,레인저,1.96,5,2,1,1,0,0.11,0.98,5,1.5,Splash,None,None,5,103,Closest
 4104,워로드,2.24,4,2,1,1,0,0.15,0.84,5,1.5,Splash,None,None,5,104,Closest
@@ -195,7 +195,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 4212,썬더버드,5.32,4,1,1,0,1,0.24,0.27,8,1.5,Target,None,None,10,212,Closest
 4213,위습,4.56,5,1,1,0,1,0.39,0.18,8,1.5,Target,None,None,10,213,Closest
 4214,셰이드,9.88,3,2,1,0,1,0.3,0.39,8,1.5,Target,None,None,10,214,Closest
-4301,팔라딘,4,2,2,1,0,0,0,0,3,10,Buff,Sword,None,0,301,Closest
+4301,검선,4,2,2,1,0,0,0,0,3,10,Buff,Sword,None,0,301,Closest
 4302,스칼드,6,2,4,1,0,0,0,0,3,10,Buff,Axe,None,0,302,Closest
 4303,엘프,2.8,5,2,1,0,0,0,0,3,10,Buff,Bow,None,0,303,Closest
 4304,랜서,3.2,4,2,1,0,0,0,0,3,10,Buff,Spear,None,0,304,Closest
@@ -209,7 +209,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 4312,키린,2.8,4,1,1,0,0,0,0,3,10,Buff,Electricity,None,0,312,Closest
 4313,비숍,2.4,5,1,1,0,0,0,0,3,10,Buff,Light,None,0,313,Closest
 4314,헬레틱,5.2,3,2,1,0,0,0,0,3,10,Buff,Darkness,None,0,314,Closest
-4401,데스나이트,4,2,2,1,0,0,0,0,3,10,Debuff,None,Sword,0,401,Closest
+4401,검귀,4,2,2,1,0,0,0,0,3,10,Debuff,None,Sword,0,401,Closest
 4402,집행관,6,2,4,1,0,0,0,0,3,10,Debuff,None,Axe,0,402,Closest
 4403,스나이퍼,2.8,5,2,1,0,0,0,0,3,10,Debuff,None,Bow,0,403,Closest
 4404,임페일러,3.2,4,2,1,0,0,0,0,3,10,Debuff,None,Spear,0,404,Closest
@@ -223,7 +223,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 4412,라이트닝 울프,2.8,4,1,1,0,0,0,0,3,10,Debuff,None,Electricity,0,412,Closest
 4413,루시퍼,2.4,5,1,1,0,0,0,0,3,10,Debuff,None,Light,0,413,Closest
 4414,레이스,5.2,3,2,1,0,0,0,0,3,10,Debuff,None,Darkness,0,414,Closest
-5101,히어로,2.8,2,1,2,1,0,0.1,1.4,5,1.5,Splash,None,None,5,101,Closest
+5101,검성,2.8,2,1,2,1,0,0.1,1.4,5,1.5,Splash,None,None,5,101,Closest
 5102,바이킹,4.2,2,3,2,1,0,0.06,2.1,5,1.5,Splash,None,None,5,102,Closest
 5103,레인저,1.96,5,1,2,1,0,0.11,0.98,5,1.5,Splash,None,None,5,103,Closest
 5104,워로드,2.24,4,1,2,1,0,0.15,0.84,5,1.5,Splash,None,None,5,104,Closest
@@ -251,7 +251,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 5212,썬더버드,5.32,4,1,4,0,1,0.24,0.27,8,1.5,Target,None,None,10,212,Closest
 5213,위습,4.56,5,1,2,0,1,0.39,0.18,8,1.5,Target,None,None,10,213,Closest
 5214,셰이드,9.88,3,1,3,0,1,0.3,0.39,8,1.5,Target,None,None,10,214,Closest
-5301,팔라딘,4,2,1,1,0,0,0,0,6,3,Buff,Sword,None,0,301,Closest
+5301,검선,4,2,1,1,0,0,0,0,6,3,Buff,Sword,None,0,301,Closest
 5302,스칼드,6,2,3,1,0,0,0,0,6,3,Buff,Axe,None,0,302,Closest
 5303,엘프,2.8,5,1,1,0,0,0,0,6,3,Buff,Bow,None,0,303,Closest
 5304,랜서,3.2,4,1,1,0,0,0,0,6,3,Buff,Spear,None,0,304,Closest
@@ -265,7 +265,7 @@ ID,Name,attackDamage,attackRange,Action,attackCount,SplashRadius,AdditionalHitCo
 5312,키린,2.8,4,1,1,0,0,0,0,6,3,Buff,Electricity,None,0,312,Closest
 5313,비숍,2.4,5,1,1,0,0,0,0,6,3,Buff,Light,None,0,313,Closest
 5314,헬레틱,5.2,3,1,1,0,0,0,0,6,3,Buff,Darkness,None,0,314,Closest
-5401,데스나이트,4,2,1,1,0,0,0,0,6,3,Debuff,None,Sword,0,401,Closest
+5401,검귀,4,2,1,1,0,0,0,0,6,3,Debuff,None,Sword,0,401,Closest
 5402,집행관,6,2,3,1,0,0,0,0,6,3,Debuff,None,Axe,0,402,Closest
 5403,스나이퍼,2.8,5,1,1,0,0,0,0,6,3,Debuff,None,Bow,0,403,Closest
 5404,임페일러,3.2,4,1,1,0,0,0,0,6,3,Debuff,None,Spear,0,404,Closest

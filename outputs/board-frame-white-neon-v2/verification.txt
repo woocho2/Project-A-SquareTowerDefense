@@ -1,0 +1,6 @@
+﻿PASS: 90 original sprite identities retained.
+PASS: every sprite slice still measures 1.5 world units.
+PASS: production PNG is an exact copy of the built-in image-generation result.
+PASS: all 19 BoardFrame assets still use the original atlas GUID.
+PASS: Stage1 board grid material is connected.
+PASS: grid vertex and pixel shader compilation.

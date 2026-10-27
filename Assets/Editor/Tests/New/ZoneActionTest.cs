@@ -6,8 +6,11 @@ using UnityEngine;
 namespace SquareTD.Tests
 {
     // 수업 26 2단계: 버프·디버프 타워의 행동, 존 버프 받기, 디버프존 밟기 (시험 규칙: 위력 +10% / 방어 −10%, 스킬 2면 두 배)
+    //   수업 27부터 문양마다 규칙이 생김 → 아직 규칙이 없는 어둠 문양으로 시험 규칙을 봄 (수업 40에서 시험 규칙과 함께 바꿈)
     public class ZoneActionTest
     {
+        private const TowerEmblem TestEmblem = TowerEmblem.Darkness;
+
         private GameObject m_root;
         private BoardGrid m_grid;                   // 길 5칸, 스폰 3칸
         private PathOccupancy m_occupancy;
@@ -38,7 +41,7 @@ namespace SquareTD.Tests
             var go = new GameObject($"{color} {slot}");
             go.transform.SetParent(m_root.transform);
             var tower = go.AddComponent<TowerController>();
-            var definition = new TowerDefinition(TowerId.Make(tier, color, TowerEmblem.Sword), 10f, 2, 3, attackCount, 0f, 0f, 1, 60, 5, 2f, 5f, TargetPriority.Closest);
+            var definition = new TowerDefinition(TowerId.Make(tier, color, TestEmblem), 10f, 2, 3, attackCount, 0f, 0f, 1, 60, 5, 2f, 5f, TargetPriority.Closest);
             tower.Init(definition, slot, action);
             m_slots.Remove(slot);
             m_slots.TryPlace(tower, slot);
@@ -259,7 +262,7 @@ namespace SquareTD.Tests
             DebuffZoneAction.Step(zone, enemy, m_zones);
             Assert.AreEqual(10f, zone.Stack, 0.0001f);
             Assert.AreEqual(90f, enemy.Stats.Get(StatType.Defense), 0.0001f, "시험 규칙 스킬 1: 방어 −10%");
-            Assert.IsTrue(enemy.Status.Has(EmblemDebuffEffect.KeyOf(TowerEmblem.Sword)));
+            Assert.IsTrue(enemy.Status.Has(EmblemDebuffEffect.KeyOf(TestEmblem)));
         }
 
         [Test]
