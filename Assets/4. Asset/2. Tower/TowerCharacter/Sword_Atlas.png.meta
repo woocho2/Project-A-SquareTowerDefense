@@ -223,6 +223,94 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Tower_Sword_Hero_Face_v1
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 675
+        width: 224
+        height: 224
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a07a33cb900243198de511672761f7ee
+      internalID: 52014
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tower_Sword_Swordsman_Face_v1
+      rect:
+        serializedVersion: 2
+        x: 602
+        y: 690
+        width: 224
+        height: 224
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80e47bde80dd460193598a9f4b1ee68e
+      internalID: 52015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tower_Sword_Paladin_Face_v1
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 234
+        width: 224
+        height: 224
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 723f745e63ba47adb04b507cadef1e25
+      internalID: 52016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tower_Sword_DeathKnight_Face_v1
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 212
+        width: 224
+        height: 224
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcbfc7e107ce48048f442376f31daf48
+      internalID: 52017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -241,6 +329,10 @@ TextureImporter:
       Tower_Sword_Hero_Front_v2: 52010
       Tower_Sword_Paladin_Front_v2: 52012
       Tower_Sword_Swordsman_Front_v2: 52011
+      Tower_Sword_Hero_Face_v1: 52014
+      Tower_Sword_Swordsman_Face_v1: 52015
+      Tower_Sword_Paladin_Face_v1: 52016
+      Tower_Sword_DeathKnight_Face_v1: 52017
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

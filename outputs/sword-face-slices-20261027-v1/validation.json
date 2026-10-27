@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-27",
+  "project": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense",
+  "pngSha256": "134469d999ba96a8177fbac86e951c7a847d0c8dd677b4e47fcc217a15d02cd3",
+  "pngUnchanged": true,
+  "changes": [
+    {
+      "path": "Assets/4. Asset/2. Tower/TowerCharacter/Sword_Atlas.png.meta",
+      "beforeSha256": "57463c79e3f4905ee25ce8f15db4fba331750feb61a00055df6547520ac1f722",
+      "afterSha256": "7dd9e9f6376e8f4db1b47a117d4f605a6197517c588f03b161be809305a6edc7",
+      "preparedPath": "C:/Users/user/Documents/Codex/2026-10-22/sladk/work/sword-face-slices-20261027/prepared/Assets/4. Asset/2. Tower/TowerCharacter/Sword_Atlas.png.meta"
+    },
+    {
+      "path": "Assets/Resources/TowerCharacterCatalog.asset",
+      "beforeSha256": "13980e2628f7975c017aab145699765f68d232ab06d07f8fed352bee6511999b",
+      "afterSha256": "42c2cca22bb4073c5465c2fa53372eef9c49c3354a4612f86489020031b199c5",
+      "preparedPath": "C:/Users/user/Documents/Codex/2026-10-22/sladk/work/sword-face-slices-20261027/prepared/Assets/Resources/TowerCharacterCatalog.asset"
+    },
+    {
+      "path": "Assets/3. Scripts/05. Tower/TowerCharacterCatalog.cs",
+      "beforeSha256": "58b8de8f3894f48a55a17de62389a7089a240e1dcbd3e4c09080836d11b5b56d",
+      "afterSha256": "9c8473aa4305e09f55f30b6ac7a56e132c607814655a109ecc20ca43c2c6b372",
+      "preparedPath": "C:/Users/user/Documents/Codex/2026-10-22/sladk/work/sword-face-slices-20261027/prepared/Assets/3. Scripts/05. Tower/TowerCharacterCatalog.cs"
+    },
+    {
+      "path": "Assets/3. Scripts/05. Tower/TowerVisual.cs",
+      "beforeSha256": "aa04fa3e0c23c0b0bebcb8c9948a6a46022ba615edabb816930b81daab0dd1c1",
+      "afterSha256": "67760c6ca477683cb45743332c1a654ef7f2f5341a92aa064878d4b6c89ef2ee",
+      "preparedPath": "C:/Users/user/Documents/Codex/2026-10-22/sladk/work/sword-face-slices-20261027/prepared/Assets/3. Scripts/05. Tower/TowerVisual.cs"
+    },
+    {
+      "path": "Assets/3. Scripts/11. UI/TowerInfoPanel.cs",
+      "beforeSha256": "7331e088df16bd555773dbb0a2e21457615ae028b2cd6edd1e633daacd76d673",
+      "afterSha256": "f0b5e92b4d058c365bbb7b5a152011cc79b166f66049b3f83de60e53da0864ac",
+      "preparedPath": "C:/Users/user/Documents/Codex/2026-10-22/sladk/work/sword-face-slices-20261027/prepared/Assets/3. Scripts/11. UI/TowerInfoPanel.cs"
+    },
+    {
+      "path": "codex 에셋파일 생성기준규칙.txt",
+      "beforeSha256": "8da0c1c942c66eb5275707bd8982650b82854bf6c49b03c122685e3fde0dc2bd",
+      "afterSha256": "117e9a6b34bbf530a9bd8ecefae78e1edf7f2e838fe785be33374c360afb91d4",
+      "preparedPath": "C:/Users/user/Documents/Codex/2026-10-22/sladk/work/sword-face-slices-20261027/prepared/codex 에셋파일 생성기준규칙.txt"
+    }
+  ],
+  "newSlices": [
+    {
+      "role": "Splash",
+      "name": "Tower_Sword_Hero_Face_v1",
+      "fileId": 52014,
+      "spriteId": "a07a33cb900243198de511672761f7ee",
+      "x": 140,
+      "y": 675,
+      "width": 224,
+      "height": 224
+    },
+    {
+      "role": "Target",
+      "name": "Tower_Sword_Swordsman_Face_v1",
+      "fileId": 52015,
+      "spriteId": "80e47bde80dd460193598a9f4b1ee68e",
+      "x": 602,
+      "y": 690,
+      "width": 224,
+      "height": 224
+    },
+    {
+      "role": "Buff",
+      "name": "Tower_Sword_Paladin_Face_v1",
+      "fileId": 52016,
+      "spriteId": "723f745e63ba47adb04b507cadef1e25",
+      "x": 138,
+      "y": 234,
+      "width": 224,
+      "height": 224
+    },
+    {
+      "role": "Debuff",
+      "name": "Tower_Sword_DeathKnight_Face_v1",
+      "fileId": 52017,
+      "spriteId": "fcbfc7e107ce48048f442376f31daf48",
+      "x": 584,
+      "y": 212,
+      "width": 224,
+      "height": 224
+    }
+  ],
+  "existingFullSprites": [
+    52010,
+    52011,
+    52012,
+    52013
+  ],
+  "zoom": 2.2857142857142856,
+  "unityPlayVerified": false,
+  "verification": {
+    "compiler": "Unity 6000.3.9f1 Roslyn with existing editor response-file references",
+    "compilePassed": true,
+    "originalFourSlicesUnchanged": true,
+    "otherEmblemEntriesUnchanged": true,
+    "allFaceRectsSquare": true,
+    "faceRectsWithinOriginalCells": true,
+    "sourceMetaHashes": {
+      "Assets/Resources/TowerCharacterCatalog.asset.meta": "ff9cea443325c83f97b73fe1633fabbe7a9a5c665b51f4f9eb0dd5c9b693a825",
+      "Assets/3. Scripts/05. Tower/TowerCharacterCatalog.cs.meta": "cda594303858fe0406415cc1d57c3d9cf0106b4f4ef41d801e7be8fda5f0c244",
+      "Assets/3. Scripts/05. Tower/TowerVisual.cs.meta": "f80811bd960f33aabd6cf1a4d8d32b386a753aab69c0d451f19a0bae3a78b5f5",
+      "Assets/3. Scripts/11. UI/TowerInfoPanel.cs.meta": "fc010ffb9f0a10df7d48ed73a99e0231c78d996c491b446c714d1a823052f0f3"
+    }
+  }
+}

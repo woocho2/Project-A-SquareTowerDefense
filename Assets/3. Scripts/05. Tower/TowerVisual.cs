@@ -35,6 +35,7 @@ namespace SquareTD
         private int m_appliedVisualID;
         public bool UsesCharacterVisual { get; private set; }
         public Sprite CharacterSprite => m_characterRenderer != null ? m_characterRenderer.sprite : null;
+        public Sprite IllustrationSprite { get; private set; }
         public Sprite ProjectileEmblemSprite => GetSprite(m_emblemSprites, m_appliedVisualID % 100);
         public Color ProjectileEmblemColor => GetEmblemColor((m_appliedVisualID % 1000) / 100);
         public Sprite TierSprite => m_appliedTowerID / 1000 == 6
@@ -67,6 +68,9 @@ namespace SquareTD
                     m_regularCharacters = Resources.Load<TowerCharacterCatalog>("TowerCharacterCatalog");
                 if (m_regularCharacters != null) portrait = m_regularCharacters.GetCharacter(towerID % 100, attack);
             }
+            IllustrationSprite = portrait;
+            if (IsRegular && m_regularCharacters != null)
+                portrait = m_regularCharacters.GetTowerCharacter(towerID % 100, attack);
             float canvasSize = synergy ? m_synergyCanvasWorldSize : m_canvasWorldSize;
             Sprite background = m_backgroundRenderer != null ? m_backgroundRenderer.sprite : null;
             Sprite decoration = m_decorationRenderer != null ? m_decorationRenderer.sprite : null;

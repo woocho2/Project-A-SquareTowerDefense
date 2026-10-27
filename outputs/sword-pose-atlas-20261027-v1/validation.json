@@ -1,0 +1,134 @@
+{
+  "date": "2026-10-27",
+  "source": "C:/Users/user/.codex/generated_images/01a15f0c-c4b1-71c1-b9f7-86acfcc12394/exec-ea2c5d52-2550-43ed-9a3a-61f5b6afaede.png",
+  "target": "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Sword_Atlas.png",
+  "beforeSha256": "23073e6341f7e6d781f61719a58e1fde471f7be3d1ec65f8db3a9386570a7bfa",
+  "preparedSha256": "134469d999ba96a8177fbac86e951c7a847d0c8dd677b4e47fcc217a15d02cd3",
+  "metaSha256": "57463c79e3f4905ee25ce8f15db4fba331750feb61a00055df6547520ac1f722",
+  "guid": "69ef51cd58244ba0b749572a967a4d02",
+  "spriteIds": [
+    52010,
+    52011,
+    52012,
+    52013
+  ],
+  "spriteReports": [
+    {
+      "role": "Sword_Splash",
+      "sourceBounds": {
+        "left": 26,
+        "top": 18,
+        "width": 623,
+        "height": 601
+      },
+      "scale": 0.759493670886076,
+      "placed": {
+        "x": 19,
+        "y": 26,
+        "width": 473,
+        "height": 456
+      }
+    },
+    {
+      "role": "Sword_Target",
+      "sourceBounds": {
+        "left": 656,
+        "top": 103,
+        "width": 583,
+        "height": 525
+      },
+      "scale": 0.759493670886076,
+      "placed": {
+        "x": 34,
+        "y": 83,
+        "width": 443,
+        "height": 399
+      }
+    },
+    {
+      "role": "Sword_Buff",
+      "sourceBounds": {
+        "left": 18,
+        "top": 653,
+        "width": 632,
+        "height": 563
+      },
+      "scale": 0.759493670886076,
+      "placed": {
+        "x": 16,
+        "y": 54,
+        "width": 480,
+        "height": 428
+      }
+    },
+    {
+      "role": "Sword_Debuff",
+      "sourceBounds": {
+        "left": 667,
+        "top": 660,
+        "width": 572,
+        "height": 555
+      },
+      "scale": 0.759493670886076,
+      "placed": {
+        "x": 39,
+        "y": 60,
+        "width": 434,
+        "height": 422
+      }
+    }
+  ],
+  "marginResults": [
+    {
+      "cell": 0,
+      "alphaBounds": {
+        "left": 19,
+        "top": 26,
+        "right": 491,
+        "bottom": 481
+      },
+      "edgePixels": 0,
+      "pass": true
+    },
+    {
+      "cell": 1,
+      "alphaBounds": {
+        "left": 34,
+        "top": 83,
+        "right": 476,
+        "bottom": 481
+      },
+      "edgePixels": 0,
+      "pass": true
+    },
+    {
+      "cell": 2,
+      "alphaBounds": {
+        "left": 16,
+        "top": 54,
+        "right": 495,
+        "bottom": 481
+      },
+      "edgePixels": 0,
+      "pass": true
+    },
+    {
+      "cell": 3,
+      "alphaBounds": {
+        "left": 39,
+        "top": 60,
+        "right": 472,
+        "bottom": 481
+      },
+      "edgePixels": 0,
+      "pass": true
+    }
+  ],
+  "rulesBeforeSha256": "faadd8f9b8c9398cbe0eb1bf24de4001483d1559abb8badc4e4ce41e740c6778",
+  "referenceHashes": {
+    "Assets/Resources/TowerCharacterCatalog.asset": "13980e2628f7975c017aab145699765f68d232ab06d07f8fed352bee6511999b",
+    "Assets/Resources/TowerCharacterCatalog_Old.asset": "39d6b41bea5d5df5ca9ef6a3adb906ddaccf52e0ce4bae4cdf20db26527157e0",
+    "Assets/2. Prefab/1. Tower.prefab": "5b87146d945b1d97981b1338031ef12ec98916f0b840e5c216481242ac9e77c2",
+    "Assets/2. Prefab/UICanvas.prefab": "0f2d92a69a493af33dec9b061b0691fe5f1a46f21beb1d541f4c68c6d6d626f5"
+  }
+}

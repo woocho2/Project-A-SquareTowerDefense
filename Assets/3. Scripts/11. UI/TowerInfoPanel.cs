@@ -208,7 +208,7 @@ namespace SquareTD
                 int tier = definition.Tier;
                 int attackIndex = TowerId.IsSynergy(definition.Id) ? -1 : (int)definition.Color - 1;
                 cardView.SetArtwork(
-                    towerVisual != null ? towerVisual.CharacterSprite : null,
+                    towerVisual != null ? towerVisual.IllustrationSprite : null,
                     towerVisual != null ? towerVisual.ProjectileEmblemSprite : null,
                     towerVisual != null ? towerVisual.TierSprite : null,
                     towerVisual != null ? towerVisual.TierColor : Color.white,
