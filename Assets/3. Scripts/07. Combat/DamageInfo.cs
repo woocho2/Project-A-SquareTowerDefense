@@ -15,6 +15,7 @@ namespace SquareTD
         public int Distance;
         public bool ChangesMovement;
         public bool ForceFixed;
+        public float StunChance;        // 이 공격의 기절 확률 (0 ~ 1). 배쉬 0.2 (수업 31)
     }
 
     public struct KillInfo

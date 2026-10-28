@@ -30,7 +30,7 @@ namespace SquareTD
             EnemyManager.Instance.CountChanged += HandleCountChanged;
             CurrencyManager.Instance.Changed += UpdateCurrencyText;
             TurnManager.Instance.EnemyTurnEnded += HandleEnemyTurnEnded;
-            // 수업 31 · 32: 도끼·방패 버프의 한도 보정이 생기면 img_shield(방어막)를 켜고 끔
+            // 수업 28 · 31: 도끼·방패 버프의 한도 보정이 생기면 img_shield(방어막)를 켜고 끔
             // 수업 43: GameSpeed.Changed += UpdateGameSpeedText
 
             if (btn_option != null) btn_option.onClick.AddListener(HandleOptionClick);

@@ -37,6 +37,15 @@ namespace SquareTD
             if (Stack >= maxStack) Stage = ZoneStage.Skill2;            
         }
 
+        // 스택을 타워가 쌓는 문양(방패, 수업 31): 타워의 스택을 그대로 옮겨 적음. 한 번 스킬 2가 되면 그대로
+        public void SetStack(float stack, int maxStack)
+        {
+            if (Stage == ZoneStage.Skill2) return;
+
+            Stack = System.Math.Min(stack, maxStack);
+            if (Stack >= maxStack) Stage = ZoneStage.Skill2;
+        }
+
         public void ResetIfSkill1()
         {
             if (Stage == ZoneStage.Skill1) Stack = 0f;

@@ -7,7 +7,7 @@ namespace SquareTD
     //   ① 적 머리 위 높이 거대한 도끼가 날을 아래로 하고 나타남 → 더 높이 들리며 부들부들 (힘 모으기)
     //   ② 잔상을 남기며 수직으로 내리꽂힘
     //   ③ 박힌 채 멈칫 → 굵은 세로 베기 + 큰 균열 · 충격파 · 파편 · 먼지 + 강한 화면 흔들림
-    //   ④ 버서커에게 붉은 분노 기운이 이글거림 (쪼개기 강화가 유지되는 동안 — 규칙은 수업 31. 지금은 m_rageDuration초)
+    //   ④ 버서커에게 붉은 분노 기운이 이글거림 (쪼개기 강화가 유지되는 동안 — 규칙은 수업 28. 지금은 m_rageDuration초)
     //   타워·규칙은 모름. 타워 위치·맞을 위치·칸 크기만 받아서 그림
     [DisallowMultipleComponent]
     public sealed class AxeTargetSkillEffect : MonoBehaviour

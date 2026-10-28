@@ -18,8 +18,8 @@ namespace SquareTD
         {
             return new Dictionary<int, IShotEffect>
             {
-                { 101, EffectSpace.Make<SwordSplashAttackEffect>(parent, "Sword Saint Attack Effect") },   // 검성 (광역 검)
-                { 201, EffectSpace.Make<SwordTargetAttackEffect>(parent, "Swordsman Attack Effect") },     // 검객 (단일 검)
+                { 101, EffectSpace.Make<SwordSplashAttackEffect>(parent, "Sword Saint Attack Effect") },   // 소드 마스터 (광역 검)
+                { 201, EffectSpace.Make<SwordTargetAttackEffect>(parent, "Swordsman Attack Effect") },     // 블레이드 댄서 (단일 검)
                 { 102, EffectSpace.Make<AxeSplashAttackEffect>(parent, "Viking Attack Effect") },          // 바이킹 (광역 도끼)
                 { 202, EffectSpace.Make<AxeTargetAttackEffect>(parent, "Berserker Attack Effect") },       // 버서커 (단일 도끼)
                 { 103, EffectSpace.Make<ArrowSplashAttackEffect>(parent, "Ranger Attack Effect") },        // 레인저 (광역 활)
@@ -56,30 +56,58 @@ namespace SquareTD
             switch ((owner.Definition.Emblem, owner.Definition.Color))
             {
                 case (TowerEmblem.Axe, TowerColor.Red):
-                    s_axeSplash.Play(from, center, SplashAction.GetAreaSide(owner.Stats.Mastery) * cell, cell);   // 바이킹 강타
+                    s_axeSplash.Play(from, from, (owner.Stats.Range * 2 + 1) * cell, cell);         // 바이킹 대회전: 타워 자리에서 사거리 전체 (회전 연출은 따로 만들 때까지 옛 내려찍기)
                     break;
                 case (TowerEmblem.Sword, TowerColor.Red):
-                    s_swordSplash.Play(Camera.main, from, hitPositions, cell);                         // 검성 천지일섬
+                    s_swordSplash.Play(Camera.main, from, hitPositions, cell, Illustration(owner));    // 소드 마스터 보이드 슬래시 (컷인은 스킬을 쓴 타워)
                     break;
                 case (TowerEmblem.Sword, TowerColor.Blue):
-                    s_swordTarget.Play(hitPositions[0], cell);                                       // 검객 이십사수매화검법
+                    s_swordTarget.Play(hitPositions[0], cell);                                       // 블레이드 댄서 블레이드 템페스트
                     break;
                 case (TowerEmblem.Axe, TowerColor.Blue):
                     s_axeTarget.Play(from, hitPositions[0], cell);                                   // 버서커 쪼개기
-                    break;
-                case (TowerEmblem.Bow, TowerColor.Red):
-                    s_bowSplash.Play(Camera.main, from, hitPositions, cell);                         // 레인저 화살비 (맵 전체)
                     break;
                 case (TowerEmblem.Bow, TowerColor.Blue):
                     s_bowTarget.Play(from, hitPositions[0], cell);                                   // 헌터 은화살
                     break;
                 case (TowerEmblem.Spear, TowerColor.Red):
-                    s_spearSplash.Play(Camera.main, from, center, hitPositions, cell);               // 워로드 선두 지휘
+                    s_spearSplash.Play(Camera.main, from, center, hitPositions, cell);               // 워로드 옛 선두 지휘(줄 돌격) — 용맹한 깃창은 피해가 없어 여기 안 옴. 깃창 연출은 PlayCast에 새로
                     break;
                 case (TowerEmblem.Spear, TowerColor.Blue):
                     s_spearTarget.Play(from, hitPositions[0], cell);                                 // 창술사 뽑아찢기
                     break;
             }
+        }
+
+        // 피해 대신 다른 일을 하는 스킬의 발동 연출 (AttackSkill.CastInstead): 화살비 쏘아 올리기. 광폭화는 아직 없음
+        public static void PlayCast(TowerController owner)
+        {
+            if (!Application.isPlaying || owner == null) return;
+
+            EnsureHolder();
+            float cell = EffectSpace.CellWorldSize();
+            switch ((owner.Definition.Emblem, owner.Definition.Color))
+            {
+                case (TowerEmblem.Bow, TowerColor.Red):
+                    s_bowSplash.PlayVolley(Camera.main, owner.transform.position, cell);             // 레인저 화살비: 하늘로 쏘아 올림
+                    break;
+            }
+        }
+
+        // ⑤ 화살비가 떨어짐 (ArrowRainGround). owner는 그사이 팔렸으면 null
+        public static void PlayArrowRain(TowerController owner, IReadOnlyList<Vector3> hitPositions)
+        {
+            if (!Application.isPlaying) return;
+
+            EnsureHolder();
+            s_bowSplash.PlayRain(Camera.main, hitPositions, EffectSpace.CellWorldSize());
+        }
+
+        // 스킬 컷인에 띄울 그 타워의 일러스트 (TowerVisual이 카탈로그에서 고른 그림)
+        private static Sprite Illustration(TowerController owner)
+        {
+            TowerVisual visual = owner.GetComponent<TowerVisual>();
+            return visual != null ? visual.IllustrationSprite : null;
         }
 
         private static void EnsureHolder()

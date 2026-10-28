@@ -122,6 +122,7 @@ namespace SquareTD
             values[(int)StatType.Duration] = Mathf.Max(1, values[(int)StatType.Duration]);
             values[(int)StatType.MaxStack] = Mathf.Max(1, values[(int)StatType.MaxStack]);            
             values[(int)StatType.CritRate] = Mathf.Min(1, values[(int)StatType.CritRate]);
+            values[(int)StatType.ArmorPenetration] = Mathf.Clamp01(values[(int)StatType.ArmorPenetration]);
         }
     }
 }

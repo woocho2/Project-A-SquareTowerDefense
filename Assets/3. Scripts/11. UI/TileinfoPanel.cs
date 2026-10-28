@@ -5,122 +5,227 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
+    // 타일 정보 카드 (2026-10-28 카드형으로 다시 씀)
+    //   앞면: 고른 칸에 걸린 버프·디버프 목록 (특수 타일, 버프존·디버프존). 한 줄씩 버튼
+    //   항목을 누르면 카드가 뒤집히며 뒷면에 그 효과의 자세한 설명. 뒷면을 누르면 앞면으로
+    //   칸 이름은 머리(앞·뒤 공통). 존이 바뀌거나 스택이 오르면 다시 그림 (ZoneChanged, 적 턴 끝)
     public class TileinfoPanel : MonoBehaviour
     {
-        [Header("버프 목록")]
-        [SerializeField] ScrollRect m_buffScrollRect;
-        [SerializeField] RectTransform m_buffContent;
-        [SerializeField] GameObject m_buffEntryPrefab;
-        [SerializeField] float m_buffStartY = 150f;
+        [Header("머리 (앞·뒤 공통)")]
+        [SerializeField] TextMeshProUGUI m_title;
 
-        [Header("디버프 목록")]
-        [SerializeField] ScrollRect m_debuffScrollRect;
-        [SerializeField] RectTransform m_debuffContent;
-        [SerializeField] GameObject m_debuffEntryPrefab;
-        [SerializeField] float m_debuffStartY = 105f;
+        [Header("앞면: 버프·디버프 목록")]
+        [SerializeField] GameObject m_front;
+        [SerializeField] ScrollRect m_list;
+        [SerializeField] RectTransform m_listContent;
+        [Tooltip("목록 한 줄의 틀 (꺼 둔 채로 둠. 이것을 복사해서 씀)")]
+        [SerializeField] Button m_entryTemplate;
+        [SerializeField] float m_entryHeight = 58f;
+        [SerializeField] float m_entrySpacing = 6f;
+        [SerializeField] Color m_buffColor = new Color(1f, 0.92f, 0.65f);
+        [SerializeField] Color m_debuffColor = new Color(0.85f, 0.72f, 1f);
 
-        [Header("항목 배치")]
-        [SerializeField] float m_entrySpacing = 75f;
+        [Header("뒷면: 고른 효과의 자세한 설명")]
+        [SerializeField] GameObject m_back;
+        [SerializeField] TextMeshProUGUI m_detailTitle;
+        [SerializeField] TextMeshProUGUI m_detailText;
+        [Tooltip("누르면 앞면으로 (뒷면 바탕)")]
+        [SerializeField] Graphic m_backArea;
 
-        private readonly List<GameObject> m_spawnedBuffEntries = new List<GameObject>();
-        private readonly List<GameObject> m_spawnedDebuffEntries = new List<GameObject>();
+        private struct Entry
+        {
+            public string Title;
+            public string Summary;
+            public string Detail;
+            public bool IsDebuff;
+        }
 
-        public GameObject BuffEntryPrefab => m_buffEntryPrefab;
+        private readonly List<GameObject> m_spawned = new List<GameObject>();
+        private bool m_subscribed;
+
+        // EnemyInfoPanel이 버프 목록 줄의 틀로 빌려 씀
+        public GameObject BuffEntryPrefab => m_entryTemplate != null ? m_entryTemplate.gameObject : null;
+
+        private void Start()
+        {
+            if (m_backArea != null)
+            {
+                m_backArea.raycastTarget = true;
+                Button button = m_backArea.GetComponent<Button>();
+                if (button == null) button = m_backArea.gameObject.AddComponent<Button>();
+                button.targetGraphic = m_backArea;
+                button.onClick.AddListener(FlipToFront);
+            }
+        }
 
         private void OnEnable()
         {
+            ShowFront();
             if (UIManager.Instance == null) return;
 
-            UIManager.Instance.SelectedTileChanged += UpdateTileInfo;
-            // 수업 26: ZoneRegistry.ZoneChanged += 지금 보는 칸의 존이 바뀌면 UpdateTileInfo
-            if (UIManager.Instance.HasSelectedTile) UpdateTileInfo();
+            if (!m_subscribed)
+            {
+                UIManager.Instance.SelectedTileChanged += Refresh;
+                if (BoardManager.Instance != null) BoardManager.Instance.Zones.ZoneChanged += HandleZoneChanged;
+                if (TurnManager.Instance != null) TurnManager.Instance.EnemyTurnEnded += HandleEnemyTurnEnded;
+                m_subscribed = true;
+            }
+            if (UIManager.Instance.HasSelectedTile) Refresh();
         }
 
         private void OnDisable()
         {
-            if (UIManager.Instance != null) UIManager.Instance.SelectedTileChanged -= UpdateTileInfo;
+            if (!m_subscribed) return;
+            if (UIManager.Instance != null) UIManager.Instance.SelectedTileChanged -= Refresh;
+            if (BoardManager.Instance != null) BoardManager.Instance.Zones.ZoneChanged -= HandleZoneChanged;
+            if (TurnManager.Instance != null) TurnManager.Instance.EnemyTurnEnded -= HandleEnemyTurnEnded;
+            m_subscribed = false;
         }
 
-        private void UpdateTileInfo()
+        private void HandleZoneChanged(Zone zone) => Refresh();
+        private void HandleEnemyTurnEnded(int turn) => Refresh();        // 존의 스택은 오를 때 알림이 없어 턴이 끝날 때 다시 그림
+
+        private void Refresh()
         {
-            ClearEntries(m_spawnedBuffEntries);
-            ClearEntries(m_spawnedDebuffEntries);
-
-            var buffDescriptions = new List<string>();
-            var debuffDescriptions = new List<string>();
-
+            if (UIManager.Instance == null || BoardManager.Instance == null) return;
             int pathIndex = UIManager.Instance.SelectedPathIndex;
             int spawnIndex = UIManager.Instance.SelectedSpawnIndex;
 
-            if (spawnIndex >= 0) AddTowerTileDescriptions(spawnIndex, buffDescriptions);
-            else if (pathIndex >= 0) AddPathTileDescriptions(pathIndex, buffDescriptions, debuffDescriptions);
+            var entries = new List<Entry>();
+            if (spawnIndex >= 0) CollectSpawn(spawnIndex, entries);
+            else if (pathIndex >= 0) CollectPath(pathIndex, entries);
 
-            if (buffDescriptions.Count == 0) buffDescriptions.Add("특수 효과 없음\n이 칸에는 맵 효과와 버프존이 없습니다.");
-            if (debuffDescriptions.Count == 0 && spawnIndex < 0) debuffDescriptions.Add("디버프존 없음\n이 칸에는 디버프존이 없습니다.");
-
-            RectTransform buffContent = m_buffScrollRect != null && m_buffScrollRect.content != null ? m_buffScrollRect.content : m_buffContent;
-            RectTransform debuffContent = m_debuffScrollRect != null && m_debuffScrollRect.content != null ? m_debuffScrollRect.content : m_debuffContent;
-
-            CreateEntries(m_buffEntryPrefab, buffContent, buffDescriptions, m_buffStartY, m_spawnedBuffEntries);
-            CreateEntries(m_debuffEntryPrefab, debuffContent, debuffDescriptions, m_debuffStartY, m_spawnedDebuffEntries);
-
-            if (m_buffScrollRect != null) m_buffScrollRect.verticalNormalizedPosition = 1f;
-            if (m_debuffScrollRect != null) m_debuffScrollRect.verticalNormalizedPosition = 1f;
+            if (m_title != null) m_title.text = spawnIndex >= 0 ? $"스폰 {spawnIndex}번 칸" : pathIndex >= 0 ? $"길 {pathIndex}번 칸" : "-";
+            BuildList(entries);
         }
 
-        private void AddTowerTileDescriptions(int spawnIndex, List<string> buffDescriptions)
-        {
-            string tile = SpecialTileText.Describe(BoardManager.Instance.Tiles.GetSpawnTile(spawnIndex));
-            if (tile != null) buffDescriptions.Add(tile);
-            // 수업 26: 이 칸의 버프존들 (문양, 단계, 스택)
-            //   foreach (Zone zone in BoardManager.Instance.Zones.GetAtSpawn(spawnIndex)) buffDescriptions.Add(StatusTextFormatter.Describe(zone));
-        }
-
-        private void AddPathTileDescriptions(int pathIndex, List<string> buffDescriptions, List<string> debuffDescriptions)
+        private static void CollectSpawn(int spawnIndex, List<Entry> entries)
         {
             BoardManager board = BoardManager.Instance;
-            string tile = SpecialTileText.Describe(board.Tiles.GetPathTile(pathIndex), pathIndex, board.Grid);
-            if (tile != null) buffDescriptions.Add(tile);
-            // 수업 26: 이 칸의 디버프존들
-            //   foreach (Zone zone in BoardManager.Instance.Zones.GetAtPath(pathIndex)) debuffDescriptions.Add(StatusTextFormatter.Describe(zone));
-            // 수업 29 · 40: 이 칸에 깔린 장판 (화살비, 블랙홀)
+            AddTile(SpecialTileText.Describe(board.Tiles.GetSpawnTile(spawnIndex)), entries);
+            foreach (Zone zone in board.Zones.GetAtSpawn(spawnIndex)) entries.Add(ZoneEntry(zone));
         }
 
-        private void CreateEntries(GameObject entryPrefab, RectTransform content, List<string> descriptions, float startY, List<GameObject> spawnedEntries)
+        private static void CollectPath(int pathIndex, List<Entry> entries)
         {
-            if (entryPrefab == null || content == null) return;
-
-            for (int index = 0; index < descriptions.Count; index++)
-            {
-                GameObject entry = Instantiate(entryPrefab, content);
-                entry.name = $"{entryPrefab.name}_{index + 1}";
-                entry.SetActive(true);
-
-                RectTransform entryRect = entry.GetComponent<RectTransform>();
-                if (entryRect != null)
-                    entryRect.anchoredPosition = new Vector2(entryRect.anchoredPosition.x, startY - m_entrySpacing * index);
-
-                TextMeshProUGUI text = entry.GetComponentInChildren<TextMeshProUGUI>(true);
-                if (text != null) text.text = descriptions[index];
-                else Debug.LogWarning($"[TileinfoPanel] {entryPrefab.name} 프리팹에서 TextMeshProUGUI를 찾지 못함");
-
-                spawnedEntries.Add(entry);
-            }
-
-            if (descriptions.Count > 0)
-            {
-                float requiredHeight = Mathf.Abs(startY - m_entrySpacing * (descriptions.Count - 1)) + m_entrySpacing;
-                content.sizeDelta = new Vector2(content.sizeDelta.x, Mathf.Max(content.sizeDelta.y, requiredHeight));
-            }
+            BoardManager board = BoardManager.Instance;
+            AddTile(SpecialTileText.Describe(board.Tiles.GetPathTile(pathIndex), pathIndex, board.Grid), entries);
+            foreach (Zone zone in board.Zones.GetAtPath(pathIndex)) entries.Add(ZoneEntry(zone));
+            foreach (GroundEffect ground in board.Grounds.GetAt(pathIndex)) entries.Add(GroundEntry(ground));    // 깔린 장판 (화살비, 수업 40 블랙홀)
         }
 
-        private static void ClearEntries(List<GameObject> entries)
+        private static Entry GroundEntry(GroundEffect ground)
         {
-            foreach (GameObject entry in entries)
+            string owner = ground.Owner != null ? ground.Owner.name : "-";
+            string description = ground.Describe();
+            return new Entry
             {
-                if (entry != null) Destroy(entry);
+                Title = description.Split(':')[0],
+                Summary = $"{ground.RemainingTurns}턴 남음",
+                Detail = $"{description}\n쏜 타워: {owner}",
+                IsDebuff = true,
+            };
+        }
+
+        // 특수 타일 글은 "이름\n설명" — 첫 줄이 제목
+        private static void AddTile(string description, List<Entry> entries)
+        {
+            if (string.IsNullOrEmpty(description)) return;
+            string[] lines = description.Split(new[] { '\n' }, 2);
+            entries.Add(new Entry
+            {
+                Title = lines[0],
+                Summary = lines.Length > 1 ? lines[1] : "",
+                Detail = description,
+                IsDebuff = false,
+            });
+        }
+
+        private static Entry ZoneEntry(Zone zone)
+        {
+            string emblem = EmblemNames.GetEmblemName(zone.Emblem);
+            string kind = zone.IsBuff ? "버프존" : "디버프존";
+            string stageName = SkillDescriptions.GetZoneStageName(zone);
+            int maxStack = zone.Owner != null ? zone.Owner.Stats.Stack : 0;
+            string progress = zone.Stage == ZoneStage.Skill2 ? "스킬 2 (다 참)" : $"스킬 1 · 스택 {zone.Stack:0.#} / {maxStack}";
+            string owner = zone.Owner != null ? zone.Owner.name : "-";
+            string rule = zone.Owner != null ? SkillDescriptions.GetDescription(zone.Owner.Definition, zone.Owner.Stats) : "";
+
+            return new Entry
+            {
+                Title = $"{emblem} {kind} · {stageName}",
+                Summary = progress,
+                Detail = $"{emblem} {kind} · {stageName}\n{progress}\n존 주인: {owner}\n\n{rule}",
+                IsDebuff = !zone.IsBuff,
+            };
+        }
+
+        private void BuildList(List<Entry> entries)
+        {
+            foreach (GameObject spawned in m_spawned)
+            {
+                if (spawned != null) Destroy(spawned);
             }
-            entries.Clear();
+            m_spawned.Clear();
+            if (m_entryTemplate == null || m_listContent == null) return;
+
+            if (entries.Count == 0)
+            {
+                entries.Add(new Entry { Title = "효과 없음", Summary = "이 칸에는 특수 타일과 존이 없습니다.", Detail = "이 칸에는 특수 타일과 존이 없습니다." });
+            }
+
+            for (int i = 0; i < entries.Count; i++)
+            {
+                Entry entry = entries[i];
+                Button button = Instantiate(m_entryTemplate, m_listContent);
+                button.name = $"Entry_{i + 1}";
+                button.gameObject.SetActive(true);
+
+                var rect = (RectTransform)button.transform;
+                rect.anchoredPosition = new Vector2(0f, -m_entrySpacing - i * (m_entryHeight + m_entrySpacing));
+                rect.sizeDelta = new Vector2(rect.sizeDelta.x, m_entryHeight);
+
+                if (button.targetGraphic != null) button.targetGraphic.color = entry.IsDebuff ? m_debuffColor : m_buffColor;
+                TextMeshProUGUI text = button.GetComponentInChildren<TextMeshProUGUI>(true);
+                if (text != null) text.text = string.IsNullOrEmpty(entry.Summary) ? $"<b>{entry.Title}</b>" : $"<b>{entry.Title}</b>\n<size=80%>{entry.Summary}</size>";
+
+                button.onClick.AddListener(() => ShowDetail(entry));
+                m_spawned.Add(button.gameObject);
+            }
+
+            m_listContent.sizeDelta = new Vector2(m_listContent.sizeDelta.x, entries.Count * (m_entryHeight + m_entrySpacing) + m_entrySpacing);
+            if (m_list != null) m_list.verticalNormalizedPosition = 1f;
+        }
+
+        // 항목을 누름 → 카드가 뒤집히며 뒷면에 설명
+        private void ShowDetail(Entry entry)
+        {
+            if (m_detailTitle != null) m_detailTitle.text = entry.Title;
+            if (m_detailText != null) m_detailText.text = entry.Detail;
+            if (m_front == null || m_back == null) return;
+            CardFlip.Flip(transform, () =>
+            {
+                m_front.SetActive(false);
+                m_back.SetActive(true);
+            });
+        }
+
+        private void FlipToFront()
+        {
+            if (m_front == null || m_back == null || m_front.activeSelf) return;
+            CardFlip.Flip(transform, () =>
+            {
+                m_back.SetActive(false);
+                m_front.SetActive(true);
+            });
+        }
+
+        private void ShowFront()
+        {
+            DG.Tweening.DOTween.Kill(transform, true);
+            transform.localRotation = Quaternion.identity;
+            if (m_front != null) m_front.SetActive(true);
+            if (m_back != null) m_back.SetActive(false);
         }
     }
 }

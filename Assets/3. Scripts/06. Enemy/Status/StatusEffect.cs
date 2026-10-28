@@ -24,8 +24,8 @@ namespace SquareTD
         }
 
         public virtual IReadOnlyList<StatModifier> GetModifiers() => Array.Empty<StatModifier>();     // 걸려 있는 동안의 스탯 수정자 (출처는 Key로)
-        public virtual void OnAdded(EnemyController enemy) { }                                        // 목록에 들어간 순간 한 번 (귀기: 최대 체력 줄이기)
-        public virtual void OnRemoved(EnemyController enemy) { }                                      // 목록에서 빠질 때 — 끝남·정화·더 센 것으로 바뀜 (귀기: 되돌리기)
+        public virtual void OnAdded(EnemyController enemy) { }                                        // 목록에 들어간 순간 한 번 (둠: 최대 체력 줄이기)
+        public virtual void OnRemoved(EnemyController enemy) { }                                      // 목록에서 빠질 때 — 끝남·정화·더 센 것으로 바뀜 (둠: 되돌리기)
         public virtual void OnEnemyTurnStart(EnemyController enemy) { }                               // ⓪ (빛: 도깨비불 비우기)
         public virtual MoveRange OnDecideMove(EnemyController enemy, MoveRange range) => range;      // 다음 이동을 정할 때 (행동 불가 0 / 0, 역풍)
         public virtual void OnMoved(EnemyController enemy, int steps) { }                             // 이동한 뒤 (난기류, 프리즘)
@@ -33,7 +33,9 @@ namespace SquareTD
         public virtual void OnTurn(EnemyController enemy) { }                                         // ⑤ 매 턴 (지속 피해, 빙결 확률)
         public virtual void OnBeforeHit(EnemyController enemy, ref DamageInfo info) { }               // 맞기 전 (락 온: 치명 확률)
         public virtual float ModifyIncomingDamage(EnemyController enemy, DamageInfo info, float damage) => damage;   // 피해 계산에 끼어듦
-        public virtual void OnDamageTaken(EnemyController enemy, DamageInfo info, float damage) { }  // 피해가 들어간 뒤 (처형)
+        public virtual void OnDamageTaken(EnemyController enemy, DamageInfo info, float damage) { }  // 피해가 들어간 뒤 (사형 집행)
+        public virtual float GetCritRateBonus(TowerController attacker) => 0f;                      // 이 적을 치는 공격의 치명 확률 + (락 온·핀 포인트)
+        public virtual float GetStunChanceBonus(DamageInfo info) => 0f;                              // 이 적을 치는 공격의 기절 확률 + (서프레스·락다운)
         public virtual void OnExpire(EnemyController enemy) { }                                       // 유지가 끝날 때 (해동)
         public virtual void OnDeath(EnemyController enemy, KillInfo kill) { }                         // 그 적이 죽을 때 (원석·금맥)
 

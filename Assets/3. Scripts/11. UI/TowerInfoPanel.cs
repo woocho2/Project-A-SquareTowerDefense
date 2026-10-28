@@ -52,6 +52,16 @@ namespace SquareTD
         [SerializeField] Button btn_consumeStack;
         [SerializeField] Button btn_pickAttackCell;
 
+        [Header("카드 앞·뒤 (2026-10-28) — 앞: 스탯 칸·스킬 칸의 수치 / 뒤: 기본 공격·스킬 설명")]
+        [SerializeField] GameObject m_front;
+        [SerializeField] GameObject m_back;
+        [Tooltip("누르면 카드가 뒤집히는 자리 (앞·뒤의 스탯 칸·스킬 칸 바탕)")]
+        [SerializeField] Graphic[] m_flipAreas = Array.Empty<Graphic>();
+        [Tooltip("스킬 칸 제목 (앞·뒤): \"보이드 슬래시 · 액티브\"")]
+        [SerializeField] TextMeshProUGUI[] txt_skillTitles = Array.Empty<TextMeshProUGUI>();
+        [Tooltip("타워 그림 (타워 아틀라스의 일러스트)")]
+        [SerializeField] Image img_portrait;
+
         private const string UnusedStatText = "-";
 
         private static readonly TargetPriority[] s_targetPriorityOrder =
@@ -71,6 +81,7 @@ namespace SquareTD
         {
             BindCardView();
             if (cardView != null) cardView.ResetToFront();
+            ShowFront();
             Subscribe();
 
             if (UIManager.Instance != null) m_selectedTower = UIManager.Instance.SelectedTower;
@@ -95,8 +106,41 @@ namespace SquareTD
             if (btn_sellTower != null) btn_sellTower.onClick.AddListener(HandleSellTowerClick);
             if (btn_consumeStack != null) btn_consumeStack.onClick.AddListener(HandleConsumeStackClick);
             if (btn_pickAttackCell != null) btn_pickAttackCell.onClick.AddListener(HandlePickAttackCellClick);
+            foreach (Graphic area in m_flipAreas) MakeFlipButton(area);
 
             Subscribe();
+        }
+
+        // ── 카드 앞·뒤 ──
+
+        // 스탯 칸·스킬 칸 바탕을 누르면 뒤집히게 (버튼이 없으면 붙임)
+        private void MakeFlipButton(Graphic area)
+        {
+            if (area == null) return;
+            area.raycastTarget = true;
+            Button button = area.GetComponent<Button>();
+            if (button == null) button = area.gameObject.AddComponent<Button>();
+            button.targetGraphic = area;
+            button.onClick.AddListener(FlipCard);
+        }
+
+        private void FlipCard()
+        {
+            if (m_front == null || m_back == null) return;
+            bool toBack = m_front.activeSelf;
+            CardFlip.Flip(transform, () =>
+            {
+                m_front.SetActive(!toBack);
+                m_back.SetActive(toBack);
+            });
+        }
+
+        private void ShowFront()
+        {
+            DG.Tweening.DOTween.Kill(transform, true);
+            transform.localRotation = Quaternion.identity;
+            if (m_front != null) m_front.SetActive(true);
+            if (m_back != null) m_back.SetActive(false);
         }
 
         private void OnDestroy()
@@ -153,6 +197,7 @@ namespace SquareTD
         private void HandleTowerSelected(TowerController tower)
         {
             if (m_selectedTower != tower && cardView != null) cardView.ResetToFront();
+            if (m_selectedTower != tower) ShowFront();
             m_selectedTower = tower;
             WatchStack(tower);
             UpdateTowerInfo();
@@ -217,6 +262,12 @@ namespace SquareTD
                 return;
             }
 
+            if (img_portrait != null)
+            {
+                img_portrait.sprite = towerVisual != null ? towerVisual.IllustrationSprite : null;
+                img_portrait.preserveAspect = true;
+                img_portrait.enabled = img_portrait.sprite != null;
+            }
             UpdateImage(img_tier, towerVisual != null ? towerVisual.TierSprite : null);
             if (img_tier != null && towerVisual != null) img_tier.color = towerVisual.TierColor;
             UpdateImage(img_color, towerVisual != null ? towerVisual.ColorSprite : null);
@@ -253,27 +304,66 @@ namespace SquareTD
         {
             bool isSupport = !m_selectedTower.IsAttackTower;
 
-            SetText(txt_power, $"{stats.Power:0.##}");
+            SetText(txt_power, $"{stats.Power:0.##}{GetBonusText(stats, StatType.Power, 1f, "")}");
             SetText(txt_range, isSupport ? UnusedStatText : $"{stats.Range}칸");
             SetText(txt_action, $"{m_selectedTower.State.RemainingAction} / {stats.Action}");
             SetText(txt_attackCount, isSupport ? $"{stats.AttackCount}스택" : $"{stats.AttackCount}회");
-            SetText(txt_criticalRate, isSupport ? UnusedStatText : $"{stats.CriticalRate * 100f:0.##}%");
+            SetText(txt_criticalRate, isSupport ? UnusedStatText : $"{stats.CriticalRate * 100f:0.##}%{GetBonusText(stats, StatType.CritRate, 100f, "%")}");
             SetText(txt_criticalDamage, isSupport ? UnusedStatText : $"{CriticalRoll.Multiplier(stats.CriticalDamage) * 100f:0.##}%");
             SetText(txt_abilityValue, cardView != null ? $"x{stats.AbilityValue:0.##}" : $"×{stats.AbilityValue:0.##}");
-            SetText(txt_duration, GetDurationText(definition.Color, stats));
+            SetText(txt_duration, GetDurationText(definition.Color, stats, m_selectedTower.State));
             SetText(txt_mastery, GetMasteryText(definition.Color, stats));
             SetText(txt_stack, GetStackText(isSupport, stats));
         }
+
+        // 수정자로 바뀐 만큼 " (+0.12)" — 바뀌지 않았으면 빈 글자. scale: 화면에 보일 단위 (치명 확률은 0.1 → 10%)
+        private static string GetBonusText(TowerFinalStats stats, StatType stat, float scale, string unit)
+        {
+            float bonus = (stats.Get(stat) - stats.GetBase(stat)) * scale;
+            return Mathf.Abs(bonus) < 0.005f ? "" : $" ({bonus:+0.##;-0.##}{unit})";
+        }
+
+        // 받는 버프를 출처별로 한 줄씩: "검 버프존: 공격력 +0.12, 치명 확률 +10%, 최종 피해 +10%"
+        private static string GetReceivedBuffText(TowerFinalStats stats)
+        {
+            var bySource = new Dictionary<string, List<string>>();
+            var order = new List<string>();
+            foreach (StatSource source in stats.Sources)
+            {
+                if (!bySource.TryGetValue(source.Source, out List<string> parts))
+                {
+                    bySource[source.Source] = parts = new List<string>();
+                    order.Add(source.Source);
+                }
+                parts.Add(FormatSource(source));
+            }
+
+            var lines = new List<string>();
+            foreach (string name in order) lines.Add($"{name}: {string.Join(", ", bySource[name])}");
+            return string.Join("\n", lines);
+        }
+
+        private static string FormatSource(StatSource source) => source.Stat switch
+        {
+            StatType.Power => $"공격력 {source.Amount:+0.##;-0.##}",
+            StatType.CritRate => $"치명 확률 {source.Amount * 100f:+0.##;-0.##}%",
+            StatType.CritDamage => $"치명 피해 {source.Amount * 100f:+0.##;-0.##}%",
+            StatType.FinalDamage => $"최종 피해 {source.Amount * 100f:+0.##;-0.##}%",
+            StatType.AttackCount => $"공격 횟수 {source.Amount:+0;-0}",
+            StatType.Mastery => $"Mastery {source.Amount:+0;-0}",
+            StatType.ActionGainPerTurn => $"행동 카운트 {source.Amount:+0;-0}",
+            _ => $"{source.Stat} {source.Amount:+0.##;-0.##}",
+        };
 
         private static void SetText(TextMeshProUGUI text, string value)
         {
             if (text != null) text.text = value;
         }
 
-        private static string GetDurationText(TowerColor color, TowerFinalStats stats) => color switch
+        // 공격 타워: 스킬 2까지 센 적중 수 / 필요 적중 수 (광역·단일 공통, 수업 28)
+        private static string GetDurationText(TowerColor color, TowerFinalStats stats, TowerState state) => color switch
         {
-            TowerColor.Red => $"{stats.Duration}턴",
-            TowerColor.Blue => $"같은 적 {stats.Duration}회",
+            TowerColor.Red or TowerColor.Blue => $"{state.SkillHitCount} / {stats.Duration}회",
             TowerColor.Purple => $"{stats.Duration}회 행동",
             _ => UnusedStatText
         };
@@ -325,8 +415,13 @@ namespace SquareTD
                     break;
             }
 
-            // 수업 27 ~ 40: 문양별 스킬 2의 이름과 설명 (SkillRegistry에서)
-            SetText(txt_skill, "스킬 2는 문양 수업에서");
+            // 공격 타워가 받는 버프 (버프존·스폰 타일 …): 출처마다 한 줄
+            string buffs = m_selectedTower.IsAttackTower ? GetReceivedBuffText(stats) : "";
+            if (buffs.Length > 0 && txt_default != null) txt_default.text += $"\n\n받는 버프\n{buffs}";
+
+            // 스킬 칸: 이름 · 액티브/패시브, 뒷면 설명 (SkillDescriptions — 문양 수업마다 그 문양의 설명을 채움)
+            SetText(txt_skill, SkillDescriptions.GetDescription(definition, stats));
+            foreach (TextMeshProUGUI title in txt_skillTitles) SetText(title, SkillDescriptions.GetTitle(definition));
         }
 
         private void UpdateButtons()

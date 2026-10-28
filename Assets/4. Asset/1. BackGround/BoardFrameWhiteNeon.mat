@@ -26,6 +26,9 @@ Material:
     - _RimMiddleLuminance: 220
     - _EdgeLuminance: 180
     - _EdgeTileMode: 1
+    - _ArtworkBlend: 1
+    - _ArtworkRimStrength: 0
+    - _PreserveAccentColor: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _PlateUvBounds: {r: 0.196969697, g: 0.195374801, b: 0.803030303, a: 0.784688995}
+    - _PlateUvBounds: {r: 0.196969697, g: 0.196969697, b: 0.803030303, a: 0.803030303}

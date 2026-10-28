@@ -20,13 +20,17 @@ namespace SquareTD
 
         public override IEnumerator Act(TowerController tower, TowerFinalStats stats, AttackHandle handle)
         {
+            bool ownerStack = SkillRegistry.GetBuffRule(tower.Definition.Emblem).UsesOwnerStack;
+            if (ownerStack) tower.State.Stack.Add(stats.AttackCount);      // 방패: 행동마다 타워 자신에게 한 번 (존 수와 무관)
+
             foreach (Zone zone in m_zones.GetByOwner(tower))
             {
                 if (!zone.IsPlaced) continue;
 
                 ZoneStage before = zone.Stage;
 
-                zone.AddStack(stats.AttackCount, stats.Stack);
+                if (ownerStack) zone.SetStack(tower.State.Stack.Current, stats.Stack);
+                else zone.AddStack(stats.AttackCount, stats.Stack);
 
                 if (zone.Stage != before) m_zones.NotifyChanged(zone);
 

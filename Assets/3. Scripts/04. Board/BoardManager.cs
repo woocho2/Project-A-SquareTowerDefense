@@ -22,6 +22,8 @@ namespace SquareTD
 
         public TowerSlots Slots { get; private set; }
 
+        public GroundEffectRegistry Grounds { get; private set; }     // 깔린 장판 (화살비, 수업 40 블랙홀)
+
         protected override void Awake()
         {
             base.Awake();
@@ -38,6 +40,7 @@ namespace SquareTD
             Grid = new BoardGrid(m_pathCells, spawnCells);
             Occupancy = new PathOccupancy();
             Slots = new TowerSlots(Grid.SpawnCount);
+            Grounds = new GroundEffectRegistry();
 
             System.Random random = m_layoutSeed == 0 ? new System.Random() : new System.Random(m_layoutSeed);
 

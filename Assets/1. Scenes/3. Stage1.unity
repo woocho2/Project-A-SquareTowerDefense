@@ -1300,6 +1300,7 @@ GameObject:
   - component: {fileID: 358708782}
   - component: {fileID: 358708781}
   - component: {fileID: 873511001}
+  - component: {fileID: 873511002}
   m_Layer: 0
   m_Name: BoardTile
   m_TagString: Untagged
@@ -2470,7 +2471,7 @@ Tilemap:
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
-  m_Color: {r: 0.16981131, g: 0.16981131, b: 0.16981131, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Origin: {x: -12, y: -8, z: 0}
   m_Size: {x: 24, y: 15, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
@@ -3001,12 +3002,31 @@ MonoBehaviour:
   m_GameObject: {fileID: 358708779}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bba9aabda46c48158c54fb0b602688eb, type: 3}
+  m_Script: {fileID: 11500000, guid: 5c7e2a91d4f84b0e9a3c61f28b7d40e5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.BoardGridGlow
-  m_glowMaterial: {fileID: 2100000, guid: 6c9d07cfcf714ed4bf8b49a342fd535b, type: 2}
-  m_patternDuration: 6
-  m_transitionDuration: 1
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.SpecialTileGlowEffect
+  m_intensity: 1.6
+  m_alpha: 0.5
+  m_sizeRatio: 0.96
+  m_showGrid: 1
+  m_gridColor: {r: 0.55, g: 0.55, b: 0.55, a: 0.35}
+--- !u!114 &873511002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 358708779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d41b7e2a05c4f3c8e6a2b19c7f05d38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.ZoneGlowEffect
+  m_intensity: 1.6
+  m_alpha: 0.85
+  m_buffColor: {r: 1, g: 0.82, b: 0.3, a: 1}
+  m_debuffColor: {r: 0.72, g: 0.4, b: 1, a: 1}
+  m_iconSize: 0.28
 --- !u!1 &944652004
 GameObject:
   m_ObjectHideFlags: 0
@@ -5045,33 +5065,41 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -0.00030318883
       objectReference: {fileID: 0}
+    - target: {fileID: 1570886707159918219, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2496719023786573408, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2519520974583011991, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_Name
       value: UICanvas
       objectReference: {fileID: 0}
     - target: {fileID: 3369032141382350318, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3369032141382350318, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3369032141382350318, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 8861281910777565147, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8861281910777565147, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8861281910777565147, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 0.5208334
       objectReference: {fileID: 0}
     - target: {fileID: 9019515539557091308, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_Pivot.x

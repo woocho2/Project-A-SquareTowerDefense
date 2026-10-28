@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 수정자 + 남은 행동 수 (23번 #134): 파쇄(방어 −20%), 100T 해머(최대 이동력 −1) 같은 보통의 시간 디버프
+    // 수정자 + 남은 행동 수 (21번 #134): 아머 브레이크(방어 −20%), 100T 해머(최대 이동력 −1) 같은 보통의 시간 디버프
     //   수정자의 출처는 Key로 맞춰 둠 (EnemyStatusEffects가 출처로 지우고 다시 모음)
     public class TimedModifierEffect : StatusEffect
     {

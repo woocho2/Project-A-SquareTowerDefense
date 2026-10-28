@@ -11,7 +11,6 @@ namespace SquareTD
         public int SpawnWave { get; private set; }
         public float MaxHp => Health.Max;
         public EnemyStats Stats { get; private set; }
-        public EnemyHitCounter HitCounter { get; } = new EnemyHitCounter();     // 단일 타워 스킬 2용, 문양별 적중 수
         public EnemyResistance Resistance { get; private set; }                 // 기본·지금 저항력 (수업 25)
         public EnemyStatusEffects Status { get; private set; }                  // 걸린 효과 목록 (수업 25)
         public Transform Transform => transform;
@@ -29,6 +28,9 @@ namespace SquareTD
         }
         public void SetSortingOrder(int order) => Movement.SetSortingOrder(order);
 
+        // 회복 (회복 타일 …): 받는 치유 배율만큼 (출혈·과다출혈이 깎음, 수업 30). 실제로 오른 양을 돌려줌
+        public float Heal(float amount) => Health.Heal(amount * Mathf.Max(0f, Stats.Get(StatType.HealingTaken)));
+
         private void Awake()
         {
             Movement = GetComponent<EnemyMovement>();
@@ -40,7 +42,6 @@ namespace SquareTD
             Pool = pool;
             SpawnWave = spawnWave;
             Stats = new EnemyStats(definition, spawnWave);
-            HitCounter.Clear();
             Resistance = new EnemyResistance(definition.BaseResistance);                   // 소환마다 새로 (풀에서 다시 꺼낸 적이 지난번 저항·효과를 들고 있지 않게)
             Status = new EnemyStatusEffects(this, Stats.Modifiers, Resistance);
             Health.Reset(definition.MaxHP * WaveTable.GetHpMultiplier(spawnWave, definition.Kind));
@@ -52,10 +53,37 @@ namespace SquareTD
             Status.OnBeforeHit(ref info);                   // 맞기 전 (락 온: 치명 확률 등)
             float damage = PreviewDamage(info);
             bool died = Health.TakeDamage(damage);
-            Status.OnDamageTaken(info, damage);             // 맞은 뒤 (처형 등). 죽었어도 부름
+            Status.OnDamageTaken(info, damage);             // 맞은 뒤 (사형 집행 등). 죽었어도 부름
 
-            if (!died) return;
+            if (!died)
+            {
+                TryStun(info);
+                return;
+            }
+            Die(info);
+        }
 
+        // 기절이 실린 공격 (배쉬 20%, 서프레스·락다운의 타격 시너지 +5% / +10%, 수업 31). 두 확률을 더해 한 번 굴림
+        //   기절은 강한 CC라 붙일 때 적이 지금 저항력%로 막을 수 있음 (Status.Add)
+        private void TryStun(DamageInfo info)
+        {
+            if (!IsAlive) return;
+            float chance = info.StunChance + Status.GetStunChanceBonus(info);
+            if (chance <= 0f) return;
+            if (chance < 1f && Random.value >= chance) return;
+            Status.Add(new ImmobilizeEffect("기절"));
+        }
+
+        // 즉사 (도끼 사형 선고·사형 집행, 수업 28): 피해 계산 없이 남은 체력을 다 깎음. info는 즉사를 부른 그 공격 (보상·처치 기록용)
+        public void Execute(DamageInfo info)
+        {
+            if (!IsAlive) return;
+            Health.TakeDamage(Health.Current);
+            Die(info);
+        }
+
+        private void Die(DamageInfo info)
+        {
             KillInfo kill = new KillInfo
             {
                 Enemy = this,

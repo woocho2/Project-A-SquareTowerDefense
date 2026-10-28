@@ -5,7 +5,7 @@ namespace SquareTD
 {
     public readonly struct StatModifier
     {
-        public readonly string Source;      // 카드에 보일 이름이자 지울 때 쓰는 열쇠 (예: "공격력 타일", "검기 (12번 타워)")
+        public readonly string Source;      // 카드에 보일 이름이자 지울 때 쓰는 열쇠 (예: "공격력 타일", "블레싱 (12번 타워)")
         public readonly StatType Stat;
         public readonly float Value;        // %면 0.5 = +50%, 정수면 그 수만큼 더함. 디버프는 음수
         public readonly bool IsPercent;

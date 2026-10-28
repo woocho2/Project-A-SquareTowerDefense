@@ -56,7 +56,7 @@ namespace SquareTD
                 TowerController tower = m_slots.Get(i);
                 if (tower == null || !tower.IsAttackTower) continue;
 
-                if (!tower.TickAction()) continue;                  // 광역의 스킬 2는 착탄마다 셈 (TowerController.OnSplashShotLanded)
+                if (!tower.TickAction()) continue;                  // 스킬 2는 적중마다 셈 (TowerController.CountSkillHit)
 
                 if (LogActions) Debug.Log($"[TowerTurnRunner] ④ {tower.name} 행동");
                 var handle = new AttackHandle();

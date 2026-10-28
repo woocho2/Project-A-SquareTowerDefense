@@ -11,11 +11,19 @@ namespace SquareTD
         private static readonly Dictionary<TowerEmblem, BuffRule> s_buffRules = new Dictionary<TowerEmblem, BuffRule>
         {
             { TowerEmblem.Sword, new SwordBuffRule() },
+            { TowerEmblem.Axe, new AxeBuffRule() },
+            { TowerEmblem.Bow, new BowBuffRule() },
+            { TowerEmblem.Spear, new SpearBuffRule() },
+            { TowerEmblem.Shield, new ShieldBuffRule(CurrentLimit) },
         };
 
         private static readonly Dictionary<TowerEmblem, DebuffRule> s_debuffRules = new Dictionary<TowerEmblem, DebuffRule>
         {
-            { TowerEmblem.Sword, new SwordDebuffRule() },            
+            { TowerEmblem.Sword, new SwordDebuffRule() },
+            { TowerEmblem.Axe, new AxeDebuffRule() },
+            { TowerEmblem.Bow, new BowDebuffRule() },
+            { TowerEmblem.Spear, new SpearDebuffRule() },
+            { TowerEmblem.Shield, new ShieldDebuffRule() },
         };
 
         // 표에 아직 없는 문양은 시험 규칙 (문양이 다 들어오는 수업 40에서 지움)
@@ -40,8 +48,21 @@ namespace SquareTD
             new Dictionary<(TowerColor, TowerEmblem), Func<BoardGrid, PathOccupancy, StackModeSettings, AttackSkill>>
             {
                 { (TowerColor.Red, TowerEmblem.Sword), (grid, occupancy, stackModes) => new SwordSplashSkill(grid, occupancy, stackModes) },
-                { (TowerColor.Blue, TowerEmblem.Sword), (grid, occupancy, stackModes) => new SwordTargetSkill(grid, occupancy, stackModes) },                
+                { (TowerColor.Blue, TowerEmblem.Sword), (grid, occupancy, stackModes) => new SwordTargetSkill(grid, occupancy, stackModes) },
+                { (TowerColor.Red, TowerEmblem.Axe), (grid, occupancy, stackModes) => new AxeSplashSkill(grid, occupancy, stackModes) },
+                { (TowerColor.Blue, TowerEmblem.Axe), (grid, occupancy, stackModes) => new AxeTargetSkill(grid, occupancy, stackModes) },
+                { (TowerColor.Red, TowerEmblem.Bow), (grid, occupancy, stackModes) => new ArrowSplashSkill(grid, occupancy, stackModes, CurrentGrounds()) },
+                { (TowerColor.Blue, TowerEmblem.Bow), (grid, occupancy, stackModes) => new ArrowTargetSkill(grid, occupancy, stackModes) },
+                { (TowerColor.Red, TowerEmblem.Spear), (grid, occupancy, stackModes) => new SpearSplashSkill(grid, occupancy, stackModes, CurrentSlots()) },
+                { (TowerColor.Blue, TowerEmblem.Spear), (grid, occupancy, stackModes) => new SpearTargetSkill(grid, occupancy, stackModes) },
+                { (TowerColor.Red, TowerEmblem.Shield), (grid, occupancy, stackModes) => new ShieldSplashSkill(grid, occupancy, stackModes) },
+                { (TowerColor.Blue, TowerEmblem.Shield), (grid, occupancy, stackModes) => new ShieldTargetSkill(grid, occupancy, stackModes) },
             };
+
+        // 판에 달린 것들: 게임에서는 BoardManager의 것. 테스트(판이 없음)에서는 null
+        private static GroundEffectRegistry CurrentGrounds() => BoardManager.Instance != null ? BoardManager.Instance.Grounds : null;   // 화살비가 장판을 깔 곳
+        private static TowerSlots CurrentSlots() => BoardManager.Instance != null ? BoardManager.Instance.Slots : null;                // 깃창이 아군을 찾을 곳
+        private static int CurrentLimit() => GameSession.Instance != null ? GameSession.Instance.CurrentLimit : 20;                       // 방패 버프 (게임 밖이면 사이클 1의 노말 한도)
 
         public static AttackSkill CreateAttackSkill(TowerColor color, TowerEmblem emblem,
                                                     BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)

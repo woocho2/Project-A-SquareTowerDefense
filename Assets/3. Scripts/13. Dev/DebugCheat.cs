@@ -91,7 +91,7 @@ namespace SquareTD
             Debug.LogWarning($"[DebugCheat] 배속 x{s_speeds[m_speedIndex]:0}");   // 경고로 찍어 K 필터 중에도 보이게
         }
 
-        // ── ID로 타워 세우기 (T) ── T → 숫자 4자리 (예: 1101 = 브론즈 검성). Enter 확인 · Esc 취소 · Backspace 지우기
+        // ── ID로 타워 세우기 (T) ── T → 숫자 4자리 (예: 1101 = 브론즈 소드 마스터). Enter 확인 · Esc 취소 · Backspace 지우기
         //   입력하는 동안에는 다른 키가 동작하지 않음 (숫자 키가 합성·배속과 겹치므로)
         private static readonly Key[] s_digitKeys =
             { Key.Digit0, Key.Digit1, Key.Digit2, Key.Digit3, Key.Digit4, Key.Digit5, Key.Digit6, Key.Digit7, Key.Digit8, Key.Digit9 };
@@ -221,22 +221,10 @@ namespace SquareTD
             if (keyboard.vKey.wasPressedThisFrame) RequestStackConsume();   // V: 고른 타워의 수동 스택 소모 (적 턴에도)
             if (keyboard.f1Key.wasPressedThisFrame) m_showKeys = !m_showKeys;  // F1: 키 목록 보이기 / 숨기기
             if (keyboard.zKey.wasPressedThisFrame) StartPlaceZone();            // Z: 고른 버프·디버프 타워의 존 자리 고르기
-            if (keyboard.jKey.wasPressedThisFrame) StunAllEnemies();         // J: 살아 있는 적 전부에게 기절 (수업 25 확인용, 저항으로 막힐 수 있음)
             if (keyboard.digit5Key.wasPressedThisFrame || keyboard.numpad5Key.wasPressedThisFrame) NextGameSpeed();   // 5: 배속 1 → 2 → 3 → 1
         }
 
 
-
-        private static void StunAllEnemies()                                // ── 수업 25 확인용 임시 코드 ── 기절 규칙(수업 32 방패)이 생기면 지움
-        {
-            int stunned = 0, blocked = 0;
-            foreach (EnemyController enemy in EnemyManager.Instance.Registry.Alive)
-            {
-                if (enemy.Status.Add(new ImmobilizeEffect("기절 (J 키)"))) stunned++;
-                else blocked++;
-            }
-            Debug.Log($"[DebugCheat] 기절 {stunned}마리, 막힘(저항·이미 걸림) {blocked}마리");
-        }
 
         // ── 키 목록 (F1) ── 화면 왼쪽 위에 작게. 키를 더하면 여기에도 한 줄 더함
         private bool m_showKeys = true;
@@ -253,11 +241,9 @@ namespace SquareTD
             "C 공격 칸 고르기   P 우선순위 다음",
             "Z 존 자리 고르기 (버프·디버프 타워)",
             "V 수동 스택 소모 (적 턴에도)",
-            "── 적 ──",
-            "J 살아 있는 적 전부 기절 (수업 25 확인용)",
             "── 보기 ──",
             "── 타워 세우기 ──",
-            "T + 숫자 4자리  ID로 세우기 (예: T 1101 = 브론즈 검성)",
+            "T + 숫자 4자리  ID로 세우기 (예: T 1101 = 브론즈 소드 마스터)",
             "K [Skill] 로그만   Tools > Click Debug 창",
         };
 

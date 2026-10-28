@@ -2,10 +2,10 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 검 디버프 — 사기(스킬 1) · 귀기(스킬 2) (20번 4-3장)
+    // 검 디버프 — 커스(스킬 1) · 둠(스킬 2) (20번 4-3장)
     //   매 턴 최대 체력의 (0.001 × Power × AbilityValue × 스택)% 피해
-    //   귀기는 최대 체력 −20% (현재 체력도 같은 비율로)
-    //   베기 시너지: 베기 공격에 맞으면 그 피해의 10%(사기) / 20%(귀기)가 고정 피해(방어 무시)로 바뀜
+    //   둠은 최대 체력 −20% (현재 체력도 같은 비율로)
+    //   베기 시너지: 베기 공격에 맞으면 그 피해의 10%(커스) / 20%(둠)가 고정 피해(방어 무시)로 바뀜
     //   모든 수치는 적의 저항력만큼 줄어듦
     public class SwordDebuffRule : DebuffRule
     {
@@ -19,12 +19,12 @@ namespace SquareTD
         }
     }
 
-    // 사기·귀기가 적에게 걸려 있는 동안 하는 일. 값은 SwordDebuffRule이 저항까지 계산해서 넘김
+    // 커스·둠이 적에게 걸려 있는 동안 하는 일. 값은 SwordDebuffRule이 저항까지 계산해서 넘김
     public class SwordDebuffEffect : EmblemDebuffEffect
     {
         private readonly TowerController m_owner;
         private readonly float m_turnDamage;        // 매 턴 최대 체력의 이 비율 (0.012 = 1.2%)
-        private readonly float m_maxHpCut;          // 귀기: 최대 체력을 줄이는 비율 (사기는 0)
+        private readonly float m_maxHpCut;          // 둠: 최대 체력을 줄이는 비율 (커스는 0)
         private readonly float m_fixedRatio;        // 베기 피격 때 고정 피해로 바꾸는 비율
 
         public SwordDebuffEffect(Zone zone, float turnDamage, float maxHpCut, float fixedRatio)

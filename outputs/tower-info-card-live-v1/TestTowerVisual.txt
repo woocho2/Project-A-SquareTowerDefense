@@ -1,6 +1,0 @@
-using UnityEngine;
-public sealed class TowerVisual : MonoBehaviour
-{
-    public Sprite CharacterSprite,ProjectileEmblemSprite,TierSprite,ColorSprite,EmblemSprite;
-    public Color TierColor=Color.white,EmblemColor=Color.white;
-}

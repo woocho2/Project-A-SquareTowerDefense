@@ -1,8 +1,0 @@
-﻿PASS: 9 texture GUIDs and 18 layered materials resolve to shared background, frame, state badge atlas, character and equipment masks.
-PASS: all 3 appearance profiles link matching standalone character/mask textures.
-PASS: all 5 enemy prefabs changed only by adding an appearance profile; six material pools and movement/gameplay settings unchanged.
-PASS: masks use linear sampling; all textures retain exact pixel sizes without NPOT resizing or mipmaps.
-PASS: old 8 baked face textures deleted after consolidation.
-PASS: 18 CPU layer compositions preserve canonical character position/non-equipment pixels and shared rounded outer alpha.
-PASS: modified C# compiled against installed Unity CoreModule (0 warnings, 0 errors).
-Unity was not launched. Shader compilation, color-space appearance, and actual rolling/rendering must be checked in Unity.

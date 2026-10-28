@@ -50,5 +50,49 @@ namespace SquareTD
             s_cache[key] = mesh;
             return mesh;
         }
+
+        private static readonly Dictionary<(int, int), Mesh> s_crescentCache = new Dictionary<(int, int), Mesh>();
+
+        // 초승달 참격: 바깥 둘레는 반지름 1의 원, 안쪽 둘레는 가운데로 갈수록 파여 가운데가 가장 굵고 양 끝은 뾰족함
+        //   v = 0(안쪽) → 0.5(바깥 날). 가운데가 밝은 줄 그림(FX_SlashLine)을 입히면 바깥 날이 가장 밝고 안쪽으로 번져 사라짐
+        //   thickness: 가장 굵은 가운데의 두께 (반지름 1에 대한 비율)
+        public static Mesh GetCrescent(float arcDegrees, float thickness, int segments = 40)
+        {
+            var key = (Mathf.RoundToInt(arcDegrees), Mathf.RoundToInt(thickness * 100f));
+            if (s_crescentCache.TryGetValue(key, out Mesh cached) && cached != null) return cached;
+
+            var vertices = new List<Vector3>();
+            var uvs = new List<Vector2>();
+            var colors = new List<Color>();
+            var triangles = new List<int>();
+            float half = arcDegrees * 0.5f * Mathf.Deg2Rad;
+
+            for (int i = 0; i <= segments; i++)
+            {
+                float t = i / (float)segments;
+                float angle = Mathf.Lerp(-half, half, t);
+                float width = thickness * Mathf.Pow(Mathf.Sin(t * Mathf.PI), 0.8f);       // 끝 0 → 가운데 thickness → 끝 0
+                Vector3 direction = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
+                vertices.Add(direction * (1f - width));
+                vertices.Add(direction);
+                uvs.Add(new Vector2(t, 0f));
+                uvs.Add(new Vector2(t, 0.5f));
+                colors.Add(Color.white);
+                colors.Add(Color.white);
+                if (i == 0) continue;
+                int b = i * 2;
+                triangles.Add(b - 2); triangles.Add(b + 1); triangles.Add(b - 1);
+                triangles.Add(b - 2); triangles.Add(b); triangles.Add(b + 1);
+            }
+
+            var mesh = new Mesh { name = $"Crescent {key.Item1}° × {thickness:0.##}" };
+            mesh.SetVertices(vertices);
+            mesh.SetUVs(0, uvs);
+            mesh.SetColors(colors);
+            mesh.SetTriangles(triangles, 0);
+            mesh.RecalculateBounds();
+            s_crescentCache[key] = mesh;
+            return mesh;
+        }
     }
 }

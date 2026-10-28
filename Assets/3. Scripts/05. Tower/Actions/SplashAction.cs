@@ -35,7 +35,7 @@ namespace SquareTD
 
                 ITarget aimed = selector.Select(TargetSelector.PreferAttackCell(inRange, tower.State.AttackCellIndex), towerCell, m_grid);
                 Vector3Int impactCell = m_grid.GetPathCell(aimed.PathIndex);
-                bool isCritical = CriticalRoll.Roll(stats.CriticalRate);
+                bool isCritical = CriticalRoll.Roll(CriticalRoll.RateAgainst(tower, stats, aimed));     // 한 발에 한 번, 착탄점으로 고른 적 기준
                 Vector3 from = tower.transform.position + SatelliteLayout.GetOffset(s, satelliteCount, satellite.Radius);
 
                 handle.AddShot();
@@ -43,10 +43,10 @@ namespace SquareTD
                                 {
                                     foreach (ITarget target in CollectTargetsInSquare(impactCell, radius))
                                     {
+                                        tower.CountSkillHit(target);
                                         ProjectileHitResolver.HitSingle(target, MakeBasicHit(tower, stats, target, isCritical));
                                         tower.OnBasicHitLanded(target);
                                     }
-                                    tower.OnSplashShotLanded(aimed);   // 한 발 떨어질 때마다 스킬 2 카운트 (다 차면 줄 세움, 쏘는 건 행동이 끝난 뒤)
                                     handle.CompleteShot();
                                 });
 

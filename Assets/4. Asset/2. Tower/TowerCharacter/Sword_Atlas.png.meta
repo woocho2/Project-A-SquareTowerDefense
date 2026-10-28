@@ -136,7 +136,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower_Sword_Hero_Front_v2
+      name: SwordMaster_Full
       rect:
         serializedVersion: 2
         x: 0
@@ -158,7 +158,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Sword_Swordsman_Front_v2
+      name: BladeDancer_Full
       rect:
         serializedVersion: 2
         x: 512
@@ -180,7 +180,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Sword_Paladin_Front_v2
+      name: Valkyrie_Full
       rect:
         serializedVersion: 2
         x: 0
@@ -202,7 +202,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Sword_DeathKnight_Front_v2
+      name: DeathKnight_Full
       rect:
         serializedVersion: 2
         x: 512
@@ -224,13 +224,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Sword_Hero_Face_v1
+      name: SwordMaster_Face
       rect:
         serializedVersion: 2
-        x: 140
-        y: 675
-        width: 224
-        height: 224
+        x: 200
+        y: 864
+        width: 144
+        height: 144
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -246,13 +246,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Sword_Swordsman_Face_v1
+      name: BladeDancer_Face
       rect:
         serializedVersion: 2
-        x: 602
-        y: 690
-        width: 224
-        height: 224
+        x: 698
+        y: 840
+        width: 144
+        height: 144
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -268,13 +268,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Sword_Paladin_Face_v1
+      name: Valkyrie_Face
       rect:
         serializedVersion: 2
-        x: 138
-        y: 234
-        width: 224
-        height: 224
+        x: 208
+        y: 356
+        width: 144
+        height: 144
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -290,13 +290,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Sword_DeathKnight_Face_v1
+      name: DeathKnight_Face
       rect:
         serializedVersion: 2
-        x: 584
-        y: 212
-        width: 224
-        height: 224
+        x: 688
+        y: 362
+        width: 144
+        height: 144
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -325,14 +325,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Tower_Sword_DeathKnight_Front_v2: 52013
-      Tower_Sword_Hero_Front_v2: 52010
-      Tower_Sword_Paladin_Front_v2: 52012
-      Tower_Sword_Swordsman_Front_v2: 52011
-      Tower_Sword_Hero_Face_v1: 52014
-      Tower_Sword_Swordsman_Face_v1: 52015
-      Tower_Sword_Paladin_Face_v1: 52016
-      Tower_Sword_DeathKnight_Face_v1: 52017
+      DeathKnight_Full: 52013
+      SwordMaster_Full: 52010
+      Valkyrie_Full: 52012
+      BladeDancer_Full: 52011
+      SwordMaster_Face: 52014
+      BladeDancer_Face: 52015
+      Valkyrie_Face: 52016
+      DeathKnight_Face: 52017
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

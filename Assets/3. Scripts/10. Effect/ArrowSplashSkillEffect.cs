@@ -4,11 +4,9 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 레인저(광역 활) 스킬 2 화살비 연출 — 맵 전체에 화살이 쏟아짐 (2026-10-27 사용자: 맵 전체)
-    //   ① 타워에서 화살 다발이 부채꼴로 하늘에 쏘아 올려짐 + 하늘이 어둑해짐
-    //   ② 화면 전체에 화살이 비스듬히 쏟아져 꽂힘. 맞은 적마다 두 대씩 먼저 꽂힘
-    //   ③ 꽂힌 화살들이 남았다가 흐려지고 하늘이 다시 밝아짐
-    //   남아서 n턴 동안 매 턴 피해를 주는 화살비(장판)의 표시는 수업 29에서 규칙(ArrowRainGround)과 함께
+    // 레인저(광역 활) 스킬 2 화살비 연출 (2026-10-28 사용자: 쏘아 올리기와 떨어지기를 나눔)
+    //   PlayVolley (발동, ④) 타워에서 화살 다발이 세 번 부채꼴로 하늘에 쏘아 올려져 화면 위로 사라짐
+    //   PlayRain   (⑤마다)  하늘이 어둑해지고 화면 전체에 화살이 비스듬히 쏟아져 꽂힘. 맞은 적마다 두 대씩 먼저 꽂힘
     //   타워·규칙은 모름. 카메라·타워 위치·맞을 위치들만 받아서 그림
     [DisallowMultipleComponent]
     public sealed class ArrowSplashSkillEffect : MonoBehaviour
@@ -17,7 +15,9 @@ namespace SquareTD
 
         [SerializeField] private int m_arrowCount = 70;
         [SerializeField] private float m_arrowLength = 0.6f;       // 칸에 대한 비율
-        [SerializeField] private float m_volleyDuration = 0.25f;
+        [SerializeField] private float m_volleyDuration = 0.35f;
+        [SerializeField] private int m_volleyWaves = 3;
+        [SerializeField] private float m_volleyWaveGap = 0.12f;
         [SerializeField] private float m_rainSpread = 1f;          // 쏟아지는 데 걸리는 시간
         [SerializeField] private float m_fallDuration = 0.2f;
         [SerializeField] private float m_slant = 16f;
@@ -31,8 +31,22 @@ namespace SquareTD
 
         private void OnDestroy() => m_pool?.Dispose();
 
-        // camera: 화면 크기를 잴 카메라 / owner: 레인저 위치 / hitPositions: 맞을 적들의 위치 / cellWorldSize: 칸 한 변
-        public void Play(Camera camera, Vector3 owner, IReadOnlyList<Vector3> hitPositions, float cellWorldSize)
+        // 발동: 하늘로 쏘아 올리기만. owner: 레인저 위치 / cellWorldSize: 칸 한 변
+        public void PlayVolley(Camera camera, Vector3 owner, float cellWorldSize)
+        {
+            if (!m_pool.IsReady) return;
+
+            float cell = Mathf.Max(0.5f, cellWorldSize);
+            float length = cell * m_arrowLength;
+            float height = camera != null && camera.orthographic ? camera.orthographicSize * 2f : 10f;   // 화면 위로 벗어날 만큼 날아감
+            for (int wave = 0; wave < m_volleyWaves; wave++)
+            {
+                for (int i = 0; i < 5; i++) PlayVolleyArrow(owner, length, i, wave * m_volleyWaveGap, height);
+            }
+        }
+
+        // ⑤: 쏘아 올린 화살이 떨어짐. camera: 화면 크기를 잴 카메라 / hitPositions: 맞을 적들의 위치
+        public void PlayRain(Camera camera, IReadOnlyList<Vector3> hitPositions, float cellWorldSize)
         {
             if (camera == null || !m_pool.IsReady) return;
 
@@ -40,11 +54,10 @@ namespace SquareTD
             float length = cell * m_arrowLength;
             float height = camera.orthographic ? camera.orthographicSize * 2f : 10f;
             float width = height * camera.aspect;
-            Vector3 center = new Vector3(camera.transform.position.x, camera.transform.position.y, owner.z);
-            float rainAt = m_volleyDuration + 0.1f;
+            Vector3 center = new Vector3(camera.transform.position.x, camera.transform.position.y, 0f);
+            float rainAt = 0.2f;                                                    // 하늘이 어두워진 뒤
 
             PlaySkyDim(center, width, height, rainAt + m_rainSpread + m_fallDuration + m_stayDuration);
-            for (int i = 0; i < 5; i++) PlayVolleyArrow(owner, length, i);
 
             for (int i = 0; i < m_arrowCount; i++)
             {
@@ -65,10 +78,10 @@ namespace SquareTD
             }
         }
 
-        // 타워에서 화살이 부채꼴로 하늘에 쏘아 올려짐
-        private void PlayVolleyArrow(Vector3 owner, float length, int index)
+        // 타워에서 화살이 부채꼴로 하늘에 쏘아 올려짐 (delay 뒤, 화면 높이만큼 날아가며 흐려짐)
+        private void PlayVolleyArrow(Vector3 owner, float length, int index, float delay, float travel)
         {
-            float angle = 90f + (index - 2) * 12f;
+            float angle = 90f + (index - 2) * 10f + Range(-3f, 3f);
             float radians = angle * Mathf.Deg2Rad;
             Vector3 direction = new Vector3(Mathf.Cos(radians), Mathf.Sin(radians), 0f);
 
@@ -82,10 +95,12 @@ namespace SquareTD
 
             float alpha = 1f;
             Sequence sequence = DOTween.Sequence().SetLink(arrow.GameObject, LinkBehaviour.KillOnDisable);
-            sequence.AppendInterval(index * 0.025f);
-            sequence.Append(arrow.Transform.DOMove(owner + direction * (length * 6f), m_volleyDuration).SetEase(Ease.InQuad));
+            arrow.Transform.localScale = Vector3.zero;
+            sequence.AppendInterval(delay + index * 0.025f);
+            sequence.AppendCallback(() => arrow.Transform.localScale = new Vector3(length, length * 0.5f, 1f));
+            sequence.Append(arrow.Transform.DOMove(owner + direction * Mathf.Max(length * 6f, travel), m_volleyDuration).SetEase(Ease.InQuad));
             sequence.Join(DOTween.To(() => alpha, value => { alpha = value; arrow.SetFloat(EffectQuad.AlphaId, value); },
-                0f, m_volleyDuration).SetEase(Ease.InQuad));
+                0f, m_volleyDuration).SetEase(Ease.InCubic));
             sequence.OnKill(() => m_pool.Release(arrow));
         }
 

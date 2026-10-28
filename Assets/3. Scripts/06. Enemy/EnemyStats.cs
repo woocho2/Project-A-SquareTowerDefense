@@ -30,6 +30,7 @@ namespace SquareTD
             m_base[(int)StatType.SpeedMax] = definition.SpeedMax;
             m_base[(int)StatType.SpeedMin] = definition.SpeedMin;
             m_base[(int)StatType.DamageTaken] = 1f;
+            m_base[(int)StatType.HealingTaken] = 1f;
         }
 
         public float GetBase(StatType stat) => m_base[(int)stat];

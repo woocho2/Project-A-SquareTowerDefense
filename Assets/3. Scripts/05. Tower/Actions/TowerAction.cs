@@ -42,6 +42,7 @@ namespace SquareTD
             float critMultiplier = isCritical ? CriticalRoll.Multiplier(stats.CriticalDamage) : 1f;
             Vector3Int from = m_grid.GetSpawnCell(tower.SlotIndex);
             Vector3Int to = m_grid.GetPathCell(target.PathIndex);
+            int distance = BoardGrid.GetTileDistance(from, to);
 
             return new DamageInfo
             {
@@ -49,10 +50,11 @@ namespace SquareTD
                 Source = DamageSource.Basic,
                 Emblem = tower.Definition.Emblem,
                 Attribute = tower.Definition.Attribute,
-                BaseDamage = DamageCalculator.GetOutgoing(stats.Power, 1f, critMultiplier) * stats.FinalDamageMultiplier,
+                BaseDamage = DamageCalculator.GetOutgoing(stats.Power, stats.GetDistanceMultiplier(distance), critMultiplier) * stats.FinalDamageMultiplier,
                 IsCritical = isCritical,
                 CritMultiplier = critMultiplier,
-                Distance = BoardGrid.GetTileDistance(from, to),
+                ArmorPenetration = stats.ArmorPenetration,
+                Distance = distance,
             };
         }
     }

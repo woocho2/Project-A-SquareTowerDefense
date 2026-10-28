@@ -36,8 +36,8 @@ namespace SquareTD
                     List<ITarget> inRange = CollectTargetsInRange(tower, stats.Range);
                     if (inRange.Count == 0) yield break;
 
-                    bool isCritical = CriticalRoll.Roll(stats.CriticalRate);
                     ITarget shotTarget = PickTarget(selector, inRange, incoming, towerCell, tower.State.AttackCellIndex);
+                    bool isCritical = CriticalRoll.Roll(CriticalRoll.RateAgainst(tower, stats, shotTarget));
                     DamageInfo hit = MakeBasicHit(tower, stats, shotTarget, isCritical);
                     float expected = shotTarget.PreviewDamage(hit);
                     AddIncoming(incoming, shotTarget, expected);
@@ -47,9 +47,9 @@ namespace SquareTD
                     m_launcher.Fire(lookId, from, shotTarget.Transform.position, speed, hold, 1f, () =>
                     {
                         AddIncoming(incoming, shotTarget, -expected);
+                        tower.CountSkillHit(shotTarget);
                         ProjectileHitResolver.HitSingle(shotTarget, hit);
-                        if (shotTarget.IsAlive && shotTarget.Body != null) shotTarget.Body.HitCounter.Add(tower.Definition.Emblem);
-                        tower.OnBasicHitLanded(shotTarget);     // 💬 센 바로 뒤에: 적중 수가 Duration에 닿았으면 그 적에게 스킬 2를 줄 세움 (쏘는 건 행동이 끝난 뒤)
+                        tower.OnBasicHitLanded(shotTarget);
                         handle.CompleteShot();
                     });
                 }

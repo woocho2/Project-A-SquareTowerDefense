@@ -129,6 +129,8 @@ namespace SquareTD
             {
                 if (enemy.IsAlive) enemy.Status.OnTurn();
             }
+
+            BoardManager.Instance.Grounds.RunTurn();            
         }
 
         private void BossTimerPhase()

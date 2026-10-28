@@ -27,7 +27,6 @@ namespace SquareTD
         [SerializeField] private TextMeshProUGUI m_txtAction;
         [SerializeField] private TextMeshProUGUI m_txtSpeed;
         [SerializeField] private TextMeshProUGUI m_txtResistance;
-        [SerializeField] private TextMeshProUGUI m_txtHitCount;
         [SerializeField] private Slider m_hpSlider;                     // 체력 막대 (없으면 글자만)
         [SerializeField] private TextMeshProUGUI m_txtEnemyType;        // 일반 / 중간 보스 / 최종 보스
         [SerializeField] private TextMeshProUGUI m_txtDamageTaken;      // 받는 피해 증감 (%)
@@ -219,41 +218,26 @@ namespace SquareTD
         {
             if (m_detailFront == null || m_detailBack == null) return;
 
-            m_flipTween?.Kill(true);
             GameObject from = m_showingBack ? m_detailBack : m_detailFront;
             GameObject to = m_showingBack ? m_detailFront : m_detailBack;
             m_showingBack = !m_showingBack;
-            UpdateFlipLabel();
 
-            float half = m_flipDuration * 0.5f;
-            m_flipTween = DOTween.Sequence()
-                .Append(from.transform.DOScaleX(0f, half).SetEase(Ease.InSine))
-                .AppendCallback(() =>
-                {
-                    from.SetActive(false);
-                    from.transform.localScale = Vector3.one;
-                    to.transform.localScale = new Vector3(0f, 1f, 1f);
-                    to.SetActive(true);
-                })
-                .Append(to.transform.DOScaleX(1f, half).SetEase(Ease.OutSine))
-                .SetUpdate(true)
-                .SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            // 카드 전체(배경까지)가 세로축으로 뒤집히고, 옆모습일 때 앞·뒤 내용을 바꿈 (CardFlip)
+            m_flipTween = CardFlip.Flip(transform, () =>
+            {
+                from.SetActive(false);
+                to.SetActive(true);
+                UpdateFlipLabel();
+            }, m_flipDuration);
         }
 
         private void SetDetailFace(bool showBack)
         {
             m_flipTween?.Kill();
+            transform.localRotation = Quaternion.identity;
             m_showingBack = showBack;
-            if (m_detailFront != null)
-            {
-                m_detailFront.transform.localScale = Vector3.one;
-                m_detailFront.SetActive(!showBack);
-            }
-            if (m_detailBack != null)
-            {
-                m_detailBack.transform.localScale = Vector3.one;
-                m_detailBack.SetActive(showBack);
-            }
+            if (m_detailFront != null) m_detailFront.SetActive(!showBack);
+            if (m_detailBack != null) m_detailBack.SetActive(showBack);
             UpdateFlipLabel();
         }
 
@@ -322,7 +306,6 @@ namespace SquareTD
                     case "Txt_EnemyAction": m_txtAction ??= txt; break;
                     case "Txt_EnemySpeed": m_txtSpeed ??= txt; break;
                     case "Txt_EnemyResistance": m_txtResistance ??= txt; break;
-                    case "Txt_EnemyHitCount": m_txtHitCount ??= txt; break;
                 }
             }
         }
@@ -407,7 +390,6 @@ namespace SquareTD
             m_txtAction = CreateStatRow(statsGroup.transform, "Txt_EnemyAction", "행동력: -", 12f, new Color(0.45f, 0.8f, 1f));
             m_txtSpeed = CreateStatRow(statsGroup.transform, "Txt_EnemySpeed", "이동력: -", -13f, new Color(0.55f, 1f, 0.55f));
             m_txtResistance = CreateStatRow(statsGroup.transform, "Txt_EnemyResistance", "저항력: -", -38f, new Color(0.85f, 0.65f, 1f));
-            m_txtHitCount = CreateStatRow(statsGroup.transform, "Txt_EnemyHitCount", "적중 수: -", -63f, new Color(0.9f, 0.9f, 0.9f));
 
             RepositionBuffDebuffGroups(detailView.transform);
             return detailView;
@@ -653,7 +635,8 @@ namespace SquareTD
 
             int hp = Mathf.CeilToInt(m_selectedTarget.CurrentHp);
             int maxHp = Mathf.CeilToInt(m_selectedTarget.MaxHp);
-            if (m_txtHP != null) m_txtHP.text = m_compactValues ? $"{hp} / {maxHp}" : $"체력: {hp} / {maxHp}";
+            string maxHpChange = GetMaxHpChangeText(body);
+            if (m_txtHP != null) m_txtHP.text = m_compactValues ? $"{hp} / {maxHp}{maxHpChange}" : $"체력: {hp} / {maxHp}{maxHpChange}";
             if (m_hpSlider != null)
             {
                 m_hpSlider.minValue = 0f;
@@ -698,24 +681,15 @@ namespace SquareTD
                 float extra = (stats.Get(StatType.DamageTaken) - 1f) * 100f;
                 m_txtDamageTaken.text = Mathf.Approximately(extra, 0f) ? "0%" : $"{extra:+0.#;-0.#}%";
             }
-            if (m_txtHitCount != null)
-            {
-                string hits = GetHitCountText(body.HitCounter);
-                m_txtHitCount.text = m_compactValues ? hits : $"적중 수: {hits}";
-            }
         }
 
-        // 단일 타워 문양별로 이 적이 맞은 횟수 (20번 4장: 적이 몇 회 맞았는지는 적 쪽에서 보여 줌). 예: "검 3, 활 1"
-        private static string GetHitCountText(EnemyHitCounter counter)
+        // 최대 체력이 소환 때보다 바뀌었으면 " (최대 -20%)" (검 디버프 둠 등). 그대로면 빈 글자
+        private static string GetMaxHpChangeText(EnemyController body)
         {
-            var parts = new List<string>();
-            foreach (TowerEmblem emblem in System.Enum.GetValues(typeof(TowerEmblem)))
-            {
-                if (emblem == TowerEmblem.None) continue;
-                int count = counter.Get(emblem);
-                if (count > 0) parts.Add($"{EmblemNames.GetEmblemName(emblem)} {count}");
-            }
-            return parts.Count > 0 ? string.Join(", ", parts) : "-";
+            if (body == null || body.Definition == null) return "";
+            float spawnMaxHp = body.Definition.MaxHP * WaveTable.GetHpMultiplier(body.SpawnWave, body.Definition.Kind);
+            if (spawnMaxHp <= 0f || Mathf.Approximately(spawnMaxHp, body.MaxHp)) return "";
+            return $" (최대 {body.MaxHp / spawnMaxHp * 100f - 100f:+0.#;-0.#}%)";
         }
 
         private static string GetKindName(EnemyKind kind)

@@ -82,6 +82,7 @@ namespace SquareTD
             if (IsAttackTower) State.Stack.Add(Stats.AttackCount);
             m_skill?.OnOwnerActed(this);
             yield return m_action.Act(this, Stats, handle);
+            TimedTowerBuff.CountDown(State);            // 행동이 끝날 때 시간 버프의 남은 행동 −1 (수업 28 광폭화)
         }
 
         // ── 스킬 2 발동 (수업 23) ──
@@ -95,30 +96,27 @@ namespace SquareTD
             m_skill.OnEnemyTurnStart(this);
         }
 
-        // 광역: 기본 공격이 한 발 떨어질 때마다 1씩, Duration 발이 되면 스킬 2를 줄 세우고 0부터 다시 셈. 줄 세웠으면 true
-        public bool OnSplashShotLanded(ITarget aimed)
+        //   기본 공격이 살아 있는 적을 맞힐 때마다 1 (광역은 범위 안의 적마다, 단일은 한 발에 1). 어느 적이든 타워 하나에 합쳐 셈
+        //   Duration이 되면 그 적을 대상(단일)·중심(광역)으로 스킬 2를 줄 세우고 0부터. 줄 세웠으면 true
+        //   피해를 주기 전에 부름: 이 탄에 죽는 적도 "살아 있는 적을 맞힌 것". 이미 죽은 적은 세지 않음
+        public bool CountSkillHit(ITarget target)
         {
-            if (m_skill == null || !IsSplash) return false;
-            State.SkillShotCount++;
-            if (State.SkillShotCount < Stats.Duration) return false;
+            if (m_skill == null || !IsAttackTower) return false;
+            if (target == null || !target.IsAlive) return false;
 
-            State.SkillShotCount = 0;
-            m_pendingSkills.Enqueue(aimed);         // 착탄 범위를 쓰는 스킬의 중심은 이 발의 대상
+            State.SkillHitCount++;
+            if (State.SkillHitCount < Stats.Duration) return false;
+
+            State.SkillHitCount = 0;
+
+            m_pendingSkills.Enqueue(target);
             return true;
         }
 
-        // 단일: 그 적이 맞은 수가 Duration 이상이면 그 적의 수를 0으로 하고 스킬 2를 줄 세움
+        // 기본 공격이 맞은 뒤: 문양 스킬의 훅 (바람 광역의 당기기 등)
         public void OnBasicHitLanded(ITarget target)
         {
-            if (m_skill == null) return;
-            m_skill.OnBasicHit(this, target);
-
-            if (!IsTarget || !target.IsAlive || target.Body == null) return;
-
-            TowerEmblem emblem = Definition.Emblem;
-            if (target.Body.HitCounter.Get(emblem) < Stats.Duration) return;
-            target.Body.HitCounter.Reset(emblem);
-            m_pendingSkills.Enqueue(target);
+            m_skill?.OnBasicHit(this, target);
         }
 
         // 줄 선 스킬 2를 하나 쏨. 쏘았으면 true → TowerTurnRunner가 연출이 끝나길 기다린 뒤 다시 부름
@@ -133,18 +131,18 @@ namespace SquareTD
                     int aliveBefore = AliveEnemyCount();
                     if (m_skill.Fire(this, target) > 0)
                     {
-                        Debug.Log($"[Skill] {name} 스킬 2 발동 (착탄 {Stats.Duration}발) → {aliveBefore - AliveEnemyCount()}마리 죽음, 남은 적 {AliveEnemyCount()}");   // ── 확인용 임시 로그 ──
+                        Debug.Log($"[Skill] {name} 스킬 2 발동 (적중 {Stats.Duration}회) → {aliveBefore - AliveEnemyCount()}마리 죽음, 남은 적 {AliveEnemyCount()}");   // ── 확인용 임시 로그 ──
                         return true;
                     }
 
-                    State.SkillShotCount = Stats.Duration;      // 맞힐 적이 없음: 다 찬 채로 남겨 두고 다음 착탄에 다시 (스킬을 버리지 않음)
+                    State.SkillHitCount = Stats.Duration;       // 맞힐 적이 없음: 다 찬 채로 남겨 두고 다음 적중에 다시 (스킬을 버리지 않음)
                     m_pendingSkills.Clear();
                     return false;
                 }
 
-                if (!target.IsAlive) continue;                  // 그사이 기본 공격에 죽음. 그 적에게만 쏘는 스킬이라 넘어감
+                if (!target.IsAlive && m_skill.NeedsLivingTarget) continue;     // 그사이 기본 공격에 죽음. 그 적에게만 쏘는 스킬이면 넘어감 (광폭화·뽑아찢기는 쏨)
                 m_skill.Fire(this, target);
-                Debug.Log($"[Skill] {name} → {target.Body.name} 스킬 2 발동 (적중 {Stats.Duration}회) → {(target.IsAlive ? $"버팀, 체력 {target.CurrentHp:0.0}" : "죽음")}");    // ── 수업 23 확인용 임시 로그 ──
+                Debug.Log($"[Skill] {name} → {(target.Transform != null ? target.Transform.name : "대상")} 스킬 2 발동 (적중 {Stats.Duration}회) → {(target.IsAlive ? $"버팀, 체력 {target.CurrentHp:0.0}" : "죽음")}");    // ── 수업 23 확인용 임시 로그 ──
                 return true;
             }
             return false;

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 적 턴 ③ "멈춘 칸의 효과" (23번 4-1). 부르는 곳은 TurnManager.TileEffectsPhase 하나뿐
+    // 적 턴 ③ "멈춘 칸의 효과" (21번 4-1). 부르는 곳은 TurnManager.TileEffectsPhase 하나뿐
     // (B12: 옛 코드는 두 곳에서 불러 회복이 두 번 들어감)
     public class EnemyTileEffectApplier
     {

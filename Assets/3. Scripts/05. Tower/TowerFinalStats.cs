@@ -50,5 +50,18 @@ namespace SquareTD
         public float AbilityValue => Get(StatType.AbilityValue);
         public float StackValue => Get(StatType.StackValue);
         public float FinalDamageMultiplier => 1f + Get(StatType.FinalDamage);
+        public float ArmorPenetration => Get(StatType.ArmorPenetration);
+
+        // 거리 비례 추가 피해 배율 (활 버프, 수업 29): 1 + 타일당 값 × 날아간 거리(사거리까지)
+        //   찌르기 시너지면 거리와 무관하게 사거리 끝 값 + 보너스. 버프가 없으면 1
+        public float GetDistanceMultiplier(int distance)
+        {
+            float perTile = Get(StatType.DistanceDamage);
+            if (perTile <= 0f) return 1f;
+
+            float pierceBonus = Get(StatType.DistanceDamageBonus);
+            int tiles = pierceBonus > 0f ? Range : UnityEngine.Mathf.Clamp(distance, 0, Range);
+            return 1f + perTile * tiles + pierceBonus;
+        }
     }
 }

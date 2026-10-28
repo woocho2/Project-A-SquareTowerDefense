@@ -7,6 +7,9 @@ Shader "SquareTowerDefense/BoardFrameWhiteNeon"
         _CenterLuminance ("Surface Gray (0-255)", Range(0,255)) = 255
         _RimMiddleLuminance ("Rim Middle Gray (0-255)", Range(0,255)) = 220
         _EdgeLuminance ("Rim Ends Gray (0-255)", Range(0,255)) = 180
+        _ArtworkBlend ("Artwork Colors", Range(0,1)) = 0
+        _ArtworkRimStrength ("Artwork Rim Shading", Range(0,1)) = 0.35
+        _PreserveAccentColor ("Preserve Gold Accents", Range(0,1)) = 1
         [Enum(CornersOnly,0,OuterRing,1)] _EdgeTileMode ("Shaded Tiles", Float) = 1
         [HideInInspector] _PlateUvBounds ("Visible Plate Bounds", Vector) = (0.196969697,0.195374801,0.803030303,0.784688995)
     }
@@ -26,6 +29,7 @@ Shader "SquareTowerDefense/BoardFrameWhiteNeon"
             sampler2D _MainTex;
             float4 _Color, _PlateUvBounds;
             float _CenterLuminance, _RimMiddleLuminance, _EdgeLuminance, _EdgeTileMode;
+            float _ArtworkBlend, _ArtworkRimStrength, _PreserveAccentColor;
             struct appdata { float4 vertex : POSITION; float2 uv : TEXCOORD0; float4 color : COLOR; };
             struct v2f { float4 vertex : SV_POSITION; float2 uv : TEXCOORD0; float2 world : TEXCOORD1; float4 color : COLOR; };
             v2f vert(appdata v)
@@ -39,7 +43,8 @@ Shader "SquareTowerDefense/BoardFrameWhiteNeon"
             }
             float4 frag(v2f i) : SV_Target
             {
-                float alpha = tex2D(_MainTex, i.uv).a * i.color.a;
+                float4 artwork = tex2D(_MainTex, i.uv);
+                float alpha = artwork.a * i.color.a;
                 // TL/TR/BL/BR are the four corner cells of the 3x3 board master.
                 float2 cell = floor(min(saturate(i.uv), 0.999999) * 3.0);
                 float2 outerAxes = step(0.5, abs(cell - 1.0));
@@ -59,6 +64,15 @@ Shader "SquareTowerDefense/BoardFrameWhiteNeon"
                 #if !defined(UNITY_COLORSPACE_GAMMA)
                 surface = GammaToLinearSpace(surface);
                 #endif
+                float highest = max(artwork.r, max(artwork.g, artwork.b));
+                float lowest = min(artwork.r, min(artwork.g, artwork.b));
+                float saturation = (highest - lowest) / max(highest, 0.001);
+                float accent = smoothstep(0.08, 0.25, saturation) * saturate(_PreserveAccentColor);
+                float rimFade = smoothstep(0.0, 0.45, depth);
+                float shadeStrength = lerp(1.0, saturate(_ArtworkRimStrength) * rimFade, shadedTile);
+                shadeStrength *= 1.0 - accent;
+                float3 coloredSurface = artwork.rgb * lerp(float3(1.0, 1.0, 1.0), surface, shadeStrength);
+                surface = lerp(surface, coloredSurface, saturate(_ArtworkBlend));
                 return float4(surface * i.color.rgb * alpha, alpha);
             }
             ENDCG

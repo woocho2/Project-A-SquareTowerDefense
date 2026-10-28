@@ -1,6 +1,6 @@
 namespace SquareTD
 {
-    // 디버프 규칙의 베이스 (23번 #57, 수업 27) — 문양마다 하나 (SwordDebuffRule …), SkillRegistry가 문양으로 찾아 줌
+    // 디버프 규칙의 베이스 (21번 #57, 수업 27) — 문양마다 하나 (SwordDebuffRule …), SkillRegistry가 문양으로 찾아 줌
     //   규칙은 상태를 갖지 않음: 적에게 걸 효과(StatusEffect)를 만들어 주기만 함. 효과가 매 턴 피해 같은 일을 직접 함
     public abstract class DebuffRule
     {

@@ -1,4 +1,0 @@
-﻿PASS: all 90 board Sprite UV rectangles map to their intended 3x3 slice.
-PASS: 40 corner sprites across ten realm variants are identified; side and centre sprites excluded.
-PASS: CornersOnly mode, corner gray 180, other tiles gray 255.
-NOT RUN: Unity rendering/playback.

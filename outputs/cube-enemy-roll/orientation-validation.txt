@@ -1,5 +1,0 @@
-﻿PASS: requested R -> U -> U -> U sequence: Left/0, Bottom/90, Right/180, Top/90.
-PASS: all 24 cube orientations, 96 reversible transitions, and four-roll cycles checked using the production C# source.
-PASS: different orders of turning preserve different cube poses.
-PASS: 1001 samples keep the shared edge, normalized pivot and full cube silhouette; two faces visible at 45 degrees.
-PASS: all 1000 intervals move and deform continuously without held poses or large jumps.

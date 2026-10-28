@@ -51,9 +51,12 @@ namespace SquareTD
         private readonly List<Button> m_tileSwitchButtons = new List<Button>();
         private float m_timeScaleBeforePause = 1f;
 
+        private Button m_tileCorner;
+
         private void Start()
         {
             BindInfoPanelSwitchButtons();
+            CreateCardCorners();
             InitUI();
 
             TurnManager.Instance.StateChanged += HandleStateChanged;
@@ -154,8 +157,9 @@ namespace SquareTD
         {
             SelectedPathIndex = pathIndex;
             SelectedSpawnIndex = spawnIndex;
-            SelectedTileChanged?.Invoke();
             SetInfoPanel(InfoPanel.Tile);
+            SelectedTileChanged?.Invoke();                  // 패널이 켜진 뒤에 알림 (꺼져 있으면 듣지 않으므로)
+            RefreshTileCorner();
         }
 
         public void ShowEnemyInfoPanel(int pathIndex)
@@ -249,36 +253,80 @@ namespace SquareTD
             }
         }
 
-        private void SwitchToTowerInfoPanel()
+        // ── 카드 넘기기 (타워·적 카드 ↔ 타일 카드): 카드가 빠르게 여러 번 돌다가 다른 카드로 (CardFlip.Spin) ──
+
+        // 카드마다 오른쪽 위에 접힌 귀퉁이 (2026-10-28, 왼쪽 세로 탭 대신)
+        private void CreateCardCorners()
         {
-            if (SelectedTower != null)
+            if (m_towerInfoPanel != null) CardCorner.Create((RectTransform)m_towerInfoPanel.transform, "타일", SwitchToTileInfoPanel);
+            if (m_enemyInfoPanelUI != null) CardCorner.Create((RectTransform)m_enemyInfoPanelUI.transform, "타일", SwitchToTileInfoPanel);
+            if (m_tileInfoPanel != null) m_tileCorner = CardCorner.Create((RectTransform)m_tileInfoPanel.transform, "타워", SwitchFromTileInfoPanel);
+        }
+
+        // 타일 카드에서 돌아갈 카드: 스폰 칸에 타워가 있으면 타워, 길 칸에 적이 있으면 적. 없으면 귀퉁이를 숨김
+        private void RefreshTileCorner()
+        {
+            if (m_tileCorner == null) return;
+            BoardManager board = BoardManager.Instance;
+            bool hasTower = SelectedSpawnIndex >= 0 && board.Slots.Get(SelectedSpawnIndex) != null;
+            bool hasEnemy = SelectedPathIndex >= 0 && board.Occupancy.GetAt(SelectedPathIndex).Count > 0;
+            m_tileCorner.gameObject.SetActive(hasTower || hasEnemy);
+            CardCorner.SetLabel(m_tileCorner, hasTower ? "타워" : "적");
+        }
+
+        private Transform ActiveInfoPanel()
+        {
+            if (m_towerInfoPanel != null && m_towerInfoPanel.activeSelf) return m_towerInfoPanel.transform;
+            if (m_enemyInfoPanelUI != null && m_enemyInfoPanelUI.gameObject.activeSelf) return m_enemyInfoPanelUI.transform;
+            if (m_tileInfoPanel != null && m_tileInfoPanel.activeSelf) return m_tileInfoPanel.transform;
+            return null;
+        }
+
+        private void SwitchToTowerInfoPanel() => SwitchFromTileInfoPanel();
+
+        private void SwitchFromTileInfoPanel()
+        {
+            BoardManager board = BoardManager.Instance;
+            Transform from = ActiveInfoPanel();
+
+            TowerController tower = SelectedTower;
+            if (tower == null && SelectedSpawnIndex >= 0) tower = board.Slots.Get(SelectedSpawnIndex);
+            if (tower != null)
             {
-                ShowTowerPanel(SelectedTower);
+                Spin(from, m_towerInfoPanel != null ? m_towerInfoPanel.transform : null, () => ShowTowerPanel(tower));
                 return;
             }
 
-            if (SelectedSpawnIndex >= 0)
+            int path = SelectedPathIndex;
+            if (path >= 0 && board.Occupancy.GetAt(path).Count > 0)
             {
-                TowerController tower = BoardManager.Instance.Slots.Get(SelectedSpawnIndex);
-                if (tower != null)
-                {
-                    ShowTowerPanel(tower);
-                    return;
-                }
+                Spin(from, m_enemyInfoPanelUI != null ? m_enemyInfoPanelUI.transform : null, () => ShowEnemyInfoPanel(path));
+                return;
             }
 
-            Debug.Log("[UIManager] 선택된 타워가 없어 타워 정보 패널로 바꿀 수 없음");
+            Debug.Log("[UIManager] 이 칸에 타워도 적도 없어 넘길 카드가 없음");
         }
 
         private void SwitchToTileInfoPanel()
         {
-            if (SelectedTower != null)
+            int path = -1, spawn = -1;
+            if (SelectedTower != null) spawn = SelectedTower.SlotIndex;
+            else if (SelectedSpawnIndex >= 0) spawn = SelectedSpawnIndex;
+            else if (SelectedPathIndex >= 0) path = SelectedPathIndex;
+            if (path < 0 && spawn < 0) return;
+
+            Spin(ActiveInfoPanel(), m_tileInfoPanel != null ? m_tileInfoPanel.transform : null, () => ShowTileInfoPanel(path, spawn));
+        }
+
+        // 두 카드가 같은 자리에 겹쳐 있음 → 지금 카드가 돌다가, 옆모습일 때 다음 카드로 바꾸고 그 카드가 마저 돎
+        private static void Spin(Transform from, Transform to, Action swap)
+        {
+            if (from == null || to == null || from == to)
             {
-                ShowTileInfoPanel(-1, SelectedTower.SlotIndex);
+                swap();
                 return;
             }
-
-            if (HasSelectedTile) ShowTileInfoPanel(SelectedPathIndex, SelectedSpawnIndex);
+            CardFlip.Spin(from, to, swap);
         }
 
         private void RefreshInfoPanelSwitchButtons()

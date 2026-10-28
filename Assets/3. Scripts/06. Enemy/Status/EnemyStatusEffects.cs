@@ -141,6 +141,20 @@ namespace SquareTD
         public void OnDamageTaken(DamageInfo info, float damage) => ForEach(effect => effect.OnDamageTaken(m_owner, info, damage), stopWhenDead: false);
         public void OnDeath(KillInfo kill) => ForEach(effect => effect.OnDeath(m_owner, kill), stopWhenDead: false);
 
+        public float GetCritRateBonus(TowerController attacker)
+        {
+            float bonus = 0f;
+            foreach (StatusEffect effect in m_effects) bonus += effect.GetCritRateBonus(attacker);
+            return bonus;
+        }
+
+        public float GetStunChanceBonus(DamageInfo info)
+        {
+            float bonus = 0f;
+            foreach (StatusEffect effect in m_effects) bonus += effect.GetStunChanceBonus(info);
+            return bonus;
+        }
+
         public MoveRange DecideMove(MoveRange range)
         {
             MoveRange result = range;

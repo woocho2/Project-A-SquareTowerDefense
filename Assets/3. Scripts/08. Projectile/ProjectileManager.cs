@@ -17,7 +17,7 @@ namespace SquareTD
         private ObjectPool<Projectile> m_pool;
 
         private readonly Dictionary<int, ObjectPool<HitEffect>> m_hitEffectPools = new Dictionary<int, ObjectPool<HitEffect>>();
-        private Dictionary<int, IShotEffect> m_shotEffects;     // 투사체 대신 그리는 연출 (ShotEffectTable: 검성 101, 검객 201)
+        private Dictionary<int, IShotEffect> m_shotEffects;     // 투사체 대신 그리는 연출 (ShotEffectTable: 소드 마스터 101, 블레이드 댄서 201)
 
         public int FlyingCount { get; private set; }
 

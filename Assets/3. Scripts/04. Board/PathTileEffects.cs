@@ -60,7 +60,7 @@ namespace SquareTD
 
         public override void OnTurnStanding(EnemyController enemy)
         {
-            enemy.Health.Heal(enemy.MaxHp * Rate);
+            enemy.Heal(enemy.MaxHp * Rate);         // 받는 치유 배율까지 (출혈)
         }
     }
 

@@ -1,0 +1,1469 @@
+23. 수업 질문 노트 — 수업 중에 한 질문과 답
+작성일: 2026-10-20
+
+적는 방법
+- 수업 중이나 수업이 끝난 뒤에 한 질문을 수업별로 모음. 질문(Q)은 했던 말에 가깝게, 답(A)은 다시 읽어도 이해되게 정리함.
+- 새 질문이 나오면 Claude가 그때그때 이 파일의 해당 수업 밑에 더함 (따로 부탁하지 않아도).
+- 코드(문법, 구조, 오류, 테스트)에 관한 질문만 적음. 기획 내용을 확인하는 질문은 적지 않음 (규칙은 20번에 있으므로).
+- 수업에서 만든 것과 정한 것은 22번 내역서, 남은 할 일은 21번 계획서. 이 문서는 "왜 그런가"를 다시 찾아보는 용도.
+
+======================================================================
+준비 (2026-10-20)
+======================================================================
+
+Q. Dev 폴더는 뭐야?
+A. Development(개발)의 줄임말. 게임 기능이 아니라 만드는 동안 개발자가 확인용으로 쓰는 스크립트를 모으는 폴더.
+   플레이어는 볼 일이 없고 출시할 때는 꺼 둠.
+   들어가는 것: InvariantChecker(적 턴마다 "항상 맞아야 하는 것"을 검사해 어긋나면 에러), DebugCheat(턴 종료·생성·골드 같은 개발용 키).
+   개발용끼리 한 폴더에 있으면 출시할 때 무엇을 꺼야 하는지 한눈에 보여서, DebugCheat도 Tower에서 Dev로 옮김.
+
+======================================================================
+수업 1. 이름표 — GameEnums, TowerId (2026-10-20)
+======================================================================
+
+Q. 그럼 스크립트를 6개 만드는 거야? (enum 6개)
+A. 아니, 파일 하나(GameEnums.cs) 안에 enum 6개를 위아래로 나란히 씀.
+   MonoBehaviour와 ScriptableObject는 Unity가 파일 이름으로 찾기 때문에 반드시 파일 하나에 하나.
+   enum이나 순수 C# 클래스는 그런 제약이 없어서 작은 것끼리 한 파일에 묶어도 됨.
+
+Q. 0번에 None을 꼭 써야 해?
+A. 꼭은 아니지만 넣는 게 안전함. C#에서 enum의 기본값은 무조건 0이라서, 값을 안 넣은 변수·필드나 인스펙터에 새로 붙인 컴포넌트는
+   전부 0번 값으로 시작함. 0번이 Story라면 "모드를 안 골랐다"와 "스토리를 골랐다"를 구분할 수 없어 버그가 숨음.
+   0번이 None이면 if (mode == GameMode.None)으로 "안 정했음"을 잡을 수 있음.
+   꼭 필요한 곳도 있음: 원소 문양은 공격 속성이 없음(AttackAttribute.None), 시너지 타워 6014는 백의 자리가 0이라 컬러가 없음(TowerColor.None).
+
+Q. Boss만 있고 FinalBoss는 안 해도 돼?
+A. 기획의 적 종류는 일반, 중간 보스, 최종 보스 셋뿐 (10·20·30·40웨이브의 보스도 전부 최종 보스).
+   Boss와 FinalBoss를 둘 다 두면 "보스를 소환할 때 어느 쪽?"이 헷갈리므로 하나만. 뜻이 분명한 FinalBoss를 남김.
+
+Q. TargetPriority가 각각 무슨 뜻이야? (없음, 가까운 적, 먼 적, 체력 많은 적, 체력 적은 적, 가장 많은 구간, 보스 — 맞아?)
+A. 거의 맞음. 기획(20번 4장 [타겟 우선순위]) 기준으로 정확히는:
+   None         없음 (안 정함)
+   Closest      타워와의 타일 거리가 가장 가까운 적
+   Farthest     사거리 안에서 타일 거리가 가장 먼 적
+   MostHP       지금 체력이 가장 많은 적. 보스도 예외 없이 비교
+   LeastHP      지금 체력이 가장 적은 적
+   MostCrowded  "구간"이 아니라 사거리 안에서 적이 가장 많이 선 칸 하나
+   Boss         사거리 안의 최종 보스·중간 보스를 먼저. 없으면 체력 많은 적
+   플레이어가 공격할 칸을 직접 고르는 것은 이 목록과 따로임. 고른 칸에 적이 있으면 그 칸을 먼저, 없으면 우선순위대로.
+
+Q. GetColor에서 막혔어. 힌트 줘.
+A. 계산식 id / 100 % 10은 맞음 (2107 / 100 = 21, 21 % 10 = 1). 결과가 int인데 함수가 돌려줄 형식은 TowerColor라서 에러.
+   C#은 정수를 enum으로 알아서 바꿔 주지 않음 → 형변환이 필요함: return (TowerColor)(id / 100 % 10);
+   식 전체를 괄호로 감싸야 형변환이 식 전체에 붙음 (안 감싸면 id에만 먼저 붙음).
+
+Q. 엠블럼은 왜 오류가 떠?
+A. 처음에 적은 TowerEmblem이 새로 만든 enum이 아니라 옛 코드의 이름이었음.
+   옛 TowerDataSO.cs에 public static class TowerEmblem { const int SWORD = 1 ... }이 namespace 없이 있어서,
+   컴파일러가 "없는 이름" 에러 없이 그 옛 클래스를 찾아 버림. static class는 반환 형식이나 형변환 대상으로 쓸 수 없어서 에러.
+   (그 뒤 새 enum의 이름을 TowerEmblem으로 정함. namespace SquareTD 안에서는 같은 namespace의 새 enum이 먼저 찾아짐.)
+   교훈: 자동 완성에 옛 이름(TowerData, TowerStats, EnemyType 등)이 뜨면 새로 만든 것인지 확인.
+
+Q. Make는 모르겠다. 힌트.
+A. 지금까지 한 것의 반대 방향. 2107을 잘라 2, 1, 7을 꺼냈으니, 이번엔 각 숫자를 자기 자리로 보내 더함.
+   티어 2 × 1000 + 컬러 1 × 100 + 문양 7 = 2107. 자리는 곱셈, 합치는 건 덧셈.
+   color와 emblem은 enum이라 곱할 수 없으므로 정수로 바꿈: tier * 1000 + (int)color * 100 + (int)emblem
+
+Q. IsSynergy는 bool 판정이라 힘드네.
+A. 비교식 자체가 bool임 (3 == 3은 true, 5 > 7은 false). if 없이 비교한 결과를 그대로 return하면 됨.
+   천의 자리를 구하는 함수(GetTier)가 이미 있으니 그것을 다시 부름: return GetTier(id) == 6;
+   같은 계산을 한 곳에만 두면 나중에 규칙이 바뀌어도 한 곳만 고치면 됨.
+
+Q. 공격 타겟도 엠블럼마다 다르게 하기로 안 했는데, 디폴트값으로 적으면 되나? (GetAttribute)
+A. GetAttribute는 공격 대상을 고르는 것과 상관없음. AttackAttribute는 "공격 속성" = 베기·찌르기·타격 (20번 4-2장).
+   속성은 문양마다 정해져 있음: 검·도끼 베기, 활·창 찌르기, 방패·해머 타격, 원소 8종은 없음.
+   "디폴트"라는 생각은 맞음: switch에서 무기 6종은 case로 묶고, 원소 8종은 default 하나로 None을 돌려줌.
+
+Q. 테스트 스크립트가 무슨 말이야?
+A. 게임에 들어가는 스크립트가 아니라, 만든 함수를 "채점"하는 스크립트.
+   TowerId = 문제를 푸는 사람, 테스트 스크립트 = 채점표("2107을 줬을 때 2가 나와야 정답"), Test Runner = 채점하는 선생님.
+   게임을 실행하지 않고 함수만 따로 불러서, 맞으면 초록색, 틀리면 빨간색.
+   왜 필요한가: 함수가 수백 개가 되면 하나를 고쳤을 때 어디가 망가졌는지 머리로 못 찾음. 채점표가 있으면 버튼 한 번에 전부 다시 채점.
+   모양: using NUnit.Framework; / [Test]가 붙은 함수 하나 = 문제 하나 / Assert.AreEqual(정답, 실제로 나온 답).
+   MonoBehaviour가 아님. 파일은 Editor 폴더 안에 둠 (게임 빌드에 안 들어가게).
+
+Q. GetTier밖에 테스트가 안 돼.
+A. [Test]는 바로 아래 함수 하나에만 붙는 표시라서, 첫 함수에만 붙어 있으면 나머지는 Test Runner가 문제로 알아보지 못함. 함수마다 위에 하나씩.
+
+Q. 5305 엠블럼 테스트가 빨간색이야.
+A. 정답 칸에 05(정수 5)를 적었는데 GetEmblem이 돌려주는 것은 TowerEmblem.Shield(enum). 속은 같은 5지만 Assert.AreEqual은 형식까지
+   같아야 같다고 봄. 실패 메시지의 "Expected: 5 / But was: Shield"가 그 뜻.
+   규칙: 정답 칸에는 그 함수가 돌려주는 형식을 적음 (함수 머리 맨 앞의 형식). GetEmblem → TowerEmblem.Shield, GetTier → 숫자 2.
+   테스트 파일이 namespace SquareTD 밖에 있으면 TowerEmblem이 옛 것으로 찾아지므로 SquareTD.TowerEmblem.Shield로 쓰거나,
+   테스트 클래스를 namespace SquareTD.Tests로 감쌈.
+
+(수업 1을 마친 뒤의 질문)
+
+Q. namespace로 선언했으면 이제부터 모든 스크립트에 SquareTD를 써야 해?
+A. 새로 만드는 스크립트는 전부 namespace SquareTD { } 안에 씀. 하나라도 빠지면 그 파일만 옛 이름을 먼저 찾게 됨.
+   새 게임 스크립트(3. Scripts/New)   namespace SquareTD { }로 감쌈. 같은 namespace끼리는 using 없이 서로 보임
+   새 테스트·에디터 스크립트          namespace SquareTD.Tests { }로 감싸거나, 감싸지 않고 맨 위에 using SquareTD;
+   그대로 쓰는 옛 스크립트 25개       손대지 않음. namespace가 없어 어디서나 보이므로 새 코드에서 그냥 부름
+   MonoBehaviour                      namespace 안에 있어도 됨. 파일 이름 = 클래스 이름만 지키면 Unity가 찾음
+   namespace X { } = "이 코드는 X 집안"이라는 선언. using X; = "X 집안 것을 성 없이 부르겠다"는 가져오기.
+
+Q. enum은 구조체야?
+A. 구조체는 아니지만 구조체와 같은 "값 형식". C#의 형식은 둘로 나뉨:
+   값 형식    int, float, bool, struct, enum — 변수에 값 자체가 들어 있음. 다른 변수에 넣으면 복사됨. null이 안 됨
+   참조 형식  class, string, List — 변수에는 "어디 있는지"만 들어 있음
+   enum은 int처럼 행동함: 복사되고, null이 안 되고, 기본값이 0 (그래서 0번에 None을 둠).
+   정확히는 struct와 따로인 "열거형"이라는 종류지만, 값 형식이라고 기억하면 충분함.
+
+Q. enum은 string으로 이루어져 있어?
+A. 아니. 속은 정수(int)이고 이름은 사람이 읽으라고 붙인 꼬리표. 컴파일하면 TowerEmblem.Fire는 그냥 7,
+   Unity가 프리팹에 저장할 때도 7 (그래서 중간에 값을 끼우면 안 됨). 인스펙터의 이름 목록은 숫자를 이름으로 보여 주는 것일 뿐.
+   이름과 글자 사이는 오갈 수 있음:
+     TowerEmblem.Fire.ToString()                                  → "Fire"
+     Debug.Log(TowerEmblem.Fire)                                  → 콘솔에 Fire
+     (TowerEmblem)Enum.Parse(typeof(TowerEmblem), "Fire")         → 글자에서 enum으로 (수업 11에서 CSV를 읽을 때 쓸 수 있음)
+
+======================================================================
+수업 2. 매니저의 틀 — Singleton (2026-10-20)
+======================================================================
+
+Q. Singleton을 일단 썼는데 감이 안 와. (T != null, Destroy(T), T = Instance처럼 T를 변수로 씀)
+A. T는 값이 아니라 형식의 이름(int, string 같은 것). 검사하고 넣고 비우는 대상은 전부 Instance.
+   카페 비유: T = "점장"이라는 직책 이름, Instance = 지금 점장 자리에 앉은 사람, this = 나 자신, gameObject = 나를 담은 씬의 오브젝트.
+   오브젝트 A, B가 깨어날 때:
+     A의 Awake  자리가 비었네 → 내가 앉음 (Instance = this as T)
+     B의 Awake  자리에 누가 있는데 내가 아니네 (Instance != null && Instance != this) → Destroy(gameObject); return;
+     A가 지워질 때 OnDestroy  자리에 앉은 게 나였나 (Instance == this) → Instance = null
+   OnDestroy에서는 아무것도 지우지 않음 (이미 지워지는 중이라 불린 것).
+   = 는 값을 넣는 것, == 는 같은지 묻는 비교.
+   this as T를 쓰려면 머리에 where T : MonoBehaviour가 있어야 함 (as는 T가 클래스라는 보장이 필요).
+
+Q. 한 줄씩 한국어로 바꿔 봤는데(공유된 절대 클래스, 지켜진 가상의 어웨이크 …) 무슨 말인지 모르겠어.
+A. public·abstract·protected·virtual은 뜻보다 "누가 쓸 수 있나 / 어떻게 쓰나"를 정하는 표시라 직역하면 안 읽힘. 하는 일로 읽음:
+   public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+     "매니저를 하나만 남기는 규칙"의 미완성 설계도. 물려받는 쪽이 T 자리에 자기 이름을 넣음 (class CurrencyManager : Singleton<CurrencyManager>)
+     abstract = 이것만으로는 못 씀, 물려받아서 씀 ("절대·최상단"이 아님)
+   public static T Instance { get; private set; }
+     씬에 하나뿐인 그 매니저. 누구나 꺼내 씀(CurrencyManager.Instance), 바꾸는 건 설계도 안에서만. "대리자"가 아니라 "그 하나"
+   Awake   이미 그 하나가 있고(&&) 그게 내가 아니면 나는 사라짐. 아니면 내가 그 하나가 됨(this as T = 나를 넣음)
+           && = 그리고, || = 또는. "있거나"가 아니라 "있고"
+   OnDestroy  그 하나가 나였으면 자리를 비움 (Instance = null). 지우는 게 아님
+   protected virtual = 자식만 보고, 자식이 덧붙여 쓸 수 있음
+   쓸모: 옛 코드는 매니저마다 이 15줄을 복사함. 새 코드는 ": Singleton<자기 이름>" 한 번이면 Instance가 생김.
+
+Q. TestManager 오브젝트 1, 2로 실험하면 항상 2가 지워져. 하이어라키에서 2를 위로 올려도 똑같아. 상관관계가 있어?
+A. 하이어라키의 위아래와는 상관없고, 순서가 정해져 있다는 보장도 없음.
+   Awake를 어떤 순서로 부를지는 씬 파일 안에 저장된 순서·만들어진 순서 같은 Unity 내부 사정으로 정해짐.
+   1을 먼저 만들었다면 1이 먼저 깨어나 자리에 앉고 2가 지워지기 쉬움. 하이어라키에서 끌어올리면 보이는 순서만 바뀜.
+   (2를 먼저 만들면 바뀔 수 있지만 그것도 "그럴 가능성"일 뿐. 같은 스크립트끼리의 Awake 순서는 Unity가 보장하지 않고, 빌드에서 달라질 수 있음)
+   Script Execution Order 설정은 "서로 다른 스크립트끼리"의 순서라 같은 스크립트 둘의 순서는 못 정함.
+   그래서 약속: Awake의 순서에 기대는 코드를 쓰지 않음. Awake에서는 자기 준비만, 다른 매니저를 찾는 건 Start에서
+   (Start는 모든 Awake가 끝난 뒤). 싱글톤은 누가 남든 상관없게 만들어져 있어서 괜찮음. 옛 버그 B5(첫 소환 0마리)가 이 순서 문제였음.
+   실험해 보니: 2를 먼저 만들고 1을 나중에 만들면 1이 지워짐 → 지금 환경에서는 먼저 만든 오브젝트가 먼저 깨어남.
+   그래도 Unity가 약속한 규칙이 아니므로 기대지 않음.
+
+Q. 직관적으로 해석하면: 회사 자리에 누가 있고 그게 내가 아니면 회사를 안 다니고, 빈자리가 있으면 다니고, 자리에 앉은 게 나면 짤릴 때 자리도 비워 놓는 것?
+A. 맞음.
+   출근(Awake)  자리에 이미 누가 앉았고 내가 아니면 → 안 다님(내가 사라짐) / 자리가 비었으면 → 내가 앉음
+   퇴사(OnDestroy)  앉아 있던 게 나였으면 → 자리를 비우고 감
+   "나였을 때만" 비우는 이유: 점장이 아닌 사람이 나가며 자리를 비우면 멀쩡히 앉은 진짜 점장이 쫓겨남 → if (Instance == this).
+
+======================================================================
+수업 3. 판 — BoardGrid, BoardManager (2026-10-20)
+======================================================================
+
+Q. BoardGrid가 너무 어려워. (필드를 List 넷으로, PathCount를 public int PathCount;로, Wrap을 index % PathCount + PathCount로 씀)
+A. 한 번에 다 하지 말고 "길"만 먼저: 필드 둘 + 생성자 + PathCount + Wrap + GetPathCell + TryGetPathIndex. 스폰은 같은 모양이라 나중에 복사.
+   public int PathCount;   빈 상자라 아무도 안 넣으면 늘 0 → % 0에서 "0으로 나누기" 에러.
+   public int PathCount => m_pathCells.Count;   물어볼 때마다 목록 길이를 세어 줌 (=> 프로퍼티).
+   번호 → 좌표는 List(출석부), 좌표 → 번호는 Dictionary(열쇠 = 좌표로 바로 찾음). List로 좌표를 찾으려면 처음부터 다 뒤져야 함.
+   Wrap: index % n + n은 음수(-1 → 39)는 맞지만 양수가 넘침(41 → 41). 더한 뒤 한 번 더 % n → ((index % n) + n) % n.
+   같은 좌표를 두 번 지나는 길: Add 전에 ContainsKey로 물어보고 처음일 때만 넣음 (같은 열쇠를 두 번 Add하면 에러).
+   생성자: 이름이 클래스와 같고 돌려주는 형식이 없음. new BoardGrid(...) 하는 순간 한 번 실행.
+
+Q. GetPathCell의 빈칸이 틀린 것 같아. (m_pathCells(WrapPathIndex(index)))
+A. 생각은 맞음. 괄호만: ( )는 함수를 부를 때, [ ]는 목록에서 몇 번째를 꺼낼 때 → m_pathCells[WrapPathIndex(index)].
+   매개변수 이름은 소문자로 시작(pathCells)이 관례. 대문자는 프로퍼티(PathCount)와 헷갈림.
+
+Q. readonly는 왜 쓰고 언제 써야 해?
+A. 선언할 때나 생성자 안에서만 값을 넣을 수 있고, 그 뒤로는 다른 것으로 바꿀 수 없음.
+   m_pathCells.Add(cell) 는 됨 (목록 안에 넣는 건 괜찮음) / m_pathCells = new List(...) 나 = null 은 에러.
+   "내용이 고정"이 아니라 "이 상자는 끝까지 이 목록을 가리킨다"는 뜻.
+   왜: 목록을 통째로 갈아 끼우거나 null로 만드는 실수를 막음 (다른 곳이 붙잡은 예전 목록과 따로 놀게 되는 버그). "처음 정하고 안 바뀜"을 알려 줌.
+   쓰는 곳: 생성자에서 한 번 만들고 다시 안 바꾸는 필드(목록·Dictionary, 받은 부품).
+   안 쓰는 곳: 게임 중에 바뀌는 값(골드, 남은 행동력, 체력), 인스펙터에서 넣는 [SerializeField] 필드(Unity가 나중에 값을 넣음).
+
+Q. IReadOnlyList는 왜 쓰고 언제 써야 해?
+A. "읽기만 할 수 있는 목록"이라는 약속(인터페이스). Count와 [i]는 되고 Add·Remove·Clear는 없음. List를 그대로 넘길 수 있음.
+   왜: "남의 목록을 망가뜨리지 않겠다"를 코드로 적어 둠 — 실수로 Add를 쓰면 컴파일 에러로 막힘.
+   쓰는 곳: 목록을 받아 읽기만 하는 매개변수(BoardGrid 생성자), 내 목록을 밖에 보여 줄 때(수업 7 EnemyRegistry.Alive —
+            보기는 되지만 넣고 빼기는 Register/Unregister로만. "값마다 주인은 하나"를 지키는 방법).
+   안 쓰는 곳: 내가 직접 넣고 빼는 내 필드 (그건 List).
+   readonly = 상자(변수)를 다른 목록으로 바꾸는 걸 막음 / IReadOnlyList = 그 통로로 내용을 바꾸는 걸 막음.
+   그래서 BoardGrid의 필드는 private readonly List, 생성자 매개변수는 IReadOnlyList.
+
+Q. readonly가 끝까지 하나를 가리킨다는데, 처음부터 = new List<>()로 초기화해 버리잖아? 그럼 누굴 가리키는 거야?
+A. 여기서 초기화는 "지운다"가 아니라 "처음 넣어 둔다". new List<Vector3Int>() = 빈 공책 한 권을 만듦, m_pathCells = … = 그 공책에 이름표를 붙임.
+   readonly가 끝까지 가리키는 건 "처음 만든 그 빈 공책" (빈 공책도 공책이라 null과 다름).
+   순서: ① 필드 줄이 먼저 실행 → 빈 공책 A  ② 생성자의 for가 공책 A에 칸을 Add  ③ 그 뒤 내내 m_pathCells는 공책 A.
+   Add = 같은 공책에 글씨를 더 씀(됨) / = new List() = 이름표를 새 공책으로 옮김(readonly가 막음).
+   = new List<>()를 안 쓰면 이름표만 있고 공책이 없음(null) → Add에서 NullReferenceException.
+   생성자 안에서 m_pathCells = new List<Vector3Int>(pathCells);로 만들어도 됨 (readonly는 생성자 안까지는 넣을 수 있음).
+
+Q. BoardGrid를 한 줄씩 해석해 봤어. (생성자의 pathCells를 "좌표 하나"로, Add(cell, i)를 "cell에 i를 키로"로 읽음)
+A. 거의 맞음. 다듬을 곳:
+   pathCells는 좌표 하나가 아니라 좌표 목록(길 40칸 전체, 0번부터 순서대로).
+   for는 i를 0부터 (칸 수 − 1)까지 하나씩 올리며 반복 (i < Count라서 40이 되는 순간 멈춤). cell = pathCells의 i번째 좌표.
+   Add(cell, i)는 앞이 열쇠, 뒤가 값 → cell을 열쇠로, i를 값으로. 사전처럼 "단어(cell)를 찾으면 뜻(i)".
+   GetPathCell은 범위 밖 번호(41, −1)도 고리로 감아서 좌표로 돌려줌.
+   Claude의 해석 (비유: BoardGrid = 길 칸의 주소록. 칸마다 번호 0 ~ 39와 주소 = 좌표가 있음)
+     m_pathCells          "번호 → 주소" 장부. 3번을 펼치면 3번 칸의 주소
+     m_pathIndexByCell    "주소 → 번호" 장부. 주소를 찾으면 몇 번 칸인지
+     생성자               길 칸 주소 목록을 받아 0번부터 두 장부에 적음. 이미 적힌 주소는 건너뜀(처음 번호만)
+     PathCount            장부의 줄 수 = 길 칸 수
+     WrapPathIndex        번호를 0 ~ 39 안으로 감기 (고리라서 40번 = 0번, -1번 = 39번)
+     GetPathCell          "n번 칸 주소 알려 줘" — 번호를 먼저 감고 장부를 펼침
+     TryGetPathIndex      "이 주소 길 칸이야? 맞으면 몇 번?" — 있으면 true와 번호, 없으면 false
+     한 줄로: 번호로 주소를 찾고, 주소로 번호를 찾는 주소록. 번호는 고리라 늘 감아서 씀.
+
+Q. 좌표랑 List, Dictionary가 같이 나오니까 어질어질해.
+A. 길 5칸짜리 판으로 보면: 0번 (0,0), 1번 (1,0), 2번 (2,1), 3번 (1,1), 4번 (2,-1). 4번 다음은 다시 0번.
+   좌표 = 칸이 판의 어디 있는지 (x, y). 2D라 z는 늘 0.
+   List(m_pathCells) = 이 표를 번호 순서대로 적은 것. m_pathCells[2] → (2,1). 번호가 곧 목록의 몇 번째.
+   Dictionary(m_pathIndexByCell) = 같은 표를 좌표로 찾게 뒤집은 것. (1,1) → 3. 표에 없는 (3,0)은 "없음" → Try.
+   둘 다 두는 이유: 같은 표를 양쪽 방향으로 빨리 찾으려고 (적이 2번 칸 → 화면 위치는 List / 클릭한 (1,1)은 몇 번 → Dictionary).
+   List만 있으면 좌표로 찾을 때 [0]부터 하나씩 비교해야 해서 느림.
+   Wrap(n = 5): 5 → 0, -1 → 4. 테스트도 40칸 대신 5칸짜리로 만들면 숫자가 작아 덜 어지러움.
+
+Q. Vector3Int가 정확히 뭐야? Vector3는 알겠는데 Int는 왜 붙어?
+A. 안의 숫자가 소수(float)냐 정수(int)냐의 차이.
+   Vector3     (3.75, 2.25, 0)  화면 위의 위치 (오브젝트·투사체가 있는 곳)
+   Vector3Int  (2, 1, 0)        타일맵의 칸 번호 ("가로 2번째, 세로 1번째 칸")
+   칸에 Int를 쓰는 이유:
+     칸은 정수로만 있음 (2.5번째 칸은 없음). 20번 2장 "모든 판정은 정수 타일 단위, 월드 1.5는 화면 표시용".
+     소수는 작은 오차가 생겨(0.1 + 0.2 ≠ 정확히 0.3) "같다" 비교가 위험함. 정수는 오차가 없어 Dictionary의 열쇠로 안전.
+     Unity의 타일맵 함수(HasTile, GetTile)가 원래 Vector3Int로 칸을 받음.
+   오가는 법 (칸 크기 1.5): tilemap.GetCellCenterWorld((2,1,0)) → (3.75, 2.25, 0) [(2 + 0.5) × 1.5]
+                            tilemap.WorldToCell((3.9, 2.0, 0)) → (2, 1, 0) (클릭 위치를 칸으로)
+   판정·계산(BoardGrid)은 Vector3Int, 화면에 그릴 때(BoardManager)만 Vector3. 2D라 z는 늘 0. Vector3Int도 값 형식(struct).
+
+Q. Grid의 cellSize를 1.5가 아니라 1로 바꿔도 변경점은 딱히 없지?
+A. 게임 규칙(판정·계산)은 안 바뀜: BoardGrid는 칸 번호만 다뤄서 거리·고리·비프로스트가 그대로.
+   화면은 바뀜: 칸 하나가 화면에서 얼마나 큰가라서 판 전체가 2/3로 줄어듦 → 카메라 크기·위치, 칸에 맞춘 스프라이트 크기,
+   월드 단위로 정한 값(투사체 속도, 위성 반지름 0.9, 대미지 숫자 속도)을 다시 맞춰야 함.
+   옛 코드에는 TowerAttackAction.WorldUnitsPerTile = 1.5f가 박혀 있어, Grid만 바꾸면 옛 게임의 사거리가 1.5배로 틀어짐
+   (같은 값을 두 곳에 따로 적은 것 = "값마다 주인은 하나"를 어긴 예).
+   새 코드는 숫자를 박지 않고 칸 → 화면 위치를 늘 타일맵에 물어봄(GetCellCenterWorld) → 칸 크기를 바꿔도 따라감.
+   바꾸고 싶으면 화면을 다듬는 6부 즈음에. (→ 같은 날 1로 바꾸기로 하고 옛 코드의 1.5를 1에 맞춤. 22번 [변경])
+
+Q. BoardGrid의 pathCells라는 변수는 그냥 임의의 값이야?
+A. 이름은 자유, 값은 부르는 쪽이 정함. "넘겨받을 물건을 담을 빈 칸에 붙인 이름" = 매개변수.
+   new BoardGrid(path)처럼 괄호 안에 넣은 것이 pathCells가 됨. 테스트에서는 가짜 5칸, 게임에서는 BoardManager가 넘긴 진짜 경로.
+   BoardGrid는 둘을 구분할 필요가 없음. 이름(cells, road …)을 바꾸면 안에서 부르는 곳도 같이 바꿈.
+   매개변수는 그 함수가 실행되는 동안에만 있음 → 생성자가 끝나면 사라지므로 필드 m_pathCells에 옮겨 적어 둠.
+   pathCells = 택배 상자(받아서 열고 버림), m_pathCells = 내 책장(꺼낸 걸 꽂아 둠). m_ = member, 내가 들고 있는 것.
+
+Q. 그러니까 BoardGrid를 사용하는 곳에서 매개변수까지 호출한다는 거네?
+A. 뜻은 맞음. 다듬으면: "부를 때 매개변수에 들어갈 값까지 같이 넣어서 부른다". 부르는 건 생성자이고, 매개변수는 그때 채워지는 빈칸.
+   매개변수(parameter) = 받는 쪽 괄호의 빈칸 이름 (BoardGrid(IReadOnlyList<Vector3Int> pathCells)의 pathCells)
+   인자(argument)      = 부르는 쪽 괄호에 넣는 실제 값 (new BoardGrid(path)의 path)
+   TowerId.GetTier(2107)도 같음: GetTier(int id)의 id가 매개변수, 2107이 인자 → 그 순간 id = 2107.
+
+Q. TryGetPathIndex 테스트를 어떻게 써야 해? (Assert.IsTrue(true, grid.TryGetPathIndex(...))로 씀)
+A. Assert.IsTrue는 괄호 안에 bool 하나만 받음 (정답은 이미 true로 정해져 있음). 두 번째 자리는 정답이 아니라 실패 때 보여 줄 글(string).
+   AreEqual(정답, 실제) = 둘이 같은지 / IsTrue(조건) = 조건이 true인지 / IsFalse(조건) = 조건이 false인지.
+   TryGetPathIndex는 돌려주는 게 둘(bool과 out i)이라 한 줄에 넣으면 꼬임 → 결과를 변수에 받아 두고 하나씩 확인:
+     bool found = grid.TryGetPathIndex(new Vector3Int(1, 1, 0), out int i);
+     Assert.IsTrue(found);
+     Assert.AreEqual(3, i);
+   길이 아닌 칸은 Assert.IsFalse(found)만. i는 의미가 없으니 확인하지 않음.
+
+Q. 마지막 테스트에서 IsFalse 다음에 AreEqual로 i를 확인하면 어떻게 돼?
+A. out 매개변수는 함수가 끝날 때 반드시 채워져 있어야 해서, TryGetValue는 못 찾으면 기본값(int는 0)을 넣고 돌아옴.
+   → AreEqual(0, i)는 통과, AreEqual(3, i)는 실패.
+   그런데 0은 진짜 칸 번호(0번 = Start)이기도 함. bool을 안 보고 i만 믿으면 "길이 아닌 칸을 눌러도 0번 칸의 적을 보여 주는" 버그.
+   규칙: Try가 false면 out 값은 쓰지 않는다. 그래서 테스트도 false일 때 i는 확인하지 않음.
+   Assert는 실패하는 순간 그 테스트를 멈춤 (아래 줄은 실행 안 됨).
+
+Q. 실무에서도 테스트를 이렇게 해? 그냥 코드 짜고 돌려 보면서 디버깅할 것 같은데.
+A. 게임 업계는 둘 다 쓰고, "돌려 보며 디버깅"이 더 흔함.
+   플레이로 확인할 것: 손맛·연출·화면·밸런스, 여러 시스템이 엮인 흐름 (계획서 4-8의 시나리오 S1 ~ S8).
+   테스트로 확인할 것: 계산과 규칙 —
+     재현하기 어려운 경우 (WrapPathIndex(-41)을 플레이로 보려면 적을 41칸 뒤로 보내야 함. 테스트는 한 줄)
+     나중에 다시 고칠 때 (스탯·문양을 바꾸다 앞의 계산이 조용히 깨지는 것을 정확히 짚음. 플레이로는 "좀 약한가?" 정도)
+     기획서와 맞는지 (기획서의 숫자 예시를 정답으로 옮기면 "기획대로 만들었다"는 증거)
+   큰 회사, 서버·저장·결제처럼 틀리면 큰일 나는 곳일수록 많이 씀. 작은 팀은 계산 핵심만 테스트하고 나머지는 플레이.
+   우리 계획도 그 중간: 계산(static·순수 클래스)만 테스트, 화면과 흐름은 플레이와 시나리오.
+
+Q. GetTileDistance에서 Vector3Int는 int인데 Mathf는 float라 변환할 수 없다는 에러가 떠. (Mathf.Max(Mathf.Abs(a), Mathf.Abs(b)))
+A. 진짜 원인은 int/float가 아니라 좌표 통째로(a)를 넣은 것. Mathf.Abs는 int 버전도 있지만 "숫자 하나"만 받음.
+   Vector3Int는 정수 셋을 묶은 것 → a.x(가로), a.y(세로), a.z(2D라 0)로 하나씩 꺼내 씀.
+   계산도: "a와 b 사이가 가로·세로로 얼마나 떨어졌나" → 빼기 먼저, 음수일 수 있어 Abs:
+     int dx = Mathf.Abs(a.x - b.x);  int dy = Mathf.Abs(a.y - b.y);  return Mathf.Max(dx, dy);
+   함수 앞에 아무것도 안 쓰면 private이 기본 → 테스트·다른 스크립트에서 "접근할 수 없음". public을 붙임.
+   dx, dy의 d = difference(차이).
+   한 줄로 Mathf.Max(Mathf.Abs(a.x - b.x), Mathf.Abs(a.y - b.y))도 되지만, 나눠 두면 읽기 쉽고 틀린 곳을 찾기 쉬움.
+
+Q. 테스트 맞는지 확인해 줘. (GetSpawnCell 테스트에 Assert.AreEqual((1,0,0), grid.GetSpawnCell(1)))
+A. 두 개가 겹쳐 틀림: 값(스폰 1번은 (3,0,0))과 형식.
+   C#에서 괄호에 숫자만 쓴 (1, 0, 0)은 Vector3Int가 아니라 "튜플"(그냥 묶음)이라, 값이 같아도 형식이 달라 실패함
+   (컴파일은 되고 실행하면 빨간색). 좌표는 꼭 new Vector3Int(3, 0, 0).
+   static 함수(BoardGrid.GetTileDistance)를 테스트할 때는 판을 만들 필요 없음 — 판 없이 부를 수 있다는 게 static의 뜻.
+
+Q. BoardManager 맞아? (파일 이름 BoradManager.cs, 확인을 layoutGrid.transform.position == 로 씀)
+A. 빈칸은 정답. 고칠 곳:
+   파일 이름 오타: MonoBehaviour는 파일 이름 = 클래스 이름이어야 Unity가 오브젝트에 붙여 줌. 이름은 Unity 프로젝트 창에서 바꿈(.meta가 따라감).
+   layoutGrid = 부모 Grid. 같은 부모 밑이면 그 위치는 늘 같아서 아무것도 못 잡음.
+     잡을 실수 둘: 한쪽 타일맵을 옮김 → 타일맵의 transform.position끼리 / 서로 다른 Grid 밑 → layoutGrid끼리(같은 Grid인가).
+   "다를 때" 알려야 하므로 != , 둘 중 하나라도이므로 || , 고치기 전엔 게임이 틀리는 경고라 빨간 Debug.LogError.
+   함수 안의 지역 변수는 소문자로 시작(spawnCells)이 관례.
+
+Q. CollectSpawnCells에 bounds가 많이 나오는데 bound가 뭐야?
+A. bound = 경계. cellBounds = 이 타일맵에서 타일이 깔린 칸들을 전부 감싸는 가장 작은 사각형. 칸 단위라 BoundsInt (Vector3 ↔ Vector3Int와 같은 관계).
+   예: 칸이 x 0 ~ 3, y 0 ~ 2에 깔렸으면 xMin 0, xMax 4, yMin 0, yMax 3 — Max는 "마지막 칸의 바로 다음" (그래야 크기 = Max − Min).
+   그래서 x는 < xMax에서 멈추고, 위에서 시작하는 y는 yMax − 1부터.
+   사각형 안의 모든 칸을 돌지만 그 안에도 빈 칸이 있음 → HasTile(cell)로 진짜 타일이 있는 칸만 넣음.
+   bounds = 어디서부터 어디까지 훑을지, HasTile = 그중 진짜 칸만.
+   타일을 지워도 cellBounds가 저절로 안 줄 때가 있지만 HasTile로 거르므로 결과는 같음 (안전).
+
+Q. 5×5 보드라면 bounds가 (0,0,0)부터 (4,4,0)까지 25개가 나오는 거지?
+A. 맞음. 다만 bounds 자체는 숫자 넷(xMin 0, xMax 5, yMin 0, yMax 5)뿐이고, 25칸은 그 안을 for문이 하나씩 만들어 보는 것.
+   Max는 4가 아니라 5 (마지막 칸의 바로 다음).
+   for문의 순서는 y가 큰 줄(위)부터: (0,4) (1,4) … (4,4) → (0,3) … → … (4,0). 화면에서 y가 클수록 위라 "왼쪽 위부터 읽는 순서".
+   실제 씬의 좌표는 타일을 칠한 곳에 따라 음수에서 시작할 수도 있음 (xMin = -3 등). 코드는 Min ~ Max를 그대로 쓰니 상관없음.
+
+Q. yMax, yMin을 따로 입력 안 했는데 어떻게 알아?
+A. 타일맵이 스스로 기억함. 타일 팔레트로 칠하면 Tilemap 컴포넌트가 "어디부터 어디까지 깔렸나"를 자동으로 기록하고(바깥에 칠하면 넓어짐),
+   씬을 저장할 때 같이 저장됨. 씬 파일에 타일맵마다 m_Origin(시작 칸 = xMin, yMin)과 m_Size(크기)가 있음 (예: Origin (-6,-9), Size (12,12)).
+   cellBounds는 이 둘을 묶어 돌려주는 프로퍼티 → yMin -9, yMax = -9 + 12 = 3.
+   List.Count와 같은 모양: Add할 때마다 List가 알아서 세고 우리는 읽기만 함.
+   그래서 코드에 판 크기를 숫자로 적지 않음 → 스테이지마다 판 모양이 달라도 타일만 다르게 칠하면 코드는 그대로.
+
+Q. 타일이 안 깔린 빈칸이 있으면 무시하는 거야?
+A. 응. if (m_spawnTilemap.HasTile(cell))이 false면 아무것도 안 하고 다음 칸으로.
+   빈칸은 스폰 목록에 없음(타워를 못 세움), 번호도 안 받음(넣은 순서대로 0, 1, 2…라 번호가 건너뛰지 않음),
+   좌표로 물어도 TryGetSpawnIndex가 false. 그래서 판이 네모가 아니어도 됨 — 칠한 곳만 판.
+
+Q. 그럼 HasTile은 왜 넣은 거야?
+A. bounds가 "사각형"이라서. 사각형 안에는 타일이 없는 자리도 들어 있어, HasTile이 없으면 빈자리까지 전부 스폰 칸이 됨.
+   4×3 그림 예: HasTile 있음 → 진짜 6칸(0 ~ 5번) / 없음 → 12칸(0 ~ 11번), 그중 6칸은 허공 → 허공에 타워가 서고 번호가 붙음.
+   실제 첫 맵은 6 × 10 판에 스폰 약 20칸 (나머지는 길이라 스폰 타일맵에서는 빈칸). 사각형은 판 전체만큼 크고, 지운 타일만큼 안 줄기도 함
+   → HasTile 없이는 20칸이 수십 ~ 백 칸이 됨.
+   bounds = 어디까지 훑을지(사각형)만 앎, HasTile = 그 칸에 진짜 타일이 있는지 하나씩 물음. 그물(bounds)로 크게 뜨고 체(HasTile)로 거름.
+
+Q. 컴퓨터는 타일이 어디 깔렸는지 모르니까, 타일맵 크기를 바탕으로 셀 크기로 하나하나 확인해서 타일이 있는 곳을 HasTile에 집어넣는 거야?
+A. 거의 맞음. 다듬을 곳:
+   타일맵은 어디에 깔렸는지 앎 (안에 "이 칸에는 이 타일" 기록이 있음). 다만 "깔린 칸을 왼쪽 위부터 순서대로 줘" 기능은 없어서,
+   순서를 우리가 정하려고 사각형을 위 → 아래, 왼 → 오른쪽으로 훑으며 칸마다 물어봄.
+   HasTile은 질문하는 함수(true/false)라 무언가를 담지 않음. 담는 곳은 cells 목록 (HasTile이 true면 cells.Add).
+   셀 크기(1)는 여기서 안 쓰임. for문은 칸 번호(정수)를 하나씩 올림. 셀 크기는 화면에 그릴 때만.
+   다듬은 문장: bounds를 칸 하나씩 훑으며 "여기 타일 있어?"(HasTile)라고 물어보고, 있다면 스폰 목록(cells)에 넣는다.
+
+Q. 각 타일마다 인덱스를 넣으려는 거구나? 그래서 spawn 칸만 이걸로 검사하는 거고?
+A. 맞음. 목적은 스폰 칸마다 "왼쪽 위부터" 순서의 번호를 붙이는 것.
+   길은 이 방법으로 못 모음: 스폰 번호는 "읽는 순서"라 훑기만 하면 되지만, 길 번호는 "적이 걸어가는 순서".
+   고리가 어느 칸에서 시작하고(0번 = Start) 어느 방향으로 도는지는 타일만 보고 알 수 없음 → 사람이 정해 줘야 함.
+   그래서 스폰 칸 = 타일맵을 훑어 코드가 모음(CollectSpawnCells), 길 칸 = 사람이 순서대로 인스펙터에 적어 둠(m_pathCells).
+   손으로 적기 불편해서 씬 뷰 Shift + 클릭으로 경로 끝에 칸을 더하는 에디터 도구가 있음 (C단계에서 옮김).
+   OnDrawGizmos로 길 번호를 그리는 것도 적어 둔 순서가 길을 따라 이어지는지 눈으로 확인하려는 것.
+
+Q. 인스펙터에서 경로 목록 복사가 안 돼. BoardManager에서 직접 지정하는 방법은 없어?
+A. 두 가지: ① 씬 뷰 Shift + 클릭으로 칸을 경로 끝에 더하는 도구 (C단계) — 40칸을 순서대로 다시 클릭해야 해서 이사에는 번거로움.
+   ② 옛 TileManager.PathGridPositions를 읽어 넣는 한 번용 메뉴 (추천):
+     [ContextMenu("이름")]을 붙인 함수 = 컴포넌트 ⋮ 메뉴의 버튼. 편집 중에 한 번 실행할 작업에 씀.
+     FindFirstObjectByType<TileManager>(FindObjectsInactive.Include)로 꺼진 것까지 찾고,
+     Undo.RecordObject(Ctrl+Z 되게) → 값 넣기 → EditorUtility.SetDirty(저장되게) 순서.
+     쓰고 나면 바로 지움: 새 코드가 옛 TileManager를 부르는 유일한 곳이라, 남기면 옛 스크립트를 지울 때 컴파일 에러.
+   (→ 사용자는 ②를 쓰지 않고 ①의 도구를 옮기기로 함)
+
+Q. 에디터는 공부할 필요가 없나?
+A. 지금은 깊이 안 해도 됨. "읽고 고칠 수 있는" 정도면 충분 (C단계가 딱 그 정도).
+   에디터 스크립트 = 게임 안이 아니라 Unity 편집기를 꾸미는 코드 (인스펙터 버튼, 씬 뷰 클릭, 메뉴). 게임 로직을 편하게 해 주는 "공구".
+   같은 C#이지만 도구가 따로라(SerializedObject, Handles, OnSceneGUI, Undo) 거의 다른 과목. 이 프로젝트엔 2개뿐이고 둘 다 옮기기만 함.
+   알아 둘 넷: [CustomEditor(typeof(X))] = X의 인스펙터를 꾸밈 / OnInspectorGUI·OnSceneGUI = 인스펙터에 그리기·씬 뷰 마우스 받기 /
+             serializedObject.FindProperty("필드이름") = 글자로 찾음, 이름이 바뀌면 조용히 null / Undo.RecordObject = Ctrl+Z 되게.
+   반복 작업을 도구로 만들고 싶어질 때 따로 배워도 늦지 않음 (실무에서도 "툴 프로그래머"가 따로 있을 만큼 독립된 분야).
+   에디터 도구는 Assets/Editor/New/, 테스트는 Assets/Editor/Tests/New/로 나눠 둠 (둘 다 Editor 폴더 안이라 빌드에서 빠짐).
+
+Q. BoardManagerEditor 옮기기 리뷰 (namespace·이름·필드 이름·타일맵 꺼내기는 맞음)
+A. [CustomEditor(typeof(BoardManager))]가 빠짐 → 에러 없이 어디에도 연결되지 않아 버튼도 Shift + 클릭도 안 됨. 가장 중요한 한 줄.
+   #endif가 namespace를 닫는 } 앞에 있었음 → 편집기에서는 문제가 안 보이지만, 빌드 때 #if ~ #endif가 빠지면 } 하나만 남아 실패.
+   #endif는 파일 맨 끝, 마지막 } 다음 줄. #if로 감쌌으면 그 안에서 괄호 짝이 맞아야 함.
+
+======================================================================
+수업 4. 적 한 마리 — EnemyDefinition, EnemyController (2026-10-20)
+======================================================================
+
+Q. 적은 DataSO 방식보다 CSV로 읽어 와서 소환하는 게 낫지 않아?
+A. 둘 다 되고, 무엇을 더 자주 고치느냐로 갈림.
+   SO   숫자는 에셋마다 인스펙터에서 / 그림·프리팹은 끌어다 놓으면 끝 / 칸마다 형식이 정해져 틀린 값을 못 넣음 / 종류 수만큼 파일
+   CSV  엑셀 한 장에서 한눈에·일괄 수정 / 그림은 못 담아 경로를 글자로 적고 Resources.Load / 글자라 오타·빈칸을 따로 검사 / 파일 하나
+   타워가 CSV인 이유: 280종이라 에셋으로는 너무 많고, 그림은 ID로 정해짐(TowerVisual).
+   적은: 약 30종(스테이지마다 일반·중간 보스·최종 보스), 웨이브마다 세지는 건 WaveTable의 배율이라 적마다 숫자는 기본값 7개뿐,
+         대신 그림(큐브 면, 보스 외형)과 나중의 보스 기믹이 적마다 다름 → SO가 편함.
+   추천은 SO: 그림 연결이 쉽고, SO는 어차피 배워야 하고(StageDefinition), 다른 코드는 EnemyDefinition의 프로퍼티만 읽으니
+   나중에 CSV로 바꿔도 EnemyDefinition 하나만 고치면 됨. 섞는 방법(숫자는 CSV, 그림은 SO)도 있지만 CSV 읽기(수업 11)를 먼저 해야 함.
+   (→ SO로 가기로 함)
+
+Q. EnemyDefinition 리뷰 (파일은 EnemyDefinition.cs인데 클래스 이름을 EnemyData로 씀)
+A. 파일 이름 = 클래스 이름 규칙은 ScriptableObject도 같음. 다르면 에셋이 스크립트와 연결되지 않음 ("The associated script can not be loaded").
+   EnemyData는 옛 코드(EnemyDataSO.cs, namespace 없음)의 이름이라, namespace 밖에서 부르면 옛 것이 먼저 찾아져 헷갈림 (TowerEmblem과 같은 문제).
+   이름을 고친 뒤 이미 만든 에셋은 지우고 다시 만듦.
+
+Q. EnemyController에서 뭘 하라는 거야? (임시 코드만 붙여 넣어 클래스 { }와 Setup 등이 빠짐)
+A. 파일 하나를 완성: ① Definition(이 적의 종류) ② MaxHp·Defense(이번 판의 값 = 기본값 × 웨이브 배율) ③ Setup(값 채우기)
+   + 씬에서 확인하려고 자기 자신을 0번 칸에 세워 보는 임시 Start (수업 7에서 지움).
+   클래스는 public class X : MonoBehaviour 다음에 { 로 열고 끝에 } 로 닫음.
+   Setup은 값만 채움 (위치·켜기는 수업 7의 Spawner가 순서대로). 이 값들은 코드가 채우므로 [field: SerializeField]를 안 붙임.
+   임시 코드가 Start인 이유: 다른 매니저(BoardManager.Instance)를 쓰므로 모든 Awake가 끝난 뒤.
+   $"…{값}…" = 글자 안에 값을 끼워 넣는 문법.
+
+Q. 플레이했더니 "[EnemyController]  체력 0, 0번 칸 (-5, -3, 0)"이 찍혀. (이름이 비고 체력이 0)
+A. 코드는 다 돌았음 (로그가 찍혔고 0번 칸 좌표도 나옴). 빈 이름과 0은 아무것도 안 넣었을 때의 기본값
+   (string = "", float = 0, enum = 0) → 에셋(Valkyrie)의 값이 비어 있다는 뜻.
+   클래스 이름을 바꾸며 에셋을 다시 만들었는데 값을 안 넣었거나, 이름이 바뀌며 연결이 끊겨 값이 사라졌을 수 있음.
+   에셋 인스펙터에 값을 넣고, 씬 오브젝트의 Test Definition에 그 에셋이 들어 있는지 확인.
+   로그에 값을 찍어 두면 "코드는 돌았는데 데이터가 비었다"를 바로 구분할 수 있음 (화면만 보면 0번 칸에 잘 서 있어 모름).
+
+Q. 예전에는 HealthController, MoveController, DebuffController로 관리했는데 이젠 그런 방식이 아니네?
+A. 나누는 건 같고, 나누는 방식이 다름.
+   옛 방식: MB 셋이 나란히, 각자 남의 일까지 함 (Health가 보상·클리어·풀 반환, Move가 타일 효과, Debuff가 UI 문구).
+            책임자가 없어 서로 GetComponent로 부르고, 풀 재사용 때의 초기화 순서가 흩어짐 (옛 버그 B3, B9의 원인).
+   새 방식: EnemyController(MB, 책임자)가 부품을 들고 초기화·정리 순서를 한곳에서 정함.
+            부품: EnemyMovement(MB, 수업 8), EnemyHealth(클래스, 14), EnemyStats(21), EnemyStatusEffects·EnemyResistance(25).
+            남의 일은 따로: 보상·클리어·풀 반환 = DeathResolver(14), 타일 효과 = EnemyTileEffectApplier(22), 설명 문구 = StatusTextFormatter(25).
+   좋아지는 점: 한 부품 = 한 가지 일 / 순서가 한곳에 / 대부분 순수 클래스라 씬 없이 테스트됨.
+   EnemyMovement만 MB인 이유: 여러 프레임에 걸친 코루틴과 transform(위치)이 MonoBehaviour의 기능이라서.
+   비유: 옛날 = 팀장 없이 직원 셋이 남의 일까지 / 새 = 팀장(EnemyController)이 직원(부품)을 두고 순서를 정함.
+
+======================================================================
+수업 5. 오브젝트 풀 — EnemyPool (2026-10-20)
+======================================================================
+
+Q. EnemyPool을 리뷰해 볼게: 프리팹·부모 지정 → Awake에서 각 함수의 역할을 정의 → CreateEnemy는 소환하고 바로 끔 →
+   OnGetEnemy는 spawn할 때 켬 → Release는 돌아감 → Destroy는 많이 생기면 파괴(201마리째면 1마리 파괴) → K는 40마리 꺼내기?
+A. 큰 줄기는 맞음. Awake는 풀을 만들며 "이럴 땐 이 함수를 불러 줘"라고 넘겨주는(등록) 것 — 이때는 아무 함수도 실행 안 됨.
+   CreateEnemy는 "소환"이 아니라 "만든다" (판에 내보내는 소환과는 다른 일).
+   OnGetEnemy는 켜는 게 아님: 풀이 부르긴 하지만 일부러 아무것도 안 함. 켜는 건 Spawner가 값을 다 채운 뒤
+     (꺼냄 → Setup → 위치 → SetActive(true)). 꺼내자마자 켜면 값이 빈 적이 한순간 보일 수 있음.
+   maxSize 200 = 보관하는 수의 한도 (사용자가 이해한 대로). 250마리가 다 돌아오면 200마리까지만 보관하고 넘치는 것은 파괴.
+     옛 버그 B4는 이걸 "20마리 넘게 못 만든다"로 막아서 소환이 멈추고 게임이 안 끝났음.
+
+Q. OnGetEnemy가 비어 있는데, 나중에 초기화 같은 함수로 채워진다는 거지?
+A. 아니, OnGetEnemy는 계속 비어 있음 (일부러). 초기화는 나중에 채워지지만 Spawner(수업 7) 쪽에서 함.
+   풀은 이번 적이 무엇인지(발키리·보스), 몇 웨이브 배율인지, 몇 번 칸에 설지 모름. Spawner가 앎 →
+     pool.Get()(이때 빈 OnGetEnemy가 불림) → Setup(정의, 배율) → 위치 → SetActive(true).
+   풀은 "보관하고, 달라면 주고, 돌려받기"만 → 같은 EnemyPool을 일반·중간 보스·최종 보스 풀로 그대로 씀.
+   빈 함수 대신 null을 넘겨도 동작은 같지만, 주석과 함께 남겨 "여기서 안 켜는 건 일부러"를 알려 둠.
+
+Q. OnGetEnemy의 역할이 뭐야? 아무것도 없는 빈 함수를 호출해 봤자 아무 일도 없잖아.
+A. 맞음, 지금은 역할이 없음. ObjectPool은 꺼낼 때 끼어들 수 있는 자리를 만들어 둔 것이고, 그 자리는 비워도 됨(null).
+   → 빈 함수를 지우고 생성자에 null을 넘기고 옆에 주석("꺼낼 때: 할 일 없음, 켜는 건 값을 다 채운 뒤 Spawner")을 다는 게 더 깔끔.
+   나중에 "꺼낼 때마다 개수를 센다" 같은 일이 생기면 그때 함수를 넣음.
+
+Q. 나중에 Spawner에서 소환할 때는 무슨 함수를 써? CreateEnemy?
+A. Get(). Spawner는 CreateEnemy를 직접 부르지 않음.
+   Get() → 풀: 보관함에 꺼진 적이 있으면 그걸 줌(새로 안 만듦) / 없으면 그때만 CreateEnemy()를 불러 새로 만들어 줌.
+   CreateEnemy = 풀이 모자랄 때 알아서 부르는 함수. private인 이유: 밖에서 직접 만들면 풀이 모르는 적이 생겨 돌려받을 수 없음.
+   밖에서 쓰는 건 둘뿐: Get()(소환할 때, Spawner) / Release(enemy)(죽었을 때, DeathResolver). 나머지 셋은 풀 안에서만.
+   수업 5 확인에서 두 번째 K에 "만든 수 40 그대로" = CreateEnemy가 안 불리고 보관함에서 꺼냈다는 뜻.
+
+Q. 그러니까 OnGet에서 적을 켜서 소환하면 되는데 그걸 왜 안 써?
+A. 켜지는 시점이 너무 빨라서. OnGet은 Get() 안에서, Spawner가 적을 받기 "전에" 불림:
+     ① 꺼냄 → ② OnGet (여기서 켜면?) → [Spawner가 받음] → ③ Setup(값) → ④ 위치
+   ②에서 켜면: 켜질 때 저절로 도는 OnEnable이 빈 값으로 돎 (체력 0, 정의 없음),
+              재사용하는 적은 지난번에 죽은 자리에 있어 그 자리에 한순간 보였다가 옮겨짐.
+   그래서 ① 꺼냄(꺼진 채) → ② Setup → ③ 위치 → ④ 켜기로, 켜기를 맨 뒤에 Spawner가 직접 함.
+   옛 코드도 "활성화가 초기화보다 먼저라 위험"했고, 그걸 피하려고 풀 안에서 초기화까지 함 (풀이 너무 많이 앎).
+   총알처럼 켜진 직후 바로 날아가는 단순한 것은 OnGet에서 켜도 괜찮음. 켜질 때 준비할 게 많을수록 켜기를 뒤로.
+
+Q. OnGet 자리를 null로 하면, 나중에 다른 함수들이 OnGet으로 소환할 수 있게 되는 거 아냐?
+A. 아님. 그 칸("꺼낼 때 풀이 부를 함수")을 부르는 건 풀 자신뿐 — Get() 안에서 함수가 있으면 부르고, null이면 넘어감.
+   다른 스크립트가 그 칸으로 소환할 방법은 없음. 적을 받는 길은 언제나 Get() 하나.
+   이 칸은 풀을 만들 때 한 번 정하면 바꿀 수 없어서 나중에 끼워 넣을 수도 없음.
+   빈 함수 + 주석(의도가 이름으로 보임) / null + 주석(더 짧음) — 안전은 같고 읽기 편한 쪽으로.
+
+Q. 그럼 Release도 다른 스크립트가 직접 하는 게 아니라 풀에게 전달만 하면 풀이 알아서 하는 거야?
+A. 맞음. 다른 스크립트는 enemyPool.Release(enemy)로 "돌려줄게"만 하고, 풀이 보관함에 자리가 있으면 OnReleaseEnemy(끔 → 보관),
+   꽉 찼으면 OnDestroyEnemy(파괴)를 알아서 부름.
+   Release(enemy)(public) = 다른 스크립트가 맡기는 창구 / OnReleaseEnemy(private) = 풀이 실제로 끄는 일. Get도 같은 모양.
+   다른 스크립트가 SetActive(false)나 Destroy를 직접 하면 풀은 돌아온 줄 몰라 보관함에 안 넣음 → 다음 Get에서 못 씀 → 새로 만들게 되어 풀의 의미가 없어짐.
+
+Q. Release(OnRelease)는 SetActive(false)로 끄는데, Get(OnGet)은 왜 SetActive(true)를 안 써? (짝이 안 맞아 보임)
+A. 끄기와 켜기는 "언제 해도 되는가"가 다름.
+   끄기: 돌아올 때는 일이 다 끝난 상태라 준비할 게 없고, 지금 바로 사라져야 맞음 → 풀이 돌려받자마자 꺼도 안전.
+   켜기: 꺼낼 때는 준비 전. Setup·위치가 먼저인데 그건 Get()이 끝난 다음 Spawner가 함 → 풀은 준비가 언제 끝날지 몰라 켤 시점을 못 정함.
+   그래서 끄기는 풀(OnRelease), 켜기는 준비하는 쪽(Spawner).
+   비유: 문 닫기는 마지막 손님이 나가면 바로 / 문 열기는 진열이 끝나야 — 창고지기(풀)는 진열이 언제 끝나는지 모름.
+
+Q. 그래도 결국 Spawner가 풀에게 켜 달라고 말해야 켜는 거 아냐?
+A. 아님, Spawner가 직접 켬: Get() → Setup → 위치 → enemy.gameObject.SetActive(true). 풀은 모름.
+   Get()으로 받은 순간부터 Release로 돌려줄 때까지 그 적은 게임 쪽 손에 있고, 풀은 "밖에 나가 있다"만 앎.
+   켜기 = 받은 적을 보이게 하는 것이라 풀이 알 필요 없음 → 직접 해도 됨.
+   돌려주기 = 풀이 반드시 알아야 보관하고 다음 Get에서 다시 줌 → 꼭 Release. 끄는 건 Release 안에서 풀이 덤으로 해 줌.
+   "직접 SetActive(false) 하면 안 됨"은 끄는 게 위험해서가 아니라, 풀에게 알리지 않은 채 사라지게 되기 때문.
+   풀에게 꼭 알려야 하는 건 받기(Get)와 돌려주기(Release) 둘뿐. 그 사이의 켜기·이동·피해는 전부 게임 쪽 일.
+
+Q. 아까는 다른 스크립트가 Get이나 Release에 직접 접근하면 안 된다면서, 이번엔 Get에 직접 접근해도 된다니 헷갈려.
+A. (설명이 섞였던 것을 정리) Get과 Release는 다른 스크립트가 직접 불러야 하는 창구(public)가 맞음.
+   "직접 하면 안 된다"고 한 건 창구 안쪽에서 풀이 쓰는 것들:
+     불러야 함   pool.Get() (받기), pool.Release(enemy) (돌려주기)
+     해도 됨     enemy.gameObject.SetActive(true) (받은 적을 보이게 하기, 풀과 무관)
+     하면 안 됨  CreateEnemy·OnReleaseEnemy·OnDestroyEnemy (풀이 안에서 부름, 그래서 private)
+                 죽은 적을 SetActive(false)·Destroy로 직접 치우기 (풀이 돌아온 줄 모름 → Release로 돌려줌)
+   한 줄로: 다른 스크립트는 창구(Get·Release)로만 풀과 이야기하고, 창구 안쪽은 건드리지 않음.
+   켜기는 Get과 다른 일: Get = 받기, 켜기 = 받은 걸 보이게 하기 → Spawner가 Get 다음에 직접 켬.
+
+Q. Spawner가 Get으로 몬스터를 소환한다는 건 맞지?
+A. 맞음. 소환 한 번 = Get()(받기) → Setup(값) → 위치 → SetActive(true)(켜기) 네 줄 (수업 7).
+
+Q. Get에 아무 함수도 없는데 소환이 된다고?
+A. 비어 있는 건 OnGetEnemy이고 Get()은 비어 있지 않음. 우리 Get()은 Unity의 m_pool.Get()을 대신 불러 줄 뿐이고,
+   ObjectPool.Get() 안쪽(Unity가 만든 것)은 대략: 보관함이 비었으면 createFunc(= CreateEnemy)로 새로 만들고, 아니면 보관함에서 꺼냄
+   → actionOnGet(= OnGetEnemy, 지금은 빈 함수)를 부름 → 적을 돌려줌.
+   OnGetEnemy = Get() 중간에 "덧붙일 일이 있으면 해"라고 열어 둔 작은 자리. 덧붙일 일이 없어 비워 둔 것.
+   K로 40마리가 생기는 것도 Unity의 Get()이 CreateEnemy를 40번 불러 준 것.
+   이름의 On = "~할 때": OnGetEnemy는 "적을 얻는 함수"가 아니라 "꺼낼 때 불리는 함수" (OnDestroy = 지워질 때, OnEnable = 켜질 때와 같은 이름 짓기).
+   꺼내는 함수는 Get(), OnGetEnemy는 Get()이 일하는 도중 "지금 꺼내는 중" 하고 불러 주는 것.
+   확인법: OnGetEnemy에 Debug.Log를 넣고 K → 우리가 부른 적이 없는데 40번 찍힘 = Get()이 꺼낼 때마다 대신 불러 줌.
+
+Q. 그러니까 OnGetEnemy 안에 아무 코드가 없어도 소환이 된다는 거네? / OnGetEnemy 자체에 Get을 하라는 게 들어가 있는 거야?
+A. 맞음 — 꺼내 오는 건 Get()이 하니까. 그리고 방향은 반대: OnGetEnemy 안에 Get이 있는 게 아니라 Get() 안에서 OnGetEnemy를 부름.
+   Spawner → Get()(본체): ① 보관함에서 꺼내거나 없으면 CreateEnemy()로 만듦 → ② OnGetEnemy() 부름(빈 칸, 아무 일 없이 돌아옴) → ③ 적을 돌려줌.
+   OnGetEnemy는 Get()이 중간에 잠깐 들르는 빈 칸. Get을 부르지도 않음.
+
+Q. 그럼 OnGetEnemy를 쓰는 이유가 뭐야?
+A. 우리 코드에서는 쓸 이유가 없음 → 지우는 게 맞음 (처음에 빈 함수로 넣은 것이 헷갈림의 원인).
+   Unity의 ObjectPool은 누구나 쓰라고 "이럴 때 할 일" 칸 4개를 열어 둠: 만들 때 / 꺼낼 때 / 돌려놓을 때 / 버릴 때.
+   우리는 만들 때(CreateEnemy)·돌려놓을 때(OnReleaseEnemy)·버릴 때(OnDestroyEnemy)만 씀.
+   "꺼낼 때" 칸은 꺼낼 때마다 꼭 할 일이 있는 물건용 (총알: 꺼낼 때마다 켜고 꼬리 효과 지우기).
+   적은 꺼낸 뒤 Spawner가 값을 채우고 켜므로 꺼내는 순간 할 일이 없음 → OnGetEnemy 함수를 지우고 생성자의 그 자리에 null.
+
+Q. 그러면 풀링 방식은 왜 OnGet을 넣었는데?
+A. 풀링하는 물건 대부분은 다시 쓸 때 지난번 흔적이 남아 있어서, 꺼낼 때마다 "원래 상태로 되돌리기"가 필요함. 그걸 넣는 자리가 OnGet.
+   총알(꼬리 효과 지우고 켬), 대미지 숫자(글자·투명도 되돌림), 이펙트(처음부터 재생) — 되돌리는 데 바깥 정보가 필요 없어 풀 혼자 할 수 있음
+   → OnGet에 넣으면 편함. 그래서 예제 대부분이 OnGet에 SetActive(true)·되돌리기를 넣음.
+   적은 되돌리려면 바깥 정보가 필요함(정의, 웨이브 배율, 칸) → 풀은 모르고 Spawner가 앎 → 되돌리기(Setup)·켜기를 Spawner가 하니 OnGet에 할 일이 없음.
+   한 줄로: OnGet = 꺼낼 때 되돌리기 자리. 풀 혼자 되돌릴 수 있으면 거기에, 바깥 정보가 있어야 하면 꺼낸 쪽이 직접.
+   투사체 풀(수업 16)은 OnGet을 씀 — 그때 두 풀을 나란히 보면 차이가 보임.
+   함수를 넘길 때 () 없이 이름만 = 지금 부르는 게 아니라 함수 자체를 넘겨 두고, 받은 쪽이 필요할 때 부름.
+
+Q. TryGetPathIndex는 뭐야?
+A. GetPathCell의 반대 방향: 좌표 → 번호. "이 좌표가 길이야? 맞으면 몇 번?"
+   번호 → 좌표는 Wrap 덕분에 늘 답이 있지만, 좌표 → 번호는 스폰 칸·빈 칸을 넣으면 답이 없음 → Try.
+   돌려주는 bool = 길 칸인가, out int index = true일 때 그 번호.
+   쓰는 곳: 플레이어가 클릭한 칸이 길인지, 몇 번인지 (if (grid.TryGetPathIndex(cell, out int i)) { … }).
+   안의 TryGetValue는 Dictionary가 원래 가진 함수 (열쇠가 있으면 true와 값, 없으면 false)라 그대로 돌려줌.
+
+Q. WrapPathIndex를 (index + PathCount) % PathCount로 하면 안 돼? (39 → 79 % 40 = 39)
+A. 대부분은 맞음 (39, 41, -1 모두 맞음). 하지만 -41 → -1, -90 → -10으로 틀림.
+   n을 한 번만 더하는 건 "한 바퀴만 앞으로 당기기"라 두 바퀴 넘게 뒤로 간 번호는 음수로 남음.
+   ((index % n) + n) % n: 먼저 % n으로 -39 ~ 39로 줄이고 → + n으로 양수 → % n으로 0 ~ 39. 어떤 정수가 와도 맞음.
+   게임에서 -41이 나올 일은 드물지만, 누가 어떤 수를 넣어도 맞는 답을 주는 것이 안전 ("블랙홀이 50칸 뒤로"를 한 번에 계산하는 경우 등).
+   테스트의 WrapPathIndex(-41) == 39가 이 경우를 잡으려는 것.
+
+======================================================================
+수업 6. 웨이브 표 — WaveTable (2026-10-21)
+======================================================================
+
+Q. 1단계 리뷰 (GetCycle을 switch의 case >= 1 and <= 10 …으로, GetOrder를 wave + 1로 씀)
+A. GetCycle은 맞음. case >= 1 and <= 10은 C# 9의 "범위 패턴" (Unity 6에서 됨). 1 ~ 40 밖은 default 0 = "이상한 웨이브"라는 뜻.
+   식으로도 됨: (wave - 1) / 10 + 1. 정수 나눗셈은 몫만 남기므로 1 ~ 10 → 0, 11 ~ 20 → 1. 1을 먼저 빼는 이유는 10 / 10 = 1이 되어 버려서.
+     switch  표를 그대로 옮겨 한눈에 보임 / 웨이브 수가 바뀌면 case를 고침
+     식      한 줄, 웨이브 수가 늘어도 그대로 / 40 밖도 숫자가 나옴 (41 → 5)
+   GetOrder의 wave + 1은 틀림: 1 → 2, 11 → 12. 순서는 "10으로 나눈 나머지" 쪽 (GetCycle이 몫, GetOrder가 나머지 — TowerId의 / 와 %와 같은 짝).
+   (고친 답: ((wave - 1) % 10) + 1 — 맞음)
+
+Q. (wave - 1) / 10 + 1은 소수가 나오는데, int 계산은 버림이라며? 그러면 0이 되는 거 아냐?
+A. 맞음, 버림이라 0이 됨 — 그게 의도. 0이 된 다음에 + 1을 함.
+   계산 순서: 괄호 → 나누기·곱하기·나머지(/ * %) → 더하기·빼기. 그래서 "+ 1"은 나눈 뒤에 붙음.
+     wave 5    (5 - 1) / 10 = 4 / 10 = 0 (0.4를 버림) → 0 + 1 = 1
+     wave 10   9 / 10 = 0 → 1
+     wave 11   10 / 10 = 1 → 2
+     wave 40   39 / 10 = 3 → 4
+   / 의 양쪽이 둘 다 int면 결과도 int (소수 부분은 버림). 한쪽이라도 float(10f)면 0.4처럼 소수가 남음.
+   버림을 써서 "1 ~ 10을 전부 같은 수(0)로 묶고", + 1로 사이클 번호를 1부터 시작하게 맞춘 것.
+
+Q. 테스트 파일을 새로 만들기 전에 기존에 만들었던 테스트 파일은 지워도 돼?
+A. 지우지 않음. 테스트 파일은 쌓이는 것 — 클래스마다 하나씩 따로 두고, Test Runner의 Run All이 전부 한꺼번에 채점함.
+   TowerIdTest·BoardGridTests를 남겨 두는 이유: 나중에 TowerId나 BoardGrid를 고치다 망가뜨리면 바로 빨간색으로 알려 줌. 지우면 그 보호가 사라짐.
+   Assets/Editor/Tests/ 바로 밑의 옛 테스트 3개(GameRuleTests, EnemyCube… 둘)는 옛 코드를 채점함 → 옛 코드를 지우는 수업 48까지 그대로 둠.
+   새 테스트는 Assets/Editor/Tests/New/에 파일을 하나 더 만듦 (WaveTableTests.cs).
+
+Q. 2단계 리뷰 (HasBoss는 enum에 맞춰 HasFinalBoss로 이름을 바꿈)
+A. 이름 바꾼 것은 좋음 — EnemyKind.FinalBoss와 같은 말을 써야 "보스 = 어느 쪽?"이 안 헷갈림. 계획서도 HasFinalBoss로 고침.
+   HasMiddleBoss는 맞음 (GetOrder를 다시 불러 비교식을 그대로 return).
+   GetNormalCount는 switch (wave)라서 틀림: 1 ~ 10웨이브만 맞고, 16웨이브는 어느 case에도 안 걸려 default 0.
+     표의 1 ~ 4, 6 ~ 9는 웨이브가 아니라 "사이클 안의 순서" → switch에 넣을 것은 GetOrder(wave).
+   HasFinalBoss의 GetOrder(wave) == 0은 늘 false: GetOrder는 1 ~ 10을 돌려주도록 만들었으므로 0이 나오지 않음. 순서 10이 최종 보스.
+     (% 10만 쓰던 생각이 남은 것. 10 % 10 = 0이 싫어서 1을 빼고 더한 것이 GetOrder)
+   두 버그 모두 테스트(GetNormalCount(16) == 20, HasFinalBoss(40) == true)가 있었으면 빨간색으로 잡힘 → 함수를 쓰면 테스트도 바로 씀.
+
+Q. 3단계: 배열 대신 식(1 + (순서 − 1) × 0.5, 방어는 × 0.2)으로 썼는데 테스트는 다 통과해. 생각한 방식은 아니겠지만?
+A. 식도 맞음. 기획서도 방어 배율을 "순서가 하나 오를 때마다 +0.2"라고 식으로 적어 둠.
+     배열  표를 그대로 옮김 → 기획자가 숫자 하나를 고르지 않게 바꿔도(2.0 → 2.2) 그 칸만 고침
+     식    짧음 → 표가 일정하게 오르는 동안만 맞음. 순서 10은 식으로 5.5(방어 2.8)인데 표는 1.0 —
+           순서 10에는 일반 적이 없어서(최종 보스만, 보스는 순서 배율을 안 받음) 실제로는 상관없음
+   진짜 버그는 보스 쪽: 중간 보스·최종 보스에 1을 돌려줌. 기획은 "순서 배율 없이 사이클 배율만" → 1이 아니라 사이클(1 ~ 4).
+     40웨이브 최종 보스는 4배여야 하는데 1배 = 사이클 1의 보스와 같은 체력으로 나옴.
+   테스트도 같은 오해(정답 1)로 써서 초록색이었음. 테스트가 통과한다 = 코드가 "테스트의 정답"과 같다는 뜻일 뿐.
+   정답이 틀리면 둘이 함께 틀려도 초록색 → 정답은 머리로 정하지 말고 기획서의 숫자·예시에서 가져옴.
+   float 허용 오차: 이번 값들(× 2, × 4, 1.5)은 우연히 정확히 맞아 오차 없이도 통과함. 반올림이 맞아떨어질지는 값마다 달라서
+   float를 비교할 때는 늘 세 번째 칸(0.0001f)을 넣는 습관으로.
+   (고친 뒤: 보스는 cycleMultiplier, 테스트 정답 25웨이브 중간 보스 3 / 40웨이브 최종 보스 4 / 35웨이브 중간 보스 4.
+    10웨이브 최종 보스 1은 사이클 1이라 처음부터 우연히 맞았던 것)
+
+Q. 원래 하려던 방식(배열)은 뭐였어?
+A. 표를 배열 그대로 옮기고, 순서 − 1을 번호로 꺼냄 (번호는 0부터):
+     private static readonly float[] HpByOrder      = { 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f, 4.0f, 4.5f, 5.0f, 1.0f };
+     private static readonly float[] DefenseByOrder = { 1.0f, 1.2f, 1.4f, 1.6f, 1.8f, 2.0f, 2.2f, 2.4f, 2.6f, 1.0f };
+
+     public static float GetHpMultiplier(int wave, EnemyKind kind)
+     {
+         float cycle = GetCycle(wave);
+         if (kind == EnemyKind.Normal) return HpByOrder[GetOrder(wave) - 1] * cycle;
+         return cycle;   // 중간 보스·최종 보스: 사이클 배율만
+     }
+     (방어는 DefenseByOrder로 같은 모양)
+   식으로 쓴 지금 코드와 결과가 같음 (순서 10만 다르지만 일반 적이 없는 칸). 둘 다 정답이라 지금 코드는 그대로 둠.
+   차이: 배열은 기획 표가 코드에 그대로 보임 / 식은 표가 일정하게 오를 때만 맞음.
+   if 하나로 쓰면 None도 사이클 배율을 받음. 지금 코드의 switch는 None에 0을 돌려줘 "종류를 안 정한 적"이 체력 0으로 드러남 (enum 0번 None의 쓸모).
+
+Q. 밸런스로 배율을 고친다고 하면 배열 방식이 더 좋은 것 같기도 하고?
+A. 맞음. 밸런스 조정은 "한 칸만 다르게"가 흔함 (순서 6만 3.5 → 3.8). 식은 그런 표를 못 담아 식을 새로 짜야 하고, 배열은 그 숫자만 고침.
+   기획서 표와 코드를 나란히 놓고 맞춰 보기도 쉬움.
+   바꾸는 법: switch(None → 0)는 그대로 두고 waveMultiplier 한 줄만 배열에서 꺼내게.
+     float waveMultiplier = HpByOrder[GetOrder(wave) - 1];
+   테스트는 한 줄도 안 고침 → 바꾼 뒤 Run All이 초록이면 "결과는 그대로, 속만 바꿈"이 증명됨. 이게 리팩토링이고, 테스트가 있어서 안심하고 바꿀 수 있음.
+
+Q. 배열을 HasFinalBoss와 GetHpMultiplier 사이에 넣어도 상관없어?
+A. 동작은 같음. 클래스 안에서는 필드·함수를 어느 순서로 적어도 컴파일러가 전부 읽고 서로 찾아 줌
+   (함수가 아래에 적힌 필드를 써도 됨). static 필드는 클래스를 처음 쓰기 전에 값이 채워짐.
+   예외 하나: static 필드끼리 서로의 값으로 만들면 위에서 아래 순서로 채워짐 (아래 것을 쓰면 아직 빈 값). 이번엔 해당 없음.
+   관례는 필드를 클래스 맨 위에 모음 — 이 클래스가 무엇을 들고 있는지 열자마자 보이게. 지금까지 만든 BoardGrid·EnemyPool도 그 모양.
+
+Q. 배율을 새로 설계함 (순서 1.0 ~ 1.9를 +0.1씩, 사이클 1 / 2 / 4 / 8 배열. 체력·방어 같은 표) — 리뷰
+   (기획 변경: 20번 3장 [웨이브별 능력치 배율]을 이 표로 고침. 9웨이브 1.8 → 11웨이브 2.0으로 떨어지지 않음)
+A. 배열에서 꺼내는 번호 두 곳이 틀림 — 배열 번호는 0부터, 꺼낼 번호는 "몇 번째 칸인가":
+     order[wave - 1]          순서 배율인데 웨이브 번호로 꺼냄. 10칸짜리라 11웨이브부터 order[10] → IndexOutOfRangeException
+                              (배열에 없는 번호를 꺼내면 C#은 0을 주지 않고 에러로 멈춤)
+     cycle[GetCycle(wave)]    GetCycle은 1 ~ 4인데 번호는 0 ~ 3. 사이클 1 → cycle[1] = 2 (한 칸 밀림), 사이클 4 → cycle[4] → 에러
+   둘 다 "1부터 세는 수 → 0부터 세는 번호"로 바꾸는 − 1이 필요하고, 순서 배율은 GetOrder(wave)로.
+   ;; 는 빈 문장 하나가 더 있는 것 (에러는 아니지만 지움).
+   필드 이름 order·cycle은 GetOrder·GetCycle의 "순서 번호·사이클 번호"와 헷갈림 → 안에 든 것이 배율이라는 이름 (OrderMultipliers 등).
+   이름이 번호처럼 보여서 order[wave − 1]처럼 웨이브를 넣는 실수가 나오기 쉬움.
+   기획이 바뀌었으므로 테스트의 정답도 새 표에서 다시 계산 (예전 정답 4.5, 6 …은 이제 틀린 정답).
+
+Q. 4단계 리뷰 (스토리 한도를 25 × 사이클로 바꿈 — 사실상 이지 모드. 20번 9장을 고침)
+A. GetEnemyLimit, GetModeStatMultiplier 둘 다 맞음.
+   GetModeStatMultiplier는 None → 0인데 default → 1이라 둘이 어긋남. default는 enum에 없는 값이 들어왔을 때 —
+   나중에 모드를 더하고(헬 등) 여기 case를 빼먹으면 조용히 노말 배율 1로 돎. 0이면 적이 체력 0으로 나와 바로 드러남.
+   "빠뜨리면 눈에 띄게"가 None → 0과 같은 생각 → default도 0 (GetEnemyLimit은 이미 0).
+
+======================================================================
+수업 7. 소환 (2026-10-21)
+======================================================================
+
+Q. EnemyRegistry를 했는데 한참 잘못된 것 같아. (설계표의 줄을 그대로 옮겨 적음: 필드 이름 없음, 함수 머리 끝에 ;)
+A. 이름표만 옮기고 몸통이 빠진 것.
+     private readonly List<EnemyController>     → 필드 이름(m_alive)과 = new List<EnemyController>(); 가 있어야 함
+     IReadOnlyList<EnemyController> Alive       → public, 그리고 무엇을 보여 줄지 => m_alive
+     int Count;                                 → 빈 상자(늘 0). => m_alive.Count로 물어볼 때마다 셈
+     void Register(EnemyController enemy);      → 머리 끝의 ; 는 "몸통 없는 함수" (abstract·인터페이스에서만 씀). public + { } 몸통
+   if (m_alive.Contains(enemy)) = 이미 있나 (bool). if (!m_alive.Remove(enemy)) = 빼면서 실패했는지를 한 번에 (Remove가 bool을 돌려줌). ! = 아니면.
+   (빈칸 코드로 완성 — 맞음)
+
+Q. TryGetValue가 뭐야?
+A. Dictionary에게 "이 열쇠 있어? 있으면 값도 줘"를 한 번에 묻는 함수. Dictionary가 원래 가진 함수.
+     bool 있나 = m_cells.TryGetValue(열쇠, out List<EnemyController> list);
+     있으면 true + list에 그 값 / 없으면 false + list는 기본값(null)
+   왜 그냥 m_cells[3]으로 안 꺼내나: 없는 열쇠를 [ ]로 꺼내면 KeyNotFoundException으로 멈춤.
+     적이 한 번도 안 선 칸은 Dictionary에 열쇠가 없음 → 먼저 물어봐야 함.
+   ContainsKey(3) → m_cells[3]으로 두 번 찾는 것을 한 번으로 줄인 것.
+   PathOccupancy에서:
+     Add     if (!TryGetValue(...)) — 없으면(!) 새 목록을 만들어 걸어 둠
+     GetAt   if (TryGetValue(...)) return list — 있으면 그 목록, 없으면 Empty
+     Remove  TryGetValue(...) && list.Remove(enemy) — 목록이 있고 그 안에서 빼기도 성공하면
+   수업 3의 BoardGrid.TryGetPathIndex 안에서도 이걸 썼음. Try로 시작하는 함수는 모두 같은 약속: bool이 false면 out 값은 쓰지 않음.
+   m_cells[3] = list (넣기)는 열쇠가 없어도 됨 — 없으면 새로 만들고, 있으면 덮어씀. 에러가 나는 건 꺼낼 때뿐.
+
+Q. list 앞의 out은 어떤 기능이야?
+A. "이 변수는 함수가 채워서 돌려준다"는 표시. return은 값을 하나만 돌려주므로, 두 번째 결과를 받을 빈 그릇을 넘겨주는 것.
+     TryGetValue의 return = bool (있나), out list = 찾은 목록
+   수업 6에서 직접 만든 GetKillReward(kind, wave, out int gold, out int gem)와 같은 것. 그때는 채우는 쪽, 지금은 받는 쪽.
+     채우는 쪽: 함수가 끝나기 전에 out 변수를 반드시 채워야 함 (안 채우면 컴파일 에러)
+     받는 쪽:   부를 때도 out을 붙여야 함 ("채워질 수 있다"를 부르는 줄에서도 보이게)
+   out List<EnemyController> list = 변수 만들기와 넘기기를 한 줄에. 풀어 쓰면
+     List<EnemyController> list;
+     m_cells.TryGetValue(index, out list);
+   이렇게 만든 list는 그 줄 아래에서 계속 씀 (Add의 list.Add(enemy)).
+   그냥 넘기는 매개변수와 다른 점: 일반 매개변수는 값을 "들고 들어가는" 것, out은 값을 "들고 나오는" 것.
+
+Q. TryGetValue가 "번호와 적이 모두 있을 때" true라면, Add에서는 번호와 적 중 하나라도 없으면 목록을 만든다는 거지?
+A. 아님. TryGetValue는 열쇠(칸 번호)만 봄. 적은 전혀 보지 않음.
+     true  = 그 칸 번호에 목록이 걸려 있음 (목록이 비어 있어도 true)
+     false = 그 칸 번호에 목록이 한 번도 걸린 적 없음
+   예: 3번 칸에 A가 왔다가 떠남 → 3번에는 빈 목록 [ ]이 남아 있음 → TryGetValue(3) = true, list = [ ] (만들지 않고 그 빈 목록에 넣음)
+   Add 안에서 적(enemy)은 "누구를 넣을까"일 뿐, 조건에 안 들어감. 조건은 "이 칸에 공책이 걸려 있나" 하나.
+   "그 적이 목록 안에 있나"를 보는 건 Remove의 list.Remove(enemy) 쪽 (EnemyRegistry의 Contains와 같은 일).
+
+Q. 게임이 시작하면 보드에 인덱스별로 목록을 만들고, 플레이 중에 적이 움직이거나 생성되면 목록에 넣기만 하는 거지?
+A. 뒤는 맞음, 앞은 다름. 시작할 때는 m_cells가 텅 빔. 목록은 그 칸에 적이 "처음 설 때" 만들어짐 (필요할 때 만들기).
+   한 번 만든 목록은 적이 다 떠나도 빈 채로 남고, 그 뒤로는 넣고 빼기만 함.
+   시작할 때 40칸의 목록을 다 만들어 두는 방법도 됨 (그러면 Add에 TryGetValue가 필요 없음).
+   지금 방식은 BoardGrid의 PathCount를 몰라도 되고, 적이 안 서는 칸은 목록을 안 만듦. 길 40칸이라 둘 다 큰 차이 없음.
+
+Q. 처음부터 칸마다 목록을 만들어 두고 Add·Remove만 하는 게 훨씬 가볍지 않아?
+A. 속도·메모리는 거의 같음 (40칸, 적 수십 마리. 미리 만들면 빈 목록 40개, Dictionary도 어차피 열쇠로 찾음).
+   좋아지는 건 "코드가 단순해짐": Add에 if가 없어지고, GetAt에 Empty가 필요 없음.
+   그리고 미리 만들 거면 Dictionary보다 배열이 맞음:
+     칸 번호가 0 ~ 39로 빈틈없이 이어짐 → 번호 = 배열 칸. List<EnemyController>[] m_cells = new List<EnemyController>[pathCount];
+     Dictionary는 열쇠가 띄엄띄엄이거나(좌표, 이름) 미리 다 알 수 없을 때 씀 (BoardGrid의 좌표 → 번호가 그 예).
+   배열 방식의 덤: 감지 않은 번호(40, -1)를 넣으면 IndexOutOfRangeException으로 바로 드러남. Dictionary는 그 번호로 새 목록을 조용히 만듦.
+   대신 PathOccupancy가 칸 수를 알아야 함 → 생성자로 받음: new PathOccupancy(Grid.PathCount).
+
+Q. 모든 칸마다 적 목록을 배열로 만들어 두면 생기는 문제점이 있어?
+A. 이 게임에서는 거의 없음. 조건 셋만 지키면 됨:
+     ① 칸 수를 만들 때 알아야 함 → BoardManager가 Grid를 만든 "다음에" new PathOccupancy(Grid.PathCount). 순서가 바뀌면 Grid가 null.
+     ② 판 도중에 길 칸 수가 바뀌면 배열 크기를 못 바꿈 → 이 게임은 한 판 동안 길이 고정 (스테이지가 바뀌면 판을 새로 만듦). 해당 없음.
+     ③ 감지 않은 번호를 넣으면 에러로 멈춤 → 버그를 일찍 찾는 장점이지만, 부르는 쪽이 반드시 WrapPathIndex로 감아서 넘겨야 함.
+        뒤로 가는 적(-3), 비프로스트처럼 번호를 계산하는 곳이 특히.
+   메모리는 빈 목록 40개라 무시해도 됨.
+   배열이 안 맞는 경우: 칸 수가 계속 바뀌거나, 번호가 띄엄띄엄(0, 500, 10000)이라 빈 칸이 너무 많을 때 → 그때가 Dictionary.
+
+Q. 그럼 중간중간 길이 바뀌는 기믹이 생기면 배열은 안 쓰는 게 맞겠네?
+A. 반만 맞음. 길이 바뀌면 진짜 문제는 그릇(배열·Dictionary)이 아니라 "번호의 뜻이 바뀌는 것".
+   칸이 하나 끼어들면 5번 칸이 다른 자리가 되므로, Dictionary를 써도 적마다 새 번호로 옮겨 적어야 함.
+   어차피 다시 정리할 거라면 그때 배열을 새 크기로 다시 만들면 됨. 크기를 자주 바꿀 거면 배열 대신 List<List<EnemyController>>(늘었다 줄었다 하는 배열).
+   더 중요한 것: 밖에서는 Add·Remove·Move·GetAt만 부르고 m_cells는 private → 속을 배열에서 다른 것으로 바꿔도 이 파일 하나만 고침.
+   그래서 지금 규칙(길 고정)에 맞는 가장 단순한 것을 고르고, 기믹이 실제로 생길 때 바꿈. "나중에 생길지도 모를 일"에 미리 맞추면 지금 코드만 복잡해짐.
+
+Q. 리스트를 리스트로 담으면 안 돼? 굳이 배열로 담는 이유가 뭐야?
+A. 돼. 동작·속도는 같음. 다른 건 "크기가 고정이라는 뜻이 코드에 보이나" 하나.
+     배열 List<EnemyController>[]          칸 수가 만들 때 정해지고 못 바뀜 → 실수로 칸을 더하거나 빼는 코드가 아예 안 써짐
+     List<List<EnemyController>>           m_cells.Add(...) / RemoveAt(...)이 열려 있음 → 누가 칸 수를 바꿔도 컴파일러가 안 막음
+   readonly는 "다른 목록으로 갈아 끼우기"만 막고 Add는 못 막음 (수업 3) → 크기 고정을 코드로 지키는 건 배열.
+   readonly·IReadOnlyList와 같은 생각: 바뀌면 안 되는 것은 못 바꾸게 만들어 둠.
+   만들기: 배열은 new List<EnemyController>[n] 하고 for로 칸마다 new / 리스트는 for로 n번 Add.
+   길이 자주 바뀌는 기믹이 생기면 그때 List<List<>>가 맞음.
+
+Q. (정리) 지금 방식은 칸 번호에 딕셔너리가 없으면 새로 만들고, 있으면 리스트에 추가, 적이 다 사라지면 remove하는 거지?
+   내 생각은 시작할 때 패스 목록 전부 리스트를 만들어 두고, 기믹으로 타일이 생기거나 사라지면 리스트를 더하거나 빼는 것. ObjectPool이랑 비슷한 방식?
+A. 지금 방식에서 두 곳만 다름:
+     Dictionary는 하나뿐. 없으면 새로 만드는 것은 "그 칸 번호의 목록" (Dictionary에 열쇠 하나를 더함)
+     Remove는 목록에서 그 적 하나만 뺌. 적이 다 떠나도 빈 목록과 열쇠는 그대로 남음 (목록을 지우지 않음)
+   제안한 방식(시작할 때 칸마다 목록, 칸이 생기거나 사라지면 목록을 더하고 뺌)도 맞는 설계 (List<List<EnemyController>>).
+   ObjectPool과는 "미리 만들어 둔다"만 닮음. 풀의 목적은 자주 만들고 버리는 것을 재사용해 GC를 줄이는 것.
+   칸 목록은 어느 방식이든 칸마다 한 번 만들고 버리지 않음 → 재사용할 것이 없음. 이건 "미리 만들기(사전 할당)"라고 부름.
+
+Q. Dictionary 방식은 전부 만들어 두는 거야, 적이 움직일 때마다 만드는 거야?
+   움직일 때마다 만들면 index가 꼬이지 않아? 적이 1번에 갔다가 5번으로 가면, 1번 자리에 1번 인덱스, 2번 자리에 5번 인덱스가 들어가는 거 아냐?
+A. Dictionary 자체는 하나를 처음에 만듦 (필드의 = new). 그 안의 "열쇠 → 목록"은 그 칸에 적이 처음 설 때 한 번 더해짐.
+   움직일 때마다가 아니라, 목록이 아직 없는 칸에 처음 갈 때만. 그 뒤로는 있는 목록을 씀.
+   index는 꼬이지 않음: Dictionary에는 "몇 번째 자리"가 없음. m_cells[5]는 "5번째 것"이 아니라 "열쇠가 5인 것".
+     1번 칸 다음에 5번 칸에 적이 가면 → { 1 → [ ], 5 → [A] }. 넣은 순서와 상관없이 열쇠 5로 찾으면 5번 칸 목록이 나옴.
+     비유: List는 줄 서기(앞에서 몇 번째), Dictionary는 번호표 붙은 사물함(5번 사물함은 몇 번째로 만들었든 5번).
+   걱정한 일은 List<List>에서 일어남: List의 [5]는 "앞에서 6번째 자리"라서, 목록을 필요할 때 끝에 하나씩 붙이면 자리와 칸 번호가 어긋남.
+   그래서 List<List>(나 배열)는 처음에 0 ~ 39를 빈틈없이 다 만들어 둬야 하고, Dictionary는 필요할 때 만들어도 됨.
+
+Q. Dictionary로 쓰면 5번 인덱스의 키값으로 자연스럽게 5가 간다고? 여기가 이해 안 가.
+A. 저절로 가는 게 아니라 우리 코드가 직접 정함. Add(enemy, index)의 index가 열쇠.
+     Spawner가 Add(A, 5)를 부름 → 함수 안에서 index = 5
+     m_cells.TryGetValue(index, ...)   → "열쇠 5 있어?" → 없음
+     m_cells[index] = list;            → m_cells[5] = list → 열쇠 5에 새 목록을 걺
+   열쇠를 고르는 건 [ ] 안에 넣은 값. 5를 넣었으니 열쇠가 5.
+   List와의 차이: list.Add(x)는 자리를 못 고름 (늘 맨 끝 = 다음 번호). dict[열쇠] = 값은 자리(열쇠)를 직접 고름.
+     List   Add(목록1), Add(목록5) → [0] = 목록1, [1] = 목록5 (번호가 순서대로 붙음)
+     Dict   d[1] = 목록1, d[5] = 목록5 → 열쇠 1, 열쇠 5 (넣은 값이 곧 열쇠)
+   5는 어디서 오나: 부르는 쪽이 넘김 — 소환은 Random.Range로 고른 칸 번호, 이동은 BoardGrid로 계산한 새 칸 번호.
+   (→ 둘을 견주어 본 뒤 Dictionary로 가기로 함. 길 칸이 바뀌는 기믹이 생겨도 칸 번호 = 열쇠라 자리 순서를 맞출 필요가 없음)
+
+Q. 목록을 만드는 함수(GetOrCreateList)까지는 만들었는데, 그 함수에서 list를 뽑는 걸 모르겠어.
+A. return list; 로 돌려준 값은 부르는 자리에 그대로 "놓임". 받는 법 둘:
+     변수에 받기   List<EnemyController> toList = GetOrCreateList(to);   toList.Add(enemy);
+     바로 쓰기     GetOrCreateList(to).Add(enemy);
+   둘은 같음. GetOrCreateList(to)가 목록으로 바뀐다고 생각하면 됨 (TowerId.GetTier(2107)이 2로 바뀌는 것과 같은 원리).
+   바로 쓰기의 . 은 "돌려받은 그것의": GetOrCreateList(to) → 목록 → .Add(enemy) → 그 목록에 넣기.
+   한 번만 쓸 거면 바로 쓰기, 여러 번 쓸 거면 변수에 받아 둠.
+
+Q. 이럴 거면 Add는 왜 만든 거야? 기능이 GetOrCreateList랑 거의 같은데.
+A. 하는 일이 다름:
+     GetOrCreateList (private)  목록을 찾거나 만들어서 "돌려주기"만. 적을 넣지도, 알리지도 않음
+     Add (public)               그 목록에 적을 넣고 + 알림까지. 밖에서 부르는 창구
+   GetOrCreateList를 public으로 열면 밖에서 GetOrCreateList(3).Add(적)처럼 알림 없이 넣을 수 있음
+   → BoardPresenter가 모르는 적이 생겨 "x N"이 틀림. "넣으면 반드시 알린다"는 규칙을 Add 하나가 지킴.
+   Move가 Add를 안 부르고 GetOrCreateList를 쓰는 이유: Add는 넣자마자 알리는데, Move는 두 칸을 다 바꾼 뒤에 알려야 해서(B18).
+   EnemyPool과 같은 모양: Get(public 창구) / CreateEnemy(private, 안에서만). 창구는 규칙을 지키고, 안쪽 함수는 일만 함.
+
+Q. 지금 하는 방식이 프로그래밍의 5대 원칙(SOLID)을 안 지키는 거 아냐?
+A. 일부는 지키고, 일부는 일부러 "필요해질 때"로 미룸.
+     S 단일 책임      지킴. Registry(명단), Occupancy(칸), Spawner(소환), Pool(보관), Manager(조립)가 한 가지씩.
+                      옛 코드의 Health·Move·Debuff가 남의 일까지 하던 것을 고친 게 이것.
+     O 개방-폐쇄      일부만. WaveTable의 switch(GameMode·EnemyKind)는 모드를 더하면 고쳐야 함.
+                      종류가 셋뿐이고 늘 일이 드문 곳은 switch가 더 읽기 쉬움. 문양 56종처럼 계속 늘 곳은 수업 15(전략)·27(팩토리)에서 지킴.
+     L 리스코프 치환  지금 상속은 Singleton<T>뿐. 자식이 base.Awake()를 부르는 약속으로 지킴. ITarget(수업 15)부터 본격적으로.
+     I 인터페이스 분리 아직 인터페이스가 없어 해당 없음. 수업 15의 ITarget이 첫 인터페이스.
+     D 의존성 역전    절반. Spawner가 부품을 생성자로 받는 것(주입)은 맞지만, 받는 것이 인터페이스가 아니라 진짜 클래스(EnemyPool, BoardManager).
+                      Singleton.Instance는 어디서나 꺼내 쓰는 전역이라 이 원칙과 반대 방향 → 매니저끼리만, Start에서만 쓰기로 제한.
+   원칙은 목적(고치기 쉽게)을 위한 도구라, 모든 곳에 인터페이스를 두면 파일만 늘고 따라가기 어려워짐.
+   기준: 구현이 둘 이상이 되거나(적과 더미가 둘 다 맞는 대상), 테스트에서 가짜로 바꿔 끼워야 할 때 인터페이스를 둠.
+
+Q. 지금까지 TextMeshProUGUI를 썼는데 여기서는 TextMeshPro를 쓰네. 차이가 뭐야?
+A. 둘 다 같은 TMP 글자인데 "어디에 사느냐"가 다름. 부모 클래스는 둘 다 TMP_Text.
+     TextMeshProUGUI   Canvas 안의 UI (RectTransform). 화면에 붙은 HUD — 골드, 버튼, 패널. 메뉴: UI → Text - TextMeshPro
+                       그리는 순서는 Canvas가 정함 (하이어라키 순서, Canvas의 Sort Order)
+     TextMeshPro       Canvas 없이 씬에 놓이는 3D 오브젝트 (MeshRenderer). 스프라이트처럼 월드 좌표에 있음. 메뉴: 3D Object → Text - TextMeshPro
+                       그리는 순서는 Sorting Layer / Order in Layer (적·타일 스프라이트와 같은 줄에서 겨룸)
+   "x N"에 TextMeshPro를 쓰는 이유:
+     판의 칸 위에 붙는 글자라 칸의 월드 위치(GetCellCenterWorld)에 바로 놓으면 됨 (UGUI면 월드 → 화면 좌표 변환이 필요)
+     적 스프라이트와 같은 Sorting Layer로 위아래를 정할 수 있음
+     지금 UI 캔버스는 6부까지 꺼 둠 → Canvas 밖에 있어야 수업 중에도 보임
+     글자 수십 개가 바뀔 때 Canvas 전체를 다시 그리지 않음
+   고르는 기준: 화면에 붙어 있으면 UGUI, 게임 세계(판·적·타워) 위에 붙어 있으면 TextMeshPro.
+   필드를 TMP_Text로 선언하면 둘 다 받음 (.text, .SetText는 같음).
+
+Q. 그럼 대미지 텍스트도 UGUI가 아니라 TextMeshPro로 쓰면 되겠네?
+A. 맞음. 옛 DamageText.cs도 이미 TextMeshPro(월드 글자) + 풀(DamageTextPool)로 되어 있음. 맞은 적의 월드 위치에서 떠오르면 됨.
+   UGUI가 나은 경우는 둘: 카메라를 확대·축소해도 글자가 화면에서 늘 같은 크기여야 할 때, UI 패널보다 위에 그려져야 할 때.
+   이 게임은 카메라가 고정이고 대미지 숫자는 판 위에서만 뜨므로 TextMeshPro가 맞음.
+
+======================================================================
+수업 8. 이동 (2026-10-21)
+======================================================================
+
+Q. (WrapPathIndex에 steps, t에 m_stepDuration을 넣었다가 리뷰를 받고) 뭔 말임?
+A. 숫자로 따라가기:
+     다음 칸: 지금 5번(PathIndex = 5)이면 가야 할 곳은 6번 → WrapPathIndex(PathIndex + 1). steps는 "몇 칸 갈지"라 칸 번호가 아님.
+              39 + 1 = 40 → Wrap이 0으로 감아 줌.
+     t: "지금 몇 % 왔나". 시간이 갈수록 커져야 함 → elapsed / m_stepDuration
+              0초 → 0(출발), 0.075초 → 0.25, 0.15초 → 0.5(중간), 0.3초 → 1(도착)
+              숫자(0.5f)를 박으면 매 프레임 늘 중간 → 마지막에 툭 도착. Clamp01은 마지막 프레임에 1을 살짝 넘는 것을 막음.
+
+Q. 적의 이동 칸 수는 이동력으로 정해지는데 왜 1로 고정해?
+A. 1은 "첫 이동" 하나에만 씀. 기획(20번 2장): 소환된 적은 첫 적 턴에 무조건 한 칸 → if (!m_hasMadeFirstMove) 안의 MoveSteps(1).
+   그 뒤로는 행동 주기마다 주사위(SpeedMin ~ SpeedMax) → 2단계에서 if 아래에 MoveSteps(주사위)를 씀.
+   MoveSteps(int steps)는 몇 칸이든 받는 함수라, 1단계에서는 첫 이동만 먼저 만들어 동작을 확인한 것.
+   (→ 바로 뒤 기획을 바꿈: 소환 위치가 무작위라 "첫 이동 한 칸"이 필요 없음. 소환된 순간부터 행동 주기를 셈. 첫 이동 if와 m_hasMadeFirstMove는 지움)
+
+Q. 그럼 MoveOneTile도 지워야 하는 거 아냐?
+A. 아님. 지우는 것은 "첫 이동 한 칸" 규칙(m_hasMadeFirstMove와 그 if)뿐.
+     TakeTurn       이번 턴에 행동하나? → 주사위 (예: 3)
+     MoveSteps(3)   3번 반복: 다음 칸 번호 → MoveOneTile → 도착 …, 다 오면 Occupancy.Move 한 번
+     MoveOneTile    한 칸을 Lerp로 미끄러지는 방법 (0.3초)
+   MoveSteps(1)의 1은 "몇 칸 갈지"(이제 주사위), MoveOneTile은 "한 칸을 가는 방법". 이름이 비슷해도 하는 일이 다름.
+
+Q. EnemySpawner에서 C#이 주는 Random을 쓸지 Unity가 주는 Random을 쓸지 정하라는데? (Random이 모호하다는 에러)
+A. 맨 위에 using System;이 자동으로 들어가서. System에도 Random 클래스가 있고 UnityEngine에도 Random이 있어
+   컴파일러가 둘 중 어느 것인지 모름. 이 파일은 System의 것을 안 쓰므로 using System;을 지우면 해결.
+   쓰는 것은 UnityEngine.Random: static이라 Random.Range(0, 40)처럼 바로 부르고, Unity의 시드·에디터와 함께 동작.
+   System.Random은 new System.Random()으로 만들어 .Next(0, 40)로 씀 (서버·순수 C#용).
+   둘 다 꼭 써야 하는 파일이면 맨 위에 using Random = UnityEngine.Random; 으로 "이 파일의 Random은 Unity 것"이라고 정해 둠
+   (옛 TileManager가 이렇게 함).
+
+Q. Random.Range가 max를 안 쓰는 건, min 1·max 100이면 1을 0으로, 100을 99로 봐서 그런 거야?
+A. 아님. 앞의 수는 그대로 포함, 뒤의 수만 빠짐. Random.Range(1, 100) → 1 ~ 99 (1은 1 그대로, 0은 안 나옴).
+   이렇게 만든 이유: 목록의 번호를 뽑을 때 편하라고. 40칸이면 번호는 0 ~ 39 → Random.Range(0, 40) = Random.Range(0, list.Count).
+   그래서 "1 ~ 100을 다 포함"하려면 Random.Range(1, 100 + 1). 주사위 SpeedMin ~ SpeedMax도 Random.Range(SpeedMin, SpeedMax + 1).
+   float 버전 Random.Range(0f, 1f)는 뒤의 수도 포함함 (int만 빠짐). 헷갈리기 쉬운 곳.
+
+Q. 새로 만든 Appearance 에셋은 왜 필드에 아무것도 넣을 수가 없어? SerializeField가 잘못됐나?
+A. SerializeField 문제가 아님. EnemyMovement에 뼈대의 빈칸 ___ 두 개가 그대로 남아 컴파일 에러(CS0103)가 났기 때문.
+   Unity는 컴파일 에러가 하나라도 있으면 프로젝트 전체를 새로 컴파일하지 않음 → 새로 만든 SquareTD.EnemyCubeAppearance가
+   Unity에게는 "아직 없는 클래스" → 그 에셋의 스크립트를 못 읽어 인스펙터에 칸이 안 나옴.
+   그래서 이상한 증상이 보이면 먼저 콘솔의 빨간 컴파일 에러부터 봄. 빈칸 코드를 붙여 넣었으면 채우거나 주석 처리한 뒤 저장.
+
+======================================================================
+수업 9 전. 복사해 온 큐브 스크립트 리뷰 (2026-10-22)
+======================================================================
+
+Q. (EnemyCubeRollGeometry.Sample) progress를 0 ~ 1로 고정하고 각도를 계산하는데, 파이가 각도 계산에 들어가면 어떻게 되는 거야?
+A. 각도를 "라디안"이라는 단위로 바꾸는 것. Math.Cos·Math.Sin(Mathf.Cos·Sin도)은 도(°)가 아니라 라디안을 받음 (cm와 인치처럼 단위만 다름).
+   180° = π. 그래서 90° = π × 0.5, 45° = π × 0.25, 360° = π × 2.
+   progress * Math.PI * 0.5 = "몇 % 돌았나(0 ~ 1)"를 "실제 각도 0° ~ 90°(라디안)"로 바꿈. 큐브는 한 번에 90° 넘어가므로 끝이 π × 0.5.
+   π 없이 Math.Cos(90)이라고 쓰면 90라디안(약 5157°)으로 계산되어 엉뚱한 값 — 흔한 실수.
+   Unity의 변환: 각도 * Mathf.Deg2Rad (도 → 라디안), Mathf.Rad2Deg (라디안 → 도).
+   Quaternion.AngleAxis는 반대로 도를 받음 → EnemyCubeMeshVisual에서는 π 없이 progress * 90f.
+
+Q. 코사인이 가로선, 사인이 세로선이잖아? 이걸로 뭘 구하는 거야? (Travel = 0.5 × (1 − cos + sin))
+A. 구르는 동안 큐브 중심의 가로 위치. 큐브(한 변 1)가 오른쪽으로 구르면 오른쪽 아래 모서리가 바닥에 붙은 축이 되고 큐브가 그 점을 돌아 90° 넘어감.
+   축에서 중심까지를 두 팔로 나눔: 왼쪽 0.5, 위 0.5. θ만큼 기울면
+     왼쪽 팔의 가로 = −0.5 cos θ (점점 짧아짐) / 위 팔의 가로 = +0.5 sin θ (오른쪽으로 눕으며 나감)
+   축에서 본 중심 = −0.5cos + 0.5sin, 출발 때는 −0.5 → 움직인 거리 = 0.5 × (1 − cos + sin). θ = 90°면 1 = 한 칸.
+   같은 두 팔의 세로 성분이 EnemyCubeMeshVisual.AnimateRoll의 lift = 0.5 × (cos + sin − 1) (중간에 들리는 높이, 45°에서 약 0.21).
+   Travel = 가로, lift = 세로.
+
+Q. progress를 외부에서 어떻게 전달하지?
+A. 수업 8의 EnemyMovement.MoveOneTile에서 시작해 세 단계를 거침.
+     EnemyMovement        t = elapsed / m_stepDuration (시간 비율) → m_cube.AnimateTileRoll(before, direction, t, out travel, …)
+     AnimateTileRoll      turn = SmoothStep(0, 1, t / 0.86) (회전 비율) → EnemyCubeRollGeometry.Sample(turn).Travel
+     Sample               turn → Travel (가로로 온 비율) → out travel로 돌아감 → EnemyMovement가 Lerp(start, target, travel)
+   / 0.86 (flightFraction): 앞 86% 시간에 다 구르고 뒤 14%는 착지 눌림 (그동안 travel = 1).
+   SmoothStep: 0 ~ 1을 "천천히 출발 → 빨라짐 → 천천히 멈춤" 곡선으로 바꿈.
+   숫자 (0.7초): 0.3초 → t 0.43 → turn 0.5 → Travel 0.5 / 0.6초 → 1 / 0.6 ~ 0.7초 착지.
+   요점: EnemyMovement는 시간만 넘기고, 그림을 어떻게 그릴지는 연출 쪽이 정함.
+
+Q. 부드러운 연출이 아니라 그냥 시간에 맞게 정확하게 이동하게 하려면 코드를 어떻게 고쳐야 해?
+A. 위치가 시간과 안 맞는 곳은 셋: ① / flightFraction (앞 86%에 도착, 뒤는 착지 눌림) ② SmoothStep (느리게-빠르게-느리게)
+   ③ Sample().Travel (회전 각도 → 실제 구르는 가로 위치, cos·sin).
+   방법 1  EnemyMovement에서 Lerp(start, target, t) (travel 대신 t). 가장 간단하지만 회전은 여전히 곡선이라
+           위치와 회전이 어긋나 모서리가 미끄러지거나 뜨는 것처럼 보임.
+   방법 2  AnimateTileRoll에서 turn = local / flightFraction (SmoothStep 뺌), travel = (rollIndex + turn) / RollsPerTile (Sample 뺌).
+           회전과 이동이 함께 일정. ③을 뺀 차이는 한 칸의 2% 정도 (0.25에서 0.23 대신 0.25).
+   ①은 남김: flightFraction = 1f면 (1f − flightFraction) = 0으로 나눠 NaN. 착지 눌림까지 없애려면 else 쪽을 고쳐야 함.
+   연출 곡선은 "그럴듯해 보이게"일 뿐 규칙(몇 칸, 몇 초)과 무관 → 바꿔도 EnemyMovement의 규칙 코드는 그대로.
+   (→ S/H 키로 둘을 견줘 본 뒤 부드러운 연출을 유지: "코드가 더 복잡해도 쓰는 맛이 있네". 연출 코드를 따로 떼어 둔 덕에
+      연출을 세 번 바꾸는 동안 EnemyMovement의 규칙 줄은 그대로였음)
+
+Q. Frame의 안 쓰는 값 네 개가 코사인이랑 사인 값만 하는 거야? 원래 어디에 쓰던 기능이야?
+A. 맞음. DepartingWidth = cos, ArrivingWidth = sin, DepartingOffset = 0.5 sin, ArrivingOffset = −0.5 cos.
+   옛 2D 큐브(EnemyCubeVisual)가 썼음. 진짜 정육면체가 아니라 납작한 스프라이트 두 장으로 구르는 "척"을 함:
+     떠나는 면은 기울어 정면에서 좁아 보임(폭 cos), 새 면은 일어서며 넓어짐(폭 sin). 45°에서 둘 다 0.71.
+     Offset 둘은 두 장의 맞닿은 모서리가 벌어지지 않게 미는 위치. 기울어지는 면은 m_faceShade로 어둡게 칠함.
+   길이 1인 면이 θ만큼 누우면 정면에서 보이는 가로 길이 = cos θ ("cos = 가로선"과 같음).
+   지금의 3D 메시는 진짜로 돌리므로 폭과 그늘을 Unity가 그림 → 남는 건 중심의 가로 이동(Travel)뿐.
+   (→ 사용자가 넷을 지움. 에러가 없음 = 읽는 코드가 없었다는 증거. 단, 컴파일러는 코드로 부르는 것만 잡음:
+      글자로 찾는 것(FindProperty)·인스펙터에 저장된 [SerializeField] 값은 지워도 에러 없이 조용히 끊김)
+
+Q. (EnemyCubeMeshVisual.Awake 해석) 위치·회전·크기를 저장하고, 메시 필터와 렌더러를 저장하고, 면 수만큼 얼굴을 넣고,
+   GetPropertyBlock은 뭔지 모르겠지만 에셋을 넣는 것 같고, 색을 바꾸고, 얼굴도 오브젝트 풀로 관리하나? 재질과 그림자를 넣고.
+A. 대부분 맞음. 보충:
+   local 위치·회전·크기 = 부모(적 본체) 기준의 "기본자세". 연출이 흔들림을 더했다가 ShowOrientation에서 이 값으로 되돌림.
+   메시는 지역 변수(검사에 한 번), 렌더러는 필드(계속 씀).
+   _EquipmentMask: 여기서 색을 바꾸지 않음. "어디를 바꿀지" 그림만 셰이더에 넘김 (없으면 검은 그림 = 바꿀 곳 없음).
+   m_faceAssetPool은 오브젝트 풀이 아니라 "후보 목록" (면 효과 6종의 재질). 소환할 때 면마다 하나씩 뽑음. 꺼내고 돌려놓기가 없음.
+   MaterialPropertyBlock = 이 렌더러에만 붙이는 메모지. 재질은 모든 적이 함께 씀(sharedMaterials) → 재질을 고치면 40마리가 다 바뀜,
+     적마다 복사하면 메모리. 메모지로 "이 면만 이 그림"을 덮어씀. Get(읽어 옴, 다른 값을 안 지우려고) → SetTexture(적음) → Set(붙임).
+     수업 4의 "정의는 함께, 마리마다 다른 건 따로"와 같은 생각.
+   m_hasAllFaces: 6면 메시·재질 6칸·후보 6개·빈 칸 없음을 검사. 틀리면 RandomizeForSpawn이 면을 섞지 않고 Identity만 → 설정이 틀려도 안 멈춤.
+   그림자는 자식이 아니라 형제(부모 = 적 본체): 자식이면 큐브가 구를 때 같이 돎. 그래서 OnDestroy에서 직접 지움.
+   static Mesh s_shadowMesh = 모든 적이 함께 쓰는 그림자 네모. 판의 상태가 아니라 모양 데이터라 static 약속(4-8)에 안 걸림.
+
+Q. 3D라서 메테리얼을 적용하는 건가?
+A. 반만 맞음. 2D든 3D든 화면에 그리는 것은 전부 재질을 씀. 차이는 직접 만지느냐.
+     SpriteRenderer  Unity가 기본 재질(Sprites-Default)을 알아서 붙임. 그림은 renderer.sprite, 색은 renderer.color (옛 2D 큐브가 이 방식)
+     MeshRenderer    재질을 직접 넣어야 함(없으면 분홍). 서브메시마다 재질 칸 하나. 그림·색은 재질(이나 PropertyBlock)의 값으로
+   재질 = 셰이더(어떻게 칠할지 정하는 작은 프로그램) + 값(_MainTex, _EquipmentMask, _Color 같은 텍스처·색·숫자).
+   이 큐브: 서브메시 6개 = 재질 칸 6개. 면마다 다른 재질 = 면 효과의 배경색·심볼(소환 때 후보에서 뽑음),
+            모든 면이 같은 캐릭터 그림은 PropertyBlock으로 덮어씀, 둘을 합치는 건 셰이더.
+   → "3D라서 재질을 직접 다룬다"가 더 정확.
+
+Q. 면마다 이미 메테리얼로 캐릭터 에셋이 그려져 있으면 왜 또 따로 그리는 것 같지? 기분 탓인가?
+A. 기분 탓 아님. 면 재질(0. Common/Enemy_State_*.mat)의 _MainTex에 이미 Valkyrie_Character가 들어 있고, ApplyAppearance가 PropertyBlock으로
+   _MainTex를 또 넣음. 단 두 번 그리는 게 아니라, 그리기 전에 재질의 값을 바꿔치기 → 화면에는 한 번.
+   재질의 캐릭터는 기본값: 편집 중 미리보기, m_appearance가 비었을 때의 대비책(86줄 if). Appearance가 있으면 덮어씀.
+   이유: 면 재질 6개는 모든 적 종류가 함께 쓰는 공용. 2스테이지 적은 Appearance 에셋만 새로 만들면 됨 (재질을 종류마다 6개씩 복사하지 않음).
+   재질 한 장의 층 (EnemyCubeUnlit 셰이더, 아래부터): 배경(_BackgroundTex × _BackgroundColor, 면 재질) → 캐릭터(_MainTex, 장비만
+   _EquipmentColor, Appearance) → 테두리 장식(_DecorationTex × _DecorationColor, 면 재질) → 심볼(_BadgeTex 아틀라스의 한 칸, 면 재질).
+   "면마다 색과 심볼만 바꾼다" = 배경·장식·심볼 층.
+
+Q. 메테리얼 그림을 우리가 다시 채울 거면 메테리얼을 굳이 프리팹에 붙여 넣는 이유가 뭐야?
+A. 다시 채우는 건 재질의 일부(_MainTex, _EquipmentMask)뿐. 셰이더·배경색·테두리 장식·심볼은 재질에만 있음 → 메모지(PropertyBlock)는
+   재질 위에 붙이는 것이지 재질을 대신하지 못함. 재질 없이 메모지만 있으면 칠할 셰이더가 없어 분홍.
+   프리팹에는 같은 재질 6개가 두 군데:
+     Mesh Renderer의 Materials   지금 실제로 칠하는 재질 (편집 중 미리보기도). Awake가 m_faceMaterials로 받아 작업용으로 씀
+     m_faceAssetPool             소환할 때 뽑을 후보. 뽑은 결과를 위 칸에 넣음
+   후보가 비면 Awake가 렌더러 칸을 복사해 후보로 씀 (m_faceAssetPool = (Material[])m_faceMaterials.Clone()) → 둘이 같으면 후보는 비워도 됨.
+   렌더러 칸이 비면 m_hasAllFaces = false → RandomizeForSpawn이 면을 안 섞음. 렌더러 칸은 꼭 채움.
+
+Q. 기존 재질이 있어야 재질에 맞게 소환해서 그런 거라고?
+A. 반만 맞음. 소환에 진짜 필요한 건 후보(m_faceAssetPool). 렌더러 칸의 처음 재질은 소환할 때 덮임.
+   RandomizeForSpawn: 면마다 후보에서 무작위로 하나씩(중복 가능) → 작업용 배열 → renderer.sharedMaterials = 배열 (렌더러 칸이 통째로 바뀜)
+                      → ApplyAppearance로 캐릭터 메모지를 다시 붙임.
+   후보        없으면 뽑을 게 없음(Awake가 렌더러 칸을 복사해 대신 씀). 소환 뒤에도 남아 다음 소환에 씀
+   렌더러 칸   없으면 편집 중 분홍 + m_hasAllFaces false로 면을 안 섞음. 첫 소환에서 덮임
+   → 렌더러 칸의 처음 재질은 "무엇을 소환할지"가 아니라 "소환 전까지 멀쩡히 보이고 6칸 검사를 통과하기 위한 것". 6칸만 차 있으면 무엇이든 결과가 같음.
+
+Q. 내 의도는 게임을 시작하면 큐브의 각 면에 역할을 정하고, 역할에 맞게 색을 바꾸고 아이콘을 교체하면 끝 아니야? 왜 이렇게 붙은 코드가 많아?
+A. 의도한 부분은 RandomizeForSpawn 15줄 정도가 전부. 다른 점 하나: 색과 아이콘을 따로 바꾸지 않고, 색·아이콘이 묶인 재질 6개 중 하나로 통째로 갈아 끼움.
+   (기획의 면 6종: 자가치유·방어·이동력·행동력·자물쇠·모래시계)
+   나머지는 "3D 큐브가 굴러가는 것" 때문: 구르기·눌림·점프·소환 낙하, 자세 → 회전 계산(RotationFor 등). 구르면 보이는 면과 그림의 기울기가
+   계속 바뀌어 그것을 따라감 → "어느 면이 보이나"를 알아야 나중에 면 효과(모래시계 면 동안 면역 등)를 붙임.
+   아무도 안 쓰는 것: m_tileRollDuration·TileRollDuration(구르는 시간은 EnemyMovement.m_stepDuration이 정함), m_uprightImpactDuration·
+     UprightImpactDuration(점프 뒤 눌림을 안 가져옴), HasAllFaces(옛 EnemyMoveController용) → 앞으로도 안 씀.
+     SpawnDuration·AnimateSpawn·소환 칸(낙하 연출), SetAppearance(적 종류별 그림), GetFaceAssetIndex·GetFaceAsset(면 효과) → 나중에 쓸 자리.
+   재질 1개 + 메모지로 배경색·아이콘 칸을 면마다 바꾸는 방식도 됨. 재질은 6 → 1개로 줄지만 "역할마다 색·아이콘 칸" 표를 따로 둬야 함.
+   코드 양은 비슷. 지금 방식은 그 표를 재질 6개가 대신함.
+
+Q. (함수 설명 요청) ApplyAppearance / RandomizeForSpawn / ShowOrientation / AnimateSpawn
+A. ApplyAppearance   6면 모두에 이 적의 캐릭터 그림·장비 마스크를 메모지로 붙임. Awake, SetAppearance, RandomizeForSpawn(재질을 바꾼 뒤)에서 부름.
+   RandomizeForSpawn 면마다 역할을 무작위로(후보 수 범위) + 처음 보이는 물리 면을 무작위로(면 수 범위) 골라 정방향으로 세우고 그 자세를 돌려줌.
+                     무작위가 둘: 각 면의 "역할"과 어느 "면"이 앞에 보이나.
+   ShowOrientation   기본자세(Awake에서 찍어 둔 위치·회전·크기)로 되돌리고 받은 자세로 돌려 놓음. 연출은 매 프레임 "되돌리기 → 흔들림 더하기"를
+                     반복해서 흔들림이 쌓이지 않음 (수업 8에서 마지막에 target으로 딱 맞추던 것과 같은 생각).
+   AnimateSpawn      소환 낙하. 낙하(1 − t², 가속) → 착지 눌림(Sin 0 → π) → 튀어 오름(4t(1 − t), 포물선) → 작은 눌림. elapsed에서 구간 시간을
+                     하나씩 빼며 지금이 몇 번째 구간인지 찾음.
+   (→ 이 함수들은 그 뒤 DOTween으로 다시 쓰여 없어짐. 22번 2026-10-22 [수업 8 보충])
+
+Q. 지금 코드가 너무 길고 복잡해서, 완벽하게 이해한 코드만 쓰고 싶다. 연출은 DOTween을 쓰면 될 거라고 생각했다.
+A. 꼭 필요한 건 셋: 면 역할 정하기, 구른 뒤 보이는 면 알기, 90°씩 돌리기. 나머지는 꾸밈·대비책이고 어려운 건 축 계산·쿼터니언.
+   DOTween은 이미 프로젝트에 있음. 지금 코드의 while + Lerp + SmoothStep → DOMove(...).SetEase, 90° 굴리기 → DORotate(..., WorldAxisAdd),
+   눌림 → DOPunchScale, 점프 → DOJump, 소환 4구간 → Sequence, 기다리기 → yield return tween.WaitForCompletion().
+   DOTween이 못 하는 것: "지금 어느 면이 보이나" (움직이기만 하고 면은 모름) → 우리 코드로 남김.
+   풀과 함께 쓸 때: 꺼질 때 트윈을 멈추고(SetLink KillOnDisable / DOKill), 꺼낼 때 트윈이 바꿔 둔 값을 되돌림.
+   (→ AI가 DOTween으로 다시 씀. 앞으로 모든 연출은 DOTween)
+
+Q. (스크린샷) 계속 이동시켜 보니 큐브가 "x1"과 다른 칸에 있고, 45° 돌아가고, 눌린 채 멈춤.
+A. M 연타로 한 적의 이동이 끝나기 전에 다음 이동이 시작돼 겹친 것.
+     위치    두 이동이 같은 PathIndex에서 출발해 서로 위치를 뺏고, Occupancy.Move는 엉뚱한 칸에서 빼려다 실패
+     45°     DORotate(WorldAxisAdd)는 "지금 회전에 더하기"라 겹치면 섞임. 반쯤 돈 자세를 SnapRotation이 엉뚱하게 맞춤
+     눌림    DOPunchScale은 "시작할 때 크기로 돌아옴". 이미 눌린 순간에 시작하면 눌린 크기로 돌아감
+   옛 코드는 매 프레임 기본자세로 되돌려서 티가 덜 났고, DOTween은 값을 더해 가서 겹치면 바로 망가짐.
+   고침: EnemyMovement.IsMoving, 임시 M 키는 이동 중이면 무시. 진짜 턴은 TurnManager(수업 9)가 이동이 다 끝나길 기다림.
+
+======================================================================
+수업 9. 턴의 흐름 (2026-10-22)
+======================================================================
+
+Q. 에셋만 바꿔 끼는 거라면 적도 데이터 그릇만 일반·중간 보스·최종 보스로 만들고 프리팹은 하나로 돌려 쓰면 되겠네? 보스들도?
+A. 맞음. 큐브라면 Appearance(그림) + EnemyDefinition(데이터)만 갈아 끼우면 됨. 지금 코드 그대로 세 Entry에 같은 EnemyPool을 넣으면 됨
+   (풀은 꺼낼 때마다 Setup으로 정의를 새로 채움). Entry에 Pool 칸이 있어서, 보스가 큐브가 아닌 모양으로 정해지면 그 칸만 바꿈.
+   보스만 다를 것도 데이터로: 기믹 칸, 크기 배율 칸. 그림을 정의에 넣고 소환 때 SetAppearance(definition.Appearance)는 수업 42.
+
+Q. (TurnManager) 적긴 했는데 오류 부분은 모르겠다. (Current.Name(next); / while (PlayerTurnState.Exit()))
+A. "바꿈" = 값을 넣기 → Current = next; . Current.Name은 이름을 읽는 프로퍼티라 ( )를 붙여 부를 수 없음.
+   while 괄호에는 true/false가 나오는 것만. Exit()는 void라 조건이 못 됨 → while (!m_endTurnRequested) yield return null;
+   "턴 종료 요청이 아닌 동안 한 프레임씩 쉼". Space가 눌리면 OnClickEndTurn이 true로 → 다음 프레임에 빠져나감.
+   using Unity.VisualScripting은 편집기가 자동으로 넣은 것 → 지움. 숫자 20·10 대신 상수 LastWaveEnemyTurns·EnemyTurnsPerWave.
+
+Q. 상수로 바꾸라는 게 무슨 말이야?
+A. 숫자 20·10을 직접 쓰지 말고 파일 맨 위에 이름을 붙여 둔 const를 씀: wave.IsLastWave ? LastWaveEnemyTurns : EnemyTurnsPerWave.
+   const = 절대 안 바뀌는 값에 붙인 이름. 결과는 같고, 읽을 때 이름으로 뜻이 보이고, 기획이 바뀌면 한 곳만 고침
+   (숫자를 여러 곳에 쓰면 하나를 빠뜨려도 에러가 안 남). WaveManager.LastWave = 40도 같은 이유.
+
+Q. (EnemyTurn의 ①·④ 빈칸에 yield return (0.5f);를 씀) 흠..
+A. 빈칸은 "몇 초"가 아니라 "무엇이 끝날 때까지"를 기다리는 자리 → yield return MoveAllEnemies(); / yield return AttackTowersPhase();
+   GameLoop의 yield return EnemyTurn(turn);과 같은 모양 = 이 코루틴을 실행하고 끝날 때까지 기다림.
+   yield return 0.5f는 0.5초를 기다리지 않음 (숫자를 받으면 한 프레임만 쉼). 초 단위는 yield return new WaitForSeconds(0.5f).
+   List는 using System.Collections.Generic이 있어야 보임. 다른 클래스에서 부를 함수는 public.
+
+Q. (InvariantChecker를 돌려 보니) DOTween 경고 "Max Tweens reached: capacity has automatically been increased from 200/50 to 200/125" 말곤 뜬 게 없네.
+A. 해가 없는 알림. DOTween이 처음에 트윈 200·시퀀스 50개만 준비해 뒀는데, 적 수십 마리가 한꺼번에 구르며 시퀀스가 모자라 자동으로 125개로 늘렸다는 뜻.
+   판을 시작할 때 DOTween.SetTweensCapacity(500, 200)으로 미리 넉넉히 잡으면 안 뜸 (수업 10의 GameSession.Awake에 넣음).
+
+======================================================================
+수업 10. 한도와 게임의 끝 (2026-10-22)
+======================================================================
+
+Q. EndGame에서 오류가 떠.
+A. GameSession이 TurnManager.Instance.EndGame(...)을 부르는데 TurnManager에 그 함수가 아직 없어서 ("정의가 없다").
+   ChangeState는 private이라 밖에서 못 부름 → public void EndGame(ITurnState endState) { ChangeState(endState); } 창구를 엶
+   (수업 7의 Add(public 창구) / GetOrCreateList(private)와 같은 모양). GameClear에 복사하다 남은 GameOverState도 GameClearState로.
+
+Q. (BossTimer 연결) 스크립트까지 수정했어. (EnemySpawnEntry에 BossTimer를 넣고, SpawnOne에서 BossTimer.Add(enemy))
+A. Entry = 인스펙터에서 넣는 데이터 묶음(정의 + 풀). BossTimer는 게임에 하나뿐이고 EnemyManager가 new로 만드는 물건 → Entry에 넣으면 셋이 되고,
+   순수 클래스라 인스펙터에서 넣을 수도 없음.
+   대문자 BossTimer는 클래스 이름(설계도). 클래스 이름으로 부르는 건 static 함수만(TowerId.GetTier). Add는 static이 아니라 "어느 타이머?" 에러.
+   Registry를 받아 온 것과 똑같이: 필드 m_bossTimer, 생성자 매개변수, m_bossTimer = bossTimer;, m_bossTimer.Add(enemy). EnemyManager의 new에도 넘김.
+
+Q. (EnemyManager.Instance.BossTimer.Add로 고친 뒤) 이럼 됐나?
+A. 동작은 됨. 생성자로 받는 방식과의 차이: Instance는 한 줄로 짧지만, Registry(생성자)와 모양이 섞이고, 생성자만 보고는 필요한 것을 모르고,
+   EnemyManager → Spawner → EnemyManager로 서로 부르며, 씬 없이 테스트할 수 없음. 수업 7의 약속 "부품은 생성자로" 쪽은 생성자.
+   (→ 사용자가 생성자로 고침)
+
+======================================================================
+수업 11. 타워 데이터 (2026-10-22)
+======================================================================
+
+Q. (TowerDatabase.ReadHeader) columns[names] = ; 이거 모르겠다.
+A. 만들 표는 "이름 → 몇 번째 칸". 헤더 ["ID", "Name", "Power", …]에서 i = 2일 때 열쇠는 names[2] = "Power", 값은 2 = i
+   → columns[names[i]] = i; . names만 쓰면 배열 통째라 열쇠가 못 됨. [ ] 안이 열쇠, = 오른쪽이 값 (수업 7의 m_cells[index] = list).
+   ReadInt를 ReadFloat에서 복사하며 돌려주는 형식이 float로 남으면 생성자의 int 칸에 못 넣는다는 에러가 줄줄이 뜸 → int ReadInt.
+   m_byId.Equals(id)는 "Dictionary 자체가 이 숫자와 같나" → 늘 false. 열쇠가 있나는 ContainsKey.
+   (Equals로 두면 같은 ID가 Add에서 throw되고 catch가 영어 에러 문구로 찍음 — 우연히 막히지만 로그가 불친절)
+
+Q. (private static float ReadInt …) 여기서 뭐가 문제지?
+A. 함수 이름 앞의 형식 = 돌려주는 형식. 안에서 int로 읽어도 머리가 float면 float로 나감 → 생성자의 int 칸에 못 넣음
+   (C#은 float → int를 자동으로 안 바꿈. 소수가 몰래 잘리지 않게). ReadFloat를 복사할 때 맨 앞 형식만 남은 실수 → int ReadInt.
+
+Q. 테스트는 초록색인데 로그에 에러가 떠.
+A. 정상. "틀린 줄" 테스트들이 일부러 잘못된 CSV를 넣어 TowerDatabase가 진짜로 에러를 찍음. LogAssert.Expect는 그 에러를 예상한 것으로 쳐서
+   통과시킬 뿐 콘솔에 찍히는 건 막지 않음. 예상한 다섯 개 말고 다른 [TowerDatabase] 에러가 있으면 그게 진짜 문제.
+
+======================================================================
+수업 12. 재화와 타워 생성 (2026-10-22)
+======================================================================
+
+Q. B를 눌렀더니 NullReferenceException (TowerManager.cs:53, CurrencyManager.Instance.Gold)
+A. 그 앞 줄(TurnManager, BoardManager)은 지나갔으니 CurrencyManager.Instance가 null → 씬에 새 CurrencyManager가 없음.
+   오브젝트를 안 만들었거나, 옛 CurrencyManager(04. Manager)를 붙였거나, 씬을 저장 안 함.
+   읽는 법: 맨 위 줄이 터진 곳. 그 줄에서 "." 앞의 것 중 하나가 null. 매니저 Instance가 null이면 대개 씬에 그 매니저가 없다는 뜻.
+
+======================================================================
+수업 13. 타워 한 기 (2026-10-22)
+======================================================================
+
+Q. (TickAction의 if (State.RemainingAction == 0) return false; 를 고친 뒤) 이렇게?
+A. == 0이면 Action 3이 3 → 2 → (행동) 3 → 2 …로 0에 닿지 않아 매 턴 행동. 물어야 할 것은 "아직 남았나?" → if (> 0) return false;
+   (수업 8 EnemyMovement.TakeTurn의 첫 두 줄과 같은 모양). 숫자로 표를 그려 보면 조건이 뒤집힌 게 보임.
+
+======================================================================
+수업 14. 피해와 죽음 (2026-10-22)
+======================================================================
+
+Q. (DamageCalculator) 초록색이 안 되는데. / fixedDamage가 고정 피해인지 몰랐네.
+A. 틀린 곳 셋을 테스트 숫자로 따라감:
+     음수 방어력 관통: −100 × 0.2 = −20 (기대 −120). "20%만큼 더 음수" = × (1 + 0.2). 양수 쪽 × (1 − 0.2)와 짝
+     (원래 피해 − 방어력): 방어 100이면 (100 − 100) = 0 (기대 50). 빼는 건 고정 피해. 방어력은 빼는 게 아니라 계수로 곱함
+     GetDefenseCoefficient(defense): 관통 전 값을 써서 관통이 안 먹음 → defenseAfter
+   Mathf.Abs(-defense) = Mathf.Abs(defense) (절댓값이라 같음).
+   영어 이름: fixed 고정, ratio 비율, penetration 관통, coefficient 계수, multiplier 배율, outgoing/incoming 나가는/들어오는, critical 치명.
+
+Q. 데미지 계산기는 맞고 6개짜리(TowerControllerTest)는 틀렸다고 나와.
+A. TowerController.Init에 GetComponent<TowerVisual>().Apply를 넣은 뒤라, TowerController만 붙인 테스트 오브젝트에서 GetComponent가 null → NullReference.
+   [RequireComponent(typeof(TowerVisual))]를 class 위에: AddComponent<TowerController>가 TowerVisual도 자동으로 붙이고, 인스펙터에서 TowerVisual을 못 지움.
+   테스트만 고치는 것보다 진짜 프리팹의 실수까지 막음. (그림 자식이 없어 뜨는 노란 경고는 테스트를 실패시키지 않음)
+
+Q. (CriticalRoll) Random.Range(0,1)과 randomValue == rate로 씀
+A. Random.Range(0, 1)은 정수라 int 버전 → 뒤의 수가 빠져 늘 0. 소수는 Random.value 또는 Random.Range(0f, 1f).
+   확률 판정은 "굴린 수 < 확률": 30%면 0 ~ 0.3 구간이 치명. == 는 정확히 0.3이 나올 때만이라 사실상 0%.
+   float을 == 로 비교하는 건 거의 늘 위험 (0.1 + 0.2 ≠ 정확히 0.3).
+   Random.value는 0과 1을 둘 다 포함 → 0 이하·1 이상은 따로 막음 (B11: 확률 0인데 치명).
+
+Q. 지금 Roll이 두 개잖아. 밑에 거가 테스트니까 RollTest로 하면 되지?
+A. 넘긴 값의 개수·형식으로 고름 (오버로드): Roll(0.3f) → 위, Roll(0.3f, 0.12f) → 아래.
+   위쪽은 Random.value를 굴려 아래쪽에 넘기기만, 판정 규칙은 아래쪽에만. 나눈 이유: 굴린 수를 밖에서 받아야 테스트가 정답을 적을 수 있음.
+   아래쪽은 테스트 전용이 아니라 게임도 매번 거치는 진짜 판정 → 이름에 Test를 붙이면 "지워도 되는 함수"로 오해. 다른 이름이면 IsCritical, Judge 등.
+
+Q. 어떻게 돌아가는 거야? 그냥 Random.Range(0 ~ (criticalRate × 100) + 1) 하면 안 돼?
+A. 0 ~ 1 사이 수 하나를 뽑아 확률보다 작으면 치명 (길이 1인 자에서 앞 0.3 구간에 떨어지면 30%).
+   제안한 식은 뽑는 범위가 확률에 따라 바뀌고 비교 기준이 없어 치명 여부가 안 나옴. 범위는 고정, 비교 기준이 확률.
+   100칸 버전 Random.Range(0, 100) < rate × 100도 맞지만 소수 퍼센트가 틀어짐: CSV의 0.055(5.5%)가 0 ~ 5 = 6칸 = 6%.
+   Random.value < rate는 정확히 5.5%이고 100을 곱했다 나누는 단계도 없음.
+
+Q. (DeathResolver 생성자) 이렇게 지정하는 이유가 뭐야?
+A. 매개변수는 생성자가 끝나면 사라지는 택배 상자 → Resolve(적이 죽을 때, 한참 뒤)에 쓰려고 필드(책장, m_)에 옮겨 둠 (수업 3).
+   readonly = 한 번 받은 부품을 다른 것으로 바꾸지 않음.
+   안에서 CurrencyManager.Instance를 바로 써도 동작은 같음. 생성자로 받는 까닭: 필요한 부품이 생성자 한 줄에 다 보이고,
+   매니저를 찾는 일(Instance)은 EnemyManager.Start 한 곳에서만 하고, 테스트에서 가짜를 넣을 수 있음 (수업 10 BossTimer에서 정한 "부품은 생성자로").
+   new는 EnemyManager.Start에서: 모든 매니저가 Awake에서 Instance를 준비한 뒤라 null이 아님 (B5).
+
+Q. 그러면 readonly로 적어 놓으면 Instance가 아니고, SerializeField로 컴포넌트를 붙이지 않아도 가져온다는 건가?
+A. 아님. readonly는 가져오는 기능이 없음. "한 번 넣은 뒤 다른 것으로 못 바꿈"이라는 잠금일 뿐.
+   부품을 손에 넣는 길은 셋: [SerializeField](사람이 인스펙터에 끌어다 놓음, MB·SO만), Instance(싱글톤을 찾음), 생성자 매개변수(만드는 쪽이 건네줌).
+   DeathResolver는 컴포넌트가 아닌 순수 클래스라 인스펙터 칸이 없음 → 생성자로 받음. 실제로 찾는 일은 new 하는 EnemyManager.Start가 Instance로 함.
+   즉 Instance를 안 쓰는 게 아니라, 찾는 곳이 EnemyManager 한 곳으로 옮겨 간 것.
+
+Q. 함수 이름을 Resolve로, KillInfo의 칸을 Victim으로 쓴 이유?
+A. Resolve = "일어난 일을 규칙대로 끝까지 처리하다". 보드게임·카드게임에서 효과를 처리하는 것을 resolve라고 함 (damage resolution).
+   Die가 아닌 까닭: 죽는 건 이미 EnemyHealth에서 일어났고, 여기서는 그 뒤의 정리(보상·명단·풀)를 함. 클래스 이름 DeathResolver와 짝,
+   수업 16의 ProjectileHitResolver(명중 처리)도 같은 이름 짓기.
+   Victim = 당한 쪽. DamageInfo의 Attacker(때린 쪽)와 짝. 형식(EnemyController)이 아니라 이 사건에서의 역할로 이름을 지음
+   (Attacker도 TowerController지만 Tower라고 안 함). enemy라고 하면 "어느 적?"이 되고, Victim이면 "이 죽음의 주인공"이 바로 읽힘.
+
+Q. Victim 말고 다른 단어 없나?
+A. Enemy(가장 쉬움, KillInfo는 진짜 적만 담으니 맞음), DeadEnemy(죽은 적인 게 이름에 보임), Killed(당한 쪽, 짧음).
+   Target은 피함: 수업 15의 ITarget·타겟 고르기와 헷갈림. Deceased는 너무 딱딱함.
+   → Enemy로 정함 (KillInfo.Victim → KillInfo.Enemy).
+
+======================================================================
+수업 15. 공격 방식과 맞을 대상 (2026-10-23)
+======================================================================
+
+Q. (EnemyController) ITarget을 어떻게 받아야 할지 모르겠어.
+A. 이미 가진 값으로 약속의 이름을 채움 (=> 한 줄씩). 틀리기 쉬운 곳 넷:
+     IsAlive => !Health.IsDead   (반대말이면 ! 하나)
+     IsBoss => Definition.Kind != EnemyKind.Normal   (Kind는 enum이라 bool로 쓰려면 비교. 보스 = 일반이 아닌 것)
+     IsDummy => false   (더미는 다른 클래스 DummyTarget. 적은 언제나 false)
+     SetSortingOrder(int order) => Movement.SetSortingOrder(order)   (형식은 받는 쪽에서만 씀. 넘길 때는 이름만)
+
+Q. (PathOccupancy) List<EnemyController>에 ITarget이 안 들어가서 target.Body로 담음.
+A. 컴파일은 되지만 틀림. 더미의 Body는 본체 적 → 더미 칸에 본체가 들어가 본체가 두 칸에 서고, 더미를 지울 때 본체를 지움.
+   ITarget이 늘 EnemyController라는 보장이 없어서 생긴 에러이므로, 값을 좁히지 말고 목록을 List<ITarget>으로 넓혀서 풂.
+   다 바꾸면 PathOccupancy에 EnemyController라는 글자가 없음 = 점유가 적을 모름.
+
+Q. 왜 EnemySpawner·EnemyMovement·DeathResolver는 안 고쳐도 컴파일돼?
+A. EnemyController는 ITarget을 지키므로, ITarget을 받는 자리에 그대로 넘길 수 있음 (암시적 변환). 받는 쪽만 넓히면 넘기는 쪽은 그대로.
+   BoardPresenter의 IReadOnlyList<ITarget> = IReadOnlyList<EnemyController>도 됨: 읽기만 하는 목록은 넓혀 담기를 허락함.
+   쓰기도 되는 List<EnemyController>는 List<ITarget>에 못 담음 (더미를 넣을 수 있게 돼 버리므로).
+
+Q. error CS0101: SquareTD에 ITarget이 이미 있음.
+A. EnemyController의 클래스 이름이 ITarget으로 바뀌어 있었음 (class ITarget : MonoBehaviour, ITarget). 다른 파일 여섯에서도 함께 바뀜.
+   VS Code에서 이름 위에 F2(이름 바꾸기)를 누르면 프로젝트 전체의 그 이름이 한꺼번에 바뀜. 되돌려서 해결.
+
+Q. 라벨("x N")이 적한테 가려져서 안 보여.
+A. 이번 수업 탓이 아니라 원래부터: 라벨과 적이 둘 다 Sorting Layer Enemy, 라벨 Order 1 < 적 Order 2, 4, 6 …
+   같은 레이어 안에서는 Order가 큰 것이 위. 라벨 프리팹의 Sorting Layer를 UI로 (MapTile → Tower → Enemy → Projectile → UI 순서).
+   Order 숫자를 키우는 것보다 낫다: 적이 몇 마리 쌓이든 신경 쓰지 않아도 됨.
+
+Q. (GetPathIndicesInSquare) var result에 정수를 리스트로 담아야 해? 사거리 안에서 도는 것까진 알겠는데 어떻게 돌아야 할지 모르겠음.
+A. 맞음, new List<int>() (칸 번호를 모으므로). 돌 때는 "사거리 안"을 도는 게 아니라 길 칸 전부를 0번부터 돌면서 한 칸씩 "사거리 안이야?"를 물음.
+   사거리 안의 칸만 골라서 도는 방법은 없음 → 전부 보고 거름. 길 칸은 수십 개라 매번 다 봐도 충분히 빠름.
+   빈칸에 radius, PathCount를 넣었음 → 둘 다 for 동안 바뀌지 않는 값이라 매번 같은 칸을 봄.
+   "지금 몇 번째인가"는 그 for가 만든 변수 i (0 → 1 → 2 …): m_pathCells[i], result.Add(i).
+
+Q. (TowerAction·TargetAction) 나머지는 모르겠다, 최대한 적었는데.
+A. 줄마다:
+     AddRange(index) → AddRange(m_occupancy.GetAt(index))   번호가 아니라 그 칸에 선 대상들을 담음
+     GetPathCell(target.Transform) → GetPathCell(target.PathIndex)   칸 번호를 받는 함수. Transform은 화면 위치
+     : base(TowerAction) → : base(grid, occupancy)   부모 생성자에 넘길 값을 이름만 (형식 없이)
+     발 수 = mastery * 2, shots = AttackCount × GetShotsPerAttack(Mastery)   Mastery는 단계(1)지 발 수(2)가 아님
+     CanAct = CollectTargetsInRange(tower, stats.Range).Count > 0   부모의 protected 함수를 자식이 그냥 부름
+     if (target == null) yield return null → break
+       yield return null은 "한 프레임 쉬고 다음 줄로 계속" → null.TakeDamage로 NullReference.
+       break = 도는 for를 통째로 끝냄 (continue는 이번 바퀴만 건너뜀)
+     ? Act : null → ? targets[0] : null   Act는 함수 이름. 목록의 맨 앞을 돌려줌
+
+======================================================================
+수업 16. 투사체 (2026-10-23)
+======================================================================
+
+Q. 프리팹 하나로 넣으면 애니메이션은 어떻게 해?
+A. 옛 투사체 프리팹 28개에는 Animator가 없음. 전부 그림 1장 + 꼬리(TrailRenderer) + 파티클.
+   날아갈 때의 움직임은 코드: 보통은 날아가는 방향으로 머리를 돌림, 202(도끼)·205(방패)만 빙글빙글 (옛 ProjectileHit2D).
+   28개가 다른 건 그림과 꼬리·파티클 색뿐 → "번호 → 그림, 색, 도는지" 표(ProjectileCatalog, SO) + 프리팹 하나로 정함.
+   "타워마다 같은 방식으로 쏘니까 풀이 하나여도 될 것 같음" (사용자). 꺼낼 때 그림·색을 갈아 끼우므로 풀의 "지난번 그림" 버그만 조심.
+
+Q. (AttackHandle) 힌트 좀 자세하게 주지..
+A. PendingShots = 날아가는 탄의 수. 쏨 0 → 1 → 2, 닿음 2 → 1 → 0이면 끝.
+     IsDone => PendingShots == 0   (같은지 묻기)
+     AddShot: PendingShots++   (1 더하기, for의 i++와 같음)
+     CompleteShot: PendingShots--   (1 빼기. = 0은 한 발만 닿아도 전부 끝난 걸로 침. 통째로 끝낼 때(ForceComplete)만 = 0)
+
+Q. (5단계) 음? / 인터페이스 사라지고 난리났네 수정 좀
+A. 에러의 원인 셋: IProjectileLauncher.cs 파일이 없었음, TargetAction에 ", IProjectileLauncher"를 붙임, TowerController·TurnManager가 아직 옛 Act().
+   - interface는 "그 일을 하는 쪽"이 지킴: 쏘는 기계 ProjectileManager가 IProjectileLauncher를 지키고, TargetAction은 발사기를 받아서 쓰기만 함.
+     쓰는 쪽에 붙이면 "TargetAction에 Fire가 없다" 에러.
+   - override는 부모의 abstract와 매개변수가 똑같아야 함 (AttackHandle을 양쪽에).
+   - HitResolver는 null이 아니라 !IsAlive를 물음: 죽은 적도 오브젝트는 남아 있어 null이 아님.
+   - using UnityEngine.WSA 같은 줄은 자동 완성이 넣은 것. 쓰지 않으면 지움.
+   AI가 고침: IProjectileLauncher.cs 만들기, TargetAction의 옛 임시 로그 지우기, TowerController.Act(handle), TurnManager ④ 영수증 대기, HitResolver !IsAlive, WSA 지우기.
+
+Q. 왜 인터페이스를 못 읽지
+A. Unity 밖에서 만든 파일은 Unity가 Import해야 .meta가 생기고 Assembly-CSharp.csproj 목록에 들어감. VS Code는 그 목록만 읽음.
+   Unity 창을 한 번 앞으로 가져오거나 Ctrl + R (Assets → Refresh).
+
+Q. (위성 배치, 사용자가 정함) 옛것은 12 · 6 · 9 · 3 순서였는데, 이제는 AttackCount만큼 12시부터 시계 방향으로 고르게.
+   2발 12·6시, 4발 12·3·6·9시, 3발은 12시와 아래 둘.
+A. 고르게 나누면 3발은 12·4·8시 (120°씩). 많아도 원 하나에 고르게 (옛 것처럼 바깥 고리로 안 넘김).
+   12시에서 시계 방향으로 θ 돈 자리 = (sin θ, cos θ) × 반지름. θ = 360° × i ÷ N. Mathf.Sin·Cos는 라디안 → × Mathf.Deg2Rad.
+   360f의 f: 정수끼리 나누면 소수점을 버림 (360 / 7 = 51).
+   SatelliteSettings 칸: Interval 위성 하나 띄우고 다음까지(발사도 같은 간격), LaunchDelay 다 띄운 뒤 첫 발사까지,
+                        Radius 타워 중심에서 위성까지, GroupSpacing 한 자리의 여러 발을 옆으로 벌리는 간격.
+   띄우고 쏘는 순서: 위성 i를 i × 간격에 띄우고, 모든 탄이 같은 H = (N − 1) × 간격 + 발사 대기 만큼 기다렸다 날아감 → 띄운 순서대로 간격을 두고 발사.
+
+Q. (FlyTo(to, hold, speed), GetSpread(…, lookId, …)) 에러가 안 났는데 이상하게 날아감
+A. 같은 형식의 인자 둘(float 속력·기다릴 시간, int 발 번호·모양 번호)은 순서가 바뀌거나 다른 변수가 들어가도 컴파일러가 모름.
+   넘길 때는 받는 쪽 선언과 같은 순서·같은 뜻의 값으로. 이름을 보고 확인 (speed 자리에 speed).
+
+Q. (TowerTurnRunner) 됐나?
+A. 옮기면서 BoardManager.Instance.Slots 줄까지 따라옴 → 생성자로 받은 m_slots를 씀 (테스트엔 BoardManager가 없어 NullReference).
+   CompleteShot은 1발만 빼고, 안전 시간에 남은 걸 통째로 끝내는 건 ForceComplete. 생성자의 매개변수 개수를 부르는 쪽(TurnManager)도 맞춤.
+
+======================================================================
+수업 17. 광역과 타겟 우선순위 (2026-10-23)
+======================================================================
+
+Q. (TargetSelectors) 됐나
+A. 가장 작은 것을 찾을 때는 비교 < 와 시작값 MaxValue, 가장 큰 것은 > 와 MinValue. 반대로 쓰면 첫 후보도 못 이겨 늘 null.
+   개수 세기는 count + 1 (count + count는 0 + 0 = 0이 계속).
+   지역 변수는 소문자로 시작(hp). 대문자는 속성·클래스(CurrentHp).
+
+Q. TargetAction 쪽 빈칸이랑 주석까지 포함해서 너가 적어 줄래?
+A. 뼈대(빈칸 + 주석)를 AI가 파일에 직접 넣음. 사용자는 빈칸 6개만 채움.
+   미리 나눔: 쏠 때 대상을 정하고 피해는 닿을 때 들어가므로, 쏠 때마다 "날아가는 예상 피해"를 적어 두고(PreviewDamage), 닿으면 지움.
+   체력 − 날아가는 피해 > 0 인 대상만 후보. 다 죽을 예정이면 원래 후보 전부(inRange)에서. default는 목록에선 null → foreach에서 NullReference.
+   예상과 실제가 늘 같도록 TakeDamage도 PreviewDamage를 부름 (계산식을 한 곳에).
+
+======================================================================
+수업 18. 입력과 조작 (2026-10-23)
+======================================================================
+
+Q. (InputModes 92번 줄) 모르겠네
+A. &&의 양쪽은 참/거짓. SpawnIndex(칸 번호, int)가 아니라 IsSpawn(스폰 칸인가, bool). 같은 줄의 뒤쪽 SpawnIndex는 "어느 칸으로" 넘기는 값.
+   ScreenToWorldPoint(화면 → 월드)와 WorldToScreenPoint(월드 → 화면)는 이름이 방향. 둘 다 Vector3라 에러가 안 남.
+
+Q. 타워 생성(버튼)으로 소환한 건 안 되고 B로 소환한 건 되네
+A. 화면의 버튼은 옛 UI → 옛 TowerManager가 옛 타워를 만듦. 새 TowerSlots에 없어서 새 입력이 "타워 없음"으로 봄.
+   옛 Manager·Pool·UICanvas가 켜져 있으면 옛 게임과 새 게임이 같이 돎 → 꺼야 함.
+
+======================================================================
+수업 19. 합성과 티어 강화 (2026-10-23)
+======================================================================
+
+Q. selectedEmblems에서 모르겠다 (원래 emblem으로 했는데 테스트가 합성 실패라고 해서 여기가 문제인 줄)
+A. foreach가 목록에서 꺼낸 하나의 이름(emblem)을 씀. 진짜 원인은 49번 줄 MergeCount − i: 숫자 1(재료 = 3기 − 선택한 1기)이어야 하는데
+   칸 번호 i가 들어가 칸 위치에 따라 "몇 기면 끝"이 바뀜. 테스트가 실패하면 실패한 테스트 이름이 가리키는 함수 전체를 다시 읽기.
+
+======================================================================
+수업 20. 타워 스탯 완성 (2026-10-23)
+======================================================================
+
+Q. (BalanceTables) 티어별로 뭐가 오르는지는 기획을 봐야 아는데
+A. 기획 10장 [티어가 올리는 스탯] 표와 8장 [컬러 강화] 표를 TODO 위에 주석으로 붙임. 표는 "브론즈(레벨 1)에 견준 누적값"이라 한 줄씩 그대로 옮기면 됨.
+   생성자 순서를 바꾸면 그 생성자를 부르는 모든 줄(Identity 포함)도 같은 순서로 바꿔야 함.
+
+Q. GetTierRow부터 막힘 (나머지는 AI가 쓰고 읽어 봄)
+A. 배열의 인덱스 = 티어. 범위 밖(0 이하, 시너지 6)이면 Identity, 아니면 s_tierRows[tier].
+   GetColorLevelRow: Mathf.Clamp로 1 ~ 6에 맞춤 → 블루면 AttackCount만 ×2인 새 줄을 만듦 (readonly 필드는 고칠 수 없으니 new).
+   GetColorUpgradeCost: 배열은 "지금 레벨 → 다음 레벨" 비용. 레벨 5 이상은 0(= MAX).
+   Identity는 "아무것도 바꾸지 않는 줄" → 곱하는 값은 1, 더하는 값은 0. MaxStack 0f는 실수.
+
+Q. (StatModifierList) Sum과 RemoveBySource를 모르겠다
+A. stat은 "찾는 스탯 이름"(매개변수)일 뿐이라 stat.isPercent 같은 건 없음. 목록에서 꺼낸 한 줄에 이름(modifier)을 붙여야 함:
+     foreach (StatModifier modifier in m_modifiers) { if (modifier.Stat != stat) continue; IsPercent면 percent, 아니면 flat에 Value }
+   RemoveAll에는 지울 값이 아니라 "이 줄을 지울까?" 조건을 넘김: RemoveAll(m => m.Source == source). 지운 개수를 돌려줌.
+   지운 게 있을 때만 Changed (다시 계산할 이유가 없으니). int 함수는 return이 꼭 있어야 함.
+   선언한 변수 이름과 쓰는 이름이 다르면(remove / removed) "없는 이름" 에러.
+
+======================================================================
+수업 22. 특수 타일 (2026-10-26)
+======================================================================
+
+Q. 지금까진 UnityEngine.Random을 쓰다가 갑자기 System.Random을 쓰는 이유는?
+A. UnityEngine.Random은 게임 전체가 같이 쓰는 주사위 하나(static). System.Random은 new로 만드는 "나만의 주사위"라 넘겨줄 수 있음.
+   - 시드를 넣으면 이 배치만 똑같이 다시 나옴. Unity 쪽은 InitState(시드)를 해도 사이에 다른 코드(적 주사위, 타워 뽑기)가
+     한 번이라도 굴리면 결과가 달라지고, 시드를 고정하면 적 주사위까지 같이 고정됨.
+   - 테스트에서 new System.Random(42)를 넘기면 늘 같은 결과 → "같은 시드면 같은 배치"를 확인할 수 있음.
+   그때그때 한 번 굴리고 끝나는 것(적 주사위, 타워 뽑기)은 Unity Random 그대로 써도 됨.
+   주의: System.Random.Next(최대)는 최대를 빼고(0 ~ 최대−1), Unity의 Random.Range(int, int)도 끝을 뺌. float Range만 끝 포함.
+
+Q. 비프로스트 두 칸을 골랐는데 어떻게 집어넣어야 할지 모르겠다
+A. m_pathTiles는 "칸 번호 → 타일 종류" 배열. 깔기 = 그 번호 칸에 대입 (m_pathTiles[first] = PathTileType.Bifrost).
+   그다음 pathCells.Remove로 후보에서 빼야 나머지 타일이 그 위에 안 깔림.
+   Next(0, Count − 1)은 마지막 칸이 절대 안 나옴 → Next(Count).
+   (BoardManager) 새 변수는 타입을 붙여 선언(System.Random random = …), 쓰기 전에 만들어야 함.
+
+Q. (EnemyHealth.Heal) 늘어난 체력에서 이전 체력은 왜 빼? 힐량을 정확히 재려는 장치?
+A. 맞음. 돌려주는 값 = "실제로 찬 양". 최대 100, 지금 90에 30을 회복하면 체력은 100이 되고 돌려주는 값은 30이 아니라 10.
+   넘쳐서 버려진 20은 빼고 셈. 회복 뒤 체력(Current) − 회복 전 체력(before) = 실제로 오른 양.
+   지금은 아무도 이 값을 안 씀(타일은 버림). 나중에 회복 숫자 "+10" 표시나 실제 회복량을 읽는 규칙에 씀.
+   틀렸던 것: && → || (죽었거나 또는 0 이하), Mathf.Min의 결과를 Current에 넣어야 함, before는 건드리지 않음, "최대를 넘지 않게"는 Min.
+
+======================================================================
+수업 23. 스택과 스킬 2의 틀 (2026-10-26)
+======================================================================
+
+Q. (SkillFormula) 고쳤는데 코드 색깔이 어두워지는 건 왜?
+A. 에러가 아니라 VS Code 힌트(IDE0047 "괄호를 빼도 됨"). 곱하기·나누기는 왼쪽부터 차례로라 (a * b) / 100과 a * b / 100이 같음.
+   흐린 글자 = "없어도 결과가 같은 코드" (쓰지 않는 using, 하는 일 없는 괄호 등). 그대로 둬도 됨.
+   같이 고친 것: 0.01은 double → 0.01f (float × double = double이라 float 변수에 못 넣음), colorlevel / colorLevel 대소문자,
+   Resist는 ÷100을 저항력에만 (value × (1 − Min(저항, 100) / 100)). 괄호 위치 하나로 결과가 0.09 ↔ −0.0882.
+
+Q. (TowerStack) SetMax 하다가 막힘
+A. "넘치면 깎고 적으면 그대로" = 둘 중 작은 쪽 = Mathf.Min(Current, Max) 한 줄. 삼항 연산자는 값 하나를 고르는 식이라 "이러면 이걸 해라"로는 못 씀.
+   계산한 값은 꼭 대입해야 바뀜 (Max = …, Current = …). 이 단계에서 같은 실수가 넷(Add, Consume, SetMax, CopyFrom).
+   Add는 맨 위 "이미 다 찼으면 return" 덕에 wasFull 없이 IsFull만 봐도 되지만, SetMax는 그런 return이 없어 바꾸기 전 상태(wasFull)를 기억해야 함.
+   "최소 1"은 Mathf.Max(1, 값), "최대 n"은 Mathf.Min(n, 값) — 이름과 반대라 헷갈림.
+   CopyFrom은 옛 타워의 스택(old.Current)과 새 타워의 최대(Max)를 비교 (새 타워의 Current는 아직 0).
+
+Q. (TowerStack) ④ RequestManualConsume은 뭐야?
+A. 수동 소모 타워의 "스택 소모 버튼"을 눌렀다는 표시(ManualRequested)를 켜는 함수. 다 찼을 때만 받음. 쓰면(Consume) 꺼짐.
+
+Q. (StackModeSettings) IsManual · ShouldUseStack
+A. TryGetValue는 두 값을 줌: 돌려주는 bool = 표에 있나, out manual = 그 값. "표에 있나"를 "수동인가"로 쓰면 안 됨.
+   이름이 Is… · Should…인 함수는 답만 하고 아무것도 바꾸지 않음 (ManualByDefault를 덮어쓰거나 Consume을 부르면 안 됨).
+   "자동이거나" = "수동이 아니거나" = !IsManual(…).
+
+Q. (TowerState ③) 우선순위·공격 칸은 = 로 받는데 스택은 왜 Stack = Stack.CopyFrom(old.Stack)이 아니야?
+A. 스택도 = 로 받음. 그 = 가 CopyFrom 안(Current = Mathf.Min(old.Current, Max))에 들어 있을 뿐.
+   점(.) 앞의 Stack = 받는 쪽(새 타워의 스택, 함수 안에서 이름 없이 Current·Max), 괄호 안의 old.Stack = 주는 쪽(함수 안에서 old).
+   CopyFrom은 void라 돌려주는 값이 없어 = 오른쪽에 못 둠. Stack은 { get; }뿐이라 생성자 밖에서 못 바꿈.
+   상자째 받으면(Stack = old.Stack) 옛 최대(60)가 남아 미스릴(30)이 안 지켜짐 → 개수만 옮기고 최대는 새 타워 것을 지키려고 함수로 감쌈.
+   숫자 하나(우선순위)는 그대로 옮기면 끝, 여러 칸짜리 상자(스택)는 옮기는 규칙을 그 상자의 함수에 맡김.
+
+Q. (EnemyHitCounter) 딕셔너리를 잘 몰라서 어떻게 할지 모르겠다
+A. 딕셔너리 = "이름표 → 값" 표 (여기선 문양 → 맞은 횟수). 이번에 쓰는 동작 넷:
+   읽기 TryGetValue(키, out 값) (없으면 false — 대괄호로 바로 읽으면 없을 때 에러), 쓰기 d[키] = 값 (없으면 새 줄),
+   한 줄 지우기 Remove(키), 전부 지우기 Clear(). = 는 오른쪽 값을 왼쪽에 넣음 (value = d[k]는 읽기, d[k] = value는 쓰기).
+
+Q. (4a) 1번(useStack)은 뭐야?
+A. "이번 스킬 2에 다 찬 스택을 쓸까"를 한 번 정해 두는 줄. 2단계의 ShouldUseStack을 부름. 아래에서 두 번(피해 1.6배, 끝에 Consume) 쓰여
+   한 번 정해 두면 "1.6배로 쐈으면 반드시 비운다"가 짝으로 맞음. WithStack의 첫 칸은 Power가 아니라 이미 계산한 스킬 피해(damage).
+
+Q. (4b) 훅이 뭐야?
+A. "나중에 끼워 넣을 자리" — 지금은 비어 있는 virtual 함수를 정해진 때에 미리 불러 둠. 예: 광역 기본 공격이 맞을 때 OnBasicHit을 부름
+   → 수업 38 전기 광역은 그 함수만 덮어써 "전하 1"을 붙임. SplashAction·TowerController는 안 고쳐도 됨.
+   abstract = 꼭 채울 빈칸, virtual 훅 = 필요할 때만 덮어쓰는 자리 (안 덮으면 빈 함수라 아무 일도 없음).
+
+======================================================================
+수업 25. 저항과 상태 효과 (2026-10-26)
+======================================================================
+
+Q. (EnemyStatusEffects.Add) 겹침 판단 부분 간단히 해석
+A. "새 효과를 넣어도 되나?" 문지기. return false = 안 넣고 돌아감.
+   강한 CC(기절·속박): 이미 걸려 있거나 저항 주사위에 막히면 안 넣음. 나머지: 같은 게 있는데 그게 영구(스킬 2)거나, 새것이 더 약하면 안 넣음.
+   여기까지 오면 넣음 (같은 게 있었으면 빼고 새것으로).
+
+Q. (Remove) 이름들이 뭘 뜻하는지 모르겠다 → 이해가 하나도 안 간다
+A. 그림으로: 적이 "걸린 효과 목록" 종이를 들고 있음. Remove("파쇄") = 종이에서 파쇄 줄을 지우고 방어력을 다시 계산.
+   m_pending(메모장)은 안전장치: 출석부를 읽는 도중에 줄을 찢어 가면 헷갈리듯, 목록을 도는 중에 지우면 에러.
+   그래서 도는 중이면 "다 읽고 나서 지우기"를 메모만 하고 나중에 함. 이 부분은 AI가 만든 안전장치라 문양을 만들 때 손댈 일 없음.
+   (설명을 한 번에 너무 많이 줬음 → 표·코드보다 일상 비유 하나가 먼저)
+
+Q. 지울 것을 메모장에 다 적어 두고 안전할 때 RemoveAll로 지우면 되지 않아?
+A. "적어 두고 안전할 때(목록을 다 돈 바로 뒤, FlushPending)"는 지금 방식과 같음. 다만 RemoveAll은 정화 전용 — 효과를 전부 지움.
+   메모에 적힌 것만 하나씩 지워야 다른 효과(기절, 출혈)가 안 사라짐. 메모장에는 지우기뿐 아니라 "나중에 넣기"(연소가 옮기는 화상 등)도 적힘.
+
+Q. Has는 뭐야? Find로 쓰면 되는 거 아니야?
+A. Has = "그 이름표의 효과가 걸려 있나?" (true / false). Find(key) != null을 그대로 써도 결과는 같음.
+   Find는 효과 자체를 돌려줌 → 그 효과의 값(남은 행동 수, 세기)이 필요할 때.
+   Has는 예/아니오만 필요할 때 읽기 쉽게: if (Status.Has("화상")) 이 if (Status.Find("화상") != null) 보다 뜻이 바로 보임.
+
+Q. modifier가 스탯 목록? / 수정자가 뭔데 / source가 뭔데 / RebuildModifiers 해석
+A. 스탯 = 원래 값(방어력 100). 수정자(StatModifier) = "이 스탯을 이만큼 바꿔라" 쪽지 한 장: (출처, 스탯, 값) 예: ("파쇄", 방어력, −20%).
+   modifiers = 쪽지 목록. 최종값 = 원래 값 × (1 + 쪽지 %의 합) + 정수의 합. 원래 값은 안 건드리고 쪽지만 붙이고 뗌.
+   Source(출처) = 쪽지에 적힌 "누가 줬나" 이름표. 뗄 때 이 이름으로 찾음 (RemoveBySource("파쇄")).
+   RebuildModifiers = 효과가 바뀔 때마다 상태 효과가 붙인 쪽지만 전부 떼고(m_appliedSources로 기억), 지금 걸린 효과 것을 다시 붙임.
+     통째로 지우면 방어 타일·큐브 면 쪽지까지 날아가므로 "내가 붙인 것"만 기억했다가 뗌. ?. = 비어 있으면(null) 건너뜀.
+
+Q. (ForEach) finally는 처음 보는데?
+A. try { … } 안에서 에러가 나도 finally { … } 안은 꼭 실행됨. 여기선 "목록 읽는 중" 팻말(m_iterating)을 꼭 떼려고 씀.
+   못 떼면 그 적은 영원히 "읽는 중"이라 그 뒤 효과가 전부 메모장에만 쌓임. m_iterating이 숫자인 건 읽는 중에 또 읽기가 시작될 수 있어서(몇 장 걸었나).
+
+Q. OnStopped는 정화 타일에 올라와 있을 때? 정화 전용? 어디서 불려?
+A. "올라와 있는 동안"(OnTurnStanding, 매 턴)이 아니라 "이번 턴에 행동해서 멈춘 순간" 한 번. 기절 0 / 0도 멈춘 것.
+   정화 전용 아님 — 정화와 비프로스트가 덮어씀(훅). 부르는 곳은 EnemyTileEffectApplier 한 곳: 타일이 뭔지 안 따지고 effect.OnStopped만 부름.
+
+Q. 한 스크립트에 클래스를 여러 개 선언해도 돼?
+A. 됨. 단 MonoBehaviour·ScriptableObject는 파일 이름과 클래스 이름이 같아야 Unity가 붙일 수 있음 (파일 하나에 하나).
+   순수 C# 클래스(PathTileEffect 6종처럼 작고 붙어 다니는 것)는 한 파일에 모아도 됨. 커지면(문양 56종) 파일을 나눔.
+
+Q. (TowerFinalStats) Clone 줄을 float values.Clone으로, Get을 m_values[(int)2]로 씀 → "Get에서 Range를 소환하는거라는걸 내가 어떻게 알아"
+A. 알 수 없는 게 맞음. AI 힌트가 "(int)를 붙이면 그 번호 (Power = 1, Range = 2 …)"라 숫자를 넣게 만든 것 (힌트 잘못).
+   Get은 무엇을 꺼낼지 스스로 정하지 않음. 부르는 쪽이 정해서 매개변수로 넘김: Power 줄이 Get(StatType.Power)로 부르면 stat = Power.
+   그래서 빈칸에는 숫자가 아니라 들어온 매개변수: m_values[(int)stat]. 숫자를 박으면 무엇을 물어도 늘 같은 서랍.
+   형식 바꾸기는 괄호로 감싸 앞에: (float[])values.Clone(). 함수를 부를 때는 () 필요.
+
+Q. (TowerStatCalculator) Sum에서 막힘 — modifiers.Sum(, (int)StatType.ColorLevelBonus)로 씀
+A. Sum은 스탯 하나만 받고 두 칸짜리 상자 (percent, flat)를 돌려줌. 꺼낸 뒤에 .flat, 그 결과(float)를 int로:
+     int bonus = (int)modifiers.Sum(StatType.ColorLevelBonus).flat;
+   (int)는 스탯 이름이 아니라 꺼낸 결과 앞에.
+
+Q. ApplyModifiers의 values[i] = modifiers.Apply(stat, i) — 88번째 줄 정답이 뭔데
+A. values[i] = modifiers.Apply(stat, values[i]);
+   i는 서랍 번호(Power면 1), values[i]는 그 서랍에 든 값(Power면 150). Apply의 두 번째 칸은 "기본값"이라 든 값을 넣어야 함.
+   i를 넣으면 Power 150이 아니라 "1에 +50%" = 1.5가 됨. 번호와 값을 구별 (Get의 (int)stat과 m_values[(int)stat]의 차이와 같음).
+   CritRate 한도는 0 ~ 1로 들고 있으므로 Mathf.Min(1f, …) (100이 아님).
+
+Q. (BuildSources) amount = (int)modifier.Stat * modifier.Value — "저건 도저히 모르겠는걸?"
+A. amount = baseValues[(int)modifier.Stat] * modifier.Value;
+   안쪽부터: modifier.Stat(Power) → (int)로 서랍 번호 1 → baseValues[1]로 그 서랍에 든 값 150 → × 0.5 = 75.
+   번호만 쓰면 1 × 0.5 = 0.5. "번호 → 배열[번호] → 든 값"은 Get(m_values[(int)stat]), ApplyModifiers(values[i])와 같은 모양.
+   GetBase는 Get을 베낀 뒤 배열 이름을 m_baseValues로 바꿔야 함 (안 바꾸면 늘 최종값).
+
+Q. (ColorUpgradeState) GetLevel(color) => GetLevel(color), GetCost => GetCost(m_levels), m_levels++ — "아 진짜 모르겠네"
+A. 함수가 자기 이름을 다시 부르면 끝없이 불러 StackOverflow(유니티가 멈춤). 컴파일 에러가 안 나서 위험.
+     public int GetLevel(TowerColor color) => m_levels[(int)color];                              // 배열[번호] = 그 칸에 든 레벨
+     public int GetCost(TowerColor color) => BalanceTables.GetColorUpgradeCost(GetLevel(color));  // 지금 레벨 → 비용표
+     m_levels[(int)color]++;                                                                       // 배열 통째가 아니라 그 칸 하나를 올림
+   배열 이름만 쓰면 "칸 5개 묶음 전체", 배열[번호]를 써야 "칸 하나".
+
+======================================================================
+수업 27. 규칙의 틀과 검 (2026-10-27)
+======================================================================
+
+Q. (SwordSplashSkill [A] [B]) "모르겠어.."
+A. 천지일섬 = "피해만 주는 시험 스킬(DamageOnlySkill)의 광역 쪽"과 똑같음. 거기서 두 줄을 그대로 가져오면 됨.
+     [A] return SkillArea.WholeMap(m_grid, m_occupancy);      // 어디를: 맵 전체의 적 목록
+     [B] ProjectileHitResolver.HitSingle(target, hit);        // 맞으면: 그 적에게 피해 한 번
+   GetArea는 List<ITarget>를 돌려주는 함수라 return이 꼭 있어야 함 (없으면 "값을 돌려주지 않음" 에러).
+   m_grid·m_occupancy는 부모(AttackSkill)가 가진 칸 정보 — protected라 자식도 그냥 씀.
+   피해 식·스택·치명은 부모의 Fire가 이미 계산해서 hit에 담아 줌. 문양 스킬은 "어디를"과 "맞으면 무엇을"만 정함.
+
+Q. (SwordTargetSkill [D]) HitSingle(target, slice/SliceCount)로 씀 — "d는 진짜 모르겠는데"
+A. slice는 숫자 하나가 아니라 꾸러미(struct): 공격자, 피해, 치명 여부, 속성 … 이 들어 있음. 꾸러미 통째로는 나눌 수 없음 (컴파일 에러).
+   나누는 것은 꾸러미 안의 피해 칸 하나 → 그게 [C]: slice.BaseDamage = hit.BaseDamage / SliceCount;
+   [C]에서 미리 잘라 뒀으니 [D]는 자른 꾸러미를 그대로 줌: ProjectileHitResolver.HitSingle(target, slice);
+   순서: 복사(slice = hit) → 피해 칸만 ÷24 ([C]) → 24번 주기 ([D]).
+   ("나.. 완전 초보라고.." → 설명이 또 너무 많았음. 비유 하나 + 칠 줄 두 개만으로 다시 설명함)
+   비유: slice는 택배 상자, 안에 "피해 20" 쪽지. 상자를 24로 자를 수는 없고, 쪽지의 숫자만 20/24로 고쳐 씀([C]). 그 상자를 24번 보냄([D]).
+
+Q. (SwordBuffRule [F]) 치명 블록(if (IsSynergy …) { … })을 통째로 복사해 FinalDamage로 바꿈 — "다 됐나?"
+A. 컴파일은 되지만 조건이 다름. 최종 피해 +10%는 "검강일 때(isSkill2)" 누구에게나, 치명 보너스는 "베기 타워일 때(IsSynergy)".
+   복사한 블록은 조건이 IsSynergy라 검기(스킬 1)인데도 베기 타워에 최종 피해가 붙고, 검강인데 활 타워에는 안 붙음.
+     if (isSkill2) modifiers.Add(StatModifier.Flat(source, StatType.FinalDamage, 0.1f));
+   따라 쓸 것은 modifiers.Add(…) 부분만, 앞의 조건은 빈칸 힌트에 적힌 것 (if (isSkill2)).

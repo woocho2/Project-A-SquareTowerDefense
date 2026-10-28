@@ -1,2 +1,0 @@
-const sharp=require('../../_codex_spreadsheet_task/node_modules/sharp'),path=require('node:path'),p=require('./production-plan.json'),m=require('./asset-manifest.json');
-(async()=>{for(const a of p.assets){const dir=path.resolve(__dirname,'../../Assets/4. Asset/4. Enemy',a.realm),s=await sharp(path.join(dir,a.id+'_Character.png')).stats(),mask=await sharp(path.join(dir,a.id+'_EquipmentMask.png')).removeAlpha().raw().toBuffer();console.log(a.id,JSON.stringify({alpha:s.channels[3],selected:mask.filter((v,i)=>i%3===0&&v===255).length,layout:m.finalLayout[a.id]}));}})();
