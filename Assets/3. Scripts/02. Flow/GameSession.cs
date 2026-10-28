@@ -13,6 +13,7 @@ namespace SquareTD
         public int BaseLimit { get; private set; }                  // 사이클의 기본 한도 (WaveTable)
         public int CurrentLimit => BaseLimit + SumLimitModifiers(); // 기본 + 보정의 합 (도끼 버프 −, 수업 31 방패 방어막 +)
         public bool IsOver { get; private set; }
+        public EmblemSharedState Shared { get; } = new EmblemSharedState();        // 어둠의 카운트 (수업 40)
 
         public event Action<int> LimitChanged;
 
@@ -36,6 +37,20 @@ namespace SquareTD
             TowerManager.Instance.TowerRemoved += OnTowerChanged;
             TowerManager.Instance.TowerReplaced += OnTowerReplaced;
             BoardManager.Instance.Zones.ZoneChanged += OnZoneChanged;      // 방패의 이지스가 펴지면 (존이 스킬 2로)
+            EnemyManager.Instance.EnemyDied += OnEnemyDied;                // 어둠의 카운트 (수업 40)
+        }
+
+        private void OnEnemyDied(KillInfo kill) => Shared.AddDarkness(EmblemSharedState.GetKillCount(kill, HasDarknessBuffTower()));
+
+        private bool HasDarknessBuffTower()
+        {
+            TowerSlots slots = BoardManager.Instance.Slots;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                TowerController tower = slots.Get(i);
+                if (tower != null && tower.Definition.Color == TowerColor.Yellow && tower.Definition.Emblem == TowerEmblem.Darkness) return true;
+            }
+            return false;
         }
 
         protected override void OnDestroy()
@@ -49,6 +64,7 @@ namespace SquareTD
                 TowerManager.Instance.TowerReplaced -= OnTowerReplaced;
             }
             if (BoardManager.Instance != null) BoardManager.Instance.Zones.ZoneChanged -= OnZoneChanged;
+            if (EnemyManager.Instance != null) EnemyManager.Instance.EnemyDied -= OnEnemyDied;
         }
 
         private void OnWaveChanged(int wave)

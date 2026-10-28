@@ -6,10 +6,10 @@ using UnityEngine;
 namespace SquareTD.Tests
 {
     // 수업 26 2단계: 버프·디버프 타워의 행동, 존 버프 받기, 디버프존 밟기 (시험 규칙: 위력 +10% / 방어 −10%, 스킬 2면 두 배)
-    //   수업 27부터 문양마다 규칙이 생김 → 아직 규칙이 없는 어둠 문양으로 시험 규칙을 봄 (수업 40에서 시험 규칙과 함께 바꿈)
+    //   수업 27부터 문양마다 규칙이 생김 → 14문양이 다 들어온 뒤로는 "문양 없음(None)"으로 시험 규칙을 봄 (표에 없는 문양 = 시험 규칙)
     public class ZoneActionTest
     {
-        private const TowerEmblem TestEmblem = TowerEmblem.Darkness;
+        private const TowerEmblem TestEmblem = TowerEmblem.None;
 
         private GameObject m_root;
         private BoardGrid m_grid;                   // 길 5칸, 스폰 3칸

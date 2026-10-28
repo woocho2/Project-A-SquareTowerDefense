@@ -1255,3 +1255,91 @@
   SkySplit.shader를 네 줄 → 한 줄 + 작아짐 + 배경으로 다시 씀. DOTween UI 모듈이 꺼져 있어 위치·투명도는 DOTween.To로
   같은 날 사용자 평("칼집 조잡", "적 맞는 노란 반달 짜침") → 칼집·작아짐을 뺌. 갈라진 뒤 벤 자리에서 빛이 퍼져(_Beam) 하얘짐.
   적이 맞는 것: 노란 반달 X자 → 큰 베기와 같은 각도의 하얀 일자 참격 + 번쩍 + 금빛 고리, 8시 → 2시 쪽 적 순서로 차례로
+
+[수업 32 ~ 40] 해머 · 불 · 물 · 대지 · 바람 · 얼음 · 전기 · 빛 · 어둠 — 9문양을 한 번에 (AI가 코드·테스트, 빈칸 43개)   (2026-10-28)
+                                       확인 상태: Unity CLI로 Run All — 정답으로 채우면 775개 전부 통과, 빈칸 상태로는 721 통과 · 54 실패(전부 빈칸 몫)
+                                                  게임에서 확인은 아직 (빈칸을 채운 뒤 문양마다), 연출은 없음 (Codex)
+사용자 요청: "망치부터 어둠까지 일단 전부 만들고 빈칸만 만들어볼래?"
+만든 파일 (05. Tower/Skills/ 아래, 문양마다 광역 · 단일 · 버프 · 디버프)
+- Hammer/ — HammerSplashSkill(100T 해머: 착탄 범위, 최대 이동력 −1), HammerTargetSkill(망치질: 50%×(1−저항) 이동력 1 / 1),
+    HammerBuffRule(제련·세공: 추가 피해 = 식 × 골드, 세공 10% 젬(사이클), 타격 공격 횟수 +1 / +2), HammerDebuffRule(원석·금맥: 처치 골드 +, 금맥 10% 젬, 타격 막타 +5 / +10%)
+- Fire/ — FireSplashSkill(메테오: 맵 전체, 화상 +50% 연소 +100%), FireTargetSkill(화염구: 60%×(1−저항) 화상 스택 1, 화상 +10% 연소 +20% 기본 공격도),
+    FireBuffRule(불씨·불길: 치명 +10% 치명 피해 +30% 공격 횟수 +1, 불 단일 공격 횟수 +1 / +2, 불 광역 StackValue +20%, 불길은 레벨×5턴 뒤 0스택 불씨),
+    FireDebuffRule + FireDebuffEffect(화상·연소: 매 턴 최대 체력 % + 받는 치유 −, 연소는 같은 칸에 SpreadBurnEffect)
+- Water/ — WaterSplashSkill(쓰나미: 맵 전체, 다음 행동 이동력 −2(저항 확률), 물결 ×1.25 해류 ×1.5), WaterTargetSkill(급류: 뒤로 1칸, 젖음이면 2칸),
+    WaterBuffRule(물결·해류: 스택 쌓이는 양 +, 해류는 절반에서 다시), WaterDebuffRule(젖음·침수: 이동력을 바꾼 공격에 받는 피해 +, 일반은 절반, 침수 맵 버프 50%)
+- Earth/ — EarthSplashSkill(대지의 분노: 맵 전체, 쓸 때마다 AV +1/1.5/2%, 진흙·석화 적은 방어력 × 0.1%), EarthTargetSkill(씨뿌리기: Power +1/1.5/2%, 진흙 최소 이동력 −1 석화 −2),
+    EarthBuffRule(성장·만개: AV +, 만개 컬러 레벨 +1), EarthDebuffRule(진흙·석화: 턴마다 속박 확률, 방어 +20/+10%, 석화 행동 주기 +2)
+- Wind/ — WindSplashSkill(칼바람: 착탄 범위, 반드시 치명, 적 수로 나눔, 역풍 2배 난기류 3배, 기본 공격이 역풍·난기류를 맞히면 1 / 2 당김),
+    WindTargetSkill(폭풍: P×AV% 확률로 자기 버프), WindBuffRule(순풍·질풍: 확률로 터지는 시간 버프, 질풍 Action −1, 바람 광역 치명 피해·바람 단일 공격 횟수),
+    WindDebuffRule(역풍·난기류: 이동할 때 확률로 −최대 ~ +최대, 난기류 이동 칸 × 4% 현재 체력, 바람 단일 치명 +10 / +20%)
+- Ice/ — IceSplashSkill(블리자드: 동상·저체온증 적 빙결), IceTargetSkill(스노우볼: × (1 + 줄어든 이동력 × 0.25)),
+    IceBuffRule(냉기·한기: 맞은 적 이동력 감소 확률, 얼음 타워 Mastery +1 / +2), IceDebuffRule(동상·저체온증: 턴마다 빙결 확률, 저체온증 이동력 −1 / −1)
+- Electricity/ — ElectricSplashSkill(볼텍스: 전하 10×레벨, 충전 2배 과충전 4배, 기본 공격 전하 1), ElectricTargetSkill(과부하: 1 + 레벨×Mastery명 연쇄, ×(1 + 전하%), 감전 2배, 터뜨림),
+    ElectricBuffRule(충전 → 과충전(레벨×5턴, 맞힌 적 전하 2 / 5) → 방전(5턴) → 충전), ElectricDebuffRule(누전: 밟을 때 전하, 감전: 매 턴 전하)
+- Light/ — LightSplashSkill(프리즘 2 / 3 / 4스택), LightTargetSkill(도깨비불: 맞을 때마다 +2%, 더미 4%, 다음 턴에 비움),
+    LightBuffRule(광채·광휘: 확률로 터지는 전 스탯 버프, 빛 단일 공격 횟수), LightDebuffRule(잔영·잔상: 더미, 받은 피해 × 2 / × 4를 본체에게)
+- Darkness/ — DarknessSplashSkill(블랙홀을 깖), BlackHoleGround(⑤ 피해, 맵 전체를 끌어당김, 막타 +5), DarknessTargetSkill(심연: × (1 + 카운트%), 포식 1.5 폭식 2배),
+    DarknessBuffRule(카운트 100 ~ 1000 단계 누적, 폭식 사거리 +1), DarknessDebuffRule(잠식·침식: 죽으면 카운트 +, 침식 받는 피해 +10%)
+- SkillRegistry에 9문양 × 4줄. 표에 없는 것은 이제 문양 없음(None)뿐 → 시험 규칙은 ZoneActionTest가 None으로 씀 (지우지 않음)
+공용에 더한 것 (그 문양이 처음 쓰는 것)
+- StatType: BonusDamage(해머), StackGainRate·StackKeepHalf·MapBuffRate(물), RewardBonus·ForceFixedDamage(어둠). ZoneStage.Discharge(전기)
+- Zone: StageTurnsLeft·StartStageTimer·TickStageTimer·ResetToSkill1·StartDischarge (불길·과충전·방전), 방전 중에는 스택을 쌓지 않음
+- BuffRule 훅: OnGiveBuff(확률 버프), OnTaken(존을 벗어나면 끝), OnReceiverActed(세공 젬), OnReceiverHit(냉기·과충전), OnZoneTurn(단계 순환), ReceivedStage(맞물림)
+- DebuffRule.OnStep(누전), StatusEffect.GetGoldBonusRate·RollGemBonus(원석·금맥) → DeathResolver.GetBonusReward(+ 어둠 600의 RewardBonus)
+- AttackSkill: ModifyBasicDamage(불 단일·도깨비불), OnFired·Grow(대지 성장, TowerState.PersistentSources로 티어 강화 때 이어받음), 해류의 Consume(keepHalf),
+    MakeSkillHit·MakeBasicHit의 ForceFixed(어둠 900)
+- TowerController: 쌓는 스택 × (1 + StackGainRate), 존 위 타워의 행동·적중 훅, AdvanceSkillCount(칼바람 당기기). TowerTurnRunner ⓪에 RunZoneTurns
+- GroundEffect.PullCenter·ModifyMove + GroundEffectRegistry.DecideMove (블랙홀) → EnemyMovement.DecideMove(장판 → 상태 효과 순)
+- 맵 버프 비율: EnemyTileEffectApplier가 수정자를 MapBuffRate만큼, 회복·행동 카운트 타일도
+- 06. Enemy/Status: SpeedLockEffect(#138), ForcedMoveEffect(#137), FreezeEffect(#136, 해동·한기 +25%), ChargeEffect(#139), PrismEffect(#140)
+- 06. Enemy/DummyTarget(#133): ITarget의 두 번째 구현. 점유에 들어가고 명단 밖. 본체의 빛 디버프가 없어지면 스스로 사라짐. InvariantChecker가 더미를 셈
+- 02. Flow/EmblemSharedState(#15): 어둠의 카운트. GameSession이 가짐(EnemyDied 구독), 게임 밖(테스트)은 Current가 따로 둔 하나
+- 07. Combat/Chance: 확률 굴리기 (Random.value < 확률)
+- 11. UI/SkillDescriptions: 9문양 36칸 설명, 전기 방전 단계 이름
+- 테스트 (AI): EmblemTestBase(도우미), Hammer·Fire·Water·Earth·Wind·Ice·Electric·Light·Darkness EmblemTest 9개 (기획서 예시값)
+- 같이 고친 것: EmblemExampleTest의 이지스 테스트(다이아 최대 스택 30이라 30을 넣으면 다 참 → 20), "아직 없는 문양"을 None으로,
+    Resources/TowerData.csv의 검 이름 메모 20줄(검성·검객·검선·검귀 → 2026-10-28 새 이름)
+
+수업 중에 정한 것 (기획에 적혀 있지 않아 AI가 고른 것 — 바꾸고 싶으면 말하기)
+- 해머의 "추가 피해"는 최종 피해와 더해서 나가는 피해에 곱함 (BonusDamage). 골드는 버프 타워가 행동할 때 다시 읽음 (방패의 한도와 같은 방식)
+- 불길·과충전의 시간은 켜진 다음 턴 ⓪부터 셈 (레벨×5턴 동안 켜져 있음). 단계가 바뀌면 존 위 타워의 버프를 그 자리에서 다시 줌
+- 연소의 번짐은 ⑤에서 연소인 적의 차례에 같은 칸의 적에게. 옮겨붙은 화상은 그 적의 ⑤에서 칸을 확인해 꺼짐
+- 쓰나미의 −2는 한 번 행동만 걸리는 스탯 수정자 (그래서 1 아래로 내려가면 3장 규칙대로 행동 주기가 늚)
+- 냉기·한기의 이동력 감소와 과충전의 전하는 존 위 타워의 "기본 공격"이 맞을 때 (스킬 2는 아님)
+- 대지의 성장(+1%)은 티어·컬러 강화가 반영된 값에 붙는 % (원본 CSV 값이 아니라)
+- 도깨비불은 탄을 쏠 때 쌓음 (단일 타워가 쏠 때 피해를 정하므로). 스킬 2도 한 번 쌓고 맞음
+- 더미는 그림 없이 탄이 날아갈 자리만 있는 빈 오브젝트 (그림은 Codex). 다시 밟아도 더미가 살아 있으면 그 더미(체력 그대로), 처치된 뒤 밟으면 새로
+- 더미에 남은 프리즘은 터질 때 늘 10% × 스택 (빛 광역이 아니어도)
+- 어둠 버프의 카운트 단계는 버프 타워가 행동할 때 다시 읽음
+
+빈칸 (문양마다 [A] ~ [E], 전부 "옆에 거의 같은 줄이 있는" 한 줄. 비어 있어도 컴파일은 됨)
+  해머 [A] 등록표 해머 광역  [B] HammerSplashSkill 피해  [C] HammerBuffRule 타격 공격 횟수  [D] 등록표 해머 디버프
+  불   [A] 등록표 불 단일  [B] FireSplashSkill 피해  [C] FireBuffRule 치명 피해 +30%  [D] FireBuffRule 불길 → 불씨  [E] 등록표 불 버프
+  물   [A] 등록표 물 광역  [B] WaterTargetSkill 피해  [C] WaterBuffRule 해류 절반  [D] 등록표 물 디버프
+  대지 [A] 등록표 대지 광역  [B] EarthTargetSkill 파묻기  [C] EarthBuffRule 만개 레벨 +1  [D] EarthDebuffEffect 속박  [E] 등록표 대지 버프
+  바람 [A] 등록표 바람 단일  [B] WindSplashSkill 피해  [C] WindBuffRule 질풍 Action −1  [D] WindBuffRule.OnTaken  [E] 등록표 바람 디버프
+  얼음 [A] 등록표 얼음 광역  [B] IceSplashSkill 빙결  [C] IceTargetSkill 피해  [D] 등록표 얼음 디버프  [E] IceBuffRule Mastery
+  전기 [A] 등록표 전기 단일  [B] ElectricSplashSkill 기본 공격 전하  [C] ElectricTargetSkill 전하 비우기  [D] ElectricBuffRule 치명 피해  [E] 등록표 전기 디버프
+  빛   [A] 등록표 빛 광역  [B] LightTargetSkill 피해  [C] LightBuffRule.OnTaken  [D] LightBuffRule Mastery +1  [E] 등록표 빛 버프
+  어둠 [A] 등록표 어둠 단일  [B] DarknessTargetSkill 피해  [C] DarknessBuffRule 카운트 400  [D] DarknessDebuffEffect 카운트 +  [E] 등록표 어둠 디버프
+
+빈칸 답 — 풀고 나서 볼 것 (리뷰하는 AI용)
+  등록표 공격 스킬: { (TowerColor.Red, TowerEmblem.Hammer), (grid, occupancy, stackModes) => new HammerSplashSkill(grid, occupancy, stackModes) },
+    (불 단일 FireTargetSkill, 물 광역 WaterSplashSkill, 대지 광역 EarthSplashSkill, 바람 단일 WindTargetSkill, 얼음 광역 IceSplashSkill,
+     전기 단일 ElectricTargetSkill, 빛 광역 LightSplashSkill, 어둠 단일 DarknessTargetSkill — 같은 모양)
+  등록표 규칙: { TowerEmblem.Fire, new FireBuffRule() }, (Earth·Light 버프, Hammer·Water·Wind·Ice·Electricity·Darkness 디버프도 같은 모양)
+  HitSingle 빈칸: ProjectileHitResolver.HitSingle(target, smash / hit / torrent);
+  해머 [C] modifiers.Add(StatModifier.Flat(source, StatType.AttackCount, isSkill2 ? 2f : 1f));
+  불 [C] modifiers.Add(StatModifier.Flat(source, StatType.CritDamage, 0.3f));   불 [D] zone.ResetToSkill1();
+  물 [C] modifiers.Add(StatModifier.Flat(source, StatType.StackKeepHalf, 1f));
+  대지 [B] Bury(owner, target);   [C] modifiers.Add(StatModifier.Flat(source, StatType.ColorLevelBonus, 1f));
+       [D] if (Chance.Roll(m_bindChance)) enemy.Status.Add(new ImmobilizeEffect("속박"));
+  바람 [C] modifiers.Add(StatModifier.Flat(source, StatType.MaxAction, -1f));   [D] TimedTowerBuff.Remove(receiver.State, BurstSource);
+  얼음 [B] if (freezes && enemy.IsAlive) enemy.Status.Add(new FreezeEffect());
+       [E] modifiers.Add(StatModifier.Flat(source, StatType.Mastery, zone.Stage == ZoneStage.Skill2 ? 2f : 1f));
+  전기 [B] ChargeEffect.Add(target?.Body, BasicCharge);   [C] ChargeEffect.Clear(target);
+       [D] modifiers.Add(StatModifier.Flat(source, StatType.CritDamage, value));
+  빛 [C] TimedTowerBuff.Remove(receiver.State, BurstSource);   [D] StatModifier.Flat(BurstSource, StatType.Mastery, 1f),
+  어둠 [C] if (count >= 400f) modifiers.Add(StatModifier.Flat(source, StatType.AttackCount, 1f));
+       [D] EmblemSharedState.Current.AddDarkness(m_countBonus);

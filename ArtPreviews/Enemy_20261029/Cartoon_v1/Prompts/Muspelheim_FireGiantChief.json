@@ -1,0 +1,20 @@
+﻿{
+  "index": 22,
+  "stage": 8,
+  "group": "Muspelheim",
+  "stageName": "무스펠헤임",
+  "key": "FireGiantChief",
+  "name": "불 거인 족장",
+  "role": 1,
+  "roleName": "중간 보스",
+  "existing": "Assets/4. Asset/4. Enemy/Muspelheim/FireGiantChief_Character.png",
+  "subject": "A fully adult powerful male fire giant chief, charcoal-gray skin with broad orange lava cracks, rusty red hair and short red beard, turquoise eyes, two small dark horns and an angular silver headband. Heavy black steel armor with silver edges, dark red long tabard, massive boots. Two hands firmly grip a heavy spiked mace resting diagonally in front of him, full handle and mace head visible. Proud stable upright stance, weathered mature face. Bigger armor silhouette than common giant, not a scaled-up copy. No lava pool or ground.",
+  "references": [
+    "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+    "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Muspelheim/FireGiantChief_Character.png"
+  ],
+  "prompt": "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy's old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 무스펠헤임; 중간 보스; 불 거인 족장: A fully adult powerful male fire giant chief, charcoal-gray skin with broad orange lava cracks, rusty red hair and short red beard, turquoise eyes, two small dark horns and an angular silver headband. Heavy black steel armor with silver edges, dark red long tabard, massive boots. Two hands firmly grip a heavy spiked mace resting diagonally in front of him, full handle and mace head visible. Proud stable upright stance, weathered mature face. Bigger armor silhouette than common giant, not a scaled-up copy. No lava pool or ground.",
+  "generatedPath": "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-199635f4-6b9b-47a4-9745-d05d5a3603a8.png",
+  "source": "Sources/Muspelheim_FireGiantChief.png",
+  "tool": "built-in image_gen"
+}

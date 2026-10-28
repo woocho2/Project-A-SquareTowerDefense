@@ -41,6 +41,31 @@ namespace SquareTD
             return targets;
         }
 
+        // 연쇄 (전기 과부하, 수업 38): 처음 맞은 적 + 거기서 가까운 적부터 (count − 1)명. 거리가 같으면 tieBreak 값이 큰 적부터 (전하)
+        public static List<ITarget> Chain(BoardGrid grid, PathOccupancy occupancy, ITarget first, int count, System.Func<ITarget, float> tieBreak)
+        {
+            var chain = new List<ITarget>();
+            if (first == null || count <= 0) return chain;
+            chain.Add(first);
+
+            Vector3Int origin = grid.GetPathCell(first.PathIndex);
+            var others = new List<ITarget>();
+            foreach (ITarget target in WholeMap(grid, occupancy))
+            {
+                if (target != first && target.IsAlive) others.Add(target);
+            }
+
+            others.Sort((a, b) =>
+            {
+                int byDistance = BoardGrid.GetTileDistance(origin, grid.GetPathCell(a.PathIndex))
+                    .CompareTo(BoardGrid.GetTileDistance(origin, grid.GetPathCell(b.PathIndex)));
+                return byDistance != 0 ? byDistance : tieBreak(b).CompareTo(tieBreak(a));
+            });
+
+            for (int i = 0; i < others.Count && chain.Count < count; i++) chain.Add(others[i]);
+            return chain;
+        }
+
         public static List<ITarget> Single(ITarget target)
         {
             var targets = new List<ITarget>();

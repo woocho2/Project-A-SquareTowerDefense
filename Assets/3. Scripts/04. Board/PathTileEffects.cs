@@ -48,7 +48,7 @@ namespace SquareTD
 
         public override void OnTurnStanding(EnemyController enemy)
         {
-            enemy.Movement.AddActionProgress(Amount);
+            enemy.Movement.AddActionProgress(Mathf.RoundToInt(Amount * enemy.Stats.Get(StatType.MapBuffRate)));     // 침수면 +1 (수업 34)
         }
     }
 
@@ -60,7 +60,7 @@ namespace SquareTD
 
         public override void OnTurnStanding(EnemyController enemy)
         {
-            enemy.Heal(enemy.MaxHp * Rate);         // 받는 치유 배율까지 (출혈)
+            enemy.Heal(enemy.MaxHp * Rate * enemy.Stats.Get(StatType.MapBuffRate));     // 받는 치유 배율까지 (출혈), 침수면 절반 (수업 34)
         }
     }
 

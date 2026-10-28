@@ -79,7 +79,12 @@ namespace SquareTD
         public IEnumerator Act(AttackHandle handle)
         {
             if (m_action == null) yield break;
-            if (IsAttackTower) State.Stack.Add(Stats.AttackCount);
+            if (IsAttackTower)
+            {
+                State.Stack.Add(Stats.AttackCount * (1f + Stats.Get(StatType.StackGainRate)));     // 물결·해류는 쌓이는 양 +% (수업 34)
+                foreach (Zone zone in new List<Zone>(State.ReceivedZoneBuffs.Keys))
+                    SkillRegistry.GetBuffRule(zone.Emblem).OnReceiverActed(zone, this);           // 해머 세공의 젬 (수업 32)
+            }
             m_skill?.OnOwnerActed(this);
             yield return m_action.Act(this, Stats, handle);
             TimedTowerBuff.CountDown(State);            // 행동이 끝날 때 시간 버프의 남은 행동 −1 (수업 28 광폭화)
@@ -117,6 +122,21 @@ namespace SquareTD
         public void OnBasicHitLanded(ITarget target)
         {
             m_skill?.OnBasicHit(this, target);
+            foreach (Zone zone in new List<Zone>(State.ReceivedZoneBuffs.Keys))
+                SkillRegistry.GetBuffRule(zone.Emblem).OnReceiverHit(zone, this, target);         // 얼음 냉기·한기, 전기 과충전 (수업 37·38)
+        }
+
+        // 스킬 2까지의 적중 수를 한꺼번에 더함 (바람 칼바람: 역풍·난기류인 적을 맞히면 당김, 수업 36). 다 차면 그 적으로 줄 세움
+        public void AdvanceSkillCount(int amount, ITarget target)
+        {
+            if (m_skill == null || amount <= 0 || target == null) return;
+
+            State.SkillHitCount += amount;
+            while (State.SkillHitCount >= Stats.Duration)
+            {
+                State.SkillHitCount -= Stats.Duration;
+                m_pendingSkills.Enqueue(target);
+            }
         }
 
         // 줄 선 스킬 2를 하나 쏨. 쏘았으면 true → TowerTurnRunner가 연출이 끝나길 기다린 뒤 다시 부름

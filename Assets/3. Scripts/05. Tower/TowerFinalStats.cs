@@ -49,8 +49,9 @@ namespace SquareTD
         public int Duration => (int)Get(StatType.Duration);
         public float AbilityValue => Get(StatType.AbilityValue);
         public float StackValue => Get(StatType.StackValue);
-        public float FinalDamageMultiplier => 1f + Get(StatType.FinalDamage);
+        public float FinalDamageMultiplier => 1f + Get(StatType.FinalDamage) + Get(StatType.BonusDamage);     // 최종 피해와 추가 피해(해머)는 더함
         public float ArmorPenetration => Get(StatType.ArmorPenetration);
+        public bool ForcesFixedDamage => Get(StatType.ForceFixedDamage) > 0f;                                    // 어둠 카운트 900 (수업 40)
 
         // 거리 비례 추가 피해 배율 (활 버프, 수업 29): 1 + 타일당 값 × 날아간 거리(사거리까지)
         //   찌르기 시너지면 거리와 무관하게 사거리 끝 값 + 보너스. 버프가 없으면 1

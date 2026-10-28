@@ -27,9 +27,11 @@ namespace SquareTD
 
             bool useStack = m_stackModes != null && m_stackModes.ShouldUseStack(owner.Definition, stack);
 
+            bool keepHalf = stats.Get(StatType.StackKeepHalf) > 0f;    // 해류 존: 스택을 써도 절반에서 다시 (수업 34)
+
             if (CastInstead(owner, mainTarget, useStack))   // 피해 대신 다른 일을 하는 스킬(광폭화: 자기 버프, 화살비: 장판)은 여기서 끝 (수업 28·29)
             {
-                if (useStack) stack.Consume();
+                if (useStack) stack.Consume(keepHalf);
                 SkillEffectTable.PlayCast(owner);
                 return 1;
             }
@@ -71,7 +73,8 @@ namespace SquareTD
                 string dealtText = Mathf.Approximately(minDealt, maxDealt) ? $"{minDealt:0.##}" : $"{minDealt:0.##} ~ {maxDealt:0.##}";
                 Debug.Log($"[Skill] {owner.name} 스킬 피해: 위력 {stats.Power:0.##} × 능력치 {stats.AbilityValue:0.##} = {baseDamage:0.##}{stackText}{critText} → 방어 뒤 실제 {dealtText} ({hitCount}명)");
             }
-            if (useStack && hitCount > 0) stack.Consume();  // 💬 아무도 못 맞혔으면 다 찬 스택을 버리지 않고 남김
+            if (useStack && hitCount > 0) stack.Consume(keepHalf);  // 💬 아무도 못 맞혔으면 다 찬 스택을 버리지 않고 남김
+            if (hitCount > 0) OnFired(owner, hitCount);     // 쓰고 난 뒤 (대지: 쓸 때마다 자람, 수업 35)
             return hitCount;                                // 💬 0이면 광역 타워가 "발동 안 한 것"으로 보고 다음 턴에 다시 함
         }
 
@@ -87,8 +90,22 @@ namespace SquareTD
         protected virtual float ModifyOutgoingDamage(TowerController owner, ITarget target) => 1f;    // 도끼(끝 칸)·불·바람·대지·전기·빛·어둠: 대상에 따른 배율
         public virtual void OnBasicHit(TowerController owner, ITarget target) { }                     // 바람 광역(당기기), 전기 광역(전하), 빛 단일(도깨비불)
         public virtual void OnOwnerActed(TowerController owner) { }                                   // 그 타워가 행동할 때 (시간 버프의 유지 감소는 TimedTowerBuff가 따로)
-        public virtual void OnEnemyTurnStart(TowerController owner) { }                               // ⓪
-        // 수업 35·36: ModifyOwnerStats — 자기 강화(폭풍, 성장)를 최종 스탯에
+        public virtual void OnEnemyTurnStart(TowerController owner) { }                               // ⓪ (빛 단일: 도깨비불 비우기)
+        public virtual float ModifyBasicDamage(TowerController owner, ITarget target) => 1f;          // 이 타워의 기본 공격 피해 배율 (불 단일: 화상 +10%, 빛 단일: 도깨비불)
+        protected virtual void OnFired(TowerController owner, int hitCount) { }                       // 스킬 2를 쏜 뒤 (대지: 쓸 때마다 자람, 수업 35)
+
+        // 그 타워 자신에게 영구로 쌓이는 강화 (대지의 분노·씨뿌리기, 수업 35). 출처 하나에 합계를 넣어 두고, 티어 강화해도 이어받음
+        protected static void Grow(TowerController owner, string source, StatType stat, float amount)
+        {
+            float total = amount;
+            foreach (StatModifier modifier in owner.State.Modifiers.All)
+            {
+                if (modifier.Source == source && modifier.Stat == stat) total += modifier.Value;
+            }
+            owner.State.Modifiers.RemoveBySource(source);
+            owner.State.Modifiers.Add(StatModifier.Percent(source, stat, total));
+            owner.State.PersistentSources.Add(source);
+        }
 
         protected DamageInfo MakeSkillHit(TowerController owner, TowerFinalStats stats, ITarget target, float damage, bool isCritical)
         {
@@ -108,6 +125,7 @@ namespace SquareTD
                 CritMultiplier = critMultiplier,
                 ArmorPenetration = stats.ArmorPenetration,
                 Distance = distance,
+                ForceFixed = stats.ForcesFixedDamage,
             };
         }
     }

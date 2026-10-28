@@ -9,6 +9,15 @@ namespace SquareTD
     {
         public static string KeyOf(TowerEmblem emblem) => $"{EmblemNames.GetEmblemName(emblem)} 디버프";
 
+        // 그 대상에게 걸린 그 문양 디버프의 단계 (없으면 None). 원소 문양의 맞물림에서 씀 ("화상인 적에게 +50%" …)
+        //   더미는 본체의 것을 봄
+        public static ZoneStage StageOn(ITarget target, TowerEmblem emblem)
+        {
+            EnemyStatusEffects status = target?.Body != null ? target.Body.Status : target?.Status;
+            if (status == null) return ZoneStage.None;
+            return status.Find(KeyOf(emblem)) is EmblemDebuffEffect effect ? effect.Stage : ZoneStage.None;
+        }
+
         private readonly string m_description;
         private readonly float m_strength;
         private readonly StatModifier[] m_modifiers;

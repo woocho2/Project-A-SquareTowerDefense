@@ -38,6 +38,8 @@ namespace SquareTD
 
         public void RunEnemyTurnStart()
         {
+            if (m_zones != null) BuffZoneAction.RunZoneTurns(m_zones, m_slots);     // 불길·과충전·방전의 남은 턴 (수업 33·38)
+
             for (int i = 0; i < m_slots.Count; i++)
             {
                 TowerController tower = m_slots.Get(i);

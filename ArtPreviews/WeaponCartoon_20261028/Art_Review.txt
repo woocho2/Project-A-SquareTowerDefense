@@ -1,0 +1,14 @@
+승인한 활 카툰풍 기준 검·도끼 8종 스타일 전환 / 내장 image_gen
+소드 마스터: source 1254x1254 -> 512x512 RGBA; nonzero alpha bounds (34,30)-(477,482); AA pixels 90244.
+블레이드 댄서: source 1254x1254 -> 512x512 RGBA; nonzero alpha bounds (25,23)-(482,489); AA pixels 106307.
+발키리: source 1254x1254 -> 512x512 RGBA; nonzero alpha bounds (16,28)-(485,484); AA pixels 134456.
+데스 나이트: source 1254x1254 -> 512x512 RGBA; nonzero alpha bounds (20,23)-(490,488); AA pixels 112309.
+바이킹: source 1254x1254 -> 512x512 RGBA; nonzero alpha bounds (24,24)-(491,489); AA pixels 117474.
+버서커: source 1254x1254 -> 512x512 RGBA; nonzero alpha bounds (28,29)-(488,486); AA pixels 88183.
+스칼드: source 1254x1254 -> 512x512 RGBA; nonzero alpha bounds (35,28)-(485,484); AA pixels 95849.
+집행관: source 1254x1254 -> 512x512 RGBA; nonzero alpha bounds (59,32)-(473,484); AA pixels 92195.
+소드 마스터 existing 144px face crop: visible pixels 12584; crop rectangle unchanged.
+블레이드 댄서 existing 144px face crop: visible pixels 17808; crop rectangle unchanged.
+발키리 existing 144px face crop: visible pixels 11329; crop rectangle unchanged.
+데스 나이트 existing 144px face crop: visible pixels 13348; crop rectangle unchanged.
+모든 셀 512x512 / 아틀라스 1024x1024 / 사방 16px 이상 투명 여백. 적용 시 기존 메타·GUID·카탈로그를 바이트 대조. Unity 실제 플레이 확인은 별도.

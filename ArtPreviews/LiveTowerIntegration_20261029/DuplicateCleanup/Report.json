@@ -1,0 +1,125 @@
+﻿{
+    "date":  "2026-10-29",
+    "scope":  "Assets/4. Asset/2. Tower/TowerCharacter",
+    "removedPNGCount":  11,
+    "removedMetaCount":  11,
+    "remainingPNGCount":  15,
+    "regularAtlases":  14,
+    "synergyAtlases":  1,
+    "allRemovedImagesIdenticalToRetained":  true,
+    "retainedAssetsAndMetadataUnchanged":  true,
+    "catalogsAndPrefabsUnchanged":  true,
+    "unityPlayTest":  false,
+    "removed":  [
+                    {
+                        "group":  "Dark",
+                        "deletedPath":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Dark_Atlas_Cartoon_v1.png",
+                        "deletedGuid":  "f8e77caba8d342f6ac79d6aa3c9d727f",
+                        "retained":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Dark_Front_Atlas_v2.png",
+                        "retainedGuid":  "953a471c72b546ad9068c0faea033d7d",
+                        "source":  "ArtPreviews/RemainingTowers_20261028/Cartoon_v1/Atlases/Tower_Dark_Atlas_Cartoon_v1.png",
+                        "sha256":  "8334547C24E2007566D27696A88C226427D1FA6CE562EA6AEE2C025DE35DC383",
+                        "unreferenced":  true
+                    },
+                    {
+                        "group":  "Earth",
+                        "deletedPath":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Earth_Atlas_Cartoon_v1.png",
+                        "deletedGuid":  "b5f3cd5b8826432d8bc301ad8f4b9d80",
+                        "retained":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Earth_Front_Atlas_v2.png",
+                        "retainedGuid":  "8390fb07d78842e5bd54661b86f954b3",
+                        "source":  "ArtPreviews/RemainingTowers_20261028/Cartoon_v1/Atlases/Tower_Earth_Atlas_Cartoon_v1.png",
+                        "sha256":  "23A8BFE6F1019869ADB782D2B9F453D4CAAF894F6CFFFCA61ACFADBF3000227C",
+                        "unreferenced":  true
+                    },
+                    {
+                        "group":  "Electric",
+                        "deletedPath":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Electric_Atlas_Cartoon_v1.png",
+                        "deletedGuid":  "ab42933e331d4ea1ac1e354e9f24218c",
+                        "retained":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Electric_Front_Atlas_v2.png",
+                        "retainedGuid":  "adde8ba3d8f748ee86bd238829b414e1",
+                        "source":  "ArtPreviews/RemainingTowers_20261028/Cartoon_v1/Atlases/Tower_Electric_Atlas_Cartoon_v1.png",
+                        "sha256":  "5599F62216C5328FA4E3E304008246A48591E1097CF54BA6765CAB491BA11027",
+                        "unreferenced":  true
+                    },
+                    {
+                        "group":  "Fire",
+                        "deletedPath":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Fire_Atlas_Cartoon_v1.png",
+                        "deletedGuid":  "01436727a1c9495c9fb67fb6742552fc",
+                        "retained":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Fire_Front_Atlas_v2.png",
+                        "retainedGuid":  "4b7ae037348c4e1fb2b07ef4e812345a",
+                        "source":  "ArtPreviews/RemainingTowers_20261028/Cartoon_v1/Atlases/Tower_Fire_Atlas_Cartoon_v1.png",
+                        "sha256":  "D4CEB703824D6A8F0300080AC4D17FDAC5F730E6283434FC2B971FF541253E7E",
+                        "unreferenced":  true
+                    },
+                    {
+                        "group":  "Hammer",
+                        "deletedPath":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Hammer_Atlas_Cartoon_v1.png",
+                        "deletedGuid":  "0232ee22d343400390569d94f45f9012",
+                        "retained":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Hammer_Front_Atlas_v2.png",
+                        "retainedGuid":  "7f1926df052b4b21835940e0c831f4bb",
+                        "source":  "ArtPreviews/RemainingTowers_20261028/Cartoon_v1/Atlases/Tower_Hammer_Atlas_Cartoon_v1.png",
+                        "sha256":  "C39480ECE5EB549C5E33E3288559836F520C8FBF9C07AD4DC8B70FDEF6D09C5B",
+                        "unreferenced":  true
+                    },
+                    {
+                        "group":  "Ice",
+                        "deletedPath":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Ice_Atlas_Cartoon_v1.png",
+                        "deletedGuid":  "eab396d69fd74b3183fbb4515c9050f7",
+                        "retained":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Ice_Front_Atlas_v2.png",
+                        "retainedGuid":  "538a88213ca7412fb8598d7eeb49b43a",
+                        "source":  "ArtPreviews/RemainingTowers_20261028/Cartoon_v1/Atlases/Tower_Ice_Atlas_Cartoon_v1.png",
+                        "sha256":  "D8221C73E5A6E2124198DC8402E3EB5E06F6A4776E20E08F990A9501D8D773D3",
+                        "unreferenced":  true
+                    },
+                    {
+                        "group":  "Light",
+                        "deletedPath":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Light_Atlas_Cartoon_v1.png",
+                        "deletedGuid":  "6635541c9d6f47d48beab89d4de17c38",
+                        "retained":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Light_Front_Atlas_v2.png",
+                        "retainedGuid":  "9fd282ad393245f582b02e8677341e08",
+                        "source":  "ArtPreviews/RemainingTowers_20261028/Cartoon_v1/Atlases/Tower_Light_Atlas_Cartoon_v1.png",
+                        "sha256":  "9E6D599CA92462FB3818311EBBA04342C6444C3F6596242C19FC12C86D16A84D",
+                        "unreferenced":  true
+                    },
+                    {
+                        "group":  "Shield",
+                        "deletedPath":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Shield_Atlas_Cartoon_v1.png",
+                        "deletedGuid":  "e917a1485d264c24ad0a446dbdf31810",
+                        "retained":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Shield_Front_Atlas_v2.png",
+                        "retainedGuid":  "dad3e683a34749cf8b77273c00554807",
+                        "source":  "ArtPreviews/RemainingTowers_20261028/Cartoon_v1/Atlases/Tower_Shield_Atlas_Cartoon_v1.png",
+                        "sha256":  "D886B9966AECEEEB4000CA5B9EB2973032746D464052C868B233C4C131F772AD",
+                        "unreferenced":  true
+                    },
+                    {
+                        "group":  "Spear",
+                        "deletedPath":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Spear_Atlas_Cartoon_v2.png",
+                        "deletedGuid":  "40a504b50eaef3f44861b25c724d9d5e",
+                        "retained":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Spear_Front_Atlas_v2.png",
+                        "retainedGuid":  "8afebe18f45b43e8beeca6d3bf595c4e",
+                        "source":  "ArtPreviews/Spear_20261028/Cartoon_v2/Tower_Spear_Atlas_Concept_v2.png",
+                        "sha256":  "8693B5FB286A74D1BC9A8B271A887B3B1939088EE42FF3D8C280A002041F1796",
+                        "unreferenced":  true
+                    },
+                    {
+                        "group":  "Water",
+                        "deletedPath":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Water_Atlas_Cartoon_v1.png",
+                        "deletedGuid":  "8e0c8d40d2644775bc62f5c9ea704d75",
+                        "retained":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Water_Front_Atlas_v2.png",
+                        "retainedGuid":  "e93520a891c74b879b9906b1be2b09ff",
+                        "source":  "ArtPreviews/RemainingTowers_20261028/Cartoon_v1/Atlases/Tower_Water_Atlas_Cartoon_v1.png",
+                        "sha256":  "09BB728B899AFCB23766F8F95BAB672CC7F81801BCD238120BCA502059EA8827",
+                        "unreferenced":  true
+                    },
+                    {
+                        "group":  "Wind",
+                        "deletedPath":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Wind_Atlas_Cartoon_v1.png",
+                        "deletedGuid":  "831611417ca545398d253f664b338c4a",
+                        "retained":  "Assets/4. Asset/2. Tower/TowerCharacter/Tower_Wind_Front_Atlas_v2.png",
+                        "retainedGuid":  "fdb92e0d3d25433194d359753018fcbe",
+                        "source":  "ArtPreviews/RemainingTowers_20261028/Cartoon_v1/Atlases/Tower_Wind_Atlas_Cartoon_v1.png",
+                        "sha256":  "771621AA4D8FB8DE36417FD252EFBC32F364234E7445C2F19CCF18F25D6A2B1C",
+                        "unreferenced":  true
+                    }
+                ]
+}

@@ -138,6 +138,49 @@ namespace SquareTD
                 Debug.Log($"[DebugCheat] {tower.name} ({EmblemNames.GetTierName(definition.Tier)}) → {tower.SlotIndex}번 칸");
         }
 
+        // ── 1티어 한꺼번에 세우기 (8 무기 · 9 원소) ── 에셋 확인용. 문양 순서대로 레드 → 블루 → 옐로 → 퍼플
+        //   칸(28)이 모자라면 멈춘 자리를 기억함 → 0으로 판 뒤 같은 키를 다시 누르면 다음 종류부터. 끝까지 세우면 처음부터
+        private TowerEmblem m_spawnGroupFirst;
+        private int m_spawnNext;
+
+        private void SpawnAllTier1(TowerEmblem first, TowerEmblem last)
+        {
+            if (m_spawnGroupFirst != first)                         // 다른 묶음으로 바꾸면 처음부터
+            {
+                m_spawnGroupFirst = first;
+                m_spawnNext = 0;
+            }
+
+            int total = (last - first + 1) * 4;
+            int start = m_spawnNext;
+            for (; m_spawnNext < total; m_spawnNext++)
+            {
+                TowerEmblem emblem = first + m_spawnNext / 4;
+                TowerColor color = TowerColor.Red + m_spawnNext % 4;
+                if (!TowerManager.Instance.Database.TryGet(TowerId.Make(1, color, emblem), out TowerDefinition definition)) continue;
+                if (TowerManager.Instance.SpawnForDebug(definition) == null)
+                {
+                    Debug.LogWarning($"[DebugCheat] 1티어 {first} ~ {last}: {start + 1} ~ {m_spawnNext}번째 세움 / {total}종 — 빈 칸이 모자람. 0으로 판 뒤 다시 누르면 이어서");
+                    return;
+                }
+            }
+            Debug.Log($"[DebugCheat] 1티어 {first} ~ {last}: {start + 1} ~ {total}번째 세움 / {total}종 — 끝. 다시 누르면 처음부터");
+            m_spawnNext = 0;
+        }
+
+        // ── 보드의 타워 전부 판매 (0) ── 시너지 타워는 팔 수 없어 남음
+        private static void SellAll()
+        {
+            TowerSlots slots = BoardManager.Instance.Slots;
+            int sold = 0;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                TowerController tower = slots.Get(i);
+                if (tower != null && TowerManager.Instance.TrySell(tower)) sold++;
+            }
+            Debug.Log($"[DebugCheat] 타워 {sold}개 판매");
+        }
+
         private void Update()
         {
             Keyboard keyboard = Keyboard.current;
@@ -222,6 +265,9 @@ namespace SquareTD
             if (keyboard.f1Key.wasPressedThisFrame) m_showKeys = !m_showKeys;  // F1: 키 목록 보이기 / 숨기기
             if (keyboard.zKey.wasPressedThisFrame) StartPlaceZone();            // Z: 고른 버프·디버프 타워의 존 자리 고르기
             if (keyboard.digit5Key.wasPressedThisFrame || keyboard.numpad5Key.wasPressedThisFrame) NextGameSpeed();   // 5: 배속 1 → 2 → 3 → 1
+            if (keyboard.digit8Key.wasPressedThisFrame) SpawnAllTier1(TowerEmblem.Sword, TowerEmblem.Hammer);       // 8: 무기 1티어 24종
+            if (keyboard.digit9Key.wasPressedThisFrame) SpawnAllTier1(TowerEmblem.Fire, TowerEmblem.Darkness);      // 9: 원소 1티어 32종
+            if (keyboard.digit0Key.wasPressedThisFrame) SellAll();                                                  // 0: 보드의 타워 전부 판매
         }
 
 
@@ -244,6 +290,8 @@ namespace SquareTD
             "── 보기 ──",
             "── 타워 세우기 ──",
             "T + 숫자 4자리  ID로 세우기 (예: T 1101 = 브론즈 소드 마스터)",
+            "8 무기 1티어 24종   9 원소 1티어 32종   0 전부 판매",
+            "  (칸이 모자라면 0으로 판 뒤 같은 키 → 이어서)",
             "K [Skill] 로그만   Tools > Click Debug 창",
         };
 

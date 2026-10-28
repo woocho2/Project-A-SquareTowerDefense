@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace SquareTD
 {
     // 아직 규칙이 없는 문양이 쓰는 시험 규칙 (수업 26의 ZoneTestRules를 BuffRule·DebuffRule 모양으로 옮김)
-    //   SkillRegistry 표에 없는 문양만 이것으로. 문양이 다 들어오는 수업 40에서 지움
+    //   SkillRegistry 표에 없는 문양만 이것으로. 14문양이 다 들어온 뒤로는 "문양 없음(None)"뿐 — ZoneActionTest가 존의 동작을 볼 때 씀
     //   버프존: 존 위 공격 타워의 위력 +10% (스킬 2면 +20%)
     public class TestBuffRule : BuffRule
     {

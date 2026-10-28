@@ -38,7 +38,9 @@ namespace SquareTD
             zone.AddStack(stats.AttackCount, stats.Stack);
             if (zone.Stage != before) zones.NotifyChanged(zone);
 
-            enemy.Status.Add(SkillRegistry.GetDebuffRule(zone.Emblem).CreateEffect(zone, enemy));
+            DebuffRule rule = SkillRegistry.GetDebuffRule(zone.Emblem);
+            rule.OnStep(zone, enemy);
+            enemy.Status.Add(rule.CreateEffect(zone, enemy));
         }
     }
 }

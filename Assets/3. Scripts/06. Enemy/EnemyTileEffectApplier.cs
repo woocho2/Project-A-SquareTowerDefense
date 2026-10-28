@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace SquareTD
 {
@@ -40,14 +41,19 @@ namespace SquareTD
             PathTileEffect effect = PathTileEffects.Get(tile);
             if (effect == null) return;
 
+            float rate = enemy.Stats.Get(StatType.MapBuffRate);        // 침수면 맵 버프를 절반만 (수업 34)
             foreach (StatModifier modifier in effect.GetStandingModifiers())
             {
-                enemy.Stats.Modifiers.Add(modifier);
+                enemy.Stats.Modifiers.Add(Mathf.Approximately(rate, 1f) ? modifier : Scale(modifier, rate));
             }
 
             if (enemy.Movement.ActedThisTurn) effect.OnStopped(enemy, m_grid, m_layout);
 
             effect.OnTurnStanding(enemy);
         }
+
+        private static StatModifier Scale(StatModifier modifier, float rate) => modifier.IsPercent
+            ? StatModifier.Percent(modifier.Source, modifier.Stat, modifier.Value * rate)
+            : StatModifier.Flat(modifier.Source, modifier.Stat, modifier.Value * rate);
     }
 }

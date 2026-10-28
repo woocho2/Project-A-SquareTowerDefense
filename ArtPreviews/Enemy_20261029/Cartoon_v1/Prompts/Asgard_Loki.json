@@ -1,0 +1,20 @@
+﻿{
+  "index": 2,
+  "stage": 1,
+  "group": "Asgard",
+  "stageName": "아스가르드",
+  "key": "Loki",
+  "name": "타락한 로키",
+  "role": 2,
+  "roleName": "최종 보스",
+  "existing": "Assets/4. Asset/4. Enemy/Asgard/Loki_Character.png",
+  "subject": "An adult male corrupted Loki with long black hair fading dark green, green eyes, narrow knowing smile, small asymmetric gold horn circlet. Layered forest-green and black fitted robes and ragged dark cape with violet inner lining, boots. One hand holds a small mistletoe arrow; the other grips a narrow dark bow beside the thigh. Elegant slight side-on standing pose with natural head angle, no forced neck bend. A restrained purple ember curls around the arrow. Darker, more sinister silhouette than player Loki.",
+  "references": [
+    "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+    "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Asgard/Loki_Character.png"
+  ],
+  "prompt": "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy's old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 아스가르드; 최종 보스; 타락한 로키: An adult male corrupted Loki with long black hair fading dark green, green eyes, narrow knowing smile, small asymmetric gold horn circlet. Layered forest-green and black fitted robes and ragged dark cape with violet inner lining, boots. One hand holds a small mistletoe arrow; the other grips a narrow dark bow beside the thigh. Elegant slight side-on standing pose with natural head angle, no forced neck bend. A restrained purple ember curls around the arrow. Darker, more sinister silhouette than player Loki.",
+  "generatedPath": "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-3cca8812-c3d8-4532-a19d-a0f9ddade892.png",
+  "source": "Sources/Asgard_Loki.png",
+  "tool": "built-in image_gen"
+}

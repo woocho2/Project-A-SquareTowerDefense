@@ -17,12 +17,41 @@ namespace SquareTD
         //   같은 문양 버프 타워가 여럿이면 GameSession이 그중 값이 가장 큰 하나만 씀 (도끼: 가장 높은 티어 = 가장 덜 깎음)
         public virtual int GetLimitModifier(TowerController owner, int baseLimit) => 0;
 
+        // 버프를 막 준 뒤 (버프 타워가 행동할 때, GetModifiers 다음). 확률로 터지는 버프 (바람 순풍·질풍, 빛 광채·광휘, 수업 36·39)
+        public virtual void OnGiveBuff(Zone zone, TowerController receiver) { }
+
+        // 존을 벗어나 버프가 끝날 때. 확률로 터진 시간 버프도 같이 끝남 (바람·빛)
+        public virtual void OnTaken(Zone zone, TowerController receiver) { }
+
+        // 존 위 타워가 행동할 때마다 (해머 세공: 10% 젬, 수업 32)
+        public virtual void OnReceiverActed(Zone zone, TowerController receiver) { }
+
+        // 존 위 타워의 기본 공격이 적에게 맞을 때마다 (얼음 냉기·한기: 이동력 감소, 전기 과충전: 전하, 수업 37·38)
+        public virtual void OnReceiverHit(Zone zone, TowerController receiver, ITarget target) { }
+
+        // 적 턴마다 한 번 (⓪). 단계가 도는 문양 (불 불길 → 불씨, 전기 과충전 → 방전 → 충전, 수업 33·38). 단계가 바뀌었으면 true
+        public virtual bool OnZoneTurn(Zone zone) => false;
+
         // 시너지: 무기 문양은 같은 속성끼리(베기·찌르기·타격), 원소 문양은 같은 문양끼리 (20번 4-2장)
         protected static bool IsSynergy(Zone zone, TowerController receiver)
         {
             AttackAttribute attribute = zone.Owner.Definition.Attribute;
             if (attribute != AttackAttribute.None) return receiver.Definition.Attribute == attribute;
             return receiver.Definition.Emblem == zone.Emblem;
+        }
+
+        // 그 타워가 지금 받고 있는 그 문양 버프존의 단계 (없으면 None). 원소 문양의 맞물림에서 씀 ("불씨 존에 서 있으면 …")
+        public static ZoneStage ReceivedStage(TowerController tower, TowerEmblem emblem)
+        {
+            ZoneStage best = ZoneStage.None;
+            if (tower == null || tower.State == null) return best;
+
+            foreach (Zone zone in tower.State.ReceivedZoneBuffs.Keys)
+            {
+                if (zone.Emblem != emblem || zone.Stage == ZoneStage.Discharge) continue;
+                if (zone.Stage > best) best = zone.Stage;
+            }
+            return best;
         }
     }
 }

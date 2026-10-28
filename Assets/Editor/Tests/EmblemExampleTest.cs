@@ -69,7 +69,7 @@ namespace SquareTD.Tests
         [Test]
         public void 등록표에_아직_없는_문양은_null()
         {
-            Assert.IsNull(SkillRegistry.CreateAttackSkill(TowerColor.Red, TowerEmblem.Fire, m_grid, m_occupancy, null));
+            Assert.IsNull(SkillRegistry.CreateAttackSkill(TowerColor.Red, TowerEmblem.None, m_grid, m_occupancy, null), "문양 없음 (수업 40에서 14문양이 다 들어옴)");
             Assert.IsNull(SkillRegistry.CreateAttackSkill(TowerColor.Yellow, TowerEmblem.Sword, m_grid, m_occupancy, null), "버프 타워는 공격 스킬이 없음");
         }
 
@@ -207,7 +207,7 @@ namespace SquareTD.Tests
         {
             Assert.IsInstanceOf<SwordBuffRule>(SkillRegistry.GetBuffRule(TowerEmblem.Sword));
             Assert.IsInstanceOf<SwordDebuffRule>(SkillRegistry.GetDebuffRule(TowerEmblem.Sword));
-            Assert.IsInstanceOf<TestBuffRule>(SkillRegistry.GetBuffRule(TowerEmblem.Darkness), "아직 없는 문양은 시험 규칙");
+            Assert.IsInstanceOf<TestBuffRule>(SkillRegistry.GetBuffRule(TowerEmblem.None), "표에 없는 문양(문양 없음)은 시험 규칙");
         }
 
         [Test]
@@ -1367,7 +1367,7 @@ namespace SquareTD.Tests
         public void 이지스_전에는_한도가_늘지_않음()
         {
             TowerController guardian = MakeTower(5305);
-            guardian.State.Stack.Add(30f);
+            guardian.State.Stack.Add(20f);      // 다이아는 최대 스택이 60 × ½ = 30이라, 30을 넣으면 이미 다 참
             Assert.AreEqual(0, new ShieldBuffRule(() => 20).GetLimitModifier(guardian, 20));
         }
 

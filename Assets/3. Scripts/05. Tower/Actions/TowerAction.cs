@@ -43,6 +43,7 @@ namespace SquareTD
             Vector3Int from = m_grid.GetSpawnCell(tower.SlotIndex);
             Vector3Int to = m_grid.GetPathCell(target.PathIndex);
             int distance = BoardGrid.GetTileDistance(from, to);
+            float skillMultiplier = tower.Skill != null ? tower.Skill.ModifyBasicDamage(tower, target) : 1f;    // 불 단일(화상), 빛 단일(도깨비불)
 
             return new DamageInfo
             {
@@ -50,11 +51,12 @@ namespace SquareTD
                 Source = DamageSource.Basic,
                 Emblem = tower.Definition.Emblem,
                 Attribute = tower.Definition.Attribute,
-                BaseDamage = DamageCalculator.GetOutgoing(stats.Power, stats.GetDistanceMultiplier(distance), critMultiplier) * stats.FinalDamageMultiplier,
+                BaseDamage = DamageCalculator.GetOutgoing(stats.Power, stats.GetDistanceMultiplier(distance), critMultiplier) * stats.FinalDamageMultiplier * skillMultiplier,
                 IsCritical = isCritical,
                 CritMultiplier = critMultiplier,
                 ArmorPenetration = stats.ArmorPenetration,
                 Distance = distance,
+                ForceFixed = stats.ForcesFixedDamage,
             };
         }
     }

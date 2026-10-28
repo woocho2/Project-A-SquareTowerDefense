@@ -15,6 +15,9 @@ namespace SquareTD
         // 스킬이 자기에게 건 시간 버프: 출처 → 남은 행동 수 (TimedTowerBuff, 수업 28 광폭화)
         public System.Collections.Generic.Dictionary<string, int> TimedBuffs { get; } = new System.Collections.Generic.Dictionary<string, int>();
 
+        // 타워가 판 위에 있는 동안 계속 남는 자기 강화의 출처 (대지의 분노·씨뿌리기의 성장, 수업 35). 티어 강화해도 이어받음
+        public System.Collections.Generic.HashSet<string> PersistentSources { get; } = new System.Collections.Generic.HashSet<string>();
+
         public TowerState(TowerDefinition definition)
         {
             RemainingAction = definition.Action;
@@ -47,7 +50,15 @@ namespace SquareTD
                     if (modifier.Source == pair.Key) Modifiers.Add(modifier);
                 }
             }
-            // 수업 35: 대지 성장
+            // 쌓인 자기 강화(대지 성장)도 그대로 (20번 4-11장)
+            foreach (string source in old.PersistentSources)
+            {
+                PersistentSources.Add(source);
+                foreach (StatModifier modifier in old.Modifiers.All)
+                {
+                    if (modifier.Source == source) Modifiers.Add(modifier);
+                }
+            }
         }
     }
 }

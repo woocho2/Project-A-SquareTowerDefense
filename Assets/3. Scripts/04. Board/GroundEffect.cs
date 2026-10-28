@@ -19,6 +19,10 @@ namespace SquareTD
 
         public abstract void OnTurn();                          // ⑤ 그 턴의 일 (피해 등)
         public virtual bool Covers(int pathIndex) => true;      // 이 길 칸에 깔려 있나 (맵 전체면 늘 true)
+
+        // 적의 이동을 끌어당기는 장판 (블랙홀, 수업 40). 끌어당기지 않으면 −1
+        public virtual int PullCenter => -1;
+        public virtual MoveRange ModifyMove(EnemyController enemy, MoveRange range) => range;
         public abstract string Describe();                      // 설명 한 줄 (타일 카드, Click Debug 창)
 
         public void CountDown() => RemainingTurns--;

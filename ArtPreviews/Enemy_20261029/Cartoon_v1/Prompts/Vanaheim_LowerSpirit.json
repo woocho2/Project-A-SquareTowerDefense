@@ -1,0 +1,20 @@
+﻿{
+  "index": 6,
+  "stage": 3,
+  "group": "Vanaheim",
+  "stageName": "바나헤임",
+  "key": "LowerSpirit",
+  "name": "타락한 하급 정령",
+  "role": 0,
+  "roleName": "일반",
+  "existing": "Assets/4. Asset/4. Enemy/Vanaheim/LowerSpirit_Character.png",
+  "subject": "A small-statured but clearly ADULT masculine forest spirit, light leaf-green skin, pale yellow-green tousled leaf-like hair, amber eyes and tiny leaf-shaped ears. Body is slender living vine and wood covered by simple gray-brown leaf tunic, trailing moss wraps and bare root-like feet. One hand gently grasps a short crooked wooden staff, the other hand open near the chest. Full standing form, upright head, subtle purple corruption fissures in bark. No childlike giant head, no diaper, no scene or ground.",
+  "references": [
+    "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+    "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Vanaheim/LowerSpirit_Character.png"
+  ],
+  "prompt": "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy's old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 바나헤임; 일반; 타락한 하급 정령: A small-statured but clearly ADULT masculine forest spirit, light leaf-green skin, pale yellow-green tousled leaf-like hair, amber eyes and tiny leaf-shaped ears. Body is slender living vine and wood covered by simple gray-brown leaf tunic, trailing moss wraps and bare root-like feet. One hand gently grasps a short crooked wooden staff, the other hand open near the chest. Full standing form, upright head, subtle purple corruption fissures in bark. No childlike giant head, no diaper, no scene or ground.",
+  "generatedPath": "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-7b0ef17f-b2b1-483b-9407-2347d8f17118.png",
+  "source": "Sources/Vanaheim_LowerSpirit.png",
+  "tool": "built-in image_gen"
+}

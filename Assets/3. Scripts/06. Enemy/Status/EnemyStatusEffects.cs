@@ -148,6 +148,20 @@ namespace SquareTD
             return bonus;
         }
 
+        public float GetGoldBonusRate(KillInfo kill)
+        {
+            float bonus = 0f;
+            foreach (StatusEffect effect in m_effects) bonus += effect.GetGoldBonusRate(kill);
+            return bonus;
+        }
+
+        public int RollGemBonus(KillInfo kill)
+        {
+            int gems = 0;
+            foreach (StatusEffect effect in m_effects) gems += effect.RollGemBonus(kill);
+            return gems;
+        }
+
         public float GetStunChanceBonus(DamageInfo info)
         {
             float bonus = 0f;

@@ -1,0 +1,73 @@
+{
+    "applied":  true,
+    "characterCount":  12,
+    "changedAtlases":  3,
+    "sourceStyle":  "User-approved Bow Cartoon_v2",
+    "preservedCharacterDesigns":  true,
+    "originalsBackedUp":  true,
+    "catalogByteIdentical":  true,
+    "catalogSha256":  "42C2CCA22BB4073C5465C2FA53372EEF9C49C3354A4612F86489020031B199C5",
+    "verifiedCatalogSpriteReferences":  16,
+    "swordFaceCropRectsPreserved":  true,
+    "gameCodeChanged":  false,
+    "unityPlayTest":  false,
+    "artReview":  "Art_Review.txt",
+    "overview":  "Sword_Axe_Bow_Cartoon_Overview.png",
+    "files":  [
+                  {
+                      "file":  "Sword_Atlas.png",
+                      "beforeSha256":  "C94391E20377CC8601FC361175A9CAA14607E2718770E7B39A4B6B201A07FC0A",
+                      "afterSha256":  "9B2DCB3C446206F855F497278436B3C2F1F14EB4643C41DDCD5728ABF25FBBCA",
+                      "metaSha256":  "740AB680048D9A39B0EEB74CBC9630348ACD62912A7037A1FCB70F3024FE7DCB",
+                      "metadataByteIdentical":  true,
+                      "guid":  "69ef51cd58244ba0b749572a967a4d02",
+                      "spriteFileIDs":  [
+                                            52010,
+                                            52011,
+                                            52012,
+                                            52013,
+                                            52014,
+                                            52015,
+                                            52016,
+                                            52017
+                                        ],
+                      "atlasSize":  "1024x1024",
+                      "cellSize":  "512x512",
+                      "ppu":  512
+                  },
+                  {
+                      "file":  "Axe_atlas.png",
+                      "beforeSha256":  "B736D959CD357E745BF6AE274D64723FF3D79AFFB82BF3A3CB9D7885A0E113A5",
+                      "afterSha256":  "1CA9E9D8ACA8A3E8DFDE0AB371C8C75D667204C0F12AD571A27B4FD63E7ACE62",
+                      "metaSha256":  "B456965A5ED24D523E07643FF33518C3DDE80F57A464A3D9753CF33D3109CC9C",
+                      "metadataByteIdentical":  true,
+                      "guid":  "38dd808fe99a439d8843a95932730424",
+                      "spriteFileIDs":  [
+                                            52020,
+                                            52021,
+                                            52022,
+                                            52023
+                                        ],
+                      "atlasSize":  "1024x1024",
+                      "cellSize":  "512x512",
+                      "ppu":  512
+                  },
+                  {
+                      "file":  "Tower_Bow_Front_Atlas_v2.png",
+                      "beforeSha256":  "635C2B9F81BE430D35A0F91AFF4E8455CCCC58AF43E18610554B25A034B4C4E0",
+                      "afterSha256":  "50F15EC4237E0C88F32CB2A5F5D5108D98D6BC413C0CEFB0E981919E80F3F73F",
+                      "metaSha256":  "B5CCABE0C59CE147282A613F005C2A51AFCD2A27D75EB7AE61CCB4CFE81A7BF4",
+                      "metadataByteIdentical":  true,
+                      "guid":  "e6e5c445463b4dd4a9288d13ab488f8e",
+                      "spriteFileIDs":  [
+                                            52030,
+                                            52031,
+                                            52032,
+                                            52033
+                                        ],
+                      "atlasSize":  "1024x1024",
+                      "cellSize":  "512x512",
+                      "ppu":  512
+                  }
+              ]
+}

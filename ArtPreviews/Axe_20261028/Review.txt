@@ -1,0 +1,6 @@
+도끼 4종 시안 / 내장 image_gen / 게임 파일 변경 없음
+바이킹 (광역): source 1254x1254, source opaque edge 0; export 512x512; bounds {X=26,Y=21,Width=470,Height=469}; AA pixels 127262
+버서커 (단일): source 1254x1254, source opaque edge 0; export 512x512; bounds {X=32,Y=16,Width=458,Height=473}; AA pixels 86694
+스칼드 (버프): source 1254x1254, source opaque edge 0; export 512x512; bounds {X=29,Y=16,Width=462,Height=480}; AA pixels 107029
+집행관 (디버프): source 1254x1254, source opaque edge 0; export 512x512; bounds {X=59,Y=16,Width=407,Height=474}; AA pixels 102048
+Atlas: 1024x1024; top-left 광역, top-right 단일, bottom-left 버프, bottom-right 디버프. All 512px exports have >=16px transparent gutters. Source opaque-edge counts are retained for inspection; they do not establish absence of generation crop.

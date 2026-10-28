@@ -59,7 +59,9 @@ namespace SquareTD
         
         private MoveRange DecideMove(MoveRange range)
         {
-            return m_controller.Status.DecideMove(range);
+            BoardManager board = BoardManager.Instance;
+            if (board != null && board.Grounds != null) range = board.Grounds.DecideMove(m_controller, range);     // 블랙홀의 끌어당김 (수업 40)
+            return m_controller.Status.DecideMove(range);       // 상태 효과가 마지막 (행동 불가 0 / 0이 끌어당김보다 우선)
         }
 
         private void OnMoved(int steps) => m_controller.Status.OnMoved(steps);

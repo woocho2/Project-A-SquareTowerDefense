@@ -1,0 +1,20 @@
+﻿{
+  "index": 19,
+  "stage": 7,
+  "group": "Niflheim",
+  "stageName": "니플헤임",
+  "key": "FrostWolfAlpha",
+  "name": "대장 서리 늑대",
+  "role": 1,
+  "roleName": "중간 보스",
+  "existing": "Assets/4. Asset/4. Enemy/Niflheim/FrostWolfAlpha_Character.png",
+  "subject": "A fully grown four-legged frost wolf pack alpha, deep navy-blue fur with pale silver muzzle and mane, amber eyes. Muscular broad chest, restrained sharp silver neck and shoulder armor attached with straps, one large curved silver head crest. Four naturally jointed animal legs and complete bushy tail. Proud guarding three-quarter stance, mouth slightly parted with a few fangs, no blood. Larger mane and more angular silhouette than common white wolf. No human limbs, no scenery.",
+  "references": [
+    "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+    "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Niflheim/FrostWolfAlpha_Character.png"
+  ],
+  "prompt": "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy's old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 니플헤임; 중간 보스; 대장 서리 늑대: A fully grown four-legged frost wolf pack alpha, deep navy-blue fur with pale silver muzzle and mane, amber eyes. Muscular broad chest, restrained sharp silver neck and shoulder armor attached with straps, one large curved silver head crest. Four naturally jointed animal legs and complete bushy tail. Proud guarding three-quarter stance, mouth slightly parted with a few fangs, no blood. Larger mane and more angular silhouette than common white wolf. No human limbs, no scenery.",
+  "generatedPath": "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-903add79-1d16-4790-bbc8-82adacc7570f.png",
+  "source": "Sources/Niflheim_FrostWolfAlpha.png",
+  "tool": "built-in image_gen"
+}

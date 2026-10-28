@@ -1,0 +1,543 @@
+﻿[
+{
+    "index":  0,
+    "stage":  1,
+    "group":  "Asgard",
+    "stageName":  "아스가르드",
+    "key":  "Valkyrie",
+    "name":  "타락한 발키리",
+    "role":  0,
+    "roleName":  "일반",
+    "existing":  "Assets/4. Asset/4. Enemy/Asgard/Valkyrie_Character.png",
+    "subject":  "An adult female fallen Valkyrie, long golden-blond hair with one thick braid, clear blue eyes and an impassive stern expression. Small silver winged helmet, worn charcoal and silver plate armor over a deep navy split skirt, knee-high armored boots. She firmly grips one short straight sword lowered beside her right leg; a small round dark shield is strapped to the opposite forearm. Natural guarded standing stance, level neck and head, two arms and two legs clearly connected. A few dark violet cracks on armor suggest corruption; no huge wings. Distinct from friendly golden player Valkyries.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Asgard/Valkyrie_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 아스가르드; 일반; 타락한 발키리: An adult female fallen Valkyrie, long golden-blond hair with one thick braid, clear blue eyes and an impassive stern expression. Small silver winged helmet, worn charcoal and silver plate armor over a deep navy split skirt, knee-high armored boots. She firmly grips one short straight sword lowered beside her right leg; a small round dark shield is strapped to the opposite forearm. Natural guarded standing stance, level neck and head, two arms and two legs clearly connected. A few dark violet cracks on armor suggest corruption; no huge wings. Distinct from friendly golden player Valkyries.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-7e32c9d9-d913-4f10-b966-af8547cfc80d.png",
+    "source":  "Sources/Asgard_Valkyrie.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  1,
+    "stage":  1,
+    "group":  "Asgard",
+    "stageName":  "아스가르드",
+    "key":  "Brunhild",
+    "name":  "타락한 브륀힐드",
+    "role":  1,
+    "roleName":  "중간 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Asgard/Brunhild_Character.png",
+    "subject":  "An imposing adult female corrupted Brunhild, golden-blond double braids and icy blue eyes, tall wing-shaped gold-and-black circlet. Blackened gold and navy heavy Valkyrie armor, ivory fur mantle, broad dark shield on left arm and a complete lightning-edged sword held firmly in right hand pointing down. Calm cold commanding three-quarter standing pose, upright head. Restrained violet corruption seams and torn dark blue cape make her visibly an enemy version of the heroic shield-maiden. Full shield, sword tip and boots shown.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Asgard/Brunhild_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 아스가르드; 중간 보스; 타락한 브륀힐드: An imposing adult female corrupted Brunhild, golden-blond double braids and icy blue eyes, tall wing-shaped gold-and-black circlet. Blackened gold and navy heavy Valkyrie armor, ivory fur mantle, broad dark shield on left arm and a complete lightning-edged sword held firmly in right hand pointing down. Calm cold commanding three-quarter standing pose, upright head. Restrained violet corruption seams and torn dark blue cape make her visibly an enemy version of the heroic shield-maiden. Full shield, sword tip and boots shown.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-9539474a-d8de-4004-9a99-64db1f5557a9.png",
+    "source":  "Sources/Asgard_Brunhild.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  2,
+    "stage":  1,
+    "group":  "Asgard",
+    "stageName":  "아스가르드",
+    "key":  "Loki",
+    "name":  "타락한 로키",
+    "role":  2,
+    "roleName":  "최종 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Asgard/Loki_Character.png",
+    "subject":  "An adult male corrupted Loki with long black hair fading dark green, green eyes, narrow knowing smile, small asymmetric gold horn circlet. Layered forest-green and black fitted robes and ragged dark cape with violet inner lining, boots. One hand holds a small mistletoe arrow; the other grips a narrow dark bow beside the thigh. Elegant slight side-on standing pose with natural head angle, no forced neck bend. A restrained purple ember curls around the arrow. Darker, more sinister silhouette than player Loki.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Asgard/Loki_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 아스가르드; 최종 보스; 타락한 로키: An adult male corrupted Loki with long black hair fading dark green, green eyes, narrow knowing smile, small asymmetric gold horn circlet. Layered forest-green and black fitted robes and ragged dark cape with violet inner lining, boots. One hand holds a small mistletoe arrow; the other grips a narrow dark bow beside the thigh. Elegant slight side-on standing pose with natural head angle, no forced neck bend. A restrained purple ember curls around the arrow. Darker, more sinister silhouette than player Loki.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-3cca8812-c3d8-4532-a19d-a0f9ddade892.png",
+    "source":  "Sources/Asgard_Loki.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  3,
+    "stage":  2,
+    "group":  "Alfheim",
+    "stageName":  "알프헤임",
+    "key":  "CorruptedElf",
+    "name":  "타락한 엘프",
+    "role":  0,
+    "roleName":  "일반",
+    "existing":  "Assets/4. Asset/4. Enemy/Alfheim/CorruptedElf_Character.png",
+    "subject":  "An adult male corrupted elf scout, short tousled ivory-blond hair, violet eyes, long pointed ears, one small purple corruption mark on his cheek. Simple charcoal-gray leaf-shaped leather armor and short tattered cloak, dark leggings and light boots. Left hand clearly grips a small wooden recurved bow, right hand loosely holds one lowered arrow. Alert balanced scouting stance, adult slim natural proportions, full body and bow within the frame. Few silver leaf fittings, no crown. Low-rank silhouette.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Alfheim/CorruptedElf_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 알프헤임; 일반; 타락한 엘프: An adult male corrupted elf scout, short tousled ivory-blond hair, violet eyes, long pointed ears, one small purple corruption mark on his cheek. Simple charcoal-gray leaf-shaped leather armor and short tattered cloak, dark leggings and light boots. Left hand clearly grips a small wooden recurved bow, right hand loosely holds one lowered arrow. Alert balanced scouting stance, adult slim natural proportions, full body and bow within the frame. Few silver leaf fittings, no crown. Low-rank silhouette.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-a08ce50a-a438-4f97-8756-f2ae1bff52a6.png",
+    "source":  "Sources/Alfheim_CorruptedElf.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  4,
+    "stage":  2,
+    "group":  "Alfheim",
+    "stageName":  "알프헤임",
+    "key":  "CorruptedElfCaptain",
+    "name":  "타락한 엘프 부족장",
+    "role":  1,
+    "roleName":  "중간 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Alfheim/CorruptedElfCaptain_Character.png",
+    "subject":  "An adult male corrupted elf captain, long dark-teal hair in two thin braids, amber eyes, pointed ears and a violet mark on one cheek. More structured charcoal and pale silver leaf-shaped armor than the common scout, modest branching circlet, long teal cloak. Clearly grips a straight slender spear diagonally across the body with both hands naturally separated on the shaft. Upright composed battle-ready stance, shoulders and hips aligned, weapon tips entirely visible. Strong teal-and-silver blocks, no extra figure.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Alfheim/CorruptedElfCaptain_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 알프헤임; 중간 보스; 타락한 엘프 부족장: An adult male corrupted elf captain, long dark-teal hair in two thin braids, amber eyes, pointed ears and a violet mark on one cheek. More structured charcoal and pale silver leaf-shaped armor than the common scout, modest branching circlet, long teal cloak. Clearly grips a straight slender spear diagonally across the body with both hands naturally separated on the shaft. Upright composed battle-ready stance, shoulders and hips aligned, weapon tips entirely visible. Strong teal-and-silver blocks, no extra figure.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-f271f04f-8cf9-4e2d-82f6-9cdb942e59ee.png",
+    "source":  "Sources/Alfheim_CorruptedElfCaptain.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  5,
+    "stage":  2,
+    "group":  "Alfheim",
+    "stageName":  "알프헤임",
+    "key":  "CorruptedElfChief",
+    "name":  "타락한 엘프 족장",
+    "role":  2,
+    "roleName":  "최종 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Alfheim/CorruptedElfChief_Character.png",
+    "subject":  "An adult male corrupted elf tribal chief, long plum-purple hair, red eyes, pointed ears and a small violet corruption mark on the cheek. Distinct large silver branching crown with a single violet gem, dark silver and charcoal royal leaf armor and a long plum split cape. Right hand firmly holds a single elegant curved elven sword lowered beside him, left hand rests on his belt. Regally upright standing pose, mature beautiful face, full boots visible. Hair PURPLE and eyes RED must differ from teal-haired amber-eyed captain.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Alfheim/CorruptedElfChief_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 알프헤임; 최종 보스; 타락한 엘프 족장: An adult male corrupted elf tribal chief, long plum-purple hair, red eyes, pointed ears and a small violet corruption mark on the cheek. Distinct large silver branching crown with a single violet gem, dark silver and charcoal royal leaf armor and a long plum split cape. Right hand firmly holds a single elegant curved elven sword lowered beside him, left hand rests on his belt. Regally upright standing pose, mature beautiful face, full boots visible. Hair PURPLE and eyes RED must differ from teal-haired amber-eyed captain.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-6f233e3c-5579-49c9-b80e-71d0aacb3068.png",
+    "source":  "Sources/Alfheim_CorruptedElfChief.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  6,
+    "stage":  3,
+    "group":  "Vanaheim",
+    "stageName":  "바나헤임",
+    "key":  "LowerSpirit",
+    "name":  "타락한 하급 정령",
+    "role":  0,
+    "roleName":  "일반",
+    "existing":  "Assets/4. Asset/4. Enemy/Vanaheim/LowerSpirit_Character.png",
+    "subject":  "A small-statured but clearly ADULT masculine forest spirit, light leaf-green skin, pale yellow-green tousled leaf-like hair, amber eyes and tiny leaf-shaped ears. Body is slender living vine and wood covered by simple gray-brown leaf tunic, trailing moss wraps and bare root-like feet. One hand gently grasps a short crooked wooden staff, the other hand open near the chest. Full standing form, upright head, subtle purple corruption fissures in bark. No childlike giant head, no diaper, no scene or ground.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Vanaheim/LowerSpirit_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 바나헤임; 일반; 타락한 하급 정령: A small-statured but clearly ADULT masculine forest spirit, light leaf-green skin, pale yellow-green tousled leaf-like hair, amber eyes and tiny leaf-shaped ears. Body is slender living vine and wood covered by simple gray-brown leaf tunic, trailing moss wraps and bare root-like feet. One hand gently grasps a short crooked wooden staff, the other hand open near the chest. Full standing form, upright head, subtle purple corruption fissures in bark. No childlike giant head, no diaper, no scene or ground.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-7b0ef17f-b2b1-483b-9407-2347d8f17118.png",
+    "source":  "Sources/Vanaheim_LowerSpirit.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  7,
+    "stage":  3,
+    "group":  "Vanaheim",
+    "stageName":  "바나헤임",
+    "key":  "MiddleSpirit",
+    "name":  "타락한 중급 정령",
+    "role":  1,
+    "roleName":  "중간 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Vanaheim/MiddleSpirit_Character.png",
+    "subject":  "An ADULT feminine intermediate forest spirit, pale pink-lilac skin, soft lavender wavy hair, cool blue eyes and pointed leaf ears. Body dressed in layered dark gray leaves and pale silver bark armor, long violet petal skirt split to reveal rootlike feet. One arm raised palm outward with a few violet leaves suspended nearby, other arm relaxed. Elegant floating-upright full body, natural connected torso and hips, head level. Purple corruption threads along leaf edges, distinct from the lower green-haired spirit.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Vanaheim/MiddleSpirit_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 바나헤임; 중간 보스; 타락한 중급 정령: An ADULT feminine intermediate forest spirit, pale pink-lilac skin, soft lavender wavy hair, cool blue eyes and pointed leaf ears. Body dressed in layered dark gray leaves and pale silver bark armor, long violet petal skirt split to reveal rootlike feet. One arm raised palm outward with a few violet leaves suspended nearby, other arm relaxed. Elegant floating-upright full body, natural connected torso and hips, head level. Purple corruption threads along leaf edges, distinct from the lower green-haired spirit.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-0969c3cc-526e-466e-b9f0-211fcffbe87e.png",
+    "source":  "Sources/Vanaheim_MiddleSpirit.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  8,
+    "stage":  3,
+    "group":  "Vanaheim",
+    "stageName":  "바나헤임",
+    "key":  "UpperSpirit",
+    "name":  "타락한 상급 정령",
+    "role":  2,
+    "roleName":  "최종 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Vanaheim/UpperSpirit_Character.png",
+    "subject":  "An ADULT feminine ancient high forest spirit sovereign, pale green skin, long deep teal hair, crimson eyes and a tall symmetrical bare-branch antler crown. Silver-gray bark shoulder armor, layered charcoal and teal leaf robes around a mature humanoid body and rootlike feet. Both hands clearly hold a long branching wood staff in front of the torso. Calm menacing upright full standing form, natural neck and arms, a few purple corruption cracks in bark. No extra spirits, no forest background.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Vanaheim/UpperSpirit_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 바나헤임; 최종 보스; 타락한 상급 정령: An ADULT feminine ancient high forest spirit sovereign, pale green skin, long deep teal hair, crimson eyes and a tall symmetrical bare-branch antler crown. Silver-gray bark shoulder armor, layered charcoal and teal leaf robes around a mature humanoid body and rootlike feet. Both hands clearly hold a long branching wood staff in front of the torso. Calm menacing upright full standing form, natural neck and arms, a few purple corruption cracks in bark. No extra spirits, no forest background.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-50189b6e-3d8b-4393-847e-5c49dc8e4de5.png",
+    "source":  "Sources/Vanaheim_UpperSpirit.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  9,
+    "stage":  4,
+    "group":  "Midgard",
+    "stageName":  "미드가르드",
+    "key":  "SeaSerpent",
+    "name":  "바다뱀",
+    "role":  0,
+    "roleName":  "일반",
+    "existing":  "Assets/4. Asset/4. Enemy/Midgard/SeaSerpent_Character.png",
+    "subject":  "A real nonhumanoid aquatic sea serpent, slender long turquoise-scaled body, pale cream belly, golden amber eyes, small swept-back blue fin crest and two cheek fins. NO arms, NO legs, NO human torso. Arrange the entire continuous snake body into a compact elegant S curve with one visible coil, raised alert head and complete tapering tail tip. Clean readable broad scale planes, not thousands of individually textured scales. Snout calm but predatory, a few small fangs, no blood. Whole serpent comfortably within canvas.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Midgard/SeaSerpent_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 미드가르드; 일반; 바다뱀: A real nonhumanoid aquatic sea serpent, slender long turquoise-scaled body, pale cream belly, golden amber eyes, small swept-back blue fin crest and two cheek fins. NO arms, NO legs, NO human torso. Arrange the entire continuous snake body into a compact elegant S curve with one visible coil, raised alert head and complete tapering tail tip. Clean readable broad scale planes, not thousands of individually textured scales. Snout calm but predatory, a few small fangs, no blood. Whole serpent comfortably within canvas.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-25a9a9ac-0dab-47ff-b1f8-b5cd3b41313f.png",
+    "source":  "Sources/Midgard_SeaSerpent.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  10,
+    "stage":  4,
+    "group":  "Midgard",
+    "stageName":  "미드가르드",
+    "key":  "GreatSeaSerpent",
+    "name":  "큰 바다뱀",
+    "role":  1,
+    "roleName":  "중간 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Midgard/GreatSeaSerpent_Character.png",
+    "subject":  "A large armored sea serpent, deep indigo-blue scales, pale slate segmented belly, luminous teal eyes, sharp silver-blue swept fins and short angular crown ridges. NO arms or legs. Entire long serpentine body forms one low compact coil with a broad raised neck and visible curling tail, more muscular and armored than the small turquoise serpent. Adult predatory animal anatomy, no human clothing. Sharp clean cel shading with large readable blue plates, no ocean, rocks, splashes or backdrop.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Midgard/GreatSeaSerpent_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 미드가르드; 중간 보스; 큰 바다뱀: A large armored sea serpent, deep indigo-blue scales, pale slate segmented belly, luminous teal eyes, sharp silver-blue swept fins and short angular crown ridges. NO arms or legs. Entire long serpentine body forms one low compact coil with a broad raised neck and visible curling tail, more muscular and armored than the small turquoise serpent. Adult predatory animal anatomy, no human clothing. Sharp clean cel shading with large readable blue plates, no ocean, rocks, splashes or backdrop.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-9c0bfe51-e4c4-4b0f-8d33-34eda65b7c85.png",
+    "source":  "Sources/Midgard_GreatSeaSerpent.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  11,
+    "stage":  4,
+    "group":  "Midgard",
+    "stageName":  "미드가르드",
+    "key":  "Jormungandr",
+    "name":  "요르문간드",
+    "role":  2,
+    "roleName":  "최종 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Midgard/Jormungandr_Character.png",
+    "subject":  "Jormungandr the world-serpent boss, an immense-looking but fully contained coiled snake with dark emerald-black scales, pale gray armored belly, sharp crimson eyes, prominent backward swept charcoal horns and silver interlocking head plates. NO human torso, NO arms, NO legs, NO wings. One massive continuous full serpentine body in a bold circular coil, head rising above it and clearly visible tail tip at the front, not cut by frame. Controlled mythic menacing expression, restrained turquoise highlights. No ocean or ground.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Midgard/Jormungandr_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 미드가르드; 최종 보스; 요르문간드: Jormungandr the world-serpent boss, an immense-looking but fully contained coiled snake with dark emerald-black scales, pale gray armored belly, sharp crimson eyes, prominent backward swept charcoal horns and silver interlocking head plates. NO human torso, NO arms, NO legs, NO wings. One massive continuous full serpentine body in a bold circular coil, head rising above it and clearly visible tail tip at the front, not cut by frame. Controlled mythic menacing expression, restrained turquoise highlights. No ocean or ground.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-8a617f3b-d6ce-469c-9d98-6e453d3b086b.png",
+    "source":  "Sources/Midgard_Jormungandr.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  12,
+    "stage":  5,
+    "group":  "Jotunheim",
+    "stageName":  "요툰헤임",
+    "key":  "FrostGiant",
+    "name":  "서리 거인",
+    "role":  0,
+    "roleName":  "일반",
+    "existing":  "Assets/4. Asset/4. Enemy/Jotunheim/FrostGiant_Character.png",
+    "subject":  "A mature heavily built male frost giant with slate-blue skin, short messy dark navy hair, green eyes and small lower tusks. Weathered plain silver plate shoulders over charcoal fur tunic, belted dark trousers and rugged fur boots. Right hand grips a crude stone-headed club held low; left hand curled in a natural fist. Stable wide full standing stance with natural joints and upright head, muscular adult proportions, complete equipment. Pale ice cracks on forearms, no pedestal, no mist hiding feet.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Jotunheim/FrostGiant_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 요툰헤임; 일반; 서리 거인: A mature heavily built male frost giant with slate-blue skin, short messy dark navy hair, green eyes and small lower tusks. Weathered plain silver plate shoulders over charcoal fur tunic, belted dark trousers and rugged fur boots. Right hand grips a crude stone-headed club held low; left hand curled in a natural fist. Stable wide full standing stance with natural joints and upright head, muscular adult proportions, complete equipment. Pale ice cracks on forearms, no pedestal, no mist hiding feet.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-587ff694-13ef-40ca-bcf9-f5538ddf3c1f.png",
+    "source":  "Sources/Jotunheim_FrostGiant.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  13,
+    "stage":  5,
+    "group":  "Jotunheim",
+    "stageName":  "요툰헤임",
+    "key":  "FrostGiantChief",
+    "name":  "서리 거인 족장",
+    "role":  1,
+    "roleName":  "중간 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Jotunheim/FrostGiantChief_Character.png",
+    "subject":  "A mature male frost giant chief, blue-gray skin, thick rusty copper hair and matching short braided beard, amber eyes and a simple silver diamond-shaped headband. Heavy dark silver shoulder plates, broad gray-white fur collar, dark slate layered armor and fur boots. Both hands clearly grip a long-handled heavy ice-crystal mace at waist height, head of mace fully in view. Authoritative slightly turned full standing pose, natural anatomy and level head. Different copper hair and beard from common navy-haired frost giant.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Jotunheim/FrostGiantChief_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 요툰헤임; 중간 보스; 서리 거인 족장: A mature male frost giant chief, blue-gray skin, thick rusty copper hair and matching short braided beard, amber eyes and a simple silver diamond-shaped headband. Heavy dark silver shoulder plates, broad gray-white fur collar, dark slate layered armor and fur boots. Both hands clearly grip a long-handled heavy ice-crystal mace at waist height, head of mace fully in view. Authoritative slightly turned full standing pose, natural anatomy and level head. Different copper hair and beard from common navy-haired frost giant.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-64cc072f-be55-4c05-9f85-009dbd6adbed.png",
+    "source":  "Sources/Jotunheim_FrostGiantChief.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  14,
+    "stage":  5,
+    "group":  "Jotunheim",
+    "stageName":  "요툰헤임",
+    "key":  "Ymir",
+    "name":  "이미르",
+    "role":  2,
+    "roleName":  "최종 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Jotunheim/Ymir_Character.png",
+    "subject":  "Ymir the primordial frost giant boss, huge broad adult male with glacier-blue skin, long white hair and braided white beard, cold blue eyes. Massive jagged ice and dark stone shoulder armor, charcoal-gray fur cloak and belted slate trousers with heavy boots. Both hands grip a broad stone-and-ice war hammer angled across the body. Ruler-like upright stance, restrained violet fissures in ice plates make him a hostile elder giant rather than the restored friendly ally. Full hammer and both feet shown, no ice mountain or ground.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Jotunheim/Ymir_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 요툰헤임; 최종 보스; 이미르: Ymir the primordial frost giant boss, huge broad adult male with glacier-blue skin, long white hair and braided white beard, cold blue eyes. Massive jagged ice and dark stone shoulder armor, charcoal-gray fur cloak and belted slate trousers with heavy boots. Both hands grip a broad stone-and-ice war hammer angled across the body. Ruler-like upright stance, restrained violet fissures in ice plates make him a hostile elder giant rather than the restored friendly ally. Full hammer and both feet shown, no ice mountain or ground.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-d7e2b89d-487e-4979-afbd-263f4cd53536.png",
+    "source":  "Sources/Jotunheim_Ymir.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  15,
+    "stage":  6,
+    "group":  "Nidavellir",
+    "stageName":  "니다벨리르",
+    "key":  "CorruptedDwarf",
+    "name":  "타락한 드워프",
+    "role":  0,
+    "roleName":  "일반",
+    "existing":  "Assets/4. Asset/4. Enemy/Nidavellir/CorruptedDwarf_Character.png",
+    "subject":  "One ADULT stocky male corrupted dwarf miner, brown hair and thick brown beard, amber eyes, rounded nose. Small iron mining helmet with goggles pushed up, simple gray work armor over dark leather apron, short sturdy legs in brown trousers and heavy boots. Both hands firmly hold a single pickaxe diagonally across his body, sharp ends visible. Suspicious determined expression, one tiny purple corruption fissure on the cheek. Natural mature dwarf proportions rather than a human child. No mine, no ore pile.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Nidavellir/CorruptedDwarf_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 니다벨리르; 일반; 타락한 드워프: One ADULT stocky male corrupted dwarf miner, brown hair and thick brown beard, amber eyes, rounded nose. Small iron mining helmet with goggles pushed up, simple gray work armor over dark leather apron, short sturdy legs in brown trousers and heavy boots. Both hands firmly hold a single pickaxe diagonally across his body, sharp ends visible. Suspicious determined expression, one tiny purple corruption fissure on the cheek. Natural mature dwarf proportions rather than a human child. No mine, no ore pile.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-7d074319-080a-401f-8ee1-c65f413332f8.png",
+    "source":  "Sources/Nidavellir_CorruptedDwarf.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  16,
+    "stage":  6,
+    "group":  "Nidavellir",
+    "stageName":  "니다벨리르",
+    "key":  "CorruptedDwarfArtisan",
+    "name":  "타락한 드워프 장인",
+    "role":  1,
+    "roleName":  "중간 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Nidavellir/CorruptedDwarfArtisan_Character.png",
+    "subject":  "One ADULT mature male corrupted dwarf master artisan, copper-red hair and thick braided red beard, bright teal-green eyes. Steel goggles on forehead, broad metal-braced shoulders, charcoal smith shirt, worn leather apron, short sturdy legs and heavy boots. Right hand grips one rectangular forging hammer held upright near shoulder; left hand holds closed blacksmith tongs low at the waist, each tool connected to its hand. Stern working posture, head upright, a small purple corruption mark on face. No forge, anvil or other person.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Nidavellir/CorruptedDwarfArtisan_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 니다벨리르; 중간 보스; 타락한 드워프 장인: One ADULT mature male corrupted dwarf master artisan, copper-red hair and thick braided red beard, bright teal-green eyes. Steel goggles on forehead, broad metal-braced shoulders, charcoal smith shirt, worn leather apron, short sturdy legs and heavy boots. Right hand grips one rectangular forging hammer held upright near shoulder; left hand holds closed blacksmith tongs low at the waist, each tool connected to its hand. Stern working posture, head upright, a small purple corruption mark on face. No forge, anvil or other person.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-6a6c3614-25ee-48f5-a230-58f6a109f574.png",
+    "source":  "Sources/Nidavellir_CorruptedDwarfArtisan.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  17,
+    "stage":  6,
+    "group":  "Nidavellir",
+    "stageName":  "니다벨리르",
+    "key":  "Fafnir",
+    "name":  "파프니르",
+    "role":  2,
+    "roleName":  "최종 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Nidavellir/Fafnir_Character.png",
+    "subject":  "Fafnir, a corrupted greedy dwarf transformed into a golden DRAGON, nonhumanoid four-legged stocky armored drake. Gold and amber large plate scales, dark bronze underside, violet eyes, layered gold horn crown and a few angular silver chin plates echo the old identity. Exactly four connected clawed legs, a continuous muscular tail curled beside the body with tip visible, long strong neck and mature reptilian head. NO wings to keep a compact readable silhouette. Three-quarter crouching animal pose, no human limbs, no treasure pile, no floor or background.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Nidavellir/Fafnir_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 니다벨리르; 최종 보스; 파프니르: Fafnir, a corrupted greedy dwarf transformed into a golden DRAGON, nonhumanoid four-legged stocky armored drake. Gold and amber large plate scales, dark bronze underside, violet eyes, layered gold horn crown and a few angular silver chin plates echo the old identity. Exactly four connected clawed legs, a continuous muscular tail curled beside the body with tip visible, long strong neck and mature reptilian head. NO wings to keep a compact readable silhouette. Three-quarter crouching animal pose, no human limbs, no treasure pile, no floor or background.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-86a37f80-5b63-4307-a4af-99e3d72bd7d1.png",
+    "source":  "Sources/Nidavellir_Fafnir.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  18,
+    "stage":  7,
+    "group":  "Niflheim",
+    "stageName":  "니플헤임",
+    "key":  "FrostWolf",
+    "name":  "서리 늑대",
+    "role":  0,
+    "roleName":  "일반",
+    "existing":  "Assets/4. Asset/4. Enemy/Niflheim/FrostWolf_Character.png",
+    "subject":  "A fully grown four-legged frost wolf, white and pale silver thick fur, blue eyes, dark small nose and a simple charcoal collar with one square buckle. Lean athletic animal body with four naturally jointed legs, paws, triangular ears and a fully visible bushy tail. Quiet prowling three-quarter stance, head slightly raised and alert, mouth closed. A few broad cool blue cel shadows, no humanoid torso or hands, no armor clothes. Whole animal and all paws within the canvas, no snowy ground.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Niflheim/FrostWolf_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 니플헤임; 일반; 서리 늑대: A fully grown four-legged frost wolf, white and pale silver thick fur, blue eyes, dark small nose and a simple charcoal collar with one square buckle. Lean athletic animal body with four naturally jointed legs, paws, triangular ears and a fully visible bushy tail. Quiet prowling three-quarter stance, head slightly raised and alert, mouth closed. A few broad cool blue cel shadows, no humanoid torso or hands, no armor clothes. Whole animal and all paws within the canvas, no snowy ground.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-ccca46ce-23f6-41ed-bc53-eee224c6f3f4.png",
+    "source":  "Sources/Niflheim_FrostWolf.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  19,
+    "stage":  7,
+    "group":  "Niflheim",
+    "stageName":  "니플헤임",
+    "key":  "FrostWolfAlpha",
+    "name":  "대장 서리 늑대",
+    "role":  1,
+    "roleName":  "중간 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Niflheim/FrostWolfAlpha_Character.png",
+    "subject":  "A fully grown four-legged frost wolf pack alpha, deep navy-blue fur with pale silver muzzle and mane, amber eyes. Muscular broad chest, restrained sharp silver neck and shoulder armor attached with straps, one large curved silver head crest. Four naturally jointed animal legs and complete bushy tail. Proud guarding three-quarter stance, mouth slightly parted with a few fangs, no blood. Larger mane and more angular silhouette than common white wolf. No human limbs, no scenery.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Niflheim/FrostWolfAlpha_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 니플헤임; 중간 보스; 대장 서리 늑대: A fully grown four-legged frost wolf pack alpha, deep navy-blue fur with pale silver muzzle and mane, amber eyes. Muscular broad chest, restrained sharp silver neck and shoulder armor attached with straps, one large curved silver head crest. Four naturally jointed animal legs and complete bushy tail. Proud guarding three-quarter stance, mouth slightly parted with a few fangs, no blood. Larger mane and more angular silhouette than common white wolf. No human limbs, no scenery.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-903add79-1d16-4790-bbc8-82adacc7570f.png",
+    "source":  "Sources/Niflheim_FrostWolfAlpha.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  20,
+    "stage":  7,
+    "group":  "Niflheim",
+    "stageName":  "니플헤임",
+    "key":  "Fenrir",
+    "name":  "펜리르",
+    "role":  2,
+    "roleName":  "최종 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Niflheim/Fenrir_Character.png",
+    "subject":  "Fenrir the mythic giant wolf boss, huge nonhumanoid four-legged wolf with charcoal-black fur, a massive silver-gray ruff, intense crimson eyes and tall dark ears. Thick broken iron chains lie securely across the collar and upper chest, individual hanging ends visible but no cage or ground attachment. Powerful crouched forward stalking animal stance with all four paws and complete heavy tail in frame. Mature menacing wolf face, a few fangs without gore. Simplified large fur clumps, no human torso, no extra heads.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Niflheim/Fenrir_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 니플헤임; 최종 보스; 펜리르: Fenrir the mythic giant wolf boss, huge nonhumanoid four-legged wolf with charcoal-black fur, a massive silver-gray ruff, intense crimson eyes and tall dark ears. Thick broken iron chains lie securely across the collar and upper chest, individual hanging ends visible but no cage or ground attachment. Powerful crouched forward stalking animal stance with all four paws and complete heavy tail in frame. Mature menacing wolf face, a few fangs without gore. Simplified large fur clumps, no human torso, no extra heads.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-07602c1a-8e10-4fe0-9681-ad08b146ac90.png",
+    "source":  "Sources/Niflheim_Fenrir.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  21,
+    "stage":  8,
+    "group":  "Muspelheim",
+    "stageName":  "무스펠헤임",
+    "key":  "FireGiant",
+    "name":  "불 거인",
+    "role":  0,
+    "roleName":  "일반",
+    "existing":  "Assets/4. Asset/4. Enemy/Muspelheim/FireGiant_Character.png",
+    "subject":  "A fully adult muscular male fire giant warrior, warm dark red skin with a few bright orange lava fissures, short dark brown-black hair with red tips, vivid cold blue eyes. Simple blackened silver plate armor over a dark charcoal tunic, fully clothed trousers, heavy boots. Right hand holds a broad iron cleaver sword lowered beside the thigh, left hand open with curled fingers. Natural full standing fighter stance, upright head and connected shoulders. Restrained embers near arm only, no fire scenery or rock pedestal.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Muspelheim/FireGiant_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 무스펠헤임; 일반; 불 거인: A fully adult muscular male fire giant warrior, warm dark red skin with a few bright orange lava fissures, short dark brown-black hair with red tips, vivid cold blue eyes. Simple blackened silver plate armor over a dark charcoal tunic, fully clothed trousers, heavy boots. Right hand holds a broad iron cleaver sword lowered beside the thigh, left hand open with curled fingers. Natural full standing fighter stance, upright head and connected shoulders. Restrained embers near arm only, no fire scenery or rock pedestal.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-b905e593-70ef-488f-851e-4797b3f12fd6.png",
+    "source":  "Sources/Muspelheim_FireGiant.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  22,
+    "stage":  8,
+    "group":  "Muspelheim",
+    "stageName":  "무스펠헤임",
+    "key":  "FireGiantChief",
+    "name":  "불 거인 족장",
+    "role":  1,
+    "roleName":  "중간 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Muspelheim/FireGiantChief_Character.png",
+    "subject":  "A fully adult powerful male fire giant chief, charcoal-gray skin with broad orange lava cracks, rusty red hair and short red beard, turquoise eyes, two small dark horns and an angular silver headband. Heavy black steel armor with silver edges, dark red long tabard, massive boots. Two hands firmly grip a heavy spiked mace resting diagonally in front of him, full handle and mace head visible. Proud stable upright stance, weathered mature face. Bigger armor silhouette than common giant, not a scaled-up copy. No lava pool or ground.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Muspelheim/FireGiantChief_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 무스펠헤임; 중간 보스; 불 거인 족장: A fully adult powerful male fire giant chief, charcoal-gray skin with broad orange lava cracks, rusty red hair and short red beard, turquoise eyes, two small dark horns and an angular silver headband. Heavy black steel armor with silver edges, dark red long tabard, massive boots. Two hands firmly grip a heavy spiked mace resting diagonally in front of him, full handle and mace head visible. Proud stable upright stance, weathered mature face. Bigger armor silhouette than common giant, not a scaled-up copy. No lava pool or ground.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-199635f4-6b9b-47a4-9745-d05d5a3603a8.png",
+    "source":  "Sources/Muspelheim_FireGiantChief.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  23,
+    "stage":  8,
+    "group":  "Muspelheim",
+    "stageName":  "무스펠헤임",
+    "key":  "Surtr",
+    "name":  "수르트",
+    "role":  2,
+    "roleName":  "최종 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Muspelheim/Surtr_Character.png",
+    "subject":  "Surtr the apocalyptic fire giant boss, full humanoid adult male with deep red skin, blazing orange hair, two prominent backward swept cracked obsidian horns and molten amber eyes. Massive black volcanic armor with simple bright orange glowing seams, ragged charcoal and crimson cloak, fully armored boots. Both hands grip a huge flame-edged sword whose point rests near one boot, all blade and fire tips within frame. Unyielding mature hostile expression and broad balanced standing pose. No fire backdrop, no dense flames hiding anatomy, no extra limbs.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Muspelheim/Surtr_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 무스펠헤임; 최종 보스; 수르트: Surtr the apocalyptic fire giant boss, full humanoid adult male with deep red skin, blazing orange hair, two prominent backward swept cracked obsidian horns and molten amber eyes. Massive black volcanic armor with simple bright orange glowing seams, ragged charcoal and crimson cloak, fully armored boots. Both hands grip a huge flame-edged sword whose point rests near one boot, all blade and fire tips within frame. Unyielding mature hostile expression and broad balanced standing pose. No fire backdrop, no dense flames hiding anatomy, no extra limbs.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-359371cb-b592-4743-8566-5229f494b37f.png",
+    "source":  "Sources/Muspelheim_Surtr.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  24,
+    "stage":  9,
+    "group":  "Hel",
+    "stageName":  "헬",
+    "key":  "Wight",
+    "name":  "망자",
+    "role":  0,
+    "roleName":  "일반",
+    "existing":  "Assets/4. Asset/4. Enemy/Hel/Wight_Character.png",
+    "subject":  "One adult male wight, cold pale gray skin, medium disheveled silver-gray hair, muted green eyes and fine dark cracks at the cheek, NO open wounds or gore. Worn charcoal armor and torn black-gray cloak over covered legs with battered boots. Right hand firmly holds one broken straight sword pointed down; left hand hangs naturally beside him. A subtle weary hunched but anatomically coherent full standing posture, head upright relative to shoulders. Thin gray cloth strips attached to costume, no floating dismembered parts.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Hel/Wight_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 헬; 일반; 망자: One adult male wight, cold pale gray skin, medium disheveled silver-gray hair, muted green eyes and fine dark cracks at the cheek, NO open wounds or gore. Worn charcoal armor and torn black-gray cloak over covered legs with battered boots. Right hand firmly holds one broken straight sword pointed down; left hand hangs naturally beside him. A subtle weary hunched but anatomically coherent full standing posture, head upright relative to shoulders. Thin gray cloth strips attached to costume, no floating dismembered parts.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-6f47e744-ef19-464f-8114-8323847fc27d.png",
+    "source":  "Sources/Hel_Wight.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  25,
+    "stage":  9,
+    "group":  "Hel",
+    "stageName":  "헬",
+    "key":  "Garm",
+    "name":  "가름",
+    "role":  1,
+    "roleName":  "중간 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Hel/Garm_Character.png",
+    "subject":  "Garm, the monstrous gate-hound of Hel, one nonhumanoid four-legged adult war hound with dark burgundy-red coarse fur, charcoal muzzle, amber-orange eyes and broad angular canine snout. Thick black steel collar with a few large spikes and short secured hanging chain ends. Massive chest, powerful naturally jointed legs with all four clawed paws and complete tapering tail visible. Low guarding three-quarter pose, snarling lightly with a few fangs, no blood. Distinct from the black silver-maned wolf Fenrir: shorter mane and red heavier dog anatomy. No gate, scenery or extra heads.",
+    "references":  [
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/2. Tower/TowerCharacter/Bow_Atlas.png",
+                       "C:/Users/user/Desktop/Programing/Project-A-SquareTowerDefense/Assets/4. Asset/4. Enemy/Hel/Garm_Character.png"
+                   ],
+    "prompt":  "Use case: stylized-concept. Create ONE transparent full-body enemy character asset for a Korean fantasy tower-defense game. Reference 1 is the approved player Bow atlas, STYLE ONLY: match its clean 2D Japanese anime/subculture game cartoon illustration, crisp selective outlines, big readable local-color shapes, controlled cel shadows, simple materials; no painterly photoreal textures or dense decorative micro-details. Reference 2 is this enemy\u0027s old CHIBI BUST, IDENTITY ONLY: keep specified hair/eye colors, species and signature headgear, redesign as an adult full-body character with natural proportions; do NOT reproduce the chibi head/body ratio, do not draw an atlas or multiple variants. Humanlike adults generally 6.5-7.5 heads tall, dwarves naturally shorter mature proportions, animals correct animal anatomy. Preserve distinct poses, equipment and rank. ALL hair, limbs, weapons, wings and tail tips must be inside the square with generous EMPTY TRANSPARENT space at least 8% on EVERY side; zoom out enough to fit the COMPLETE silhouette. Transparent RGBA, NO background, NO ground or floor shadow, NO base, NO frame, NO text, NO emblem/buff icon, NO watermark. No cropped body parts, floating unheld equipment, extra fingers, twisted necks, merged limbs or extra characters. Non-graphic fantasy corruption; no gore. Large readable silhouette at 96px. One square illustration about 1024x1024. Stage 헬; 중간 보스; 가름: Garm, the monstrous gate-hound of Hel, one nonhumanoid four-legged adult war hound with dark burgundy-red coarse fur, charcoal muzzle, amber-orange eyes and broad angular canine snout. Thick black steel collar with a few large spikes and short secured hanging chain ends. Massive chest, powerful naturally jointed legs with all four clawed paws and complete tapering tail visible. Low guarding three-quarter pose, snarling lightly with a few fangs, no blood. Distinct from the black silver-maned wolf Fenrir: shorter mane and red heavier dog anatomy. No gate, scenery or extra heads.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-b20fbf9c-3e93-4209-9b52-0a74de31d88e.png",
+    "source":  "Sources/Hel_Garm.png",
+    "tool":  "built-in image_gen"
+},
+{
+    "index":  26,
+    "stage":  9,
+    "group":  "Hel",
+    "stageName":  "헬",
+    "key":  "HelQueen",
+    "name":  "헬",
+    "role":  2,
+    "roleName":  "최종 보스",
+    "existing":  "Assets/4. Asset/4. Enemy/Hel/HelQueen_Character.png",
+    "subject":  "Alternative enemy Hel: upright adult death queen, natural continuous pale face, black hair with a silver streak, violet eyes, small crown, simplified black/plum dress and cape, compact crescent axe held naturally with both hands.",
+    "references":  [
+                       "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-3950c3b1-cc44-40b7-9296-69ed50c27325.png"
+                   ],
+    "prompt":  "Refine this exact newly simplified Hel queen illustration. Change ONLY the head/face and neck alignment; preserve the entire new costume, reduced crescent axe, two-hand grip, standing pose, black-and-plum palette, violet eyes, small crown, long black hair with a silver-white streak, mature adult body proportions, full-body framing and clean cel-shaded cartoon style. Remove the irregular white/gray painted patch COMPLETELY from the forehead and cheek. Her whole face should have continuous natural pale ivory skin with normal subtle cel shadows; no half-face mask, no blotches, no scars or fissures on the face. Keep her death-queen identity through the dark costume, silver hair streak and cold violet eyes. Bring the head naturally upright on the neck, level eyes and a centered chin; do not tilt the head sideways. Give her a composed dignified cold expression, naturally symmetrical eyes, normal ear placement and an anatomically clean slender neck. Do not change any other part. Keep everything fully inside the image with transparent margins, complete axe tip and both boots visible. Transparent RGBA background, no text, no watermark, no scenery, no floor.",
+    "generatedPath":  "C:\\Users\\user\\.codex\\generated_images\\01a1347f-21af-71c1-8a9c-3a9cea2aa748\\exec-94f9f0c9-ebe3-43f7-8c73-2ed6a96da5dd.png",
+    "source":  "Sources/Hel_HelQueen.png",
+    "tool":  "built-in image_gen",
+    "initialRedesignPrompt":  "Use case: style-transfer / character redesign. Redesign ONLY the female Hel queen enemy from reference 1, a rejected overly ornate draft. Keep her identity: adult goddess/queen of the dead, long black hair with one silver-white front streak, violet eyes, charcoal and deep-plum royal clothing and restrained silver accents. Reference 2 (four archers) is the REQUIRED rendering style: clean 2D mature Japanese anime cartoon game art, selective crisp outlines, broad readable color planes, restrained cel shadows and simple materials. Make an appealing composed mature female final boss with natural adult anatomy about 7 heads tall, graceful but grounded, recognizable beautiful face and calm cold expression. NEW COMPOSITION: front three-quarter standing with head level and neck naturally above shoulders, hips and torso aligned, shoulders relaxed, both feet visibly supporting her weight. Her right hand clearly grips ONE straight staff-length black axe beside her body at waist height; left hand rests lightly over the other wrist/shaft with believable fingers. The axe has a SMALL SIMPLE single crescent blade, roughly a quarter of the old huge axehead; no branching spikes, dangling chains, floating ornaments or oversized decorative mass. Clothes: one elegant tailored dark charcoal long dress/coat, a modest plum split skirt showing both armored boots, a short gray fur shoulder collar and ONE broad plum-lined cape falling behind her. Use large simple fabric shapes and a few clear folds, reduce all shredded strips, lace, jewelry, silver filigree and hanging diamonds by at least 80%. One violet jewel at the chest and small three-point dark silver crown are enough. FACE: both halves have normal beautiful human anatomy and continuous facial features; keep the death aspect only as a subtle cool gray tint near ONE temple/cheek and one delicate fissure at the outer eye, rather than the old harsh painted half-face boundary or mottled white patch. No mask, no skull, no skeleton, no corpse wounds. Hair falls in simple large black strands with the one silver streak. No excessive twisting or tilted head. Complete full body, whole small axe blade, shaft tip, hair and boot soles all visible. Zoom out to keep generous EMPTY transparent margin on all four sides, at least 8 percent. Square transparent RGBA asset, NO background, NO scenery, NO floor or cast shadow, NO base, NO text, NO labels, NO frame, NO watermark, NO extra character. Natural hands, exactly two arms/two legs, no obscured torso. This is one alternative Hel design, not a contact sheet or multiple variations.",
+    "revision":  "20261029_01_HelSimplified"
+}
+]

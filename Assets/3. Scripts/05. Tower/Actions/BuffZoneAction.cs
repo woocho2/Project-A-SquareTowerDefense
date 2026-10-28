@@ -58,10 +58,12 @@ namespace SquareTD
         public static void GiveBuff(Zone zone, TowerController receiver)
         {
             string source = SourceOf(zone);
+            BuffRule rule = SkillRegistry.GetBuffRule(zone.Emblem);
             receiver.State.Modifiers.RemoveBySource(source);
-            foreach (StatModifier modifier in SkillRegistry.GetBuffRule(zone.Emblem).GetModifiers(zone, receiver, source))
+            foreach (StatModifier modifier in rule.GetModifiers(zone, receiver, source))
                 receiver.State.Modifiers.Add(modifier);
             receiver.State.ReceivedZoneBuffs[zone] = source;
+            rule.OnGiveBuff(zone, receiver);                // 확률로 터지는 버프 (바람·빛)
         }
 
         public static void TakeBuff(Zone zone, TowerController receiver)
@@ -69,6 +71,21 @@ namespace SquareTD
             if (!receiver.State.ReceivedZoneBuffs.TryGetValue(zone, out string source)) return;
             receiver.State.Modifiers.RemoveBySource(source);
             receiver.State.ReceivedZoneBuffs.Remove(zone);
+            SkillRegistry.GetBuffRule(zone.Emblem).OnTaken(zone, receiver);     // 확률로 터진 시간 버프도 같이 끝남
+        }
+
+        // ⓪ 적 턴마다: 단계가 도는 존(불·전기)의 시간을 줄이고, 단계가 바뀌었으면 존 위 타워의 버프를 바로 다시 줌
+        public static void RunZoneTurns(ZoneRegistry zones, TowerSlots slots)
+        {
+            foreach (Zone zone in new List<Zone>(zones.All))
+            {
+                if (!zone.IsBuff || !zone.IsPlaced) continue;
+                if (!SkillRegistry.GetBuffRule(zone.Emblem).OnZoneTurn(zone)) continue;
+
+                zones.NotifyChanged(zone);
+                TowerController receiver = slots.Get(zone.CellIndex);
+                if (receiver != null && receiver.IsAttackTower) GiveBuff(zone, receiver);
+            }
         }
 
         public static void RefreshReceived(TowerController tower, ZoneRegistry zones)

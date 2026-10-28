@@ -37,7 +37,9 @@ namespace SquareTD
         public virtual float GetCritRateBonus(TowerController attacker) => 0f;                      // 이 적을 치는 공격의 치명 확률 + (락 온·핀 포인트)
         public virtual float GetStunChanceBonus(DamageInfo info) => 0f;                              // 이 적을 치는 공격의 기절 확률 + (서프레스·락다운)
         public virtual void OnExpire(EnemyController enemy) { }                                       // 유지가 끝날 때 (해동)
-        public virtual void OnDeath(EnemyController enemy, KillInfo kill) { }                         // 그 적이 죽을 때 (원석·금맥)
+        public virtual void OnDeath(EnemyController enemy, KillInfo kill) { }                         // 그 적이 죽을 때 (잠식·침식의 카운트)
+        public virtual float GetGoldBonusRate(KillInfo kill) => 0f;                                   // 처치 골드 +x (원석·금맥 0.012 = +1.2%, 수업 32)
+        public virtual int RollGemBonus(KillInfo kill) => 0;                                          // 처치 때 더 얻는 젬 (금맥 10%로 1개)
 
         public abstract string Describe();                  // 설명 한 줄 (Click Debug 창, 적 정보 패널)
     }
