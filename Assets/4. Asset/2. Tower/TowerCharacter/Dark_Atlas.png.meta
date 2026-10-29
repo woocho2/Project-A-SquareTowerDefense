@@ -136,89 +136,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower_Dark_DarkMage_Front_v2
+      name: Dark_Wraith_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 584
+        y: 111
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: bfaf409977a44f72848f98349860e709
-      internalID: 52140
+      spriteID: 1cafa65ed25ca0d4890739c1c89e8fb2
+      internalID: 701935508
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Dark_Shade_Front_v2
+      name: Dark_Heretic_Face
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 205
+        y: 399
+        width: 100
+        height: 100
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 8ae1aee21ce9403abbd35ec9bf6c1598
-      internalID: 52141
+      spriteID: 30e084d5cd149fd4e89b84985e223869
+      internalID: -1167745768
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Dark_Heretic_Front_v2
+      name: Dark_Shade_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 591
+        y: 624
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: ee7dfcf6ce854d698de9270c309c3210
-      internalID: 52142
+      spriteID: 16a6107c9be8822498aa47071066f70e
+      internalID: -249817752
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Dark_Wraith_Front_v2
+      name: Dark_Dark Mage_Ful
       rect:
         serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
+        x: 105
+        y: 615
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 090713437898423eaa3821668f1bde3e
-      internalID: 52143
+      spriteID: 87bf3bc82bf43044dbaf9677d730e6c2
+      internalID: 304963694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dark_Heretic_Full
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 124
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06110353e6be7974a978b83bec8a3fa9
+      internalID: -1813006478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dark_Wraith_Face
+      rect:
+        serializedVersion: 2
+        x: 715
+        y: 361
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4288e66eaec447c478dd0ba37ccee7bd
+      internalID: 889378666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dark_Dark Mage_Face
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 917
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b791784fe5e6a694e9b77504459cceaa
+      internalID: 888434947
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Dark_Shade_Face
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 884
+        width: 128
+        height: 125
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f1ba8130185b3be4780d921622cfd37f
+      internalID: 791777195
       vertices: []
       indices: 
       edges: []
@@ -227,7 +315,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 60cd6f2a4279ed34fa2fde511a6bcc5f
     internalID: 0
     vertices: []
     indices: 
@@ -237,10 +325,19 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Dark_Dark Mage_Face: 888434947
+      Dark_Dark Mage_Ful: 304963694
+      Dark_Heretic_Face: -1167745768
+      Dark_Heretic_Full: -1813006478
+      Dark_Shade_Face: 791777195
+      Dark_Shade_Full: -249817752
+      Dark_Wraith_Face: 889378666
+      Dark_Wraith_Full: 701935508
       Tower_Dark_DarkMage_Front_v2: 52140
       Tower_Dark_Heretic_Front_v2: 52142
       Tower_Dark_Shade_Front_v2: 52141
       Tower_Dark_Wraith_Front_v2: 52143
+      Wraith: 889378666
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

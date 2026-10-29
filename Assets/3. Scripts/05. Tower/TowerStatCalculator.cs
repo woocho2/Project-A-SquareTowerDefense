@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 티어·컬러 레벨·수정자로 최종 스탯을 계산
     public static class TowerStatCalculator
     {
         private static readonly StatType[] s_intStats =
@@ -40,8 +41,8 @@ namespace SquareTD
 
             foreach (StatModifier modifier in modifiers.All)
             {
-                float amount;                
-                if (modifier.IsPercent) amount = baseValues[(int)modifier.Stat] * modifier.Value;                
+                float amount;
+                if (modifier.IsPercent) amount = baseValues[(int)modifier.Stat] * modifier.Value;
                 else amount = modifier.Value;
 
                 sources.Add(new StatSource(modifier.Source, modifier.Stat, amount));
@@ -118,9 +119,9 @@ namespace SquareTD
             foreach (StatType stat in s_intStats)
                 values[(int)stat] = Mathf.Round(values[(int)stat]);
 
-            values[(int)StatType.MaxAction] = Mathf.Max(1, values[(int)StatType.MaxAction]);            
+            values[(int)StatType.MaxAction] = Mathf.Max(1, values[(int)StatType.MaxAction]);
             values[(int)StatType.Duration] = Mathf.Max(1, values[(int)StatType.Duration]);
-            values[(int)StatType.MaxStack] = Mathf.Max(1, values[(int)StatType.MaxStack]);            
+            values[(int)StatType.MaxStack] = Mathf.Max(1, values[(int)StatType.MaxStack]);
             values[(int)StatType.CritRate] = Mathf.Min(1, values[(int)StatType.CritRate]);
             values[(int)StatType.ArmorPenetration] = Mathf.Clamp01(values[(int)StatType.ArmorPenetration]);
         }

@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: SeaSerpent_Appearance
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyCubeAppearance
   m_characterTexture: {fileID: 2800000, guid: 76866ba3f2477f74c365e2146606443f, type: 3}
+  m_faceSprite: {fileID: 161040, guid: 1b4175b9cfac460cb1ff939499c27615, type: 3}
+  m_fullSprite: {fileID: 61040, guid: 1b4175b9cfac460cb1ff939499c27615, type: 3}
   m_equipmentMask: {fileID: 0}

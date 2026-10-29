@@ -1,5 +1,6 @@
 namespace SquareTD
 {
+    // 적이 죽었을 때의 보상 계산
     public class DeathResolver
     {
         private readonly BoardManager m_board;
@@ -43,8 +44,6 @@ namespace SquareTD
             enemy.Pool.Release(enemy);
         }
 
-        // 처치 보상 보정 (수업 32·40): 원석·금맥(+ 타격 막타)은 골드 +%, 금맥은 10%로 젬 1개,
-        //   어둠 카운트 600 존에 선 타워가 처치하면 골드·젬 +150%. 골드 증가끼리는 더하고 소수는 버림
         public static void GetBonusReward(KillInfo kill, ref int gold, ref int gem)
         {
             float goldRate = 0f;
@@ -57,7 +56,7 @@ namespace SquareTD
             TowerController killer = kill.Damage.Attacker;
             float reward = killer != null && killer.Stats != null ? killer.Stats.Get(StatType.RewardBonus) : 0f;
 
-            gold = UnityEngine.Mathf.FloorToInt(gold * (1f + goldRate + reward) + 0.001f);     // + 0.001: 1111.9999 같은 float 오차가 1111로 버려지지 않게
+            gold = UnityEngine.Mathf.FloorToInt(gold * (1f + goldRate + reward) + 0.001f);
             gem = UnityEngine.Mathf.FloorToInt(gem * (1f + reward) + 0.001f);
         }
     }

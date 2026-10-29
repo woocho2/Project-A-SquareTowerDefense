@@ -1,7 +1,6 @@
 namespace SquareTD
 {
-    // 다음 행동 한 번은 주사위 없이 정해진 칸만큼 (21번 #137, 수업 34 급류) — −1이면 뒤로 한 칸, 젖음이면 −2
-    //   다시 맞아도 겹치지 않음 (다음 행동 한 번만). 행동 불가(0 / 0)면 그대로 둠
+    // 다음 행동은 정해진 칸만큼 이동 (급류)
     public class ForcedMoveEffect : StatusEffect
     {
         public const string ForcedKey = "밀려남";

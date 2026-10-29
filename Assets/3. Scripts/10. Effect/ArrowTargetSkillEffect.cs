@@ -3,20 +3,16 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 헌터(단일 활) 스킬 2 은화살 연출 — 최대 체력을 꿰뚫는 한 발
-    //   ① 타워에 은빛이 모이며 은화살이 적을 겨눔 (뒤로 크게 당김)
-    //   ② 순식간에 쏘아져 적을 꿰뚫고 지나감: 굵은 은빛 줄기가 적 뒤까지 길게 남음
-    //   ③ 맞은 자리에 은빛 십자 번쩍 + 퍼지는 고리 + 약한 흔들림
-    //   타워·규칙은 모름. 타워 위치·맞을 위치·칸 크기만 받아서 그림
+    // 헌터(단일 활) 스킬 2 은화살 연출
     [DisallowMultipleComponent]
     public sealed class ArrowTargetSkillEffect : MonoBehaviour
     {
         private static readonly Color s_silver = new Color(0.8f, 0.9f, 1f);
 
         [SerializeField] private float m_chargeDuration = 0.3f;
-        [SerializeField] private float m_arrowLength = 0.9f;       // 칸에 대한 비율
+        [SerializeField] private float m_arrowLength = 0.9f;
         [SerializeField] private float m_flight = 0.07f;
-        [SerializeField] private float m_pierceLength = 1.6f;      // 적 뒤로 꿰뚫고 나가는 길이 (칸)
+        [SerializeField] private float m_pierceLength = 1.6f;
 
         private EffectQuadPool m_pool;
         private EffectQuadPool m_streakPool;
@@ -33,7 +29,6 @@ namespace SquareTD
             m_streakPool?.Dispose();
         }
 
-        // owner: 헌터 위치 / target: 맞을 적의 위치 / cellWorldSize: 칸 한 변
         public void Play(Vector3 owner, Vector3 target, float cellWorldSize)
         {
             if (!m_pool.IsReady || !m_streakPool.IsReady) return;
@@ -60,11 +55,11 @@ namespace SquareTD
             float alpha = 1f;
             Sequence sequence = DOTween.Sequence().SetLink(arrow.GameObject, LinkBehaviour.KillOnDisable);
             sequence.Append(arrow.Transform.DOScale(new Vector3(length, length * 0.5f, 1f), 0.12f).SetEase(Ease.OutBack));
-            sequence.Append(arrow.Transform.DOMove(drawn, m_chargeDuration - 0.12f).SetEase(Ease.OutCubic));     // 크게 당김
+            sequence.Append(arrow.Transform.DOMove(drawn, m_chargeDuration - 0.12f).SetEase(Ease.OutCubic));
             sequence.AppendCallback(() =>
             {
                 SlashStroke.Play(m_streakPool, (drawn + beyond) * 0.5f, angle, (beyond - drawn).magnitude, cell * 0.5f, 0.16f, s_silver,
-                    0f, m_flight, 0.12f, 0.35f);                                    // 꿰뚫는 은빛 줄기
+                    0f, m_flight, 0.12f, 0.35f);
             });
             sequence.Append(arrow.Transform.DOMove(beyond, m_flight).SetEase(Ease.Linear));
             sequence.Join(DOTween.To(() => alpha, value => { alpha = value; arrow.SetFloat(EffectQuad.AlphaId, value); },
@@ -91,7 +86,6 @@ namespace SquareTD
             sequence.OnKill(() => m_pool.Release(glow));
         }
 
-        // 꿰뚫린 자리: 큰 은빛 십자 번쩍 + 퍼지는 고리 + 약한 흔들림
         private void PlayPierce(Vector3 target, float cell)
         {
             ArrowFx.PlaySpark(m_pool, target, cell * 1.5f, s_silver);

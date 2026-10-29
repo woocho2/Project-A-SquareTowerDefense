@@ -136,79 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower_Hammer_Breaker_Front_v2
+      name: Hammer_Blacksmith_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a24757610c8140ff9fa8983542ce44dc
-      internalID: 52060
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Tower_Hammer_Mason_Front_v2
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 826e52a99ae24e43a4167a8ac4663fea
-      internalID: 52061
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Tower_Hammer_Blacksmith_Front_v2
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d52e37e163e7486a9048c530f7575da3
-      internalID: 52062
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Tower_Hammer_Dwarf_Front_v2
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
+        x: 63
+        y: 108
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -223,11 +157,165 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Hammer_Dwarf_Full
+      rect:
+        serializedVersion: 2
+        x: 580
+        y: 97
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 936e168ae21410546a73075cde0e050e
+      internalID: 1463755192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hammer_Breaker_Full
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 621
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 77afea335264e7c4c89c4b7fbed5c755
+      internalID: 1131173497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hammer_Mason_Full
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 624
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9f03509fa0bfd324eb9b82d7a61c1873
+      internalID: 378897747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hammer_Blacksmith_Face
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 393
+        width: 88
+        height: 88
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 699d3d4f42bcddf40a520fec292a0d18
+      internalID: -1182673352
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hammer_Dwarf_Face
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 362
+        width: 132
+        height: 132
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd197dd3046cb1741ac4f9a9eeffa8ed
+      internalID: 1558521776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hammer_Breaker_Face
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 921
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea708a4cba9636943abdd549e46f7aa8
+      internalID: 732280956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hammer_Mason_Face
+      rect:
+        serializedVersion: 2
+        x: 731
+        y: 865
+        width: 150
+        height: 150
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b66f0743917b2941a6a2f4b69934a3c
+      internalID: -1396774050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 63e598f55efa87c4589bc47597313698
     internalID: 0
     vertices: []
     indices: 
@@ -237,9 +325,16 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Hammer_Blacksmith_Face: -1182673352
+      Hammer_Blacksmith_Full: 52063
+      Hammer_Breaker_Face: 732280956
+      Hammer_Breaker_Full: 1131173497
+      Hammer_Dwarf_Face: 1558521776
+      Hammer_Dwarf_Full: 1463755192
+      Hammer_Mason_Face: -1396774050
+      Hammer_Mason_Full: 378897747
       Tower_Hammer_Blacksmith_Front_v2: 52062
       Tower_Hammer_Breaker_Front_v2: 52060
-      Tower_Hammer_Dwarf_Front_v2: 52063
       Tower_Hammer_Mason_Front_v2: 52061
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 한 번 행동할 때의 이동 범위와 행동 주기
+    // 적의 스탯과 이동 범위
     public readonly struct MoveRange
     {
         public readonly int Min;
@@ -45,7 +45,7 @@ namespace SquareTD
             int action = Mathf.RoundToInt(Get(StatType.MaxAction));
 
             int shortage = Mathf.Max(0, 1 - min);
-            
+
             min = Mathf.Max(1, min);
             max = Mathf.Max(min, max);
             action = Mathf.Max(1, action + shortage);

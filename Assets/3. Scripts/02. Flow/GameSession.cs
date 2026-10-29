@@ -5,21 +5,21 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 한 판의 진행: 적 수 한도(기본 + 보정), 게임 오버·클리어
     public class GameSession : Singleton<GameSession>
     {
         [SerializeField] private GameMode m_mode = GameMode.Normal;
 
         public GameMode Mode => m_mode;
-        public int BaseLimit { get; private set; }                  // 사이클의 기본 한도 (WaveTable)
-        public int CurrentLimit => BaseLimit + SumLimitModifiers(); // 기본 + 보정의 합 (도끼 버프 −, 수업 31 방패 방어막 +)
+        public int BaseLimit { get; private set; }
+        public int CurrentLimit => BaseLimit + SumLimitModifiers();
         public bool IsOver { get; private set; }
-        public EmblemSharedState Shared { get; } = new EmblemSharedState();        // 어둠의 카운트 (수업 40)
+        public EmblemSharedState Shared { get; } = new EmblemSharedState();
 
         public event Action<int> LimitChanged;
 
-        // 한도 보정: 출처 → 더하는 값 (수업 28). 바뀌면 값과 LimitChanged는 바로, 패배 판정은 여전히 소환 직전만 (20번 1장)
         private readonly Dictionary<string, int> m_limitModifiers = new Dictionary<string, int>();
-        private readonly HashSet<string> m_towerLimitSources = new HashSet<string>();   // 버프 타워 규칙이 넣은 출처 (다시 셀 때 이것만 지움)
+        private readonly HashSet<string> m_towerLimitSources = new HashSet<string>();
         public IReadOnlyDictionary<string, int> LimitModifiers => m_limitModifiers;
 
         protected override void Awake()
@@ -36,8 +36,8 @@ namespace SquareTD
             TowerManager.Instance.TowerAdded += OnTowerChanged;
             TowerManager.Instance.TowerRemoved += OnTowerChanged;
             TowerManager.Instance.TowerReplaced += OnTowerReplaced;
-            BoardManager.Instance.Zones.ZoneChanged += OnZoneChanged;      // 방패의 이지스가 펴지면 (존이 스킬 2로)
-            EnemyManager.Instance.EnemyDied += OnEnemyDied;                // 어둠의 카운트 (수업 40)
+            BoardManager.Instance.Zones.ZoneChanged += OnZoneChanged;
+            EnemyManager.Instance.EnemyDied += OnEnemyDied;
         }
 
         private void OnEnemyDied(KillInfo kill) => Shared.AddDarkness(EmblemSharedState.GetKillCount(kill, HasDarknessBuffTower()));
@@ -73,7 +73,7 @@ namespace SquareTD
             if (limit == BaseLimit) return;
 
             ChangeLimit(() => BaseLimit = limit);
-            RefreshTowerLimits();                   // 도끼가 깎는 양은 기본 한도에 비례
+            RefreshTowerLimits();
         }
 
         private void OnTowerChanged(TowerController tower) => RefreshTowerLimits();
@@ -90,7 +90,6 @@ namespace SquareTD
             return sum;
         }
 
-        // 한도를 바꾸는 일을 하고, 실제로 바뀌었으면 알림
         private void ChangeLimit(Action change)
         {
             int before = CurrentLimit;
@@ -101,7 +100,6 @@ namespace SquareTD
             LimitChanged?.Invoke(CurrentLimit);
         }
 
-        // 판 위 버프 타워의 한도 보정을 다시 셈: 문양마다 그 문양 버프 타워 중 값이 가장 큰 하나 (도끼는 여러 기여도 더하지 않음, 20번 4-4장)
         private void RefreshTowerLimits()
         {
             var best = new Dictionary<TowerEmblem, int>();

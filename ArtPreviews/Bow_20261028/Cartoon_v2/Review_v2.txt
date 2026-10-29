@@ -1,6 +1,0 @@
-활 4종 전신 시안 / 내장 image_gen / 게임 에셋과 코드 변경 없음
-레인저 / 광역: source 1254x1254, source opaque edge 0; 512x512 RGBA; nonzero-alpha bounds (41,20)-(484,486); partial-alpha pixels=57118.
-헌터 / 단일: source 1254x1254, source opaque edge 0; 512x512 RGBA; nonzero-alpha bounds (16,25)-(475,489); partial-alpha pixels=64543.
-엘프 / 버프: source 1254x1254, source opaque edge 0; 512x512 RGBA; nonzero-alpha bounds (41,16)-(485,495); partial-alpha pixels=51706.
-스나이퍼 / 디버프: source 1254x1254, source opaque edge 0; 512x512 RGBA; nonzero-alpha bounds (30,16)-(481,488); partial-alpha pixels=74776.
-Atlas 1024x1024: 광역(왼쪽 위), 단일(오른쪽 위), 버프(왼쪽 아래), 디버프(오른쪽 아래). 개별 512px PNG의 사방 16px 이상 투명 여백 확인. 검 원본과 같은 배율 비교 및 96px 축소 미리보기 생성. source opaque edge 기록은 원본 가장자리 확인용이며 생성 잘림 부재 자체를 보증하지 않음. Unity 임포트/플레이 확인 없음.

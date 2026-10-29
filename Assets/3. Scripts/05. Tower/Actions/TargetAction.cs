@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
+    // 단일 타워의 기본 공격: 고른 적에게 여러 발
     public class TargetAction : TowerAction
     {
         public TargetAction(BoardGrid grid, PathOccupancy occupancy, IProjectileLauncher launcher) : base(grid, occupancy, launcher) { }
@@ -17,22 +18,22 @@ namespace SquareTD
 
         public override IEnumerator Act(TowerController tower, TowerFinalStats stats, AttackHandle handle)
         {
-            int satelliteCount = stats.AttackCount;
-            int shotsPerSatellite = GetShotsPerAttack(stats.Mastery);
-            SatelliteSettings satellite = tower.Satellite;
-            float hold = (satelliteCount - 1) * satellite.Interval + satellite.LaunchDelay;
+            int volleyCount = stats.AttackCount;
+            int shotsPerVolley = GetShotsPerAttack(stats.Mastery);
+            ShotTiming timing = tower.ShotTiming;
+            Vector3 from = tower.transform.position;
             int lookId = ProjectileCatalog.GetLookId(tower.Definition.Id);
             float speed = tower.Definition.ProjectileSpeed;
             TargetSelector selector = TargetSelector.For(tower.State.TargetPriority);
             Vector3Int towerCell = m_grid.GetSpawnCell(tower.SlotIndex);
             var incoming = new Dictionary<ITarget, float>();
 
-            for (int s = 0; s < satelliteCount; s++)
+            for (int s = 0; s < volleyCount; s++)
             {
-                Vector3 center = tower.transform.position + SatelliteLayout.GetOffset(s, satelliteCount, satellite.Radius);
-
-                for (int j = 0; j < shotsPerSatellite; j++)
+                for (int j = 0; j < shotsPerVolley; j++)
                 {
+                    if (j > 0 && timing.ShotGap > 0f) yield return new WaitForSeconds(timing.ShotGap);
+
                     List<ITarget> inRange = CollectTargetsInRange(tower, stats.Range);
                     if (inRange.Count == 0) yield break;
 
@@ -41,10 +42,9 @@ namespace SquareTD
                     DamageInfo hit = MakeBasicHit(tower, stats, shotTarget, isCritical);
                     float expected = shotTarget.PreviewDamage(hit);
                     AddIncoming(incoming, shotTarget, expected);
-                    Vector3 from = center + SatelliteLayout.GetSpread(s, satelliteCount, j, shotsPerSatellite, satellite.GroupSpacing);
 
                     handle.AddShot();
-                    m_launcher.Fire(lookId, from, shotTarget.Transform.position, speed, hold, 1f, () =>
+                    m_launcher.Fire(lookId, from, shotTarget.Transform.position, speed, 0f, 1f, () =>
                     {
                         AddIncoming(incoming, shotTarget, -expected);
                         tower.CountSkillHit(shotTarget);
@@ -54,9 +54,9 @@ namespace SquareTD
                     });
                 }
 
-                if (s < satelliteCount - 1 && satellite.Interval > 0f)
+                if (s < volleyCount - 1 && timing.VolleyInterval > 0f)
                 {
-                    yield return new WaitForSeconds(satellite.Interval);
+                    yield return new WaitForSeconds(timing.VolleyInterval);
                 }
             }
         }

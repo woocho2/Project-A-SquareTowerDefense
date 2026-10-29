@@ -2,11 +2,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 바람 디버프 — 역풍(스킬 1) · 난기류(스킬 2) (20번 4-12장)
-    //   이동할 때마다 (0.001 × Power × AbilityValue × 스택)% 확률로 최소 이동력이 (최대 × −1) → −최대 ~ +최대 사이에서 굴림 (음수면 뒤로)
-    //   난기류의 고유 효과: 이동할 때마다 (이동한 칸 수 × 4)%만큼 현재 체력이 깎임 (뒤로 간 칸도 셈)
-    //   확률과 4%는 저항력만큼 줄어듦
-    //   바람 단일이 이 적을 치면 치명 확률 +10%(역풍) / +20%(난기류)
+    // 바람 디버프 — 역풍 · 난기류
     public class WindDebuffRule : DebuffRule
     {
         public const float TurbulenceRate = 0.04f;
@@ -20,12 +16,11 @@ namespace SquareTD
         }
     }
 
-    // 역풍·난기류가 적에게 걸려 있는 동안
     public class WindDebuffEffect : EmblemDebuffEffect
     {
         private readonly TowerController m_owner;
         private readonly float m_chance;
-        private readonly float m_hpRate;            // 난기류: 한 칸에 현재 체력의 이 비율 (역풍은 0)
+        private readonly float m_hpRate;
 
         public WindDebuffEffect(Zone zone, float chance, float hpRate)
             : base(TowerEmblem.Wind, zone.Stage, zone.Owner.Stats.Duration, chance,
@@ -38,7 +33,7 @@ namespace SquareTD
 
         public override MoveRange OnDecideMove(EnemyController enemy, MoveRange range)
         {
-            if (range.Min == 0 && range.Max == 0) return range;            // 행동 불가
+            if (range.Min == 0 && range.Max == 0) return range;
             if (!Chance.Roll(m_chance)) return range;
             return new MoveRange(-range.Max, range.Max, range.Action);
         }

@@ -1,56 +1,64 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 
 namespace SquareTD
 {
+    // 타워의 그림과 색을 입힘
     public class TowerVisual : MonoBehaviour
     {
         [Header("Sprite Renderers")]
         [SerializeField] private SpriteRenderer m_backgroundRenderer;
         [SerializeField] private SpriteRenderer m_characterRenderer;
         [SerializeField] private SpriteRenderer m_decorationRenderer;
-        [SerializeField] private SpriteRenderer m_emblemRenderer;
         [Header("정면 캐릭터")]
         [SerializeField] private TowerCharacterCatalog m_regularCharacters;
         [SerializeField] private SynergyCharacterCatalog m_synergyCharacters;
         [FormerlySerializedAs("m_swordCanvasWorldSize")]
         [SerializeField, Min(0.01f)] private float m_canvasWorldSize = 1f;
         [SerializeField, Min(0.01f)] private float m_synergyCanvasWorldSize = 1f;
-        [Header("문양 / 정보 패널 아이콘")]
-        [Tooltip("검, 도끼, 활, 창, 방패, 해머, 불, 물, 대지, 바람, 얼음, 전기, 빛, 어둠 순서.")]
-        [SerializeField] private Sprite[] m_emblemSprites;
-        [SerializeField] private Sprite[] m_tierSprites;
-        [Header("문양 색상 (1 광역 / 2 단일 / 3 버프 / 4 디버프)")]
-        [SerializeField] private Color m_splashColor = new Color32(226, 93, 98, 255);
-        [SerializeField] private Color m_targetColor = new Color32(83, 138, 205, 255);
-        [SerializeField] private Color m_buffColor = new Color32(213, 173, 40, 255);
-        [SerializeField] private Color m_debuffColor = new Color32(32, 32, 39, 255);
+        [Header("프레임 안 캐릭터 (마스크)")]
+        [Tooltip("프리팹에서 맞춘 크기·위치를 게임에서도 그대로 씀. 캐릭터 그림이 바뀌어도 프리팹의 그림과 같은 크기로 맞춤")]
+        [SerializeField] private SpriteMask m_characterMask;
         [Header("티어 색상 (장식 테두리, 1 브론즈 ~ 5 다이아)")]
         [SerializeField] private Color[] m_tierColors =
         {
             new Color(0.78f, 0.46f, 0.24f), new Color(0.77f, 0.85f, 0.92f), new Color(1f, 0.78f, 0.27f),
             new Color(0.56f, 0.91f, 0.80f), new Color(0.32f, 0.80f, 1f)
         };
+        [Header("테두리 반짝임·후광 (FrameShine, SelectionGlow 셰이더)")]
+        [SerializeField, Min(1f)] private float m_haloScale = 1.5f;
+        [SerializeField, Range(0.5f, 1f)] private float m_frameEdge = 0.95f;
+        [SerializeField, Range(0f, 0.5f)] private float m_frameCorner = 0.25f;
+        [SerializeField] private Vector2 m_haloAlpha = new Vector2(0.35f, 0.9f);
+        [SerializeField] private Vector2 m_haloIntensity = new Vector2(0.8f, 2f);
+
+        private static readonly int s_tierId = Shader.PropertyToID("_Tier");
+        private static readonly int s_phaseId = Shader.PropertyToID("_Phase");
+        private static readonly int s_halfSizeId = Shader.PropertyToID("_HalfSize");
+        private static readonly int s_edgeId = Shader.PropertyToID("_Edge");
+        private static readonly int s_cornerId = Shader.PropertyToID("_Corner");
+        private static readonly int s_lineId = Shader.PropertyToID("_Line");
+        private static readonly int s_speedId = Shader.PropertyToID("_Speed");
+        private static readonly int s_intensityId = Shader.PropertyToID("_Intensity");
+        private static Material s_frameMaterial;
+        private static Material s_haloMaterial;
+
+        private SpriteRenderer m_halo;
+        private MaterialPropertyBlock m_shineBlock;
+        private float m_shinePhase = -1f;
         private int m_appliedTowerID;
-        private int m_appliedVisualID;
         public bool UsesCharacterVisual { get; private set; }
         public Sprite CharacterSprite => m_characterRenderer != null ? m_characterRenderer.sprite : null;
         public Sprite IllustrationSprite { get; private set; }
-        public Sprite ProjectileEmblemSprite => GetSprite(m_emblemSprites, m_appliedVisualID % 100);
-        public Color ProjectileEmblemColor => GetEmblemColor((m_appliedVisualID % 1000) / 100);
-        public Sprite TierSprite => m_appliedTowerID / 1000 == 6
-            ? (m_decorationRenderer != null ? m_decorationRenderer.sprite : null)
-            : GetSprite(m_tierSprites, m_appliedTowerID / 1000);
+        public Sprite DecorationSprite => m_decorationRenderer != null ? m_decorationRenderer.sprite : null;
         public Color TierColor => m_decorationRenderer != null ? m_decorationRenderer.color : Color.white;
         public Sprite ColorSprite => IsRegular && m_backgroundRenderer != null ? m_backgroundRenderer.sprite : null;
-        public Sprite EmblemSprite => IsRegular ? GetSprite(m_emblemSprites, m_appliedTowerID % 100) : null;
-        public Color EmblemColor => GetEmblemColor((m_appliedTowerID % 1000) / 100);
         private bool IsRegular => m_appliedTowerID / 1000 >= 1 && m_appliedTowerID / 1000 <= 5;
 
         public void Apply(int towerID)
         {
             m_appliedTowerID = towerID;
-            m_appliedVisualID = towerID;
             CacheRenderers();
             int tier = towerID / 1000;
             int attack = (towerID % 1000) / 100;
@@ -69,7 +77,9 @@ namespace SquareTD
                 if (m_regularCharacters != null) portrait = m_regularCharacters.GetCharacter(towerID % 100, attack);
             }
             IllustrationSprite = portrait;
-            if (IsRegular && m_regularCharacters != null)
+            if (synergy && m_synergyCharacters != null)
+                portrait = m_synergyCharacters.GetTowerCharacter(towerID);
+            else if (IsRegular && m_regularCharacters != null)
                 portrait = m_regularCharacters.GetTowerCharacter(towerID % 100, attack);
             float canvasSize = synergy ? m_synergyCanvasWorldSize : m_canvasWorldSize;
             Sprite background = m_backgroundRenderer != null ? m_backgroundRenderer.sprite : null;
@@ -77,20 +87,10 @@ namespace SquareTD
             ApplyLayer(m_backgroundRenderer, background, -1, canvasSize);
             ApplyLayer(m_characterRenderer, portrait, 0, canvasSize);
             ApplyLayer(m_decorationRenderer, decoration, 1, canvasSize);
+            ApplyCharacterFrame(background, canvasSize);
             if (m_decorationRenderer != null && !synergy && tier >= 1 && m_tierColors != null && tier <= m_tierColors.Length)
                 m_decorationRenderer.color = m_tierColors[tier - 1];
-            if (m_emblemRenderer != null)
-            {
-                m_emblemRenderer.sprite = synergy ? null : GetSprite(m_emblemSprites, towerID % 100);
-                m_emblemRenderer.color = GetEmblemColor(attack);
-                m_emblemRenderer.enabled = m_emblemRenderer.sprite != null;
-                m_emblemRenderer.SetPropertyBlock(null);
-                if (m_characterRenderer != null)
-                {
-                    m_emblemRenderer.sortingLayerID = m_characterRenderer.sortingLayerID;
-                    m_emblemRenderer.sortingOrder = m_characterRenderer.sortingOrder + 2;
-                }
-            }
+            ApplyFrameShine(synergy ? 6 : Mathf.Clamp(tier, 1, 5));
             UsesCharacterVisual = portrait != null;
             if (portrait == null || background == null || decoration == null)
                 Debug.LogWarning($"[TowerVisual] TowerID {towerID}의 초상·배경·장식 연결을 확인해 주세요.", this);
@@ -117,30 +117,120 @@ namespace SquareTD
             if (renderer == m_characterRenderer) renderer.SetPropertyBlock(null);
             if (m_characterRenderer != null && renderer != m_characterRenderer)
             {
-                renderer.transform.localPosition = m_characterRenderer.transform.localPosition;
-                renderer.transform.localRotation = m_characterRenderer.transform.localRotation;
                 renderer.sortingLayerID = m_characterRenderer.sortingLayerID;
                 renderer.sortingOrder = m_characterRenderer.sortingOrder + orderOffset;
             }
             if (sprite == null) return;
+
             Vector3 size = sprite.bounds.size;
+            float ratio = canvasSize / Mathf.Max(0.0001f, m_canvasWorldSize);
+            if (m_authored.TryGetValue(renderer, out Authored authored) && authored.SpriteSize.x > 0f && authored.SpriteSize.y > 0f)
+            {
+                renderer.transform.localScale = new Vector3(
+                    authored.Scale.x * authored.SpriteSize.x / Mathf.Max(0.0001f, size.x) * ratio,
+                    authored.Scale.y * authored.SpriteSize.y / Mathf.Max(0.0001f, size.y) * ratio,
+                    authored.Scale.z);
+                return;
+            }
             renderer.transform.localScale = new Vector3(
                 canvasSize / Mathf.Max(0.0001f, size.x),
                 canvasSize / Mathf.Max(0.0001f, size.y), renderer.transform.localScale.z);
         }
 
-        private Color GetEmblemColor(int attackClass) => attackClass switch
+        private void ApplyFrameShine(int tier)
         {
-            1 => m_splashColor, 2 => m_targetColor, 3 => m_buffColor, 4 => m_debuffColor, _ => Color.white
-        };
+            if (!Application.isPlaying || m_decorationRenderer == null || m_decorationRenderer.sprite == null) return;
+            if (s_frameMaterial == null) s_frameMaterial = MakeMaterial("FrameShine");
+            if (s_haloMaterial == null) s_haloMaterial = MakeMaterial("SelectionGlow");
+            if (m_shineBlock == null) m_shineBlock = new MaterialPropertyBlock();
+            if (m_shinePhase < 0f) m_shinePhase = Random.Range(0f, 10f);
+            float strength = (tier - 1) / 5f;
 
-        private static Sprite GetSprite(Sprite[] sprites, int id)
-        {
-            int index = id - 1;
-            return sprites != null && index >= 0 && index < sprites.Length ? sprites[index] : null;
+            if (s_frameMaterial != null)
+            {
+                m_decorationRenderer.sharedMaterial = s_frameMaterial;
+                m_decorationRenderer.GetPropertyBlock(m_shineBlock);
+                m_shineBlock.SetFloat(s_tierId, tier);
+                m_shineBlock.SetFloat(s_phaseId, m_shinePhase);
+                m_decorationRenderer.SetPropertyBlock(m_shineBlock);
+            }
+
+            if (s_haloMaterial == null) return;
+            if (m_halo == null)
+            {
+                var halo = new GameObject("Frame Halo");
+                halo.transform.SetParent(m_decorationRenderer.transform.parent, false);
+                m_halo = halo.AddComponent<SpriteRenderer>();
+                m_halo.sharedMaterial = s_haloMaterial;
+            }
+
+            Sprite frame = m_decorationRenderer.sprite;
+            m_halo.sprite = frame;
+            m_halo.transform.localPosition = m_decorationRenderer.transform.localPosition;
+            m_halo.transform.localScale = m_decorationRenderer.transform.localScale * m_haloScale;
+            m_halo.sortingLayerID = m_decorationRenderer.sortingLayerID;
+            m_halo.sortingOrder = (m_backgroundRenderer != null ? m_backgroundRenderer.sortingOrder : m_decorationRenderer.sortingOrder) - 1;
+            Color glow = m_decorationRenderer.color;
+            glow.a = Mathf.Lerp(m_haloAlpha.x, m_haloAlpha.y, strength);
+            m_halo.color = glow;
+
+            m_shineBlock.Clear();
+            m_halo.GetPropertyBlock(m_shineBlock);
+            m_shineBlock.SetFloat(s_halfSizeId, frame.bounds.extents.x);
+            m_shineBlock.SetFloat(s_edgeId, m_frameEdge / m_haloScale);
+            m_shineBlock.SetFloat(s_cornerId, m_frameCorner);
+            m_shineBlock.SetFloat(s_lineId, 0.012f);
+            m_shineBlock.SetFloat(s_speedId, Mathf.Lerp(0.8f, 1.8f, strength));
+            m_shineBlock.SetFloat(s_intensityId, Mathf.Lerp(m_haloIntensity.x, m_haloIntensity.y, strength));
+            m_halo.SetPropertyBlock(m_shineBlock);
+            m_shineBlock.Clear();
         }
 
-        private void Awake() => CacheRenderers();
+        private static Material MakeMaterial(string shaderName)
+        {
+            Shader shader = Resources.Load<Shader>(shaderName);
+            return shader != null && shader.isSupported ? new Material(shader) { name = $"{shaderName} (Runtime)" } : null;
+        }
+
+        private void ApplyCharacterFrame(Sprite frameInside, float canvasSize)
+        {
+            if (m_characterRenderer == null || m_characterMask == null) return;
+            m_characterRenderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+            if (m_characterMask.sprite == null) m_characterMask.sprite = frameInside;
+        }
+
+        private struct Authored
+        {
+            public Vector3 Scale;
+            public Vector3 SpriteSize;
+        }
+
+        private readonly System.Collections.Generic.Dictionary<SpriteRenderer, Authored> m_authored =
+            new System.Collections.Generic.Dictionary<SpriteRenderer, Authored>();
+
+        private void RememberAuthored(SpriteRenderer renderer)
+        {
+            if (renderer == null || m_authored.ContainsKey(renderer)) return;
+            m_authored[renderer] = new Authored
+            {
+                Scale = renderer.transform.localScale,
+                SpriteSize = renderer.sprite != null ? renderer.sprite.bounds.size : Vector3.zero,
+            };
+        }
+
+        private void Awake()
+        {
+            CacheRenderers();
+            RememberAuthored(m_backgroundRenderer);
+            RememberAuthored(m_characterRenderer);
+            RememberAuthored(m_decorationRenderer);
+            if (m_characterMask != null && GetComponent<SortingGroup>() == null)
+            {
+                SortingGroup group = gameObject.AddComponent<SortingGroup>();
+                if (m_characterRenderer != null) group.sortingLayerID = m_characterRenderer.sortingLayerID;
+            }
+        }
+
         private void OnValidate() => CacheRenderers();
 
         private void CacheRenderers()
@@ -148,7 +238,7 @@ namespace SquareTD
             if (m_backgroundRenderer == null) m_backgroundRenderer = FindRenderer("Background");
             if (m_characterRenderer == null) m_characterRenderer = FindRenderer("Character");
             if (m_decorationRenderer == null) m_decorationRenderer = FindRenderer("Decoration");
-            if (m_emblemRenderer == null) m_emblemRenderer = FindRenderer("Emblem");
+            if (m_characterMask == null) m_characterMask = GetComponentInChildren<SpriteMask>(true);
         }
 
         private SpriteRenderer FindRenderer(string childName)

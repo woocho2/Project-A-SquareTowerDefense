@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace SquareTD
 {
+    // 버프 타워의 행동: 존에 스택을 쌓고 존 위 타워에게 버프
     public class BuffZoneAction : TowerAction
     {
         private readonly ZoneRegistry m_zones;
@@ -21,7 +22,7 @@ namespace SquareTD
         public override IEnumerator Act(TowerController tower, TowerFinalStats stats, AttackHandle handle)
         {
             bool ownerStack = SkillRegistry.GetBuffRule(tower.Definition.Emblem).UsesOwnerStack;
-            if (ownerStack) tower.State.Stack.Add(stats.AttackCount);      // 방패: 행동마다 타워 자신에게 한 번 (존 수와 무관)
+            if (ownerStack) tower.State.Stack.Add(stats.AttackCount);
 
             foreach (Zone zone in m_zones.GetByOwner(tower))
             {
@@ -63,7 +64,7 @@ namespace SquareTD
             foreach (StatModifier modifier in rule.GetModifiers(zone, receiver, source))
                 receiver.State.Modifiers.Add(modifier);
             receiver.State.ReceivedZoneBuffs[zone] = source;
-            rule.OnGiveBuff(zone, receiver);                // 확률로 터지는 버프 (바람·빛)
+            rule.OnGiveBuff(zone, receiver);
         }
 
         public static void TakeBuff(Zone zone, TowerController receiver)
@@ -71,10 +72,9 @@ namespace SquareTD
             if (!receiver.State.ReceivedZoneBuffs.TryGetValue(zone, out string source)) return;
             receiver.State.Modifiers.RemoveBySource(source);
             receiver.State.ReceivedZoneBuffs.Remove(zone);
-            SkillRegistry.GetBuffRule(zone.Emblem).OnTaken(zone, receiver);     // 확률로 터진 시간 버프도 같이 끝남
+            SkillRegistry.GetBuffRule(zone.Emblem).OnTaken(zone, receiver);
         }
 
-        // ⓪ 적 턴마다: 단계가 도는 존(불·전기)의 시간을 줄이고, 단계가 바뀌었으면 존 위 타워의 버프를 바로 다시 줌
         public static void RunZoneTurns(ZoneRegistry zones, TowerSlots slots)
         {
             foreach (Zone zone in new List<Zone>(zones.All))

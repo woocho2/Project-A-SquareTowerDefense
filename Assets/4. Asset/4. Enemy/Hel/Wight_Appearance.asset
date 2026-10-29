@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: Wight_Appearance
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyCubeAppearance
   m_characterTexture: {fileID: 2800000, guid: 2370dfbeb76b03765af1033667cb0089, type: 3}
+  m_faceSprite: {fileID: 161090, guid: 9341ecf5f1bf4d3e99043e3107657b6b, type: 3}
+  m_fullSprite: {fileID: 61090, guid: 9341ecf5f1bf4d3e99043e3107657b6b, type: 3}
   m_equipmentMask: {fileID: 0}

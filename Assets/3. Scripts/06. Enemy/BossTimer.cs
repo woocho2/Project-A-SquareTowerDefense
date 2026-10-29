@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
+    // 보스 제한 턴
     public class BossTimer
     {
         public const int TurnLimit = 20;

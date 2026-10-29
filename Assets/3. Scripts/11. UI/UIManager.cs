@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
+    // UI 패널들을 켜고 끄고 고른 대상을 알림
     public class UIManager : Singleton<UIManager>
     {
         [Header("Panel")]
@@ -158,7 +159,7 @@ namespace SquareTD
             SelectedPathIndex = pathIndex;
             SelectedSpawnIndex = spawnIndex;
             SetInfoPanel(InfoPanel.Tile);
-            SelectedTileChanged?.Invoke();                  // 패널이 켜진 뒤에 알림 (꺼져 있으면 듣지 않으므로)
+            SelectedTileChanged?.Invoke();
             RefreshTileCorner();
         }
 
@@ -197,6 +198,9 @@ namespace SquareTD
             SelectedTower = null;
             SetInfoPanel(InfoPanel.None);
         }
+
+        public bool IsTowerSelected(TowerController tower) =>
+            tower != null && SelectedTower == tower && m_towerInfoPanel != null && m_towerInfoPanel.activeSelf;
 
         public bool IsTowerInfoPanelElement(GameObject element)
         {
@@ -253,9 +257,6 @@ namespace SquareTD
             }
         }
 
-        // ── 카드 넘기기 (타워·적 카드 ↔ 타일 카드): 카드가 빠르게 여러 번 돌다가 다른 카드로 (CardFlip.Spin) ──
-
-        // 카드마다 오른쪽 위에 접힌 귀퉁이 (2026-10-28, 왼쪽 세로 탭 대신)
         private void CreateCardCorners()
         {
             if (m_towerInfoPanel != null) CardCorner.Create((RectTransform)m_towerInfoPanel.transform, "타일", SwitchToTileInfoPanel);
@@ -263,7 +264,6 @@ namespace SquareTD
             if (m_tileInfoPanel != null) m_tileCorner = CardCorner.Create((RectTransform)m_tileInfoPanel.transform, "타워", SwitchFromTileInfoPanel);
         }
 
-        // 타일 카드에서 돌아갈 카드: 스폰 칸에 타워가 있으면 타워, 길 칸에 적이 있으면 적. 없으면 귀퉁이를 숨김
         private void RefreshTileCorner()
         {
             if (m_tileCorner == null) return;
@@ -318,7 +318,6 @@ namespace SquareTD
             Spin(ActiveInfoPanel(), m_tileInfoPanel != null ? m_tileInfoPanel.transform : null, () => ShowTileInfoPanel(path, spawn));
         }
 
-        // 두 카드가 같은 자리에 겹쳐 있음 → 지금 카드가 돌다가, 옆모습일 때 다음 카드로 바꾸고 그 카드가 마저 돎
         private static void Spin(Transform from, Transform to, Action swap)
         {
             if (from == null || to == null || from == to)
@@ -375,7 +374,6 @@ namespace SquareTD
             Resume();
         }
 
-        // 수업 43: 게임 속도가 생기면 멈추기 전 속도를 GameSpeed에서 읽고 되돌림
         public void Pause()
         {
             if (IsPaused) return;

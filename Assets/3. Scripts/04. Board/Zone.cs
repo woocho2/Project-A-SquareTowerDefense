@@ -1,11 +1,12 @@
 namespace SquareTD
-{    
+{
+    // 버프존·디버프존 하나 (주인, 자리, 스택, 단계)
     public enum ZoneStage
     {
         None = 0,
         Skill1 = 1,
         Skill2 = 2,
-        Discharge = 3,      // 전기 방전: 아무 효과 없이 5턴 쉬는 단계 (수업 38)
+        Discharge = 3,
     }
 
     public class Zone
@@ -28,12 +29,10 @@ namespace SquareTD
 
         public void PlaceAt(int cellIndex) => CellIndex = cellIndex;
 
-        // 단계가 도는 문양 (불의 불길, 전기의 과충전·방전, 수업 33·38): 그 단계가 남은 턴. 0이면 아직 시작하지 않음
         public int StageTurnsLeft { get; private set; }
 
         public void StartStageTimer(int turns) => StageTurnsLeft = System.Math.Max(1, turns);
 
-        // 한 턴 줄임. 이번에 0이 되었으면 true
         public bool TickStageTimer()
         {
             if (StageTurnsLeft <= 0) return false;
@@ -41,7 +40,6 @@ namespace SquareTD
             return StageTurnsLeft == 0;
         }
 
-        // 불길이 끝남 → 0스택의 불씨 / 방전이 끝남 → 0스택의 충전
         public void ResetToSkill1()
         {
             Stage = ZoneStage.Skill1;
@@ -49,7 +47,6 @@ namespace SquareTD
             StageTurnsLeft = 0;
         }
 
-        // 과충전이 끝남 → 방전 (스택도 쌓지 않음)
         public void StartDischarge(int turns)
         {
             Stage = ZoneStage.Discharge;
@@ -64,10 +61,9 @@ namespace SquareTD
             if (amount <= 0f) return;
             Stack = System.Math.Min(Stack + amount, maxStack);
 
-            if (Stack >= maxStack) Stage = ZoneStage.Skill2;            
+            if (Stack >= maxStack) Stage = ZoneStage.Skill2;
         }
 
-        // 스택을 타워가 쌓는 문양(방패, 수업 31): 타워의 스택을 그대로 옮겨 적음. 한 번 스킬 2가 되면 그대로
         public void SetStack(float stack, int maxStack)
         {
             if (Stage == ZoneStage.Skill2 || Stage == ZoneStage.Discharge) return;

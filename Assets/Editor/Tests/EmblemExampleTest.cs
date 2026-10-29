@@ -61,7 +61,7 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 등록표_검_단일은_블레이드_템페스트()
+        public void 등록표_검_단일은_블레이드_스톰()
         {
             Assert.IsInstanceOf<SwordTargetSkill>(SkillRegistry.CreateAttackSkill(TowerColor.Blue, TowerEmblem.Sword, m_grid, m_occupancy, null));
         }
@@ -104,33 +104,33 @@ namespace SquareTD.Tests
             Assert.AreEqual(AttackAttribute.Slash, target.Hits[0].Attribute);
         }
 
-        // ── 검 단일: 블레이드 템페스트 ──
+        // ── 검 단일: 블레이드 스톰 ──
 
         [Test]
-        public void 블레이드_템페스트는_24번에_나누고_마지막은_2점4배()
+        public void 블레이드_스톰은_10번은_10분의_1_막타는_기준식_합계_2배()
         {
             OccupyingFakeTarget target = MakeTarget(2);
             new SwordTargetSkill(m_grid, m_occupancy, new StackModeSettings()).Fire(MakeTower(1201), target);
 
-            Assert.AreEqual(24, target.Hits.Count);
-            Assert.AreEqual(20f / 24f, target.Hits[0].BaseDamage, 0.0001f);
-            Assert.AreEqual(20f / 24f * 2.4f, target.Hits[23].BaseDamage, 0.0001f, "마지막 일격");
-            Assert.AreEqual(20f * 25.4f / 24f, Total(target), 0.001f, "(23 + 2.4) ÷ 24");
+            Assert.AreEqual(11, target.Hits.Count);
+            Assert.AreEqual(2f, target.Hits[0].BaseDamage, 0.0001f, "20 ÷ 10");
+            Assert.AreEqual(20f, target.Hits[10].BaseDamage, 0.0001f, "막타");
+            Assert.AreEqual(40f, Total(target), 0.001f);
         }
 
         [Test]
-        public void 블레이드_템페스트의_치명은_한_번에_24발_전부()
+        public void 블레이드_스톰의_치명은_한_번에_11발_전부()
         {
             OccupyingFakeTarget target = MakeTarget(2);
             new SwordTargetSkill(m_grid, m_occupancy, new StackModeSettings()).Fire(MakeTower(1201, critRate: 1f), target);
 
-            Assert.AreEqual(24, target.Hits.Count);
+            Assert.AreEqual(11, target.Hits.Count);
             foreach (DamageInfo hit in target.Hits) Assert.IsTrue(hit.IsCritical);
-            Assert.AreEqual(40f * 25.4f / 24f, Total(target), 0.001f, "치명 배율 2");
+            Assert.AreEqual(80f, Total(target), 0.001f, "치명 배율 2");
         }
 
         [Test]
-        public void 블레이드_템페스트는_스택을_쓰면_총_피해가_1점6배()
+        public void 블레이드_스톰은_스택을_쓰면_총_피해가_1점6배()
         {
             OccupyingFakeTarget target = MakeTarget(2);
             TowerController tower = MakeTower(1201);
@@ -138,27 +138,27 @@ namespace SquareTD.Tests
 
             new SwordTargetSkill(m_grid, m_occupancy, new StackModeSettings()).Fire(tower, target);
 
-            Assert.AreEqual(32f * 25.4f / 24f, Total(target), 0.001f);
+            Assert.AreEqual(64f, Total(target), 0.001f);
         }
 
         [Test]
-        public void 블레이드_템페스트는_발동시킨_적에게만()
+        public void 블레이드_스톰은_발동시킨_적에게만()
         {
             OccupyingFakeTarget main = MakeTarget(2), other = MakeTarget(2);
             new SwordTargetSkill(m_grid, m_occupancy, new StackModeSettings()).Fire(MakeTower(1201), main);
 
-            Assert.AreEqual(24, main.Hits.Count);
+            Assert.AreEqual(11, main.Hits.Count);
             Assert.AreEqual(0, other.Hits.Count, "같은 칸이어도 다른 적은 안 맞음");
         }
 
         [Test]
-        public void 블레이드_템페스트_도중에_죽으면_남은_조각은_안_들어감()
+        public void 블레이드_스톰_도중에_죽으면_남은_타격은_안_들어감()
         {
             OccupyingFakeTarget target = MakeTarget(2, hp: 5f);
             new SwordTargetSkill(m_grid, m_occupancy, new StackModeSettings()).Fire(MakeTower(1201), target);
 
             Assert.IsFalse(target.IsAlive);
-            Assert.Less(target.Hits.Count, 24);
+            Assert.Less(target.Hits.Count, 11);
         }
 
         // ── 존 도우미 ──

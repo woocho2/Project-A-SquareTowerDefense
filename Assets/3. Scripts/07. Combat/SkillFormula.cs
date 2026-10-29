@@ -2,11 +2,12 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 스킬의 공통 식 (공격 스킬, 스택, 존의 값, 저항)
     public static class SkillFormula
     {
         public const float StackRate = 0.01f;
         public const float SupportRate = 0.001f;
-        
+
         public static float AttackSkill(float power, float abilityValue)
         {
             float basicAttack = power * abilityValue;
@@ -21,7 +22,7 @@ namespace SquareTD
 
         public static float SupportSkill1(float power, float abilityValue, float currentStack, float stackValue)
         {
-            float basicSupport = 0.001f * power * abilityValue * currentStack * stackValue / 100f;            
+            float basicSupport = 0.001f * power * abilityValue * currentStack * stackValue / 100f;
             return basicSupport;
         }
 
@@ -31,7 +32,6 @@ namespace SquareTD
             return skillSupport;
         }
 
-        // 버프·디버프존의 값 (20번 4-1장): 스킬 1은 지금 스택, 스킬 2는 최대 스택. 존 주인(버프·디버프 타워)의 스탯으로. 0.012 = 1.2%
         public static float ZoneValue(Zone zone)
         {
             TowerFinalStats stats = zone.Owner.Stats;
@@ -44,10 +44,10 @@ namespace SquareTD
             float resist = value * (1 - Mathf.Min(resistancePercent, 100f) / 100f);
             return resist;
         }
-        
+
         public static int DefaultDuration(int colorLevel)
         {
-            int defaultDuration = colorLevel * 2;            
+            int defaultDuration = colorLevel * 2;
             return defaultDuration;
         }
     }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 길 칸마다 서 있는 대상 목록
     public class PathOccupancy
     {
         private readonly Dictionary<int, List<ITarget>> m_cells = new Dictionary<int, List<ITarget>>();

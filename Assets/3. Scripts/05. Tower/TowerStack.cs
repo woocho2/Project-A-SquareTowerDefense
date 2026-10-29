@@ -3,14 +3,15 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 타워의 스킬 2용 스택
     public class TowerStack
     {
-        public float Current { get; private set; }          // 소수 (물결: 쌓이는 양이 % 로 늘어남)
+        public float Current { get; private set; }
         public int Max { get; private set; }
         public bool IsFull => Current >= Max;
-        public bool ManualRequested { get; private set; }   // 수동 소모: 플레이어가 스택 소모 버튼을 눌렀나
+        public bool ManualRequested { get; private set; }
 
-        public event Action Full;                           // 막 다 찼을 때 한 번 (수동 소모 타워가 빛남, 카드의 버튼 켜기)
+        public event Action Full;
 
         public TowerStack(int max)
         {

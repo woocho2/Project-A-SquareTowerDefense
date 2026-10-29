@@ -1256,9 +1256,34 @@
   같은 날 사용자 평("칼집 조잡", "적 맞는 노란 반달 짜침") → 칼집·작아짐을 뺌. 갈라진 뒤 벤 자리에서 빛이 퍼져(_Beam) 하얘짐.
   적이 맞는 것: 노란 반달 X자 → 큰 베기와 같은 각도의 하얀 일자 참격 + 번쩍 + 금빛 고리, 8시 → 2시 쪽 적 순서로 차례로
 
-[수업 32 ~ 40] 해머 · 불 · 물 · 대지 · 바람 · 얼음 · 전기 · 빛 · 어둠 — 9문양을 한 번에 (AI가 코드·테스트, 빈칸 43개)   (2026-10-28)
-                                       확인 상태: Unity CLI로 Run All — 정답으로 채우면 775개 전부 통과, 빈칸 상태로는 721 통과 · 54 실패(전부 빈칸 몫)
-                                                  게임에서 확인은 아직 (빈칸을 채운 뒤 문양마다), 연출은 없음 (Codex)
+[수업 28 ~ 31] 도끼 · 활 · 창 · 방패 — 문양마다 넷 + 처음 쓰는 공용 (AI가 코드·테스트, 문양마다 빈칸 4개)   (2026-10-28)
+                                       확인 상태: Run All 통과 (사용자), 게임에서 확인은 아직. 연출: 대회전·광폭화·깃창은 없거나 옛 것 (Codex)
+기획 변경 (20번에 반영)
+- 도끼: 대회전(사거리 안 전체, 끝 칸 ×1.5, 반드시 치명), 광폭화(레벨×2 행동 치명 100%·공격력 +식%·행동 카운트 +1),
+    출정가 → 발할라의 찬가(치명 피해, 한도 감소), 사형 선고 → 사형 집행(즉사)
+- 활: 화살비 = 쏘아 올린 뒤 ⑤마다 맵 전체에 Power×AV×0.4를 레벨×2턴. 은화살·요정의 활·락 온은 그대로
+- 창: 용맹한 깃창(사거리 안 아군 공격 타워에 공격력·치명 +식%), 뽑아찢기(창 스택 → 한꺼번에), 카우치(Action +2만) → 랜스 차지,
+    과다출혈 고유 효과 = 이동 칸 × 최대 체력 2%
+- 방패: 이름 배쉬, 아머 브레이크, 프로텍트 → 이지스, 서프레스 → 락다운
+- 검: 블레이드 템페스트 마지막 일격 2.4배. 이름을 서양식으로 (소드 마스터·블레이드 댄서·발키리·데스 나이트,
+    보이드 슬래시, 블레이드 템페스트, 블레싱 → 글로리, 커스 → 둠)
+공용에 더한 것
+- 시간 버프(TimedTowerBuff, 행동 끝에 남은 수 −1), 피해 대신 다른 일(AttackSkill.CastInstead), NeedsLivingTarget
+- 한도 보정(GameSession: 기본 + 출처별 보정, 버프 규칙의 GetLimitModifier, 같은 문양은 가장 큰 값 하나)
+- 즉사(EnemyController.Execute), 장판(GroundEffect·GroundEffectRegistry, BoardManager.Grounds), 사거리 안 범위(SkillArea.InRange)
+- 거리 배율(DistanceDamage·DistanceDamageBonus), 적 쪽 치명 확률 보너스(CriticalRoll.RateAgainst), 방어 관통, 받는 치유(EnemyController.Heal)
+- 기절(DamageInfo.StunChance + GetStunChanceBonus → TryStun), 버프 타워 자기 스택(BuffRule.UsesOwnerStack, Zone.SetStack)
+- DebugCheat J(임시 기절) 지움
+배운 것의 요점
+- 칸(필드)에는 = 로 값을 넣고, 괄호 ( )는 함수에만 (bash.StunChance = …)
+- 같은 키를 두 번 넣은 Dictionary는 게임을 켜는 순간 에러 → 등록표 한 줄이 틀리면 표 전체가 망가짐
+- 늘린 것을 되돌릴 때는 곱한 값으로 나눔 (ScaleMax(1f / (1f + 비율)))
+
+[수업 32 ~ 40] 해머 · 불 · 물 · 대지 · 바람 · 얼음 · 전기 · 빛 · 어둠 — 9문양을 한 번에 (AI가 코드·테스트, 빈칸 43개)   (2026-10-28 ~ 2026-10-29)
+                                       확인 상태: 사용자가 빈칸을 다 채운 뒤 Run All 전부 통과 (2026-10-29)
+                                                  게임에서 확인은 아직 (문양마다), 연출은 없음 (Codex)
+                                       채울 때 고친 것: 등록표 디버프 6줄을 ShieldDebuffRule로 복사함 → 각자 규칙으로,
+                                                        StatModifier.Flat(…)만 쓰고 modifiers.Add로 안 넣음(3곳), Percent ↔ Flat, ResetIfSkill1 ↔ ResetToSkill1
 사용자 요청: "망치부터 어둠까지 일단 전부 만들고 빈칸만 만들어볼래?"
 만든 파일 (05. Tower/Skills/ 아래, 문양마다 광역 · 단일 · 버프 · 디버프)
 - Hammer/ — HammerSplashSkill(100T 해머: 착탄 범위, 최대 이동력 −1), HammerTargetSkill(망치질: 50%×(1−저항) 이동력 1 / 1),
@@ -1343,3 +1368,128 @@
   빛 [C] TimedTowerBuff.Remove(receiver.State, BurstSource);   [D] StatModifier.Flat(BurstSource, StatType.Mastery, 1f),
   어둠 [C] if (count >= 400f) modifiers.Add(StatModifier.Flat(source, StatType.AttackCount, 1f));
        [D] EmblemSharedState.Current.AddDarkness(m_countBonus);
+
+[연출] 모든 공격 타워의 스킬 2 앞에 컷인 (2026-10-29, 사용자: "소드마스터와 같은 스킬사용 컷씬") — AI가 만듦   확인 상태: 컴파일 확인, 유니티 검증 필요
+- 10. Effect/SkillCutIn.cs 새로: 보이드 슬래시의 컷인을 떼어 공용으로 — 남색 띠(금 테두리)가 열리고 그 타워의 일러스트가 들어와 머물다 빠짐 (0.8초)
+- TowerTurnRunner: 줄 선 스킬 2를 쏘기 직전마다 컷인을 띄우고 끝나길 기다린 뒤 쏨 → 피해도 컷인 뒤에 들어감
+    TowerController.WillFireNextSkill: 실제로 나갈 스킬일 때만 (죽은 대상만 남은 단일, 맵에 적이 없는 광역이면 컷인 없음)
+- 보이드 슬래시: 자체 컷인을 빼고(일러스트를 넘기지 않으면 건너뜀) 공용 컷인 뒤 바로 하늘 가르기부터
+- 같은 날 추가: 띠 위에 스킬 이름(크게, 굵은 기울임 + 외곽선)과 그 아래 "티어 이름 + 직업 이름"(티어 색)을 띠와 같은 기울기로 씀.
+  띠가 티어를 보여 줌 — 테두리를 티어 색으로, 티어가 오를수록 테두리가 두꺼워지고(3 + 티어×2px) 바탕에 티어 색이 더 배며,
+  띠 안을 훑고 지나가는 빛줄기도 굵고 밝아짐. 시전자 이름 앞에 티어 아이콘(TowerIcons). 시너지 타워는 티어 이름·아이콘 없이 최고 단계 띠.
+  글꼴은 Resources의 NotoSansKR-Black SDF. 띠에 Mask를 달아 빛줄기·글자가 띠 밖으로 나가지 않음. 머무는 시간 0.5 → 0.6초 (글자 읽을 시간)
+
+[연출] 메테오·블리자드·블랙홀 (2026-10-29, 사용자: "메테오, 블리자드, 블랙홀 연출을 만들어볼까?") — AI가 만듦   확인 상태: 컴파일 확인, 유니티 검증 필요
+- FireSplashSkillEffect(메테오): 하늘이 붉게 어두워짐 → 불덩이(빛 + 꼬리 + 불꽃)가 오른쪽 위에서 비스듬히 적마다 떨어짐(최대 30개,
+    0.7초에 걸쳐 흩어서) + 적 없는 곳에 작은 메테오 6개 → 닿을 때마다 섬광·충격파 고리·불꽃·불티·연기·그을린 자국 → 마지막에 화면 테두리·흔들림
+- IceSplashSkillEffect(블리자드): 하늘이 푸르게 덮이고 1.1초 동안 바람 줄기와 눈송이가 왼쪽 위에서 비스듬히 화면을 휩쓸며
+    적마다 서리가 터짐(빛·서리 고리·눈 결정·얼음 조각·눈 뭉치) → 마지막에 하얀 화면 테두리·흔들림
+- DarknessSplashSkillEffect(블랙홀): 장판이 남아 있는 동안 계속 보임 (BoardManager.Grounds를 매 프레임 보고 생기면 열고 없어지면 무너뜨림)
+    열림: 타워에서 어둠 구슬이 포물선으로 날아감 → 고리가 빨려 들며 블랙홀이 열림(줌 펀치·흔들림)
+    남은 동안: 길 위·적 아래(존 고리와 같은 층)에 범위 그늘 + 보라 빛무리 + 검은 핵 + 자홍 테두리, 초승달 띠 6개가 소용돌이치며 안으로 빨려 듦
+    ⑤ 피해 때(BlackHoleGround.OnTurn → SkillEffectTable.PlayBlackHoleTurn): 소용돌이가 빨라지고 고리·빛 알갱이·어둠 연기가 빨려 들며 맞은 적마다 번쩍
+    끝날 때: 잠깐 부풀었다가 한 점으로 쪼그라들고 펑 (마지막 턴 피해 연출이 끝난 뒤)
+    계속 남는 판은 EffectActivity에서 빼서 턴 진행을 막지 않음 (열림·무너짐은 HoldFor로 기다림)
+    같은 날 사용자 요청("좀 더 진한색깔로 하고 알파값으로 조절"): 색을 짙은 보라·자홍·검정으로 낮추고 빛 세기를 줄임.
+    색 다섯 개(핵·그늘·빛·테두리·연기)를 인스펙터 필드로 빼고, 각 색의 알파(A)가 그 부분의 진하기 (셰이더가 _Color.a를 곱함)
+    이어서 사용자 평("그래도 잘 안보이네" — 스크린샷에서 한 칸 안에 작게, 어두운 길 칸에 묻히고 적에 가려짐):
+    핵 크기 0.75칸 → 1.2칸(m_coreScale) + Radius × 0.3칸, 빛무리 2.8배, 소용돌이 띠 두께 0.2 → 0.3·바깥 반지름 1.1배.
+    빛·테두리 색을 다시 밝힘(핵·그늘은 검게 두고 가장자리만 밝게 대비). 소용돌이 띠·테두리는 적 위(Projectile 층)에 그림 — 더하기 섞기라 적이 비쳐 보임
+
+[연출] 화염술사·소서러·다크메이지 기본 공격 (2026-10-29, 사용자 요청 — AI가 만듦)   확인 상태: 컴파일 확인(셰이더는 유니티에서), 유니티 검증 필요
+- ShotEffectTable에 107·111·114를 더함
+- FireSplashAttackEffect(화염술사): 화염구(일렁이는 빛 + 흰 속불)가 투사체 속도의 0.25배로 천천히 날아감(최소 0.5초), 뒤로 불꽃·불티를 흘림
+    → 닿으면 섬광·불꽃 고리 둘 + 불길 28줄기가 범위 끝까지 사방으로 퍼지고 불티·연기
+- IceSplashAttackEffect(소서러): 거대한 눈덩이(FX_Smoke 그림을 흰색으로, 푸른 그림자를 겹쳐 입체감)가 굴러 돌며 포물선으로 날아감, 눈송이·눈가루를 흘림
+    → 닿기 직전 살짝 눌렸다가 펑: 서리 빛·고리·눈 결정, 눈 뭉치 12개가 사방으로, 눈송이·얼음 조각
+- DarknessSplashAttackEffect(다크메이지): 작은 검은 구체가 둘레 화면을 실제로 휘게 함(렌즈처럼 끌어오고 가운데로 갈수록 비틂, 테두리에 보라 빛 고리)
+    빛 알갱이가 구체로 빨려 듦 → 닿으면 범위의 1.4배로 확 커지며 더 세게 휘었다가 → 한 점으로 쪼그라들어 소멸(번쩍·고리·알갱이)
+- Resources/SpaceWarp.shader 새로: 뒤 화면을 _CameraSortingLayerTexture에서 읽어 휨
+- 99. Settings/Renderer2D.asset: Camera Sorting Layer Texture를 켬(Foremost Sorting Layer = Enemy) → 맵·타워·적까지 담긴 화면을 셰이더가 읽음
+    (매 프레임 화면 복사 한 번이 늘어남. 끄면 다크메이지 구체 둘레가 휘지 않고 회색으로 보임)
+
+[연출] 고른 타워의 선택 표시와 사거리 (2026-10-29, 사용자: "highlight는 쉐이더 연출로 … range는 range를 키우면") — AI가 만듦   확인 상태: 컴파일 확인, 유니티 검증 필요
+- 05. Tower/TowerSelectionVisual.cs 새로 + 타워 프리팹 루트에 붙임 (HightLight·Range·Background 렌더러 연결)
+    켜지는 때: UIManager.IsTowerSelected(새로) — 그 타워가 SelectedTower이고 타워 정보창이 열려 있을 때. 평소엔 둘 다 꺼 둠
+- HightLight: Resources/SelectionGlow.shader(새로)를 입힘. 타워 칸 가장자리를 따라 밝은 테두리 + 바깥으로 번지는 빛,
+    빛 두 줄기가 테두리를 돌고 숨 쉬듯 밝아졌다 어두워짐. 색은 프리팹의 HightLight 스프라이트 색. 고를 때 1.25배에서 작아지며 딱 붙음
+- Range: 사거리 R이면 (2R + 1)칸 크기로 키움 (사거리는 칸 거리, 정사각형). 사거리가 바뀌면 바로 다시 맞춤. 고를 때 프리팹 알파까지 서서히 나타남
+- 둘 다 타워의 SortingGroup에서 떼어(sortAtRoot) MapTile 층 50·51에 그림 → 길 칸 위, 적·타워 아래
+
+[연출] 타워 테두리 반짝임·후광 (2026-10-29, 사용자: "프레임을 쉐이더로 좀 번쩍번쩍하게 후광처리") — AI가 만듦   확인 상태: 컴파일 확인, 유니티 검증 필요
+- Resources/FrameShine.shader 새로: Decoration(티어 색 테두리)에 입힘. 비스듬한 빛줄기가 2.6초마다 0.55초 동안 테두리를 훑고,
+    귀퉁이에서 별빛이 번갈아 반짝임. 티어가 높을수록 빛줄기가 밝고 굵어지고 별빛 수가 늘어남(브론즈 1개 ~ 다이아 3개, 시너지 4개)
+    타워마다 _Phase를 무작위로 줘서 한꺼번에 번쩍이지 않음
+- 후광: TowerVisual이 "Frame Halo" 자식을 만들어 SelectionGlow 셰이더로 테두리 바깥에 티어 색 빛을 번지게 함(배경 뒤라 칸 밖으로만 보임)
+    티어가 높을수록 진하고 밝고 빛 줄기가 빠르게 돎. 크기·테두리 위치·둥근 정도·알파·세기는 TowerVisual 인스펙터에서
+
+[개발 도구] 자동 진행(A)의 배치 판단 다시 짬 (2026-10-29, 사용자: "버프존이랑 디버프존이랑 맵버프중에서 최적화 … 존 위치만 잘 설정하면 티어 높은 타워를 그 존으로 이동") — AI가 만듦   확인 상태: 컴파일 확인, 유니티 검증 필요
+- 13. Dev/AutoPlanner.cs 새로. DebugCheat의 옛 자리 정리·존 놓기(AutoArrangeAttackTowers, GetSlotScore, GetDistanceToPath, AutoPlaceZones)를 지우고 AutoPlanner.PlanTurn()으로
+- 순서: 버프존 → 타워 자리 → 디버프존 (존은 영구라 먼저 좋은 칸에 박고, 센 타워를 그 칸으로 옮김)
+- 칸의 값 = 사거리 안 길 칸 수(디버프존이 놓인 길 칸은 +0.5) × (1 + 스폰 특수 타일 + 버프존)
+    스폰 특수 타일: 공격력 +0.3, 공격 횟수 +1/AttackCount, 행동 카운트 = Action ÷ 올림(Action ÷ 2) − 1, 마스터리 +0.4
+    버프존: 하나에 +0.5, 스킬 2 단계면 +0.8
+- 버프존: 판의 가장 긴 공격 사거리로 따진 칸의 값이 가장 큰 스폰 칸 → 다른 문양 버프존이 한 칸에 모임(최대 3)
+- 타워 자리: 공격 타워를 티어(같으면 Power) 높은 순으로 값이 가장 큰 빈 칸에 줌. 지금 칸은 1.05배(작은 차이로는 안 움직임 — 옮기면 버프가 끊기므로)
+    버프·디버프 타워는 특수 타일·버프를 못 받으니 남은 칸 중 값이 가장 낮은 칸으로 비켜 줌
+- 디버프존: 그 길 칸을 사거리 안에 둔 공격 타워의 티어 합이 가장 큰 칸. 정화 칸은 뺌. 같으면 존이 적은 칸
+- DebugCheat에서 안 쓰게 된 using System.Collections.Generic을 지움
+
+[개발 도구] 밸런스 시뮬레이션 1판 (2026-10-29, 사용자: "3개 파일만 만들어봐 유니티에서 돌리는 방법도 알려주고") — AI가 만듦   확인 상태: 컴파일 확인, 유니티 실행 확인 필요
+- 13. Dev/SimulationRunner.cs: SimulationSettings(설정 JSON, 프로젝트 폴더/Balance) + SimulationRunner
+    설정이 켜져 있으면 씬을 불러오기 전(BeforeSceneLoad)에 시드를 정하고 진행기를 만듦(DontDestroyOnLoad). 꺼져 있으면 아무것도 안 함
+    배속(기본 100)·한 프레임 시간 상한 1초·수직 동기 끔·카메라 끔·일반 로그 끔(경고·오류만, 게임 오버 이유는 가로챔)
+    플레이어 턴마다 생성(돈만큼) → 합성 기다림 → AutoPlanner.PlanTurn → 턴 종료. 3티어가 생기면 그 컬러 강화(DebugCheat A와 같은 규칙)
+    난이도·문양은 리플렉션으로 GameSession.m_mode, TowerManager.m_selectedEmblems를 바꿈(문양 무작위면 판마다 시드로 노말 6 / 하드 8)
+    판 끝(게임 오버·클리어·멈춤 600프레임·시간 초과) → 기록 → 다음 시드로 씬 다시 불러오기. 다 돌면 설정에 Done
+- 13. Dev/BalanceRecorder.cs: 판마다 games.csv 한 줄, towers.csv 타워 ID마다 한 줄
+    피해(기본·스킬·장판·기타, 맞은 적 체력까지만), 처치, 합성(티어별), 티어·시너지가 처음 나온 웨이브, 칸이 꽉 차 생성을 못 한 웨이브, 적 턴 수
+- Editor/BalanceSimulationWindow.cs: Tools > 밸런스 시뮬레이션 창(판 수·시드·난이도·문양 무작위·배속·한 판 제한, EditorPrefs에 기억)
+    실행 → 플레이 모드, 진행 표시, 멈춤, 끝나면 플레이 모드를 끄고 summary.txt(승률·도달 웨이브·패배 웨이브와 이유·합성 속도·타워 종류별 피해 몫 ▲▼·문양별 승률)
+- 06. Enemy/EnemyController.TakeDamage에 BalanceRecorder.OnDamage 한 줄 (피해 알림이 없어서. 기록 중이 아니면 바로 돌아감)
+- .gitignore에 /Balance/ 더함
+- 26번을 남은 것만으로 고침 (속도를 더 낼 연출 건너뛰기, 빠진 기록 항목, 같은 시드 재현 확인)
+
+[개발 도구] 자동 진행이 젬을 씀 + 판 끝 타워 구성 기록 (2026-10-29, 첫 3판 결과를 보고 사용자: "1,2번 피드백을 바탕으로 자동진행 수정")   확인 상태: 컴파일 확인, 유니티 실행 확인 필요
+- 첫 결과(시드 1 ~ 3): 클리어한 판이 끝까지 젬 900·골드 62,395를 안 씀(25웨이브 동안 칸이 꽉 참, 1티어 25 + 2티어 3). 시드 2는 타워 5기인데 피해 0
+- AutoPlanner.PlayStep 새로: 생성(돈만큼) → 합성 기다림 → 젬 쓰기(한 번에 하나, 합성이 끝나면 다음) → 배치. 턴을 넘겨도 되면 true
+    DebugCheat A와 SimulationRunner가 같이 씀. 옛 "3티어가 생기면 컬러 강화"(DebugCheat.OnTowerAdded, SimulationRunner.OnTowerAdded)는 지움
+- AutoPlanner.TrySpendGems: 젬 1당 값이 가장 큰 것 하나를 삼
+    티어 강화 값 = (2^다음티어 − 2^지금티어)/2 × 역할(공격 1, 버프·디버프 0.7). 강화한 뒤 같은 타워가 판에 2기 더 있으면(바로 합성) 다음 티어 값을 더함,
+      지금 같은 타워가 1기 더 있어 짝을 깨면 지금 티어 값의 절반을 뺌
+    컬러 강화 값 = 그 컬러 타워의 티어 값 합 × 0.25
+    비용: 티어 5/15/45/135, 컬러 4/12/48/240 (TowerProgression, BalanceTables)
+- BalanceRecorder: games.csv에 gem_tier_ups, gem_color_ups, gem_spent, attack_towers, lineup(판 끝 타워 ID 목록) 열을 더함. 젬 티어 강화는 합성 횟수에서 뺌
+- 요약에 [젬·골드](판당 티어·컬러 강화, 쓴 젬, 남은 젬·골드)와 "피해가 0인 판"(시드, 웨이브, 공격 타워 수, 구성)을 더함
+- SimulationRunner의 멈춤 판정 600 → 3000프레임 (젬을 한 프레임에 하나씩 쓰므로)
+- 같은 날 이어서 (사용자: "판이 꽉차면 가장 쓸모없는 타워를 팔고 다시 뽑는 방식으로"): AutoPlanner.TryReroll
+    칸이 꽉 찼고 골드가 생성 비용 이상이면, 짝(같은 ID)이 없는 1티어 중 가장 쓸모없는 것을 팔고(젬 +1) 바로 다시 뽑음. 한 프레임에 한 번, 젬 쓰기 다음 순서
+    쓸모 = 공격 1, 버프·디버프 0.7 (+ 스킬 2 단계인 존 하나마다 0.3). 같으면 나중에 세운 것부터 팜. 2티어 이상·짝이 있는 1티어는 안 팜
+    → 남는 골드가 생성 비용 밑으로 내려가거나 팔 1티어가 없을 때까지 다시 뽑기를 되풀이함 (같은 타워 3기가 모일 기회를 늘림)
+    games.csv에 rerolls 열, 요약 [젬·골드]에 판당 다시 뽑기 횟수
+- 공용: EffectQuad.SetSorting(층, 순서), BlackHoleGround.Radius. EffectTextures에 FX_Smoke·FX_Snowflake·FX_IceShard 이름과 임시 그림
+    (Resources/Effects에 같은 이름의 PNG를 넣으면 그 그림을 씀 — Codex에 맡길 수 있음)
+
+[기획 변경] 블레이드 댄서 스킬 2: 블레이드 템페스트(24연격) → 블레이드 스톰 (2026-10-29, 사용자 요청 — AI가 만듦)   확인 상태: 컴파일 확인, 테스트·유니티 검증 필요
+- SwordTargetSkill: 검기 10번(기준식 ÷ 10) + 폭발 막타 1번(기준식) = 11번, 합계 기준식 2배. 치명은 한 번 굴려 11번 전부
+- SwordTargetSkillEffect 새로 (사용자: "매화검처럼 초승달 검기가 적 근처에 쌓이는데 이게 모여서 폭풍이 되는 연출"):
+    초승달 검기 10개가 0.07초 간격으로 적을 베고 그 자리에 남아 쌓임(벨 때마다 번쩍) → 쌓인 검기가 돌기 시작하며
+    적을 둘러싼 고리로 모여 폭풍으로 휘몰아침(빛·잔떨림·불꽃) → 펑: 화면 테두리·줌 펀치·흔들림·큰 섬광·불꽃, 검기가 바깥으로 흩어짐
+- 20번 4-3장, 이름 표, 카드 설명, 테스트(EmblemExampleTest·DarknessEmblemTest) 고침
+
+[기획 변경] 합성 = 같은 타워 3기 자동 합성 (2026-10-29, 사용자 요청 — AI가 만듦)   확인 상태: 컴파일 확인, 테스트·유니티 검증 필요
+- 지움: 문양·컬러·완전 일치를 고르는 합성(MergeMode, TryMerge, TryFindMaterials, GetResultCandidates), 카드의 합성 버튼 셋(숨김), DebugCheat 1·2·3 키
+- TowerProgression.TryFindMergeGroup: 같은 ID(1 ~ 4티어, 시너지 아님) 3기 → 먼저 세운 셋(TowerController.BuildOrder) 중
+    원래 있던 두 기 가운데 칸 번호가 앞선 것이 남고(keep) 나머지 둘이 재료
+- TowerManager: 생성·개발용 세우기·티어 강화 뒤 RequestAutoMerge → 코루틴이 0.5초 기다림 → 재료가 날아감(TowerMergeEffect) →
+    재료를 지우고 keep을 다음 티어로 Replace(이어받기 true) → 연쇄. 합성 중인 타워는 옮기기·팔기·티어 강화 막음, 합성 중에는 턴 종료 막음
+- 10. Effect/TowerMergeEffect.cs: 재료가 연기를 남기고 별 꼬리를 끌며 날아가 작아지며 사라짐, 결과 타워가 튀어 오르며 별이 퍼짐
+- DebugCheat 자동 진행: 합성이 끝나길 기다렸다가 자리 정리·턴 종료
+- 테스트: TowerProgressionTest의 모드별 합성 테스트를 자동 합성 묶음 찾기 테스트로 바꿈
+
+[연출] 위성 없이 타워 중심에서 쏨 (2026-10-29, 사용자 요청 — AI가 만듦)   확인 상태: 컴파일 확인, 유니티 검증 필요
+- 지움: 08. Projectile/SatelliteLayout.cs(위성 자리·벌림 계산, SatelliteSettings), Editor/Tests/SatelliteLayoutTest.cs
+- 새로: 08. Projectile/ShotTiming.cs — VolleyInterval(AttackCount 묶음 사이 0.3초), ShotGap(단일 한 묶음 안 발 사이 0.06초)
+- SplashAction·TargetAction: 모든 탄이 타워 중심에서 기다림(hold) 없이 바로 나감. TowerController의 m_satellite → m_shotTiming (Tower.prefab도)
+- 연출(검·도끼·활·창의 FireShot)은 hold가 0이어도 자기 최소 준비 시간(Mathf.Max)이 있어 그대로 동작
+- 테스트: SplashActionTest·TargetActionTest의 위성 위치 테스트를 "타워 중심, hold 0"으로 바꿈

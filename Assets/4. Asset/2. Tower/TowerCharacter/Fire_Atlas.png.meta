@@ -136,89 +136,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower_Fire_Pyromancer_Front_v2
+      name: Fire_Ifrit_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 584
+        y: 108
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 1b56390d19f649fba155eb0fff50d787
-      internalID: 52070
+      spriteID: 615c8b569ce68dd499e3756996fa3a55
+      internalID: -935366621
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Fire_Salamander_Front_v2
+      name: Fire_Salamander_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 602
+        y: 531
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b6cd5a5c9444499cb2f0e61cba5b27f0
-      internalID: 52071
+      spriteID: b2dc1fc7441ac2049b8627a5d5764e2b
+      internalID: -425787773
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Fire_Phoenix_Front_v2
+      name: Fire_Pyromancer_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 80
+        y: 624
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4eb953452e9e4e99932aed161fe08efd
-      internalID: 52072
+      spriteID: c4b56a22380ce60458e9024573676378
+      internalID: 1732245225
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Fire_Ifrit_Front_v2
+      name: Fire_Phoenix_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
+        x: 99
+        y: 100
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 383eca458a0947a48d6bbce8bbb259ff
-      internalID: 52073
+      spriteID: 33025b37c6839c4489468f64c2150ebc
+      internalID: -405212073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fire_Phoenix_Face
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 300
+        width: 108
+        height: 108
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5cce225c3c77829458c118f04189065a
+      internalID: -1933085241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fire_Ifrit_Face
+      rect:
+        serializedVersion: 2
+        x: 730
+        y: 380
+        width: 100
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 110f97204ad58224eb9513f88840f678
+      internalID: 1329909975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fire_Pyromancer_Face
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 910
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f13372c6630e72443be6577d5bd5953b
+      internalID: 1122535967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fire_Salamander_Face
+      rect:
+        serializedVersion: 2
+        x: 858
+        y: 711
+        width: 144
+        height: 144
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a0159dc14229b640bf3e0ff54344d39
+      internalID: 2018809379
       vertices: []
       indices: 
       edges: []
@@ -227,7 +315,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 89e07357d5f537f47a536abc67d39eab
     internalID: 0
     vertices: []
     indices: 
@@ -237,6 +325,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Fire_Ifrit_Face: 1329909975
+      Fire_Ifrit_Full: -935366621
+      Fire_Phoenix_Face: -1933085241
+      Fire_Phoenix_Full: -405212073
+      Fire_Pyromancer_Face: 1122535967
+      Fire_Pyromancer_Full: 1732245225
+      Fire_Salamander_Face: 2018809379
+      Fire_Salamander_Full: -425787773
       Tower_Fire_Ifrit_Front_v2: 52073
       Tower_Fire_Phoenix_Front_v2: 52072
       Tower_Fire_Pyromancer_Front_v2: 52070

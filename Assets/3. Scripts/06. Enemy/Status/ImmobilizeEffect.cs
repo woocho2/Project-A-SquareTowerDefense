@@ -1,5 +1,6 @@
 namespace SquareTD
 {
+    // 행동 불가 — 기절·속박 (다음 행동 한 번 0칸)
     public class ImmobilizeEffect : StatusEffect
     {
         public const string ImmobilizeKey = "행동 불가";

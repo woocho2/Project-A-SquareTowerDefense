@@ -136,13 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower_Bow_Ranger_Front_v2
+      name: Bow_Ranger_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 106
+        y: 618
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,67 +158,155 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Bow_Hunter_Front_v2
+      name: Bow_Sniper_Face
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 683
+        y: 316
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 7d9b7df3bc2b450f8e9abeb176f4065e
-      internalID: 52031
+      spriteID: 87fd42704b8b7fd4bafd1b1066cca135
+      internalID: -1154712627
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Bow_Elf_Front_v2
+      name: Bow_Hunter_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 570
+        y: 624
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 2285c6c604de49e9857bf07d8f261150
-      internalID: 52032
+      spriteID: fe41e9ffc1b09b44497b421697e5fce0
+      internalID: -718659966
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Bow_Sniper_Front_v2
+      name: Bow_Hunter_Face
       rect:
         serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
+        x: 723
+        y: 916
+        width: 100
+        height: 100
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 87b331db84984a00a1d167526db01baf
-      internalID: 52033
+      spriteID: d937887d0b3e37e48b962843d601b6d8
+      internalID: 1053386052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bow_Elf_Full
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 112
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c47525ae4be1bba428065d8927aaa06f
+      internalID: -1449304528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bow_Sniper_Full
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 75
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a63b136bafd7ef240be8d1a216902086
+      internalID: 1273765385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bow_Ranger_Face
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 855
+        width: 116
+        height: 116
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1fc367388e2cfc842885d37f75f4ab67
+      internalID: 2146584032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bow_Elf_Face
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 397
+        width: 100
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cd06a82989194444d902bd3fa2e9625e
+      internalID: -58461233
       vertices: []
       indices: 
       edges: []
@@ -227,7 +315,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5492586cea789d242bf0f65eb4ef930b
     internalID: 0
     vertices: []
     indices: 
@@ -237,9 +325,16 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Bow_Elf_Face: -58461233
+      Bow_Elf_Full: -1449304528
+      Bow_Hunter_Face: 1053386052
+      Bow_Hunter_Full: -718659966
+      Bow_Ranger_Face: 2146584032
+      Bow_Ranger_Full: 52030
+      Bow_Sniper_Face: -1154712627
+      Bow_Sniper_Full: 1273765385
       Tower_Bow_Elf_Front_v2: 52032
       Tower_Bow_Hunter_Front_v2: 52031
-      Tower_Bow_Ranger_Front_v2: 52030
       Tower_Bow_Sniper_Front_v2: 52033
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0

@@ -4,6 +4,7 @@ using Random = UnityEngine.Random;
 
 namespace SquareTD
 {
+    // 웨이브의 적을 판에 내보냄
     [Serializable]
     public class EnemySpawnEntry
     {

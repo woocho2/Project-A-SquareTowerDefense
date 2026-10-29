@@ -136,13 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Synergy_Odin_Front_v2
+      name: Synergy_Thor_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 1536
-        width: 512
-        height: 512
+        x: 589
+        y: 1634
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,287 +158,595 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Synergy_Thor_Front_v2
+      name: Synergy_Loki_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 1536
-        width: 512
-        height: 512
+        x: 1088
+        y: 1639
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d64579954e1643e0818722a1c3f876f6
-      internalID: 53002
+      spriteID: b38e6699f0095d546b0b620fa9697314
+      internalID: 925826004
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Synergy_Loki_Front_v2
+      name: Synergy_Hel_Full
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 1536
-        width: 512
-        height: 512
+        x: 1586
+        y: 1625
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c6cc92ec19314a64be0da1efb46da26b
-      internalID: 53003
+      spriteID: 2bb97f11a5a0f2742b76c080b47e64e2
+      internalID: 1336307313
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Synergy_Hel_Front_v2
+      name: Synergy_Surtr_Full
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 1536
-        width: 512
-        height: 512
+        x: 55
+        y: 1122
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 34f971d9751e44458d65ab80e9f4861f
-      internalID: 53004
+      spriteID: d185e8ef850ae0d43a5866d896a18e9a
+      internalID: 235505631
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Synergy_Surtr_Front_v2
+      name: Synergy_Freyr_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 1024
-        width: 512
-        height: 512
+        x: 558
+        y: 1131
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9f40423f9d5d4e0f8c80234072a825f7
-      internalID: 53005
+      spriteID: f4fd8b0e07e540f4eb694a4da63380b7
+      internalID: -1822657345
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Synergy_Freyr_Front_v2
+      name: Synergy_Baldr_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 1024
-        width: 512
-        height: 512
+        x: 1085
+        y: 1121
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 97139603611543f0ad5c8d7ed12a453a
-      internalID: 53006
+      spriteID: 7cd238fd357fc724ca8e43c477ecc364
+      internalID: 1253905091
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Synergy_Baldr_Front_v2
+      name: Synergy_Skadi_Full
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 1024
-        width: 512
-        height: 512
+        x: 1596
+        y: 1121
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: a77f78ef0cff43ddb3cd457bbc543381
-      internalID: 53007
+      spriteID: c6408b62d4550ce4782faac585354246
+      internalID: 1988052842
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Synergy_Skadi_Front_v2
+      name: Synergy_Freyja_Full
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 1024
-        width: 512
-        height: 512
+        x: 79
+        y: 578
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: da271eadef82488bb78d9bfcc582184d
-      internalID: 53008
+      spriteID: 695ca48942cb4694b8e3c246c73dd834
+      internalID: -2117413287
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Synergy_Freyja_Front_v2
+      name: Synergy_Ymir_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 595
+        y: 609
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9695585e6d5d4b6db3fb03d56a864c7f
-      internalID: 53009
+      spriteID: a5de16d863c2bc944b383050a715c9dc
+      internalID: 1814002970
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Synergy_Ymir_Front_v2
+      name: Synergy_Ullr_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 1086
+        y: 605
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: dfabd90227fd4f5c9e8ba2b8724da547
-      internalID: 53010
+      spriteID: 0550ac87dac798148894a2356450d1bf
+      internalID: 1439554203
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Synergy_Ullr_Front_v2
+      name: Synergy_Brynhildr_Full
       rect:
         serializedVersion: 2
-        x: 1024
-        y: 512
-        width: 512
-        height: 512
+        x: 1594
+        y: 609
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d2ba87ec77044f25bdedcb4a0e9f6dca
-      internalID: 53011
+      spriteID: fa2b0f4e919d9ea49a694ba71c5bfff0
+      internalID: 1734929054
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Synergy_Brunhild_Front_v2
+      name: Synergy_BrokkEitri_Full
       rect:
         serializedVersion: 2
-        x: 1536
-        y: 512
-        width: 512
-        height: 512
+        x: 65
+        y: 44
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d6b577ee0c6348c487cbb342e2bf85f2
-      internalID: 53012
+      spriteID: 2c394fbf0baeb8c4db0b3dc0de15dc8d
+      internalID: -1803878594
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Synergy_BrokEitri_Front_v2
+      name: Synergy_Njord_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 567
+        y: 101
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 59cc62db8c414307bd4229e5cd2f725e
-      internalID: 53013
+      spriteID: 5934e6ff7f09a88478df6d9eb9f55bc2
+      internalID: 1515189518
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Synergy_Njord_Front_v2
+      name: Synergy_Odin_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
+        x: 66
+        y: 1575
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 47c0f3e40ce84445a2f18d7d6666a748
-      internalID: 53014
+      spriteID: 3aa5e115f5d40ab43b36d34944549cc8
+      internalID: 373902155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Synergy_Thor_Face
+      rect:
+        serializedVersion: 2
+        x: 733
+        y: 1933
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84da7b9368479af4bb87a06ba05a6681
+      internalID: 968600451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Synergy_Loki_Face
+      rect:
+        serializedVersion: 2
+        x: 1235
+        y: 1941
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6360bc8d02001f247b8d42f5f8b0bdd1
+      internalID: 1899384818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Synergy_Hel_Face
+      rect:
+        serializedVersion: 2
+        x: 1776
+        y: 1931
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 00059d57ce6f47946b72ca63dc66cb48
+      internalID: -1835001841
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Synergy_Surtr_Face
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 1429
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 04386f3fb397ac24984f7b16ec88ceb1
+      internalID: 1504528496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Synergy_Freyr_Face
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 1431
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a79faba97eda6dc4eb5c20de2c1bb573
+      internalID: -1593611423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Synergy_Baldr_Face
+      rect:
+        serializedVersion: 2
+        x: 1228
+        y: 1419
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 14fe0b96928f03247a95c016868a007a
+      internalID: 844976255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Synergy_Skadi_Face
+      rect:
+        serializedVersion: 2
+        x: 1750
+        y: 1417
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 223f6a0b7d394ef409769a530cdcd0c9
+      internalID: -1796082043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Synergy_Freyja_Face
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 878
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3f71ed6d1dec54d4586a12b554e0b905
+      internalID: 1568592010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Synergy_Ymir_Face
+      rect:
+        serializedVersion: 2
+        x: 702
+        y: 913
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4fc9ac978215c74ebdd682e967423db
+      internalID: -1329293490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Synergy_Ullr_Face
+      rect:
+        serializedVersion: 2
+        x: 1232
+        y: 909
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a64a1bbcafa0b2948aa57dcf7d25937e
+      internalID: 1153853703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Synergy_Brynhildr_Face
+      rect:
+        serializedVersion: 2
+        x: 1772
+        y: 912
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7379cb37864291b4bac032803fb49244
+      internalID: -792563697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Synergy_BrokkEitri_Face
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 334
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 322f9ad6ac4d37e43825c604867ef162
+      internalID: 1784150602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Synergy_Njord_Face
+      rect:
+        serializedVersion: 2
+        x: 747
+        y: 404
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: edce75a12a8cdf8449e972a2cd6d7e45
+      internalID: 119267804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Synergy_Odin_Face
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 1880
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b39809425f26d3742a6eba2aff7bc3b8
+      internalID: -672599585
       vertices: []
       indices: 
       edges: []
@@ -447,7 +755,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 3c4d187811be2f8418fba1e983c8c7db
     internalID: 0
     vertices: []
     indices: 
@@ -457,20 +765,48 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Synergy_Baldr_Face: 844976255
       Synergy_Baldr_Front_v2: 53007
+      Synergy_Baldr_Full: 1253905091
       Synergy_BrokEitri_Front_v2: 53013
+      Synergy_BrokkEitri_Face: 1784150602
+      Synergy_BrokkEitri_Full: -1803878594
       Synergy_Brunhild_Front_v2: 53012
+      Synergy_Brynhildr_Face: -792563697
+      Synergy_Brynhildr_Full: 1734929054
+      Synergy_Freyja_Face: 1568592010
       Synergy_Freyja_Front_v2: 53009
+      Synergy_Freyja_Full: -2117413287
+      Synergy_Freyr_Face: -1593611423
       Synergy_Freyr_Front_v2: 53006
+      Synergy_Freyr_Full: -1822657345
+      Synergy_Hel_Face: -1835001841
       Synergy_Hel_Front_v2: 53004
+      Synergy_Hel_Full: 1336307313
+      Synergy_Loki_Face: 1899384818
       Synergy_Loki_Front_v2: 53003
+      Synergy_Loki_Full: 925826004
+      Synergy_Njord_Face: 119267804
       Synergy_Njord_Front_v2: 53014
-      Synergy_Odin_Front_v2: 53001
+      Synergy_Njord_Full: 1515189518
+      Synergy_Odin_Face: -672599585
+      Synergy_Odin_Full: 373902155
+      Synergy_Skadi_Face: -1796082043
       Synergy_Skadi_Front_v2: 53008
+      Synergy_Skadi_Full: 1988052842
+      Synergy_Surtr_Face: 1504528496
       Synergy_Surtr_Front_v2: 53005
+      Synergy_Surtr_Full: 235505631
+      Synergy_Thor_Face: 968600451
       Synergy_Thor_Front_v2: 53002
+      Synergy_Thor_Full: 53001
+      Synergy_Ullr_Face: 1153853703
       Synergy_Ullr_Front_v2: 53011
+      Synergy_Ullr_Full: 1439554203
+      Synergy_Ymir_Face: -1329293490
       Synergy_Ymir_Front_v2: 53010
+      Synergy_Ymir_Full: 1814002970
+      "Synergy_\uC601\uC5B4\uC774\uB984_Full": 373902155
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 입력 모드들 (보통, 공격 칸 고르기, 존 자리 고르기 등)
     public readonly struct BoardPoint
     {
         public readonly Vector3 World;

@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 판을 화면에 그리는 쪽
     public class BoardPresenter : MonoBehaviour
     {
         [SerializeField] TextMeshPro m_labelPrefab;

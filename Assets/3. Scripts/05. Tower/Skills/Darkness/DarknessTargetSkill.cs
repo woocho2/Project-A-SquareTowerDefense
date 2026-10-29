@@ -2,10 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 어둠 단일 — 심연 (20번 4-16장)
-    //   그 적에게 Power × AbilityValue × (1 + 카운트 × 0.01) (스택을 쓰면 ×). 카운트 100이면 2배, 1000이면 11배
-    //   카운트를 쓰기만 하고 줄이지 않음
-    //   어둠 타워끼리: 포식 존에 서 있으면 카운트를 1.5배로, 폭식 존에서는 2배로 셈 (1000이면 16배 / 21배)
+    // 어둠 단일 — 심연
     public class DarknessTargetSkill : AttackSkill
     {
         public DarknessTargetSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
@@ -29,7 +26,7 @@ namespace SquareTD
 
         protected override void OnHitTarget(TowerController owner, ITarget target, DamageInfo hit)
         {
-            // [B] 피해 주기 — SwordSplashSkill.OnHitTarget과 똑같은 한 줄
+            ProjectileHitResolver.HitSingle(target, hit);
         }
     }
 }

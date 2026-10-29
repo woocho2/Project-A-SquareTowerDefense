@@ -2,16 +2,14 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 유니티 파티클 시스템을 코드로 만들어 그림(텍스처)을 입힘 — 불티(튀고 떨어짐), 꽃잎(흩날림) 등
-    //   한 번 만들어 두고 Burst로 원하는 자리에 원하는 만큼 뿌림. 게임 속도(배속)를 따름
+    // 파티클 시스템을 코드로 만들어 그림을 입힘
     public sealed class EffectParticles
     {
         private readonly ParticleSystem m_system;
-        private readonly System.Random m_random = new System.Random();     // 게임 쪽 Random을 건드리지 않게
+        private readonly System.Random m_random = new System.Random();
 
         public bool IsReady => m_system != null;
 
-        // stretch: 날아가는 방향으로 늘림 (불티) / gravity: 아래로 끌림 / spin: 돌면서 흩날림 (꽃잎)
         public EffectParticles(Transform parent, string name, string texture, bool additive, float intensity,
             int sortingOrder, bool stretch, float gravity, bool spin)
         {
@@ -32,7 +30,7 @@ namespace SquareTD
             main.startRotation3D = false;
 
             ParticleSystem.EmissionModule emission = m_system.emission;
-            emission.enabled = false;                                               // Burst로만 뿌림
+            emission.enabled = false;
             ParticleSystem.ShapeModule shape = m_system.shape;
             shape.enabled = false;
 
@@ -49,7 +47,7 @@ namespace SquareTD
 
             if (spin)
             {
-                ParticleSystem.NoiseModule noise = m_system.noise;                  // 꽃잎이 바람에 하늘하늘
+                ParticleSystem.NoiseModule noise = m_system.noise;
                 noise.enabled = true;
                 noise.strength = 0.6f;
                 noise.frequency = 0.8f;
@@ -72,7 +70,6 @@ namespace SquareTD
             EffectActivity.Register(m_system);
         }
 
-        // center에서 count개를 사방으로 (direction이 0이 아니면 그 방향 ± spread도 안에서)
         public void Burst(Vector3 center, int count, Color color, float speedMin, float speedMax, float sizeMin, float sizeMax,
             float lifeMin, float lifeMax, Vector2 direction = default, float spreadDegrees = 360f, float spawnRadius = 0f)
         {
@@ -105,7 +102,6 @@ namespace SquareTD
             return new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * distance;
         }
 
-        // 바깥에서 center로 빨려 들어오는 알갱이 (기 모으기)
         public void Gather(Vector3 center, int count, Color color, float radius, float size, float life)
         {
             if (m_system == null) return;

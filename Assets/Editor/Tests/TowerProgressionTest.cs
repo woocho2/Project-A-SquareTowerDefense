@@ -72,125 +72,84 @@ namespace SquareTD.Tests
             Assert.IsFalse(TowerProgression.CanMergeFrom(Def(6001)));
         }
 
+        private bool Find(out TowerController keep, out List<TowerController> materials, System.Func<TowerController, bool> isBusy = null) =>
+            TowerProgression.TryFindMergeGroup(m_slots, isBusy, out keep, out materials);
+
         [Test]
-        public void 완전_일치는_컬러와_문양이_같아야()
+        public void 같은_타워_셋이면_원래_있던_두_기_중_앞_칸이_남음()
         {
-            Assert.IsTrue(TowerProgression.Matches(Def(1101), Def(1101), MergeMode.Exact));
-            Assert.IsFalse(TowerProgression.Matches(Def(1101), Def(1102), MergeMode.Exact));
-            Assert.IsFalse(TowerProgression.Matches(Def(1101), Def(1201), MergeMode.Exact));
+            TowerController first = Place(1101, 3);
+            TowerController second = Place(1101, 1);
+            TowerController newest = Place(1101, 5);
+
+            Assert.IsTrue(Find(out TowerController keep, out List<TowerController> materials));
+            Assert.AreEqual(second, keep, "먼저 있던 3번·1번 칸 중 1번");
+            CollectionAssert.AreEquivalent(new[] { first, newest }, materials);
         }
 
         [Test]
-        public void 컬러_일치는_컬러만_같으면()
+        public void 방금_생긴_타워가_앞_칸이어도_재료가_됨()
         {
-            Assert.IsTrue(TowerProgression.Matches(Def(1101), Def(1107), MergeMode.Color));
-            Assert.IsFalse(TowerProgression.Matches(Def(1101), Def(1201), MergeMode.Color));
+            TowerController first = Place(1101, 4);
+            TowerController second = Place(1101, 5);
+            TowerController newest = Place(1101, 0);
+
+            Assert.IsTrue(Find(out TowerController keep, out List<TowerController> materials));
+            Assert.AreEqual(first, keep);
+            CollectionAssert.AreEquivalent(new[] { second, newest }, materials);
         }
 
         [Test]
-        public void 문양_일치는_문양만_같으면()
-        {
-            Assert.IsTrue(TowerProgression.Matches(Def(1101), Def(1401), MergeMode.Emblem));
-            Assert.IsFalse(TowerProgression.Matches(Def(1101), Def(1102), MergeMode.Emblem));
-        }
-
-        [Test]
-        public void 티어가_다르면_어느_모드든_안_맞음()
-        {
-            Assert.IsFalse(TowerProgression.Matches(Def(1101), Def(2101), MergeMode.Exact));
-            Assert.IsFalse(TowerProgression.Matches(Def(1101), Def(2101), MergeMode.Color));
-            Assert.IsFalse(TowerProgression.Matches(Def(1101), Def(2101), MergeMode.Emblem));
-        }
-
-        [Test]
-        public void 재료_두_기를_보드_순서로_찾고_자기는_뺌()
+        public void 둘뿐이면_합성하지_않음()
         {
             Place(1101, 0);
-            TowerController target = Place(1101, 2);
-            TowerController first = Place(1101, 1);
-            TowerController second = Place(1101, 4);
-            Place(1101, 5);
-            var materials = new List<TowerController>();
-
-            Assert.IsTrue(TowerProgression.TryFindMaterials(target, MergeMode.Exact, m_slots, materials));
-            Assert.AreEqual(2, materials.Count);
-            Assert.IsFalse(materials.Contains(target));
-            Assert.AreEqual(0, materials[0].SlotIndex);
-            Assert.AreEqual(1, materials[1].SlotIndex);
-        }
-
-        [Test]
-        public void 재료가_모자라면_false()
-        {
-            TowerController target = Place(1101, 0);
             Place(1101, 1);
-            Place(1102, 2);
+            Assert.IsFalse(Find(out _, out _));
+        }
+
+        [Test]
+        public void 컬러나_문양만_같으면_합성하지_않음()
+        {
+            Place(1101, 0);
+            Place(1102, 1);
+            Place(1201, 2);
             Place(2101, 3);
-            var materials = new List<TowerController>();
-
-            Assert.IsFalse(TowerProgression.TryFindMaterials(target, MergeMode.Exact, m_slots, materials));
+            Assert.IsFalse(Find(out _, out _));
         }
 
         [Test]
-        public void 컬러_일치_재료는_같은_컬러의_다른_문양도()
+        public void 다섯_티어와_시너지는_합성하지_않음()
         {
-            TowerController target = Place(1101, 0);
-            Place(1201, 1);
-            Place(1102, 2);
-            Place(1107, 3);
-            var materials = new List<TowerController>();
-
-            Assert.IsTrue(TowerProgression.TryFindMaterials(target, MergeMode.Color, m_slots, materials));
-            Assert.AreEqual(2, materials[0].SlotIndex);
-            Assert.AreEqual(3, materials[1].SlotIndex);
-        }
-
-        [Test]
-        public void 다섯_티어는_재료를_찾지_않음()
-        {
-            TowerController target = Place(5101, 0);
+            Place(5101, 0);
             Place(5101, 1);
             Place(5101, 2);
-            var materials = new List<TowerController>();
-
-            Assert.IsFalse(TowerProgression.TryFindMaterials(target, MergeMode.Exact, m_slots, materials));
+            Place(6001, 3);
+            Place(6001, 4);
+            Place(6001, 5);
+            Assert.IsFalse(Find(out _, out _));
         }
 
         [Test]
-        public void 완전_일치_결과는_같은_컬러_문양의_다음_티어_하나()
+        public void 넷이면_먼저_세운_셋으로()
         {
-            TowerDatabase database = Database(2101, 2102, 2201);
-            List<TowerDefinition> results = TowerProgression.GetResultCandidates(Def(1101), MergeMode.Exact, database, new[] { TowerEmblem.Sword, TowerEmblem.Axe });
+            TowerController a = Place(1101, 0);
+            TowerController b = Place(1101, 4);
+            TowerController c = Place(1101, 2);
+            TowerController d = Place(1101, 1);
 
-            Assert.AreEqual(1, results.Count);
-            Assert.AreEqual(2101, results[0].Id);
+            Assert.IsTrue(Find(out TowerController keep, out List<TowerController> materials));
+            Assert.AreEqual(a, keep);
+            CollectionAssert.AreEquivalent(new[] { b, c }, materials);
+            CollectionAssert.DoesNotContain(materials, d);
         }
 
         [Test]
-        public void 컬러_일치_결과는_고른_문양_안의_같은_컬러_다음_티어()
+        public void 합성_중인_타워는_빼고_찾음()
         {
-            TowerDatabase database = Database(2101, 2102, 2103, 2201);
-            List<TowerDefinition> results = TowerProgression.GetResultCandidates(Def(1101), MergeMode.Color, database, new[] { TowerEmblem.Sword, TowerEmblem.Axe });
-
-            CollectionAssert.AreEquivalent(new[] { 2101, 2102 }, results.ConvertAll(d => d.Id));
-        }
-
-        [Test]
-        public void 문양_일치_결과는_같은_문양의_네_컬러_다음_티어()
-        {
-            TowerDatabase database = Database(2101, 2201, 2301, 2401, 2102);
-            List<TowerDefinition> results = TowerProgression.GetResultCandidates(Def(1101), MergeMode.Emblem, database, new[] { TowerEmblem.Sword });
-
-            CollectionAssert.AreEquivalent(new[] { 2101, 2201, 2301, 2401 }, results.ConvertAll(d => d.Id));
-        }
-
-        [Test]
-        public void 결과가_CSV에_없으면_빈_목록()
-        {
-            TowerDatabase database = Database(2102);
-            List<TowerDefinition> results = TowerProgression.GetResultCandidates(Def(1101), MergeMode.Exact, database, new[] { TowerEmblem.Sword });
-
-            Assert.AreEqual(0, results.Count);
+            TowerController busy = Place(1101, 0);
+            Place(1101, 1);
+            Place(1101, 2);
+            Assert.IsFalse(Find(out _, out _, tower => tower == busy));
         }
     }
 }

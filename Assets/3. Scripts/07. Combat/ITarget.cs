@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 타워가 공격할 수 있는 대상의 공통 모양
     public interface ITarget
     {
         Transform Transform { get; }
@@ -16,6 +17,6 @@ namespace SquareTD
         void TakeDamage(DamageInfo info);
         void SetSortingOrder(int order);
         EnemyStats Stats { get; }
-        EnemyStatusEffects Status { get; }      // 걸린 효과 목록 (수업 25). 가짜 대상·더미는 null일 수 있음
+        EnemyStatusEffects Status { get; }
     }
 }

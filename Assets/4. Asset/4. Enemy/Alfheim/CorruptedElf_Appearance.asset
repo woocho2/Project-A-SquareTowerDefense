@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: CorruptedElf_Appearance
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyCubeAppearance
   m_characterTexture: {fileID: 2800000, guid: 56813670e8e5c1b7032004718125625c, type: 3}
+  m_faceSprite: {fileID: 161020, guid: b27032fb31e549519742e6943d4d5be6, type: 3}
+  m_fullSprite: {fileID: 61020, guid: b27032fb31e549519742e6943d4d5be6, type: 3}
   m_equipmentMask: {fileID: 0}

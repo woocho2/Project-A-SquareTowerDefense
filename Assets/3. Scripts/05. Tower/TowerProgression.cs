@@ -1,14 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SquareTD
 {
-    public enum MergeMode
-    {
-        Exact = 0,
-        Color = 1,
-        Emblem = 2
-    }
-
+    // 자동 합성의 묶음 찾기와 티어 강화 비용
     public static class TowerProgression
     {
         public const int MergeCount = 3;
@@ -21,66 +17,41 @@ namespace SquareTD
             return definition.Tier >= 1 && definition.Tier <= 4 && !TowerId.IsSynergy(definition.Id);
         }
 
-        public static bool Matches(TowerDefinition a, TowerDefinition b, MergeMode mode)
+        public static bool TryFindMergeGroup(TowerSlots slots, Func<TowerController, bool> isBusy,
+                                             out TowerController keep, out List<TowerController> materials)
         {
-            if (a.Tier != b.Tier) return false;
+            keep = null;
+            materials = null;
 
-            switch (mode)
-            {
-                case MergeMode.Exact: return a.Color == b.Color && a.Emblem == b.Emblem;
-                case MergeMode.Color: return a.Color == b.Color;
-                default: return a.Emblem == b.Emblem;
-            }
-        }
-
-        public static bool TryFindMaterials(TowerController target, MergeMode mode, TowerSlots slots, List<TowerController> materials)
-        {
-            materials.Clear();
-            if (!CanMergeFrom(target.Definition)) return false;
-
+            var groups = new Dictionary<int, List<TowerController>>();
+            var order = new List<int>();
             for (int i = 0; i < slots.Count; i++)
             {
                 TowerController tower = slots.Get(i);
-                if (tower == null || tower == target) continue;
-                if (!Matches(target.Definition, tower.Definition, mode)) continue;
+                if (tower == null || !CanMergeFrom(tower.Definition)) continue;
+                if (isBusy != null && isBusy(tower)) continue;
 
-                materials.Add(tower);
-                if (materials.Count == MergeCount - 1) return true;
+                int id = tower.Definition.Id;
+                if (!groups.TryGetValue(id, out List<TowerController> group))
+                {
+                    groups[id] = group = new List<TowerController>();
+                    order.Add(id);
+                }
+                group.Add(tower);
+            }
+
+            foreach (int id in order)
+            {
+                List<TowerController> group = groups[id];
+                if (group.Count < MergeCount) continue;
+
+                List<TowerController> three = group.OrderBy(t => t.BuildOrder).Take(MergeCount).ToList();
+                keep = three.Take(MergeCount - 1).OrderBy(t => t.SlotIndex).First();
+                TowerController kept = keep;
+                materials = three.Where(t => t != kept).ToList();
+                return true;
             }
             return false;
-        }
-
-        public static List<TowerDefinition> GetResultCandidates(TowerDefinition target, MergeMode mode, TowerDatabase database, IReadOnlyList<TowerEmblem> selectedEmblems)
-        {
-            int nextTier = target.Tier + 1;
-            var results = new List<TowerDefinition>();
-
-            switch (mode)
-            {
-                case MergeMode.Exact:
-                    AddIfExists(database, TowerId.Make(nextTier, target.Color, target.Emblem), results);
-                    break;
-
-                case MergeMode.Color:
-                    foreach (TowerEmblem emblem in selectedEmblems)
-                    {
-                        AddIfExists(database, TowerId.Make(nextTier, target.Color, emblem), results);
-                    }
-                    break;
-
-                case MergeMode.Emblem:
-                    for (TowerColor color = TowerColor.Red; color <= TowerColor.Purple; color++)
-                    {
-                        AddIfExists(database, TowerId.Make(nextTier, color, target.Emblem), results);
-                    }
-                    break;
-            }
-            return results;
-        }
-
-        private static void AddIfExists(TowerDatabase database, int id, List<TowerDefinition> results)
-        {
-            if (database.TryGet(id, out TowerDefinition definition)) results.Add(definition);
         }
     }
 }

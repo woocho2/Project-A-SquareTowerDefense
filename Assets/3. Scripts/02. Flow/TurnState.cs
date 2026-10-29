@@ -1,5 +1,6 @@
 namespace SquareTD
 {
+    // 턴 상태들 (대기, 플레이어 턴, 적 턴, 게임 끝)
     public interface ITurnState
     {
         string Name { get; }

@@ -1,4 +1,4 @@
-﻿fileFormatVersion: 2
+fileFormatVersion: 2
 guid: 51661a7468f3488aa78d7917c4396461
 TextureImporter:
   internalIDToNameTable: []
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Enemy_Vanaheim_LowerSpirit
+      name: Vanaheim_LowerSpirit_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 56
+        y: 568
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -145,13 +145,35 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Enemy_Vanaheim_MiddleSpirit
+      name: Vanaheim_LowerSpirit_Face
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 218
+        y: 887
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1395491a1b014943869d29b18b5b9245
+      internalID: 161030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vanaheim_MiddleSpirit_Full
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 568
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,13 +189,35 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Enemy_Vanaheim_UpperSpirit
+      name: Vanaheim_MiddleSpirit_Face
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 733
+        y: 887
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7a08e9d1a1e4c158d9afcfcf7a39e63
+      internalID: 161031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vanaheim_UpperSpirit_Full
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 56
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -184,6 +228,28 @@ TextureImporter:
       bones: []
       spriteID: 5845be5dacc3476c86e28535cc9139fe
       internalID: 61032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vanaheim_UpperSpirit_Face
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 355
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b1889458ff945b79ccdce4b043812ae
+      internalID: 161032
       vertices: []
       indices: 
       edges: []
@@ -202,9 +268,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Enemy_Vanaheim_LowerSpirit: 61030
-      Enemy_Vanaheim_MiddleSpirit: 61031
-      Enemy_Vanaheim_UpperSpirit: 61032
+      Vanaheim_LowerSpirit_Full: 61030
+      Vanaheim_LowerSpirit_Face: 161030
+      Vanaheim_MiddleSpirit_Full: 61031
+      Vanaheim_MiddleSpirit_Face: 161031
+      Vanaheim_UpperSpirit_Full: 61032
+      Vanaheim_UpperSpirit_Face: 161032
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

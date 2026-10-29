@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
+    // 적 정보 카드
     public class EnemyInfoPanel : MonoBehaviour
     {
         [Header("Views")]
@@ -27,11 +28,11 @@ namespace SquareTD
         [SerializeField] private TextMeshProUGUI m_txtAction;
         [SerializeField] private TextMeshProUGUI m_txtSpeed;
         [SerializeField] private TextMeshProUGUI m_txtResistance;
-        [SerializeField] private Slider m_hpSlider;                     // 체력 막대 (없으면 글자만)
-        [SerializeField] private TextMeshProUGUI m_txtEnemyType;        // 일반 / 중간 보스 / 최종 보스
-        [SerializeField] private TextMeshProUGUI m_txtDamageTaken;      // 받는 피해 증감 (%)
-        [SerializeField] private TextMeshProUGUI[] m_unusedValueTexts = new TextMeshProUGUI[0];   // 아직 쓰는 시스템이 없는 칸 → "-"
-        [SerializeField] private bool m_compactValues;                  // 칸 이름 글자가 따로 있는 레이아웃이면 값만 씀 ("방어력:" 없이)
+        [SerializeField] private Slider m_hpSlider;
+        [SerializeField] private TextMeshProUGUI m_txtEnemyType;
+        [SerializeField] private TextMeshProUGUI m_txtDamageTaken;
+        [SerializeField] private TextMeshProUGUI[] m_unusedValueTexts = new TextMeshProUGUI[0];
+        [SerializeField] private bool m_compactValues;
 
         [Header("Buff & Debuff Rects")]
         [SerializeField] private RectTransform m_buffContent;
@@ -43,7 +44,7 @@ namespace SquareTD
         [Header("Detail Flip (앞: 스탯 / 뒤: 버프·디버프 목록)")]
         [SerializeField] private GameObject m_detailFront;
         [SerializeField] private GameObject m_detailBack;
-        [SerializeField] private Button m_btnFlipDetail;                // 비어 있으면 상세 화면 가운데 줄에 작은 버튼을 만듦
+        [SerializeField] private Button m_btnFlipDetail;
         [SerializeField] private Vector2 m_flipButtonPosition = new Vector2(0f, 0.5f);
         [SerializeField] private Vector2 m_flipButtonSize = new Vector2(46f, 35f);
         [SerializeField, Min(0.05f)] private float m_flipDuration = 0.2f;
@@ -171,8 +172,6 @@ namespace SquareTD
             SetDetailFace(false);
         }
 
-        // ── 상세 화면 뒤집기 (스탯 ↔ 버프·디버프 목록) ──
-
         private void EnsureFlipButton()
         {
             if (m_detailFront == null || m_detailBack == null || m_viewEnemyDetail == null) return;
@@ -222,7 +221,6 @@ namespace SquareTD
             GameObject to = m_showingBack ? m_detailFront : m_detailBack;
             m_showingBack = !m_showingBack;
 
-            // 카드 전체(배경까지)가 세로축으로 뒤집히고, 옆모습일 때 앞·뒤 내용을 바꿈 (CardFlip)
             m_flipTween = CardFlip.Flip(transform, () =>
             {
                 from.SetActive(false);
@@ -269,7 +267,6 @@ namespace SquareTD
 
         private void EnsureViewHierarchy()
         {
-            // 인스펙터에 연결한 화면이 있으면 그것을 씀. 없을 때만 찾거나 만듦
             if (m_viewEnemyList == null)
             {
                 Transform listTr = transform.Find("View_EnemyList");
@@ -470,7 +467,7 @@ namespace SquareTD
         {
             if (m_viewEnemyList != null) m_viewEnemyList.SetActive(false);
             if (m_viewEnemyDetail != null) m_viewEnemyDetail.SetActive(true);
-            SetDetailFace(false);                                       // 다른 적을 고르면 앞면(스탯)부터
+            SetDetailFace(false);
         }
 
         public void RefreshListEntries()
@@ -541,7 +538,6 @@ namespace SquareTD
             rect.sizeDelta = new Vector2(width, 74f);
         }
 
-        // 목록 칸의 너비에 맞춤 (옛 레이아웃은 330 고정이라 좁은 목록에서 잘렸음)
         private static float GetEntryWidth(RectTransform content)
         {
             Transform viewport = content.parent;
@@ -673,7 +669,7 @@ namespace SquareTD
                 EnemyResistance resistance = body.Resistance;
                 string text = Mathf.Approximately(resistance.Current, resistance.Base)
                     ? $"{resistance.Current:0.#}%"
-                    : $"{resistance.Current:0.#}% (기본 {resistance.Base:0.#}%)";          // 강한 CC로 올라 있으면 기본도 함께 (20번 3장)
+                    : $"{resistance.Current:0.#}% (기본 {resistance.Base:0.#}%)";
                 m_txtResistance.text = m_compactValues ? text : $"저항력: {text}";
             }
             if (m_txtDamageTaken != null)
@@ -683,7 +679,6 @@ namespace SquareTD
             }
         }
 
-        // 최대 체력이 소환 때보다 바뀌었으면 " (최대 -20%)" (검 디버프 둠 등). 그대로면 빈 글자
         private static string GetMaxHpChangeText(EnemyController body)
         {
             if (body == null || body.Definition == null) return "";
@@ -713,7 +708,6 @@ namespace SquareTD
             BoardManager board = BoardManager.Instance;
             PathTileType tile = board.Tiles.GetPathTile(m_selectedTarget.PathIndex);
             if (SpecialTileText.IsStandingBuff(tile)) descriptions.Add(SpecialTileText.Describe(tile, m_selectedTarget.PathIndex, board.Grid));
-            // 수업 21: 큐브 윗면의 효과 (EnemyCubeFaces) — 면의 수치가 정해지면 (지금은 전부 0)
             if (descriptions.Count == 0) descriptions.Add("적용 중인 버프 없음\n현재 적에게 적용된 버프가 없습니다.");
 
             CreateEntries(content, descriptions, m_spawnedBuffEntries);

@@ -2,10 +2,10 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
+    // 검 단일 — 블레이드 스톰
     public class SwordTargetSkill : AttackSkill
     {
-        public const int SliceCount = 24;
-        public const float LastSliceMultiplier = 2.4f;      // 마지막 24번째 일격은 앞의 한 번의 2.4배 (2026-10-28 사용자)
+        public const int StormHits = 10;
 
         public SwordTargetSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
             : base(grid, occupancy, stackModes) { }
@@ -17,17 +17,15 @@ namespace SquareTD
 
         protected override void OnHitTarget(TowerController owner, ITarget target, DamageInfo hit)
         {
-            DamageInfo slice = hit;
-            slice.BaseDamage = hit.BaseDamage / SliceCount;
+            DamageInfo storm = hit;
+            storm.BaseDamage = hit.BaseDamage / StormHits;
 
-            for (int i = 0; i < SliceCount - 1; i++)
+            for (int i = 0; i < StormHits; i++)
             {
-                ProjectileHitResolver.HitSingle(target, slice);
+                ProjectileHitResolver.HitSingle(target, storm);
             }
 
-            DamageInfo last = slice;
-            last.BaseDamage = slice.BaseDamage * LastSliceMultiplier;
-            ProjectileHitResolver.HitSingle(target, last);
+            ProjectileHitResolver.HitSingle(target, hit);
         }
     }
 }

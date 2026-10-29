@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 방어·관통·받는 피해·고정 피해로 실제 피해를 계산
     public static class DamageCalculator
     {
         public static float GetOutgoing(float power, float distanceBonus, float critMultiplier)
@@ -11,7 +12,7 @@ namespace SquareTD
 
         public static float ApplyPenetration(float defense, float penetration)
         {
-            if (defense >= 0f) 
+            if (defense >= 0f)
             {
                 return defense * (1f - penetration);
             }
@@ -21,7 +22,7 @@ namespace SquareTD
 
         public static float GetDefenseCoefficient(float defense)
         {
-            if (defense >= 0f) 
+            if (defense >= 0f)
             {
                 return 1f / (1f + 0.01f * defense);
             }

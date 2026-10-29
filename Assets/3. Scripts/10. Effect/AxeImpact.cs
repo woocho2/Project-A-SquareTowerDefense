@@ -3,11 +3,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 도끼가 땅을 찍은 자리
-    //   Play       (쪼개기) 그을린 자국 + 불붙은 균열 + 충격파 고리 + 번쩍 + 파편 + 흙먼지 + 화면 흔들림
-    //   PlayGround (바이킹) 빛 없이 땅만 쩍: 그을린 자국 + 지그재그로 뻗는 어두운 금 + 파편 + 흙먼지 + 화면 흔들림
-    //   PlaySmall  (버서커) 작게: 작은 반짝 + 파편 몇 개 + 작은 먼지
-    //   weight 0 ~ 1: 클수록 파편이 많고 화면이 세게 흔들림
+    // 도끼가 땅을 찍은 자리 연출
     public static class AxeImpact
     {
         public static readonly Color Ember = new Color(1f, 0.45f, 0.2f);
@@ -17,7 +13,6 @@ namespace SquareTD
         private static readonly Color s_rock = new Color(0.58f, 0.44f, 0.34f);
         private static readonly Color s_dust = new Color(0.78f, 0.66f, 0.54f);
 
-        // 바이킹: 빛 없이 땅이 갈라짐. 금은 가운데에서 바깥으로 마디마디 꺾이며 퍼져 나감
         public static void PlayGround(EffectQuadPool shapePool, EffectQuadPool slashPool, System.Random random,
             Vector3 center, float size, int cracks, float delay, float weight)
         {
@@ -39,7 +34,6 @@ namespace SquareTD
             DOVirtual.DelayedCall(delay, () => ScreenShake.Play(0.05f + 0.15f * weight, 0.12f + 0.15f * weight));
         }
 
-        // 흙먼지 고리: 빛 없이 흙빛 고리가 크게 퍼짐 (강타)
         public static void PlayDustRing(EffectQuadPool shapePool, Vector3 center, float size, float delay)
         {
             EffectQuad ring = shapePool.Get();
@@ -59,7 +53,6 @@ namespace SquareTD
             sequence.OnKill(() => shapePool.Release(ring));
         }
 
-        // 버서커: 작은 도끼가 맞은 자리. 크지 않게
         public static void PlaySmall(EffectQuadPool shapePool, System.Random random, Vector3 center, float size, float delay)
         {
             size = Mathf.Max(0.3f, size);
@@ -67,7 +60,6 @@ namespace SquareTD
             for (int i = 0; i < 3; i++) PlayChunk(shapePool, random, center, size * 0.6f, delay);
         }
 
-        // 지그재그 금 하나: 세 마디가 차례로 그어지며 점점 가늘어짐
         private static void PlayCrack(EffectQuadPool slashPool, System.Random random, Vector3 center, float angle,
             float length, float thickness, float delay)
         {
@@ -85,7 +77,6 @@ namespace SquareTD
             }
         }
 
-        // size: 충격 범위 한 변의 월드 길이 / cracks: 균열 줄 수 / delay: 몇 초 뒤에 찍히는지
         public static void Play(EffectQuadPool shapePool, EffectQuadPool slashPool, System.Random random,
             Vector3 center, float size, int cracks, float delay, float weight)
         {
@@ -96,7 +87,6 @@ namespace SquareTD
             float startAngle = Range(random, 0f, 360f);
             for (int i = 0; i < cracks; i++)
             {
-                // 가운데에서 바깥으로 뻗는 균열 (판의 왼쪽 끝을 가운데에 두려고 반 길이만큼 밀어 둠)
                 float angle = startAngle + i * (360f / cracks) + Range(random, -18f, 18f);
                 float length = size * Range(random, 0.5f, 0.8f);
                 float radians = angle * Mathf.Deg2Rad;
@@ -114,11 +104,9 @@ namespace SquareTD
             DOVirtual.DelayedCall(delay, () => ScreenShake.Play(0.05f + 0.15f * weight, 0.12f + 0.15f * weight));
         }
 
-        // 지나간 도끼의 흐린 잔상 하나: 그 자리·각도·크기 그대로 잠깐 남았다 사라짐
         public static void PlayGhost(EffectQuadPool shapePool, Transform source, Color color, float alpha, float fade)
             => PlayGhostShape(shapePool, source, color, 5f, alpha, fade);
 
-        // 아무 모양의 잔상 (shape = SwordQi 셰이더의 모양 번호. 창은 9)
         public static void PlayGhostShape(EffectQuadPool shapePool, Transform source, Color color, float shape, float alpha, float fade)
         {
             EffectQuad ghost = shapePool.Get();
@@ -145,7 +133,7 @@ namespace SquareTD
             scorch.SetColor(s_scorch);
             scorch.SetFloat(EffectQuad.ShapeId, 2f);
             scorch.SetFloat(EffectQuad.AlphaId, 0.7f);
-            scorch.SetSortingOffset(-20);                                        // 균열·파편보다 아래
+            scorch.SetSortingOffset(-20);
 
             float alpha = 0.7f;
             Sequence sequence = DOTween.Sequence().SetLink(scorch.GameObject, LinkBehaviour.KillOnDisable);
@@ -213,7 +201,6 @@ namespace SquareTD
             sequence.OnKill(() => pool.Release(dust));
         }
 
-        // 돌 파편 하나: 바깥으로 튀어 올랐다가 떨어지며 돌고, 끝에 사라짐
         private static void PlayChunk(EffectQuadPool pool, System.Random random, Vector3 center, float size, float delay)
         {
             EffectQuad chunk = pool.Get();

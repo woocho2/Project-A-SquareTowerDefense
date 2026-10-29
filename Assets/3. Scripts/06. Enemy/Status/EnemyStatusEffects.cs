@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 
 namespace SquareTD
-{    
+{
+    // 적에게 걸린 상태 효과 목록과 훅 호출
     public class EnemyStatusEffects
     {
         private readonly EnemyController m_owner;
@@ -88,7 +89,7 @@ namespace SquareTD
 
         public bool Has(string key)
         {
-            return Find(key) != null;            
+            return Find(key) != null;
         }
 
         public StatusEffect Find(string key) => m_effects.Find(effect => effect.Key == key);

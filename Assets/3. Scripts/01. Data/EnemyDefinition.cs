@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 적 한 종류의 기본 데이터 (체력, 방어, 이동력 등)
     [CreateAssetMenu(fileName = "NewEnemy", menuName = "SquareTD/Enemy Definition")]
     public class EnemyDefinition : ScriptableObject
     {

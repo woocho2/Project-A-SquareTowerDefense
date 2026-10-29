@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace SquareTD
 {
+    // 판 클릭·드래그 입력
     public class BoardInputController : MonoBehaviour
     {
         [SerializeField] private Camera m_camera;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
+    // 판 위의 모든 존 목록과 자리 규칙
     public class ZoneRegistry
     {
         public const int MaxEmblemsPerCell = 3;

@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 탄이 맞은 자리의 이펙트
     public class HitEffect : MonoBehaviour
     {
         [SerializeField] private float m_safetyLifetime = 2f;

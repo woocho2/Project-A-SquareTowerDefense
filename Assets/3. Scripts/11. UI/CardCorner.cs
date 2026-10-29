@@ -5,8 +5,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
-    // 정보 카드 오른쪽 위의 접힌 귀퉁이 — 누르면 다른 카드로 넘김 (타워·적 카드 ↔ 타일 카드, 2026-10-28)
-    //   귀퉁이 그림은 코드로 그린 삼각형 (Codex 아이콘이 오면 Image의 sprite만 바꾸면 됨). 위에 작은 글자("타일" 등)
+    // 정보 카드의 접힌 귀퉁이 (다른 카드로 넘기기)
     public static class CardCorner
     {
         private const float Size = 46f;
@@ -34,7 +33,7 @@ namespace SquareTD
             var text = new GameObject("Txt_CardCorner", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI)).GetComponent<TextMeshProUGUI>();
             text.rectTransform.SetParent(rect, false);
             text.rectTransform.anchorMin = Vector2.zero;
-            text.rectTransform.anchorMax = new Vector2(0.62f, 0.62f);           // 접힌 면(왼쪽 아래 삼각형) 안쪽
+            text.rectTransform.anchorMax = new Vector2(0.62f, 0.62f);
             text.rectTransform.offsetMin = new Vector2(2f, 2f);
             text.rectTransform.offsetMax = Vector2.zero;
             if (sample != null) text.font = sample.font;
@@ -54,7 +53,6 @@ namespace SquareTD
             if (text != null) text.text = label;
         }
 
-        // 오른쪽 위 귀퉁이를 접은 모양: 접힌 면 = 왼쪽 아래 삼각형 (접힌 선 쪽이 밝고, 두 변에 그림자 선)
         private static Sprite FoldSprite()
         {
             if (s_fold != null) return s_fold;
@@ -68,7 +66,7 @@ namespace SquareTD
                 for (int x = 0; x < size; x++)
                 {
                     float u = (x + 0.5f) / size, v = (y + 0.5f) / size;
-                    float fold = 1f - (u + v);                                   // 0 = 접힌 선, 클수록 왼쪽 아래 끝
+                    float fold = 1f - (u + v);
                     if (fold < 0f) { texture.SetPixel(x, y, Color.clear); continue; }
                     Color color = Color.Lerp(paper, shade, Mathf.Clamp01(fold * 1.4f));
                     bool outline = fold < 0.035f || u < 0.035f || v < 0.035f;

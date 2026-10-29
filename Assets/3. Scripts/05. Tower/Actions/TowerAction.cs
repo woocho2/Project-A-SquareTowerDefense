@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 타워 행동의 베이스 (사거리 안 대상 모으기, 기본 공격 피해 만들기)
     public abstract class TowerAction
     {
         protected readonly BoardGrid m_grid;
@@ -43,7 +44,7 @@ namespace SquareTD
             Vector3Int from = m_grid.GetSpawnCell(tower.SlotIndex);
             Vector3Int to = m_grid.GetPathCell(target.PathIndex);
             int distance = BoardGrid.GetTileDistance(from, to);
-            float skillMultiplier = tower.Skill != null ? tower.Skill.ModifyBasicDamage(tower, target) : 1f;    // 불 단일(화상), 빛 단일(도깨비불)
+            float skillMultiplier = tower.Skill != null ? tower.Skill.ModifyBasicDamage(tower, target) : 1f;
 
             return new DamageInfo
             {

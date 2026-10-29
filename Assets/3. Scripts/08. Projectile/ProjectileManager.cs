@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
+    // 탄 풀과 발사, 명중 이펙트
     public class ProjectileManager : Singleton<ProjectileManager>, IProjectileLauncher
     {
         [SerializeField] private Projectile m_prefab;
@@ -17,7 +18,7 @@ namespace SquareTD
         private ObjectPool<Projectile> m_pool;
 
         private readonly Dictionary<int, ObjectPool<HitEffect>> m_hitEffectPools = new Dictionary<int, ObjectPool<HitEffect>>();
-        private Dictionary<int, IShotEffect> m_shotEffects;     // 투사체 대신 그리는 연출 (ShotEffectTable: 소드 마스터 101, 블레이드 댄서 201)
+        private Dictionary<int, IShotEffect> m_shotEffects;
 
         public int FlyingCount { get; private set; }
 
@@ -97,7 +98,6 @@ namespace SquareTD
             effect.gameObject.SetActive(true);
             effect.Play(pool.Release);
         }
-
 
         private Projectile CreateProjectile()
         {

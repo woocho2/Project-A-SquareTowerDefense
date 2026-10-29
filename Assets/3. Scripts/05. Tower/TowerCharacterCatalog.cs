@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 타워 ID → 캐릭터 그림 표
     [CreateAssetMenu(menuName = "SquareTD/Tower Character Catalog")]
     public class TowerCharacterCatalog : ScriptableObject
     {

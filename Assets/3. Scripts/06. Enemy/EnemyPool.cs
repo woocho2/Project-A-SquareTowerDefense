@@ -3,6 +3,7 @@ using UnityEngine.Pool;
 
 namespace SquareTD
 {
+    // 적 오브젝트 풀
     public class EnemyPool : MonoBehaviour
     {
         [SerializeField] private EnemyController m_prefab;

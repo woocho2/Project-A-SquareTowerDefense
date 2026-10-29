@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 타겟 우선순위별로 공격할 적을 고르는 방법들
     public abstract class TargetSelector
     {
         private static readonly TargetSelector s_closest = new ClosestSelector();
@@ -164,7 +165,7 @@ namespace SquareTD
             }
 
             if (best != null) return best;
-            return For(TargetPriority.MostHP).Select(candidates, towerCell, grid);   // 보스가 없으면 "체력 많은 적" 선택자에게 맡김
+            return For(TargetPriority.MostHP).Select(candidates, towerCell, grid);
         }
     }
 }

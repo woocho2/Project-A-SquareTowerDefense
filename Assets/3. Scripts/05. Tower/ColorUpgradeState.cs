@@ -2,6 +2,7 @@ using System;
 
 namespace SquareTD
 {
+    // 컬러별 강화 레벨
     public class ColorUpgradeState
     {
         private readonly int[] m_levels = { 1, 1, 1, 1, 1 };
@@ -16,9 +17,9 @@ namespace SquareTD
         public bool TryUpgrade(TowerColor color)
         {
             if (!CanUpgrade(color)) return false;
-            
+
             m_levels[(int)color]++;
-            
+
             LevelChanged?.Invoke(color, GetLevel(color));
             return true;
         }

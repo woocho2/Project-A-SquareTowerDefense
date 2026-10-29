@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: UpperSpirit_Appearance
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyCubeAppearance
   m_characterTexture: {fileID: 2800000, guid: 2bfbf17b1f32f76ca596b369d3e21fc3, type: 3}
+  m_faceSprite: {fileID: 161032, guid: 51661a7468f3488aa78d7917c4396461, type: 3}
+  m_fullSprite: {fileID: 61032, guid: 51661a7468f3488aa78d7917c4396461, type: 3}
   m_equipmentMask: {fileID: 0}

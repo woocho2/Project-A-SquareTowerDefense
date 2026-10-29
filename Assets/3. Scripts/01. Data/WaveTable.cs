@@ -1,5 +1,6 @@
 namespace SquareTD
 {
+    // 웨이브·사이클별 적 체력 배율과 적 수 한도 표
     public static class WaveTable
     {
         private static readonly float[] waveMulti = { 1.0f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f, 1.7f, 1.8f, 1.9f };

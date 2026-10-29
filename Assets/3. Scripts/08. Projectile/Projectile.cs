@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 날아가는 탄 하나
     public class Projectile : MonoBehaviour
     {
         private static readonly int IsFlying = Animator.StringToHash("IsFlying");

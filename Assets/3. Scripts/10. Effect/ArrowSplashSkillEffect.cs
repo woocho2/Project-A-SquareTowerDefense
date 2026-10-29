@@ -4,48 +4,43 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 레인저(광역 활) 스킬 2 화살비 연출 (2026-10-28 사용자: 쏘아 올리기와 떨어지기를 나눔)
-    //   PlayVolley (발동, ④) 타워에서 화살 다발이 세 번 부채꼴로 하늘에 쏘아 올려져 화면 위로 사라짐
-    //   PlayRain   (⑤마다)  하늘이 어둑해지고 화면 전체에 화살이 비스듬히 쏟아져 꽂힘. 맞은 적마다 두 대씩 먼저 꽂힘
-    //   타워·규칙은 모름. 카메라·타워 위치·맞을 위치들만 받아서 그림
+    // 레인저(광역 활) 스킬 2 화살비 연출
     [DisallowMultipleComponent]
     public sealed class ArrowSplashSkillEffect : MonoBehaviour
     {
         private static readonly Color s_sky = new Color(0.05f, 0.05f, 0.1f);
 
         [SerializeField] private int m_arrowCount = 70;
-        [SerializeField] private float m_arrowLength = 0.6f;       // 칸에 대한 비율
+        [SerializeField] private float m_arrowLength = 0.6f;
         [SerializeField] private float m_volleyDuration = 0.35f;
         [SerializeField] private int m_volleyWaves = 3;
         [SerializeField] private float m_volleyWaveGap = 0.12f;
-        [SerializeField] private float m_rainSpread = 1f;          // 쏟아지는 데 걸리는 시간
+        [SerializeField] private float m_rainSpread = 1f;
         [SerializeField] private float m_fallDuration = 0.2f;
         [SerializeField] private float m_slant = 16f;
         [SerializeField] private float m_stayDuration = 0.6f;
         [SerializeField, Range(0f, 1f)] private float m_skyDarkness = 0.35f;
 
-        private readonly System.Random m_random = new System.Random();     // 게임 쪽 Random을 건드리지 않게
+        private readonly System.Random m_random = new System.Random();
         private EffectQuadPool m_pool;
 
         private void Awake() => m_pool = new EffectQuadPool(transform, "SwordQi", "Arrow Rain", 30);
 
         private void OnDestroy() => m_pool?.Dispose();
 
-        // 발동: 하늘로 쏘아 올리기만. owner: 레인저 위치 / cellWorldSize: 칸 한 변
         public void PlayVolley(Camera camera, Vector3 owner, float cellWorldSize)
         {
             if (!m_pool.IsReady) return;
 
             float cell = Mathf.Max(0.5f, cellWorldSize);
             float length = cell * m_arrowLength;
-            float height = camera != null && camera.orthographic ? camera.orthographicSize * 2f : 10f;   // 화면 위로 벗어날 만큼 날아감
+            float height = camera != null && camera.orthographic ? camera.orthographicSize * 2f : 10f;
             for (int wave = 0; wave < m_volleyWaves; wave++)
             {
                 for (int i = 0; i < 5; i++) PlayVolleyArrow(owner, length, i, wave * m_volleyWaveGap, height);
             }
         }
 
-        // ⑤: 쏘아 올린 화살이 떨어짐. camera: 화면 크기를 잴 카메라 / hitPositions: 맞을 적들의 위치
         public void PlayRain(Camera camera, IReadOnlyList<Vector3> hitPositions, float cellWorldSize)
         {
             if (camera == null || !m_pool.IsReady) return;
@@ -55,7 +50,7 @@ namespace SquareTD
             float height = camera.orthographic ? camera.orthographicSize * 2f : 10f;
             float width = height * camera.aspect;
             Vector3 center = new Vector3(camera.transform.position.x, camera.transform.position.y, 0f);
-            float rainAt = 0.2f;                                                    // 하늘이 어두워진 뒤
+            float rainAt = 0.2f;
 
             PlaySkyDim(center, width, height, rainAt + m_rainSpread + m_fallDuration + m_stayDuration);
 
@@ -67,7 +62,7 @@ namespace SquareTD
             }
 
             if (hitPositions == null) return;
-            foreach (Vector3 hit in hitPositions)                                 // 맞은 적에게는 먼저 두 대씩
+            foreach (Vector3 hit in hitPositions)
             {
                 for (int k = 0; k < 2; k++)
                 {
@@ -78,7 +73,6 @@ namespace SquareTD
             }
         }
 
-        // 타워에서 화살이 부채꼴로 하늘에 쏘아 올려짐 (delay 뒤, 화면 높이만큼 날아가며 흐려짐)
         private void PlayVolleyArrow(Vector3 owner, float length, int index, float delay, float travel)
         {
             float angle = 90f + (index - 2) * 10f + Range(-3f, 3f);
@@ -104,7 +98,6 @@ namespace SquareTD
             sequence.OnKill(() => m_pool.Release(arrow));
         }
 
-        // 화살이 하늘을 덮어 화면이 어둑해졌다가 밝아짐
         private void PlaySkyDim(Vector3 center, float width, float height, float duration)
         {
             EffectQuad sky = m_pool.Get();

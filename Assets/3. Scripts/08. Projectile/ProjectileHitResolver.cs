@@ -2,9 +2,10 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 탄이 닿았을 때 피해를 넣음
     public static class ProjectileHitResolver
     {
-        public static bool LogHits = false;     // 임시 체력 로그 "[Hit] …" 켜기·끄기 (2026-10-27 사용자 요청으로 끔, true면 다시 나옴)
+        public static bool LogHits = false;
 
         public static void HitSingle(ITarget target, DamageInfo info)
         {

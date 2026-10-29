@@ -4,14 +4,11 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // "아직 연출이 돌고 있나?" 를 한곳에서 봄 (2026-10-27 사용자: 연출이 끝나야 다음 타워·다음 턴)
-    //   켜진 연출 판(EffectQuadPool), 살아 있는 파티클(EffectParticles), 판 없이 도는 연출이 걸어 둔 시간(HoldFor)
-    //   연출 쪽이 알아서 등록하므로 새 연출도 EffectQuadPool·EffectParticles만 쓰면 따로 할 일 없음
-    //   규칙 쪽은 이것을 모름: TurnManager가 WaitUntilIdle을 TowerTurnRunner에 넘겨 줌
+    // 연출이 아직 돌고 있는지 한곳에서 봄
     public static class EffectActivity
     {
-        private const float IdleGrace = 0.1f;       // 연출 사이의 아주 짧은 틈(DelayedCall 뒤에 판을 꺼냄)에 넘어가지 않게
-        private const float MaxWait = 6f;           // 판을 안 돌려놓는 실수가 있어도 게임이 멈추지 않게
+        private const float IdleGrace = 0.1f;
+        private const float MaxWait = 6f;
 
         private static readonly HashSet<GameObject> s_quads = new HashSet<GameObject>();
         private static readonly List<ParticleSystem> s_particles = new List<ParticleSystem>();
@@ -30,7 +27,6 @@ namespace SquareTD
         public static void QuadOff(GameObject quad) => s_quads.Remove(quad);
         public static void Register(ParticleSystem system) => s_particles.Add(system);
 
-        // 판 없이 도는 연출(화면 갈라짐 덮개 등)은 끝날 때까지의 시간을 직접 걸어 둠. 게임 시간(배속)을 따름
         public static void HoldFor(float seconds) => s_holdUntil = Mathf.Max(s_holdUntil, Time.time + seconds);
 
         public static bool IsBusy
@@ -42,7 +38,7 @@ namespace SquareTD
                 s_gone.Clear();
                 foreach (GameObject quad in s_quads)
                 {
-                    if (quad == null || !quad.activeInHierarchy) s_gone.Add(quad);     // 씬이 바뀌어 사라진 판은 빼 둠
+                    if (quad == null || !quad.activeInHierarchy) s_gone.Add(quad);
                 }
                 foreach (GameObject quad in s_gone) s_quads.Remove(quad);
                 if (s_quads.Count > 0) return true;
@@ -56,7 +52,6 @@ namespace SquareTD
             }
         }
 
-        // 연출이 IdleGrace 동안 이어서 조용해질 때까지 기다림
         public static IEnumerator WaitUntilIdle()
         {
             float idle = 0f;

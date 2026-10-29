@@ -2,6 +2,7 @@ using System;
 
 namespace SquareTD
 {
+    // 지금 웨이브 번호와 웨이브 바뀜 알림
     public class WaveManager : Singleton<WaveManager>
     {
         public const int LastWave = 40;

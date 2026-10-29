@@ -1,4 +1,4 @@
-﻿fileFormatVersion: 2
+fileFormatVersion: 2
 guid: 9341ecf5f1bf4d3e99043e3107657b6b
 TextureImporter:
   internalIDToNameTable: []
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Enemy_Hel_Wight
+      name: Hel_Wight_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 56
+        y: 568
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -145,13 +145,35 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Enemy_Hel_Garm
+      name: Hel_Wight_Face
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 272
+        y: 894
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2f2f18d33994755b84ff615ce6b3111
+      internalID: 161090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hel_Garm_Full
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 568
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,13 +189,35 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Enemy_Hel_HelQueen
+      name: Hel_Garm_Face
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 877
+        y: 806
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aab17b8a198940dcac26cea6afdc54e8
+      internalID: 161091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hel_HelQueen_Full
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 56
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -184,6 +228,28 @@ TextureImporter:
       bones: []
       spriteID: 824440afec054e10bc5e1eaff3d5ba1f
       internalID: 61092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hel_HelQueen_Face
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 380
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: acd2d0d265274509995b844dc9d04ea0
+      internalID: 161092
       vertices: []
       indices: 
       edges: []
@@ -202,9 +268,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Enemy_Hel_Wight: 61090
-      Enemy_Hel_Garm: 61091
-      Enemy_Hel_HelQueen: 61092
+      Hel_Wight_Full: 61090
+      Hel_Wight_Face: 161090
+      Hel_Garm_Full: 61091
+      Hel_Garm_Face: 161091
+      Hel_HelQueen_Full: 61092
+      Hel_HelQueen_Face: 161092
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

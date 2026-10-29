@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
+    // 게임 시작 전 문양 고르기 패널
     public class EmblemSelectPanel : MonoBehaviour
     {
         [Header("모드")]
@@ -61,7 +62,6 @@ namespace SquareTD
             m_modeName = modeName;
             m_requiredCount = requiredCount;
             if (txt_mode != null) txt_mode.text = modeName;
-            // 수업 42: 라그나로크의 문양 규칙(고정 문양 등)과 모드별 해금 상태를 20번 9장대로
             Refresh();
         }
 
@@ -89,9 +89,6 @@ namespace SquareTD
             List<TowerEmblem> emblems = GetSelectedEmblems();
             if (emblems.Count != m_requiredCount) return;
 
-            // 수업 42: StartSettings(씬을 건너는 static 설정)에 모드·스테이지·고른 문양을 적고 스테이지 씬으로
-            //   StartSettings.Set(모드, 스테이지, emblems);
-            //   GameSession과 TowerManager가 Awake에서 StartSettings를 읽음 (지금은 인스펙터의 m_mode·m_selectedEmblems)
             Debug.Log($"[EmblemSelectPanel] {m_modeName} · 문양 {string.Join(", ", emblems)} (설정 넘기기는 수업 42)");
             SceneFlow.Load(m_sceneName_Stage);
         }

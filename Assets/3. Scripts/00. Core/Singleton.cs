@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 씬에 하나만 있는 매니저의 공용 베이스 (Instance)
     public abstract class Singleton<T> : MonoBehaviour
     where T : MonoBehaviour
     {

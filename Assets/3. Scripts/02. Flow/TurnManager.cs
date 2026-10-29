@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 웨이브와 적 턴의 순서를 돌리는 게임 루프
     public class TurnManager : Singleton<TurnManager>
     {
         public const int EnemyTurnsPerWave = 10;
@@ -32,6 +33,12 @@ namespace SquareTD
         public void OnClickEndTurn()
         {
             if (!Current.CanPlayerAct) return;
+
+            if (TowerManager.Instance != null && TowerManager.Instance.IsMerging)
+            {
+                Debug.Log("[TurnManager] 자동 합성이 끝난 뒤에 턴을 넘길 수 있음");
+                return;
+            }
 
             if (BoardManager.Instance.Zones.HasUnplaced())
             {
@@ -88,7 +95,7 @@ namespace SquareTD
         {
             Debug.Log($"[TurnManager] 적 턴 {turn}");
             EnemyTurnStart();
-            yield return EffectActivity.WaitUntilIdle();       // 지난 턴의 연출이 다 끝난 뒤에 적이 움직임
+            yield return EffectActivity.WaitUntilIdle();
             yield return MoveAllEnemies();
             yield return SupportTowersPhase();
             TileEffectsPhase();
@@ -125,12 +132,12 @@ namespace SquareTD
 
         private void DebuffPhase()
         {
-            foreach (EnemyController enemy in new List<EnemyController>(EnemyManager.Instance.Registry.Alive))   // 도는 중에 죽어 목록이 바뀌어도 되게 복사
+            foreach (EnemyController enemy in new List<EnemyController>(EnemyManager.Instance.Registry.Alive))
             {
                 if (enemy.IsAlive) enemy.Status.OnTurn();
             }
 
-            BoardManager.Instance.Grounds.RunTurn();            
+            BoardManager.Instance.Grounds.RunTurn();
         }
 
         private void BossTimerPhase()

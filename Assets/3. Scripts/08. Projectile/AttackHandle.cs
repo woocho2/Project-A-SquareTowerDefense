@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 한 번의 공격에서 쏜 탄이 다 닿았는지 셈
     public class AttackHandle
     {
         public int PendingShots { get; private set; }
@@ -19,7 +20,7 @@ namespace SquareTD
                 Debug.LogWarning("[AttackHandle] 쏜 탄보다 도착한 탄이 많음");
                 return;
             }
-            
+
             PendingShots--;
         }
 

@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 길 칸·스폰 칸의 좌표와 거리 계산
     public class BoardGrid
     {
         private readonly List<Vector3Int> m_pathCells = new List<Vector3Int>();

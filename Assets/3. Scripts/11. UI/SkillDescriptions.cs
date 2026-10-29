@@ -2,16 +2,13 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 타워 카드의 스킬 칸 글: 스킬 이름, 액티브/패시브, 설명 (2026-10-28)
-    //   이름은 20번 기획서 [문양별 이름]. 공격 타워(광역·단일)의 스킬 2는 액티브, 버프·디버프 타워의 존 효과는 패시브
-    //   설명은 14문양 모두 (2026-10-28 수업 32 ~ 40의 문양까지 채움). 문양 없는 타워(시너지 등)만 컬러별 공통 문장
+    // 타워 카드의 스킬 이름·설명
     public static class SkillDescriptions
     {
-        // [문양, 컬러] — 컬러 순서: 광역, 단일, 버프, 디버프
         private static readonly string[,] s_names =
         {
-            { "", "", "", "" },                                                  // 0 None
-            { "보이드 슬래시", "블레이드 템페스트", "블레싱 → 글로리", "커스 → 둠" },
+            { "", "", "", "" },
+            { "보이드 슬래시", "블레이드 스톰", "블레싱 → 글로리", "커스 → 둠" },
             { "대회전", "광폭화", "출정가 → 발할라의 찬가", "사형 선고 → 사형 집행" },
             { "화살비", "은화살", "요정의 활 → 정령의 활", "락 온 → 핀 포인트" },
             { "용맹한 깃창", "뽑아찢기", "카우치 → 랜스 차지", "출혈 → 과다출혈" },
@@ -34,11 +31,9 @@ namespace SquareTD
             return s_names[emblem, color];
         }
 
-        // 버프·디버프 타워의 존 효과는 따로 누르지 않아도 늘 걸리므로 패시브
         public static bool IsPassive(TowerDefinition definition) =>
             definition.Color == TowerColor.Yellow || definition.Color == TowerColor.Purple;
 
-        // 카드 스킬 칸의 제목: "보이드 슬래시 · 액티브"
         public static string GetTitle(TowerDefinition definition) =>
             $"{GetName(definition)} · {(IsPassive(definition) ? "패시브" : "액티브")}";
 
@@ -52,7 +47,7 @@ namespace SquareTD
                 case (TowerEmblem.Sword, TowerColor.Red):
                     return $"기본 공격이 적에게 {stats.Duration}번 적중할 때마다 맵 전체의 적에게 {damage:0.##} 피해.\n덧붙는 효과 없는 베기의 기본형";
                 case (TowerEmblem.Sword, TowerColor.Blue):
-                    return $"기본 공격이 적에게 {stats.Duration}번 적중하면 그 순간 맞은 적에게 {damage:0.##} 피해를 24번에 나눠 줌, 마지막 일격은 2.4배.\n치명은 한 번만 판정해 24번 모두에";
+                    return $"기본 공격이 적에게 {stats.Duration}번 적중하면 그 순간 맞은 적에게 검기 폭풍.\n검기 10번에 {damage / SwordTargetSkill.StormHits:0.##}씩, 폭발 막타 {damage:0.##} (합계 2배). 치명은 한 번만 판정해 11번 모두에";
                 case (TowerEmblem.Sword, TowerColor.Yellow):
                     return $"블레싱: 공격력 +(스택만큼, 최대 {zone:0.##}%)\n글로리: 공격력 +{zone:0.##}%, 최종 피해 +10%\n베기 타워는 치명 확률 +5% / +10%";
                 case (TowerEmblem.Sword, TowerColor.Purple):
@@ -163,7 +158,6 @@ namespace SquareTD
                     return $"잠식: 죽으면 카운트 +(스택만큼, 최대 {zone:0.##})\n침식: 죽으면 카운트 +{zone:0.##}, 받는 피해 +10%";
             }
 
-            // 아직 문양 수업 전: 컬러별 공통 문장
             switch (definition.Color)
             {
                 case TowerColor.Red: return $"기본 공격이 적에게 {stats.Duration}번 적중할 때마다 발동. 피해 {damage:0.##}\n(문양 효과는 그 문양의 수업에서)";
@@ -174,14 +168,13 @@ namespace SquareTD
             }
         }
 
-        // 버프존·디버프존의 지금 단계 이름: 스킬 1이면 "블레싱", 스킬 2면 "글로리" (이름 표의 "→" 앞뒤)
         public static string GetZoneStageName(Zone zone)
         {
             TowerColor color = zone.IsBuff ? TowerColor.Yellow : TowerColor.Purple;
             int emblem = (int)zone.Emblem;
             if (emblem < 1 || emblem >= s_names.GetLength(0)) return zone.IsBuff ? "버프존" : "디버프존";
             string[] stages = s_names[emblem, (int)color - 1].Split('→');
-            int index = zone.Stage == ZoneStage.Skill2 ? 1 : zone.Stage == ZoneStage.Discharge ? 2 : 0;     // 방전은 전기만 (충전 → 과충전 → 방전)
+            int index = zone.Stage == ZoneStage.Skill2 ? 1 : zone.Stage == ZoneStage.Discharge ? 2 : 0;
             return stages[Mathf.Min(index, stages.Length - 1)].Trim();
         }
     }

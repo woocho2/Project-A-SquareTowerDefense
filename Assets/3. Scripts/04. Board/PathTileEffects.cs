@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 길 위 특수 타일의 효과 (방어, 이동력, 행동 카운트, 회복, 정화)
     public abstract class PathTileEffect
     {
         public const string Source = "길 특수 타일";
@@ -48,7 +49,7 @@ namespace SquareTD
 
         public override void OnTurnStanding(EnemyController enemy)
         {
-            enemy.Movement.AddActionProgress(Mathf.RoundToInt(Amount * enemy.Stats.Get(StatType.MapBuffRate)));     // 침수면 +1 (수업 34)
+            enemy.Movement.AddActionProgress(Mathf.RoundToInt(Amount * enemy.Stats.Get(StatType.MapBuffRate)));
         }
     }
 
@@ -60,7 +61,7 @@ namespace SquareTD
 
         public override void OnTurnStanding(EnemyController enemy)
         {
-            enemy.Heal(enemy.MaxHp * Rate * enemy.Stats.Get(StatType.MapBuffRate));     // 받는 치유 배율까지 (출혈), 침수면 절반 (수업 34)
+            enemy.Heal(enemy.MaxHp * Rate * enemy.Stats.Get(StatType.MapBuffRate));
         }
     }
 
@@ -82,9 +83,9 @@ namespace SquareTD
         public override PathTileType Type => PathTileType.Bifrost;
 
         public override void OnStopped(EnemyController enemy, BoardGrid grid, SpecialTileLayout layout)
-        {            
+        {
             if (layout.GetPathTile(enemy.Movement.ActionStartIndex) == PathTileType.Bifrost) return;
-                        
+
             enemy.Movement.TeleportTo(grid.GetBifrostPartner(enemy.PathIndex));
         }
     }
@@ -101,6 +102,6 @@ namespace SquareTD
             { PathTileType.Bifrost, new BifrostTileEffect() },
         };
 
-        public static PathTileEffect Get(PathTileType type) => s_effects.TryGetValue(type, out PathTileEffect effect) ? effect : null;     // None이면 null
+        public static PathTileEffect Get(PathTileType type) => s_effects.TryGetValue(type, out PathTileEffect effect) ? effect : null;
     }
 }

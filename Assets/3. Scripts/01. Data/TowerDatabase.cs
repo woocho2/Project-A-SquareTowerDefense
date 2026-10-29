@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // TowerData.csv를 읽어 타워 정의를 ID로 찾게 해 줌
     public class TowerDatabase
     {
         private readonly Dictionary<int, TowerDefinition> m_byId = new Dictionary<int, TowerDefinition>();

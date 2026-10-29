@@ -1,13 +1,9 @@
+using System.Collections.Generic;
+using UnityEngine;
+
 namespace SquareTD
 {
-    // 블랙홀 (21번 #116, 20번 4-16장): 정한 적의 칸 위에 생겨 (컬러 강화 레벨 × 2)턴 남음. 크기는 Mastery (1 → 1×1, 2 → 3×3, 3 → 5×5)
-    //   피해: ⑤마다 그 구역의 적에게 소환한 때 정해 둔 값 (화살비처럼). 블랙홀이 막타를 치면 카운트 +5 (EmblemSharedState)
-    //   끌어당김: 맵 전체. 블랙홀의 길 칸 번호를 기준으로 (고리를 돌아 가까운 쪽을 따지지 않음)
-    //                       번호가 낮은 적     번호가 높은 적
-    //     보통 적            이동력 +2          이동력 +3, 60%로 뒤로
-    //     잠식인 적          이동력 +3          이동력 +4, 80%로 뒤로
-    //     침식인 적          이동력 +4          이동력 +5, 100%로 뒤로
-    //   뒤로 가는 확률은 저항력만큼 줄어듦. 이동력 증가는 적에게 주는 것이라 저항과 무관
+    // 블랙홀 장판: 적을 끌어당기고 매 턴 피해
     public class BlackHoleGround : GroundEffect
     {
         private readonly BoardGrid m_grid;
@@ -16,6 +12,7 @@ namespace SquareTD
         private readonly int m_radius;
 
         public float Damage { get; }
+        public int Radius => m_radius;
 
         public BlackHoleGround(TowerController owner, BoardGrid grid, PathOccupancy occupancy, int centerPathIndex, int mastery, float damage, int turns)
             : base(owner, TowerEmblem.Darkness, turns)
@@ -34,9 +31,11 @@ namespace SquareTD
 
         public override void OnTurn()
         {
+            var hitPositions = new List<Vector3>();
             foreach (ITarget target in SkillArea.Impact(m_grid, m_occupancy, m_center, m_radius + 1))
             {
                 if (!target.IsAlive) continue;
+                if (Application.isPlaying && target.Transform != null) hitPositions.Add(target.Transform.position);
                 ProjectileHitResolver.HitSingle(target, new DamageInfo
                 {
                     Attacker = Owner != null ? Owner : null,
@@ -45,9 +44,9 @@ namespace SquareTD
                     BaseDamage = Damage,
                 });
             }
+            SkillEffectTable.PlayBlackHoleTurn(this, hitPositions);
         }
 
-        // (낮은 쪽 +, 높은 쪽 +, 뒤로 갈 확률)
         public static void GetPull(ZoneStage darkness, out int lower, out int higher, out float backChance)
         {
             switch (darkness)
@@ -68,7 +67,7 @@ namespace SquareTD
 
             var faster = new MoveRange(range.Min + higher, range.Max + higher, range.Action);
             if (!Chance.Roll(enemy.Resistance.ResistWeak(backChance))) return faster;
-            return new MoveRange(-faster.Max, -faster.Min, faster.Action);      // 뒤로 (하한 없음)
+            return new MoveRange(-faster.Max, -faster.Min, faster.Action);
         }
 
         public override string Describe() => $"블랙홀: 매 턴 {Damage:0.##} 피해, 맵 전체를 {m_center}번 칸으로 끌어당김, {RemainingTurns}턴 남음";

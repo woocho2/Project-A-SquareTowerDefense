@@ -2,10 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 물 광역 — 쓰나미 (20번 4-10장)
-    //   맵 전체의 적에게 Power × AbilityValue (스택을 쓰면 ×). 맞은 적의 최소·최대 이동력 −2, 그 적의 다음 행동 한 번만
-    //   이동력 감소는 (100 − 저항력)% 확률로 걸림. 피해는 저항과 무관. 실제로 걸린 타격만 "이동력을 바꾼 공격" (젖음이 전부 받음)
-    //   물 타워끼리: 물결 존에 서 있으면 쓰나미 피해 ×1.25, 해류 존에서는 ×1.5 (스택 배율과 따로 곱함)
+    // 물 광역 — 쓰나미
     public class WaterSplashSkill : AttackSkill
     {
         public const string Key = "쓰나미";

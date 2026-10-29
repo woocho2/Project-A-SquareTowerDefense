@@ -4,12 +4,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 판 위의 버프존·디버프존을 보여 줌 (2026-10-28 사용자: 존이 안 보임)
-    //   놓인 존마다 칸 둘레에 고리: 버프 노랑, 디버프 보라 (역할 색). 스택만큼 시계 방향으로 차고, 다 차면(스킬 2) 숨 쉬듯 빛남
-    //   칸 왼쪽 아래에 그 존을 만든 타워의 문양 엠블럼. 한 칸에 존이 여럿이면 고리는 안쪽으로 하나씩, 엠블럼은 옆으로
-    //   모양은 Resources/SpecialTile.shader의 11번. SpecialTileGlowEffect와 같이 보드 타일맵(BoardTile)에 붙임
-    //   규칙은 모름: ZoneRegistry를 읽기만 함. 존이 생기고·놓이고·사라질 때(ZoneChanged) 다시 깔고, 스택은 매 프레임 읽음
-    //   (스택이 오를 때마다 알리는 이벤트는 없음 — 단계가 바뀔 때만 ZoneChanged)
+    // 판 위의 버프존·디버프존 고리 표시
     [DisallowMultipleComponent]
     public sealed class ZoneGlowEffect : MonoBehaviour
     {
@@ -28,7 +23,7 @@ namespace SquareTD
         [SerializeField, Range(0f, 1f)] private float m_alpha = 0.85f;
         [SerializeField] private Color m_buffColor = new Color(1f, 0.82f, 0.3f);
         [SerializeField] private Color m_debuffColor = new Color(0.72f, 0.4f, 1f);
-        [SerializeField, Range(0.1f, 0.5f)] private float m_iconSize = 0.28f;      // 칸에 대한 비율
+        [SerializeField, Range(0.1f, 0.5f)] private float m_iconSize = 0.28f;
 
         private sealed class View
         {
@@ -67,7 +62,7 @@ namespace SquareTD
 
             Renderer boardRenderer = GetComponent<Renderer>();
             m_sortingLayer = boardRenderer != null ? boardRenderer.sortingLayerID : 0;
-            m_ringOrder = (boardRenderer != null ? boardRenderer.sortingOrder : 0) + 3;     // 격자(+1)·특수 타일(+2) 위
+            m_ringOrder = (boardRenderer != null ? boardRenderer.sortingOrder : 0) + 3;
             m_cell = EffectSpace.CellWorldSize();
 
             m_board.Zones.ZoneChanged += OnZoneChanged;
@@ -100,15 +95,13 @@ namespace SquareTD
             }
         }
 
-        // 스킬 2면 1, 스킬 1이면 지금 스택 ÷ 최대 스택 (존 주인의 Stack)
         private static float Progress(Zone zone)
         {
             if (zone.Stage == ZoneStage.Skill2) return 1f;
             int max = zone.Owner != null ? zone.Owner.Stats.Stack : 0;
-            return max > 0 ? Mathf.Clamp01(zone.Stack / max) * 0.999f : 0f;      // 0.999: 다 찬 모습은 스킬 2일 때만
+            return max > 0 ? Mathf.Clamp01(zone.Stack / max) * 0.999f : 0f;
         }
 
-        // 존이 생기거나 사라지거나 놓일 때만 부름 (드묾) — 통째로 다시 깔아도 가벼움
         private void Rebuild()
         {
             m_dirty = false;
@@ -119,7 +112,6 @@ namespace SquareTD
             }
             m_views.Clear();
 
-            // 같은 칸의 존끼리 묶어 몇 번째인지 셈 (버프존은 스폰 칸, 디버프존은 길 칸)
             var countAtCell = new Dictionary<(bool, int), int>();
             foreach (Zone zone in m_board.Zones.All)
             {
@@ -161,11 +153,9 @@ namespace SquareTD
             return new View { Zone = zone, Ring = ring, Renderer = renderer, Block = block, Icon = MakeIcon(zone, center, indexInCell, color) };
         }
 
-        // 칸 왼쪽 아래에 주인 타워의 문양 엠블럼 (타워 그림에 가리지 않게 투사체 층에 그림)
         private GameObject MakeIcon(Zone zone, Vector3 center, int indexInCell, Color color)
         {
-            TowerVisual visual = zone.Owner.GetComponent<TowerVisual>();
-            Sprite sprite = visual != null ? visual.EmblemSprite : null;
+            Sprite sprite = TowerIcons.Instance != null ? TowerIcons.Instance.GetEmblem(zone.Emblem) : null;
             if (sprite == null) return null;
 
             var icon = new GameObject("Zone Emblem", typeof(SpriteRenderer));

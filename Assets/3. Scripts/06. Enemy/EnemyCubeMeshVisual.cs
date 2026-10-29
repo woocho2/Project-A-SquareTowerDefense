@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 적 큐브 3D 메쉬와 면 그림
     public enum EnemyCubeFace { Front = 0, Back = 1, Left = 2, Right = 3, Top = 4, Bottom = 5 }
     public enum EnemyCubeFaceAsset { SelfHeal = 0, Defense = 1, Action = 2, Mobility = 3, Locked = 4, Hourglass = 5 }
 
@@ -53,10 +54,12 @@ namespace SquareTD
         {
             if (m_appearance == null || m_appearance.CharacterTexture == null) return;
 
+            Rect uv = m_appearance.CharacterUvRect;
             for (int face = 0; face < m_faceMaterials.Length; face++)
             {
                 m_renderer.GetPropertyBlock(m_appearanceProperties, face);
                 m_appearanceProperties.SetTexture("_MainTex", m_appearance.CharacterTexture);
+                m_appearanceProperties.SetVector("_MainTex_ST", new Vector4(uv.width, uv.height, uv.x, uv.y));
                 m_renderer.SetPropertyBlock(m_appearanceProperties, face);
             }
         }

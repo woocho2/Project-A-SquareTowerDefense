@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 효과 → 설명 문구 (21번 #166). Click Debug 창과 적 정보 패널이 같이 씀
+    // 상태 효과를 설명 문구로 바꿈
     public static class StatusTextFormatter
     {
         public static string Describe(StatusEffect effect)

@@ -136,13 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower_Ice_Sorcerer_Front_v2
+      name: Ice_Glacier_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 88
+        y: 101
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,67 +158,155 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Ice_JackFrost_Front_v2
+      name: Ice_Yeti_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 582
+        y: 101
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 371bf5c9bd2e4ef6bf04df825cfb0034
-      internalID: 52111
+      spriteID: d1d15588c6083dc46a17ca96ad2590b2
+      internalID: 248009233
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Ice_Glacier_Front_v2
+      name: Ice_Sorcerer_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 62
+        y: 619
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 175aa52bcdba44fc9f896f7496361186
-      internalID: 52112
+      spriteID: fb5150c4cf5f43f4f9a5517e4ec2e4dc
+      internalID: -874438648
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Ice_Yeti_Front_v2
+      name: Ice_Jack Frost_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
+        x: 528
+        y: 620
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 423907c3eaee43d581ef610f52d9dfc5
-      internalID: 52113
+      spriteID: ed7f4a0f1504b38489b88852ed5539b8
+      internalID: 1835624905
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ice_Glacier_Face
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 308
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 25eb4e45e23b0ca46938bde0e3e81907
+      internalID: 18413572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ice_Yeti_Face
+      rect:
+        serializedVersion: 2
+        x: 651
+        y: 282
+        width: 144
+        height: 144
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 116a2ff9cf9669241a2c2cc732a0b1b1
+      internalID: 518057151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ice_Sorcerer_Face
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 916
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53fa31da460f5a3498ffc4a7ca1566ca
+      internalID: -1765599532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ice_Jack Frost_Face
+      rect:
+        serializedVersion: 2
+        x: 651
+        y: 880
+        width: 128
+        height: 123
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eb2b12283c4b4ae4a985666b01bd7231
+      internalID: -148760465
       vertices: []
       indices: 
       edges: []
@@ -227,7 +315,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 4576f42f5d7c32b41abf7e07a13584b2
     internalID: 0
     vertices: []
     indices: 
@@ -237,9 +325,16 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Ice_Glacier_Face: 18413572
+      Ice_Glacier_Full: 52110
+      Ice_Jack Frost_Face: -148760465
+      Ice_Jack Frost_Full: 1835624905
+      Ice_Sorcerer_Face: -1765599532
+      Ice_Sorcerer_Full: -874438648
+      Ice_Yeti_Face: 518057151
+      Ice_Yeti_Full: 248009233
       Tower_Ice_Glacier_Front_v2: 52112
       Tower_Ice_JackFrost_Front_v2: 52111
-      Tower_Ice_Sorcerer_Front_v2: 52110
       Tower_Ice_Yeti_Front_v2: 52113
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0

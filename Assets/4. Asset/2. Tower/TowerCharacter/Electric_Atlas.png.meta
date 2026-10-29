@@ -136,79 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower_Electric_Stormbringer_Front_v2
+      name: Electric_Stormbringer_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: bd0961e8ff7c40b68bf1c622889b277a
-      internalID: 52120
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Tower_Electric_Thunderbird_Front_v2
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d885af3ad05842fea17619bb7b977023
-      internalID: 52121
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Tower_Electric_Qilin_Front_v2
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: cb7104d6723a4de59098c6883128c40e
-      internalID: 52122
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Tower_Electric_LightningWolf_Front_v2
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
+        x: 91
+        y: 610
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -223,11 +157,165 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Electric_Thunderbird_Full
+      rect:
+        serializedVersion: 2
+        x: 620
+        y: 556
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b457caa868c910f4a9116b708495216a
+      internalID: 809658539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Electric_Kirin_Full
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 115
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 677cdbdf14c7e244ca85d5701da7ece4
+      internalID: 2013819202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Electric_Lightning Wolf_Full
+      rect:
+        serializedVersion: 2
+        x: 548
+        y: 54
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4db3402814053254083c60769a825a8d
+      internalID: 957560292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Electric_Stormbringer_Face
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 917
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd258a085918fc14fbacaf0a029978c9
+      internalID: 450835207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Electric_Thunderbird_Face
+      rect:
+        serializedVersion: 2
+        x: 817
+        y: 788
+        width: 108
+        height: 108
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6e78f08c95ee2ef4cadeaa8175cdf7c8
+      internalID: -915840084
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Electric_Kirin_Face
+      rect:
+        serializedVersion: 2
+        x: 153
+        y: 346
+        width: 144
+        height: 144
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b373cb41e3562e848a90c575eda8c184
+      internalID: -2134967169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Electric_Lightning Wolf_Face
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 210
+        width: 144
+        height: 144
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 95bed78fc1cefbc4897c89e41e72a574
+      internalID: 338323416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 633cbeceae8fb044b997b340788cfdf8
     internalID: 0
     vertices: []
     indices: 
@@ -237,7 +325,16 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Tower_Electric_LightningWolf_Front_v2: 52123
+      Electric_Atlas_3: -1706566292
+      Electric_Atlas_8: -2062105210
+      Electric_Kirin_Face: -2134967169
+      Electric_Kirin_Full: 2013819202
+      Electric_Lightning Wolf_Face: 338323416
+      Electric_Lightning Wolf_Full: 957560292
+      Electric_Stormbringer_Face: 450835207
+      Electric_Stormbringer_Full: 52123
+      Electric_Thunderbird_Face: -915840084
+      Electric_Thunderbird_Full: 809658539
       Tower_Electric_Qilin_Front_v2: 52122
       Tower_Electric_Stormbringer_Front_v2: 52120
       Tower_Electric_Thunderbird_Front_v2: 52121

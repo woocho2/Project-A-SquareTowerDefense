@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 탄에 붙는 파티클
     public class ProjectileVfx : MonoBehaviour
     {
         [SerializeField] private TrailRenderer m_trail;

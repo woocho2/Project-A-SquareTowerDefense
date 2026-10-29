@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
+    // 옵션 패널
     public class OptionPanel : MonoBehaviour
     {
         [SerializeField] Button btn_resume;
@@ -22,7 +23,6 @@ namespace SquareTD
             if (btn_restart != null) btn_restart.onClick.AddListener(HandleRestartClick);
             if (btn_menu != null) btn_menu.onClick.AddListener(HandleQuitClick);
 
-            // 스택 전체 자동/수동 (켜짐 = 자동). 타워 종류(문양 + 컬러)별 예외 목록은 수업 47
             if (tgl_autoConsumeStack != null && TowerManager.Instance != null)
             {
                 tgl_autoConsumeStack.isOn = !TowerManager.Instance.StackModes.ManualByDefault;

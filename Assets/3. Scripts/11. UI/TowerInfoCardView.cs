@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
+    // 수집형 타워 카드 화면 (아직 프리팹에 없음)
     public sealed class TowerInfoCardView : MonoBehaviour
     {
         [Header("카드 면")]

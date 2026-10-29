@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 적 턴에 타워들을 차례로 행동시킴
     public class TowerTurnRunner
     {
         private readonly TowerSlots m_slots;
@@ -11,10 +12,8 @@ namespace SquareTD
         private readonly ZoneRegistry m_zones;
         private readonly Func<IEnumerator> m_waitForVisuals;
 
-        public static bool LogActions = false;      // "② / ④ 누구 행동" 로그 켜기·끄기 (2026-10-27 사용자 요청으로 끔, [Skill] 로그는 그대로)
+        public static bool LogActions = false;
 
-        // waitForVisuals: 공격 타워 한 기가 끝날 때마다 "연출이 끝날 때까지 기다리기" (TurnManager가 EffectActivity.WaitUntilIdle을 넘김)
-        //   타워 쪽은 연출을 모르게 밖에서 받음. 테스트처럼 안 넘기면 기다리지 않음
         public TowerTurnRunner(TowerSlots slots, float safetySeconds, ZoneRegistry zones = null, Func<IEnumerator> waitForVisuals = null)
         {
             m_slots = slots;
@@ -38,7 +37,7 @@ namespace SquareTD
 
         public void RunEnemyTurnStart()
         {
-            if (m_zones != null) BuffZoneAction.RunZoneTurns(m_zones, m_slots);     // 불길·과충전·방전의 남은 턴 (수업 33·38)
+            if (m_zones != null) BuffZoneAction.RunZoneTurns(m_zones, m_slots);
 
             for (int i = 0; i < m_slots.Count; i++)
             {
@@ -58,16 +57,18 @@ namespace SquareTD
                 TowerController tower = m_slots.Get(i);
                 if (tower == null || !tower.IsAttackTower) continue;
 
-                if (!tower.TickAction()) continue;                  // 스킬 2는 적중마다 셈 (TowerController.CountSkillHit)
+                if (!tower.TickAction()) continue;
 
                 if (LogActions) Debug.Log($"[TowerTurnRunner] ④ {tower.name} 행동");
                 var handle = new AttackHandle();
                 yield return tower.Act(handle);
                 yield return WaitForHandle(tower, handle);
-                yield return WaitForVisuals();                  // 기본 공격의 명중 연출이 끝난 뒤에
+                yield return WaitForVisuals();
 
-                while (tower.FireNextPendingSkill())            // 이번 행동에서 찬 스킬 2를 하나씩: 쏘고 → 연출이 끝나면 다음
+                while (tower.HasPendingSkill)
                 {
+                    if (tower.WillFireNextSkill()) yield return SkillCutIn.Play(tower);
+                    if (!tower.FireNextPendingSkill()) break;
                     yield return WaitForVisuals();
                 }
             }

@@ -1,6 +1,6 @@
 namespace SquareTD
 {
-    // 특수 타일의 이름과 설명 (타일 정보 패널, 적 정보 패널이 같이 씀). 수치는 20번 2장
+    // 특수 타일의 이름과 설명 문구
     public static class SpecialTileText
     {
         public static string Describe(PathTileType type, int pathIndex, BoardGrid grid)
@@ -29,7 +29,6 @@ namespace SquareTD
             }
         }
 
-        // 적이 "서 있는 동안" 받는 타일만 (정화·비프로스트는 멈춘 순간이라 버프 목록에 넣지 않음)
         public static bool IsStandingBuff(PathTileType type) =>
             type == PathTileType.Defense || type == PathTileType.Speed || type == PathTileType.ActionCount || type == PathTileType.Heal;
     }

@@ -1,5 +1,6 @@
 namespace SquareTD
 {
+    // 타워 스폰 칸마다 선 타워
     public class TowerSlots
     {
         private readonly TowerController[] m_slots;
@@ -57,6 +58,5 @@ namespace SquareTD
             m_slots[b] = temp;
             return true;
         }
-
     }
 }

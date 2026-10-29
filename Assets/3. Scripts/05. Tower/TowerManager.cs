@@ -1,10 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace SquareTD
 {
+    // 타워 생성·판매·합성·강화·이동을 맡는 매니저
     public class TowerManager : Singleton<TowerManager>
     {
         public const int StartBuildCost = 50;
@@ -16,6 +18,7 @@ namespace SquareTD
         [SerializeField] private TowerController m_towerPrefab;
         [SerializeField] private Transform m_towerParent;
         [SerializeField] private List<TowerEmblem> m_selectedEmblems = new List<TowerEmblem>();
+        [SerializeField] private float m_mergeDelay = 0.5f;
 
         public TowerDatabase Database { get; private set; }
         public ColorUpgradeState ColorLevels { get; private set; }
@@ -32,6 +35,12 @@ namespace SquareTD
         public event Action<TowerController, TowerController> TowerReplaced;
 
         private TowerFactory m_factory;
+        private TowerMergeEffect m_mergeEffect;
+        private Coroutine m_mergeRoutine;
+        private readonly HashSet<TowerController> m_merging = new HashSet<TowerController>();
+
+        public bool IsMerging => m_mergeRoutine != null;
+        public bool IsMergingTower(TowerController tower) => tower != null && m_merging.Contains(tower);
 
         protected override void Awake()
         {
@@ -47,7 +56,8 @@ namespace SquareTD
 
         private void Start()
         {
-            m_factory = new TowerFactory(m_towerPrefab, m_towerParent, BoardManager.Instance, Database, ColorLevels, StackModes);   // 💬 맨 뒤에 StackModes를 더 넘김
+            m_factory = new TowerFactory(m_towerPrefab, m_towerParent, BoardManager.Instance, Database, ColorLevels, StackModes);
+            m_mergeEffect = EffectSpace.Make<TowerMergeEffect>(transform, "Tower Merge Effect");
         }
 
         public bool TryBuild()
@@ -81,10 +91,10 @@ namespace SquareTD
             Debug.Log($"[TowerManager] {tower.name} → {slotIndex}번 칸, 다음 비용 {BuildCost}");
             TowerAdded?.Invoke(tower);
             BuildCostChanged?.Invoke(BuildCost);
+            RequestAutoMerge();
             return true;
         }
 
-        // ── 개발용 (DebugCheat 9 · 0) ── 정해 준 정의로 빈 칸에 바로 세움. 골드·턴·비용 검사 없음
         public TowerController SpawnForDebug(TowerDefinition definition)
         {
             if (!BoardManager.Instance.Slots.TryGetFirstEmpty(out int slotIndex))
@@ -94,7 +104,11 @@ namespace SquareTD
             }
 
             TowerController tower = m_factory.Create(definition, slotIndex);
-            if (tower != null) TowerAdded?.Invoke(tower);
+            if (tower != null)
+            {
+                TowerAdded?.Invoke(tower);
+                RequestAutoMerge();
+            }
             return tower;
         }
 
@@ -123,6 +137,11 @@ namespace SquareTD
                 return false;
             }
             if (tower == null) return false;
+            if (IsMergingTower(tower))
+            {
+                Debug.Log("[TowerManager] 합성 중인 타워는 팔 수 없음");
+                return false;
+            }
             if (TowerId.IsSynergy(tower.Definition.Id))
             {
                 Debug.Log("[TowerManager] 시너지 타워는 팔 수 없음");
@@ -144,49 +163,59 @@ namespace SquareTD
             TowerRemoved?.Invoke(tower);
         }
 
-        public bool TryMerge(TowerController target, MergeMode mode)
+        private void RequestAutoMerge()
         {
-            if (!TurnManager.Instance.Current.CanPlayerAct)
+            if (m_mergeRoutine == null && isActiveAndEnabled) m_mergeRoutine = StartCoroutine(AutoMergeLoop());
+        }
+
+        private IEnumerator AutoMergeLoop()
+        {
+            TowerSlots slots = BoardManager.Instance.Slots;
+            while (TowerProgression.TryFindMergeGroup(slots, IsMergingTower, out TowerController keep, out List<TowerController> materials))
             {
-                Debug.Log("[TowerManager] 플레이어 턴이 아니라 합성할 수 없음");
-                return false;
+                if (!Database.TryGet(TowerId.GetNextTier(keep.Definition.Id), out TowerDefinition next))
+                {
+                    Debug.LogError($"[TowerManager] {keep.name}의 다음 티어가 CSV에 없어 합성하지 못함");
+                    break;
+                }
+
+                m_merging.Add(keep);
+                foreach (TowerController material in materials) m_merging.Add(material);
+
+                yield return new WaitForSeconds(m_mergeDelay);
+                if (m_mergeEffect != null)
+                {
+                    m_mergeEffect.PlayGather(materials, keep.transform.position);
+                    yield return new WaitForSeconds(m_mergeEffect.FlyDuration);
+                    m_mergeEffect.PlayCharge(keep);
+                    yield return new WaitForSeconds(m_mergeEffect.ChargeDuration);
+                }
+
+                MergeInto(keep, materials, next);
+                m_merging.Clear();
             }
-            if (target == null) return false;
+            m_mergeRoutine = null;
+        }
 
-            var materials = new List<TowerController>();
-            if (!TowerProgression.TryFindMaterials(target, mode, BoardManager.Instance.Slots, materials))
-            {
-                Debug.Log($"[TowerManager] {mode} 합성 재료가 모자람 (같은 티어 {TowerProgression.MergeCount}기)");
-                return false;
-            }
+        private void MergeInto(TowerController keep, List<TowerController> materials, TowerDefinition next)
+        {
+            bool wasSelected = Selected == keep || materials.Contains(Selected);
+            foreach (TowerController material in materials) RemoveTower(material);
 
-            List<TowerDefinition> candidates = TowerProgression.GetResultCandidates(target.Definition, mode, Database, m_selectedEmblems);
-            if (candidates.Count == 0)
-            {
-                Debug.Log("[TowerManager] 합성 결과가 CSV에 없음 (재료는 그대로)");
-                return false;
-            }
+            TowerController created = m_factory.Replace(keep, next, true);
+            if (created == null) return;
 
-            TowerDefinition result = candidates[Random.Range(0, candidates.Count)];
-            TowerController created = m_factory.Replace(target, result, false);
-            if (created == null) return false;
-
-            foreach (TowerController material in materials)
-            {
-                RemoveTower(material);
-            }
-
-            Debug.Log($"[TowerManager] {mode} 합성 → {created.name}");
-            TowerReplaced?.Invoke(target, created);
+            Debug.Log($"[TowerManager] 자동 합성 → {created.name} ({created.SlotIndex}번 칸)");
+            TowerReplaced?.Invoke(keep, created);
             TowerAdded?.Invoke(created);
-            Select(created);
-            return true;
+            if (wasSelected) Select(created);
+            if (m_mergeEffect != null) m_mergeEffect.PlayPop(created);
         }
 
         public bool TryTierUpgrade(TowerController tower)
         {
             if (!TurnManager.Instance.Current.CanPlayerAct) return false;
-            if (tower == null) return false;
+            if (tower == null || IsMergingTower(tower)) return false;
 
             int cost = TowerProgression.GetTierUpgradeCost(tower.Definition.Tier);
             if (cost <= 0 || TowerId.IsSynergy(tower.Definition.Id))
@@ -212,6 +241,7 @@ namespace SquareTD
             Debug.Log($"[TowerManager] 티어 강화 → {created.name}, 젬 −{cost}");
             TowerReplaced?.Invoke(tower, created);
             if (Selected == tower) Select(created);
+            RequestAutoMerge();
             return true;
         }
 
@@ -246,7 +276,7 @@ namespace SquareTD
                 if (tower == null || tower.Definition.Color != color) continue;
 
                 tower.RecalculateStats();
-                
+
                 ZoneRegistry zones = BoardManager.Instance.Zones;
                 if (level == 4)
                 {
@@ -264,6 +294,11 @@ namespace SquareTD
             TowerSlots slots = BoardManager.Instance.Slots;
             int fromSlot = tower.SlotIndex;
             TowerController other = slots.Get(toSlot);
+            if (IsMergingTower(tower) || IsMergingTower(other))
+            {
+                Debug.Log("[TowerManager] 합성 중인 타워는 옮길 수 없음");
+                return false;
+            }
 
             if (other == null)
             {
@@ -285,7 +320,7 @@ namespace SquareTD
         {
             BoardManager board = BoardManager.Instance;
             tower.SetSlot(slot, board.GetWorldPosition(board.Grid.GetSpawnCell(slot)));
-            tower.SetSpawnTile(board.Tiles.GetSpawnTile(slot));            
+            tower.SetSpawnTile(board.Tiles.GetSpawnTile(slot));
         }
     }
 }

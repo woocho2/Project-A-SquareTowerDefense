@@ -1,4 +1,4 @@
-﻿fileFormatVersion: 2
+fileFormatVersion: 2
 guid: 1a4b37cfd6f44228b2ff05a575d0be09
 TextureImporter:
   internalIDToNameTable: []
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Enemy_Muspelheim_FireGiant
+      name: Muspelheim_FireGiant_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 56
+        y: 568
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -145,13 +145,35 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Enemy_Muspelheim_FireGiantChief
+      name: Muspelheim_FireGiant_Face
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 222
+        y: 901
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0345d709bc154dafa55ab235922f8213
+      internalID: 161080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Muspelheim_FireGiantChief_Full
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 568
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,13 +189,35 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Enemy_Muspelheim_Surtr
+      name: Muspelheim_FireGiantChief_Face
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 752
+        y: 900
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20ff9d59859a4b898a159f5ea8105feb
+      internalID: 161081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Muspelheim_Surtr_Full
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 56
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -184,6 +228,28 @@ TextureImporter:
       bones: []
       spriteID: 40edba17742f4843aed2de6edf03fa59
       internalID: 61082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Muspelheim_Surtr_Face
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 388
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05c366b9856c49babdcd0461286171c8
+      internalID: 161082
       vertices: []
       indices: 
       edges: []
@@ -202,9 +268,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Enemy_Muspelheim_FireGiant: 61080
-      Enemy_Muspelheim_FireGiantChief: 61081
-      Enemy_Muspelheim_Surtr: 61082
+      Muspelheim_FireGiant_Full: 61080
+      Muspelheim_FireGiant_Face: 161080
+      Muspelheim_FireGiantChief_Full: 61081
+      Muspelheim_FireGiantChief_Face: 161081
+      Muspelheim_Surtr_Full: 61082
+      Muspelheim_Surtr_Face: 161082
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

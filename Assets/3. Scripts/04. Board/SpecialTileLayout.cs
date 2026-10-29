@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 특수 타일 종류별 개수 (BoardManager 인스펙터). 기본값 = 20번 2장의 첫 맵
+    // 특수 타일을 판에 무작위로 배치
     [Serializable]
     public class SpecialTileCounts
     {
         [Header("길")]
-        public bool Bifrost = true;     // 두 칸이 짝이라 개수가 아니라 켜고 끄기
+        public bool Bifrost = true;
         public int Defense = 2;
         public int Speed = 2;
         public int PathActionCount = 2;
@@ -23,7 +23,6 @@ namespace SquareTD
         public int Mastery = 1;
     }
 
-    // 판 시작 때 특수 타일을 깔고, 칸 번호 → 타일 종류를 알려 줌
     public class SpecialTileLayout
     {
         private PathTileType[] m_pathTiles = Array.Empty<PathTileType>();
@@ -49,7 +48,7 @@ namespace SquareTD
             {
                 int first = random.Next(0, grid.PathCount);
                 int partner = grid.GetBifrostPartner(first);
-                
+
                 m_pathTiles[first] = PathTileType.Bifrost;
                 m_pathTiles[partner] = PathTileType.Bifrost;
 
@@ -57,18 +56,16 @@ namespace SquareTD
                 pathCells.Remove(partner);
             }
 
-            // 2. 나머지 길 타일: 남은 칸을 섞고 앞에서부터 차례로 깖
             var pathTypes = new List<PathTileType>();
             AddRepeated(pathTypes, PathTileType.Defense, counts.Defense);
             AddRepeated(pathTypes, PathTileType.Speed, counts.Speed);
             AddRepeated(pathTypes, PathTileType.ActionCount, counts.PathActionCount);
             AddRepeated(pathTypes, PathTileType.Heal, counts.Heal);
             AddRepeated(pathTypes, PathTileType.Purify, counts.Purify);
-                        
+
             Shuffle(pathCells, random);
             PlaceInOrder(pathCells, pathTypes, m_pathTiles);
 
-            // 3. 타워 스폰 타일: 전체 스폰 칸을 섞고 같은 방식으로
             var spawnCells = new List<int>();
             for (int i = 0; i < grid.SpawnCount; i++) spawnCells.Add(i);
 

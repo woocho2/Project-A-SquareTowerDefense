@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 골드·젬
     public class CurrencyManager : Singleton<CurrencyManager>
     {
         [SerializeField] private int m_startGold = 300;
@@ -11,7 +12,7 @@ namespace SquareTD
         public int Gold { get; private set; }
         public int Gem { get; private set; }
 
-        public event Action<int, int> Changed;        
+        public event Action<int, int> Changed;
 
         protected override void Awake()
         {

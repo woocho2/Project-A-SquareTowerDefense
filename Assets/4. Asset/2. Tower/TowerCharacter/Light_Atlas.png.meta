@@ -136,13 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower_Light_Archmage_Front_v2
+      name: Light_Bishop_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 62
+        y: 106
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,67 +158,155 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Light_Wisp_Front_v2
+      name: Light_Lucifer_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 586
+        y: 70
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9ce941c3955942b2ad2180f7796d187d
-      internalID: 52131
+      spriteID: 204bab498730c064c8738838821eeab9
+      internalID: 1340244950
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Light_Bishop_Front_v2
+      name: Light_Archmage_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 65
+        y: 624
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 58566539160d4a49bf04d612c5be0378
-      internalID: 52132
+      spriteID: 73fe48881775d7449a16227fc1ebd0cc
+      internalID: 989788163
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Light_Lucifer_Front_v2
+      name: Light_Wisp_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
+        x: 587
+        y: 617
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: edbc357be4864e29b7d071362428d0a6
-      internalID: 52133
+      spriteID: 44ff6704274e5074eb29fcebadcade2c
+      internalID: -316577814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Light_Bishop_Face
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 335
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eec5c9c4081e75a479521ddf32a20327
+      internalID: 1512816854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Light_Lucifer_Face
+      rect:
+        serializedVersion: 2
+        x: 747
+        y: 369
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ddd051da9017bd4384b53cee27f705a
+      internalID: -1645622279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Light_Archmage_Face
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 922
+        width: 84
+        height: 84
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30fbe0baab1f6f94db7c0579e7e5cfd0
+      internalID: -1903453174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Light_Wisp_Face
+      rect:
+        serializedVersion: 2
+        x: 745
+        y: 908
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 47bfe033700302742b58e7094410564b
+      internalID: -1209709835
       vertices: []
       indices: 
       edges: []
@@ -227,7 +315,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5feaf44a4433eef4dac7e018bc471045
     internalID: 0
     vertices: []
     indices: 
@@ -237,7 +325,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Tower_Light_Archmage_Front_v2: 52130
+      Light_Archmage_Face: -1903453174
+      Light_Archmage_Full: 989788163
+      Light_Bishop_Face: 1512816854
+      Light_Bishop_Full: 52130
+      Light_Lucifer_Face: -1645622279
+      Light_Lucifer_Full: 1340244950
+      Light_Wisp_Face: -1209709835
+      Light_Wisp_Full: -316577814
       Tower_Light_Bishop_Front_v2: 52132
       Tower_Light_Lucifer_Front_v2: 52133
       Tower_Light_Wisp_Front_v2: 52131

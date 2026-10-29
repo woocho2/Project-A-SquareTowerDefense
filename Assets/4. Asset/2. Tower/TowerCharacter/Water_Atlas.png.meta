@@ -136,13 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower_Water_TideMage_Front_v2
+      name: Water_Undine_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 584
+        y: 624
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,67 +158,155 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Water_Undine_Front_v2
+      name: Water_Naiad_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 87
+        y: 113
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 9db9faf4ff8c49879d393493a3b605b4
-      internalID: 52081
+      spriteID: 32e2fdbc25227564f894e34aa4985313
+      internalID: 317057228
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Water_Naiad_Front_v2
+      name: Water_Siren_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 542
+        y: 113
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 753de198c9c948bc86282a7b479e9b3f
-      internalID: 52082
+      spriteID: 0eacf4c1dc7fe93419d15fba4afb3a56
+      internalID: 836442716
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Water_Siren_Front_v2
+      name: Water_Wavecaller_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
+        x: 60
+        y: 603
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 71d4749c430946e6981201b3a193c6c8
-      internalID: 52083
+      spriteID: b1f258c570fa09a40bed9e116875b8bb
+      internalID: -1280612050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Water_Siren_Face
+      rect:
+        serializedVersion: 2
+        x: 683
+        y: 398
+        width: 100
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 25d89f64802038e4eb7433c397c343e8
+      internalID: -921870515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Water_Naiad_Face
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 358
+        width: 144
+        height: 144
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8c53b2015ddeff448edc321eb9260cf
+      internalID: -807451337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Water_Wavecaller_Face
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 922
+        width: 72
+        height: 72
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc578d31ba9ba204d96bdebfc1d8dd13
+      internalID: -2123199347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Water_Undine_Face
+      rect:
+        serializedVersion: 2
+        x: 748
+        y: 911
+        width: 100
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b2011962328a9594fa5c02d862ecc639
+      internalID: 1046316465
       vertices: []
       indices: 
       edges: []
@@ -227,7 +315,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 29b8ee0c261a2d04ca68b12f8cea24a7
     internalID: 0
     vertices: []
     indices: 
@@ -239,8 +327,15 @@ TextureImporter:
     nameFileIdTable:
       Tower_Water_Naiad_Front_v2: 52082
       Tower_Water_Siren_Front_v2: 52083
-      Tower_Water_TideMage_Front_v2: 52080
       Tower_Water_Undine_Front_v2: 52081
+      Water_Naiad_Face: -807451337
+      Water_Naiad_Full: 317057228
+      Water_Siren_Face: -921870515
+      Water_Siren_Full: 836442716
+      Water_Undine_Face: 1046316465
+      Water_Undine_Full: 52080
+      Water_Wavecaller_Face: -2123199347
+      Water_Wavecaller_Full: -1280612050
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

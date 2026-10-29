@@ -1,4 +1,4 @@
-﻿fileFormatVersion: 2
+fileFormatVersion: 2
 guid: 1b4175b9cfac460cb1ff939499c27615
 TextureImporter:
   internalIDToNameTable: []
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Enemy_Midgard_SeaSerpent
+      name: Midgard_SeaSerpent_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 56
+        y: 568
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -145,13 +145,35 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Enemy_Midgard_GreatSeaSerpent
+      name: Midgard_SeaSerpent_Face
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 287
+        y: 830
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17dff0a3c4b64b89b518eece55eba868
+      internalID: 161040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Midgard_GreatSeaSerpent_Full
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 568
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,13 +189,35 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Enemy_Midgard_Jormungandr
+      name: Midgard_GreatSeaSerpent_Face
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 829
+        y: 830
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58b3652d1e3b4a76ac32464f965c8caa
+      internalID: 161041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Midgard_Jormungandr_Full
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 56
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -184,6 +228,28 @@ TextureImporter:
       bones: []
       spriteID: 6489fc7727b44700a11f647525ac912b
       internalID: 61042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Midgard_Jormungandr_Face
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 322
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb2ca7565b9740b486b971901be31fcb
+      internalID: 161042
       vertices: []
       indices: 
       edges: []
@@ -202,9 +268,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Enemy_Midgard_SeaSerpent: 61040
-      Enemy_Midgard_GreatSeaSerpent: 61041
-      Enemy_Midgard_Jormungandr: 61042
+      Midgard_SeaSerpent_Full: 61040
+      Midgard_SeaSerpent_Face: 161040
+      Midgard_GreatSeaSerpent_Full: 61041
+      Midgard_GreatSeaSerpent_Face: 161041
+      Midgard_Jormungandr_Full: 61042
+      Midgard_Jormungandr_Face: 161042
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

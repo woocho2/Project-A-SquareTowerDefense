@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
+    // 타워 티어 배지 그림
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class TowerTierBadgeGraphic : MaskableGraphic
     {

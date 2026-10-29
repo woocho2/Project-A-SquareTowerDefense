@@ -4,6 +4,7 @@ using UnityEngine.Tilemaps;
 
 namespace SquareTD
 {
+    // 판 전체를 들고 있는 매니저 (격자, 특수 타일, 존, 칸 점유, 타워 자리, 장판)
     public class BoardManager : Singleton<BoardManager>
     {
         [SerializeField] private Tilemap m_pathTilemap;
@@ -22,7 +23,7 @@ namespace SquareTD
 
         public TowerSlots Slots { get; private set; }
 
-        public GroundEffectRegistry Grounds { get; private set; }     // 깔린 장판 (화살비, 수업 40 블랙홀)
+        public GroundEffectRegistry Grounds { get; private set; }
 
         protected override void Awake()
         {
@@ -117,7 +118,7 @@ namespace SquareTD
                 UnityEditor.Handles.Label(pos, label, spawnStyle);
             }
         }
-        
+
         private static string ZoneLabel(List<Zone> zones)
         {
             string text = "";

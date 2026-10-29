@@ -4,10 +4,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
-    // 큰 한 방의 "간지" 도구
-    //   Slow: 잠깐 느려짐 (히트스톱·슬로우 모션) — 실제 시간으로 재고, 끝나면 원래 배속으로
-    //   Frame: 1 ~ 2프레임 화면 전체 번쩍 (임팩트 프레임) — UI까지 덮음
-    //   Punch: 카메라가 살짝 확대됐다 돌아옴 (화면 흔들림과 함께 쓰면 묵직함)
+    // 큰 한 방의 연출 도구
     public static class ImpactFx
     {
         private static float s_restoreScale = -1f;
@@ -19,10 +16,9 @@ namespace SquareTD
         private static float s_punchBase;
         private static Tween s_punch;
 
-        // factor: 0.1이면 10배 느리게 / realSeconds: 실제 몇 초 동안
         public static void Slow(float factor, float realSeconds)
         {
-            if (Time.timeScale <= 0f) return;                                       // 일시정지 중이면 건드리지 않음
+            if (Time.timeScale <= 0f) return;
             if (s_slowEnd != null && s_slowEnd.IsActive()) s_slowEnd.Kill();
             else s_restoreScale = Time.timeScale;
 
@@ -33,7 +29,6 @@ namespace SquareTD
             }).SetUpdate(true);
         }
 
-        // 화면 전체가 color로 번쩍 (realSeconds 동안, 보통 0.03 ~ 0.06)
         public static void Frame(Color color, float realSeconds)
         {
             EnsureFrame();
@@ -43,12 +38,11 @@ namespace SquareTD
             s_frameEnd = DOVirtual.DelayedCall(realSeconds, () => { if (s_frameImage != null) s_frameImage.enabled = false; }).SetUpdate(true);
         }
 
-        // zoom: 0.04면 4% 확대 / duration: 돌아오는 데 걸리는 시간
         public static void Punch(float zoom, float duration)
         {
             Camera camera = Camera.main;
             if (camera == null || !camera.orthographic) return;
-            if (s_punch != null && s_punch.IsActive()) s_punch.Kill();          // OnKill에서 원래 크기로
+            if (s_punch != null && s_punch.IsActive()) s_punch.Kill();
             s_punchCamera = camera;
             s_punchBase = camera.orthographicSize;
             camera.orthographicSize = s_punchBase * (1f - zoom);
@@ -60,7 +54,7 @@ namespace SquareTD
 
         private static void EnsureFrame()
         {
-            if (s_frameHolder != null) return;                                      // 씬을 다시 불러오면 지워졌으므로 새로
+            if (s_frameHolder != null) return;
             s_frameHolder = new GameObject("Impact Frame", typeof(RectTransform), typeof(Canvas));
             Canvas canvas = s_frameHolder.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;

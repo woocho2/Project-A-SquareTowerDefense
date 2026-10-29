@@ -2,10 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 불 단일 — 화염구 (20번 4-9장)
-    //   그 적에게 Power × AbilityValue (스택을 쓰면 ×). 60% × (1 − 저항력%) 확률로 화상 — 그 적이 (레벨 × 2)번 행동하는 동안
-    //   이 화상은 스택 1로 고정: 세기가 아니라 "화상이 붙어 있다"는 상태 (메테오와 불 단일의 추가 피해를 켜는 용도)
-    //   불 단일의 맞물림: 화상인 적에게 +10%, 연소된 적에게 +20% — 기본 공격과 화염구 모두
+    // 불 단일 — 화염구
     public class FireTargetSkill : AttackSkill
     {
         public const float BurnChance = 0.6f;

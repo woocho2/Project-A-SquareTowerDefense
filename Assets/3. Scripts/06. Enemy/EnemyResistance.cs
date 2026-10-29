@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 적의 저항력 (약한 CC 감소, 강한 CC 확률)
     public class EnemyResistance
     {
         public const float Max = 100f;

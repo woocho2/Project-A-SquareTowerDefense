@@ -2,11 +2,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 창 디버프 — 출혈(스킬 1) · 과다출혈(스킬 2) (20번 4-6장)
-    //   받는 치유 −(0.001 × Power × AbilityValue × 스택)%
-    //   과다출혈 고유 효과 (2026-10-28 사용자): 이동할 때마다 (이동한 칸 수 × 최대 체력의 2%) 피해, 방어 무시. 뒤로 간 칸도 셈
-    //   찌르기 시너지: 찌르기 공격에 맞으면 잃은 체력 비례로 피해 + — 다 잃었을 때 +10%(출혈) / +20%(과다출혈), 절반이면 그 절반
-    //   모든 수치는 적의 저항력만큼 줄어듦
+    // 창 디버프 — 출혈 · 과다출혈
     public class SpearDebuffRule : DebuffRule
     {
         public const float MoveDamageRate = 0.02f;
@@ -21,12 +17,11 @@ namespace SquareTD
         }
     }
 
-    // 출혈·과다출혈이 적에게 걸려 있는 동안 하는 일. 값은 SpearDebuffRule이 저항까지 계산해서 넘김
     public class SpearDebuffEffect : EmblemDebuffEffect
     {
         private readonly TowerController m_owner;
-        private readonly float m_pierceMax;         // 체력을 다 잃었을 때 찌르기 피해에 더하는 비율
-        private readonly float m_moveDamage;        // 과다출혈: 한 칸 이동할 때 최대 체력의 이 비율 (출혈은 0)
+        private readonly float m_pierceMax;
+        private readonly float m_moveDamage;
 
         public SpearDebuffEffect(Zone zone, float healingCut, float pierceMax, float moveDamage)
             : base(TowerEmblem.Spear, zone.Stage, zone.Owner.Stats.Duration, healingCut,
@@ -38,7 +33,6 @@ namespace SquareTD
             m_moveDamage = moveDamage;
         }
 
-        // 찌르기 공격이면 잃은 체력 비율만큼: 피해 × (1 + 최대치 × 잃은 비율)
         public override float ModifyIncomingDamage(EnemyController enemy, DamageInfo info, float damage)
         {
             if (info.Attribute != AttackAttribute.Pierce || enemy.MaxHp <= 0f) return damage;
@@ -46,13 +40,12 @@ namespace SquareTD
             return damage * (1f + m_pierceMax * lost);
         }
 
-        // 이동한 뒤: 과다출혈이면 칸 수만큼 피를 흘림
         public override void OnMoved(EnemyController enemy, int steps)
         {
             if (m_moveDamage <= 0f || steps == 0) return;
             enemy.TakeDamage(new DamageInfo
             {
-                Attacker = m_owner != null ? m_owner : null,    // 그사이 팔린 타워면 null
+                Attacker = m_owner != null ? m_owner : null,
                 Source = DamageSource.Dot,
                 Emblem = TowerEmblem.Spear,
                 BaseDamage = enemy.MaxHp * m_moveDamage * Mathf.Abs(steps),

@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 타워별 탄 모양 표
     [CreateAssetMenu(menuName = "SquareTD/Projectile Catalog")]
     public class ProjectileCatalog : ScriptableObject
     {

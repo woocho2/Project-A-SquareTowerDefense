@@ -136,13 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower_Shield_Sergeant_Front_v2
+      name: Shield_Guardian_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 71
+        y: 114
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,67 +158,155 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Shield_Shieldmaiden_Front_v2
+      name: Shield_Shieldmaiden_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 565
+        y: 620
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b5e79078c323429389444c5caca8af54
-      internalID: 52051
+      spriteID: 4bf02ac6cdf1a7e41a55a7983c58ffa4
+      internalID: 1912641958
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Shield_Guardian_Front_v2
+      name: Shield_Warden_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 600
+        y: 109
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b3ccf4b980f44ea891db3d18d1388c53
-      internalID: 52052
+      spriteID: 63702a2e38000594f9e0ee8a794ad128
+      internalID: -1966874663
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Shield_Warden_Front_v2
+      name: Shield_Sergeant_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
+        x: 82
+        y: 615
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: cd3b37c3187e4d4e907083f444ade9b4
-      internalID: 52053
+      spriteID: ac991ef716db07447b8df223801965da
+      internalID: 274785336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shield_Shieldmaiden_Face
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 891
+        width: 128
+        height: 123
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 991f1d1e02ee5e44c90769c7876e60c8
+      internalID: -1283598111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shield_Guardian_Face
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 409
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8ce854565f2d3a41b3de37affd5c3f4
+      internalID: -1628520946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shield_Warden_Face
+      rect:
+        serializedVersion: 2
+        x: 742
+        y: 423
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 560ec0b20a15a97409721bc546ba9bd8
+      internalID: 1145347741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shield_Sergeant_Face
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 919
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f2386e69f36ef547bcfb84c81f145f0
+      internalID: -2120850934
       vertices: []
       indices: 
       edges: []
@@ -227,7 +315,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 2600ba302c8d18e43be0cee050639f26
     internalID: 0
     vertices: []
     indices: 
@@ -237,8 +325,15 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Shield_Guardian_Face: -1628520946
+      Shield_Guardian_Full: 52050
+      Shield_Sergeant_Face: -2120850934
+      Shield_Sergeant_Full: 274785336
+      Shield_Shieldmaiden_Face: -1283598111
+      Shield_Shieldmaiden_Full: 1912641958
+      Shield_Warden_Face: 1145347741
+      Shield_Warden_Full: -1966874663
       Tower_Shield_Guardian_Front_v2: 52052
-      Tower_Shield_Sergeant_Front_v2: 52050
       Tower_Shield_Shieldmaiden_Front_v2: 52051
       Tower_Shield_Warden_Front_v2: 52053
   mipmapLimitGroupName: 

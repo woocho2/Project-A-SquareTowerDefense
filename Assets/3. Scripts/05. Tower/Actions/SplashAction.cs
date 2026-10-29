@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 광역 타워의 기본 공격: 착탄 범위의 적 전부에게
     public class SplashAction : TowerAction
     {
         public SplashAction(BoardGrid grid, PathOccupancy occupancy, IProjectileLauncher launcher) : base(grid, occupancy, launcher) { }
@@ -18,9 +19,8 @@ namespace SquareTD
 
         public override IEnumerator Act(TowerController tower, TowerFinalStats stats, AttackHandle handle)
         {
-            int satelliteCount = stats.AttackCount;
-            SatelliteSettings satellite = tower.Satellite;
-            float hold = (satelliteCount - 1) * satellite.Interval + satellite.LaunchDelay;
+            int volleyCount = stats.AttackCount;
+            ShotTiming timing = tower.ShotTiming;
             int lookId = ProjectileCatalog.GetLookId(tower.Definition.Id);
             float speed = tower.Definition.ProjectileSpeed;
             int radius = GetAreaRadius(stats.Mastery);
@@ -28,18 +28,18 @@ namespace SquareTD
             TargetSelector selector = TargetSelector.For(tower.State.TargetPriority);
             Vector3Int towerCell = m_grid.GetSpawnCell(tower.SlotIndex);
 
-            for (int s = 0; s < satelliteCount; s++)
+            for (int s = 0; s < volleyCount; s++)
             {
                 List<ITarget> inRange = CollectTargetsInRange(tower, stats.Range);
                 if (inRange.Count == 0) yield break;
 
                 ITarget aimed = selector.Select(TargetSelector.PreferAttackCell(inRange, tower.State.AttackCellIndex), towerCell, m_grid);
                 Vector3Int impactCell = m_grid.GetPathCell(aimed.PathIndex);
-                bool isCritical = CriticalRoll.Roll(CriticalRoll.RateAgainst(tower, stats, aimed));     // 한 발에 한 번, 착탄점으로 고른 적 기준
-                Vector3 from = tower.transform.position + SatelliteLayout.GetOffset(s, satelliteCount, satellite.Radius);
+                bool isCritical = CriticalRoll.Roll(CriticalRoll.RateAgainst(tower, stats, aimed));
+                Vector3 from = tower.transform.position;
 
                 handle.AddShot();
-                m_launcher.Fire(lookId, from, aimed.Transform.position, speed, hold, effectScale, () =>
+                m_launcher.Fire(lookId, from, aimed.Transform.position, speed, 0f, effectScale, () =>
                                 {
                                     foreach (ITarget target in CollectTargetsInSquare(impactCell, radius))
                                     {
@@ -50,9 +50,9 @@ namespace SquareTD
                                     handle.CompleteShot();
                                 });
 
-                if (s < satelliteCount - 1 && satellite.Interval > 0f)
+                if (s < volleyCount - 1 && timing.VolleyInterval > 0f)
                 {
-                    yield return new WaitForSeconds(satellite.Interval);
+                    yield return new WaitForSeconds(timing.VolleyInterval);
                 }
             }
         }

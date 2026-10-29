@@ -136,13 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower_Spear_Warlord_Front_v2
+      name: Spear_Warlord_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 103
+        y: 596
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,67 +158,155 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Spear_SpearMaster_Front_v2
+      name: Spear_Spear Master_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 598
+        y: 569
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 899a365981004bd59eaefc1210869dab
-      internalID: 52041
+      spriteID: fa42125ef6de6a44f856d739b9996f0e
+      internalID: -344981524
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Spear_Lancer_Front_v2
+      name: Spear_Lancer_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 68
+        y: 106
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: fa18d9ea55a64419a30718e53d49b3db
-      internalID: 52042
+      spriteID: 77ecffa61f20b504b8cbd2992b457617
+      internalID: 1610500951
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Spear_Impaler_Front_v2
+      name: Spear_Impaler_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
+        x: 593
+        y: 97
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 6a07cc11ad634886ab8eab94d9be193c
-      internalID: 52043
+      spriteID: 7bbe197f249fcdf409db7306170cc417
+      internalID: -145440432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spear_Warlord_Face
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 906
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e391b7ee7a474dd4b9ab20cc875d0afd
+      internalID: -1132695834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spear_Lancer_Face
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 355
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 515cb0da4f6a64841b11302df4e1d11b
+      internalID: 120412319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spear_Spear Master_Face
+      rect:
+        serializedVersion: 2
+        x: 711
+        y: 856
+        width: 108
+        height: 108
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f309501163cf2144ab833b09063e1bd
+      internalID: -1551685464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Spear_Impaler_Face
+      rect:
+        serializedVersion: 2
+        x: 742
+        y: 394
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 51c973ddb87475a409c762aab5cf94fb
+      internalID: 134989697
       vertices: []
       indices: 
       edges: []
@@ -227,7 +315,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 8bf9b169c3a7ef24dbb181cf1c103c1b
     internalID: 0
     vertices: []
     indices: 
@@ -237,10 +325,18 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Spear_Atlas_7: 1851049023
+      Spear_Impaler_Face: 134989697
+      Spear_Impaler_Full: -145440432
+      Spear_Lancer_Face: 120412319
+      Spear_Lancer_Full: 1610500951
+      Spear_Spear Master_Face: -1551685464
+      Spear_Spear Master_Full: -344981524
+      Spear_Warlord_Face: -1132695834
+      Spear_Warlord_Full: 52040
       Tower_Spear_Impaler_Front_v2: 52043
       Tower_Spear_Lancer_Front_v2: 52042
       Tower_Spear_SpearMaster_Front_v2: 52041
-      Tower_Spear_Warlord_Front_v2: 52040
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

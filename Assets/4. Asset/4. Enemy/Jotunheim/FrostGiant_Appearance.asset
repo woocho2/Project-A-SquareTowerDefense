@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: FrostGiant_Appearance
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyCubeAppearance
   m_characterTexture: {fileID: 2800000, guid: c935d60a7aa3cf54cb980d6c194ec1ba, type: 3}
+  m_faceSprite: {fileID: 161050, guid: c86f1bace9974c6d856611f2b3e76f1b, type: 3}
+  m_fullSprite: {fileID: 61050, guid: c86f1bace9974c6d856611f2b3e76f1b, type: 3}
   m_equipmentMask: {fileID: 0}

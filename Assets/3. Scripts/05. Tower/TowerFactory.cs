@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 타워를 만들고 바꾸고 지우는 곳 (행동·스킬 연결)
     public class TowerFactory
     {
         private readonly TowerController m_prefab;
@@ -75,7 +76,6 @@ namespace SquareTD
             }
         }
 
-        // SkillRegistry에서 (컬러, 문양) → 그 문양의 스킬. 표에 아직 없는 문양만 시험 스킬 (문양이 다 들어오는 수업 40에서 지움)
         private AttackSkill CreateSkill(TowerDefinition definition)
         {
             if (definition.Color != TowerColor.Red && definition.Color != TowerColor.Blue) return null;
@@ -105,8 +105,7 @@ namespace SquareTD
 
             if (inheritState) created.State.CopyInheritedFrom(old.State);
             created.SetSpawnTile(m_board.Tiles.GetSpawnTile(slot));
-            m_board.Zones.EnsureZonesFor(created);                   // 티어 강화·합성한 버프·디버프 타워는 존을 처음부터 다시 고름 (옛 존은 old.OnRemoved에서 지움)
-
+            m_board.Zones.EnsureZonesFor(created);
 
             old.OnRemoved();
             m_board.Slots.Remove(slot);

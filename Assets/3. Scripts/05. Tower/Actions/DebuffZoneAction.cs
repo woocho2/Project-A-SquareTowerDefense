@@ -2,6 +2,7 @@ using System.Collections;
 
 namespace SquareTD
 {
+    // 디버프 타워의 행동: 존에 스택을 쌓고 밟은 적에게 디버프
     public class DebuffZoneAction : TowerAction
     {
         private readonly ZoneRegistry m_zones;

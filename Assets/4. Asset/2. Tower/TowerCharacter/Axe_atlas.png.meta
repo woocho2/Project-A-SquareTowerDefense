@@ -136,13 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower_Axe_Viking_Front_v2
+      name: Axe_Executioner_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 576
+        y: 110
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,67 +158,155 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Axe_Berserker_Front_v2
+      name: Axe_Executioner_Face
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 730
+        y: 401
+        width: 92
+        height: 92
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c6eb670d23fc439492707dbae156154d
-      internalID: 52021
+      spriteID: b0cd025b6ea6baa4887b39781a209059
+      internalID: 1829986072
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Axe_Skald_Front_v2
+      name: Axe_Berserk_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 601
+        y: 607
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 18e84ff759774f2f9b7b7fbb62138291
-      internalID: 52022
+      spriteID: 073dc30b1a44a534da0472f25f279775
+      internalID: 628741317
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Axe_Executioner_Front_v2
+      name: Axe_Berserk_Face
       rect:
         serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
+        x: 764
+        y: 877
+        width: 112
+        height: 112
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 2052450cd3e34825bc3d686508e780e4
-      internalID: 52023
+      spriteID: 457826ef3b27ca64eb7bf69ccc697e5f
+      internalID: -1908441219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Axe_Viking_Full
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 610
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c187d0beeb95ec14893eadb8d4e3c272
+      internalID: -443543609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Axe_Skald_Full
+      rect:
+        serializedVersion: 2
+        x: 83
+        y: 92
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fecc8323021136e40becd0166217484b
+      internalID: -1580627187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Axe_Viking_Face
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 919
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5a545cd3e2e052645b1d9c600b6589bb
+      internalID: 2027904654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Axe_Skald_Face
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 386
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b7e2e371864c03742afff56c5281dbda
+      internalID: 925821328
       vertices: []
       indices: 
       edges: []
@@ -227,7 +315,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 67a8405383b9a484badc9352fc2f962b
     internalID: 0
     vertices: []
     indices: 
@@ -235,12 +323,22 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
+      Axe_Berserk_Face: -1908441219
+      Axe_Berserk_Full: 628741317
+      Axe_Executioner_Face: 1829986072
+      Axe_Executioner_Full: 52020
+      Axe_Skald_Face: 925821328
+      Axe_Skald_Full: -1580627187
+      Axe_Viking_Face: 2027904654
+      Axe_Viking_Full: -443543609
+      Axe_atlas_7: -160044496
       Tower_Axe_Berserker_Front_v2: 52021
       Tower_Axe_Executioner_Front_v2: 52023
       Tower_Axe_Skald_Front_v2: 52022
-      Tower_Axe_Viking_Front_v2: 52020
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

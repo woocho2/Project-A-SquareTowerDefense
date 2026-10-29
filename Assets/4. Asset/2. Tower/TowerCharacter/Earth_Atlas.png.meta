@@ -136,13 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Tower_Earth_Druid_Front_v2
+      name: Earth_Oread_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 75
+        y: 113
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,67 +158,155 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Earth_Gnome_Front_v2
+      name: Earth_Gnome_Face
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 713
+        y: 831
+        width: 128
+        height: 128
+      alignment: 9
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: ef4f30d05f6b46c78722cebbe80937a9
-      internalID: 52091
+      spriteID: 5b0fb0f1345daf34bb981ceacba7b6e5
+      internalID: -1015586815
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Earth_Oread_Front_v2
+      name: Earth_Oread_Face
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 189
+        y: 384
+        width: 116
+        height: 116
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: a7b2ce777fc345bcb72d6fd27762b6a7
-      internalID: 52092
+      spriteID: b6ddcd31263774a4fb0fe1b09b0b6445
+      internalID: -334337625
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Tower_Earth_Gorgon_Front_v2
+      name: Earth_Gorgon_face
       rect:
         serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
+        x: 756
+        y: 384
+        width: 100
+        height: 100
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 5f0888b1aa144a2581c396b4b0dce6da
-      internalID: 52093
+      spriteID: 90f2a3935c775f1448ad31f712b9dbeb
+      internalID: 333248069
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Earth_Druid_Face
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 923
+        width: 84
+        height: 84
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f8bc91806a5e84a44ae72821b94abaaa
+      internalID: -339358118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Earth_Gorgon_Full
+      rect:
+        serializedVersion: 2
+        x: 601
+        y: 120
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f293ae4c4fdfb3f48b20a982ceae375a
+      internalID: 858845339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Earth_Druid_Full
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 624
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6cb0fb2dad327dc4d96cb989bc487d50
+      internalID: 693331406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Earth_Gnome_Full
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 557
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 56ec4d19784dae34881f20f7c6ee61a7
+      internalID: -528978622
       vertices: []
       indices: 
       edges: []
@@ -227,7 +315,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 88a63a1837387684790213985298da9c
     internalID: 0
     vertices: []
     indices: 
@@ -237,7 +325,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Tower_Earth_Druid_Front_v2: 52090
+      Earth_Druid_Face: -339358118
+      Earth_Druid_Full: 693331406
+      Earth_Gnome_Face: -1015586815
+      Earth_Gnome_Full: -528978622
+      Earth_Gorgon_Full: 858845339
+      Earth_Gorgon_face: 333248069
+      Earth_Oread_Face: -334337625
+      Earth_Oread_Full: 52090
       Tower_Earth_Gnome_Front_v2: 52091
       Tower_Earth_Gorgon_Front_v2: 52093
       Tower_Earth_Oread_Front_v2: 52092

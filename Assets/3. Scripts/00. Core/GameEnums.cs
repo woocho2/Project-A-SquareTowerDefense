@@ -1,5 +1,6 @@
 namespace SquareTD
 {
+    // 게임 전체에서 쓰는 열거형 (문양, 컬러, 스탯, 타일 종류 등)
     public enum TowerEmblem
     {
         None = 00,
@@ -63,7 +64,6 @@ namespace SquareTD
         Boss = 6
     }
 
-    // 수정자가 바꾸는 스탯 (21번 4-3). 쓰는 수업에서 맨 뒤에 더함
     public enum StatType
     {
         None = 0,
@@ -78,45 +78,43 @@ namespace SquareTD
         Duration = 9,
         MaxStack = 10,
         StackValue = 11,
-        ColorLevelBonus = 12,       // 대지의 만개: 쓸 컬러 레벨 +1 (최대 6)
+        ColorLevelBonus = 12,
         Defense = 13,
         SpeedMin = 14,
         SpeedMax = 15,
-        ActionGainPerTurn = 16,     // 매 턴 행동 카운트를 더 받음 (행동 카운트 타일, 바람의 순풍)
-        DamageTaken = 17,           // 받는 피해 배율 (기본 1)
-        FixedDamageRatio = 18,      // 피해 중 방어를 무시하는 비율 (검 디버프, 어둠 900)
-        FinalDamage = 19,           // 최종 피해 +x (기본 0, 0.1 = +10%). 나가는 피해에 × (1 + x) (글로리)
-        DistanceDamage = 20,        // 날아간 타일 하나당 추가 피해 (0.012 = +1.2%, 사거리까지) (요정의 활·정령의 활)
-        DistanceDamageBonus = 21,   // 찌르기 시너지: 0보다 크면 거리와 무관하게 사거리 끝 값 + 이 값 (+0.05 / +0.1)
-        ArmorPenetration = 22,      // 방어 관통 (0.2 = 적 방어의 20%를 무시, 최대 1) (랜스 차지)
-        HealingTaken = 23,          // 받는 치유 배율 (기본 1). 적이 회복할 때 곱함 (출혈·과다출혈)
-        BonusDamage = 24,           // 추가 피해 +x (기본 0). 최종 피해와 더해 나가는 피해에 × (1 + 최종 + 추가) (해머 제련·세공, 수업 32)
-        StackGainRate = 25,         // 스택이 쌓이는 양 +x (0.012 = +1.2%) (물 물결·해류, 수업 34)
-        StackKeepHalf = 26,         // 0보다 크면 스택을 써도 0이 아니라 최대의 절반에서 다시 (물 해류, 수업 34)
-        MapBuffRate = 27,           // 적이 길 위 특수 타일(맵 버프)을 받는 비율 (기본 1). 침수면 0.5 (수업 34)
-        RewardBonus = 28,           // 이 타워가 처치하면 골드·젬 +x (1.5 = +150%) (어둠 포식·폭식 카운트 600, 수업 40)
-        ForceFixedDamage = 29,      // 0보다 크면 이 타워의 모든 공격이 고정 피해 (어둠 카운트 900, 수업 40)
+        ActionGainPerTurn = 16,
+        DamageTaken = 17,
+        FixedDamageRatio = 18,
+        FinalDamage = 19,
+        DistanceDamage = 20,
+        DistanceDamageBonus = 21,
+        ArmorPenetration = 22,
+        HealingTaken = 23,
+        BonusDamage = 24,
+        StackGainRate = 25,
+        StackKeepHalf = 26,
+        MapBuffRate = 27,
+        RewardBonus = 28,
+        ForceFixedDamage = 29,
     }
 
-    // 길 위의 특수 타일 (20번 2장). 적에게 이로운 것만 (비프로스트만 예외)
     public enum PathTileType
     {
         None = 0,
-        Defense = 1,        // 멈춰 있는 동안 방어력 +20%
-        Speed = 2,          // 멈춰 있는 동안 이동력 최소·최대 +2
-        ActionCount = 3,    // 멈춰 있는 동안 매 턴 행동 카운트 +2
-        Heal = 4,           // 멈춰 있는 동안 매 턴 최대 체력의 5% 회복
-        Purify = 5,         // 멈춘 순간 모든 디버프 제거
-        Bifrost = 6,        // 멈춘 순간 맞은편 칸으로
+        Defense = 1,
+        Speed = 2,
+        ActionCount = 3,
+        Heal = 4,
+        Purify = 5,
+        Bifrost = 6,
     }
 
-    // 타워 스폰 칸의 특수 타일 (20번 2장). 공격 타워만 받음
     public enum SpawnTileType
     {
         None = 0,
-        Power = 1,          // 공격력 +30%
-        ActionCount = 2,    // 매 턴 행동 카운트 +1
-        AttackCount = 3,    // 공격 횟수 +1
-        Mastery = 4,        // Mastery +1
+        Power = 1,
+        ActionCount = 2,
+        AttackCount = 3,
+        Mastery = 4,
     }
 }

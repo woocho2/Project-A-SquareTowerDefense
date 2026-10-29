@@ -192,7 +192,7 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 위성은_한_자리에_한_발()
+        public void 탄은_타워_중심에서_기다리지_않고_나감()
         {
             TowerController tower = MakeTower(2, 1);
             MakeTarget(2, 1000f);
@@ -200,11 +200,9 @@ namespace SquareTD.Tests
 
             Act(MakeAction(launcher), tower);
 
-            Assert.AreEqual(2, launcher.Froms.Count);
-            Vector3 expected12 = tower.transform.position + SatelliteLayout.GetOffset(0, 2, tower.Satellite.Radius);
-            Vector3 expected6 = tower.transform.position + SatelliteLayout.GetOffset(1, 2, tower.Satellite.Radius);
-            Assert.AreEqual(expected12.y, launcher.Froms[0].y, 0.001f);
-            Assert.AreEqual(expected6.y, launcher.Froms[1].y, 0.001f);
+            Assert.AreEqual(2, launcher.Froms.Count, "AttackCount 묶음마다 한 발");
+            foreach (Vector3 from in launcher.Froms) Assert.AreEqual(tower.transform.position, from);
+            foreach (float hold in launcher.Holds) Assert.AreEqual(0f, hold);
         }
     }
 }

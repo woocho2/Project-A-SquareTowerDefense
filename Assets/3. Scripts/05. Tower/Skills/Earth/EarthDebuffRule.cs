@@ -1,9 +1,6 @@
 namespace SquareTD
 {
-    // 대지 디버프 — 진흙(스킬 1) · 석화(스킬 2) (20번 4-11장)
-    //   턴마다 (0.001 × Power × AbilityValue × 스택)% 확률로 속박 (다음 행동 0 / 0, 강한 CC) — 확률은 저항력만큼 줄어듦
-    //   대가: 진흙은 방어력 +20%, 석화는 +10% (적에게 주는 이득이라 저항과 무관)
-    //   석화의 고유 효과: 최대 행동(행동 주기) +2. 정수형이라 저항할 수 없음
+    // 대지 디버프 — 진흙 · 석화
     public class EarthDebuffRule : DebuffRule
     {
         public override StatusEffect CreateEffect(Zone zone, EnemyController enemy)
@@ -14,7 +11,6 @@ namespace SquareTD
         }
     }
 
-    // 진흙·석화가 적에게 걸려 있는 동안
     public class EarthDebuffEffect : EmblemDebuffEffect
     {
         private readonly float m_bindChance;
@@ -35,10 +31,9 @@ namespace SquareTD
             return new[] { defense, StatModifier.Flat(source, StatType.MaxAction, actionUp) };
         }
 
-        // ⑤ 턴마다 한 번 굴림. 속박은 강한 CC라 붙일 때 지금 저항력%로 한 번 더 막을 수 있음 (Status.Add)
         public override void OnTurn(EnemyController enemy)
         {
-            // [D] 확률이 맞으면 속박 — IceDebuffEffect.OnTurn과 같은 모양 (확률은 m_bindChance, 거는 것은 new ImmobilizeEffect("속박"))
+            if (Chance.Roll(m_bindChance)) enemy.Status.Add(new ImmobilizeEffect("속박"));
         }
     }
 }

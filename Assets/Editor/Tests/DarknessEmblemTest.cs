@@ -166,7 +166,7 @@ namespace SquareTD.Tests
             TowerController tower = MakeTower(1201);
             tower.State.Modifiers.Add(StatModifier.Flat("어둠 버프존", StatType.ForceFixedDamage, 1f));
             new SwordTargetSkill(m_grid, m_occupancy, Auto()).Fire(tower, enemy);
-            Assert.AreEqual(20f * (23f + 2.4f) / 24f, Lost(enemy), 0.01f, "방어 100을 무시 (블레이드 템페스트 전체)");
+            Assert.AreEqual(40f, Lost(enemy), 0.01f, "방어 100을 무시 (블레이드 스톰 전체 = 기준식 2배)");
         }
 
         // ── 디버프: 잠식 · 침식 ──

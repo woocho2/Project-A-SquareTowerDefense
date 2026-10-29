@@ -319,47 +319,29 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 위성은_AttackCount개이고_자리마다_발_수만큼_벌려서_뜸()
+        public void 탄은_AttackCount_묶음_곱하기_발_수만큼_타워_중심에서_나감()
         {
-            TowerController tower = MakeTower(2, 1);                  // 위성 2개(12시·6시) × 2발
+            TowerController tower = MakeTower(2, 1);                  // 2묶음 × 2발
             MakeTarget(2, 1000f);
             var launcher = new DelayedLauncher();
 
             Act(MakeAction(launcher), tower);
 
-            SatelliteSettings satellite = tower.Satellite;
-            Vector3 center = tower.transform.position;
             Assert.AreEqual(4, launcher.Froms.Count);
-            for (int s = 0; s < 2; s++)
-            {
-                for (int j = 0; j < 2; j++)
-                {
-                    Vector3 expected = center
-                        + SatelliteLayout.GetOffset(s, 2, satellite.Radius)
-                        + SatelliteLayout.GetSpread(s, 2, j, 2, satellite.GroupSpacing);
-                    Vector3 actual = launcher.Froms[s * 2 + j];
-                    Assert.AreEqual(expected.x, actual.x, 0.001f, $"위성 {s}, {j}번째 탄의 x");
-                    Assert.AreEqual(expected.y, actual.y, 0.001f, $"위성 {s}, {j}번째 탄의 y");
-                }
-            }
+            foreach (Vector3 from in launcher.Froms) Assert.AreEqual(tower.transform.position, from);
         }
 
         [Test]
-        public void 모든_탄은_같은_시간을_기다렸다_날아감()
+        public void 탄은_기다리지_않고_바로_날아감()
         {
-            TowerController tower = MakeTower(3, 1);                  // 위성 3개
+            TowerController tower = MakeTower(3, 1);
             MakeTarget(2, 1000f);
             var launcher = new DelayedLauncher();
 
             Act(MakeAction(launcher), tower);
 
-            SatelliteSettings satellite = tower.Satellite;
-            float expected = (3 - 1) * satellite.Interval + satellite.LaunchDelay;
             Assert.AreEqual(6, launcher.Holds.Count);
-            foreach (float hold in launcher.Holds)
-            {
-                Assert.AreEqual(expected, hold, 0.0001f);
-            }
+            foreach (float hold in launcher.Holds) Assert.AreEqual(0f, hold);
         }
     }
 }

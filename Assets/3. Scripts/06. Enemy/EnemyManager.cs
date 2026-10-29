@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 적 소환·죽음·목록을 맡는 매니저
     public class EnemyManager : Singleton<EnemyManager>
     {
         [SerializeField] EnemySpawnEntry m_normal, m_middleBoss, m_finalBoss;

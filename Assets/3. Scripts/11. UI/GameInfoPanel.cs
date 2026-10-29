@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
+    // 웨이브·적 수·한도 등 게임 정보 패널
     public class GameInfoPanel : MonoBehaviour
     {
         [Header("정보 표시")]
@@ -30,8 +31,6 @@ namespace SquareTD
             EnemyManager.Instance.CountChanged += HandleCountChanged;
             CurrencyManager.Instance.Changed += UpdateCurrencyText;
             TurnManager.Instance.EnemyTurnEnded += HandleEnemyTurnEnded;
-            // 수업 28 · 31: 도끼·방패 버프의 한도 보정이 생기면 img_shield(방어막)를 켜고 끔
-            // 수업 43: GameSpeed.Changed += UpdateGameSpeedText
 
             if (btn_option != null) btn_option.onClick.AddListener(HandleOptionClick);
             if (btn_gameSpeed != null) btn_gameSpeed.onClick.AddListener(HandleGameSpeedClick);
@@ -124,7 +123,6 @@ namespace SquareTD
 
         private void HandleGameSpeedClick()
         {
-            // 수업 43: GameSpeed.Instance.Next() (1 → 1.5 → 2 → 3 → 1)
             Debug.Log("[GameInfoPanel] 게임 속도는 수업 43에서 연결");
         }
     }

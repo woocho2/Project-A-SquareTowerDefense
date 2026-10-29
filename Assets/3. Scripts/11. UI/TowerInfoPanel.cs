@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
+    // 타워 정보 카드
     public class TowerInfoPanel : MonoBehaviour
     {
         [Header("수집형 정보 카드")]
@@ -100,9 +101,8 @@ namespace SquareTD
 
             if (btn_previousTarget != null) btn_previousTarget.onClick.AddListener(HandlePreviousTargetClick);
             if (btn_nextTarget != null) btn_nextTarget.onClick.AddListener(HandleNextTargetClick);
-            if (btn_combineColor != null) btn_combineColor.onClick.AddListener(HandleCombineColorClick);
-            if (btn_combineEmblem != null) btn_combineEmblem.onClick.AddListener(HandleCombineEmblemClick);
-            if (btn_combineExact != null) btn_combineExact.onClick.AddListener(HandleCombineExactClick);
+            foreach (Button merge in new[] { btn_combineColor, btn_combineEmblem, btn_combineExact })
+                if (merge != null) merge.gameObject.SetActive(false);
             if (btn_sellTower != null) btn_sellTower.onClick.AddListener(HandleSellTowerClick);
             if (btn_consumeStack != null) btn_consumeStack.onClick.AddListener(HandleConsumeStackClick);
             if (btn_pickAttackCell != null) btn_pickAttackCell.onClick.AddListener(HandlePickAttackCellClick);
@@ -111,9 +111,6 @@ namespace SquareTD
             Subscribe();
         }
 
-        // ── 카드 앞·뒤 ──
-
-        // 스탯 칸·스킬 칸 바탕을 누르면 뒤집히게 (버튼이 없으면 붙임)
         private void MakeFlipButton(Graphic area)
         {
             if (area == null) return;
@@ -149,9 +146,6 @@ namespace SquareTD
 
             if (btn_previousTarget != null) btn_previousTarget.onClick.RemoveListener(HandlePreviousTargetClick);
             if (btn_nextTarget != null) btn_nextTarget.onClick.RemoveListener(HandleNextTargetClick);
-            if (btn_combineColor != null) btn_combineColor.onClick.RemoveListener(HandleCombineColorClick);
-            if (btn_combineEmblem != null) btn_combineEmblem.onClick.RemoveListener(HandleCombineEmblemClick);
-            if (btn_combineExact != null) btn_combineExact.onClick.RemoveListener(HandleCombineExactClick);
             if (btn_sellTower != null) btn_sellTower.onClick.RemoveListener(HandleSellTowerClick);
             if (btn_consumeStack != null) btn_consumeStack.onClick.RemoveListener(HandleConsumeStackClick);
             if (btn_pickAttackCell != null) btn_pickAttackCell.onClick.RemoveListener(HandlePickAttackCellClick);
@@ -190,9 +184,9 @@ namespace SquareTD
             m_subscribed = false;
         }
 
-        private void HandleBoardChanged(TowerController tower) => UpdateTowerInfo();   // 판의 타워가 바뀌면 합성 버튼이 켜질지 다시 봄
+        private void HandleBoardChanged(TowerController tower) => UpdateTowerInfo();
 
-        private void HandleColorLevelChanged(TowerColor color, int level) => UpdateTowerInfo();   // TowerManager가 Awake에서 먼저 구독해 타워를 다시 계산한 뒤에 불림
+        private void HandleColorLevelChanged(TowerColor color, int level) => UpdateTowerInfo();
 
         private void HandleTowerSelected(TowerController tower)
         {
@@ -217,7 +211,7 @@ namespace SquareTD
             TowerFinalStats stats = m_selectedTower.Stats;
             int towerId = definition.Id;
 
-            int colorLevel = stats.ColorLevel;                  // 쓴 레벨 (대지의 만개면 +1)
+            int colorLevel = stats.ColorLevel;
             if (txt_level != null) txt_level.text = cardView != null ? $"Lv.{colorLevel}" : $"{colorLevel}";
             if (txt_name != null) txt_name.text = EmblemNames.GetConceptName(towerId);
 
@@ -247,18 +241,24 @@ namespace SquareTD
         private void UpdateIdentityImage(TowerDefinition definition)
         {
             TowerVisual towerVisual = m_selectedTower.GetComponentInChildren<TowerVisual>(true);
+            TowerIcons icons = TowerIcons.Instance;
+            bool synergy = TowerId.IsSynergy(definition.Id);
+            Sprite emblemSprite = icons != null && !synergy ? icons.GetEmblem(definition.Emblem) : null;
+            Sprite tierSprite = synergy ? (towerVisual != null ? towerVisual.DecorationSprite : null)
+                                        : icons != null ? icons.GetTier(definition.Tier) : null;
+            Color colorTint = icons != null ? icons.GetColor(definition.Color) : Color.white;
 
             if (cardView != null)
             {
                 int tier = definition.Tier;
-                int attackIndex = TowerId.IsSynergy(definition.Id) ? -1 : (int)definition.Color - 1;
+                int attackIndex = synergy ? -1 : (int)definition.Color - 1;
                 cardView.SetArtwork(
                     towerVisual != null ? towerVisual.IllustrationSprite : null,
-                    towerVisual != null ? towerVisual.ProjectileEmblemSprite : null,
-                    towerVisual != null ? towerVisual.TierSprite : null,
+                    emblemSprite,
+                    tierSprite,
                     towerVisual != null ? towerVisual.TierColor : Color.white,
                     (int)definition.Emblem, tier, attackIndex,
-                    "스킬공격");   // 수업 27 ~ 40: 문양별 스킬 2의 이름
+                    "스킬공격");
                 return;
             }
 
@@ -268,12 +268,12 @@ namespace SquareTD
                 img_portrait.preserveAspect = true;
                 img_portrait.enabled = img_portrait.sprite != null;
             }
-            UpdateImage(img_tier, towerVisual != null ? towerVisual.TierSprite : null);
+            UpdateImage(img_tier, tierSprite);
             if (img_tier != null && towerVisual != null) img_tier.color = towerVisual.TierColor;
             UpdateImage(img_color, towerVisual != null ? towerVisual.ColorSprite : null);
-            UpdateImage(img_emblem, towerVisual != null ? towerVisual.EmblemSprite : null);
-            if (towerVisual != null && img_color != null) img_color.color = towerVisual.EmblemColor;
-            if (towerVisual != null && img_emblem != null) img_emblem.color = towerVisual.EmblemColor;
+            UpdateImage(img_emblem, emblemSprite);
+            if (img_color != null) img_color.color = colorTint;
+            if (img_emblem != null) img_emblem.color = colorTint;
         }
 
         private static void UpdateImage(Image image, Sprite sprite)
@@ -316,14 +316,12 @@ namespace SquareTD
             SetText(txt_stack, GetStackText(isSupport, stats));
         }
 
-        // 수정자로 바뀐 만큼 " (+0.12)" — 바뀌지 않았으면 빈 글자. scale: 화면에 보일 단위 (치명 확률은 0.1 → 10%)
         private static string GetBonusText(TowerFinalStats stats, StatType stat, float scale, string unit)
         {
             float bonus = (stats.Get(stat) - stats.GetBase(stat)) * scale;
             return Mathf.Abs(bonus) < 0.005f ? "" : $" ({bonus:+0.##;-0.##}{unit})";
         }
 
-        // 받는 버프를 출처별로 한 줄씩: "검 버프존: 공격력 +0.12, 치명 확률 +10%, 최종 피해 +10%"
         private static string GetReceivedBuffText(TowerFinalStats stats)
         {
             var bySource = new Dictionary<string, List<string>>();
@@ -360,7 +358,6 @@ namespace SquareTD
             if (text != null) text.text = value;
         }
 
-        // 공격 타워: 스킬 2까지 센 적중 수 / 필요 적중 수 (광역·단일 공통, 수업 28)
         private static string GetDurationText(TowerColor color, TowerFinalStats stats, TowerState state) => color switch
         {
             TowerColor.Red or TowerColor.Blue => $"{state.SkillHitCount} / {stats.Duration}회",
@@ -387,7 +384,7 @@ namespace SquareTD
 
         private string GetStackText(bool isSupport, TowerFinalStats stats)
         {
-            if (isSupport) return $"{stats.Stack}";                     // 버프·디버프는 최대 스택만 (지금 스택은 존이 가짐, 4장 [타워 정보 카드])
+            if (isSupport) return $"{stats.Stack}";
             TowerStack stack = m_selectedTower.State.Stack;
             return $"{stack.Current:0.#} / {stack.Max}";
         }
@@ -415,21 +412,17 @@ namespace SquareTD
                     break;
             }
 
-            // 공격 타워가 받는 버프 (버프존·스폰 타일 …): 출처마다 한 줄
             string buffs = m_selectedTower.IsAttackTower ? GetReceivedBuffText(stats) : "";
             if (buffs.Length > 0 && txt_default != null) txt_default.text += $"\n\n받는 버프\n{buffs}";
 
-            // 스킬 칸: 이름 · 액티브/패시브, 뒷면 설명 (SkillDescriptions — 문양 수업마다 그 문양의 설명을 채움)
             SetText(txt_skill, SkillDescriptions.GetDescription(definition, stats));
             foreach (TextMeshProUGUI title in txt_skillTitles) SetText(title, SkillDescriptions.GetTitle(definition));
         }
 
         private void UpdateButtons()
         {
-            if (btn_combineColor != null) btn_combineColor.interactable = CanMerge(MergeMode.Color);
-            if (btn_combineEmblem != null) btn_combineEmblem.interactable = CanMerge(MergeMode.Emblem);
-            if (btn_combineExact != null) btn_combineExact.interactable = CanMerge(MergeMode.Exact);
-            if (btn_sellTower != null) btn_sellTower.interactable = CanPlayerAct && !TowerId.IsSynergy(m_selectedTower.Definition.Id);
+            if (btn_sellTower != null) btn_sellTower.interactable = CanPlayerAct && !TowerId.IsSynergy(m_selectedTower.Definition.Id)
+                                                                 && !TowerManager.Instance.IsMergingTower(m_selectedTower);
             if (btn_consumeStack != null) btn_consumeStack.interactable = CanRequestConsume();
             if (btn_pickAttackCell != null) btn_pickAttackCell.interactable = CanPlayerAct && m_selectedTower.IsAttackTower;
         }
@@ -449,33 +442,12 @@ namespace SquareTD
             UpdateTargetPriorityText();
         }
 
-        private readonly List<TowerController> m_mergeMaterials = new List<TowerController>();
-
-        private bool CanMerge(MergeMode mode)
-        {
-            return CanPlayerAct && m_selectedTower != null
-                && TowerProgression.TryFindMaterials(m_selectedTower, mode, BoardManager.Instance.Slots, m_mergeMaterials);
-        }
-
-        private void HandleCombineColorClick() => Merge(MergeMode.Color);
-
-        private void HandleCombineEmblemClick() => Merge(MergeMode.Emblem);
-
-        private void HandleCombineExactClick() => Merge(MergeMode.Exact);
-
-        private void Merge(MergeMode mode)
-        {
-            if (m_selectedTower == null) return;
-            TowerManager.Instance.TryMerge(m_selectedTower, mode);     // 성공하면 결과 타워가 선택되어 패널이 그 타워로 바뀜
-        }
-
         private void HandleSellTowerClick()
         {
             if (m_selectedTower == null) return;
             if (TowerManager.Instance.TrySell(m_selectedTower)) CloseAfterTowerRemoved();
         }
 
-        // 스택 소모 버튼: 다 찼고, 이 종류가 수동 소모이고, 아직 누르지 않았을 때. 적 턴에도 누를 수 있음 (20번 4-1장 [Stack])
         private bool CanRequestConsume()
         {
             if (m_selectedTower == null || !m_selectedTower.IsAttackTower) return false;
@@ -488,11 +460,10 @@ namespace SquareTD
         private void HandleConsumeStackClick()
         {
             if (!CanRequestConsume()) return;
-            m_selectedTower.State.Stack.RequestManualConsume();         // 다음 스킬 2가 스택을 씀
+            m_selectedTower.State.Stack.RequestManualConsume();
             UpdateTowerInfo();
         }
 
-        // 고른 타워의 스택이 막 다 차면 카드를 다시 그림 (적 턴 중에도 버튼이 켜지게)
         private TowerStack m_watchedStack;
 
         private void WatchStack(TowerController tower)

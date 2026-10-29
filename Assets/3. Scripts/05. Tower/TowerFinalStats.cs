@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 카드에 보일 한 줄: "어디서(출처) 어느 스탯에 얼마가 붙었나"
+    // 계산이 끝난 타워의 최종 스탯과 출처
     public readonly struct StatSource
     {
         public readonly string Source;
@@ -29,13 +29,13 @@ namespace SquareTD
 
         public TowerFinalStats(float[] values, float[] baseValues, int colorLevel, IReadOnlyList<StatSource> sources)
         {
-            m_values = (float[])values.Clone();            
+            m_values = (float[])values.Clone();
             m_baseValues = (float[])baseValues.Clone();
-            ColorLevel = colorLevel;            
+            ColorLevel = colorLevel;
             Sources = sources;
         }
 
-        public float Get(StatType stat) => m_values[(int)stat];        
+        public float Get(StatType stat) => m_values[(int)stat];
         public float GetBase(StatType stat) => m_baseValues[(int)stat];
 
         public float Power => Get(StatType.Power);
@@ -49,12 +49,10 @@ namespace SquareTD
         public int Duration => (int)Get(StatType.Duration);
         public float AbilityValue => Get(StatType.AbilityValue);
         public float StackValue => Get(StatType.StackValue);
-        public float FinalDamageMultiplier => 1f + Get(StatType.FinalDamage) + Get(StatType.BonusDamage);     // 최종 피해와 추가 피해(해머)는 더함
+        public float FinalDamageMultiplier => 1f + Get(StatType.FinalDamage) + Get(StatType.BonusDamage);
         public float ArmorPenetration => Get(StatType.ArmorPenetration);
-        public bool ForcesFixedDamage => Get(StatType.ForceFixedDamage) > 0f;                                    // 어둠 카운트 900 (수업 40)
+        public bool ForcesFixedDamage => Get(StatType.ForceFixedDamage) > 0f;
 
-        // 거리 비례 추가 피해 배율 (활 버프, 수업 29): 1 + 타일당 값 × 날아간 거리(사거리까지)
-        //   찌르기 시너지면 거리와 무관하게 사거리 끝 값 + 보너스. 버프가 없으면 1
         public float GetDistanceMultiplier(int distance)
         {
             float perTile = Get(StatType.DistanceDamage);

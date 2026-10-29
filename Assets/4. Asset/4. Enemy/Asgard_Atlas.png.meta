@@ -1,4 +1,4 @@
-﻿fileFormatVersion: 2
+fileFormatVersion: 2
 guid: fc18e34115a44bb2a4fe3bb0a4c0aeba
 TextureImporter:
   internalIDToNameTable: []
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Enemy_Asgard_Valkyrie
+      name: Asgard_Valkyrie_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 56
+        y: 568
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -145,13 +145,35 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Enemy_Asgard_Brunhild
+      name: Asgard_Valkyrie_Face
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 227
+        y: 879
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 183af45d0bc54c26a9b9831e03a09fcb
+      internalID: 161010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asgard_Brunhild_Full
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 568
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,13 +189,35 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Enemy_Asgard_Loki
+      name: Asgard_Brunhild_Face
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 754
+        y: 882
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d553722f3724a599e85e77f011cc294
+      internalID: 161011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asgard_Loki_Full
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 56
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -184,6 +228,28 @@ TextureImporter:
       bones: []
       spriteID: 376a254c5874433da3d527d010373617
       internalID: 61012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Asgard_Loki_Face
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 372
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6239c29e1384b8c947c87c1aaff94b2
+      internalID: 161012
       vertices: []
       indices: 
       edges: []
@@ -202,9 +268,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Enemy_Asgard_Valkyrie: 61010
-      Enemy_Asgard_Brunhild: 61011
-      Enemy_Asgard_Loki: 61012
+      Asgard_Valkyrie_Full: 61010
+      Asgard_Valkyrie_Face: 161010
+      Asgard_Brunhild_Full: 61011
+      Asgard_Brunhild_Face: 161011
+      Asgard_Loki_Full: 61012
+      Asgard_Loki_Face: 161012
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

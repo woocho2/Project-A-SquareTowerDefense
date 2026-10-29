@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: FrostWolfAlpha_Appearance
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyCubeAppearance
   m_characterTexture: {fileID: 2800000, guid: 50600409cebb5ab86db8002eaa4eb259, type: 3}
+  m_faceSprite: {fileID: 161071, guid: aba01241b276428fa22d16ffc3a8f6cb, type: 3}
+  m_fullSprite: {fileID: 61071, guid: aba01241b276428fa22d16ffc3a8f6cb, type: 3}
   m_equipmentMask: {fileID: 0}

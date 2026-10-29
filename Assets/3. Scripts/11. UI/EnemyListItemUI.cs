@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
+    // 적 목록의 한 줄
     public class EnemyListItemUI : MonoBehaviour
     {
         [SerializeField] private Image m_icon;

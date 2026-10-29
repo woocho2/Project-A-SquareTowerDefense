@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
+    // 게임 오버 패널
     public class GameOverPanel : MonoBehaviour
     {
         [SerializeField] Button btn_home;

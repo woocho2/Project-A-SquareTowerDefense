@@ -3,20 +3,28 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 연출 그림(텍스처 에셋) 찾기: Resources/Effects/FX_*.png를 이름으로 불러옴
-    //   아직 없으면 코드로 임시 그림을 만들어 씀 (Codex의 그림이 들어오면 자동으로 그쪽을 씀)
+    // 연출 그림을 이름으로 불러옴
     public static class EffectTextures
     {
-        public const string SlashTrail = "FX_SlashTrail";    // 가로 띠: 왼쪽 꼬리(흐림) → 오른쪽 머리(밝고 날카로움)
-        public const string SlashLine = "FX_SlashLine";      // 가로 빛줄기: 가운데 밝고 양 끝 뾰족
-        public const string SwordQi = "FX_SwordQi";          // 초승달 검기: 둥근 쪽이 오른쪽
-        public const string Glow = "FX_Glow";                // 동그란 부드러운 빛
-        public const string Flare = "FX_Flare";              // 4갈래 별빛
-        public const string Spark = "FX_Spark";              // 가로로 긴 불티: 오른쪽이 머리
-        public const string Ring = "FX_Ring";                // 가는 고리
-        public const string Noise = "FX_Noise";              // 이어 붙는 구름 무늬 (회색)
-        public const string PlumPetal = "FX_PlumPetal";      // 매화 꽃잎 한 장 (색 있음, 끝이 위)
-        public const string PlumBlossom = "FX_PlumBlossom";  // 매화 한 송이 (색 있음)
+        public const string SlashTrail = "FX_SlashTrail";
+        public const string SlashLine = "FX_SlashLine";
+        public const string SwordQi = "FX_SwordQi";
+        public const string Glow = "FX_Glow";
+        public const string Flare = "FX_Flare";
+        public const string Spark = "FX_Spark";
+        public const string Ring = "FX_Ring";
+        public const string Noise = "FX_Noise";
+        public const string PlumPetal = "FX_PlumPetal";
+        public const string PlumBlossom = "FX_PlumBlossom";
+        public const string Smoke = "FX_Smoke";
+        public const string Snowflake = "FX_Snowflake";
+        public const string IceShard = "FX_IceShard";
+        public const string MeteorCore = "FX_MeteorCore";
+        public const string MeteorBurst = "FX_MeteorBurst";
+        public const string BlizzardCrystal = "FX_BlizzardCrystal";
+        public const string BlackHoleVortex = "FX_BlackHoleVortex";
+        public const string Fireball = "FX_Fireball";
+        public const string Snowball = "FX_Snowball";
 
         private static readonly Dictionary<string, Texture2D> s_cache = new Dictionary<string, Texture2D>();
         private static readonly HashSet<string> s_warned = new HashSet<string>();
@@ -36,7 +44,6 @@ namespace SquareTD
             return texture;
         }
 
-        // ── 임시 그림 (에셋이 오기 전에 연출을 시험하려고) ──
         private static Texture2D MakePlaceholder(string name)
         {
             bool strip = name == SlashTrail || name == SlashLine || name == Spark;
@@ -74,7 +81,7 @@ namespace SquareTD
             {
                 case SlashTrail:
                 {
-                    float taper = Mathf.Sin(u * Mathf.PI * 0.5f);                          // 꼬리는 가늘고 머리는 굵게
+                    float taper = Mathf.Sin(u * Mathf.PI * 0.5f);
                     float body = 1f - Mathf.SmoothStep(0f, 1f, across / Mathf.Max(0.05f, taper));
                     float head = Mathf.SmoothStep(0.7f, 1f, u) * (1f - Mathf.SmoothStep(0.97f, 1f, u));
                     float a = body * Mathf.Pow(u, 1.5f);
@@ -137,14 +144,40 @@ namespace SquareTD
                     color.a = a;
                     return color;
                 }
-                default:                                                                    // Glow와 모르는 이름
+                case Smoke:
+                {
+                    float radius = p.magnitude;
+                    float lumps = 0.5f + 0.25f * Mathf.Sin(p.x * 7f + p.y * 3f) + 0.25f * Mathf.Sin(p.y * 8f - p.x * 4f);
+                    float a = Mathf.Exp(-radius * radius * 2.5f) * (1f - Mathf.SmoothStep(0.8f, 1f, radius)) * (0.55f + 0.45f * lumps);
+                    return new Color(1f, 1f, 1f, a);
+                }
+                case Snowflake:
+                {
+                    float radius = p.magnitude;
+                    float sector = Mathf.PI / 3f;
+                    float angle = Mathf.Atan2(p.y, p.x);
+                    float local = angle - Mathf.Round(angle / sector) * sector;
+                    float side = radius * Mathf.Sin(local);
+                    float along = radius * Mathf.Cos(local);
+                    float arm = Mathf.Exp(-side * side * 600f) * (1f - Mathf.SmoothStep(0.75f, 0.9f, along));
+                    float twig = Mathf.Abs(along - 0.5f) < 0.2f ? Mathf.Exp(-Mathf.Pow(Mathf.Abs(side) - (along - 0.3f) * 0.6f, 2f) * 900f) : 0f;
+                    float a = Mathf.Clamp01(arm + twig * (1f - Mathf.SmoothStep(0.65f, 0.72f, along)) + Mathf.Exp(-radius * radius * 40f));
+                    return new Color(1f, 1f, 1f, a);
+                }
+                case IceShard:
+                {
+                    float d = Mathf.Abs(p.x) * 0.9f + Mathf.Abs(p.y) * 3f - 0.85f;
+                    float a = 1f - Mathf.SmoothStep(-0.04f, 0.02f, d);
+                    float shine = 0.7f + 0.3f * Mathf.Clamp01(p.y * 3f + 0.5f);
+                    return new Color(shine, shine, shine, a);
+                }
+                default:
                     return new Color(1f, 1f, 1f, Mathf.Exp(-p.sqrMagnitude * 3f) * (1f - Mathf.SmoothStep(0.85f, 1f, p.magnitude)));
             }
         }
 
         private static float[] MakeNoise(int width, int height, System.Random random)
         {
-            // 이어 붙는 값 노이즈: 8×8 격자 값을 부드럽게 섞음 (가장자리를 감싸서 타일링)
             const int grid = 8;
             var values = new float[grid * grid];
             for (int i = 0; i < values.Length; i++) values[i] = (float)random.NextDouble();

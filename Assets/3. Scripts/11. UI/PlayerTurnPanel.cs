@@ -5,16 +5,16 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
+    // 플레이어 턴의 버튼들 (생성, 컬러 강화, 턴 종료 등)
     public class PlayerTurnPanel : MonoBehaviour
     {
-        // 컬러마다 강화 칸 하나 (광역·단일·버프·디버프). 선택한 타워와 상관없이 플레이어가 고른 컬러를 강화
         [Serializable]
         private class ColorUpgradeSlot
         {
             public TowerColor color;
-            public Button button;                   // Btn_SplashUp / Btn_TargetUp / Btn_BuffUp / Btn_DebuffUp
-            public TextMeshProUGUI txt_level;       // Txt_B_…UpLv
-            public TextMeshProUGUI txt_cost;        // Txt_A_…UpValue
+            public Button button;
+            public TextMeshProUGUI txt_level;
+            public TextMeshProUGUI txt_cost;
         }
 
         [SerializeField] Button btn_createTower;
@@ -73,7 +73,7 @@ namespace SquareTD
             if (btn_createTower != null) btn_createTower.onClick.RemoveListener(HandleCreateTowerClick);
             foreach (ColorUpgradeSlot slot in m_colorUpgrades)
             {
-                if (slot.button != null) slot.button.onClick.RemoveAllListeners();     // 람다로 붙여서 하나씩 뗄 수 없음
+                if (slot.button != null) slot.button.onClick.RemoveAllListeners();
             }
             if (btn_tierUpgrade != null) btn_tierUpgrade.onClick.RemoveListener(HandleTierUpgradeClick);
             if (btn_turnEnd != null) btn_turnEnd.onClick.RemoveListener(HandleTurnEndClick);
@@ -166,7 +166,7 @@ namespace SquareTD
                 return;
             }
 
-            TowerManager.Instance.TryTierUpgrade(m_selectedTower);      // 성공하면 TowerReplaced로 새 타워를 이어서 고름
+            TowerManager.Instance.TryTierUpgrade(m_selectedTower);
         }
 
         private void HandleTurnEndClick()

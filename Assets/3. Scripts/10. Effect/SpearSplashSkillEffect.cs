@@ -4,19 +4,14 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 워로드(광역 창) 스킬 2 선두 지휘 연출 — 말 탄 워로드가 그 줄을 돌격하며 다 꿰뚫음 (2026-10-27 사용자)
-    //   공격 대상이 선 칸의 가로줄·세로줄 중 적이 더 많은 쪽 (같으면 가로줄). 줄은 화면 끝에서 끝까지
-    //   ① 고른 줄에 붉은 표시선
-    //   ② 화면 밖에서 말 탄 워로드가 깃발 창을 앞으로 겨누고 줄을 따라 질주 (다리가 달리고 흙먼지가 일고 화면이 울림)
-    //   ③ 창끝이 지나가는 순간 줄 위 적마다 꿰뚫리는 반짝, 지나간 자리에 굵은 찌르기 줄기
-    //   타워·규칙은 모름. 카메라·타워 위치·중심 위치·맞은 위치들만 받아서 그림 (줄 고르기는 위치로 셈)
+    // 워로드(광역 창) 옛 스킬 2(줄 돌격) 연출
     [DisallowMultipleComponent]
     public sealed class SpearSplashSkillEffect : MonoBehaviour
     {
         private const float CavalryShape = 11f;
 
-        [SerializeField] private float m_riderSize = 2.2f;         // 칸에 대한 비율
-        [SerializeField] private float m_lanceLength = 2.6f;       // 칸에 대한 비율
+        [SerializeField] private float m_riderSize = 2.2f;
+        [SerializeField] private float m_lanceLength = 2.6f;
         [SerializeField] private float m_markDuration = 0.2f;
         [SerializeField] private float m_chargeDuration = 0.6f;
         [SerializeField] private float m_gallopsPerSecond = 9f;
@@ -37,7 +32,6 @@ namespace SquareTD
             m_streakPool?.Dispose();
         }
 
-        // camera: 화면 크기 / owner: 워로드 위치 / center: 공격 대상의 위치 / hitPositions: 맞은 적들 / cellWorldSize: 칸 한 변
         public void Play(Camera camera, Vector3 owner, Vector3 center, IReadOnlyList<Vector3> hitPositions, float cellWorldSize)
         {
             if (camera == null || !m_pool.IsReady || !m_streakPool.IsReady) return;
@@ -49,7 +43,6 @@ namespace SquareTD
             float riderSize = cell * m_riderSize;
             float lanceLength = cell * m_lanceLength;
 
-            // 줄 고르기: 같은 가로줄(y가 같은)과 세로줄(x가 같은)의 적 수
             int row = 0, column = 0;
             if (hitPositions != null)
             {
@@ -61,7 +54,6 @@ namespace SquareTD
             }
             bool horizontal = row >= column;
 
-            // 줄의 시작 · 끝 (화면 밖에서 밖으로): 타워 쪽에서 반대쪽으로 돌격
             Vector3 start, end;
             float margin = riderSize + lanceLength;
             if (horizontal)
@@ -78,19 +70,17 @@ namespace SquareTD
             }
             Vector3 forward = (end - start).normalized;
             float travel = Mathf.Atan2(forward.y, forward.x) * Mathf.Rad2Deg;
-            bool mirror = forward.x < -0.5f;                                       // 왼쪽으로 달릴 땐 뒤집어서 말이 똑바로 서게
+            bool mirror = forward.x < -0.5f;
             float bodyAngle = mirror ? 0f : travel;
             float lanceAngle = mirror ? 180f : travel;
             Vector3 lanceOffset = Orient(new Vector3(riderSize * 0.12f + lanceLength * 0.25f, riderSize * 0.14f, 0f), mirror, bodyAngle);
-            float tipAhead = Vector3.Dot(lanceOffset, forward) + lanceLength * SpearFx.TipOffset;    // 말 가운데에서 창끝까지 (진행 방향)
+            float tipAhead = Vector3.Dot(lanceOffset, forward) + lanceLength * SpearFx.TipOffset;
             float total = (end - start).magnitude;
 
-            // ① 표시선 (화면 안쪽 부분만 보여도 됨)
             Vector3 lineMiddle = (start + end) * 0.5f;
             SlashStroke.Play(m_streakPool, lineMiddle, travel, total, cell * 0.25f, 0.08f, SpearFx.Crimson,
                 0f, m_markDuration, m_chargeDuration, 0.2f, 0.3f);
 
-            // ② 말 탄 워로드와 깃발 창
             EffectQuad rider = m_pool.Get();
             rider.Transform.position = start;
             rider.Transform.rotation = Quaternion.Euler(0f, 0f, bodyAngle);
@@ -111,7 +101,7 @@ namespace SquareTD
                 .SetEase(Ease.Linear).SetLink(rider.GameObject, LinkBehaviour.KillOnDisable);
             Sequence sequence = DOTween.Sequence().SetLink(rider.GameObject, LinkBehaviour.KillOnDisable);
             sequence.AppendInterval(m_markDuration);
-            sequence.AppendCallback(() => ScreenShake.Play(0.05f, m_chargeDuration));                      // 말발굽 울림
+            sequence.AppendCallback(() => ScreenShake.Play(0.05f, m_chargeDuration));
             sequence.Append(DOTween.To(() => progress, value =>
             {
                 progress = value;
@@ -119,7 +109,7 @@ namespace SquareTD
                 rider.Transform.position = position;
                 lance.Transform.position = position + lanceOffset;
             }, 1f, m_chargeDuration).SetEase(Ease.Linear));
-            for (float t = 0f; t < m_chargeDuration; t += m_dustInterval)                                    // 발밑 흙먼지
+            for (float t = 0f; t < m_chargeDuration; t += m_dustInterval)
                 sequence.InsertCallback(m_markDuration + t, () =>
                     ArrowFx.PlayDust(m_pool, rider.Transform.position + Orient(new Vector3(-riderSize * 0.15f, -riderSize * 0.36f, 0f), mirror, bodyAngle),
                         riderSize * 0.35f));
@@ -130,7 +120,6 @@ namespace SquareTD
                 m_pool.Release(lance);
             });
 
-            // ③ 지나간 자리의 굵은 찌르기 줄기 + 줄 위 적마다 꿰뚫리는 반짝 (창끝이 닿는 시각에)
             SlashStroke.Play(m_streakPool, lineMiddle, travel, total, cell * 0.8f, 0.2f, SpearFx.Steel,
                 m_markDuration, m_chargeDuration, 0.1f, 0.35f, 0.6f);
             if (hitPositions == null) return;
@@ -144,7 +133,6 @@ namespace SquareTD
             }
         }
 
-        // 말 기준(오른쪽을 볼 때)의 자리를 지금 방향으로: 왼쪽이면 좌우만 뒤집고, 위·아래면 돌림
         private static Vector3 Orient(Vector3 local, bool mirror, float bodyAngle)
             => mirror ? new Vector3(-local.x, local.y, 0f) : Quaternion.Euler(0f, 0f, bodyAngle) * local;
     }

@@ -5,10 +5,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
-    // 타일 정보 카드 (2026-10-28 카드형으로 다시 씀)
-    //   앞면: 고른 칸에 걸린 버프·디버프 목록 (특수 타일, 버프존·디버프존). 한 줄씩 버튼
-    //   항목을 누르면 카드가 뒤집히며 뒷면에 그 효과의 자세한 설명. 뒷면을 누르면 앞면으로
-    //   칸 이름은 머리(앞·뒤 공통). 존이 바뀌거나 스택이 오르면 다시 그림 (ZoneChanged, 적 턴 끝)
+    // 타일 정보 카드
     public class TileinfoPanel : MonoBehaviour
     {
         [Header("머리 (앞·뒤 공통)")]
@@ -43,7 +40,6 @@ namespace SquareTD
         private readonly List<GameObject> m_spawned = new List<GameObject>();
         private bool m_subscribed;
 
-        // EnemyInfoPanel이 버프 목록 줄의 틀로 빌려 씀
         public GameObject BuffEntryPrefab => m_entryTemplate != null ? m_entryTemplate.gameObject : null;
 
         private void Start()
@@ -83,7 +79,7 @@ namespace SquareTD
         }
 
         private void HandleZoneChanged(Zone zone) => Refresh();
-        private void HandleEnemyTurnEnded(int turn) => Refresh();        // 존의 스택은 오를 때 알림이 없어 턴이 끝날 때 다시 그림
+        private void HandleEnemyTurnEnded(int turn) => Refresh();
 
         private void Refresh()
         {
@@ -111,7 +107,7 @@ namespace SquareTD
             BoardManager board = BoardManager.Instance;
             AddTile(SpecialTileText.Describe(board.Tiles.GetPathTile(pathIndex), pathIndex, board.Grid), entries);
             foreach (Zone zone in board.Zones.GetAtPath(pathIndex)) entries.Add(ZoneEntry(zone));
-            foreach (GroundEffect ground in board.Grounds.GetAt(pathIndex)) entries.Add(GroundEntry(ground));    // 깔린 장판 (화살비, 수업 40 블랙홀)
+            foreach (GroundEffect ground in board.Grounds.GetAt(pathIndex)) entries.Add(GroundEntry(ground));
         }
 
         private static Entry GroundEntry(GroundEffect ground)
@@ -127,7 +123,6 @@ namespace SquareTD
             };
         }
 
-        // 특수 타일 글은 "이름\n설명" — 첫 줄이 제목
         private static void AddTile(string description, List<Entry> entries)
         {
             if (string.IsNullOrEmpty(description)) return;
@@ -197,7 +192,6 @@ namespace SquareTD
             if (m_list != null) m_list.verticalNormalizedPosition = 1f;
         }
 
-        // 항목을 누름 → 카드가 뒤집히며 뒷면에 설명
         private void ShowDetail(Entry entry)
         {
             if (m_detailTitle != null) m_detailTitle.text = entry.Title;

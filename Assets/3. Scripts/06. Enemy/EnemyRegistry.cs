@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
+    // 살아 있는 적 목록
     public class EnemyRegistry
     {
         private readonly List<EnemyController> m_alive = new List<EnemyController>();

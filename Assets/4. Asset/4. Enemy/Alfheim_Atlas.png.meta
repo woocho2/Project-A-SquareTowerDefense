@@ -1,4 +1,4 @@
-﻿fileFormatVersion: 2
+fileFormatVersion: 2
 guid: b27032fb31e549519742e6943d4d5be6
 TextureImporter:
   internalIDToNameTable: []
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Enemy_Alfheim_CorruptedElf
+      name: Alfheim_CorruptedElf_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 56
+        y: 568
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -145,13 +145,35 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Enemy_Alfheim_CorruptedElfCaptain
+      name: Alfheim_CorruptedElf_Face
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 254
+        y: 878
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 748cad15efc640f79ba054cab94ab84b
+      internalID: 161020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Alfheim_CorruptedElfCaptain_Full
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 568
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -167,13 +189,35 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Enemy_Alfheim_CorruptedElfChief
+      name: Alfheim_CorruptedElfCaptain_Face
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 760
+        y: 879
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6892ccb80ae41c4bed236fe42e4c2a4
+      internalID: 161021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Alfheim_CorruptedElfChief_Full
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 56
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -184,6 +228,28 @@ TextureImporter:
       bones: []
       spriteID: 790beee2d1ca481b9e8c0c2bde85d0ea
       internalID: 61022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Alfheim_CorruptedElfChief_Face
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 363
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06975bd0424748b2bcb921350cfd15d8
+      internalID: 161022
       vertices: []
       indices: 
       edges: []
@@ -202,9 +268,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Enemy_Alfheim_CorruptedElf: 61020
-      Enemy_Alfheim_CorruptedElfCaptain: 61021
-      Enemy_Alfheim_CorruptedElfChief: 61022
+      Alfheim_CorruptedElf_Full: 61020
+      Alfheim_CorruptedElf_Face: 161020
+      Alfheim_CorruptedElfCaptain_Full: 61021
+      Alfheim_CorruptedElfCaptain_Face: 161021
+      Alfheim_CorruptedElfChief_Full: 61022
+      Alfheim_CorruptedElfChief_Face: 161022
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

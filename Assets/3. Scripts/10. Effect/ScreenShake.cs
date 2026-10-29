@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 화면 흔들림 하나를 모두가 같이 씀: 새로 흔들면 앞의 것을 끝내고(제자리로) 다시 흔듦 → 여러 발이 겹쳐도 카메라가 밀려나지 않음
+    // 화면 흔들림
     public static class ScreenShake
     {
         private static Camera s_camera;
@@ -15,7 +15,7 @@ namespace SquareTD
             Camera camera = Camera.main;
             if (camera == null || strength <= 0f || duration <= 0f) return;
 
-            if (s_tween != null && s_tween.IsActive()) s_tween.Kill();     // OnKill에서 제자리로
+            if (s_tween != null && s_tween.IsActive()) s_tween.Kill();
             s_camera = camera;
             s_base = camera.transform.position;
             s_tween = camera.transform.DOShakePosition(duration, new Vector3(strength, strength, 0f), 30, 90f, false, true)

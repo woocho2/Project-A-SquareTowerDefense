@@ -136,13 +136,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: SwordMaster_Full
+      name: Sword_SwordMaster_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 512
-        width: 512
-        height: 512
+        x: 51
+        y: 601
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,13 +158,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: BladeDancer_Full
+      name: Sword_BladeDancer_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 512
+        x: 598
+        y: 608
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -180,13 +180,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Valkyrie_Full
+      name: Sword_Valkyrie_Full
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 62
+        y: 107
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -202,13 +202,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DeathKnight_Full
+      name: Sword_DeathKnight_Full
       rect:
         serializedVersion: 2
-        x: 512
-        y: 0
-        width: 512
-        height: 512
+        x: 567
+        y: 108
+        width: 400
+        height: 400
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -224,13 +224,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SwordMaster_Face
+      name: Sword_SwordMaster_Face
       rect:
         serializedVersion: 2
-        x: 200
-        y: 864
-        width: 144
-        height: 144
+        x: 222
+        y: 908
+        width: 92
+        height: 92
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -246,13 +246,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: BladeDancer_Face
+      name: Sword_BladeDancer_Face
       rect:
         serializedVersion: 2
-        x: 698
-        y: 840
-        width: 144
-        height: 144
+        x: 712
+        y: 877
+        width: 92
+        height: 92
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -268,13 +268,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Valkyrie_Face
+      name: Sword_Valkyrie_Face
       rect:
         serializedVersion: 2
-        x: 208
-        y: 356
-        width: 144
-        height: 144
+        x: 223
+        y: 386
+        width: 92
+        height: 92
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -290,13 +290,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DeathKnight_Face
+      name: Sword_DeathKnight_Face
       rect:
         serializedVersion: 2
-        x: 688
-        y: 362
-        width: 144
-        height: 144
+        x: 725
+        y: 401
+        width: 92
+        height: 92
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -315,7 +315,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 208b4c947b0b5ae4a8f74a6fa4e8a3d6
     internalID: 0
     vertices: []
     indices: 
@@ -325,14 +325,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      DeathKnight_Full: 52013
-      SwordMaster_Full: 52010
-      Valkyrie_Full: 52012
-      BladeDancer_Full: 52011
-      SwordMaster_Face: 52014
-      BladeDancer_Face: 52015
-      Valkyrie_Face: 52016
-      DeathKnight_Face: 52017
+      Sword_BladeDancer_Face: 52015
+      Sword_BladeDancer_Full: 52011
+      Sword_DeathKnight_Face: 52017
+      Sword_DeathKnight_Full: 52013
+      Sword_SwordMaster_Face: 52014
+      Sword_SwordMaster_Full: 52010
+      Sword_Valkyrie_Face: 52016
+      Sword_Valkyrie_Full: 52012
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

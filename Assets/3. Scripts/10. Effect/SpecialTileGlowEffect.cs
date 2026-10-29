@@ -4,12 +4,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 판 위 특수 타일(맵 버프·정화·비프로스트, 스폰 타일)을 칸마다 빛으로 보여 줌 (2026-10-28 사용자: 판의 네온 연출 대신)
-    //   모든 칸에는 옅은 격자선을 깔고, 특수 타일은 그 위에
-    //   모양과 움직임은 Resources/SpecialTile.shader. 이 스크립트는 칸마다 판을 깔고 종류별 모양 번호·색만 정함
-    //   보드 타일맵(BoardTile)에 붙임 — 그 렌더러의 그리기 순서 바로 위에 그림
-    //   규칙은 모름: BoardManager.Tiles(SpecialTileLayout)를 읽기만 함. 배치는 판을 만들 때 한 번이라 Start에서 한 번만 깖
-    //   EffectQuadPool을 쓰지 않음 — 늘 켜져 있는 판이라 EffectActivity가 "연출 중"으로 보면 턴이 기다리게 됨
+    // 판 위 특수 타일을 칸마다 빛으로 보여 줌
     [DisallowMultipleComponent]
     public sealed class SpecialTileGlowEffect : MonoBehaviour
     {
@@ -22,12 +17,12 @@ namespace SquareTD
 
         private const int GridShape = 10;
 
-        [SerializeField] private float m_intensity = 1.6f;           // 1보다 크면 블룸으로 번짐
-        [SerializeField, Range(0f, 1f)] private float m_alpha = 0.5f;             // 특수 타일·격자 전체의 투명도
-        [SerializeField, Range(0.5f, 1f)] private float m_sizeRatio = 0.96f;     // 특수 타일 판의 크기 (칸에 대한 비율)
+        [SerializeField] private float m_intensity = 1.6f;
+        [SerializeField, Range(0f, 1f)] private float m_alpha = 0.5f;
+        [SerializeField, Range(0.5f, 1f)] private float m_sizeRatio = 0.96f;
         [Header("격자")]
         [SerializeField] private bool m_showGrid = true;
-        [SerializeField] private Color m_gridColor = new Color(0.55f, 0.55f, 0.55f, 0.35f);   // 회색. a = 격자만의 투명도
+        [SerializeField] private Color m_gridColor = new Color(0.55f, 0.55f, 0.55f, 0.35f);
 
         private readonly List<GameObject> m_tiles = new List<GameObject>();
         private Material m_material;
@@ -53,13 +48,12 @@ namespace SquareTD
             Renderer boardRenderer = GetComponent<Renderer>();
             int sortingLayer = boardRenderer != null ? boardRenderer.sortingLayerID : 0;
             int gridOrder = boardRenderer != null ? boardRenderer.sortingOrder + 1 : 1;
-            int tileOrder = gridOrder + 1;                                  // 특수 타일은 격자 위에
+            int tileOrder = gridOrder + 1;
             float cell = EffectSpace.CellWorldSize();
             float size = cell * m_sizeRatio;
 
             if (m_showGrid)
             {
-                // 격자는 칸을 꽉 채워야 옆 칸의 선과 맞닿음
                 for (int i = 0; i < board.Grid.PathCount; i++)
                     Place($"Grid Path {i}", board.GetWorldPosition(board.Grid.GetPathCell(i)), cell, GridShape, m_gridColor, sortingLayer, gridOrder);
                 for (int i = 0; i < board.Grid.SpawnCount; i++)
@@ -82,7 +76,6 @@ namespace SquareTD
                 Place($"Spawn {i} {type}", board.GetWorldPosition(board.Grid.GetSpawnCell(i)), size, shape, color, sortingLayer, tileOrder);
             }
 
-            // 흐르는 시간: 0 → 1을 1초에, 끝나면 그 자리에서 이어서 (Incremental) — 셰이더 무늬가 끊기지 않고 계속 움직임
             DOTween.To(() => m_phase, value => { m_phase = value; m_material.SetFloat(s_phaseId, value); }, 1f, 1f)
                 .SetEase(Ease.Linear)
                 .SetLoops(-1, LoopType.Incremental)
@@ -95,25 +88,23 @@ namespace SquareTD
             if (m_mesh != null) Destroy(m_mesh);
         }
 
-        // 길 위 (적에게 이로움): 셰이더의 모양 번호, 색
         private static (int shape, Color color) PathLook(PathTileType type) => type switch
         {
-            PathTileType.Defense => (0, new Color(0.35f, 0.65f, 1f)),          // 방어: 푸른 육각 격자
-            PathTileType.Speed => (1, new Color(1f, 0.85f, 0.25f)),            // 이동력: 노란 갈매기 무늬
-            PathTileType.ActionCount => (2, new Color(1f, 0.55f, 0.2f)),       // 행동 카운트: 주황 시계
-            PathTileType.Heal => (3, new Color(0.35f, 1f, 0.5f)),              // 회복: 초록 십자
-            PathTileType.Purify => (4, new Color(0.9f, 0.95f, 1f)),            // 정화: 흰 고리
-            PathTileType.Bifrost => (5, new Color(0.8f, 0.6f, 1f)),            // 비프로스트: 무지개 소용돌이
+            PathTileType.Defense => (0, new Color(0.35f, 0.65f, 1f)),
+            PathTileType.Speed => (1, new Color(1f, 0.85f, 0.25f)),
+            PathTileType.ActionCount => (2, new Color(1f, 0.55f, 0.2f)),
+            PathTileType.Heal => (3, new Color(0.35f, 1f, 0.5f)),
+            PathTileType.Purify => (4, new Color(0.9f, 0.95f, 1f)),
+            PathTileType.Bifrost => (5, new Color(0.8f, 0.6f, 1f)),
             _ => (0, Color.white),
         };
 
-        // 스폰 칸 (타워에게 이로움)
         private static (int shape, Color color) SpawnLook(SpawnTileType type) => type switch
         {
-            SpawnTileType.Power => (6, new Color(1f, 0.3f, 0.3f)),             // 공격력: 붉은 화살촉
-            SpawnTileType.ActionCount => (7, new Color(0.3f, 0.95f, 1f)),      // 행동 카운트: 하늘색 시계
-            SpawnTileType.AttackCount => (8, new Color(0.8f, 0.45f, 1f)),      // 공격 횟수: 보라 마름모
-            SpawnTileType.Mastery => (9, new Color(1f, 0.82f, 0.35f)),         // Mastery: 금빛 별
+            SpawnTileType.Power => (6, new Color(1f, 0.3f, 0.3f)),
+            SpawnTileType.ActionCount => (7, new Color(0.3f, 0.95f, 1f)),
+            SpawnTileType.AttackCount => (8, new Color(0.8f, 0.45f, 1f)),
+            SpawnTileType.Mastery => (9, new Color(1f, 0.82f, 0.35f)),
             _ => (6, Color.white),
         };
 
@@ -135,7 +126,7 @@ namespace SquareTD
             var block = new MaterialPropertyBlock();
             block.SetColor(s_colorId, color);
             block.SetFloat(s_shapeId, shape);
-            block.SetFloat(s_seedId, m_tiles.Count * 0.73f);        // 칸마다 박자를 조금씩 어긋나게
+            block.SetFloat(s_seedId, m_tiles.Count * 0.73f);
             renderer.SetPropertyBlock(block);
             m_tiles.Add(tile);
         }

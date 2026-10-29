@@ -1,8 +1,6 @@
 namespace SquareTD
 {
-    // 빙결 (21번 #136, 수업 37) — 기절과 같은 행동 불가(다음 행동 0 / 0, 강한 CC). 키도 같아 기절·속박과 겹치지 않음
-    //   해동: 빙결 중에 받은 피해의 25%를 빙결이 끝날 때 한 번 더 받음 (방어 무시)
-    //   한기 존에 선 타워의 공격은 빙결된 적에게 +25% (20번 4-13장)
+    // 빙결 — 다음 행동 한 번 못 움직임
     public class FreezeEffect : ImmobilizeEffect
     {
         public const float ThawRate = 0.25f;

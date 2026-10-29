@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
+    // 게임 클리어 패널
     public class GameClearPanel : MonoBehaviour
     {
         [SerializeField] Button btn_home;
@@ -32,7 +33,6 @@ namespace SquareTD
 
         private void HandleNextStageClick()
         {
-            // 수업 42: 스테이지 해금이 생기면 StartSettings에 다음 스테이지를 적고 그 씬을 불러옴
             SceneFlow.Load(m_sceneName_Menu);
         }
     }

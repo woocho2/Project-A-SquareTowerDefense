@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 셰이더로 그리는 네모 판 하나 (1 × 1 월드 크기, 가운데 기준). 크기·방향은 Transform으로, 값은 MaterialPropertyBlock으로
+    // 셰이더로 그리는 연출 판과 그 풀
     public sealed class EffectQuad
     {
         public static readonly int ColorId = Shader.PropertyToID("_Color");
@@ -17,7 +17,7 @@ namespace SquareTD
         public static readonly int ClipBelowId = Shader.PropertyToID("_ClipBelow");
         public static readonly int Color2Id = Shader.PropertyToID("_Color2");
         public static readonly int PhaseId = Shader.PropertyToID("_Phase");
-        public static readonly int IntensityId = Shader.PropertyToID("_Intensity");      // EffectSprite: 1보다 크면 블룸으로 번짐
+        public static readonly int IntensityId = Shader.PropertyToID("_Intensity");
         public static readonly int TailId = Shader.PropertyToID("_Tail");
         public static readonly int DissolveId = Shader.PropertyToID("_Dissolve");
         public static readonly int HeadFollowId = Shader.PropertyToID("_HeadFollow");
@@ -53,8 +53,13 @@ namespace SquareTD
             m_renderer.sortingOrder = m_baseSortingOrder;
         }
 
-        // 같은 판 묶음 안에서 아래·위로 (그을린 자국은 아래로)
         public void SetSortingOffset(int offset) => m_renderer.sortingOrder = m_baseSortingOrder + offset;
+
+        public void SetSorting(int layerId, int order)
+        {
+            m_renderer.sortingLayerID = layerId;
+            m_renderer.sortingOrder = order;
+        }
 
         public void SetFloat(int id, float value)
         {
@@ -90,8 +95,6 @@ namespace SquareTD
         }
     }
 
-    // 같은 셰이더 판을 다시 씀 (켜고 끄기만). 셰이더는 Resources에서 이름으로 찾음
-    //   texture: EffectSprite 셰이더에 입힐 그림 이름 (EffectTextures) / additive: 더하기 섞기(빛) / mesh: 네모 판 대신 쓸 메쉬 (반달 등)
     public sealed class EffectQuadPool
     {
         private readonly Stack<EffectQuad> m_free = new Stack<EffectQuad>();
@@ -120,7 +123,7 @@ namespace SquareTD
             m_material = new Material(shader) { name = $"{name} (Runtime)" };
             if (texture != null) m_material.SetTexture("_MainTex", EffectTextures.Get(texture));
             if (m_material.HasProperty("_NoiseTex")) m_material.SetTexture("_NoiseTex", EffectTextures.Get(EffectTextures.Noise));
-            if (m_material.HasProperty("_DstBlend")) m_material.SetFloat("_DstBlend", additive ? 1f : 10f);   // 1 = One(더하기), 10 = OneMinusSrcAlpha
+            if (m_material.HasProperty("_DstBlend")) m_material.SetFloat("_DstBlend", additive ? 1f : 10f);
         }
 
         public EffectQuad Get()
@@ -149,10 +152,8 @@ namespace SquareTD
         }
     }
 
-    // 베기 선 하나: 그어짐(_Progress 0 → 1) → 잠깐 머묾 → 사라짐(_Fade 1 → 0) → 판을 돌려놓음
     public static class SlashStroke
     {
-        // whiten 1 = 가운데가 하얗게 빛남 / 0 = 빛 없이 색 그대로 (땅이 갈라진 금)
         public static Sequence Play(EffectQuadPool pool, Vector3 center, float angle, float length, float thickness,
             float core, Color color, float delay, float drawDuration, float holdDuration, float fadeDuration, float whiten = 1f)
         {

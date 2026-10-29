@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 namespace SquareTD
 {
-    // 수업 48: 옛 SceneLoader·LoadingManager(로딩 화면)를 New로 복사하면 Load 안을 그쪽으로 바꿈
+    // 씬 이동
     public static class SceneFlow
     {
         public static void Reload(string sceneName)

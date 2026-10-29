@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: FireGiant_Appearance
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyCubeAppearance
   m_characterTexture: {fileID: 2800000, guid: 6e683c6100577ac176ae42e13797a252, type: 3}
+  m_faceSprite: {fileID: 161080, guid: 1a4b37cfd6f44228b2ff05a575d0be09, type: 3}
+  m_fullSprite: {fileID: 61080, guid: 1a4b37cfd6f44228b2ff05a575d0be09, type: 3}
   m_equipmentMask: {fileID: 0}

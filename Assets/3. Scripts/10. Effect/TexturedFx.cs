@@ -3,11 +3,9 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 그림(텍스처) 연출 판을 움직이는 공용 동작 (EffectSprite 셰이더용)
+    // 그림 연출 판을 움직이는 공용 동작
     public static class TexturedFx
     {
-        // 휙 지나가는 베기: 그어짐(_Progress 0 → 1, 밝은 머리가 앞장섬) → 잠깐 → 꼬리부터 지워짐(_Tail 0 → 1) → 판을 돌려놓음
-        //   pool의 판이 네모면 곧은 줄, 반달 메쉬면 휜 궤적. scale.x가 음수면 반대로 휨
         public static Sequence Swipe(EffectQuadPool pool, Vector3 position, float angle, Vector3 scale, Color color, float intensity,
             float delay, float draw, float hold, float tail)
         {
@@ -33,7 +31,6 @@ namespace SquareTD
             return sequence;
         }
 
-        // 터지는 그림 하나 (빛 덩어리, 별빛, 고리): delay 뒤 from 크기에서 to 크기로 커지며 fade초 동안 흐려짐
         public static Sequence Pop(EffectQuadPool pool, Vector3 position, float angle, float from, float to, Color color, float intensity,
             float delay, float grow, float fade, Ease growEase = Ease.OutQuad)
         {
@@ -55,7 +52,6 @@ namespace SquareTD
             return sequence;
         }
 
-        // 타들어 가듯 사라짐 (노이즈 디졸브)
         public static Tween DissolveOut(EffectQuad quad, float duration)
         {
             float amount = 0f;
