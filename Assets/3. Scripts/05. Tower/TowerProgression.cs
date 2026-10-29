@@ -18,8 +18,9 @@ namespace SquareTD
         }
 
         public static bool TryFindMergeGroup(TowerSlots slots, Func<TowerController, bool> isBusy,
-                                             out TowerController keep, out List<TowerController> materials)
+                                             out TowerController keep, out List<TowerController> materials, int mergeCount = MergeCount)
         {
+            if (mergeCount < 2) throw new ArgumentOutOfRangeException(nameof(mergeCount));
             keep = null;
             materials = null;
 
@@ -43,12 +44,12 @@ namespace SquareTD
             foreach (int id in order)
             {
                 List<TowerController> group = groups[id];
-                if (group.Count < MergeCount) continue;
+                if (group.Count < mergeCount) continue;
 
-                List<TowerController> three = group.OrderBy(t => t.BuildOrder).Take(MergeCount).ToList();
-                keep = three.Take(MergeCount - 1).OrderBy(t => t.SlotIndex).First();
+                List<TowerController> candidates = group.OrderBy(t => t.BuildOrder).Take(mergeCount).ToList();
+                keep = candidates.Take(mergeCount - 1).OrderBy(t => t.SlotIndex).First();
                 TowerController kept = keep;
-                materials = three.Where(t => t != kept).ToList();
+                materials = candidates.Where(t => t != kept).ToList();
                 return true;
             }
             return false;

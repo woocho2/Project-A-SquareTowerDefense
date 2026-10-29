@@ -15,6 +15,7 @@ namespace SquareTD
 
         public event Action<ITurnState> StateChanged;
         public event Action<int> EnemyTurnEnded;
+        public event Action EnemyTurnStarted;
 
         private bool m_endTurnRequested;
         [SerializeField] private float m_attackSafetySeconds = 10f;
@@ -107,6 +108,7 @@ namespace SquareTD
 
         private void EnemyTurnStart()
         {
+            EnemyTurnStarted?.Invoke();
             m_towerRunner.RunEnemyTurnStart();
             foreach (EnemyController enemy in new List<EnemyController>(EnemyManager.Instance.Registry.Alive))
                 enemy.Status.OnEnemyTurnStart();

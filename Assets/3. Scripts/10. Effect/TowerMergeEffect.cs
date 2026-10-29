@@ -42,6 +42,7 @@ namespace SquareTD
 
         public void PlayCharge(TowerController keep)
         {
+            if (SimulationRunner.SuppressCosmetics) return;
             if (keep == null) return;
             float cell = EffectSpace.CellWorldSize();
             Vector3 center = keep.transform.position;
@@ -58,6 +59,7 @@ namespace SquareTD
 
         public void PlayGather(IReadOnlyList<TowerController> materials, Vector3 target)
         {
+            if (SimulationRunner.SuppressCosmetics) return;
             float cell = EffectSpace.CellWorldSize();
             foreach (TowerController material in materials)
             {
@@ -83,6 +85,7 @@ namespace SquareTD
 
         public void PlayPop(TowerController result)
         {
+            if (SimulationRunner.SuppressCosmetics) return;
             if (result == null) return;
             float cell = EffectSpace.CellWorldSize();
             Transform tower = result.transform;

@@ -36,6 +36,7 @@ namespace SquareTD
 
         public static IEnumerator Play(TowerController tower)
         {
+            if (SimulationRunner.IsOn) yield break;
             if (!Application.isPlaying || tower == null || tower.Definition == null) yield break;
 
             TowerVisual visual = tower.GetComponent<TowerVisual>();

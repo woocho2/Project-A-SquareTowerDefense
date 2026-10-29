@@ -143,7 +143,7 @@ namespace SquareTD
             if (s_frameMaterial == null) s_frameMaterial = MakeMaterial("FrameShine");
             if (s_haloMaterial == null) s_haloMaterial = MakeMaterial("SelectionGlow");
             if (m_shineBlock == null) m_shineBlock = new MaterialPropertyBlock();
-            if (m_shinePhase < 0f) m_shinePhase = Random.Range(0f, 10f);
+            if (m_shinePhase < 0f) m_shinePhase = SimulationRunner.SuppressCosmetics ? 0f : Random.Range(0f, 10f);
             float strength = (tier - 1) / 5f;
 
             if (s_frameMaterial != null)

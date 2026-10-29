@@ -43,7 +43,9 @@ namespace SquareTD
             Slots = new TowerSlots(Grid.SpawnCount);
             Grounds = new GroundEffectRegistry();
 
-            System.Random random = m_layoutSeed == 0 ? new System.Random() : new System.Random(m_layoutSeed);
+            System.Random random = m_layoutSeed == 0
+                ? SimulationRunner.SuppressCosmetics ? new System.Random(SimulationRunner.CurrentSeed) : new System.Random()
+                : new System.Random(m_layoutSeed);
 
             Tiles = new SpecialTileLayout();
             Tiles.Generate(Grid, m_tileCounts, random);

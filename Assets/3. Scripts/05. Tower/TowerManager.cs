@@ -39,6 +39,14 @@ namespace SquareTD
         private Coroutine m_mergeRoutine;
         private readonly HashSet<TowerController> m_merging = new HashSet<TowerController>();
 
+        public int RequiredMergeCount { get; private set; } = TowerProgression.MergeCount;
+
+        public void ConfigureMergeCount(int count)
+        {
+            if (count < 2) throw new ArgumentOutOfRangeException(nameof(count));
+            RequiredMergeCount = count;
+        }
+
         public bool IsMerging => m_mergeRoutine != null;
         public bool IsMergingTower(TowerController tower) => tower != null && m_merging.Contains(tower);
 
@@ -171,7 +179,7 @@ namespace SquareTD
         private IEnumerator AutoMergeLoop()
         {
             TowerSlots slots = BoardManager.Instance.Slots;
-            while (TowerProgression.TryFindMergeGroup(slots, IsMergingTower, out TowerController keep, out List<TowerController> materials))
+            while (TowerProgression.TryFindMergeGroup(slots, IsMergingTower, out TowerController keep, out List<TowerController> materials, RequiredMergeCount))
             {
                 if (!Database.TryGet(TowerId.GetNextTier(keep.Definition.Id), out TowerDefinition next))
                 {

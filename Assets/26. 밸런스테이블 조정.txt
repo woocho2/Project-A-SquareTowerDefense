@@ -1,6 +1,6 @@
 26. 밸런스테이블 조정 — 빠른 시뮬레이션으로 수치를 맞추는 방법
 작성일: 2026-10-29
-상태: 1판(첫 버전) 만듦 — SimulationRunner·BalanceRecorder·BalanceSimulationWindow (22번). 아래는 남은 것만. 만든 것은 22번으로 옮기고 여기서 지움.
+상태: 배치 합성 A/B·노말4/하드6 덱 비교·타워별 턴당 화력 집계 완료 (22번). 남은 조정·검증과 실행 방법을 둠.
 바탕: 20. 통합 기획서, 지금 게임(자동 진행 + AutoPlanner)
 
 차례
@@ -30,26 +30,53 @@
 ======================================================================
   1) 3. Stage1 씬을 연다.
   2) 메뉴 Tools > 밸런스 시뮬레이션 → 창에서 판 수, 시작 시드, 난이도(씬 그대로 / 노말 / 하드), 문양 무작위, 배속(최대 100), 한 판 제한(초)을 정함.
-  3) "실행" → 플레이 모드가 켜지고 판이 이어서 돌아감. 그동안 게임 화면은 꺼지고 콘솔엔 경고·오류만 나옴. 창에 "진행 중: n / N판".
-  4) 다 끝나면 플레이 모드가 저절로 꺼지고 요약이 콘솔과 파일에 나옴. 중간에 그만두려면 창의 "멈춤"(그때까지의 결과로 요약).
+  3) 합성 비교는 "합성 A/B 비교"를 켜고 A=3기, B=2기로 정한 뒤 "A/B 실행". 같은 시드의 A → B를 반복하며, 조건당 20판이면 총 40판.
+     단일 설정은 비교를 끄고 "실행" → 플레이 모드가 켜지고 판이 이어서 돌아감. 그동안 게임 화면은 꺼지고 콘솔엔 경고·오류만 나옴. 창에 "진행 중: n / N판".
+  4) 다 끝나면 플레이 모드가 저절로 꺼지고 요약이 툴 창·콘솔·파일에 나옴. "현재/마지막 결과 보기"는 중간 결과 갱신, "결과 복사"는 표시된 요약을 복사. 중간에 그만두려면 창의 "멈춤"(그때까지의 결과로 요약).
 결과 파일 (프로젝트 폴더/Balance, git에 안 올라감)
   날짜_시각_games.csv     판마다 한 줄 (결과, 도달 웨이브, 남은 적·한도, 골드·젬, 티어 분포, 합성, 티어가 처음 나온 웨이브, 칸이 막힌 웨이브, 처치, 총 피해)
   날짜_시각_towers.csv    판 × 타워 ID마다 한 줄 (기본·스킬·장판·기타 피해, 처치)
   날짜_시각_summary.txt   AI가 읽는 요약 (승률, 도달 웨이브, 패배 웨이브·이유, 합성 속도, 타워 종류별 피해 몫 ▲▼, 문양별 승률)
+  A/B 비교는 각 조건의 _A_games.csv / _B_games.csv와 타워 CSV·요약을 따로 저장.
+  날짜_시각_comparison.txt  같은 시드의 정상 완료 짝 비교(클리어율, 웨이브, 골드·젬, 합성 등)
+  날짜_시각_paired.csv      짝별 원자료. 제외된 짝은 valid_pair=0
   simulation_settings.json  창이 쓰는 설정 (손댈 필요 없음)
 AI에게 맡길 때: "Balance의 마지막 summary 봐 줘" — AI는 summary만 읽음.
+[덱별 실전 화력 비교]
+- Unity 에디터를 닫고 프로젝트 루트 PowerShell에서 실행:
+& "C:\Program Files\Unity\Hub\Editor\6000.3.9f1\Editor\Unity.exe" -batchmode -nographics -projectPath "$PWD" -executeMethod SquareTD.BalanceSimulationWindow.RunBatch -simDeckRanking -simRuns 100 -simSeed 1 -logFile "$PWD\Balance\deck_200_unity.log"
+- 시드별 노말 4문양 → 하드 6문양을 반복. 모드당 100판이면 총 200판. 일반 플레이의 문양 수 규칙은 변경하지 않음.
+- 문양은 시드별로 무작위 선택. 합성은 현재 기본 3기, 자동 소환·판매·합성·젬 강화·배치는 기존 AutoPlanner.
+- 화력은 초당 피해가 아니라 타워 1기당 적 턴당 피해(DPT): 피해 합계 / 배치된 타워 기수×적 턴.
+  공격 대기와 사거리 밖 대기도 분모에 포함. 기본·스킬·장판·기타를 나누고, 출전 판 수를 표시.
+- *_dpt_summary.txt: 모드별 전체 티어 합산 순위. *_dpt_ranking.csv: tier=0 합산, tier=1~5 동일 티어 순위.
+  일반 모드별 games/towers/summary 파일도 보존. Timeout/Stuck 등 미완료 판은 화력 표에서 제외.
+- 기존 towers.csv에 tower_turns 열 추가. 적 턴 시작 시 실제 배치된 타워를 세므로, 종결 턴도 분모에 포함.
+- 같은 시드는 시작 상태를 맞추는 것. 게임·연출의 전역 난수 공유와 프레임 차이까지 고정한 재현성은 아직 미확보.
+- CSV SHA256을 시작 설정에 저장하고 완료 후 현재 파일과 대조. Power·AbilityValue 임시값 기준의 실전 표본임을 명시.
+
+
+[백그라운드 A/B 실행 — 에디터 창 없이]
+  1) Unity에서 저장하고 에디터를 종료. 같은 프로젝트를 열어 둔 에디터와 배치 프로세스는 함께 실행할 수 없음.
+  2) VS Code에서 프로젝트 루트 폴더를 열고 PowerShell 터미널에 아래를 입력.
+& "C:\Program Files\Unity\Hub\Editor\6000.3.9f1\Editor\Unity.exe" -batchmode -nographics -projectPath "$PWD" -executeMethod SquareTD.BalanceSimulationWindow.RunBatch -simRuns 20 -simSeed 1 -simMergeA 3 -simMergeB 2 -logFile "$PWD\Balance\batch_unity.log"
+  3) A=3기, B=2기, 시드 1부터 조건당 20판(총 40판). -simRuns를 바꾸면 조건당 판 수를 변경.
+     난이도·문양 무작위·배속·한 판 제한은 툴의 마지막 저장 설정을 사용.
+  4) Balance/batch_*_comparison.txt와 조건별 CSV에 결과 저장 후 자동 종료. 로그는 Balance/batch_unity.log.
+     현재 진행 수는 Balance/simulation_settings.json의 Finished, 전체 판 수는 Runs*2로 확인.
+  - -quit를 추가하면 비동기 시뮬레이션이 끝나기 전에 종료될 수 있으므로 붙이지 않음.
+  - RunBatch 진입·인자 검증·장면 열기·결과 저장 후 종료 연결은 컴파일 확인. 실제 배치 완주·속도 검증은 아직.
+
 
 
 ======================================================================
 2. 남은 것 — 속도 (연출 없는 모드)
 ======================================================================
-1판은 코드를 거의 안 건드리고 빨리 감기만 함: 배속 100, 한 프레임 시간 상한 1초, 수직 동기 끔, 카메라 끔(Camera.main이 없어 화면 이펙트가 건너뜀), 일반 로그 끔.
+현재는 스킬 컷인을 시뮬레이션에서 생략하며, 나머지는 빨리 감기 위주: 배속 100, 한 프레임 시간 상한 1초, 수직 동기 끔, 카메라 끔(Camera.main이 없어 화면 이펙트가 건너뜀), 일반 로그 끔.
 먼저 한 판에 몇 초 걸리는지 잼. 너무 느리면 "시뮬레이션이면 건너뛰기"(SimulationRunner.IsOn)를 아래에 넣음 (계산 로직은 그대로).
   - 이펙트 입구: SkillEffectTable(Play·PlayCast·PlayArrowRain·PlayBlackHoleTurn), ShotEffectTable·ProjectileManager.Fire(탄은 바로 맞음)
-  - 컷인: SkillCutIn.Play
   - 대기: TowerTurnRunner.WaitForVisuals(EffectActivity.WaitUntilIdle), 사격 간격 WaitForSeconds, EffectActivity.HoldFor
   - 적 이동·소환 연출(DOTween), 대미지 숫자, 합성 연출(TowerMergeEffect, 0.5초 대기)
-- 더 필요하면 화면 없는 배치 모드(-batchmode -nographics -executeMethod, 에디터를 닫고)로 돌림.
 
 
 ======================================================================
@@ -88,7 +115,8 @@ AI에게 맡길 때: "Balance의 마지막 summary 봐 줘" — AI는 summary만
 ======================================================================
 6. 지킬 것
 ======================================================================
-- CSV는 사용자가 허락한 범위만 고침 (사용자: "csv는 냅두라고" — 밸런스 조정을 시작할 때 범위를 다시 정함).
+- CSV는 사용자가 허락한 범위만 고침. 확정 범위는 일반 공격 레드·블루 140행의 Range·Action·AttackCount·CriticalRate·CriticalDamage·Stack·Duration·ProjectileSpeed (20번 10장).
+  Power·AbilityValue는 보류. 버프·디버프 행과 나머지 열은 이번 적용 범위 밖.
 - 기획(20번)의 규칙·식은 바꾸지 않음. 숫자만 맞춤. 규칙을 바꿔야 할 것 같으면 사용자에게 먼저 물음.
 - 시뮬레이션은 보통 플레이에 영향이 없어야 함 (설정 파일이 꺼져 있으면 SimulationRunner가 생기지 않음).
 - 3. Scripts의 새 스크립트는 맨 위 한 줄 설명 말고 주석 없음, 안 쓰는 using 없음 (24번).
@@ -113,3 +141,58 @@ AI에게 맡길 때: "Balance의 마지막 summary 봐 줘" — AI는 summary만
   - 판단: 위 수치가 웨이브 난도를 못 따라가 패배가 몰리면 합성을 손볼 후보로 올림.
   - 손볼 수 있는 것 (후보일 뿐, 고르지 않음): 생성 비용·증가폭, 판매 보상, 스폰 칸 수, 생성 뽑기 방식, 합성에 필요한 수.
     이 가운데 규칙(뽑기 방식, 필요한 수, 칸 수)을 바꾸는 것은 기획 변경이라 사용자에게 먼저 물음 (6번).
+
+======================================================================
+9. 활·창·얼음·불 고정 덱 배치 비교 (2026-10-29)
+======================================================================
+- 사용자 선택: 활·창의 찌르기 추가 효과를 함께 보기 위해 활·창·얼음·불 4문양, 노말로 고정.
+- 기존 자동 배치 + 맵/버프/디버프 순서 6개. 개선 정책은 우선순위 가중치 4:2:1.
+  구매·합성3기·강화·판매 정책과 CSV는 유지하고, 각 시드에 7개 정책을 교차 실행.
+- 목표 표본: 전략당100판, 시드1~100, 총700판. 모든 전략이 정상 종료한 공통 시드만 비교.
+  정렬은 평균 생존 적 턴 → 도달 웨이브 → 처치 수.
+- AutoPlanner: 현재 존 단계의 실제 버프 수식, 활·창 찌르기 보너스, 정화 제외,
+  현재 적 위치·다음 이동 후보·공격 범위와 특수 타일을 평가. 가중치 행렬의 자리 배정은 최대 합 배정.
+  전체 배치 전역 최적해가 아니라 6개 휴리스틱 정책의 실전 비교.
+- 이번 배치 모드에만 맵 시드 고정, 장식 난수 억제, 게임 시간1/30초 고정 간격 사용.
+  배치 실행에서는 Canvas 렌더링만 비활성. 일반 플레이·기존 A/B 및 덱 화력 모드에는 이 통제를 강제하지 않음.
+- 같은 정책을 같은 시드로 반복한40판(기존/정책1 각각10쌍)의 게임·타워·웨이브별 배치 기록 일치.
+  Canvas 억제 전후8판의 동일 시드 기록도 일치. unscaled_delta는 실제 실행 시간이라 비교에서 제외.
+  전략을 바꾸면 행동과 합성이 달라져 이후 난수 소비 순서는 달라질 수 있음.
+- 게임 시간1초 간격의 초기 시험222판은 연속 공격 대기를 거칠게 처리하므로 최종 비교에서 제외.
+  제외 사유와 사전 검증은 Balance/PlacementStudy_20261029에 보존.
+- 원자료는 전략별 games/towers/placements.csv. placements는 웨이브 시작의 맵·타워·존 상태와 실제 frame_delta.
+  지원 타워 이동만으로 마스터리 존 수가 즉시 갱신되지 않는 현재 구현을 고려해 가상 추가 존을 점수에 넣지 않음.
+- 본실험: placement_20261029_223156_899, 700/700판 완료. 1위 맵→버프→디버프47.4턴, 기존43.3턴(+9.47%). 전 정책 클리어0/100. 상세: Balance/PlacementStudy_20261029/Results.ko.md. 결과 _placement_summary.md / _placement_ranking.csv / _placement_pairs.csv.
+- 재실행(프로젝트 루트 PowerShell):
+  & "C:\Program Files\Unity\Hub\Editor\6000.3.9f1\Editor\Unity.exe" -batchmode -nographics -projectPath "$PWD" -executeMethod SquareTD.BalanceSimulationWindow.RunBatch -simPlacementRanking -simRuns 100 -simSeed 1 -logFile "$PWD\Balance\PlacementStudy_20261029\main30_unity.log"
+
+
+[배치 비교 후 기본값 적용]
+- 사용자 요청으로 새 자동 진행·일반/A/B/덱 시뮬레이션의 기본 배치 정책을1(맵→버프→디버프)로 적용.
+- SimulationSettings.PlacementProfile에 기록. 배치 CLI의 -simPlacementProfile 0~6으로 개별 선택 가능.
+- 기존7정책 비교는 PlacementProfiles가 우선하므로 과거 정책0도 계속 명시 비교할 수 있음.
+- 시뮬레이션 종료 후 AutoPlanner.ResetPlacement가 기본1을 복원. Unity EditMode 배치 회귀5개 통과.
+
+======================================================================
+10. 게임 전체 선택 규칙 탐색 (2026-10-29)
+======================================================================
+- 현재 목적: Power·AV 고정 상태에서 잘 진행하는 게임 전략 탐색. 최종 수치 보정은 이후 작업.
+- Tools 밸런스 시뮬레이션의 "게임 전략 탐색" 버튼 또는 -simStrategySearch.
+- 초기 시드1, 노말 활·창·얼음·불, 합성3기, 후보최대500, 전투반복최대10, 최소반복5.
+- 구매·판매·티어/컬러 강화·기수·재화 보유·버프 대상·맵 및 존 배치를 선택 규칙 후보로 표현.
+  현재 완료1위에서 변이하고 주기적으로 새로운 후보를 생성. 전체 행동 공간의 완전탐색·전역 최적 증명은 아님.
+- 초기 맵/시작 상태/구매 난수열 고정, 전투 난수만 바꾸는 반복. 구매와 전투 Unity Random 상태를 저장·복원.
+  같은 반복의 전투 시작 난수는 후보 공통. 후보 행동이 다르면 이후 난수 소비 순서와 실제 상태는 달라질 수 있음.
+- 5회부터 후보의 평균 도달 웨이브가 현재1위의 같은 반복 수 평균×0.8보다 낮으면 PrunedHeuristic.
+  경계8/10은 유지. 낮은 후보의 미실행 반복을 줄이는 경험적 기준이며 최적성 보장은 없음.
+- 최대반복을 완료한 후보들만 최종 순위에 넣고, 평균 웨이브 동점이면 처치 수 합으로 갱신.
+  부모 후보·선택 규칙 JSON·전투별 결과·실제 구매/판매/강화 및 웨이브별 배치 기록.
+- 사전 검증: EditMode9개 및 동일전략20판 기록 일치. 고정 초기 조건, 전투 시드·피해 변동 확인.
+- 본 실행: strategy_20261029_234533_420, 현재 진행 중. 진행/1위는 _strategy_search.json 및 _strategy_summary.md.
+- CLI:
+  & "C:\Program Files\Unity\Hub\Editor\6000.3.9f1\Editor\Unity.exe" -batchmode -nographics -projectPath "$PWD" -executeMethod SquareTD.BalanceSimulationWindow.RunBatch -simStrategySearch -simSeed 1 -simCandidates 500 -simRepeats 10 -simMinRepeats 5 -logFile "$PWD\Balance\StrategySearch_20261029\search_unity.log"
+- -simStrategySmoke는 동일한 기본 전략2개로 난수 분리와 반복 재현성을 확인한다.
+
+
+
+2026-10-30 완료: 후보 500개, 총 4,673판. 10회 완료 405개 / 조기 탈락 95개. 최고 후보 377(동률 다수), 평균 도달 웨이브 6.5 / 기준 6.0. 최고 후보는 9회 6웨이브, 1회 11웨이브, 클리어 0/10. 초기 맵·구매 추첨·결과 기록·순위·소스/CSV 해시 검산 통과. 최초 검산은 합성 생성(TowerAdded, 2티어 이상)을 구매 추첨으로 오인해 실패했으며, 구매로 생성되는 1티어만 비교하도록 검산 스크립트를 고친 뒤 통과했다. 게임 코드와 Power/AV는 변경하지 않았다. 결과: Balance/StrategySearch_20261029/Results.ko.md 및 FinalChecks.json. 유한한 정책 후보 중 최고이며 전역 최적성 증명은 아니다.

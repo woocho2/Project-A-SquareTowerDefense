@@ -23,6 +23,48 @@ namespace SquareTD
         public float GameTimeoutSeconds = 900f;
         public string ResultName = "";
         public int Finished;
+        public bool CompareMergeCounts;
+        public int MergeCountA = TowerProgression.MergeCount;
+        public int MergeCountB = 2;
+
+        public bool CompareDeckModes;
+        public int NormalDeckCount = 4;
+        public int HardDeckCount = 6;
+        public string CsvSha256 = "";
+
+        public bool SearchStrategies;
+        public bool SearchSmoke;
+        public bool SearchComplete;
+        public bool SearchFailed;
+        public int SearchCandidates = 500;
+        public int SearchRepeats = 10;
+        public int SearchMinRepeats = 5;
+        public float SearchRetainRatio = 0.8f;
+        public int SearchCandidate;
+        public int SearchTrial;
+        public bool IsControlled => IsPlacementStudy || SearchStrategies;
+        public int PlacementProfile = AutoPlanner.DefaultPlacementProfile;
+        public float FixedGameStep = 1f / 30f;
+        public int[] PlacementProfiles = new int[0];
+        public int[] FixedDeck = { 3, 4, 11, 7 };
+        public bool IsPlacementStudy => PlacementProfiles != null && PlacementProfiles.Length > 0;
+        public int ScenarioCount => IsPlacementStudy ? PlacementProfiles.Length : CompareMergeCounts || CompareDeckModes ? 2 : 1;
+        public int TotalRuns => SearchStrategies ? SearchCandidates * SearchRepeats : Runs * ScenarioCount;
+        public int GetPlacementProfile(int run) => SearchStrategies ? AutoPlanner.DefaultPlacementProfile : IsPlacementStudy ? PlacementProfiles[run % ScenarioCount] : PlacementProfile;
+        public static string PlacementLabel(int profile) => new[] { "Baseline", "MapBuffDebuff", "MapDebuffBuff", "BuffMapDebuff", "BuffDebuffMap", "DebuffMapBuff", "DebuffBuffMap" }[profile];
+        public int GetPairIndex(int run) => SearchStrategies ? SearchTrial : run / ScenarioCount;
+        public int GetSeed(int run) => SearchStrategies ? FirstSeed : unchecked(FirstSeed + GetPairIndex(run));
+        public string GetVariant(int run) => SearchStrategies ? $"Strategy{SearchCandidate:D4}" : IsPlacementStudy
+            ? $"S{run % ScenarioCount}_{PlacementLabel(GetPlacementProfile(run))}"
+            : CompareDeckModes
+            ? (run % 2 == 0 ? "Normal" : "Hard")
+            : CompareMergeCounts ? (run % 2 == 0 ? "A" : "B") : "";
+        public int GetMergeCount(int run) => CompareMergeCounts && !CompareDeckModes && !IsPlacementStudy && !SearchStrategies
+            ? Mathf.Clamp(run % 2 == 0 ? MergeCountA : MergeCountB, 2, 5)
+            : TowerProgression.MergeCount;
+        public int GetMode(int run) => IsControlled ? (int)GameMode.Normal : CompareDeckModes ? (int)(run % 2 == 0 ? GameMode.Normal : GameMode.Hard) : Mode;
+        public int GetDeckCount(int run) => IsControlled ? FixedDeck.Length : CompareDeckModes ? (run % 2 == 0 ? NormalDeckCount : HardDeckCount) : 0;
+        public string GetResultName(int run) => ResultName + (ScenarioCount > 1 || IsControlled ? "_" + GetVariant(run) : "");
 
         public static string Folder => Path.GetFullPath(Path.Combine(Application.dataPath, "..", "Balance"));
         public static string FilePath => Path.Combine(Folder, "simulation_settings.json");
@@ -47,13 +89,18 @@ namespace SquareTD
         private const string GameOverMarker = "[GameSession] 게임 오버: ";
 
         public static bool IsOn { get; private set; }
+        public static int CurrentSeed { get; private set; }
+        public static bool SuppressCosmetics { get; private set; }
 
         private SimulationSettings m_settings;
         private QuietLogHandler m_log;
         private ILogHandler m_originalLog;
         private float m_originalMaxDelta;
         private int m_originalVSync;
+        private StrategySearch m_search;
+        private StrategyRandomStreams m_randomStreams;
         private int m_originalFrameRate;
+        private float m_originalCaptureDelta;
         private int m_run;
         private int m_seed;
         private bool m_ending;
@@ -76,10 +123,13 @@ namespace SquareTD
         private void Begin(SimulationSettings settings)
         {
             m_settings = settings;
+            if (settings.SearchStrategies) m_search = new StrategySearch(settings);
             m_run = 0;
-            m_seed = settings.FirstSeed;
+            m_seed = settings.GetSeed(0);
+            CurrentSeed = m_seed;
             UnityEngine.Random.InitState(m_seed);
             IsOn = true;
+            SuppressCosmetics = settings.IsControlled;
 
             m_originalLog = Debug.unityLogger.logHandler;
             m_log = new QuietLogHandler(m_originalLog);
@@ -87,11 +137,12 @@ namespace SquareTD
             m_originalMaxDelta = Time.maximumDeltaTime;
             m_originalVSync = QualitySettings.vSyncCount;
             m_originalFrameRate = Application.targetFrameRate;
+            m_originalCaptureDelta = Time.captureDeltaTime;
+            if (settings.IsControlled) Time.captureDeltaTime = settings.FixedGameStep / settings.TimeScale;
             Time.maximumDeltaTime = 1f;
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = -1;
 
-            BalanceRecorder.Open(SimulationSettings.Folder, settings.ResultName);
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
@@ -104,6 +155,11 @@ namespace SquareTD
         private void Restore()
         {
             IsOn = false;
+            SuppressCosmetics = false;
+            AutoPlanner.ResetPlacement();
+            StrategySearch.Reset();
+            Time.captureDeltaTime = m_originalCaptureDelta;
+            if (TowerManager.Instance != null) TowerManager.Instance.ConfigureMergeCount(TowerProgression.MergeCount);
             if (m_originalLog != null) Debug.unityLogger.logHandler = m_originalLog;
             Time.maximumDeltaTime = m_originalMaxDelta;
             QualitySettings.vSyncCount = m_originalVSync;
@@ -118,28 +174,43 @@ namespace SquareTD
             m_handledWave = -1;
             m_gameStartTime = Time.realtimeSinceStartup;
             m_log.LastReason = "";
+            m_randomStreams = null;
+            if (m_search != null) m_search.BeginGame();
 
             foreach (Camera camera in Camera.allCameras) camera.enabled = false;
+            if (m_settings.IsControlled && Application.isBatchMode)
+                foreach (Canvas canvas in FindObjectsByType<Canvas>(FindObjectsSortMode.None)) canvas.enabled = false;
 
             string emblems = ApplyGameOptions();
             string modeName = GameSession.Instance != null ? GetField<GameMode>(GameSession.Instance, "m_mode").ToString() : "";
-            BalanceRecorder.BeginGame(m_run, m_seed, modeName, emblems);
+            BalanceRecorder.Open(SimulationSettings.Folder, m_settings.GetResultName(m_run));
+            BalanceRecorder.BeginGame(m_settings.GetPairIndex(m_run), m_seed, modeName, emblems,
+                m_settings.GetVariant(m_run), m_settings.GetMergeCount(m_run), m_search != null ? m_search.CombatSeed : 0);
 
             if (TurnManager.Instance != null) TurnManager.Instance.StateChanged += OnStateChanged;
         }
 
         private string ApplyGameOptions()
         {
-            if (m_settings.Mode != 0 && GameSession.Instance != null) SetField(GameSession.Instance, "m_mode", (GameMode)m_settings.Mode);
+            int modeValue = m_settings.GetMode(m_run);
+            if (modeValue != 0 && GameSession.Instance != null) SetField(GameSession.Instance, "m_mode", (GameMode)modeValue);
             if (TowerManager.Instance == null) return "";
+            TowerManager.Instance.ConfigureMergeCount(m_settings.GetMergeCount(m_run));
+            AutoPlanner.ConfigurePlacement(m_settings.GetPlacementProfile(m_run));
 
             List<TowerEmblem> selected = GetField<List<TowerEmblem>>(TowerManager.Instance, "m_selectedEmblems");
             if (selected == null) return "";
 
-            if (m_settings.RandomEmblems)
+            if (m_settings.IsControlled)
+            {
+                selected.Clear();
+                foreach (int emblem in m_settings.FixedDeck) selected.Add((TowerEmblem)emblem);
+            }
+            else if (m_settings.RandomEmblems || m_settings.CompareDeckModes)
             {
                 GameMode mode = GameSession.Instance != null ? GetField<GameMode>(GameSession.Instance, "m_mode") : GameMode.Normal;
-                int count = mode == GameMode.Hard ? 8 : 6;
+                int requested = m_settings.GetDeckCount(m_run);
+                int count = requested > 0 ? requested : mode == GameMode.Hard ? 8 : 6;
                 var pool = new List<TowerEmblem>();
                 for (int i = (int)TowerEmblem.Sword; i <= (int)TowerEmblem.Darkness; i++) pool.Add((TowerEmblem)i);
 
@@ -180,7 +251,14 @@ namespace SquareTD
                 Finish("Stuck", "플레이어 턴을 넘기지 못함 (놓지 못한 존 등)");
                 return;
             }
-            if (!AutoPlanner.PlayStep()) return;
+            bool ready;
+            if (m_search == null) ready = AutoPlanner.PlayStep();
+            else
+            {
+                if (m_randomStreams == null) m_randomStreams = new StrategyRandomStreams(m_settings.FirstSeed, m_search.CombatSeed);
+                ready = m_randomStreams.RunPlanner(m_search.PlayStep);
+            }
+            if (!ready) return;
 
             int wave = WaveManager.Instance.CurrentWave;
             if (m_handledWave != wave)
@@ -205,10 +283,12 @@ namespace SquareTD
 
             if (TurnManager.Instance != null) TurnManager.Instance.StateChanged -= OnStateChanged;
             BalanceRecorder.EndGame(result, reason);
+            bool searchNext = m_search == null || m_search.FinishGame(result, WaveManager.Instance.CurrentWave,
+                BalanceRecorder.EnemyTurns, BalanceRecorder.Kills);
 
             m_run++;
             m_settings.Finished = m_run;
-            if (m_run >= m_settings.Runs)
+            if (m_search != null ? !searchNext : m_run >= m_settings.TotalRuns)
             {
                 m_settings.Done = true;
                 m_settings.Save();
@@ -226,7 +306,8 @@ namespace SquareTD
         {
             yield return null;
             DOTween.KillAll();
-            m_seed = m_settings.FirstSeed + m_run;
+            m_seed = m_settings.GetSeed(m_run);
+            CurrentSeed = m_seed;
             UnityEngine.Random.InitState(m_seed);
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }

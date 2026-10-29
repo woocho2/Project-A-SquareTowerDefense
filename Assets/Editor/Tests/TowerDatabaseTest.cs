@@ -167,5 +167,45 @@ namespace SquareTD.Tests
                 }
             }
         }
+
+        [TestCase(1101, 9, 2, 0.15f, 0.50f, 1, 100, 100, 15f)]
+        [TestCase(1201, 7, 3, 0.25f, 0.30f, 1, 100, 75, 25f)]
+        [TestCase(1102, 10, 1, 0.10f, 0.75f, 1, 100, 100, 15f)]
+        [TestCase(1204, 6, 3, 0.30f, 0.10f, 2, 100, 75, 25f)]
+        [TestCase(1211, 8, 4, 0.30f, 0.30f, 2, 100, 75, 25f)]
+        [TestCase(4102, 8, 2, 0.10f, 0.75f, 1, 50, 99, 15f)]
+        [TestCase(5204, 1, 4, 0.30f, 0.10f, 2, 50, 73, 25f)]
+        public void 공격타워_CSV는_확정한_기준값을_가짐(int id, int action, int count, float crit, float critDamage, int range, int stack, int duration, float speed)
+        {
+            var database = new TowerDatabase();
+            database.Load(AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Resources/TowerData.csv").text);
+            TowerDefinition definition = database.Get(id);
+            Assert.AreEqual(action, definition.Action);
+            Assert.AreEqual(count, definition.AttackCount);
+            Assert.AreEqual(crit, definition.CriticalRate, 0.0001f);
+            Assert.AreEqual(critDamage, definition.CriticalDamage, 0.0001f);
+            Assert.AreEqual(range, definition.Range);
+            Assert.AreEqual(stack, definition.Stack);
+            Assert.AreEqual(duration, definition.Duration);
+            Assert.AreEqual(speed, definition.ProjectileSpeed, 0.0001f);
+        }
+
+        [TestCase(1204, 1, 6, 3, 100, 75)]
+        [TestCase(2201, 1, 6, 3, 100, 74)]
+        [TestCase(4102, 1, 8, 2, 50, 99)]
+        [TestCase(4102, 4, 8, 3, 25, 99)]
+        [TestCase(5204, 5, 1, 8, 25, 73)]
+        public void 공격타워_실제계산은_기본값에_성장을_한번_적용(int id, int level, int action, int count, int stack, int duration)
+        {
+            var database = new TowerDatabase();
+            database.Load(AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Resources/TowerData.csv").text);
+            TowerDefinition definition = database.Get(id);
+            TowerDefinition tierOne = database.Get(TowerId.Make(1, definition.Color, definition.Emblem));
+            TowerFinalStats stats = TowerStatCalculator.Calculate(definition, tierOne, new TowerState(definition), level);
+            Assert.AreEqual(action, stats.Action);
+            Assert.AreEqual(count, stats.AttackCount);
+            Assert.AreEqual(stack, stats.Stack);
+            Assert.AreEqual(duration, stats.Duration);
+        }
     }
 }
