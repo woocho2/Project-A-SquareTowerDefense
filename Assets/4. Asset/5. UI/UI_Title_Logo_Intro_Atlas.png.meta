@@ -1,0 +1,143 @@
+fileFormatVersion: 2
+guid: cc370b9b4b524916bb51c5c883217088
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5648121390000011
+    second: UI_Title_NemoNemo
+  - first:
+      213: 5648121390000012
+    second: UI_Title_Defense
+  - first:
+      213: 5648121390000013
+    second: UI_Title_Ragnarok
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+  isReadable: 0
+  streamingMipmaps: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 100
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 0
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  textureType: 8
+  textureShape: 1
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 100
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: UI_Title_NemoNemo
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 923
+        width: 975
+        height: 477
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 613c0b6b4f704079bbdfb48ad37f214e
+      internalID: 5648121390000011
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Title_Defense
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 437
+        width: 889
+        height: 385
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d2e81fbf56947b887666354a7a77a34
+      internalID: 5648121390000012
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_Title_Ragnarok
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 78
+        width: 945
+        height: 258
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData:
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39de489249da48778168afd61e5fbf05
+      internalID: 5648121390000013
+      vertices: []
+      indices:
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: be2c83a676ed47f7a58d1056ccb0cc9d
+    internalID: 0
+    vertices: []
+    indices:
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      UI_Title_NemoNemo: 5648121390000011
+      UI_Title_Defense: 5648121390000012
+      UI_Title_Ragnarok: 5648121390000013
+  userData:
+  assetBundleName:
+  assetBundleVariant:

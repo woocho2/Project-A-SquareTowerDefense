@@ -62,6 +62,8 @@ namespace SquareTD
         [SerializeField] TextMeshProUGUI[] txt_skillTitles = Array.Empty<TextMeshProUGUI>();
         [Tooltip("타워 그림 (타워 아틀라스의 일러스트)")]
         [SerializeField] Image img_portrait;
+        [Tooltip("타워 전신 그림의 그림자. Image의 색상과 투명도를 유지합니다.")]
+        [SerializeField] Image img_portraitB;
 
         private const string UnusedStatText = "-";
 
@@ -247,13 +249,15 @@ namespace SquareTD
             Sprite tierSprite = synergy ? (towerVisual != null ? towerVisual.DecorationSprite : null)
                                         : icons != null ? icons.GetTier(definition.Tier) : null;
             Color colorTint = icons != null ? icons.GetColor(definition.Color) : Color.white;
+            Sprite portrait = towerVisual != null ? towerVisual.IllustrationSprite : null;
+            UpdatePortrait(img_portraitB, portrait);
 
             if (cardView != null)
             {
                 int tier = definition.Tier;
                 int attackIndex = synergy ? -1 : (int)definition.Color - 1;
                 cardView.SetArtwork(
-                    towerVisual != null ? towerVisual.IllustrationSprite : null,
+                    portrait,
                     emblemSprite,
                     tierSprite,
                     towerVisual != null ? towerVisual.TierColor : Color.white,
@@ -262,18 +266,21 @@ namespace SquareTD
                 return;
             }
 
-            if (img_portrait != null)
-            {
-                img_portrait.sprite = towerVisual != null ? towerVisual.IllustrationSprite : null;
-                img_portrait.preserveAspect = true;
-                img_portrait.enabled = img_portrait.sprite != null;
-            }
+            UpdatePortrait(img_portrait, portrait);
             UpdateImage(img_tier, tierSprite);
             if (img_tier != null && towerVisual != null) img_tier.color = towerVisual.TierColor;
             UpdateImage(img_color, towerVisual != null ? towerVisual.ColorSprite : null);
             UpdateImage(img_emblem, emblemSprite);
             if (img_color != null) img_color.color = colorTint;
             if (img_emblem != null) img_emblem.color = colorTint;
+        }
+
+        private static void UpdatePortrait(Image image, Sprite sprite)
+        {
+            if (image == null) return;
+            image.sprite = sprite;
+            image.preserveAspect = true;
+            image.enabled = sprite != null;
         }
 
         private static void UpdateImage(Image image, Sprite sprite)

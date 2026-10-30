@@ -9,6 +9,7 @@ namespace SquareTD
     {
         public static readonly int ColorId = Shader.PropertyToID("_Color");
         public static readonly int AlphaId = Shader.PropertyToID("_Alpha");
+        public static readonly int OpacityId = Shader.PropertyToID("_Opacity");
         public static readonly int ShapeId = Shader.PropertyToID("_Shape");
         public static readonly int ProgressId = Shader.PropertyToID("_Progress");
         public static readonly int FadeId = Shader.PropertyToID("_Fade");
@@ -107,7 +108,7 @@ namespace SquareTD
         public bool IsReady => m_material != null;
 
         public EffectQuadPool(Transform parent, string shaderName, string name, int sortingOrder,
-            string texture = null, bool additive = false, Mesh mesh = null)
+            string texture = null, bool additive = false, Mesh mesh = null, bool proceduralTextures = false)
         {
             m_parent = parent;
             m_name = name;
@@ -121,8 +122,10 @@ namespace SquareTD
                 return;
             }
             m_material = new Material(shader) { name = $"{name} (Runtime)" };
-            if (texture != null) m_material.SetTexture("_MainTex", EffectTextures.Get(texture));
-            if (m_material.HasProperty("_NoiseTex")) m_material.SetTexture("_NoiseTex", EffectTextures.Get(EffectTextures.Noise));
+            if (texture != null)
+                m_material.SetTexture("_MainTex", proceduralTextures ? EffectTextures.GetProcedural(texture) : EffectTextures.Get(texture));
+            if (m_material.HasProperty("_NoiseTex"))
+                m_material.SetTexture("_NoiseTex", proceduralTextures ? EffectTextures.GetProcedural(EffectTextures.Noise) : EffectTextures.Get(EffectTextures.Noise));
             if (m_material.HasProperty("_DstBlend")) m_material.SetFloat("_DstBlend", additive ? 1f : 10f);
         }
 

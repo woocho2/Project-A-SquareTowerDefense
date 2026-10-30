@@ -5058,61 +5058,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 592743237413253621, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
-      propertyPath: m_HorizontalAlignment
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1225016266410751414, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -0.00030318883
-      objectReference: {fileID: 0}
-    - target: {fileID: 1570886707159918219, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2496719023786573408, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2519520974583011991, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_Name
       value: UICanvas
       objectReference: {fileID: 0}
-    - target: {fileID: 3369032141382350318, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 1
+    - target: {fileID: 6591381349295792321, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
+      propertyPath: btn_combineColor
+      value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 3369032141382350318, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
+    - target: {fileID: 6591381349295792321, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
+      propertyPath: btn_combineExact
+      value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 3369032141382350318, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: -17
-      objectReference: {fileID: 0}
-    - target: {fileID: 8524354879125717254, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 8524354879125717254, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 8524354879125717254, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -145
-      objectReference: {fileID: 0}
-    - target: {fileID: 8861281910777565147, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8861281910777565147, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8861281910777565147, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0.5208334
+    - target: {fileID: 6591381349295792321, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
+      propertyPath: btn_combineEmblem
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 9019515539557091308, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_Pivot.x

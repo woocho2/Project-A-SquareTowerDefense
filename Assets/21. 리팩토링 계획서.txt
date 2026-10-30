@@ -732,6 +732,8 @@ GroundEffect (장판)
   WaveManager: 스테이지의 일반·중간·최종 보스를 소환 목록에 (라그나로크는 사이클마다 다른 스테이지의 적)
   보스 기믹 칸: 비어 있는 채로 둠 (4장 4-6)
 확인: 하드 한도 15 · 체력 ×1.5, 스토리 아스가르드는 검·창·방패·전기만 나옴, 클리어 → 알프헤임이 열린 채로 저장됨.
+(2026-10-30 사용자: "42부터 하자, Start씬부터 바꿔보려") Start 씬부터 시작. 타이틀·배경·버튼 그림은 Codex (25번 9장 순서로 시안 → 사용자 선택).
+  지금 Start 씬: Main Camera, Canvas(Panel·Button·Text), EventSystem, UIManager_Start(옛 스크립트가 지워져 Missing). 옛 그림 BG_Image_Title(제목 글자가 그림에 박힘)·BG_Image_Menu
 
 ----------------------------------------------------------------------
 수업 43. 게임 속도와 설정 — #14 GameSpeedController, #36 StackModeSettings 저장

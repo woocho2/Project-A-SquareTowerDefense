@@ -20,6 +20,9 @@ namespace SquareTD
 
         private void Awake()
         {
+            if (m_icon == null) m_icon = transform.Find("Img_Icon")?.GetComponent<Image>();
+            if (m_txtName == null) m_txtName = transform.Find("Txt_Name")?.GetComponent<TextMeshProUGUI>();
+            if (m_txtHP == null) m_txtHP = transform.Find("Txt_HP")?.GetComponent<TextMeshProUGUI>();
             if (m_button == null) m_button = GetComponent<Button>();
             if (m_button != null)
             {
@@ -52,8 +55,10 @@ namespace SquareTD
 
             if (m_icon != null)
             {
-                SpriteRenderer sr = m_target.Transform.GetComponentInChildren<SpriteRenderer>(true);
-                m_icon.sprite = sr != null ? sr.sprite : null;
+                EnemyDefinition definition = m_target.Body != null ? m_target.Body.Definition : null;
+                m_icon.sprite = definition != null && definition.Appearance != null
+                    ? definition.Appearance.FullSprite : null;
+                m_icon.preserveAspect = true;
                 m_icon.enabled = m_icon.sprite != null;
             }
         }

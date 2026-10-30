@@ -11,7 +11,7 @@ namespace SquareTD
         public bool IsReady => m_system != null;
 
         public EffectParticles(Transform parent, string name, string texture, bool additive, float intensity,
-            int sortingOrder, bool stretch, float gravity, bool spin)
+            int sortingOrder, bool stretch, float gravity, bool spin, bool proceduralTextures = false)
         {
             Shader shader = Resources.Load<Shader>("EffectSprite");
             if (shader == null || !shader.isSupported) return;
@@ -55,8 +55,8 @@ namespace SquareTD
 
             var renderer = gameObject.GetComponent<ParticleSystemRenderer>();
             var material = new Material(shader) { name = $"{name} (Runtime)" };
-            material.SetTexture("_MainTex", EffectTextures.Get(texture));
-            material.SetTexture("_NoiseTex", EffectTextures.Get(EffectTextures.Noise));
+            material.SetTexture("_MainTex", proceduralTextures ? EffectTextures.GetProcedural(texture) : EffectTextures.Get(texture));
+            material.SetTexture("_NoiseTex", proceduralTextures ? EffectTextures.GetProcedural(EffectTextures.Noise) : EffectTextures.Get(EffectTextures.Noise));
             material.SetFloat("_DstBlend", additive ? 1f : 10f);
             material.SetFloat("_Intensity", intensity);
             renderer.sharedMaterial = material;

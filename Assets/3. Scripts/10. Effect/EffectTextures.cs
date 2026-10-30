@@ -27,6 +27,7 @@ namespace SquareTD
         public const string Snowball = "FX_Snowball";
 
         private static readonly Dictionary<string, Texture2D> s_cache = new Dictionary<string, Texture2D>();
+        private static readonly Dictionary<string, Texture2D> s_proceduralCache = new Dictionary<string, Texture2D>();
         private static readonly HashSet<string> s_warned = new HashSet<string>();
 
         public static Texture2D Get(string name)
@@ -38,20 +39,30 @@ namespace SquareTD
             if (texture == null)
             {
                 if (s_warned.Add(name)) Debug.Log($"[EffectTextures] Resources/Effects/{name}.png가 아직 없어 임시 그림을 씀");
-                texture = MakePlaceholder(name);
+                texture = GetProcedural(name);
             }
             s_cache[name] = texture;
             return texture;
         }
 
-        private static Texture2D MakePlaceholder(string name)
+        // PNG 에셋을 읽지 않고 기존 수식으로 기본 도형을 만듭니다. 그림 캐시와 분리합니다.
+        public static Texture2D GetProcedural(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return Texture2D.whiteTexture;
+            if (s_proceduralCache.TryGetValue(name, out Texture2D cached) && cached != null) return cached;
+            Texture2D texture = MakeProcedural(name);
+            s_proceduralCache[name] = texture;
+            return texture;
+        }
+
+        private static Texture2D MakeProcedural(string name)
         {
             bool strip = name == SlashTrail || name == SlashLine || name == Spark;
             int width = strip ? 256 : 128;
             int height = strip ? 32 : 128;
             var texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
             {
-                name = name + " (임시)",
+                name = name + " (Procedural)",
                 wrapMode = name == Noise ? TextureWrapMode.Repeat : TextureWrapMode.Clamp,
                 filterMode = FilterMode.Bilinear,
             };

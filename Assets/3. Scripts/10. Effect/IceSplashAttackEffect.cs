@@ -33,13 +33,13 @@ namespace SquareTD
 
         private void Awake()
         {
-            m_ballPool = new EffectQuadPool(transform, "EffectSprite", "Snowball", 26, EffectTextures.Snowball);
+            m_ballPool = new EffectQuadPool(transform, "EffectSprite", "Snowball", 26, EffectTextures.Smoke);
             m_glowPool = new EffectQuadPool(transform, "EffectSprite", "Snowball Glow", 25, EffectTextures.Glow, true);
             m_ringPool = new EffectQuadPool(transform, "EffectSprite", "Snowball Ring", 27, EffectTextures.Ring, true);
-            m_crystalPool = new EffectQuadPool(transform, "EffectSprite", "Snowball Crystal", 28, EffectTextures.Snowflake);
+            m_crystalPool = new EffectQuadPool(transform, "EffectSprite", "Snowball Crystal", 28, EffectTextures.Snowflake, true);
             m_puffs = new EffectParticles(transform, "Snowball Puffs", EffectTextures.Smoke, false, 1f, 27, false, 0.15f, true);
-            m_flakes = new EffectParticles(transform, "Snowball Flakes", EffectTextures.Snowflake, false, 1f, 28, false, 0.3f, true);
-            m_shards = new EffectParticles(transform, "Snowball Shards", EffectTextures.IceShard, false, 1f, 28, false, 1.4f, false);
+            m_flakes = new EffectParticles(transform, "Snowball Flakes", EffectTextures.Snowflake, true, 1.5f, 28, false, 0.3f, true);
+            m_shards = new EffectParticles(transform, "Snowball Shards", EffectTextures.IceShard, true, 1.6f, 28, false, 1.4f, false);
         }
 
         private void OnDestroy()
@@ -62,7 +62,7 @@ namespace SquareTD
             float flight = Mathf.Max(m_minFlight, toTarget.magnitude / Mathf.Max(0.01f, speed * m_slowness));
             float launchAt = Mathf.Max(hold, m_appearDuration);
 
-            EffectQuad halo = Prepare(m_glowPool, from, new Color(s_frost.r, s_frost.g, s_frost.b, 0.25f));
+            EffectQuad shade = Prepare(m_ballPool, from, s_shadow);
             EffectQuad body = Prepare(m_ballPool, from, s_snow);
             body.SetSortingOffset(1);
             float grown = 0f;
@@ -77,12 +77,13 @@ namespace SquareTD
             {
                 Vector3 at = body.Transform.position;
                 body.Transform.rotation = Quaternion.Euler(0f, 0f, turn);
-                halo.Transform.position = at;
+                shade.Transform.position = at + new Vector3(ball * 0.06f, -ball * 0.08f, 0f);
+                shade.Transform.rotation = body.Transform.rotation;
                 SetSize(body, ball * grown);
-                SetSize(halo, ball * 1.3f * grown);
-                if (Range(0f, 1f) < Time.deltaTime * 10f)
-                    m_flakes.Burst(at, 1, s_frost, cell * 0.2f, cell * 0.6f, cell * 0.08f, cell * 0.14f, 0.3f, 0.5f, Vector2.zero, 360f, ball * 0.4f);
-                if (Range(0f, 1f) < Time.deltaTime * 5f)
+                SetSize(shade, ball * 1.08f * grown);
+                if (Range(0f, 1f) < 0.35f)
+                    m_flakes.Burst(at, 1, s_snow, cell * 0.2f, cell * 0.6f, cell * 0.08f, cell * 0.14f, 0.3f, 0.5f, Vector2.zero, 360f, ball * 0.4f);
+                if (Range(0f, 1f) < 0.2f)
                     m_puffs.Burst(at, 1, s_puff, cell * 0.1f, cell * 0.3f, ball * 0.25f, ball * 0.4f, 0.25f, 0.4f, Vector2.zero, 360f, ball * 0.3f);
             });
             sequence.Append(DOTween.To(() => grown, value => grown = value, 0.8f, m_squashDuration).SetEase(Ease.OutQuad));
@@ -94,16 +95,15 @@ namespace SquareTD
             sequence.OnKill(() =>
             {
                 m_ballPool.Release(body);
-                m_glowPool.Release(halo);
+                m_ballPool.Release(shade);
             });
         }
 
         private void PlayBurst(Vector3 center, float area, float cell)
         {
-            TexturedFx.Pop(m_glowPool, center, 0f, cell * 0.35f, area * 0.9f, s_frost, 1f, 0f, 0.12f, 0.2f);
-            TexturedFx.Pop(m_ringPool, center, 0f, cell * 0.3f, area * 1.1f, s_frost, 1.1f, 0f, 0.24f, 0.22f, Ease.OutCubic);
-            TexturedFx.Pop(m_crystalPool, center, Range(0f, 60f), cell * 0.3f, area * 0.9f, s_frost, 1f, 0.02f, 0.18f, 0.22f, Ease.OutBack);
-            TexturedFx.Pop(m_ballPool, center, Range(0f, 360f), cell * 0.2f, area * 0.5f, s_shadow, 1f, 0f, 0.06f, 0.16f);
+            TexturedFx.Pop(m_glowPool, center, 0f, cell * 0.5f, area * 1.3f, s_frost, 1.8f, 0f, 0.14f, 0.3f);
+            TexturedFx.Pop(m_ringPool, center, 0f, cell * 0.3f, area * 1.4f, s_frost, 2f, 0f, 0.3f, 0.3f, Ease.OutCubic);
+            TexturedFx.Pop(m_crystalPool, center, Range(0f, 60f), cell * 0.3f, area * 0.9f, s_snow, 2f, 0.02f, 0.22f, 0.3f, Ease.OutBack);
 
             float reach = area * 0.55f;
             for (int i = 0; i < m_burstPuffs; i++)
@@ -114,7 +114,7 @@ namespace SquareTD
                 m_puffs.Burst(center, 1, s_puff, run, run, cell * 0.6f, cell * 1f, 0.35f, 0.55f, direction, 10f, cell * 0.1f);
             }
             m_puffs.Burst(center, 4, s_puff, cell * 0.2f, cell * 0.6f, cell * 0.9f, cell * 1.3f, 0.4f, 0.6f, Vector2.up, 360f);
-            m_flakes.Burst(center, 10, s_frost, cell * 2f, cell * 4f, cell * 0.1f, cell * 0.2f, 0.3f, 0.55f, Vector2.up, 360f);
+            m_flakes.Burst(center, 16, s_snow, cell * 2f, cell * 5f, cell * 0.1f, cell * 0.2f, 0.4f, 0.7f, Vector2.up, 360f);
             m_shards.Burst(center, 8, s_frost, cell * 3f, cell * 6f, cell * 0.15f, cell * 0.28f, 0.3f, 0.5f, Vector2.up, 300f);
             ScreenShake.Play(0.035f, 0.1f);
         }

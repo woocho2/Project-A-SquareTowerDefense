@@ -13,7 +13,7 @@ namespace SquareTD
         private static readonly int s_swirlId = Shader.PropertyToID("_Swirl");
         private static readonly int s_rimColorId = Shader.PropertyToID("_RimColor");
 
-        private static readonly Color s_rim = new Color(0.75f, 0.3f, 1f);
+        private static readonly Color s_rim = new Color(0.9f, 0.35f, 1.6f);
         private static readonly Color s_purple = new Color(0.55f, 0.15f, 1f);
         private static readonly Color s_magenta = new Color(1f, 0.3f, 0.85f);
 
@@ -31,7 +31,6 @@ namespace SquareTD
 
         private readonly System.Random m_random = new System.Random();
         private EffectQuadPool m_warpPool;
-        private EffectQuadPool m_vortexPool;
         private EffectQuadPool m_glowPool;
         private EffectQuadPool m_ringPool;
         private EffectQuadPool m_flarePool;
@@ -40,7 +39,6 @@ namespace SquareTD
         private void Awake()
         {
             m_warpPool = new EffectQuadPool(transform, "SpaceWarp", "Dark Orb", 25);
-            m_vortexPool = new EffectQuadPool(transform, "EffectSprite", "Dark Orb Vortex", 26, EffectTextures.BlackHoleVortex);
             m_glowPool = new EffectQuadPool(transform, "EffectSprite", "Dark Orb Glow", 24, EffectTextures.Glow, true);
             m_ringPool = new EffectQuadPool(transform, "EffectSprite", "Dark Orb Ring", 26, EffectTextures.Ring, true);
             m_flarePool = new EffectQuadPool(transform, "EffectSprite", "Dark Orb Flare", 27, EffectTextures.Flare, true);
@@ -50,7 +48,6 @@ namespace SquareTD
         private void OnDestroy()
         {
             m_warpPool?.Dispose(); m_glowPool?.Dispose(); m_ringPool?.Dispose(); m_flarePool?.Dispose();
-            m_vortexPool?.Dispose();
         }
 
         public void FireShot(Vector3 from, Vector3 to, float speed, float hold, float sizeWorld, Action onArrived)
@@ -78,14 +75,8 @@ namespace SquareTD
             EffectQuad glow = m_glowPool.Get();
             glow.Transform.position = from;
             glow.Transform.localScale = Vector3.zero;
-            glow.SetColor(new Color(s_purple.r, s_purple.g, s_purple.b, 0.35f));
-            glow.SetFloat(EffectQuad.IntensityId, 0.6f);
-
-            EffectQuad vortex = m_vortexPool.Get();
-            vortex.Transform.position = from;
-            vortex.Transform.localScale = Vector3.zero;
-            vortex.SetColor(s_purple);
-            float turn = Range(0f, 360f);
+            glow.SetColor(s_purple);
+            glow.SetFloat(EffectQuad.IntensityId, 0.8f);
 
             float size = 0f;
             float strength = m_strength;
@@ -96,7 +87,7 @@ namespace SquareTD
             sequence.AppendCallback(() =>
             {
                 onArrived?.Invoke();
-                TexturedFx.Pop(m_flarePool, to, Range(0f, 90f), cell * 0.15f, area * 0.5f, s_magenta, 1.2f, 0f, 0.08f, 0.15f);
+                TexturedFx.Pop(m_flarePool, to, Range(0f, 90f), cell * 0.2f, area * 0.8f, s_magenta, 2.5f, 0f, 0.08f, 0.15f);
                 ScreenShake.Play(0.03f, 0.1f);
             });
             sequence.Append(DOTween.To(() => size, value => size = value, area * 1.4f, m_swellDuration).SetEase(Ease.OutExpo));
@@ -105,9 +96,9 @@ namespace SquareTD
             sequence.Append(DOTween.To(() => size, value => size = value, 0f, m_vanishDuration).SetEase(Ease.InBack));
             sequence.AppendCallback(() =>
             {
-                TexturedFx.Pop(m_flarePool, to, 0f, cell * 0.1f, cell * 0.7f, s_rim, 1.2f, 0f, 0.06f, 0.12f);
-                TexturedFx.Pop(m_ringPool, to, 0f, cell * 0.15f, area * 0.55f, s_purple, 1f, 0f, 0.13f, 0.16f, Ease.OutCubic);
-                m_motes.Burst(to, 6, s_magenta, cell * 1.5f, cell * 3f, cell * 0.04f, cell * 0.07f, 0.15f, 0.25f);
+                TexturedFx.Pop(m_flarePool, to, 0f, cell * 0.1f, cell * 1.2f, Color.white, 3f, 0f, 0.06f, 0.15f);
+                TexturedFx.Pop(m_ringPool, to, 0f, cell * 0.2f, area * 0.9f, s_purple, 2f, 0f, 0.2f, 0.2f, Ease.OutCubic);
+                m_motes.Burst(to, 14, s_magenta, cell * 3f, cell * 6f, cell * 0.05f, cell * 0.1f, 0.2f, 0.35f);
             });
             sequence.OnUpdate(() =>
             {
@@ -116,12 +107,8 @@ namespace SquareTD
                 warp.Transform.localScale = new Vector3(shown, shown, 1f);
                 warp.SetFloat(s_strengthId, strength);
                 glow.Transform.position = at;
-                glow.Transform.localScale = new Vector3(shown * 1.15f, shown * 1.15f, 1f);
-                turn -= 160f * Time.deltaTime;
-                vortex.Transform.position = at;
-                vortex.Transform.rotation = Quaternion.Euler(0f, 0f, turn);
-                vortex.Transform.localScale = new Vector3(shown * 1.05f, shown * 1.05f, 1f);
-                if (Range(0f, 1f) < Time.deltaTime * 12f)
+                glow.Transform.localScale = new Vector3(shown * 1.4f, shown * 1.4f, 1f);
+                if (Range(0f, 1f) < 0.4f)
                 {
                     float radians = Range(0f, Mathf.PI * 2f);
                     Vector3 outside = new Vector3(Mathf.Cos(radians), Mathf.Sin(radians), 0f) * (shown * 0.55f);
@@ -133,7 +120,6 @@ namespace SquareTD
             {
                 m_warpPool.Release(warp);
                 m_glowPool.Release(glow);
-                m_vortexPool.Release(vortex);
             });
         }
 

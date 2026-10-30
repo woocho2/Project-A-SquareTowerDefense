@@ -23,6 +23,7 @@ namespace SquareTD
         [Header("Detail View Components")]
         [SerializeField] private Button m_btnBackToList;
         [SerializeField] private TextMeshProUGUI m_txtDetailTitle;
+        [SerializeField] private Image m_imgPortrait;
         [SerializeField] private TextMeshProUGUI m_txtHP;
         [SerializeField] private TextMeshProUGUI m_txtDefend;
         [SerializeField] private TextMeshProUGUI m_txtAction;
@@ -162,6 +163,12 @@ namespace SquareTD
             }
 
             EnsureViewHierarchy();
+
+            if (m_imgPortrait == null && m_viewEnemyDetail != null)
+            {
+                Transform portrait = m_viewEnemyDetail.transform.Find("Group_Enemy/Img_Enemy");
+                if (portrait != null) m_imgPortrait = portrait.GetComponent<Image>();
+            }
 
             foreach (TextMeshProUGUI text in m_unusedValueTexts)
             {
@@ -624,6 +631,14 @@ namespace SquareTD
 
             EnemyController body = m_selectedTarget.Body;
             EnemyDefinition definition = body != null ? body.Definition : null;
+
+            if (m_imgPortrait != null)
+            {
+                m_imgPortrait.sprite = definition != null && definition.Appearance != null
+                    ? definition.Appearance.FullSprite : null;
+                m_imgPortrait.preserveAspect = true;
+                m_imgPortrait.enabled = m_imgPortrait.sprite != null;
+            }
 
             string title = EnemyListItemUI.GetDisplayName(m_selectedTarget);
             if (body != null && body.IsBoss) title += $" 남은 턴 {EnemyManager.Instance.BossTimer.GetRemaining(body)}";

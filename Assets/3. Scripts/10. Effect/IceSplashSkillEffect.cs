@@ -8,7 +8,7 @@ namespace SquareTD
     [DisallowMultipleComponent]
     public sealed class IceSplashSkillEffect : MonoBehaviour
     {
-        private static readonly Color s_sky = new Color(0.12f, 0.22f, 0.34f);
+        private static readonly Color s_sky = new Color(0.6f, 0.8f, 1f);
         private static readonly Color s_frost = new Color(0.55f, 0.85f, 1f);
         private static readonly Color s_ice = new Color(0.85f, 0.96f, 1f);
         private static readonly Color s_snow = new Color(0.92f, 0.97f, 1f, 0.85f);
@@ -38,12 +38,12 @@ namespace SquareTD
             m_tintPool = new EffectQuadPool(transform, "EffectSprite", "Blizzard Sky", 18);
             m_glowPool = new EffectQuadPool(transform, "EffectSprite", "Blizzard Glow", 26, EffectTextures.Glow, true);
             m_ringPool = new EffectQuadPool(transform, "EffectSprite", "Blizzard Frost Ring", 27, EffectTextures.Ring, true);
-            m_crystalPool = new EffectQuadPool(transform, "EffectSprite", "Blizzard Snow Crystal", 28, EffectTextures.Snowflake);
+            m_crystalPool = new EffectQuadPool(transform, "EffectSprite", "Blizzard Crystal", 28, EffectTextures.Snowflake, true);
             m_flarePool = new EffectQuadPool(transform, "EffectSprite", "Blizzard Flare", 29, EffectTextures.Flare, true);
             m_puffs = new EffectParticles(transform, "Blizzard Puffs", EffectTextures.Smoke, false, 1f, 24, false, -0.05f, true);
             m_streaks = new EffectParticles(transform, "Blizzard Wind", EffectTextures.Spark, true, 1.6f, 25, true, 0f, false);
-            m_flakes = new EffectParticles(transform, "Blizzard Snow", EffectTextures.Snowflake, false, 1f, 25, false, 0.05f, true);
-            m_shards = new EffectParticles(transform, "Blizzard Shards", EffectTextures.IceShard, false, 1f, 27, false, 1.2f, false);
+            m_flakes = new EffectParticles(transform, "Blizzard Snow", EffectTextures.Snowflake, true, 1.4f, 25, false, 0.05f, true);
+            m_shards = new EffectParticles(transform, "Blizzard Shards", EffectTextures.IceShard, true, 1.8f, 27, false, 1.2f, false);
         }
 
         private void OnDestroy()
@@ -79,7 +79,7 @@ namespace SquareTD
 
             DOVirtual.DelayedCall(m_frostAt + m_frostSpread + 0.1f, () =>
             {
-                ImpactFx.Frame(new Color(0.65f, 0.85f, 1f, 0.16f), 0.05f);
+                ImpactFx.Frame(new Color(0.8f, 0.92f, 1f, 0.3f), 0.06f);
                 ScreenShake.Play(0.03f, 0.15f);
             }).SetLink(gameObject, LinkBehaviour.KillOnDisable);
         }
@@ -92,7 +92,7 @@ namespace SquareTD
             Vector3 upwind = view - (Vector3)wind * (width * 0.6f);
             float span = Mathf.Max(width, height) * 0.75f;
 
-            int streaks = Mathf.RoundToInt(m_streaksPerTick * envelope * 0.65f + 0.5f);
+            int streaks = Mathf.RoundToInt(m_streaksPerTick * envelope + 0.5f);
             for (int i = 0; i < streaks; i++)
             {
                 float speed = width * Range(1.6f, 2.2f);
@@ -111,11 +111,10 @@ namespace SquareTD
 
         private void PlayFrost(Vector3 target, float cell)
         {
-            TexturedFx.Pop(m_glowPool, target, 0f, cell * 0.3f, cell * 1.4f, s_frost, 1.2f, 0f, 0.2f, 0.35f);
-            TexturedFx.Pop(m_ringPool, target, 0f, cell * 0.2f, cell * 1.8f, s_frost, 1.3f, 0f, 0.3f, 0.3f, Ease.OutCubic);
-            TexturedFx.Pop(m_crystalPool, target, Range(0f, 60f), cell * 0.15f, cell * 1.1f,
-                new Color(0.55f, 0.83f, 1f), 1f, 0f, 0.22f, 0.55f, Ease.OutBack);
-            TexturedFx.Pop(m_flarePool, target, 45f, cell * 0.2f, cell * 0.7f, Color.white, 1.5f, 0.02f, 0.08f, 0.15f);
+            TexturedFx.Pop(m_glowPool, target, 0f, cell * 0.3f, cell * 1.6f, s_frost, 1.6f, 0f, 0.2f, 0.35f);
+            TexturedFx.Pop(m_ringPool, target, 0f, cell * 0.2f, cell * 1.8f, s_frost, 1.8f, 0f, 0.3f, 0.3f, Ease.OutCubic);
+            TexturedFx.Pop(m_crystalPool, target, Range(0f, 60f), cell * 0.2f, cell * 1.1f, s_ice, 2.2f, 0f, 0.25f, 0.4f, Ease.OutBack);
+            TexturedFx.Pop(m_flarePool, target, 45f, cell * 0.2f, cell * 1.2f, Color.white, 2.5f, 0.02f, 0.1f, 0.2f);
             m_shards.Burst(target, 8, s_ice, cell * 2f, cell * 5f, cell * 0.15f, cell * 0.3f, 0.3f, 0.55f, Vector2.up, 300f);
             m_puffs.Burst(target, 3, s_snow, cell * 0.3f, cell * 0.8f, cell * 0.5f, cell * 0.9f, 0.4f, 0.7f, Vector2.up, 360f, cell * 0.15f);
         }

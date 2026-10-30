@@ -127,6 +127,11 @@ MonoBehaviour:
   - {r: 1, g: 0.78, b: 0.27, a: 1}
   - {r: 0.56, g: 0.91, b: 0.8, a: 1}
   - {r: 0.32, g: 0.8, b: 1, a: 1}
+  m_haloScale: 1.5
+  m_frameEdge: 0.95
+  m_frameCorner: 0.25
+  m_haloAlpha: {x: 0.35, y: 0.9}
+  m_haloIntensity: {x: 0.8, y: 2}
 --- !u!114 &4815162342108899701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137,7 +142,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cbe725041029401a8d721890b8e2459b, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.TowerSelectionVisual
   m_highlight: {fileID: 2488926170602292231}
   m_range: {fileID: 1687348712576828699}
@@ -271,7 +276,7 @@ RectTransform:
   m_GameObject: {fileID: 2885216265091928727}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5.5, y: 5.5, z: 1}
+  m_LocalScale: {x: 6.5, y: 6.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7922541315568409329}
@@ -330,7 +335,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 2
   m_MaskInteraction: 1
-  m_Sprite: {fileID: 52015, guid: 69ef51cd58244ba0b749572a967a4d02, type: 3}
+  m_Sprite: {fileID: -1399205291723644498, guid: f01c9e68803837f4e8622cd03efa38a0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

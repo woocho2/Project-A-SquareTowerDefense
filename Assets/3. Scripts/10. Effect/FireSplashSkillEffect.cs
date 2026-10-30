@@ -11,6 +11,7 @@ namespace SquareTD
         private static readonly Color s_sky = new Color(0.22f, 0.03f, 0.01f);
         private static readonly Color s_fire = new Color(1f, 0.42f, 0.08f);
         private static readonly Color s_core = new Color(1f, 0.86f, 0.5f);
+        private static readonly Color s_scorch = new Color(0.06f, 0.02f, 0.01f);
         private static readonly Color s_smoke = new Color(0.16f, 0.1f, 0.08f, 0.75f);
 
         [SerializeField] private int m_maxMeteors = 30;
@@ -21,14 +22,14 @@ namespace SquareTD
         [SerializeField] private float m_fallAngle = 62f;
         [SerializeField] private float m_meteorSize = 0.9f;
         [SerializeField] private float m_afterglow = 0.5f;
+        [SerializeField] private float m_scorchDuration = 0.9f;
         [SerializeField, Range(0f, 1f)] private float m_skyDarkness = 0.45f;
 
         private readonly System.Random m_random = new System.Random();
         private EffectQuadPool m_tintPool;
+        private EffectQuadPool m_scorchPool;
         private EffectQuadPool m_trailPool;
         private EffectQuadPool m_glowPool;
-        private EffectQuadPool m_meteorPool;
-        private EffectQuadPool m_burstPool;
         private EffectQuadPool m_ringPool;
         private EffectQuadPool m_flarePool;
         private EffectParticles m_flames;
@@ -38,10 +39,9 @@ namespace SquareTD
         private void Awake()
         {
             m_tintPool = new EffectQuadPool(transform, "EffectSprite", "Meteor Sky", 18);
+            m_scorchPool = new EffectQuadPool(transform, "EffectSprite", "Meteor Scorch", 19, EffectTextures.Glow);
             m_trailPool = new EffectQuadPool(transform, "EffectSprite", "Meteor Trail", 25, EffectTextures.SlashTrail, true);
             m_glowPool = new EffectQuadPool(transform, "EffectSprite", "Meteor Glow", 26, EffectTextures.Glow, true);
-            m_meteorPool = new EffectQuadPool(transform, "EffectSprite", "Meteor Rock", 27, EffectTextures.MeteorCore);
-            m_burstPool = new EffectQuadPool(transform, "EffectSprite", "Meteor Fire Splash", 27, EffectTextures.MeteorBurst);
             m_ringPool = new EffectQuadPool(transform, "EffectSprite", "Meteor Shock", 27, EffectTextures.Ring, true);
             m_flarePool = new EffectQuadPool(transform, "EffectSprite", "Meteor Flare", 28, EffectTextures.Flare, true);
             m_smoke = new EffectParticles(transform, "Meteor Smoke", EffectTextures.Smoke, false, 1f, 23, false, -0.05f, true);
@@ -51,9 +51,8 @@ namespace SquareTD
 
         private void OnDestroy()
         {
-            m_tintPool?.Dispose(); m_trailPool?.Dispose();
+            m_tintPool?.Dispose(); m_scorchPool?.Dispose(); m_trailPool?.Dispose();
             m_glowPool?.Dispose(); m_ringPool?.Dispose(); m_flarePool?.Dispose();
-            m_meteorPool?.Dispose(); m_burstPool?.Dispose();
         }
 
         public void Play(Camera camera, IReadOnlyList<Vector3> hitPositions, float cellWorldSize)
@@ -95,10 +94,9 @@ namespace SquareTD
             Vector3 start = land + back * travel;
             float ball = size * m_meteorSize;
 
-            EffectQuad glow = Prepare(m_glowPool, s_fire, 1.35f);
-            EffectQuad core = Prepare(m_meteorPool, new Color(1f, 0.65f, 0.34f), 1f);
-            core.Transform.rotation = Quaternion.Euler(0f, 0f, m_fallAngle);
-            EffectQuad trail = Prepare(m_trailPool, s_fire, 1.4f);
+            EffectQuad glow = Prepare(m_glowPool, s_fire, 2.2f);
+            EffectQuad core = Prepare(m_glowPool, s_core, 3f);
+            EffectQuad trail = Prepare(m_trailPool, s_fire, 2f);
             trail.Transform.rotation = Quaternion.Euler(0f, 0f, m_fallAngle + 180f);
 
             float t = 0f;
@@ -107,8 +105,8 @@ namespace SquareTD
             sequence.AppendCallback(() =>
             {
                 glow.Transform.localScale = new Vector3(ball * 1.5f, ball * 1.5f, 1f);
-                core.Transform.localScale = new Vector3(ball * 1.25f, ball * 1.25f, 1f);
-                trail.Transform.localScale = new Vector3(ball * 3.7f, ball * 0.85f, 1f);
+                core.Transform.localScale = new Vector3(ball * 0.6f, ball * 0.6f, 1f);
+                trail.Transform.localScale = new Vector3(ball * 4.5f, ball * 1.1f, 1f);
             });
             sequence.Append(DOTween.To(() => t, value =>
             {
@@ -117,14 +115,14 @@ namespace SquareTD
                 glow.Transform.position = at;
                 core.Transform.position = at;
                 trail.Transform.position = at + back * (ball * 2f);
-                if (Range(0f, 1f) < 0.35f)
+                if (Range(0f, 1f) < 0.6f)
                     m_flames.Burst(at, 1, s_fire, size * 0.2f, size * 0.6f, ball * 0.35f, ball * 0.6f, 0.15f, 0.3f, back, 50f, ball * 0.2f);
             }, 1f, m_fallDuration).SetEase(Ease.InQuad));
             sequence.AppendCallback(() => PlayImpact(land, size, big));
             sequence.OnKill(() =>
             {
                 m_glowPool.Release(glow);
-                m_meteorPool.Release(core);
+                m_glowPool.Release(core);
                 m_trailPool.Release(trail);
             });
         }
@@ -132,14 +130,28 @@ namespace SquareTD
         private void PlayImpact(Vector3 land, float size, bool big)
         {
             float blast = big ? 1f : 0.65f;
-            TexturedFx.Pop(m_burstPool, land, Range(0f, 360f), size * 0.5f, size * 2.3f * blast, s_fire, 1f, 0f, 0.16f, 0.45f, Ease.OutCubic);
-            TexturedFx.Pop(m_glowPool, land, 0f, size * 0.4f, size * 1.8f * blast, s_core, 1.35f, 0f, 0.18f, 0.3f);
-            TexturedFx.Pop(m_flarePool, land, Range(0f, 90f), size * 0.3f, size * 1.2f * blast, Color.white, 1.8f, 0f, 0.08f, 0.18f);
-            TexturedFx.Pop(m_ringPool, land, 0f, size * 0.3f, size * 2.4f * blast, s_fire, 1.4f, 0f, 0.3f, 0.3f, Ease.OutCubic);
-            m_flames.Burst(land, big ? 10 : 5, s_fire, size * 1f, size * 3f, size * 0.25f, size * 0.5f, 0.25f, 0.5f, Vector2.up, 200f, size * 0.15f);
+            PlayScorch(land, size * 1.3f * blast);
+            TexturedFx.Pop(m_glowPool, land, 0f, size * 0.4f, size * 2.6f * blast, s_core, 2.5f, 0f, 0.18f, 0.35f);
+            TexturedFx.Pop(m_flarePool, land, Range(0f, 90f), size * 0.3f, size * 1.8f * blast, Color.white, 3f, 0f, 0.1f, 0.25f);
+            TexturedFx.Pop(m_ringPool, land, 0f, size * 0.3f, size * 2.4f * blast, s_fire, 2f, 0f, 0.3f, 0.3f, Ease.OutCubic);
+            m_flames.Burst(land, big ? 16 : 7, s_fire, size * 1f, size * 3f, size * 0.25f, size * 0.5f, 0.25f, 0.5f, Vector2.up, 200f, size * 0.15f);
             m_embers.Burst(land, big ? 14 : 5, s_core, size * 3f, size * 7f, size * 0.05f, size * 0.1f, 0.3f, 0.6f, Vector2.up, 160f);
             m_smoke.Burst(land, big ? 4 : 2, s_smoke, size * 0.3f, size * 0.8f, size * 0.6f, size * 1.1f, 0.6f, 1f, Vector2.up, 120f, size * 0.2f);
             if (big) ScreenShake.Play(0.025f, 0.1f);
+        }
+
+        private void PlayScorch(Vector3 land, float size)
+        {
+            EffectQuad scorch = Prepare(m_scorchPool, s_scorch, 1f);
+            scorch.Transform.position = land;
+            scorch.Transform.localScale = new Vector3(size, size * 0.8f, 1f);
+
+            float alpha = 0.6f;
+            scorch.SetFloat(EffectQuad.AlphaId, alpha);
+            DOTween.To(() => alpha, value => { alpha = value; scorch.SetFloat(EffectQuad.AlphaId, value); }, 0f, m_scorchDuration)
+                .SetEase(Ease.InQuad)
+                .SetLink(scorch.GameObject, LinkBehaviour.KillOnDisable)
+                .OnKill(() => m_scorchPool.Release(scorch));
         }
 
         private void PlayTint(Vector3 center, float width, float height, float duration)

@@ -15,6 +15,7 @@ Shader "SquareTowerDefense/EffectSprite"
         [HDR] _Color ("Color", Color) = (1, 1, 1, 1)
         _Intensity ("Intensity (Bloom)", Float) = 1
         _Alpha ("Alpha", Range(0, 1)) = 1
+        _Opacity ("Texture Opacity", Range(0, 4)) = 1
         _Progress ("Draw Progress", Range(0, 1)) = 1
         _HeadFollow ("Head Follows Progress", Range(0, 1)) = 0
         _Tail ("Tail Erase", Range(0, 1)) = 0
@@ -38,7 +39,7 @@ Shader "SquareTowerDefense/EffectSprite"
 
             sampler2D _MainTex, _NoiseTex;
             float4 _Color;
-            float _Intensity, _Alpha, _Progress, _HeadFollow, _Tail, _Dissolve, _Scroll, _ClipBelow;
+            float _Intensity, _Alpha, _Opacity, _Progress, _HeadFollow, _Tail, _Dissolve, _Scroll, _ClipBelow;
 
             struct appdata { float4 vertex : POSITION; float2 uv : TEXCOORD0; float4 color : COLOR; };
             struct v2f { float4 vertex : SV_POSITION; float2 uv : TEXCOORD0; float4 color : COLOR; float worldY : TEXCOORD1; };
@@ -65,7 +66,7 @@ Shader "SquareTowerDefense/EffectSprite"
                 float dissolve = smoothstep(_Dissolve, _Dissolve + 0.06, noise);
                 float edge = (1.0 - smoothstep(_Dissolve, _Dissolve + 0.12, noise)) * step(0.001, _Dissolve);   // 타들어 가는 가장자리
 
-                float alpha = tex.a * _Color.a * i.color.a * _Alpha * drawn * tail * dissolve;
+                float alpha = saturate(tex.a * _Opacity) * _Color.a * i.color.a * _Alpha * drawn * tail * dissolve;
                 alpha *= smoothstep(_ClipBelow - 0.01, _ClipBelow + 0.02, i.worldY);
                 float3 color = tex.rgb * _Color.rgb * i.color.rgb * _Intensity * (1.0 + edge * 2.0);
                 return float4(color * alpha, alpha);

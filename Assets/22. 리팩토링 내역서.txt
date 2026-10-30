@@ -1652,3 +1652,13 @@
 
 
 2026-10-30 완료: 후보 500개, 총 4,673판. 10회 완료 405개 / 조기 탈락 95개. 최고 후보 377(동률 다수), 평균 도달 웨이브 6.5 / 기준 6.0. 최고 후보는 9회 6웨이브, 1회 11웨이브, 클리어 0/10. 초기 맵·구매 추첨·결과 기록·순위·소스/CSV 해시 검산 통과. 최초 검산은 합성 생성(TowerAdded, 2티어 이상)을 구매 추첨으로 오인해 실패했으며, 구매로 생성되는 1티어만 비교하도록 검산 스크립트를 고친 뒤 통과했다. 게임 코드와 Power/AV는 변경하지 않았다. 결과: Balance/StrategySearch_20261029/Results.ko.md 및 FinalChecks.json. 유한한 정책 후보 중 최고이며 전역 최적성 증명은 아니다.
+
+[데이터] 발표용으로 TowerData.csv를 0.2.9의 공용 데이터로 되돌림 (2026-10-30, 사용자: "발표는 … 공용으로 해놨던거 … 세밀하게 작성한건 백업본으로")
+- 되돌린 값: 280종 전부 Range 5, Action 1, AttackCount 3, Mastery 1, Stack 60, ProjectileSpeed 25 (git bf29da1a와 같음)
+- 사용자가 세밀하게 맞춘 값(0.2.9.1)은 Assets/98. _Recovery/TowerData (밸런스 작업 2026-10-30).csv로 백업. 발표 뒤 밸런스 작업을 이어 갈 때 되돌려 놓음
+
+[연출] 화염술사·소서러·다크메이지의 스킬·기본 공격 연출을 AI가 만든 판으로 되돌림 (2026-10-30, 사용자: Codex가 에셋을 씌운 판이 "맘에 안들어서 어제 했던걸로 되돌리고 싶은데")
+- 되돌린 파일 6개: Fire/Ice/DarknessSplashSkillEffect, Fire/Ice/DarknessSplashAttackEffect. 블랙홀은 2026-10-29의 색 필드·크기 손질까지 들어간 마지막 판
+  (git 0.2.9에는 이미 Codex 손질이 들어가 있어 대화 기록의 원본으로 다시 씀). Codex 판은 scratchpad/codex_effects_backup_20261030에 백업
+- 그대로 둔 것: Codex가 공용에 더한 옵션(EffectQuadPool·EffectParticles의 proceduralTextures, EffectSprite의 _Opacity — 기본값이면 예전과 같음),
+  EffectTextures의 새 그림 이름(FX_Fireball 등, 지금 연출은 안 씀), FX_Smoke·FX_Snowflake·FX_IceShard 그림(전에 승인한 것, 지금 연출이 씀)

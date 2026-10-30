@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 160144c0ce3146e2927d5fff510428ad, type: 3}
+  m_Name: FrostWolf_Appearance
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyCubeAppearance
+  m_characterTexture: {fileID: 2800000, guid: 1e92e0d75db140f5a45073ed0be9bbfc, type: 3}
+  m_faceSprite: {fileID: 4600000000000182, guid: 1e92e0d75db140f5a45073ed0be9bbfc, type: 3}
+  m_fullSprite: {fileID: 4600000000000181, guid: 1e92e0d75db140f5a45073ed0be9bbfc, type: 3}
+  m_equipmentMask: {fileID: 0}

@@ -8,8 +8,6 @@ namespace SquareTD
     [DisallowMultipleComponent]
     public sealed class DarknessSplashSkillEffect : MonoBehaviour
     {
-        private const int VortexLayerCount = 3;
-
         private sealed class Hole
         {
             public Vector3 Center;
@@ -24,9 +22,6 @@ namespace SquareTD
             public EffectQuad Halo;
             public EffectQuad Core;
             public EffectQuad Rim;
-            public bool Closing;
-            public readonly List<EffectQuad> Vortices = new List<EffectQuad>();
-            public readonly List<float> VortexProgress = new List<float>();
             public readonly List<EffectQuad> Arcs = new List<EffectQuad>();
             public readonly List<float> Angles = new List<float>();
             public Tween Opening;
@@ -57,7 +52,6 @@ namespace SquareTD
         private EffectQuadPool m_rimPool;
         private EffectQuadPool m_arcPool;
         private EffectQuadPool m_voidPool;
-        private EffectQuadPool m_vortexPool;
         private EffectQuadPool m_glowPool;
         private EffectQuadPool m_ringPool;
         private EffectQuadPool m_flarePool;
@@ -73,7 +67,6 @@ namespace SquareTD
             m_rimPool = new EffectQuadPool(transform, "EffectSprite", "Black Hole Rim", 0, EffectTextures.Ring, true);
             m_arcPool = new EffectQuadPool(transform, "EffectSprite", "Black Hole Swirl", 0, EffectTextures.SlashTrail, true, ArcMesh.Get(140f, 0.3f));
             m_voidPool = new EffectQuadPool(transform, "EffectSprite", "Black Hole Orb Core", 27, EffectTextures.Glow);
-            m_vortexPool = new EffectQuadPool(transform, "EffectSprite", "Black Hole Painted Vortex", 0, EffectTextures.BlackHoleVortex);
             m_glowPool = new EffectQuadPool(transform, "EffectSprite", "Black Hole Orb Glow", 26, EffectTextures.Glow, true);
             m_ringPool = new EffectQuadPool(transform, "EffectSprite", "Black Hole Ring", 27, EffectTextures.Ring, true);
             m_flarePool = new EffectQuadPool(transform, "EffectSprite", "Black Hole Flare", 28, EffectTextures.Flare, true);
@@ -90,7 +83,6 @@ namespace SquareTD
         {
             m_shadePool?.Dispose(); m_haloPool?.Dispose(); m_rimPool?.Dispose(); m_arcPool?.Dispose();
             m_voidPool?.Dispose(); m_glowPool?.Dispose(); m_ringPool?.Dispose(); m_flarePool?.Dispose();
-            m_vortexPool?.Dispose();
         }
 
         private void Update()
@@ -163,22 +155,14 @@ namespace SquareTD
                 Phase = Range(0f, 6f),
             };
             hole.Shade = Persistent(m_shadePool, center, m_shadeColor, 1f, 0, false);
-            hole.Halo = Persistent(m_haloPool, center, m_glowColor, 0.8f, 1, false);
-            hole.Core = Persistent(m_shadePool, center, m_coreColor, 1f, 4, false);
-            // Stagger copies of the painted swirl so new material keeps flowing inward.
-            for (int i = 0; i < VortexLayerCount; i++)
-            {
-                EffectQuad vortex = Persistent(m_vortexPool, center, new Color(0.48f, 0.24f, 0.75f, 0.95f), 1f, 3, false);
-                vortex.Transform.rotation = Quaternion.Euler(0f, 0f, hole.Phase * Mathf.Rad2Deg + i * 120f);
-                hole.Vortices.Add(vortex);
-                hole.VortexProgress.Add(i / (float)VortexLayerCount);
-            }
+            hole.Halo = Persistent(m_haloPool, center, m_glowColor, 1.6f, 1, false);
+            hole.Core = Persistent(m_shadePool, center, m_coreColor, 1f, 2, false);
             for (int i = 0; i < m_arcCount; i++)
             {
-                hole.Arcs.Add(Persistent(m_arcPool, center, i % 2 == 0 ? m_glowColor : m_edgeColor, 1.1f, 0, true));
+                hole.Arcs.Add(Persistent(m_arcPool, center, i % 2 == 0 ? m_glowColor : m_edgeColor, 2.2f, 0, true));
                 hole.Angles.Add(i * 137f);
             }
-            hole.Rim = Persistent(m_rimPool, center, m_edgeColor, 1.35f, 1, true);
+            hole.Rim = Persistent(m_rimPool, center, m_edgeColor, 2.6f, 1, true);
             m_holes[ground] = hole;
 
             float flight = ground.Owner != null ? m_flyDuration : 0f;
@@ -238,16 +222,14 @@ namespace SquareTD
 
             Sequence sequence = DOTween.Sequence().SetLink(gameObject, LinkBehaviour.KillOnDisable);
             sequence.AppendInterval(delay);
+            sequence.Append(DOTween.To(() => hole.Open, value => hole.Open = value, 1.25f, m_collapseDuration * 0.35f).SetEase(Ease.OutQuad));
+            sequence.Join(DOTween.To(() => hole.Boost, value => hole.Boost = value, 1f, m_collapseDuration * 0.35f));
+            sequence.Append(DOTween.To(() => hole.Open, value => hole.Open = value, 0f, m_collapseDuration * 0.65f).SetEase(Ease.InBack));
             sequence.AppendCallback(() =>
             {
-                hole.Closing = true;
-                hole.Boost = 1f;
-            });
-            // Consume the remaining layers without spawning another outer copy or expanding first.
-            sequence.Append(DOTween.To(() => hole.Open, value => hole.Open = value, 0f, m_collapseDuration).SetEase(Ease.InCubic));
-            sequence.AppendCallback(() =>
-            {
-                TexturedFx.Pop(m_flarePool, hole.Center, 0f, cell * 0.12f, cell * 0.25f, m_edgeColor, 1.3f, 0f, 0.06f, 0.12f);
+                TexturedFx.Pop(m_flarePool, hole.Center, 0f, cell * 0.2f, hole.Size * 2.5f, Color.white, 3f, 0f, 0.1f, 0.25f);
+                TexturedFx.Pop(m_ringPool, hole.Center, 0f, hole.Size * 0.3f, hole.Area * 1.2f, m_edgeColor, 2f, 0f, 0.3f, 0.3f, Ease.OutCubic);
+                m_motes.Burst(hole.Center, 20, m_edgeColor, cell * 3f, cell * 6f, cell * 0.06f, cell * 0.12f, 0.25f, 0.45f);
                 ScreenShake.Play(0.03f, 0.15f);
             });
             sequence.OnKill(() =>
@@ -268,21 +250,6 @@ namespace SquareTD
             SetSize(hole.Halo, hole.Size * 2.8f * open * breath);
             SetSize(hole.Core, hole.Size * 0.9f * open * breath);
             SetSize(hole.Rim, hole.Size * open * breath);
-            for (int i = 0; i < hole.Vortices.Count; i++)
-            {
-                float fall = hole.VortexProgress[i] + deltaTime * m_inflow * speed;
-                fall = hole.Closing ? Mathf.Clamp01(fall) : Mathf.Repeat(fall, 1f);
-                hole.VortexProgress[i] = fall;
-
-                EffectQuad vortex = hole.Vortices[i];
-                float size = Mathf.Lerp(hole.Size * 2.6f, hole.Size * 0.08f, Mathf.Pow(fall, 0.85f));
-                SetSize(vortex, size * open * breath);
-                vortex.Transform.Rotate(0f, 0f, -deltaTime * m_spinSpeed * (0.25f + fall * 0.65f) * speed);
-
-                float enter = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(fall / 0.15f));
-                float swallowed = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((fall - 0.7f) / 0.3f));
-                vortex.SetFloat(EffectQuad.AlphaId, enter * swallowed * 0.85f);
-            }
 
             float outer = Mathf.Max(hole.Size * 1.1f, hole.Area * 0.55f);
             float inner = hole.Size * 0.35f;
@@ -290,7 +257,7 @@ namespace SquareTD
             {
                 float fall = Mathf.Repeat(hole.Flow + i / (float)hole.Arcs.Count, 1f);
                 float radius = Mathf.Lerp(outer, inner, fall * fall);
-                hole.Angles[i] -= deltaTime * m_spinSpeed * speed * (outer / radius);
+                hole.Angles[i] += deltaTime * m_spinSpeed * speed * (outer / radius);
 
                 EffectQuad arc = hole.Arcs[i];
                 arc.Transform.rotation = Quaternion.Euler(0f, 0f, hole.Angles[i]);
@@ -319,7 +286,6 @@ namespace SquareTD
             m_haloPool.Release(hole.Halo);
             m_shadePool.Release(hole.Core);
             m_rimPool.Release(hole.Rim);
-            foreach (EffectQuad vortex in hole.Vortices) m_vortexPool.Release(vortex);
             foreach (EffectQuad arc in hole.Arcs) m_arcPool.Release(arc);
         }
 
