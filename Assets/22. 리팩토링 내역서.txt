@@ -1662,3 +1662,15 @@
   (git 0.2.9에는 이미 Codex 손질이 들어가 있어 대화 기록의 원본으로 다시 씀). Codex 판은 scratchpad/codex_effects_backup_20261030에 백업
 - 그대로 둔 것: Codex가 공용에 더한 옵션(EffectQuadPool·EffectParticles의 proceduralTextures, EffectSprite의 _Opacity — 기본값이면 예전과 같음),
   EffectTextures의 새 그림 이름(FX_Fireball 등, 지금 연출은 안 씀), FX_Smoke·FX_Snowflake·FX_IceShard 그림(전에 승인한 것, 지금 연출이 씀)
+
+
+[데이터 복원] 밸런스 작업용 TowerData.csv 복원 (2026-10-31, 사용자 요청)
+- Assets/98. _Recovery/TowerData (밸런스 작업 2026-10-30).csv를 Assets/Resources/TowerData.csv로 복원. 백업은 Git 0.2.9.1(3ae6a5c1)의 해당 파일과 동일한 blob임을 확인.
+- 발표용 공용값에서 일반 공격 타워 140행의 8개 항목(Range, Action, AttackCount, CriticalRate, CriticalDamage, Stack, Duration, ProjectileSpeed)을 세부 밸런스값으로 되돌림. Power/AbilityValue 및 지원 타워 값은 변경 없음.
+- 검증: 전체 280행·ID 280개, 복원 파일 SHA256 10C6798CB0747B48EDB72230347E86C16AE79208751786A5EBAAC27940E7F4DE, 원본 백업과 바이트 단위 일치. CSV .meta 유지. 이번 작업에서는 Unity 플레이·시뮬레이션을 재실행하지 않음.
+
+
+[밸런스] 전체 타워 Power 3배 적용 (2026-10-31, 사용자 요청)
+- Assets/Resources/TowerData.csv의 전체 280행(광역·단일·버프·디버프 각 70행)의 Power를 현재 값의 3배로 변경.
+- 0.2.9.1 밸런스 작업본 복원 직후 값이 기준. AbilityValue와 그 외 모든 CSV 항목, 행 순서·인코딩·줄바꿈·.meta는 유지. Recovery의 원본 백업도 유지.
+- 검증: 280행 전수에서 Power=이전값×3 및 나머지 항목 동일 확인. 저장 후 재파싱 확인. SHA256 F8D06F3435F5999B78385603919409FBBF872F0E57377B3A521A8F905661C7C0. Unity 플레이·시뮬레이션은 재실행하지 않음.

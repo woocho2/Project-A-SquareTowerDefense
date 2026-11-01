@@ -5058,6 +5058,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 540299664011112267, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
+      propertyPath: m_text
+      value: "A\uB97C \uB20C\uB7EC \uC790\uB3D9\uC804\uD22C \uC9C4\uD589"
+      objectReference: {fileID: 0}
+    - target: {fileID: 540299664011112267, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
+      propertyPath: m_fontSize
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 540299664011112267, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 2519520974583011991, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_Name
       value: UICanvas
