@@ -189,7 +189,7 @@ namespace SquareTD.Tests
             upgraded.State.CopyInheritedFrom(attacker.State);
 
             Assert.IsTrue(upgraded.State.ReceivedZoneBuffs.ContainsKey(zone));
-            Assert.AreEqual(11f, upgraded.Stats.Power, 0.0001f, "새로 올라온 것으로 치지 않음 (20번 8장)");
+            Assert.AreEqual(22f, upgraded.Stats.Power, 0.0001f, "실버 10 × 2에 +10%. 새로 올라온 것으로 치지 않음 (20번 8장)");
         }
 
         // ── 3단계 연결 ──

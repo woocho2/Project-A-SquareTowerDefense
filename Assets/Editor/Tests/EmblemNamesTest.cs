@@ -69,7 +69,7 @@ namespace SquareTD.Tests
                 Assert.AreEqual(cells[nameColumn], EmblemNames.GetConceptName(id), $"{id}의 이름");
                 checkedCount++;
             }
-            Assert.AreEqual(280, checkedCount);
+            Assert.AreEqual(56, checkedCount);
         }
     }
 }

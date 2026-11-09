@@ -1674,3 +1674,23 @@
 - Assets/Resources/TowerData.csv의 전체 280행(광역·단일·버프·디버프 각 70행)의 Power를 현재 값의 3배로 변경.
 - 0.2.9.1 밸런스 작업본 복원 직후 값이 기준. AbilityValue와 그 외 모든 CSV 항목, 행 순서·인코딩·줄바꿈·.meta는 유지. Recovery의 원본 백업도 유지.
 - 검증: 280행 전수에서 Power=이전값×3 및 나머지 항목 동일 확인. 저장 후 재파싱 확인. SHA256 F8D06F3435F5999B78385603919409FBBF872F0E57377B3A521A8F905661C7C0. Unity 플레이·시뮬레이션은 재실행하지 않음.
+
+
+[데이터] TowerData.csv를 1티어 56행만 남김 (2026-11-09, 사용자: "csv데이터의 2~5티어는 전부 삭제하고 1티어만 남겨놓자")   확인 상태: Run All 통과 (사용자)
+- 까닭: 게임은 스탯을 1티어 행 + 10장 티어 표로 계산하고 2~5티어 행의 스탯은 쓰지 않았음. 그 행들은 옛 규칙(골드 Power ×2, Mastery 그대로)에 멈춰 224행 중 182행이 표와 달랐음
+- Assets/Resources/TowerData.csv: 2~5티어 224행 삭제, 1티어 56행 유지 (값·행 순서·UTF-8·CRLF·.meta 그대로). SHA256 1D4DDDA63112697CDAFABBDFCADAEA87587A4201CBD210DF5BE157FCD475FE29
+  지운 행은 git 이전 커밋에 있음. Recovery 백업은 그대로
+- TowerDatabase.Load: 다 읽은 뒤 1티어 정의마다 2~5티어 정의를 같은 값으로 만들어 넣음 (AddHigherTiers). CSV에 그 티어 행이 적혀 있으면 적힌 행을 씀
+  → 다음 티어 찾기(합성·티어 강화), DebugCheat의 ID 소환, Count 280은 그대로
+- 테스트: TowerDatabaseTest — 작은 표의 개수 기대값을 새 규칙에 맞춤, 일티어_한_줄로_2에서_5티어가_생김·높은_티어_줄이_적혀_있으면_그_줄을_씀 추가,
+  옛 4102·5204 행을 읽던 TestCase 2개 삭제, 1101 Power 기대값 1.4 → 4.2 (2026-10-31 Power 3배 뒤 고쳐지지 않았던 값). EmblemNamesTest의 CSV 행 수 280 → 56
+- 20번 기획서 3장 [스탯 — TowerData.csv의 열]과 10장의 CSV 기록 문장을 "1티어만"으로 고침
+
+[밸런스] 티어 표·컬러 강화의 차지 위력을 20번 새 표대로 (2026-11-09, 사용자: "변경된 표에 맞게 코드도 변경해라")   확인 상태: Run All 통과 (사용자)
+- BalanceTables.cs 티어 표 (브론즈 기준 누계): Action -1/-2/-3/-4, Power ×2/×4/×8/×16, Mastery 다이아만 +1, AttackCount 골드·미스릴 +1·다이아 +2,
+  최대 스택 ×0.95/×0.9/×0.8/×0.5, 스택 하나의 위력(StackValue) ×1/×1/×1.5/×2.5, Duration ×0.95/×0.9/×0.8/×0.5
+- TierRow에 SkillCount(Duration 배율) 칸을 더함. 옛 GetTierDurationDelta(공격 -, 디버프 +, 버프 0)를 지우고 네 컬러 모두 Duration에 곱함
+  Duration은 아직 정수(반올림). 기획의 "스킬 카운트 float"는 스킬 카운트 코드를 바꿀 때 함께
+- 컬러 강화 StackValue: 레벨 1 ~ 6에서 ×1 / ×1.5 / ×2 / ×2.5 / ×4 / ×4
+- 테스트 기대값을 새 표로 다시 계산: BalanceTablesTest(티어 표를 TestCase 하나로), TowerStatCalculatorTest, TowerDatabaseTest(실제 계산 4건),
+  TowerStackConnectionTest(미스릴 최대 48), ZoneActionTest(실버 Power 20 + 10%), TowerControllerTest(설명 문구)

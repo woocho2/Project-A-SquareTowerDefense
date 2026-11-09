@@ -168,7 +168,7 @@ namespace SquareTD.Tests
         {
             TowerController tower = MakeTower(Def(5101), Def(1101), null);
 
-            Assert.AreEqual(1, tower.Stats.Action, "1티어 3 − 5 → 최소 1");
+            Assert.AreEqual(1, tower.Stats.Action, "1티어 3 − 4 → 최소 1");
             Assert.AreEqual(1, tower.State.RemainingAction);
         }
 

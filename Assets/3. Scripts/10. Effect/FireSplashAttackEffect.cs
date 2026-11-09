@@ -1,132 +1,137 @@
 using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
 namespace SquareTD
 {
-    // 화염술사(광역 불) 기본 공격 연출 — 화염구가 천천히 날아가 닿으면 큰 불길을 사방으로 퍼뜨리며 사라짐
+    // 화염술사 기본 공격 — 타격 범위의 길 타일마다 같은 크기의 불기둥이 솟음
     [DisallowMultipleComponent]
     public sealed class FireSplashAttackEffect : MonoBehaviour, IShotEffect
     {
-        private static readonly Color s_fire = new Color(1f, 0.42f, 0.08f);
-        private static readonly Color s_core = new Color(1f, 0.88f, 0.55f);
-        private static readonly Color s_deep = new Color(0.85f, 0.18f, 0.04f);
-        private static readonly Color s_smoke = new Color(0.18f, 0.11f, 0.08f, 0.7f);
+        private const float FireBaseUv = 0.19f;
+        private static readonly Color s_fire = new Color(1f, 0.36f, 0.025f);
+        private static readonly Color s_core = new Color(1f, 0.84f, 0.28f);
+        private static readonly Color s_deep = new Color(0.65f, 0.065f, 0.012f);
 
-        [SerializeField] private float m_ballSize = 0.75f;
-        [SerializeField] private float m_appearDuration = 0.15f;
-        [SerializeField] private float m_slowness = 0.25f;
-        [SerializeField] private float m_minFlight = 0.5f;
-        [SerializeField] private float m_flicker = 0.12f;
-        [SerializeField] private float m_spreadDuration = 0.4f;
-        [SerializeField] private int m_spreadFlames = 28;
+        [SerializeField, Min(0.01f)] private float m_anticipation = 0.45f;
+        [SerializeField, Min(0.01f)] private float m_riseDuration = 0.07f;
+        [SerializeField, Min(0f)] private float m_sustainDuration = 0.1f;
+        [SerializeField, Min(0.01f)] private float m_fadeDuration = 0.28f;
+        [SerializeField, Min(0.1f)] private float m_pillarHeight = 2.1f;
 
-        private readonly System.Random m_random = new System.Random();
-        private EffectQuadPool m_glowPool;
-        private EffectQuadPool m_ringPool;
-        private EffectQuadPool m_flarePool;
-        private EffectParticles m_flames;
+        private EffectQuadPool m_pool;
         private EffectParticles m_embers;
-        private EffectParticles m_smoke;
 
         private void Awake()
         {
-            m_glowPool = new EffectQuadPool(transform, "EffectSprite", "Fireball Glow", 26, EffectTextures.Glow, true);
-            m_ringPool = new EffectQuadPool(transform, "EffectSprite", "Fireball Ring", 25, EffectTextures.Ring, true);
-            m_flarePool = new EffectQuadPool(transform, "EffectSprite", "Fireball Flare", 28, EffectTextures.Flare, true);
-            m_smoke = new EffectParticles(transform, "Fireball Smoke", EffectTextures.Smoke, false, 1f, 23, false, -0.05f, true);
-            m_flames = new EffectParticles(transform, "Fireball Flames", EffectTextures.Glow, true, 2f, 26, false, -0.3f, true);
-            m_embers = new EffectParticles(transform, "Fireball Embers", EffectTextures.Spark, true, 2.5f, 27, true, 0.6f, false);
+            m_pool = new EffectQuadPool(transform, "FirePillar", "Pyromancer Eruption", 25, "FX_FireEruption_Atlas_v2");
+            m_embers = new EffectParticles(transform, "Eruption Embers", EffectTextures.Spark,
+                true, 1.5f, 30, true, 0.5f, false, true);
         }
 
-        private void OnDestroy()
-        {
-            m_glowPool?.Dispose(); m_ringPool?.Dispose(); m_flarePool?.Dispose();
-        }
+        private void OnDestroy() => m_pool?.Dispose();
 
         public void FireShot(Vector3 from, Vector3 to, float speed, float hold, float sizeWorld, Action onArrived)
         {
-            if (!m_glowPool.IsReady)
+            if (!m_pool.IsReady)
             {
                 onArrived?.Invoke();
                 return;
             }
 
             float cell = EffectSpace.CellWorldSize();
-            float ball = cell * m_ballSize;
-            Vector3 toTarget = to - from;
-            Vector2 back = -(Vector2)toTarget.normalized;
-            float flight = Mathf.Max(m_minFlight, toTarget.magnitude / Mathf.Max(0.01f, speed * m_slowness));
-            float launchAt = Mathf.Max(hold, m_appearDuration);
-
-            EffectQuad glow = Prepare(m_glowPool, from, s_fire, 2.2f);
-            EffectQuad core = Prepare(m_glowPool, from, s_core, 3f);
+            float diameter = cell;
+            float height = cell * m_pillarHeight;
+            List<Vector3> centers = GetTileCenters(to, sizeWorld, cell);
+            var grounds = new EffectQuad[centers.Count];
+            var blasts = new EffectQuad[centers.Count];
+            var jets = new EffectQuad[centers.Count];
+            for (int i = 0; i < centers.Count; i++)
+            {
+                grounds[i] = Prepare(centers[i], 1f, 0, new Color(0.15f, 0.025f, 0.012f), s_fire);
+                grounds[i].SetSorting(SortingLayer.NameToID("MapTile"), 25);
+                blasts[i] = Prepare(centers[i], 2f, 4 + i * 4, s_fire, s_core);
+                jets[i] = Prepare(centers[i], 0f, 2 + i * 4, s_deep, s_fire);
+            }
             float grown = 0f;
-
-            Sequence sequence = DOTween.Sequence().SetLink(glow.GameObject, LinkBehaviour.KillOnDisable);
-            sequence.Append(DOTween.To(() => grown, value => grown = value, 1f, m_appearDuration).SetEase(Ease.OutBack));
-            sequence.AppendInterval(launchAt - m_appearDuration);
-            sequence.Append(glow.Transform.DOMove(to, flight).SetEase(Ease.InOutSine));
+            float fade = 1f;
+            float anticipation = Mathf.Max(hold, m_anticipation);
+            Sequence sequence = DOTween.Sequence().SetLink(grounds[0].GameObject, LinkBehaviour.KillOnDisable);
+            sequence.AppendInterval(anticipation);
+            sequence.Append(DOTween.To(() => grown, value => grown = value, 1f, m_riseDuration).SetEase(Ease.OutExpo));
+            sequence.AppendCallback(() =>
+            {
+                int embers = Mathf.Clamp(40 / centers.Count, 3, 14);
+                foreach (Vector3 center in centers)
+                    m_embers.Burst(center, embers, s_core, cell * 2f, cell * 4.5f,
+                        cell * 0.035f, cell * 0.085f, 0.2f, 0.4f, Vector2.up, 85f, diameter * 0.3f);
+                ScreenShake.Play(0.045f, 0.12f);
+                onArrived?.Invoke();
+            });
+            sequence.AppendInterval(m_sustainDuration);
+            sequence.Append(DOTween.To(() => fade, value => fade = value, 0f, m_fadeDuration).SetEase(Ease.InQuad));
             sequence.OnUpdate(() =>
             {
-                float flicker = 1f + m_flicker * Mathf.Sin(Time.time * 37f) * Mathf.Sin(Time.time * 23f);
-                Vector3 at = glow.Transform.position;
-                core.Transform.position = at;
-                SetSize(glow, ball * 1.5f * grown * flicker);
-                SetSize(core, ball * 0.6f * grown);
-                if (Range(0f, 1f) < 0.7f)
-                    m_flames.Burst(at, 1, Range(0f, 1f) < 0.5f ? s_fire : s_deep, cell * 0.3f, cell * 0.8f, ball * 0.4f, ball * 0.7f,
-                        0.2f, 0.4f, back, 70f, ball * 0.25f);
-                if (Range(0f, 1f) < 0.2f)
-                    m_embers.Burst(at, 1, s_core, cell * 0.5f, cell * 1.5f, cell * 0.04f, cell * 0.07f, 0.25f, 0.4f, back, 90f);
-            });
-            sequence.OnComplete(() =>
-            {
-                PlaySpread(to, Mathf.Max(cell, sizeWorld), cell);
-                onArrived?.Invoke();
+                float time = sequence.Elapsed();
+                float charge = Mathf.Clamp01(time / anticipation);
+                float eruption = Mathf.Max(0f, time - anticipation);
+                float shock = Mathf.Clamp01(eruption / 0.2f);
+                for (int i = 0; i < jets.Length; i++)
+                {
+                    grounds[i].Transform.localScale = new Vector3(diameter * (0.95f + charge * 0.12f), diameter * 0.65f, 1f);
+                    grounds[i].SetFloat(EffectQuad.ProgressId, charge);
+                    grounds[i].SetFloat(EffectQuad.AlphaId, (0.3f + charge * 0.7f) * (1f - grown * 0.55f) * fade);
+
+                    blasts[i].Transform.localScale = new Vector3(diameter * (0.65f + shock * 0.55f), diameter * (0.4f + shock * 0.33f), 1f);
+                    blasts[i].SetFloat(EffectQuad.ProgressId, shock);
+                    blasts[i].SetFloat(EffectQuad.AlphaId, grown * (1f - shock));
+
+                    float width = diameter * 1.3f;
+                    float jetHeight = height;
+                    jets[i].Transform.position = centers[i] + Vector3.up * (jetHeight * (0.5f - FireBaseUv));
+                    jets[i].Transform.localScale = new Vector3(width, jetHeight, 1f);
+                    jets[i].SetFloat(EffectQuad.AlphaId, Mathf.Clamp01(grown * 6f) * fade);
+                    jets[i].SetFloat(EffectQuad.ProgressId, eruption);
+                    jets[i].SetFloat(EffectQuad.DissolveId, 1f - fade);
+                }
             });
             sequence.OnKill(() =>
             {
-                m_glowPool.Release(glow);
-                m_glowPool.Release(core);
+                foreach (EffectQuad jet in jets) m_pool.Release(jet);
+                foreach (EffectQuad blast in blasts) m_pool.Release(blast);
+                foreach (EffectQuad ground in grounds) m_pool.Release(ground);
             });
         }
 
-        private void PlaySpread(Vector3 center, float area, float cell)
+        private EffectQuad Prepare(Vector3 center, float shape, int layer, Color outer, Color inner)
         {
-            float reach = area * 0.6f;
-            TexturedFx.Pop(m_glowPool, center, 0f, cell * 0.5f, area * 1.6f, s_core, 2.6f, 0f, 0.16f, 0.35f);
-            TexturedFx.Pop(m_flarePool, center, Range(0f, 90f), cell * 0.3f, area * 1.1f, Color.white, 3f, 0f, 0.1f, 0.2f);
-            TexturedFx.Pop(m_ringPool, center, 0f, cell * 0.3f, area * 1.5f, s_fire, 2.4f, 0f, m_spreadDuration * 0.8f, 0.3f, Ease.OutCubic);
-            TexturedFx.Pop(m_ringPool, center, 0f, cell * 0.2f, area * 1.1f, s_deep, 2f, 0.07f, m_spreadDuration * 0.8f, 0.3f, Ease.OutCubic);
-
-            for (int i = 0; i < m_spreadFlames; i++)
-            {
-                float angle = (i + Range(-0.3f, 0.3f)) / m_spreadFlames * 360f;
-                float radians = angle * Mathf.Deg2Rad;
-                Vector2 direction = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians));
-                float run = reach / m_spreadDuration * Range(0.7f, 1.2f);
-                m_flames.Burst(center, 1, i % 3 == 0 ? s_deep : s_fire, run, run, cell * 0.5f, cell * 0.9f,
-                    m_spreadDuration * 0.8f, m_spreadDuration * 1.2f, direction, 6f, cell * 0.1f);
-            }
-            m_flames.Burst(center, 10, s_core, cell * 0.3f, cell * 1f, cell * 0.5f, cell * 0.8f, 0.25f, 0.4f, Vector2.up, 360f, area * 0.2f);
-            m_embers.Burst(center, 18, s_core, cell * 3f, cell * 7f, cell * 0.05f, cell * 0.1f, 0.3f, 0.6f, Vector2.up, 360f);
-            m_smoke.Burst(center, 5, s_smoke, cell * 0.4f, cell * 1f, cell * 0.7f, cell * 1.2f, 0.6f, 1f, Vector2.up, 360f, area * 0.25f);
-            ScreenShake.Play(0.04f, 0.12f);
-        }
-
-        private static EffectQuad Prepare(EffectQuadPool pool, Vector3 position, Color color, float intensity)
-        {
-            EffectQuad quad = pool.Get();
-            quad.Transform.position = position;
+            EffectQuad quad = m_pool.Get();
+            quad.Transform.position = center;
             quad.Transform.localScale = Vector3.zero;
-            quad.SetColor(color);
-            quad.SetFloat(EffectQuad.IntensityId, intensity);
+            quad.SetSorting(SortingLayer.NameToID("Projectile"), 25 + layer);
+            quad.SetColor(outer);
+            quad.SetColorById(EffectQuad.Color2Id, inner);
+            quad.SetFloat(EffectQuad.ShapeId, shape);
+            quad.SetFloat(EffectQuad.PhaseId, layer * 2.4f);
+            quad.SetFloat(EffectQuad.AlphaId, 0f);
             return quad;
         }
 
-        private static void SetSize(EffectQuad quad, float size) => quad.Transform.localScale = new Vector3(size, size, 1f);
-
-        private float Range(float min, float max) => Mathf.Lerp(min, max, (float)m_random.NextDouble());
+        private static List<Vector3> GetTileCenters(Vector3 position, float sizeWorld, float cell)
+        {
+            var centers = new List<Vector3>();
+            BoardManager board = BoardManager.Instance;
+            if (board != null && board.Grid != null && board.TryGetPoint(position, out BoardPoint point) && point.IsPath)
+            {
+                int radius = Mathf.Max(0, Mathf.RoundToInt((sizeWorld / cell - 1f) * 0.5f));
+                Vector3Int impactCell = board.Grid.GetPathCell(point.PathIndex);
+                foreach (int index in board.Grid.GetPathIndicesInSquare(impactCell, radius))
+                    centers.Add(board.GetWorldPosition(board.Grid.GetPathCell(index)));
+            }
+            if (centers.Count == 0) centers.Add(position);
+            centers.Sort((a, b) => b.y.CompareTo(a.y));
+            return centers;
+        }
     }
 }

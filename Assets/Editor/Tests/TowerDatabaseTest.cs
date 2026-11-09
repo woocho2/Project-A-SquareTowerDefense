@@ -22,9 +22,36 @@ namespace SquareTD.Tests
         public void 두_줄을_읽음()
         {
             TowerDatabase database = Load(Header,
-                "1101,히어로,1.4,1,3,1,0.05,0.7,1,60,5,1.5,5,Closest",
+                "2101,히어로,1.4,1,3,1,0.05,0.7,1,60,5,1.5,5,Closest",
                 "2107,화염술사,2.5,2,4,2,0.1,0.5,1,60,6,2,4,Boss");
             Assert.AreEqual(2, database.Count);
+        }
+
+        [Test]
+        public void 일티어_한_줄로_2에서_5티어가_생김()
+        {
+            TowerDatabase database = Load(Header, "1101,히어로,1.4,1,3,1,0.05,0.7,1,60,5,1.5,5,Boss");
+            Assert.AreEqual(5, database.Count);
+
+            TowerDefinition diamond = database.Get(5101);
+            Assert.AreEqual(5, diamond.Tier);
+            Assert.AreEqual(TowerColor.Red, diamond.Color);
+            Assert.AreEqual(TowerEmblem.Sword, diamond.Emblem);
+            Assert.AreEqual(1.4f, diamond.Power, 0.0001f);
+            Assert.AreEqual(3, diamond.Action);
+            Assert.AreEqual(TargetPriority.Boss, diamond.TargetPriority);
+            Assert.IsFalse(database.TryGet(6101, out _));
+        }
+
+        [Test]
+        public void 높은_티어_줄이_적혀_있으면_그_줄을_씀()
+        {
+            TowerDatabase database = Load(Header,
+                "1101,히어로,1.4,1,3,1,0.05,0.7,1,60,5,1.5,5,Closest",
+                "3101,히어로,9.9,1,3,1,0.05,0.7,1,60,5,1.5,5,Closest");
+            Assert.AreEqual(5, database.Count);
+            Assert.AreEqual(9.9f, database.Get(3101).Power, 0.0001f);
+            Assert.AreEqual(1.4f, database.Get(4101).Power, 0.0001f);
         }
 
         [Test]
@@ -94,8 +121,9 @@ namespace SquareTD.Tests
                 "1101,히어로,1.4,1,3,1,0.05,0.7,1,60,5,1.5,5,Closest",
                 "1102,바이킹,abc,1,5,1,0.03,1.05,1,60,5,1.5,5,Closest",
                 "1103,레인저,0.98,4,3,1,0.055,0.49,1,60,5,1.5,5,Closest");
-            Assert.AreEqual(2, database.Count);
+            Assert.AreEqual(10, database.Count);
             Assert.IsFalse(database.TryGet(1102, out _));
+            Assert.IsFalse(database.TryGet(2102, out _));
         }
 
         [Test]
@@ -121,7 +149,7 @@ namespace SquareTD.Tests
             TowerDatabase database = Load(Header,
                 "1101,히어로,1.4,1,3,1,0.05,0.7,1,60,5,1.5,5,Closest",
                 "1101,히어로,9.9,1,3,1,0.05,0.7,1,60,5,1.5,5,Closest");
-            Assert.AreEqual(1, database.Count);
+            Assert.AreEqual(5, database.Count);
             Assert.AreEqual(1.4f, database.Get(1101).Power, 0.0001f);
         }
 
@@ -154,7 +182,8 @@ namespace SquareTD.Tests
 
             Assert.AreEqual(280, database.Count);
             Assert.AreEqual(TowerEmblem.Fire, database.Get(2107).Emblem);
-            Assert.AreEqual(1.4f, database.Get(1101).Power, 0.0001f);
+            Assert.AreEqual(4.2f, database.Get(1101).Power, 0.0001f);
+            Assert.AreEqual(4.2f, database.Get(5101).Power, 0.0001f);
             for (int tier = 1; tier <= 5; tier++)
             {
                 for (int color = 1; color <= 4; color++)
@@ -173,8 +202,6 @@ namespace SquareTD.Tests
         [TestCase(1102, 10, 1, 0.10f, 0.75f, 1, 100, 100, 15f)]
         [TestCase(1204, 6, 3, 0.30f, 0.10f, 2, 100, 75, 25f)]
         [TestCase(1211, 8, 4, 0.30f, 0.30f, 2, 100, 75, 25f)]
-        [TestCase(4102, 8, 2, 0.10f, 0.75f, 1, 50, 99, 15f)]
-        [TestCase(5204, 1, 4, 0.30f, 0.10f, 2, 50, 73, 25f)]
         public void 공격타워_CSV는_확정한_기준값을_가짐(int id, int action, int count, float crit, float critDamage, int range, int stack, int duration, float speed)
         {
             var database = new TowerDatabase();
@@ -191,10 +218,10 @@ namespace SquareTD.Tests
         }
 
         [TestCase(1204, 1, 6, 3, 100, 75)]
-        [TestCase(2201, 1, 6, 3, 100, 74)]
-        [TestCase(4102, 1, 8, 2, 50, 99)]
-        [TestCase(4102, 4, 8, 3, 25, 99)]
-        [TestCase(5204, 5, 1, 8, 25, 73)]
+        [TestCase(2201, 1, 6, 3, 95, 71)]
+        [TestCase(4102, 1, 7, 2, 80, 80)]
+        [TestCase(4102, 4, 7, 3, 40, 80)]
+        [TestCase(5204, 5, 2, 9, 25, 38)]
         public void 공격타워_실제계산은_기본값에_성장을_한번_적용(int id, int level, int action, int count, int stack, int duration)
         {
             var database = new TowerDatabase();

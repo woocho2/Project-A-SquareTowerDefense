@@ -19,7 +19,7 @@ namespace SquareTD
             TowerDefinition baseDefinition = tier1Definition ?? definition;
             float[] values = ReadBase(baseDefinition);
 
-            ApplyTier(values, definition.Tier, definition.Color);
+            ApplyTier(values, definition.Tier);
             ApplyColorLevel(values, level, definition.Color);
 
             float[] baseValues = (float[])values.Clone();
@@ -79,7 +79,7 @@ namespace SquareTD
             return values;
         }
 
-        private static void ApplyTier(float[] values, int tier, TowerColor color)
+        private static void ApplyTier(float[] values, int tier)
         {
             TierRow row = BalanceTables.GetTierRow(tier);
 
@@ -89,7 +89,7 @@ namespace SquareTD
             values[(int)StatType.MaxStack] *= row.MaxStack;
             values[(int)StatType.StackValue] *= row.StackValue;
             values[(int)StatType.Mastery] += row.Mastery;
-            values[(int)StatType.Duration] += BalanceTables.GetTierDurationDelta(tier, color);
+            values[(int)StatType.Duration] *= row.SkillCount;
         }
 
         private static void ApplyColorLevel(float[] values, int level, TowerColor color)

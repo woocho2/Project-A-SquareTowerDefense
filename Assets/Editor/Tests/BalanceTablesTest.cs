@@ -14,65 +14,29 @@ namespace SquareTD.Tests
             Assert.AreEqual(0, row.AttackCount);
         }
 
-        [Test]
-        public void 실버는_Action만_마이너스1()
+        [TestCase(2, -1, 2f, 0, 0, 0.95f, 1f, 0.95f)]
+        [TestCase(3, -2, 4f, 1, 0, 0.9f, 1f, 0.9f)]
+        [TestCase(4, -3, 8f, 1, 0, 0.8f, 1.5f, 0.8f)]
+        [TestCase(5, -4, 16f, 2, 1, 0.5f, 2.5f, 0.5f)]
+        public void 티어_표(int tier, int action, float power, int attackCount, int mastery, float maxStack, float stackValue, float skillCount)
         {
-            TierRow row = BalanceTables.GetTierRow(2);
-            Assert.AreEqual(-1, row.Action);
-            Assert.AreEqual(1f, row.Power);
-            Assert.AreEqual(0, row.Mastery);
-        }
-
-        [Test]
-        public void 골드는_Power_3배_Mastery_플러스1()
-        {
-            TierRow row = BalanceTables.GetTierRow(3);
-            Assert.AreEqual(-1, row.Action);
-            Assert.AreEqual(3f, row.Power);
-            Assert.AreEqual(1, row.Mastery);
-            Assert.AreEqual(0, row.AttackCount);
-        }
-
-        [Test]
-        public void 미스릴은_AttackCount_플러스1_최대스택_절반_스택값_2배()
-        {
-            TierRow row = BalanceTables.GetTierRow(4);
-            Assert.AreEqual(-2, row.Action);
-            Assert.AreEqual(1, row.AttackCount);
-            Assert.AreEqual(0.5f, row.MaxStack);
-            Assert.AreEqual(2f, row.StackValue);
-        }
-
-        [Test]
-        public void 다이아는_Power_15배_Action_마이너스5_Mastery_플러스3()
-        {
-            TierRow row = BalanceTables.GetTierRow(5);
-            Assert.AreEqual(-5, row.Action);
-            Assert.AreEqual(15f, row.Power);
-            Assert.AreEqual(3, row.Mastery);
-            Assert.AreEqual(1, row.AttackCount);
-            Assert.AreEqual(0.5f, row.MaxStack);
-            Assert.AreEqual(2f, row.StackValue);
+            TierRow row = BalanceTables.GetTierRow(tier);
+            Assert.AreEqual(action, row.Action);
+            Assert.AreEqual(power, row.Power, 0.0001f);
+            Assert.AreEqual(attackCount, row.AttackCount);
+            Assert.AreEqual(mastery, row.Mastery);
+            Assert.AreEqual(maxStack, row.MaxStack, 0.0001f);
+            Assert.AreEqual(stackValue, row.StackValue, 0.0001f);
+            Assert.AreEqual(skillCount, row.SkillCount, 0.0001f);
         }
 
         [Test]
         public void 표_밖의_티어는_그대로()
         {
-            Assert.AreEqual(15f, BalanceTables.GetTierRow(5).Power, "먼저 다이아 줄부터 채우기");
             Assert.AreEqual(1f, BalanceTables.GetTierRow(0).Power);
             Assert.AreEqual(1f, BalanceTables.GetTierRow(6).Power);
             Assert.AreEqual(0, BalanceTables.GetTierRow(6).Action);
-        }
-
-        [Test]
-        public void Duration은_공격이면_줄고_디버프면_늘고_버프는_그대로()
-        {
-            Assert.AreEqual(-1, BalanceTables.GetTierDurationDelta(2, TowerColor.Red));
-            Assert.AreEqual(-2, BalanceTables.GetTierDurationDelta(5, TowerColor.Blue));
-            Assert.AreEqual(1, BalanceTables.GetTierDurationDelta(3, TowerColor.Purple));
-            Assert.AreEqual(2, BalanceTables.GetTierDurationDelta(5, TowerColor.Purple));
-            Assert.AreEqual(0, BalanceTables.GetTierDurationDelta(5, TowerColor.Yellow));
-            Assert.AreEqual(0, BalanceTables.GetTierDurationDelta(1, TowerColor.Red));
+            Assert.AreEqual(1f, BalanceTables.GetTierRow(6).SkillCount);
         }
 
         [Test]
@@ -80,6 +44,7 @@ namespace SquareTD.Tests
         {
             ColorLevelRow row = BalanceTables.GetColorLevelRow(2, TowerColor.Red);
             Assert.AreEqual(2f, row.AbilityValue);
+            Assert.AreEqual(1.5f, row.StackValue);
             Assert.AreEqual(0, row.AttackCount);
         }
 
@@ -91,10 +56,10 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 레벨4는_스택값_2배_최대스택_절반()
+        public void 레벨4는_스택값_2점5배_최대스택_절반()
         {
             ColorLevelRow row = BalanceTables.GetColorLevelRow(4, TowerColor.Red);
-            Assert.AreEqual(2f, row.StackValue);
+            Assert.AreEqual(2.5f, row.StackValue);
             Assert.AreEqual(0.5f, row.MaxStack);
             Assert.AreEqual(0, row.Mastery);
         }
@@ -104,6 +69,7 @@ namespace SquareTD.Tests
         {
             ColorLevelRow row = BalanceTables.GetColorLevelRow(5, TowerColor.Red);
             Assert.AreEqual(4f, row.AbilityValue);
+            Assert.AreEqual(4f, row.StackValue);
             Assert.AreEqual(2, row.AttackCount);
             Assert.AreEqual(1, row.Mastery);
             Assert.AreEqual(4, BalanceTables.GetColorLevelRow(5, TowerColor.Blue).AttackCount);

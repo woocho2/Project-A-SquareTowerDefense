@@ -5,9 +5,11 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // TowerData.csv를 읽어 타워 정의를 ID로 찾게 해 줌
+    // TowerData.csv(1티어만)를 읽고 2~5티어 정의를 1티어에서 만들어 ID로 찾게 해 줌
     public class TowerDatabase
     {
+        private const int MaxTier = 5;
+
         private readonly Dictionary<int, TowerDefinition> m_byId = new Dictionary<int, TowerDefinition>();
 
         public int Count => m_byId.Count;
@@ -37,6 +39,29 @@ namespace SquareTD
                 catch (Exception e)
                 {
                     Debug.LogError($"[TowerDatabase] {i + 1}번째 줄을 읽지 못함: {e.Message}");
+                }
+            }
+
+            AddHigherTiers();
+        }
+
+        private void AddHigherTiers()
+        {
+            var tierOnes = new List<TowerDefinition>();
+            foreach (TowerDefinition definition in m_byId.Values)
+            {
+                if (definition.Tier == 1) tierOnes.Add(definition);
+            }
+
+            foreach (TowerDefinition one in tierOnes)
+            {
+                for (int tier = 2; tier <= MaxTier; tier++)
+                {
+                    int id = TowerId.Make(tier, one.Color, one.Emblem);
+                    if (m_byId.ContainsKey(id)) continue;
+                    m_byId.Add(id, new TowerDefinition(id, one.Power, one.Range, one.Action, one.AttackCount,
+                        one.CriticalRate, one.CriticalDamage, one.Mastery, one.Stack,
+                        one.Duration, one.AbilityValue, one.ProjectileSpeed, one.TargetPriority));
                 }
             }
         }

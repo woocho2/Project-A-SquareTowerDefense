@@ -91,10 +91,10 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 미스릴은_최대가_절반()
+        public void 미스릴은_최대가_80퍼센트()
         {
             TowerController tower = MakeTower(4101);
-            Assert.AreEqual(30, tower.State.Stack.Max, "티어 표: 미스릴 최대 스택 ×1/2 → Init에서 SetMax");
+            Assert.AreEqual(48, tower.State.Stack.Max, "티어 표: 미스릴 최대 스택 ×0.8 → Init에서 SetMax");
         }
 
         [Test]

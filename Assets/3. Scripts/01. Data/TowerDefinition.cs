@@ -1,6 +1,6 @@
 namespace SquareTD
 {
-    // 타워 한 종류의 기본 스탯 (CSV 한 줄)
+    // 타워 한 종류의 기본 스탯 (CSV 1티어 한 줄, 2~5티어는 그 복사본)
     public class TowerDefinition
     {
         public int Id { get; }
