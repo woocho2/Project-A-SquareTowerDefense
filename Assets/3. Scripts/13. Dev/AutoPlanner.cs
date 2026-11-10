@@ -67,7 +67,8 @@ namespace SquareTD
         {
             TowerDefinition definition = tower.Definition;
             var state = new TowerState(definition);
-            var received = new HashSet<string>(tower.State.ReceivedZoneBuffs.Values);
+            var received = new HashSet<string>();
+            foreach (TowerEmblem emblem in tower.State.SupportBuffs.Keys) received.Add(SupportBuffs.SourceOf(emblem));
             foreach (StatModifier modifier in tower.State.Modifiers.All)
                 if (modifier.Source != SpawnTileEffects.Source && !received.Contains(modifier.Source))
                     state.Modifiers.Add(modifier);
@@ -77,10 +78,10 @@ namespace SquareTD
             if (buffs && tower.IsAttackTower)
             {
                 foreach (Zone zone in board.Zones.GetAtSpawn(slot))
-                    foreach (StatModifier modifier in SkillRegistry.GetBuffRule(zone.Emblem).GetModifiers(zone, tower, BuffZoneAction.SourceOf(zone)))
+                    foreach (StatModifier modifier in SkillRegistry.GetBuffRule(zone.Emblem).GetModifiers(SupportCast.Skill1(zone.Owner), tower, SupportBuffs.SourceOf(zone.Emblem)))
                         state.Modifiers.Add(modifier);
                 if (extra != null)
-                    foreach (StatModifier modifier in SkillRegistry.GetBuffRule(extra.Emblem).GetModifiers(extra, tower, BuffZoneAction.SourceOf(extra)))
+                    foreach (StatModifier modifier in SkillRegistry.GetBuffRule(extra.Emblem).GetModifiers(SupportCast.Skill1(extra.Owner), tower, SupportBuffs.SourceOf(extra.Emblem)))
                         state.Modifiers.Add(modifier);
             }
             TowerManager.Instance.Database.TryGet(TowerId.Make(1, definition.Color, definition.Emblem), out TowerDefinition tierOne);
@@ -122,7 +123,7 @@ namespace SquareTD
             float value = 0f;
             foreach (int path in paths)
                 foreach (Zone zone in board.Zones.GetAtPath(path))
-                    value += Affinity(zone, tower) * (zone.Stage == ZoneStage.Skill2 ? 1f : 0.5f);
+                    value += Affinity(zone, tower) * 0.5f;
             return value / paths.Count;
         }
 
@@ -307,8 +308,7 @@ namespace SquareTD
                 float value = RoleWeight(tower);
                 if (!tower.IsAttackTower)
                 {
-                    foreach (Zone zone in board.Zones.GetByOwner(tower))
-                        if (zone.Stage == ZoneStage.Skill2) value += 1f - SupportWeight;
+                    if (tower.State.SkillCount >= tower.Stats.SkillCount * 0.5f) value += 1f - SupportWeight;
                 }
                 if (value < worstValue || value == worstValue && worst != null && tower.BuildOrder > worst.BuildOrder)
                 {
@@ -573,7 +573,7 @@ namespace SquareTD
         {
             float bonus = 0f;
             foreach (Zone zone in board.Zones.GetAtSpawn(slot))
-                bonus += zone.Stage == ZoneStage.Skill2 ? BuffZoneSkill2Value : BuffZoneValue;
+                bonus += BuffZoneValue;
             return bonus;
         }
 

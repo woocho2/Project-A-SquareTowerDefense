@@ -2,42 +2,45 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 빛 버프 — 광채 · 광휘
+    // 빛 버프 — 헤일로 · 어센션 (추가 피해, 확률로 초월 카운트 +받는 타워의 Tier, 어센션 카운트 +1,
+    //                            초월 웨이브에 어센션을 쓰면 다음 웨이브도 초월, 빛 타워가 공격하면 이 버프 타워의 스킬 카운트 +1)
     public class LightBuffRule : BuffRule
     {
-        public const string BurstSource = "광채·광휘";
+        public const float AscensionCount = 1f;
+        public const float LightSkillCount = 1f;
 
-        public override List<StatModifier> GetModifiers(Zone zone, TowerController receiver, string source)
+        public override List<StatModifier> GetModifiers(SupportCast cast, TowerController receiver, string source)
         {
-            var modifiers = new List<StatModifier>();
-            if (receiver.Definition.Emblem == TowerEmblem.Light && receiver.IsTarget)
+            return new List<StatModifier> { StatModifier.Flat(source, StatType.BonusDamage, cast.Rate) };
+        }
+
+        public override void OnGiveSkill1(SupportCast cast, TowerController receiver) => RollCount(cast, receiver);
+
+        public override void OnSkill2(SupportCast cast)
+        {
+            EmblemSharedState shared = EmblemSharedState.Current;
+            if (BoardManager.Instance != null)
             {
-                modifiers.Add(StatModifier.Flat(source, StatType.AttackCount, zone.Stage == ZoneStage.Skill2 ? 2f : 1f));
+                TowerSlots slots = BoardManager.Instance.Slots;
+                for (int i = 0; i < slots.Count; i++)
+                {
+                    TowerController tower = slots.Get(i);
+                    if (tower != null && tower.IsAttackTower) RollCount(cast, tower);
+                }
             }
-            return modifiers;
+            shared.AddTranscend(AscensionCount);
+            shared.ExtendTranscend();
         }
 
-        public override void OnGiveBuff(Zone zone, TowerController receiver)
+        public override void OnReceiverActed(SupportCast cast, TowerController receiver)
         {
-            if (!Chance.Roll(SkillFormula.ZoneValue(zone))) return;
-
-            var burst = new List<StatModifier>
-            {
-                StatModifier.Percent(BurstSource, StatType.Power, 0.1f),
-                StatModifier.Flat(BurstSource, StatType.AttackCount, 1f),
-                StatModifier.Flat(BurstSource, StatType.Mastery, 1f),
-                StatModifier.Flat(BurstSource, StatType.CritRate, 0.05f),
-                StatModifier.Flat(BurstSource, StatType.CritDamage, 0.1f),
-                StatModifier.Flat(BurstSource, StatType.MaxAction, -1f),
-            };
-            if (zone.Stage == ZoneStage.Skill2) burst.Add(StatModifier.Percent(BurstSource, StatType.AbilityValue, 0.2f));
-
-            TimedTowerBuff.Apply(receiver.State, BurstSource, zone.Owner.Stats.ColorLevel * 2, burst.ToArray());
+            if (!IsSynergy(cast, receiver) || cast.Owner == null || cast.Owner.State == null) return;
+            cast.Owner.State.SkillCount += LightSkillCount;
         }
 
-        public override void OnTaken(Zone zone, TowerController receiver)
+        private static void RollCount(SupportCast cast, TowerController receiver)
         {
-            TimedTowerBuff.Remove(receiver.State, BurstSource);
+            if (Chance.Roll(cast.Rate)) EmblemSharedState.Current.AddTranscend(receiver.Definition.Tier);
         }
     }
 }

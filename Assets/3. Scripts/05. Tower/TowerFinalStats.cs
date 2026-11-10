@@ -46,7 +46,7 @@ namespace SquareTD
         public float CriticalDamage => Get(StatType.CritDamage);
         public int Mastery => (int)Get(StatType.Mastery);
         public int Stack => (int)Get(StatType.MaxStack);
-        public int Duration => (int)Get(StatType.Duration);
+        public float SkillCount => Get(StatType.Duration);
         public float AbilityValue => Get(StatType.AbilityValue);
         public float StackValue => Get(StatType.StackValue);
         public float FinalDamageMultiplier => 1f + Get(StatType.FinalDamage) + Get(StatType.BonusDamage);
@@ -58,9 +58,9 @@ namespace SquareTD
             float perTile = Get(StatType.DistanceDamage);
             if (perTile <= 0f) return 1f;
 
-            float pierceBonus = Get(StatType.DistanceDamageBonus);
-            int tiles = pierceBonus > 0f ? Range : UnityEngine.Mathf.Clamp(distance, 0, Range);
-            return 1f + perTile * tiles + pierceBonus;
+            bool alwaysMax = Get(StatType.DistanceDamageBonus) > 0f;
+            int tiles = alwaysMax ? Range : UnityEngine.Mathf.Clamp(distance, 0, Range);
+            return 1f + perTile * tiles;
         }
     }
 }

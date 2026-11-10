@@ -1,29 +1,39 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace SquareTD
 {
-    // 창 버프 — 카우치 · 랜스 차지
+    // 창 버프 — 원 포인트 · 원 스트라이크 (모아 찌르기: AttackCount 1, 공격력 × 원래 AttackCount. 원 스트라이크 치명타 확률·방어 관통 +10%, 찌르기는 맞은 적 받는 치유 -40%)
     public class SpearBuffRule : BuffRule
     {
-        public override List<StatModifier> GetModifiers(Zone zone, TowerController receiver, string source)
+        public const float StrikeCritRate = 0.1f;
+        public const float StrikeArmorPenetration = 0.1f;
+        public const float PierceHealingCut = 0.4f;
+        public const string HealingCutKey = "원 스트라이크 치유 감소";
+
+        public override List<StatModifier> GetModifiers(SupportCast cast, TowerController receiver, string source)
         {
-            var modifiers = new List<StatModifier>();
-            if (zone.Stage != ZoneStage.Skill2)
+            int attackCount = Mathf.Max(1, Mathf.RoundToInt(receiver.Stats.GetBase(StatType.AttackCount)));
+            var modifiers = new List<StatModifier>
             {
-                modifiers.Add(StatModifier.Flat(source, StatType.MaxAction, 2f));
-                return modifiers;
-            }
-
-            float value = SkillFormula.ZoneValue(zone);
-            modifiers.Add(StatModifier.Flat(source, StatType.ArmorPenetration, 0.2f));
-            modifiers.Add(StatModifier.Flat(source, StatType.CritRate, value));
-            modifiers.Add(StatModifier.Flat(source, StatType.CritDamage, value));
-
-            if (IsSynergy(zone, receiver))
+                StatModifier.Flat(source, StatType.AttackCount, 1 - attackCount),
+                StatModifier.Percent(source, StatType.Power, attackCount - 1 + cast.Rate),
+            };
+            if (cast.IsSkill2)
             {
-                modifiers.Add(StatModifier.Flat(source, StatType.ArmorPenetration, 0.1f));
+                modifiers.Add(StatModifier.Flat(source, StatType.CritRate, StrikeCritRate));
+                modifiers.Add(StatModifier.Flat(source, StatType.ArmorPenetration, StrikeArmorPenetration));
             }
             return modifiers;
+        }
+
+        public override void OnReceiverHit(SupportCast cast, TowerController receiver, ITarget target)
+        {
+            if (!IsSynergy(cast, receiver)) return;
+            EnemyController enemy = target?.Body;
+            if (enemy == null || !enemy.IsAlive) return;
+            enemy.Status.Add(new TimedModifierEffect(HealingCutKey, cast.Duration, PierceHealingCut, "받는 치유 −40%",
+                StatModifier.Flat(HealingCutKey, StatType.HealingTaken, -PierceHealingCut)));
         }
     }
 }

@@ -127,7 +127,7 @@ namespace SquareTD
             foreach (Zone zone in zones)
             {
                 string name = EmblemNames.GetEmblemName(zone.Emblem);
-                text += zone.Stage == ZoneStage.Skill2 ? $"\n[{name} ★]" : $"\n[{name} {zone.Stack:0}/{zone.Owner.Stats.Stack}]";
+                text += $"\n[{name} {zone.Owner.State.SkillCount:0.#}/{zone.Owner.Stats.SkillCount:0.#}]";
             }
             return text;
         }

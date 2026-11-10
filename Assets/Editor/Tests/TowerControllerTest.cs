@@ -181,7 +181,7 @@ namespace SquareTD.Tests
             TowerController tower = MakeTower(Def(1101), null, colorLevels);
 
             Assert.AreEqual(5, tower.Stats.ColorLevel);
-            Assert.AreEqual(8f, tower.Stats.AbilityValue, 0.0001f);
+            Assert.AreEqual(32f, tower.Stats.AbilityValue, 0.0001f, "2 × 16");
         }
 
         [Test]

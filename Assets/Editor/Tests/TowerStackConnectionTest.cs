@@ -41,12 +41,12 @@ namespace SquareTD.Tests
         // ── 쌓기 ──
 
         [Test]
-        public void 공격_타워는_행동할_때마다_AttackCount만큼_쌓임()
+        public void 공격_타워는_행동할_때마다_1씩_쌓임()
         {
             TowerController tower = MakeTower(1101, attackCount: 3);
             RunAct(tower);
             RunAct(tower);
-            Assert.AreEqual(6f, tower.State.Stack.Current, 0.0001f);
+            Assert.AreEqual(2f, tower.State.Stack.Current, 0.0001f, "AttackCount와 무관하게 행동 한 번에 1");
         }
 
         [Test]
@@ -54,29 +54,14 @@ namespace SquareTD.Tests
         {
             TowerController tower = MakeTower(1201, attackCount: 2);
             RunAct(tower);
-            Assert.AreEqual(2f, tower.State.Stack.Current, 0.0001f);
-        }
-
-        [Test]
-        public void 버프_디버프_타워는_자기에게_쌓지_않음()
-        {
-            TowerController buff = MakeTower(1301);
-            RunAct(buff);
-            Assert.AreEqual(0f, buff.State.Stack.Current, "버프·디버프의 스택은 존이 가짐 (수업 26)");
-            CleanUp();
-
-            TowerController debuff = MakeTower(1401);
-            RunAct(debuff);
-            Assert.AreEqual(0f, debuff.State.Stack.Current);
+            Assert.AreEqual(1f, tower.State.Stack.Current, 0.0001f);
         }
 
         [Test]
         public void 다_차면_더_쌓이지_않음()
         {
-            TowerController tower = MakeTower(1101, attackCount: 25);
-            RunAct(tower);
-            RunAct(tower);
-            RunAct(tower);
+            TowerController tower = MakeTower(1101);
+            for (int i = 0; i < 70; i++) RunAct(tower);
             Assert.AreEqual(60f, tower.State.Stack.Current, 0.0001f);
             Assert.IsTrue(tower.State.Stack.IsFull);
         }
@@ -101,8 +86,8 @@ namespace SquareTD.Tests
         public void 컬러_레벨_4가_되면_넘치는_스택을_버림()
         {
             var colors = new ColorUpgradeState();
-            TowerController tower = MakeTower(1101, attackCount: 50, colors: colors);
-            RunAct(tower);
+            TowerController tower = MakeTower(1101, colors: colors);
+            for (int i = 0; i < 50; i++) RunAct(tower);
             Assert.AreEqual(50f, tower.State.Stack.Current, 0.0001f);
 
             colors.TryUpgrade(TowerColor.Red);      // 2
@@ -118,8 +103,8 @@ namespace SquareTD.Tests
         [Test]
         public void 다른_수정자로_다시_계산해도_스택은_그대로()
         {
-            TowerController tower = MakeTower(1101, attackCount: 10);
-            RunAct(tower);
+            TowerController tower = MakeTower(1101);
+            for (int i = 0; i < 10; i++) RunAct(tower);
             tower.SetSpawnTile(SpawnTileType.Power);     // Changed → RecalculateStats
 
             Assert.AreEqual(10f, tower.State.Stack.Current, 0.0001f);

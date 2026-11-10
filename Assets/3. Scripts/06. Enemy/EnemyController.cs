@@ -28,7 +28,9 @@ namespace SquareTD
         }
         public void SetSortingOrder(int order) => Movement.SetSortingOrder(order);
 
-        public float Heal(float amount) => Health.Heal(amount * Mathf.Max(0f, Stats.Get(StatType.HealingTaken)));
+        public const float MinHealingTaken = 0.2f;
+
+        public float Heal(float amount) => Health.Heal(amount * Mathf.Max(MinHealingTaken, Stats.Get(StatType.HealingTaken)));
 
         private void Awake()
         {

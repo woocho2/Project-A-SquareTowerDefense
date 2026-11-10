@@ -148,14 +148,16 @@ namespace SquareTD
 
             if (!support)
             {
-                bool manual = TowerManager.Instance != null && TowerManager.Instance.StackModes.IsManual(definition);
-                Row("스택 소모", manual ? (state.Stack.ManualRequested ? "수동 · 눌림 (다음 스킬 2에 씀)" : "수동 · 안 눌림") : "자동");
-                Row("스킬 2", tower.Skill == null ? "없음" : $"{tower.Skill.GetType().Name} · 적중 {state.SkillHitCount} / {stats.Duration}회");
+                Row("스킬 2", tower.Skill == null ? "없음" : $"{tower.Skill.GetType().Name} · 스킬 카운트 {state.SkillCount:0.#} / {stats.SkillCount:0.#}");
                 Row("우선순위", $"{state.TargetPriority}{(state.AttackCellIndex >= 0 ? $" · 공격 칸 {state.AttackCellIndex}" : "")}");
 
                 var received = new List<string>();
-                foreach (Zone zone in state.ReceivedZoneBuffs.Keys) received.Add($"{zone.Owner.name} ({zone.Stage})");
-                Row("받는 존 버프", received.Count > 0 ? string.Join(", ", received) : "없음");
+                foreach (KeyValuePair<TowerEmblem, SupportBuffEntry> pair in state.SupportBuffs)
+                {
+                    SupportCast? active = SupportBuffs.GetActive(tower, pair.Key);
+                    if (active.HasValue) received.Add($"{EmblemNames.GetEmblemName(pair.Key)} {active.Value.SkillName}{(active.Value.IsSkill2 ? $" {pair.Value.Skill2Left}회 남음" : "")}");
+                }
+                Row("받는 버프", received.Count > 0 ? string.Join(", ", received) : "없음");
 
                 var timed = new List<string>();
                 foreach (KeyValuePair<string, int> pair in state.TimedBuffs) timed.Add($"{pair.Key} {pair.Value}회 행동 남음");
@@ -181,7 +183,7 @@ namespace SquareTD
             {
                 string kind = zone.IsBuff ? "버프존" : "디버프존";
                 string cell = !zone.IsPlaced ? "자리 안 고름" : zone.IsBuff ? $"스폰 {zone.CellIndex}번" : $"길 {zone.CellIndex}번";
-                Row($"  {title}", $"{EmblemNames.GetEmblemName(zone.Emblem)} {kind} · {cell} · {zone.Stack:0.#} / {zone.Owner.Stats.Stack} · {zone.Stage}");
+                Row($"  {title}", $"{EmblemNames.GetEmblemName(zone.Emblem)} {kind} · {cell} · 스킬 카운트 {zone.Owner.State.SkillCount:0.#} / {zone.Owner.Stats.SkillCount:0.#}");
             }
         }
 
@@ -190,8 +192,9 @@ namespace SquareTD
             switch (color)
             {
                 case TowerColor.Red:
-                case TowerColor.Blue: return $"스킬 2까지 적중 {stats.Duration}회";
-                case TowerColor.Purple: return $"디버프 유지 {stats.Duration}회 행동";
+                case TowerColor.Blue:
+                case TowerColor.Yellow:
+                case TowerColor.Purple: return $"스킬 2까지 스킬 카운트 {stats.SkillCount:0.#}";
                 default: return "-";
             }
         }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 블랙홀 장판: 적을 끌어당기고 매 턴 피해
+    // 블랙홀 장판: 범위 안의 적을 매 턴 블랙홀 쪽으로 1칸 끌어당기고 피해 (끌려간 칸의 타일 효과를 받음)
     public class BlackHoleGround : GroundEffect
     {
         private readonly BoardGrid m_grid;
@@ -43,33 +43,21 @@ namespace SquareTD
                     Emblem = TowerEmblem.Darkness,
                     BaseDamage = Damage,
                 });
+                Pull(target.Body);
             }
             SkillEffectTable.PlayBlackHoleTurn(this, hitPositions);
         }
 
-        public static void GetPull(ZoneStage darkness, out int lower, out int higher, out float backChance)
+        private void Pull(EnemyController enemy)
         {
-            switch (darkness)
-            {
-                case ZoneStage.Skill2: lower = 4; higher = 5; backChance = 1f; break;
-                case ZoneStage.Skill1: lower = 3; higher = 4; backChance = 0.8f; break;
-                default: lower = 2; higher = 3; backChance = 0.6f; break;
-            }
+            if (enemy == null || !enemy.IsAlive || enemy.Movement == null || enemy.PathIndex == m_center) return;
+            int step = enemy.PathIndex > m_center ? -1 : 1;
+            enemy.Movement.TeleportTo(enemy.PathIndex + step);
+            EnemyTileEffectApplier.ApplyForcedStop(enemy);
         }
 
-        public override MoveRange ModifyMove(EnemyController enemy, MoveRange range)
-        {
-            if (enemy.PathIndex == m_center) return range;
+        public override MoveRange ModifyMove(EnemyController enemy, MoveRange range) => range;
 
-            GetPull(EmblemDebuffEffect.StageOn(enemy, TowerEmblem.Darkness), out int lower, out int higher, out float backChance);
-
-            if (enemy.PathIndex < m_center) return new MoveRange(range.Min + lower, range.Max + lower, range.Action);
-
-            var faster = new MoveRange(range.Min + higher, range.Max + higher, range.Action);
-            if (!Chance.Roll(enemy.Resistance.ResistWeak(backChance))) return faster;
-            return new MoveRange(-faster.Max, -faster.Min, faster.Action);
-        }
-
-        public override string Describe() => $"블랙홀: 매 턴 {Damage:0.##} 피해, 맵 전체를 {m_center}번 칸으로 끌어당김, {RemainingTurns}턴 남음";
+        public override string Describe() => $"블랙홀: 매 턴 {Damage:0.##} 피해, 범위 안의 적을 {m_center}번 칸 쪽으로 1칸씩 끌어당김, {RemainingTurns}턴 남음";
     }
 }

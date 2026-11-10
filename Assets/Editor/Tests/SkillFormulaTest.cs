@@ -42,44 +42,22 @@ namespace SquareTD.Tests
         // ── 버프·디버프 ──
 
         [Test]
-        public void 스킬1은_스택이_없으면_0()
+        public void 스킬1은_Power()
         {
-            Assert.AreEqual(0f, SkillFormula.SupportSkill1(10f, 2f, 0f, 1f), Eps);
+            Assert.AreEqual(1f, SkillFormula.SupportSkill1(1f), Eps);
         }
 
         [Test]
-        public void 스킬1은_스택만큼_오름()
+        public void 스킬2는_Power_곱하기_1_더하기_AbilityValue()
         {
-            // 기획 예: Power 10, AbilityValue 2, maxStack 60 → 스킬 1은 0 ~ 1.2%
-            Assert.AreEqual(0.006f, SkillFormula.SupportSkill1(10f, 2f, 30f, 1f), Eps, "반쯤 쌓이면 0.6%");
-            Assert.AreEqual(0.012f, SkillFormula.SupportSkill1(10f, 2f, 60f, 1f), Eps, "다 쌓이면 1.2%");
+            Assert.AreEqual(1.05f, SkillFormula.SupportSkill2(1f, 0.05f), Eps, "기준값: Power 1, AbilityValue 0.05");
+            Assert.AreEqual(1.6f, SkillFormula.SupportSkill2(1f, 0.6f), Eps);
         }
 
         [Test]
-        public void 스킬2는_최대_스택의_값()
+        public void 차지를_쓰면_AbilityValue에_1_더하기_차지_곱하기_ChargeValue()
         {
-            Assert.AreEqual(0.012f, SkillFormula.SupportSkill2(10f, 2f, 60f, 1f), Eps);
-        }
-
-        [Test]
-        public void 다_쌓은_스킬1과_스킬2는_같음()
-        {
-            Assert.AreEqual(SkillFormula.SupportSkill1(10f, 2f, 60f, 1f), SkillFormula.SupportSkill2(10f, 2f, 60f, 1f), Eps);
-        }
-
-        [Test]
-        public void 컬러_레벨_2에서_4까지는_2점4퍼센트()
-        {
-            // 레벨 2: AbilityValue ×2
-            Assert.AreEqual(0.024f, SkillFormula.SupportSkill2(10f, 4f, 60f, 1f), Eps);
-            // 레벨 4: AbilityValue ×2, 최대 스택 30, StackValue 2 → 값은 그대로
-            Assert.AreEqual(0.024f, SkillFormula.SupportSkill2(10f, 4f, 30f, 2f), Eps);
-        }
-
-        [Test]
-        public void 컬러_레벨_5에서는_4점8퍼센트()
-        {
-            Assert.AreEqual(0.048f, SkillFormula.SupportSkill2(10f, 8f, 30f, 2f), Eps);
+            Assert.AreEqual(125f, SkillFormula.ChargedAbility(50f, 100f, 1.5f), Eps, "50 × (1 + 100 × 0.01 × 1.5) = 125");
         }
 
         // ── 저항 ──
@@ -106,12 +84,11 @@ namespace SquareTD.Tests
         // ── 유지 시간 ──
 
         [Test]
-        public void 유지_시간은_레벨_곱하기_2()
+        public void 유지_시간은_레벨_곱하기_Tier()
         {
-            Assert.AreEqual(2, SkillFormula.DefaultDuration(1));
-            Assert.AreEqual(6, SkillFormula.DefaultDuration(3));
-            Assert.AreEqual(10, SkillFormula.DefaultDuration(5));
-            Assert.AreEqual(12, SkillFormula.DefaultDuration(6), "대지의 만개로 레벨 6이면 12");
+            Assert.AreEqual(1, SkillFormula.EffectDuration(1, 1));
+            Assert.AreEqual(12, SkillFormula.EffectDuration(3, 4));
+            Assert.AreEqual(25, SkillFormula.EffectDuration(5, 5));
         }
     }
 }

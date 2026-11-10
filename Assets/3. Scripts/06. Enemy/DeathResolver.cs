@@ -55,6 +55,11 @@ namespace SquareTD
 
             TowerController killer = kill.Damage.Attacker;
             float reward = killer != null && killer.Stats != null ? killer.Stats.Get(StatType.RewardBonus) : 0f;
+            if (killer != null && killer.Stats != null)
+            {
+                goldRate += killer.Stats.Get(StatType.GoldBonus);
+                if (Chance.Roll(killer.Stats.Get(StatType.GoldDoubleChance))) goldRate += 1f;
+            }
 
             gold = UnityEngine.Mathf.FloorToInt(gold * (1f + goldRate + reward) + 0.001f);
             gem = UnityEngine.Mathf.FloorToInt(gem * (1f + reward) + 0.001f);

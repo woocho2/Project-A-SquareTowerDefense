@@ -2,9 +2,11 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 바람 광역 — 칼바람
+    // 바람 광역 — 윈드 슬래쉬 (착탄 범위, 반드시 치명타, 총 피해를 적 수로 나눔, 가속 상태면 치명타 배율 + 가속 × 0.01)
     public class WindSplashSkill : AttackSkill
     {
+        public const float AccelerationRate = 0.01f;
+
         private int m_areaCount = 1;
 
         public WindSplashSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
@@ -14,7 +16,6 @@ namespace SquareTD
         {
             if (mainTarget == null) return new List<ITarget>();
             List<ITarget> area = SkillArea.Impact(m_grid, m_occupancy, mainTarget.PathIndex, owner.Stats.Mastery);
-
             m_areaCount = 0;
             foreach (ITarget target in area)
             {
@@ -28,27 +29,14 @@ namespace SquareTD
 
         protected override float ModifyOutgoingDamage(TowerController owner, ITarget target)
         {
-            return WindMultiplier(target) / m_areaCount;
+            float multiplier = 1f / m_areaCount;
+            float acceleration = Acceleration.Get(owner);
+            if (acceleration <= 0f) return multiplier;
+
+            float crit = CriticalRoll.Multiplier(owner.Stats.CriticalDamage);
+            return multiplier * (crit + acceleration * AccelerationRate) / crit;
         }
 
-        private static float WindMultiplier(ITarget target)
-        {
-            ZoneStage wind = EmblemDebuffEffect.StageOn(target, TowerEmblem.Wind);
-            if (wind == ZoneStage.Skill2) return 3f;
-            if (wind == ZoneStage.Skill1) return 2f;
-            return 1f;
-        }
-
-        protected override void OnHitTarget(TowerController owner, ITarget target, DamageInfo hit)
-        {
-            ProjectileHitResolver.HitSingle(target, hit);
-        }
-
-        public override void OnBasicHit(TowerController owner, ITarget target)
-        {
-            ZoneStage wind = EmblemDebuffEffect.StageOn(target, TowerEmblem.Wind);
-            if (wind == ZoneStage.None) return;
-            owner.AdvanceSkillCount(wind == ZoneStage.Skill2 ? 2 : 1, target);
-        }
+        protected override void OnHitTarget(TowerController owner, ITarget target, DamageInfo hit) => ProjectileHitResolver.HitSingle(target, hit);
     }
 }

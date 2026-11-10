@@ -36,7 +36,7 @@ namespace SquareTD.Tests
         {
             Assert.AreEqual("소드 마스터", EmblemNames.GetConceptName(TowerEmblem.Sword, TowerColor.Red));
             Assert.AreEqual("잭 프로스트", EmblemNames.GetConceptName(TowerEmblem.Ice, TowerColor.Blue));
-            Assert.AreEqual("블랙스미스", EmblemNames.GetConceptName(TowerEmblem.Hammer, TowerColor.Yellow));
+            Assert.AreEqual("골드스미스", EmblemNames.GetConceptName(TowerEmblem.Hammer, TowerColor.Yellow));
             Assert.AreEqual("레이스", EmblemNames.GetConceptName(TowerEmblem.Darkness, TowerColor.Purple));
         }
 

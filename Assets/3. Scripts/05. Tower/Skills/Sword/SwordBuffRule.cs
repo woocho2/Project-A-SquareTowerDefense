@@ -2,27 +2,17 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 검 버프 — 블레싱 · 글로리
+    // 검 버프 — 브레이브 소드 · 글로리 소드 (공격력, 글로리 소드 최종 피해 +10%, 베기 치명타 확률 +10%)
     public class SwordBuffRule : BuffRule
     {
-        public override List<StatModifier> GetModifiers(Zone zone, TowerController receiver, string source)
+        public const float GloryFinalDamage = 0.1f;
+        public const float SlashCritRate = 0.1f;
+
+        public override List<StatModifier> GetModifiers(SupportCast cast, TowerController receiver, string source)
         {
-            bool isSkill2 = zone.Stage == ZoneStage.Skill2;
-            var modifiers = new List<StatModifier>
-            {
-                StatModifier.Percent(source, StatType.Power, SkillFormula.ZoneValue(zone)),
-            };
-
-            if (isSkill2)
-            {
-                modifiers.Add(StatModifier.Flat(source, StatType.FinalDamage, 0.1f));
-            }
-
-            if (IsSynergy(zone, receiver))
-            {
-                float critBonus = isSkill2 ? 0.1f : 0.05f;
-                modifiers.Add(StatModifier.Flat(source, StatType.CritRate, critBonus));
-            }
+            var modifiers = new List<StatModifier> { StatModifier.Percent(source, StatType.Power, cast.Rate) };
+            if (cast.IsSkill2) modifiers.Add(StatModifier.Flat(source, StatType.FinalDamage, GloryFinalDamage));
+            if (IsSynergy(cast, receiver)) modifiers.Add(StatModifier.Flat(source, StatType.CritRate, SlashCritRate));
             return modifiers;
         }
     }

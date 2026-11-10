@@ -96,6 +96,10 @@ namespace SquareTD
         MapBuffRate = 27,
         RewardBonus = 28,
         ForceFixedDamage = 29,
+        GoldBonus = 30,
+        GoldDoubleChance = 31,
+        ChargeBonus = 32,
+        LostHpDamage = 33,
     }
 
     public enum PathTileType

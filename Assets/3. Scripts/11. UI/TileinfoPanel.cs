@@ -142,7 +142,7 @@ namespace SquareTD
             string kind = zone.IsBuff ? "버프존" : "디버프존";
             string stageName = SkillDescriptions.GetZoneStageName(zone);
             int maxStack = zone.Owner != null ? zone.Owner.Stats.Stack : 0;
-            string progress = zone.Stage == ZoneStage.Skill2 ? "스킬 2 (다 참)" : $"스킬 1 · 스택 {zone.Stack:0.#} / {maxStack}";
+            string progress = zone.Owner != null ? $"스킬 카운트 {zone.Owner.State.SkillCount:0.#} / {zone.Owner.Stats.SkillCount:0.#} · 차지 {zone.Owner.State.Stack.Current:0} / {maxStack}" : "-";
             string owner = zone.Owner != null ? zone.Owner.name : "-";
             string rule = zone.Owner != null ? SkillDescriptions.GetDescription(zone.Owner.Definition, zone.Owner.Stats) : "";
 

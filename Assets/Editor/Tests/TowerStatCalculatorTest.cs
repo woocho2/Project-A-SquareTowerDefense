@@ -28,7 +28,7 @@ namespace SquareTD.Tests
             Assert.AreEqual(1.5f, stats.CriticalDamage, 0.0001f);
             Assert.AreEqual(1, stats.Mastery);
             Assert.AreEqual(60, stats.Stack);
-            Assert.AreEqual(5, stats.Duration);
+            Assert.AreEqual(5f, stats.SkillCount, 0.0001f);
             Assert.AreEqual(2f, stats.AbilityValue, 0.0001f);
             Assert.AreEqual(1f, stats.StackValue, 0.0001f);
             Assert.AreEqual(1, stats.ColorLevel);
@@ -45,7 +45,7 @@ namespace SquareTD.Tests
             Assert.AreEqual(3, stats.AttackCount);
             Assert.AreEqual(30, stats.Stack);
             Assert.AreEqual(2.5f, stats.StackValue, 0.0001f);
-            Assert.AreEqual(2, stats.Duration, "5 × 0.5 = 2.5 → 반올림 2");
+            Assert.AreEqual(2f, stats.SkillCount, 0.0001f, "5 × 0.5 = 2.5 → 반올림 2");
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace SquareTD.Tests
         {
             TowerFinalStats stats = Calc(Def(4401), Def(1401), 1);
 
-            Assert.AreEqual(4, stats.Duration, "5 × 0.8");
+            Assert.AreEqual(4f, stats.SkillCount, 0.0001f, "5 × 0.8");
         }
 
         [Test]
@@ -74,14 +74,14 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 레벨5는_AbilityValue_x4()
+        public void 레벨5는_AbilityValue_x16()
         {
             TowerFinalStats stats = Calc(Def(1101), null, 5);
 
-            Assert.AreEqual(8f, stats.AbilityValue, 0.0001f);
+            Assert.AreEqual(32f, stats.AbilityValue, 0.0001f, "2 × 16");
             Assert.AreEqual(3, stats.AttackCount);
             Assert.AreEqual(2, stats.Mastery);
-            Assert.AreEqual(5, stats.Duration, "공격 타워의 Duration은 컬러 강화로 안 바뀜");
+            Assert.AreEqual(5f, stats.SkillCount, 0.0001f, "공격 타워의 Duration은 컬러 강화로 안 바뀜");
         }
 
         [Test]
@@ -93,20 +93,12 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 만개는_레벨6_AbilityValue_x6()
+        public void 쓸_레벨은_최대_5()
         {
-            TowerFinalStats stats = Calc(Def(1101), null, 5, StatModifier.Flat("만개", StatType.ColorLevelBonus, 1f));
+            TowerFinalStats stats = Calc(Def(1101), null, 5, StatModifier.Flat("보정", StatType.ColorLevelBonus, 1f));
 
-            Assert.AreEqual(6, stats.ColorLevel);
-            Assert.AreEqual(12f, stats.AbilityValue, 0.0001f);
-        }
-
-        [Test]
-        public void 쓸_레벨은_최대_6()
-        {
-            TowerFinalStats stats = Calc(Def(1101), null, 5, StatModifier.Flat("만개", StatType.ColorLevelBonus, 2f));
-
-            Assert.AreEqual(6, stats.ColorLevel);
+            Assert.AreEqual(5, stats.ColorLevel);
+            Assert.AreEqual(32f, stats.AbilityValue, 0.0001f, "2 × 16");
         }
 
         [Test]
@@ -132,7 +124,7 @@ namespace SquareTD.Tests
         {
             TowerFinalStats stats = Calc(Def(1301), null, 5,
                 StatModifier.Percent("버프", StatType.Power, 0.5f),
-                StatModifier.Flat("만개", StatType.ColorLevelBonus, 1f));
+                StatModifier.Flat("보정", StatType.ColorLevelBonus, 1f));
 
             Assert.AreEqual(10f, stats.Power, 0.0001f);
             Assert.AreEqual(5, stats.ColorLevel);

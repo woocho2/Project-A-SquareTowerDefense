@@ -2,59 +2,61 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 바람 디버프 — 역풍 · 난기류
+    // 바람 디버프 — 윈드 시어 · 터뷸런스 (다음 이동 최소·최대 +5, 이동한 칸 × 값 피해, 모든 아군에게 가속,
+    //                                    터뷸런스 최대 Action +3, 바람 타워가 치면 그 타워의 스킬 카운트 +2)
     public class WindDebuffRule : DebuffRule
     {
-        public const float TurbulenceRate = 0.04f;
+        public const int GustSpeed = 5;
+        public const int TurbulenceAction = 3;
+        public const float WindSkillCount = 2f;
 
-        public override StatusEffect CreateEffect(Zone zone, EnemyController enemy)
+        public override void OnApply(SupportCast cast, EnemyController enemy)
         {
-            bool isSkill2 = zone.Stage == ZoneStage.Skill2;
-            float chance = Resist(enemy, SkillFormula.ZoneValue(zone));
-            float hpRate = isSkill2 ? Resist(enemy, TurbulenceRate) : 0f;
-            return new WindDebuffEffect(zone, chance, hpRate);
+            if (!cast.IsSkill2) Acceleration.AddToAll(cast.Amount);
         }
+
+        public override void OnSkill2(SupportCast cast) => Acceleration.AddToAll(cast.Amount);
+
+        public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy) => new WindDebuffEffect(cast);
     }
 
     public class WindDebuffEffect : EmblemDebuffEffect
     {
-        private readonly TowerController m_owner;
-        private readonly float m_chance;
-        private readonly float m_hpRate;
+        private bool m_pending = true;
 
-        public WindDebuffEffect(Zone zone, float chance, float hpRate)
-            : base(TowerEmblem.Wind, zone.Stage, zone.Owner.Stats.Duration, chance,
-                   $"이동할 때 {chance * 100f:0.##}%로 −최대 ~ +최대" + (hpRate > 0f ? $", 이동한 칸마다 현재 체력 {hpRate * 100f:0.#}%" : ""))
+        public WindDebuffEffect(SupportCast cast)
+            : base(cast, $"다음 이동 최소·최대 +{WindDebuffRule.GustSpeed}, 이동한 칸 × {cast.Amount:0.##} 피해" + (cast.IsSkill2 ? $", 최대 Action +{WindDebuffRule.TurbulenceAction}" : ""),
+                   cast.IsSkill2 ? new[] { StatModifier.Flat(KeyOf(TowerEmblem.Wind), StatType.MaxAction, WindDebuffRule.TurbulenceAction) } : new StatModifier[0])
         {
-            m_owner = zone.Owner;
-            m_chance = chance;
-            m_hpRate = hpRate;
         }
 
         public override MoveRange OnDecideMove(EnemyController enemy, MoveRange range)
         {
-            if (range.Min == 0 && range.Max == 0) return range;
-            if (!Chance.Roll(m_chance)) return range;
-            return new MoveRange(-range.Max, range.Max, range.Action);
+            if (!m_pending || (range.Min == 0 && range.Max == 0)) return range;
+            return new MoveRange(range.Min + WindDebuffRule.GustSpeed, range.Max + WindDebuffRule.GustSpeed, range.Action);
         }
 
         public override void OnMoved(EnemyController enemy, int steps)
         {
-            if (m_hpRate <= 0f || steps == 0) return;
+            if (!m_pending) return;
+            m_pending = false;
+            if (steps == 0) return;
             enemy.TakeDamage(new DamageInfo
             {
-                Attacker = m_owner != null ? m_owner : null,
+                Attacker = Cast.Owner,
                 Source = DamageSource.Dot,
                 Emblem = TowerEmblem.Wind,
-                BaseDamage = enemy.CurrentHp * m_hpRate * Mathf.Abs(steps),
+                BaseDamage = Mathf.Abs(steps) * Cast.Amount,
                 ForceFixed = true,
             });
         }
 
-        public override float GetCritRateBonus(TowerController attacker)
+        public override void OnDamageTaken(EnemyController enemy, DamageInfo info, float damage)
         {
-            if (attacker == null || attacker.Definition.Emblem != TowerEmblem.Wind || !attacker.IsTarget) return 0f;
-            return IsPermanent ? 0.2f : 0.1f;
+            if (!IsSkill2 || info.Source != DamageSource.Basic) return;
+            TowerController attacker = info.Attacker;
+            if (attacker == null || attacker.Definition.Emblem != TowerEmblem.Wind || !attacker.IsAttackTower) return;
+            attacker.AdvanceSkillCount(WindDebuffRule.WindSkillCount, enemy);
         }
     }
 }

@@ -1,41 +1,42 @@
 namespace SquareTD
 {
-    // 얼음 디버프 — 동상 · 저체온증
+    // 얼음 디버프 — 프로스트바이트 · 딥 프리즈 (한기 스택, 딥 프리즈는 한기를 모두 없애고 빙결, 그동안 한기·빙결인 적 받는 피해 +50%)
     public class IceDebuffRule : DebuffRule
     {
-        public override StatusEffect CreateEffect(Zone zone, EnemyController enemy)
+        public const float DeepFreezeDamageTaken = 0.5f;
+
+        public override void OnApply(SupportCast cast, EnemyController enemy)
         {
-            float freezeChance = Resist(enemy, SkillFormula.ZoneValue(zone));
-            return new IceDebuffEffect(zone, freezeChance);
+            if (!cast.IsSkill2)
+            {
+                ChillEffect.Add(enemy, Resist(enemy, cast.Amount));
+                return;
+            }
+
+            if (!ChillEffect.IsChilled(enemy)) return;
+            enemy.Status.Remove(ChillEffect.ChillKey);
+            enemy.Status.Add(new FreezeEffect());
         }
+
+        public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy) =>
+            cast.IsSkill2 ? new IceDebuffEffect(cast, Resist(enemy, DeepFreezeDamageTaken)) : null;
     }
 
     public class IceDebuffEffect : EmblemDebuffEffect
     {
-        private readonly float m_freezeChance;
+        private readonly float m_damageTaken;
 
-        public IceDebuffEffect(Zone zone, float freezeChance)
-            : base(TowerEmblem.Ice, zone.Stage, zone.Owner.Stats.Duration, freezeChance,
-                   $"턴마다 {freezeChance * 100f:0.##}%로 빙결" + (zone.Stage == ZoneStage.Skill2 ? ", 최소·최대 이동력 −1" : ""),
-                   SpeedModifiers(zone.Stage == ZoneStage.Skill2))
+        public IceDebuffEffect(SupportCast cast, float damageTaken)
+            : base(cast, $"한기·빙결인 동안 받는 피해 +{damageTaken * 100f:0.#}%")
         {
-            m_freezeChance = freezeChance;
+            m_damageTaken = damageTaken;
         }
 
-        private static StatModifier[] SpeedModifiers(bool isSkill2)
+        public override float ModifyIncomingDamage(EnemyController enemy, DamageInfo info, float damage)
         {
-            if (!isSkill2) return new StatModifier[0];
-            string source = KeyOf(TowerEmblem.Ice);
-            return new[]
-            {
-                StatModifier.Flat(source, StatType.SpeedMin, -1f),
-                StatModifier.Flat(source, StatType.SpeedMax, -1f),
-            };
-        }
-
-        public override void OnTurn(EnemyController enemy)
-        {
-            if (Chance.Roll(m_freezeChance)) enemy.Status.Add(new FreezeEffect());
+            if (!ChillEffect.IsChilled(enemy) && !FreezeEffect.IsFrozen(enemy)) return damage;
+            float taken = enemy.Stats.Get(StatType.DamageTaken);
+            return taken > 0f ? damage * (taken + m_damageTaken) / taken : damage;
         }
     }
 }

@@ -1,37 +1,47 @@
+using System.Collections.Generic;
+
 namespace SquareTD
 {
-    // 어둠 디버프 — 잠식 · 침식
+    // 어둠 디버프 — 미아즈마 · 다크 플레이그 (침식 스택과 같은 양의 침식 카운트, 다크 플레이그 동안 침식인 적 추가 피해 +10%,
+    //                                       어둠 타워가 치면 그 타일의 모든 적 침식 +1)
     public class DarknessDebuffRule : DebuffRule
     {
-        public const float ErosionDamageTaken = 0.1f;
+        public const float PlagueBonusDamage = 0.1f;
+        public const float DarkTileErosion = 1f;
 
-        public override StatusEffect CreateEffect(Zone zone, EnemyController enemy)
+        public override void OnApply(SupportCast cast, EnemyController enemy)
         {
-            float countBonus = SkillFormula.ZoneValue(zone) * 100f;
-            float damageTaken = zone.Stage == ZoneStage.Skill2 ? Resist(enemy, ErosionDamageTaken) : 0f;
-            return new DarknessDebuffEffect(zone, countBonus, damageTaken);
+            ErosionEffect.Add(enemy, cast.Amount);
+            EmblemSharedState.Current.AddDarkness(cast.Amount);
         }
+
+        public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy) =>
+            cast.IsSkill2 ? new DarknessDebuffEffect(cast) : null;
     }
 
     public class DarknessDebuffEffect : EmblemDebuffEffect
     {
-        private readonly float m_countBonus;
+        public DarknessDebuffEffect(SupportCast cast)
+            : base(cast, "침식인 동안 추가 피해 +10%, 어둠 타워에게 맞으면 그 타일의 모든 적 침식 +1") { }
 
-        public DarknessDebuffEffect(Zone zone, float countBonus, float damageTaken)
-            : base(TowerEmblem.Darkness, zone.Stage, zone.Owner.Stats.Duration, countBonus,
-                   $"죽으면 카운트 +{countBonus:0.##}" + (damageTaken > 0f ? $", 받는 피해 +{damageTaken * 100f:0.#}%" : ""),
-                   DamageModifiers(damageTaken))
+        public override float ModifyIncomingDamage(EnemyController enemy, DamageInfo info, float damage)
         {
-            m_countBonus = countBonus;
+            if (info.Attacker == null || ErosionEffect.Get(enemy) <= 0f) return damage;
+            return damage * (1f + DarknessDebuffRule.PlagueBonusDamage);
         }
 
-        private static StatModifier[] DamageModifiers(float damageTaken) => damageTaken > 0f
-            ? new[] { StatModifier.Flat(KeyOf(TowerEmblem.Darkness), StatType.DamageTaken, damageTaken) }
-            : new StatModifier[0];
-
-        public override void OnDeath(EnemyController enemy, KillInfo kill)
+        public override void OnDamageTaken(EnemyController enemy, DamageInfo info, float damage)
         {
-            EmblemSharedState.Current.AddDarkness(m_countBonus);
+            TowerController attacker = info.Attacker;
+            if (attacker == null || attacker.Definition.Emblem != TowerEmblem.Darkness || !attacker.IsAttackTower) return;
+            if (info.Source != DamageSource.Basic && info.Source != DamageSource.Skill) return;
+            if (BoardManager.Instance == null) return;
+
+            foreach (ITarget other in new List<ITarget>(BoardManager.Instance.Occupancy.GetAt(enemy.PathIndex)))
+            {
+                EnemyController body = other.Body;
+                if (body != null && body.IsAlive && !other.IsDummy) ErosionEffect.Add(body, DarknessDebuffRule.DarkTileErosion);
+            }
         }
     }
 }

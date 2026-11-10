@@ -219,6 +219,17 @@ namespace SquareTD.Tests
         }
 
         [Test]
+        public void 적응형_능력치_범위는_모드별로_스토리_1_4_노말_3_6_하드_5_8()
+        {
+            Assert.AreEqual(1, WaveTable.GetAdaptiveMin(GameMode.Story));
+            Assert.AreEqual(4, WaveTable.GetAdaptiveMax(GameMode.Story));
+            Assert.AreEqual(3, WaveTable.GetAdaptiveMin(GameMode.Normal));
+            Assert.AreEqual(6, WaveTable.GetAdaptiveMax(GameMode.Normal));
+            Assert.AreEqual(5, WaveTable.GetAdaptiveMin(GameMode.Hard));
+            Assert.AreEqual(8, WaveTable.GetAdaptiveMax(GameMode.Hard));
+        }
+
+        [Test]
         public void normal_웨이브27_gold_30_gem_0()
         {
             WaveTable.GetKillReward(EnemyKind.Normal, 27, out int gold, out int gem);

@@ -38,6 +38,13 @@ namespace SquareTD
             return targets;
         }
 
+        public static float LostHpMultiplier(TowerFinalStats stats, ITarget target)
+        {
+            float rate = stats.Get(StatType.LostHpDamage);
+            if (rate <= 0f || target == null || target.MaxHp <= 0f) return 1f;
+            return 1f + rate * Mathf.Clamp01(1f - target.CurrentHp / target.MaxHp);
+        }
+
         protected DamageInfo MakeBasicHit(TowerController tower, TowerFinalStats stats, ITarget target, bool isCritical)
         {
             float critMultiplier = isCritical ? CriticalRoll.Multiplier(stats.CriticalDamage) : 1f;
@@ -52,7 +59,7 @@ namespace SquareTD
                 Source = DamageSource.Basic,
                 Emblem = tower.Definition.Emblem,
                 Attribute = tower.Definition.Attribute,
-                BaseDamage = DamageCalculator.GetOutgoing(stats.Power, stats.GetDistanceMultiplier(distance), critMultiplier) * stats.FinalDamageMultiplier * skillMultiplier,
+                BaseDamage = DamageCalculator.GetOutgoing(stats.Power, stats.GetDistanceMultiplier(distance), critMultiplier) * stats.FinalDamageMultiplier * skillMultiplier * LostHpMultiplier(stats, target),
                 IsCritical = isCritical,
                 CritMultiplier = critMultiplier,
                 ArmorPenetration = stats.ArmorPenetration,

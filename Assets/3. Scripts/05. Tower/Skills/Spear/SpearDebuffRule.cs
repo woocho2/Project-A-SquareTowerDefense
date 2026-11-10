@@ -1,56 +1,100 @@
-using UnityEngine;
+using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 창 디버프 — 출혈 · 과다출혈
+    // 창 디버프 — 래서레이트 · 헤머리지 (받은 피해의 일부가 출혈, 헤머리지 최소·최대 이동력 -1, 찌르기의 출혈 2배)
     public class SpearDebuffRule : DebuffRule
     {
-        public const float MoveDamageRate = 0.02f;
+        public const float PierceBleedMultiplier = 2f;
 
-        public override StatusEffect CreateEffect(Zone zone, EnemyController enemy)
+        public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy)
         {
-            bool isSkill2 = zone.Stage == ZoneStage.Skill2;
-            float healingCut = Resist(enemy, SkillFormula.ZoneValue(zone));
-            float pierceMax = Resist(enemy, isSkill2 ? 0.2f : 0.1f);
-            float moveDamage = isSkill2 ? Resist(enemy, MoveDamageRate) : 0f;
-            return new SpearDebuffEffect(zone, healingCut, pierceMax, moveDamage);
+            return new SpearDebuffEffect(cast, Resist(enemy, cast.Rate));
         }
     }
 
     public class SpearDebuffEffect : EmblemDebuffEffect
     {
-        private readonly TowerController m_owner;
-        private readonly float m_pierceMax;
-        private readonly float m_moveDamage;
+        private readonly float m_bleedRate;
 
-        public SpearDebuffEffect(Zone zone, float healingCut, float pierceMax, float moveDamage)
-            : base(TowerEmblem.Spear, zone.Stage, zone.Owner.Stats.Duration, healingCut,
-                   $"받는 치유 −{healingCut * 100f:0.##}%, 찌르기 피해 최대 +{pierceMax * 100f:0.#}%" + (moveDamage > 0f ? $", 이동한 칸마다 최대 체력 {moveDamage * 100f:0.#}%" : ""),
-                   StatModifier.Flat(KeyOf(TowerEmblem.Spear), StatType.HealingTaken, -healingCut))
+        public SpearDebuffEffect(SupportCast cast, float bleedRate)
+            : base(cast, $"받은 피해의 {bleedRate * 100f:0.##}%가 {cast.Duration}턴 출혈" + (cast.IsSkill2 ? ", 최소·최대 이동력 −1, 찌르기의 출혈 2배" : ""), Modifiers(cast))
         {
-            m_owner = zone.Owner;
-            m_pierceMax = pierceMax;
-            m_moveDamage = moveDamage;
+            m_bleedRate = bleedRate;
         }
 
-        public override float ModifyIncomingDamage(EnemyController enemy, DamageInfo info, float damage)
+        private static StatModifier[] Modifiers(SupportCast cast)
         {
-            if (info.Attribute != AttackAttribute.Pierce || enemy.MaxHp <= 0f) return damage;
-            float lost = Mathf.Clamp01(1f - enemy.CurrentHp / enemy.MaxHp);
-            return damage * (1f + m_pierceMax * lost);
+            if (!cast.IsSkill2) return new StatModifier[0];
+            string source = KeyOf(TowerEmblem.Spear);
+            return new[] { StatModifier.Flat(source, StatType.SpeedMin, -1f), StatModifier.Flat(source, StatType.SpeedMax, -1f) };
         }
 
-        public override void OnMoved(EnemyController enemy, int steps)
+        public override void OnDamageTaken(EnemyController enemy, DamageInfo info, float damage)
         {
-            if (m_moveDamage <= 0f || steps == 0) return;
+            if (damage <= 0f || m_bleedRate <= 0f) return;
+            if (info.Source == DamageSource.Dot && info.Emblem == TowerEmblem.Spear) return;
+
+            float bleed = damage * m_bleedRate;
+            if (IsSkill2 && info.Attribute == AttackAttribute.Pierce) bleed *= SpearDebuffRule.PierceBleedMultiplier;
+            BleedEffect.Add(enemy, Cast.Owner, bleed, Cast.Duration);
+        }
+    }
+
+    // 출혈 — 피해마다 따로 생겨 각자의 턴 수만큼 매 턴 들어감
+    public class BleedEffect : StatusEffect
+    {
+        public const string BleedKey = "출혈";
+
+        private readonly List<(float damage, int turns)> m_bleeds = new List<(float, int)>();
+        private TowerController m_owner;
+
+        private BleedEffect() : base(1) { }
+
+        public override string Key => BleedKey;
+        public override bool IsPermanent => true;
+        public float TurnDamage
+        {
+            get
+            {
+                float sum = 0f;
+                foreach (var bleed in m_bleeds) sum += bleed.damage;
+                return sum;
+            }
+        }
+
+        public static void Add(EnemyController enemy, TowerController owner, float damage, int turns)
+        {
+            if (enemy == null || !enemy.IsAlive || damage <= 0f) return;
+            if (!(enemy.Status.Find(BleedKey) is BleedEffect effect))
+            {
+                effect = new BleedEffect();
+                enemy.Status.Add(effect);
+            }
+            effect.m_owner = owner;
+            effect.m_bleeds.Add((damage, turns));
+        }
+
+        public override void OnTurn(EnemyController enemy)
+        {
+            float damage = TurnDamage;
+            for (int i = m_bleeds.Count - 1; i >= 0; i--)
+            {
+                (float d, int t) = m_bleeds[i];
+                if (t <= 1) m_bleeds.RemoveAt(i);
+                else m_bleeds[i] = (d, t - 1);
+            }
+            if (damage <= 0f) return;
             enemy.TakeDamage(new DamageInfo
             {
-                Attacker = m_owner != null ? m_owner : null,
+                Attacker = m_owner,
                 Source = DamageSource.Dot,
                 Emblem = TowerEmblem.Spear,
-                BaseDamage = enemy.MaxHp * m_moveDamage * Mathf.Abs(steps),
+                BaseDamage = damage,
                 ForceFixed = true,
             });
         }
+
+        public override string Describe() => $"출혈: 매 턴 {TurnDamage:0.#} 피해 ({m_bleeds.Count}개)";
     }
 }

@@ -317,11 +317,7 @@ namespace SquareTD
         {
             TowerController tower = TowerManager.Instance.Selected;
             if (tower == null || !tower.IsAttackTower) return;
-            if (!TurnManager.Instance.Current.CanConsumeStack) return;
-
-            tower.State.Stack.RequestManualConsume();
-
-            Debug.Log($"[DebugCheat] {tower.name} 스택 소모 요청 {(tower.State.Stack.ManualRequested ? "됨" : "안 됨 (아직 안 참)")}");
+            Debug.Log($"[DebugCheat] {tower.name} 차지는 다 차면 자동으로 씀 ({tower.State.Stack.Current:0} / {tower.State.Stack.Max})");
         }
 
         private void StartPlaceZone()

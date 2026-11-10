@@ -1,41 +1,33 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace SquareTD
 {
-    // 물 광역 — 쓰나미
+    // 물 광역 — 쓰나미 (맵 전체, × (1 + 젖음 × 0.01), 맞은 적은 (100 - 저항력)% 확률로 -3 ~ +3칸 밀려나 그 칸의 타일 효과를 받음)
     public class WaterSplashSkill : AttackSkill
     {
-        public const string Key = "쓰나미";
-        public const int SpeedCut = 2;
+        public const int PushRange = 3;
 
         public WaterSplashSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
             : base(grid, occupancy, stackModes) { }
 
         protected override List<ITarget> GetArea(TowerController owner, ITarget mainTarget) => SkillArea.WholeMap(m_grid, m_occupancy);
 
-        protected override float ModifyOutgoingDamage(TowerController owner, ITarget target)
-        {
-            ZoneStage stage = BuffRule.ReceivedStage(owner, TowerEmblem.Water);
-            if (stage == ZoneStage.Skill2) return 1.5f;
-            if (stage == ZoneStage.Skill1) return 1.25f;
-            return 1f;
-        }
+        public static float WetMultiplier(ITarget target) => 1f + WetEffect.Get(target) * 0.01f;
+
+        protected override float ModifyOutgoingDamage(TowerController owner, ITarget target) => WetMultiplier(target);
 
         protected override void OnHitTarget(TowerController owner, ITarget target, DamageInfo hit)
         {
             EnemyController enemy = target.Body;
-            bool slows = enemy != null && enemy.IsAlive && Chance.Roll(enemy.Resistance.ResistWeak(1f));
-
+            bool pushes = enemy != null && !target.IsDummy && enemy.IsAlive && Chance.Roll(enemy.Resistance.ResistWeak(1f));
             DamageInfo wave = hit;
-            wave.ChangesMovement = slows;
+            wave.ChangesMovement = pushes;
             ProjectileHitResolver.HitSingle(target, wave);
+            if (!pushes || !enemy.IsAlive || enemy.Movement == null) return;
 
-            if (slows && enemy.IsAlive)
-            {
-                enemy.Status.Add(new TimedModifierEffect(Key, 1, SpeedCut, $"다음 행동 이동력 −{SpeedCut}",
-                    StatModifier.Flat(Key, StatType.SpeedMin, -SpeedCut),
-                    StatModifier.Flat(Key, StatType.SpeedMax, -SpeedCut)));
-            }
+            enemy.Movement.TeleportTo(enemy.PathIndex + Random.Range(-PushRange, PushRange + 1));
+            EnemyTileEffectApplier.ApplyForcedStop(enemy);
         }
     }
 }

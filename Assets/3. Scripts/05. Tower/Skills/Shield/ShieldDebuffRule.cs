@@ -1,43 +1,40 @@
 namespace SquareTD
 {
-    // 방패 디버프 — 서프레스 · 락다운
+    // 방패 디버프 — 서프레스 · 락다운 (저항력 감소, 락다운 최대 이동력 -2, 타격에 맞으면 받는 최종 피해 +5%)
     public class ShieldDebuffRule : DebuffRule
     {
-        public override StatusEffect CreateEffect(Zone zone, EnemyController enemy)
+        public const int LockdownSpeedCut = 2;
+        public const float BluntDamageTaken = 0.05f;
+
+        public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy)
         {
-            bool isSkill2 = zone.Stage == ZoneStage.Skill2;
-            float defenseCut = Resist(enemy, SkillFormula.ZoneValue(zone));
-            float stunBonus = isSkill2 ? 0.1f : 0.05f;
-            return new ShieldDebuffEffect(zone, defenseCut, stunBonus, isSkill2 ? 1 : 0);
+            float cut = Resist(enemy, cast.Amount);
+            float bluntTaken = cast.IsSkill2 ? Resist(enemy, BluntDamageTaken) : 0f;
+            return new ShieldDebuffEffect(cast, cut, bluntTaken);
         }
     }
 
     public class ShieldDebuffEffect : EmblemDebuffEffect
     {
-        private readonly float m_stunBonus;
+        private readonly float m_cut;
+        private readonly float m_bluntTaken;
 
-        public ShieldDebuffEffect(Zone zone, float defenseCut, float stunBonus, int actionPenalty)
-            : base(TowerEmblem.Shield, zone.Stage, zone.Owner.Stats.Duration, defenseCut,
-                   $"방어력 −{defenseCut * 100f:0.##}%" + (actionPenalty > 0 ? $", 행동 주기 +{actionPenalty}" : "") + $", 타격에 맞으면 기절 확률 +{stunBonus * 100f:0}%",
-                   Modifiers(defenseCut, actionPenalty))
+        public ShieldDebuffEffect(SupportCast cast, float cut, float bluntTaken)
+            : base(cast, $"저항력 −{cut:0.##}%p" + (cast.IsSkill2 ? $", 최대 이동력 −{ShieldDebuffRule.LockdownSpeedCut}, 타격에 받는 최종 피해 +{bluntTaken * 100f:0.#}%" : ""),
+                   cast.IsSkill2 ? new[] { StatModifier.Flat(KeyOf(TowerEmblem.Shield), StatType.SpeedMax, -ShieldDebuffRule.LockdownSpeedCut) } : new StatModifier[0])
         {
-            m_stunBonus = stunBonus;
+            m_cut = cut;
+            m_bluntTaken = bluntTaken;
         }
 
-        private static StatModifier[] Modifiers(float defenseCut, int actionPenalty)
-        {
-            string source = KeyOf(TowerEmblem.Shield);
-            StatModifier defense = StatModifier.Percent(source, StatType.Defense, -defenseCut);
-            if (actionPenalty <= 0) return new[] { defense };
-            return new[] { defense, StatModifier.Flat(source, StatType.MaxAction, actionPenalty) };
-        }
+        public override void OnAdded(EnemyController enemy) => enemy.Resistance.AddCut(m_cut);
+        public override void OnRemoved(EnemyController enemy) => enemy.Resistance.RemoveCut(m_cut);
 
-        public override float GetStunChanceBonus(DamageInfo info)
+        public override float ModifyIncomingDamage(EnemyController enemy, DamageInfo info, float damage)
         {
-            if (info.Source != DamageSource.Basic && info.Source != DamageSource.Skill) return 0f;
-            if (info.Attribute != AttackAttribute.Blunt) return 0f;
-
-            return m_stunBonus;
+            if (m_bluntTaken <= 0f || info.Attribute != AttackAttribute.Blunt) return damage;
+            float taken = enemy.Stats.Get(StatType.DamageTaken);
+            return taken > 0f ? damage * (taken + m_bluntTaken) / taken : damage;
         }
     }
 }

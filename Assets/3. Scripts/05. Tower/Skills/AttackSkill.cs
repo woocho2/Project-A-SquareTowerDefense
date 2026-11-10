@@ -22,20 +22,18 @@ namespace SquareTD
             TowerFinalStats stats = owner.Stats;
             TowerStack stack = owner.State.Stack;
 
-            bool useStack = m_stackModes != null && m_stackModes.ShouldUseStack(owner.Definition, stack);
-
-            bool keepHalf = stats.Get(StatType.StackKeepHalf) > 0f;
+            bool useStack = stack.IsFull;
 
             if (CastInstead(owner, mainTarget, useStack))
             {
-                if (useStack) stack.Consume(keepHalf);
+                if (useStack) stack.Consume();
                 SkillEffectTable.PlayCast(owner);
                 return 1;
             }
 
             float damage = SkillFormula.AttackSkill(stats.Power, stats.AbilityValue);
             float baseDamage = damage;
-            if (useStack) damage = SkillFormula.WithStack(damage, stack.Max, stats.StackValue);
+            if (useStack) damage = SkillFormula.WithStack(damage, stack.Max, stats.StackValue) * (1f + stats.Get(StatType.ChargeBonus));
 
             bool isCritical = RollCritical(owner, stats, mainTarget);
             List<ITarget> area = GetArea(owner, mainTarget);
@@ -69,7 +67,7 @@ namespace SquareTD
                 string dealtText = Mathf.Approximately(minDealt, maxDealt) ? $"{minDealt:0.##}" : $"{minDealt:0.##} ~ {maxDealt:0.##}";
                 Debug.Log($"[Skill] {owner.name} 스킬 피해: 위력 {stats.Power:0.##} × 능력치 {stats.AbilityValue:0.##} = {baseDamage:0.##}{stackText}{critText} → 방어 뒤 실제 {dealtText} ({hitCount}명)");
             }
-            if (useStack && hitCount > 0) stack.Consume(keepHalf);
+            if (useStack && hitCount > 0) stack.Consume();
             if (hitCount > 0) OnFired(owner, hitCount);
             return hitCount;
         }
@@ -79,9 +77,15 @@ namespace SquareTD
 
         public virtual bool NeedsLivingTarget => true;
 
+        public virtual bool BlocksBasicAttack(TowerController owner) => false;
+
         protected virtual bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack) => false;
-        protected virtual bool RollCritical(TowerController owner, TowerFinalStats stats, ITarget mainTarget) =>
-            CriticalRoll.Roll(CriticalRoll.RateAgainst(owner, stats, mainTarget));
+        protected virtual bool RollCritical(TowerController owner, TowerFinalStats stats, ITarget mainTarget) => false;
+
+        protected static float ChargedAbility(TowerFinalStats stats, bool useStack) =>
+            useStack ? SkillFormula.ChargedAbility(stats.AbilityValue, stats.Stack, stats.StackValue) : stats.AbilityValue;
+
+        protected static int EffectDuration(TowerController owner) => SkillFormula.EffectDuration(owner);
         protected virtual float ModifyOutgoingDamage(TowerController owner, ITarget target) => 1f;
         public virtual void OnBasicHit(TowerController owner, ITarget target) { }
         public virtual void OnOwnerActed(TowerController owner) { }
@@ -114,7 +118,7 @@ namespace SquareTD
                 Source = DamageSource.Skill,
                 Emblem = owner.Definition.Emblem,
                 Attribute = owner.Definition.Attribute,
-                BaseDamage = DamageCalculator.GetOutgoing(damage, stats.GetDistanceMultiplier(distance), critMultiplier) * stats.FinalDamageMultiplier,
+                BaseDamage = DamageCalculator.GetOutgoing(damage, stats.GetDistanceMultiplier(distance), critMultiplier) * stats.FinalDamageMultiplier * TowerAction.LostHpMultiplier(stats, target),
                 IsCritical = isCritical,
                 CritMultiplier = critMultiplier,
                 ArmorPenetration = stats.ArmorPenetration,

@@ -1,39 +1,62 @@
+using UnityEngine;
+
 namespace SquareTD
 {
-    // 대지 디버프 — 진흙 · 석화
+    // 대지 디버프 — 루트 드레인 · 라이프 하베스트 (밟을 때마다 디버프 타워 성장 +1, 최대 체력·방어력 -(값 × 성장)%,
+    //                                              라이프 하베스트 적응형 능력치 -1, 대지 타워가 치면 그 타워의 성장만큼 추가 피해)
     public class EarthDebuffRule : DebuffRule
     {
-        public override StatusEffect CreateEffect(Zone zone, EnemyController enemy)
+        public const int AdaptiveCut = 1;
+
+        public override void OnApply(SupportCast cast, EnemyController enemy)
         {
-            bool isSkill2 = zone.Stage == ZoneStage.Skill2;
-            float bindChance = Resist(enemy, SkillFormula.ZoneValue(zone));
-            return new EarthDebuffEffect(zone, bindChance, isSkill2 ? 0.1f : 0.2f, isSkill2 ? 2 : 0);
+            if (!cast.IsSkill2) Growth.Add(cast.Owner, 1f);
+        }
+
+        public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy)
+        {
+            float cut = Mathf.Min(Resist(enemy, cast.Rate * Growth.Get(cast.Owner)), 0.95f);
+            return new EarthDebuffEffect(cast, cut);
+        }
+
+        public static int AdaptiveFor(EnemyController enemy, int adaptive)
+        {
+            if (enemy == null || !EmblemDebuffEffect.HasSkill2(enemy, TowerEmblem.Earth)) return adaptive;
+            return Mathf.Max(1, adaptive - AdaptiveCut);
         }
     }
 
     public class EarthDebuffEffect : EmblemDebuffEffect
     {
-        private readonly float m_bindChance;
+        private readonly float m_cut;
 
-        public EarthDebuffEffect(Zone zone, float bindChance, float defenseUp, int actionUp)
-            : base(TowerEmblem.Earth, zone.Stage, zone.Owner.Stats.Duration, bindChance,
-                   $"턴마다 {bindChance * 100f:0.##}%로 속박, 방어력 +{defenseUp * 100f:0}%" + (actionUp > 0 ? $", 행동 주기 +{actionUp}" : ""),
-                   Modifiers(defenseUp, actionUp))
+        public EarthDebuffEffect(SupportCast cast, float cut)
+            : base(cast, $"최대 체력·방어력 −{cut * 100f:0.##}%" + (cast.IsSkill2 ? ", 적응형 능력치 −1, 대지 타워에게 그 타워의 성장만큼 추가 피해" : ""),
+                   StatModifier.Percent(KeyOf(TowerEmblem.Earth), StatType.Defense, -cut))
         {
-            m_bindChance = bindChance;
+            m_cut = cut;
         }
 
-        private static StatModifier[] Modifiers(float defenseUp, int actionUp)
+        public override void OnAdded(EnemyController enemy)
         {
-            string source = KeyOf(TowerEmblem.Earth);
-            StatModifier defense = StatModifier.Percent(source, StatType.Defense, defenseUp);
-            if (actionUp <= 0) return new[] { defense };
-            return new[] { defense, StatModifier.Flat(source, StatType.MaxAction, actionUp) };
+            if (m_cut > 0f) enemy.Health.ScaleMax(1f - m_cut);
         }
 
-        public override void OnTurn(EnemyController enemy)
+        public override void OnRemoved(EnemyController enemy)
         {
-            if (Chance.Roll(m_bindChance)) enemy.Status.Add(new ImmobilizeEffect("속박"));
+            if (m_cut > 0f) enemy.Health.ScaleMax(1f / (1f - m_cut));
+        }
+
+        public override void OnDamageTaken(EnemyController enemy, DamageInfo info, float damage)
+        {
+            if (!IsSkill2 || !enemy.IsAlive) return;
+            TowerController attacker = info.Attacker;
+            if (attacker == null || attacker.Definition.Emblem != TowerEmblem.Earth || !attacker.IsAttackTower) return;
+            if (info.Source != DamageSource.Basic && info.Source != DamageSource.Skill) return;
+
+            float extra = Growth.Get(attacker);
+            if (extra <= 0f) return;
+            enemy.TakeDamage(new DamageInfo { Attacker = attacker, Source = DamageSource.Relay, Emblem = TowerEmblem.Earth, BaseDamage = extra, ForceFixed = true });
         }
     }
 }

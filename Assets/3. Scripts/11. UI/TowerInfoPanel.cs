@@ -367,9 +367,7 @@ namespace SquareTD
 
         private static string GetDurationText(TowerColor color, TowerFinalStats stats, TowerState state) => color switch
         {
-            TowerColor.Red or TowerColor.Blue => $"{state.SkillHitCount} / {stats.Duration}회",
-            TowerColor.Purple => $"{stats.Duration}회 행동",
-            _ => UnusedStatText
+            _ => $"{state.SkillCount:0.#} / {stats.SkillCount:0.#}"
         };
 
         private static string GetMasteryText(TowerColor color, TowerFinalStats stats)
@@ -391,7 +389,6 @@ namespace SquareTD
 
         private string GetStackText(bool isSupport, TowerFinalStats stats)
         {
-            if (isSupport) return $"{stats.Stack}";
             TowerStack stack = m_selectedTower.State.Stack;
             return $"{stack.Current:0.#} / {stack.Max}";
         }
@@ -409,10 +406,10 @@ namespace SquareTD
                     SetText(txt_default, $"사거리 {stats.Range}칸 안의 적 하나에게\n{stats.Power:0.##} 피해 × {shots}발");
                     break;
                 case TowerColor.Yellow:
-                    SetText(txt_default, $"존 {stats.Mastery}개에 스택 {stats.AttackCount}씩\n존 위의 타워에게 버프");
+                    SetText(txt_default, $"존 {stats.Mastery}개 위의 타워에게 스킬 1\n행동마다 스킬 카운트 +{stats.AttackCount}, 차면 아군 전체에게 스킬 2");
                     break;
                 case TowerColor.Purple:
-                    SetText(txt_default, $"존 {stats.Mastery}개에 스택 {stats.AttackCount}씩\n존을 밟은 적에게 디버프");
+                    SetText(txt_default, $"존 {stats.Mastery}개를 밟은 적에게 스킬 1\n행동마다 스킬 카운트 +{stats.AttackCount}, 차면 적 전체에게 스킬 2");
                     break;
                 default:
                     SetText(txt_default, "시너지 타워 (효과 미정)");
@@ -457,19 +454,10 @@ namespace SquareTD
 
         private bool CanRequestConsume()
         {
-            if (m_selectedTower == null || !m_selectedTower.IsAttackTower) return false;
-            if (TurnManager.Instance == null || !TurnManager.Instance.Current.CanConsumeStack) return false;
-
-            TowerStack stack = m_selectedTower.State.Stack;
-            return stack.IsFull && !stack.ManualRequested && TowerManager.Instance.StackModes.IsManual(m_selectedTower.Definition);
+            return false;
         }
 
-        private void HandleConsumeStackClick()
-        {
-            if (!CanRequestConsume()) return;
-            m_selectedTower.State.Stack.RequestManualConsume();
-            UpdateTowerInfo();
-        }
+        private void HandleConsumeStackClick() => UpdateTowerInfo();
 
         private TowerStack m_watchedStack;
 

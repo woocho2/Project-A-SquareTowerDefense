@@ -2,33 +2,32 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 검 디버프 — 커스 · 둠
+    // 검 디버프 — 위더링 커스 · 둠 레퀴엠 (최대 체력 감소, 둠 레퀴엠 매 턴 최대 체력 1%, 베기 피해의 20% 고정)
     public class SwordDebuffRule : DebuffRule
     {
-        public override StatusEffect CreateEffect(Zone zone, EnemyController enemy)
+        public const float DoomTurnRate = 0.01f;
+        public const float SlashFixedRatio = 0.2f;
+
+        public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy)
         {
-            bool isSkill2 = zone.Stage == ZoneStage.Skill2;
-            float turnDamage = Resist(enemy, SkillFormula.ZoneValue(zone));
-            float maxHpCut = isSkill2 ? Resist(enemy, 0.2f) : 0f;
-            float fixedRatio = Resist(enemy, isSkill2 ? 0.2f : 0.1f);
-            return new SwordDebuffEffect(zone, turnDamage, maxHpCut, fixedRatio);
+            float maxHpCut = Mathf.Min(Resist(enemy, cast.Rate), 0.95f);
+            float turnRate = cast.IsSkill2 ? Resist(enemy, DoomTurnRate) : 0f;
+            float fixedRatio = cast.IsSkill2 ? Resist(enemy, SlashFixedRatio) : 0f;
+            return new SwordDebuffEffect(cast, maxHpCut, turnRate, fixedRatio);
         }
     }
 
     public class SwordDebuffEffect : EmblemDebuffEffect
     {
-        private readonly TowerController m_owner;
-        private readonly float m_turnDamage;
         private readonly float m_maxHpCut;
+        private readonly float m_turnRate;
         private readonly float m_fixedRatio;
 
-        public SwordDebuffEffect(Zone zone, float turnDamage, float maxHpCut, float fixedRatio)
-            : base(TowerEmblem.Sword, zone.Stage, zone.Owner.Stats.Duration, turnDamage,
-                   $"매 턴 최대 체력 {turnDamage * 100f:0.##}% 피해" + (maxHpCut > 0f ? $", 최대 체력 −{maxHpCut * 100f:0.#}%" : "") + $", 베기 피해의 {fixedRatio * 100f:0.#}% 고정")
+        public SwordDebuffEffect(SupportCast cast, float maxHpCut, float turnRate, float fixedRatio)
+            : base(cast, $"최대 체력 −{maxHpCut * 100f:0.##}%" + (turnRate > 0f ? $", 매 턴 최대 체력 {turnRate * 100f:0.##}% 피해, 베기 피해의 {fixedRatio * 100f:0.#}% 고정" : ""))
         {
-            m_owner = zone.Owner;
-            m_turnDamage = turnDamage;
             m_maxHpCut = maxHpCut;
+            m_turnRate = turnRate;
             m_fixedRatio = fixedRatio;
         }
 
@@ -44,21 +43,20 @@ namespace SquareTD
 
         public override void OnTurn(EnemyController enemy)
         {
-            if (m_turnDamage <= 0f) return;
+            if (m_turnRate <= 0f) return;
             enemy.TakeDamage(new DamageInfo
             {
-                Attacker = m_owner,
+                Attacker = Cast.Owner,
                 Source = DamageSource.Dot,
                 Emblem = TowerEmblem.Sword,
-                BaseDamage = enemy.MaxHp * m_turnDamage,
+                BaseDamage = enemy.MaxHp * m_turnRate,
                 ForceFixed = true,
             });
         }
 
         public override float ModifyIncomingDamage(EnemyController enemy, DamageInfo info, float damage)
         {
-            if (info.Attribute != AttackAttribute.Slash || info.ForceFixed) return damage;
-
+            if (m_fixedRatio <= 0f || info.Attribute != AttackAttribute.Slash || info.ForceFixed) return damage;
             float defense = enemy.Stats.Get(StatType.Defense);
             float taken = enemy.Stats.Get(StatType.DamageTaken);
             float ratio = enemy.Stats.Get(StatType.FixedDamageRatio);

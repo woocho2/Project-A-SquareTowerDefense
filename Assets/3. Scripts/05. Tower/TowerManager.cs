@@ -286,10 +286,6 @@ namespace SquareTD
                 tower.RecalculateStats();
 
                 ZoneRegistry zones = BoardManager.Instance.Zones;
-                if (level == 4)
-                {
-                    foreach (Zone zone in zones.GetByOwner(tower)) zone.ResetIfSkill1();
-                }
                 zones.EnsureZonesFor(tower);
             }
         }

@@ -11,6 +11,8 @@ namespace SquareTD
 
         public static int GetShotsPerAttack(int mastery) => mastery * 2;
 
+        public const float SkillCountPerShot = 0.5f;
+
         public override bool CanAct(TowerController tower, TowerFinalStats stats)
         {
             return CollectTargetsInRange(tower, stats.Range).Count > 0;
@@ -47,7 +49,7 @@ namespace SquareTD
                     m_launcher.Fire(lookId, from, shotTarget.Transform.position, speed, 0f, 1f, () =>
                     {
                         AddIncoming(incoming, shotTarget, -expected);
-                        tower.CountSkillHit(shotTarget);
+                        tower.CountSkillHit(shotTarget, SkillCountPerShot);
                         ProjectileHitResolver.HitSingle(shotTarget, hit);
                         tower.OnBasicHitLanded(shotTarget);
                         handle.CompleteShot();

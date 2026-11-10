@@ -1,19 +1,23 @@
 namespace SquareTD
 {
-    // 도끼 디버프 — 사형 선고 · 사형 집행
+    // 도끼 디버프 — 데스 센텐스 · 엑스큐션 (즉사 기준, 엑스큐션 받는 피해 +10%, 베기에 맞으면 기준 +10%)
     public class AxeDebuffRule : DebuffRule
     {
-        public const float HpBonus = 0.2f;
-        public const int SpeedBonus = 1;
+        public const float ExecutionDamageTaken = 0.1f;
+        public const float SlashBonus = 0.1f;
 
-        public override StatusEffect CreateEffect(Zone zone, EnemyController enemy)
+        public override void OnApply(SupportCast cast, EnemyController enemy)
         {
-            bool isSkill2 = zone.Stage == ZoneStage.Skill2;
-            float threshold = Resist(enemy, SkillFormula.ZoneValue(zone));
-            float slashBonus = Resist(enemy, isSkill2 ? 0.1f : 0.05f);
-            return isSkill2
-                ? new AxeDebuffEffect(zone, threshold, slashBonus, 0f, 0)
-                : new AxeDebuffEffect(zone, threshold, slashBonus, HpBonus, SpeedBonus);
+            if (cast.IsSkill2) return;
+            float threshold = Resist(enemy, cast.Rate);
+            if (enemy.CurrentHp < enemy.MaxHp * threshold)
+                enemy.Execute(new DamageInfo { Attacker = cast.Owner, Source = DamageSource.Dot, Emblem = TowerEmblem.Axe });
+        }
+
+        public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy)
+        {
+            if (!cast.IsSkill2) return null;
+            return new AxeDebuffEffect(cast, Resist(enemy, cast.Rate), Resist(enemy, SlashBonus), Resist(enemy, ExecutionDamageTaken));
         }
     }
 
@@ -21,36 +25,18 @@ namespace SquareTD
     {
         private readonly float m_threshold;
         private readonly float m_slashBonus;
-        private readonly float m_hpBonus;
 
-        public AxeDebuffEffect(Zone zone, float threshold, float slashBonus, float hpBonus, int speedBonus)
-            : base(TowerEmblem.Axe, zone.Stage, zone.Owner.Stats.Duration, threshold,
-                   $"체력 {threshold * 100f:0.##}% 미만이면 즉사 (베기면 {(threshold + slashBonus) * 100f:0.##}%)" + (hpBonus > 0f ? $", 최대 체력 +{hpBonus * 100f:0}%, 최대 이동력 +{speedBonus}" : ""),
-                   SpeedModifiers(speedBonus))
+        public AxeDebuffEffect(SupportCast cast, float threshold, float slashBonus, float damageTaken)
+            : base(cast, $"체력 {threshold * 100f:0.##}% 미만이면 즉사 (베기면 {(threshold + slashBonus) * 100f:0.##}%), 받는 피해 +{damageTaken * 100f:0.#}%",
+                   StatModifier.Flat(KeyOf(TowerEmblem.Axe), StatType.DamageTaken, damageTaken))
         {
             m_threshold = threshold;
             m_slashBonus = slashBonus;
-            m_hpBonus = hpBonus;
-        }
-
-        private static StatModifier[] SpeedModifiers(int speedBonus) => speedBonus > 0
-            ? new[] { StatModifier.Flat(KeyOf(TowerEmblem.Axe), StatType.SpeedMax, speedBonus) }
-            : new StatModifier[0];
-
-        public override void OnAdded(EnemyController enemy)
-        {
-            if (m_hpBonus > 0f) enemy.Health.ScaleMax(1f + m_hpBonus);
-        }
-
-        public override void OnRemoved(EnemyController enemy)
-        {
-            if (m_hpBonus > 0f) enemy.Health.ScaleMax(1f / (1f + m_hpBonus));
         }
 
         public override void OnDamageTaken(EnemyController enemy, DamageInfo info, float damage)
         {
             if (!enemy.IsAlive) return;
-
             float threshold = m_threshold;
             if (info.Attribute == AttackAttribute.Slash) threshold += m_slashBonus;
             if (enemy.CurrentHp < enemy.MaxHp * threshold) enemy.Execute(info);

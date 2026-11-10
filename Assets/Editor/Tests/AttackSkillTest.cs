@@ -129,33 +129,6 @@ namespace SquareTD.Tests
             Assert.AreEqual(30f, tower.State.Stack.Current, 0.0001f);
         }
 
-        [Test]
-        public void 수동인데_누르지_않았으면_기본_피해이고_스택은_다_찬_채로()
-        {
-            OccupyingFakeTarget target = MakeTarget(0);
-            TowerController tower = MakeTower(1101);
-            tower.State.Stack.Add(60f);
-
-            MakeSkill(new StackModeSettings { ManualByDefault = true }).Fire(tower, null);
-
-            Assert.AreEqual(20f, target.Hits[0].BaseDamage, 0.0001f);
-            Assert.AreEqual(60f, tower.State.Stack.Current, 0.0001f);
-        }
-
-        [Test]
-        public void 수동이고_눌렀으면_스택을_씀()
-        {
-            OccupyingFakeTarget target = MakeTarget(0);
-            TowerController tower = MakeTower(1101);
-            tower.State.Stack.Add(60f);
-            tower.State.Stack.RequestManualConsume();
-
-            MakeSkill(new StackModeSettings { ManualByDefault = true }).Fire(tower, null);
-
-            Assert.AreEqual(32f, target.Hits[0].BaseDamage, 0.0001f);
-            Assert.AreEqual(0f, tower.State.Stack.Current);
-        }
-
         // ── 치명 ──
 
         [Test]

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 타워 하나: 스탯, 행동, 스킬 2 발동
+    // 타워 하나: 스탯, 행동, 차지, 스킬 카운트, 스킬 2 발동
     [RequireComponent(typeof(TowerVisual))]
     public class TowerController : MonoBehaviour
     {
@@ -75,6 +75,7 @@ namespace SquareTD
             State.RemainingAction = Mathf.Max(0, State.RemainingAction - (1 + gain));
             if (State.RemainingAction > 0) return false;
 
+            if (m_skill != null && m_skill.BlocksBasicAttack(this)) return false;
             if (m_action != null && !m_action.CanAct(this, Stats)) return false;
 
             State.RemainingAction = Stats.Action;
@@ -84,15 +85,17 @@ namespace SquareTD
         public IEnumerator Act(AttackHandle handle)
         {
             if (m_action == null) yield break;
+
             if (IsAttackTower)
             {
-                State.Stack.Add(Stats.AttackCount * (1f + Stats.Get(StatType.StackGainRate)));
-                foreach (Zone zone in new List<Zone>(State.ReceivedZoneBuffs.Keys))
-                    SkillRegistry.GetBuffRule(zone.Emblem).OnReceiverActed(zone, this);
+                State.Stack.Add(1f + Stats.Get(StatType.StackGainRate));
+                SupportBuffs.ForEachActive(this, (rule, cast) => rule.OnReceiverActed(cast, this));
             }
             m_skill?.OnOwnerActed(this);
             yield return m_action.Act(this, Stats, handle);
+
             TimedTowerBuff.CountDown(State);
+            if (IsAttackTower) SupportBuffs.CountDown(this);
         }
 
         private readonly Queue<ITarget> m_pendingSkills = new Queue<ITarget>();
@@ -103,37 +106,40 @@ namespace SquareTD
             m_skill.OnEnemyTurnStart(this);
         }
 
-        public bool CountSkillHit(ITarget target)
+        public int AddSkillCount(float amount, ITarget target = null)
+        {
+            if (amount <= 0f) return 0;
+
+            float threshold = Mathf.Max(0.01f, Stats.SkillCount);
+            State.SkillCount += amount;
+
+            int fires = 0;
+            while (State.SkillCount >= threshold - 0.0001f)
+            {
+                State.SkillCount = Mathf.Max(0f, State.SkillCount - threshold);
+                fires++;
+                if (target != null) m_pendingSkills.Enqueue(target);
+            }
+            return fires;
+        }
+
+        public bool CountSkillHit(ITarget target, float amount)
         {
             if (m_skill == null || !IsAttackTower) return false;
             if (target == null || !target.IsAlive) return false;
-
-            State.SkillHitCount++;
-            if (State.SkillHitCount < Stats.Duration) return false;
-
-            State.SkillHitCount = 0;
-
-            m_pendingSkills.Enqueue(target);
-            return true;
+            return AddSkillCount(amount, target) > 0;
         }
 
         public void OnBasicHitLanded(ITarget target)
         {
             m_skill?.OnBasicHit(this, target);
-            foreach (Zone zone in new List<Zone>(State.ReceivedZoneBuffs.Keys))
-                SkillRegistry.GetBuffRule(zone.Emblem).OnReceiverHit(zone, this, target);
+            SupportBuffs.ForEachActive(this, (rule, cast) => rule.OnReceiverHit(cast, this, target));
         }
 
-        public void AdvanceSkillCount(int amount, ITarget target)
+        public void AdvanceSkillCount(float amount, ITarget target)
         {
-            if (m_skill == null || amount <= 0 || target == null) return;
-
-            State.SkillHitCount += amount;
-            while (State.SkillHitCount >= Stats.Duration)
-            {
-                State.SkillHitCount -= Stats.Duration;
-                m_pendingSkills.Enqueue(target);
-            }
+            if (m_skill == null || amount <= 0f || target == null) return;
+            AddSkillCount(amount, target);
         }
 
         public bool HasPendingSkill => m_skill != null && m_pendingSkills.Count > 0;
@@ -158,18 +164,18 @@ namespace SquareTD
                     int aliveBefore = AliveEnemyCount();
                     if (m_skill.Fire(this, target) > 0)
                     {
-                        Debug.Log($"[Skill] {name} 스킬 2 발동 (적중 {Stats.Duration}회) → {aliveBefore - AliveEnemyCount()}마리 죽음, 남은 적 {AliveEnemyCount()}");
+                        Debug.Log($"[Skill] {name} 스킬 2 발동 → {aliveBefore - AliveEnemyCount()}마리 죽음, 남은 적 {AliveEnemyCount()}");
                         return true;
                     }
 
-                    State.SkillHitCount = Stats.Duration;
+                    State.SkillCount = Mathf.Max(State.SkillCount, Stats.SkillCount);
                     m_pendingSkills.Clear();
                     return false;
                 }
 
                 if (!target.IsAlive && m_skill.NeedsLivingTarget) continue;
                 m_skill.Fire(this, target);
-                Debug.Log($"[Skill] {name} → {(target.Transform != null ? target.Transform.name : "대상")} 스킬 2 발동 (적중 {Stats.Duration}회) → {(target.IsAlive ? $"버팀, 체력 {target.CurrentHp:0.0}" : "죽음")}");
+                Debug.Log($"[Skill] {name} → {(target.Transform != null ? target.Transform.name : "대상")} 스킬 2 발동 → {(target.IsAlive ? $"버팀, 체력 {target.CurrentHp:0.0}" : "죽음")}");
                 return true;
             }
             return false;

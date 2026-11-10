@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using UnityEngine;
 
 namespace SquareTD
 {
-    // 버프 타워의 행동: 존에 스택을 쌓고 존 위 타워에게 버프
+    // 버프 타워의 행동: 존 위 타워에게 스킬 1, 스킬 카운트가 차면 아군 공격 타워 전체에게 스킬 2
     public class BuffZoneAction : TowerAction
     {
         private readonly ZoneRegistry m_zones;
@@ -21,24 +21,39 @@ namespace SquareTD
 
         public override IEnumerator Act(TowerController tower, TowerFinalStats stats, AttackHandle handle)
         {
-            bool ownerStack = SkillRegistry.GetBuffRule(tower.Definition.Emblem).UsesOwnerStack;
-            if (ownerStack) tower.State.Stack.Add(stats.AttackCount);
+            BuffRule rule = SkillRegistry.GetBuffRule(tower.Definition.Emblem);
+            rule.OnOwnerActed(tower);
 
             foreach (Zone zone in m_zones.GetByOwner(tower))
             {
                 if (!zone.IsPlaced) continue;
-
-                ZoneStage before = zone.Stage;
-
-                if (ownerStack) zone.SetStack(tower.State.Stack.Current, stats.Stack);
-                else zone.AddStack(stats.AttackCount, stats.Stack);
-
-                if (zone.Stage != before) m_zones.NotifyChanged(zone);
-
                 TowerController receiver = m_slots.Get(zone.CellIndex);
-                if (receiver != null && receiver.IsAttackTower) GiveBuff(zone, receiver);
+                if (receiver == null || !receiver.IsAttackTower) continue;
+
+                SupportBuffs.GiveSkill1(zone, receiver);
+                rule.OnGiveSkill1(SupportCast.Skill1(tower), receiver);
             }
+
+            int fires = SupportSkillCount.Advance(tower);
+            for (int i = 0; i < fires; i++) FireSkill2(tower);
             yield break;
+        }
+
+        public void FireSkill2(TowerController tower)
+        {
+            SupportCast cast = SupportSkillCount.TakeSkill2Cast(tower);
+            BuffRule rule = SkillRegistry.GetBuffRule(tower.Definition.Emblem);
+
+            int count = 0;
+            for (int i = 0; i < m_slots.Count; i++)
+            {
+                TowerController receiver = m_slots.Get(i);
+                if (receiver == null || !receiver.IsAttackTower) continue;
+                SupportBuffs.GiveSkill2(cast, receiver);
+                count++;
+            }
+            rule.OnSkill2(cast);
+            Debug.Log($"[Buff] {tower.name} 스킬 2 발동 → 아군 공격 타워 {count}기, 값 {cast.Amount:0.##}, {cast.Duration}번 행동 동안");
         }
 
         public override void OnRemoved(TowerController tower)
@@ -48,54 +63,36 @@ namespace SquareTD
                 for (int i = 0; i < m_slots.Count; i++)
                 {
                     TowerController receiver = m_slots.Get(i);
-                    if (receiver != null) TakeBuff(zone, receiver);
+                    if (receiver != null) SupportBuffs.TakeSkill1(zone, receiver);
                 }
             }
             m_zones.RemoveByOwner(tower);
         }
 
-        public static string SourceOf(Zone zone) => $"{EmblemNames.GetEmblemName(zone.Emblem)} 버프존";
+        public static void RefreshReceived(TowerController tower, ZoneRegistry zones) => SupportBuffs.RefreshZones(tower, zones);
+    }
 
-        public static void GiveBuff(Zone zone, TowerController receiver)
+    // 버프·디버프 타워의 공통: 행동마다 차지 +1, 스킬 카운트 +AttackCount (치명이면 × (2 + CriticalDamage))
+    public static class SupportSkillCount
+    {
+        public static int Advance(TowerController tower) => Advance(tower, Random.value);
+
+        public static int Advance(TowerController tower, float critRoll)
         {
-            string source = SourceOf(zone);
-            BuffRule rule = SkillRegistry.GetBuffRule(zone.Emblem);
-            receiver.State.Modifiers.RemoveBySource(source);
-            foreach (StatModifier modifier in rule.GetModifiers(zone, receiver, source))
-                receiver.State.Modifiers.Add(modifier);
-            receiver.State.ReceivedZoneBuffs[zone] = source;
-            rule.OnGiveBuff(zone, receiver);
+            TowerFinalStats stats = tower.Stats;
+            tower.State.Stack.Add(1f);
+
+            float gain = stats.AttackCount;
+            if (CriticalRoll.Roll(stats.CriticalRate, critRoll)) gain *= CriticalRoll.Multiplier(stats.CriticalDamage);
+            return tower.AddSkillCount(gain);
         }
 
-        public static void TakeBuff(Zone zone, TowerController receiver)
+        public static SupportCast TakeSkill2Cast(TowerController tower)
         {
-            if (!receiver.State.ReceivedZoneBuffs.TryGetValue(zone, out string source)) return;
-            receiver.State.Modifiers.RemoveBySource(source);
-            receiver.State.ReceivedZoneBuffs.Remove(zone);
-            SkillRegistry.GetBuffRule(zone.Emblem).OnTaken(zone, receiver);
-        }
-
-        public static void RunZoneTurns(ZoneRegistry zones, TowerSlots slots)
-        {
-            foreach (Zone zone in new List<Zone>(zones.All))
-            {
-                if (!zone.IsBuff || !zone.IsPlaced) continue;
-                if (!SkillRegistry.GetBuffRule(zone.Emblem).OnZoneTurn(zone)) continue;
-
-                zones.NotifyChanged(zone);
-                TowerController receiver = slots.Get(zone.CellIndex);
-                if (receiver != null && receiver.IsAttackTower) GiveBuff(zone, receiver);
-            }
-        }
-
-        public static void RefreshReceived(TowerController tower, ZoneRegistry zones)
-        {
-            var ended = new List<Zone>();
-            foreach (Zone zone in tower.State.ReceivedZoneBuffs.Keys)
-            {
-                if (!zones.All.Contains(zone) || zone.CellIndex != tower.SlotIndex) ended.Add(zone);
-            }
-            foreach (Zone zone in ended) TakeBuff(zone, tower);
+            bool useCharge = tower.State.Stack.IsFull;
+            SupportCast cast = SupportCast.Skill2(tower, useCharge);
+            if (useCharge) tower.State.Stack.Consume();
+            return cast;
         }
     }
 }

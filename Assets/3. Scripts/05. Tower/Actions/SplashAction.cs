@@ -9,6 +9,8 @@ namespace SquareTD
     {
         public SplashAction(BoardGrid grid, PathOccupancy occupancy, IProjectileLauncher launcher) : base(grid, occupancy, launcher) { }
 
+        public const float SkillCountPerVolley = 1f;
+
         public static int GetAreaRadius(int mastery) => mastery - 1;
         public static int GetAreaSide(int mastery) => GetAreaRadius(mastery) * 2 + 1;
 
@@ -41,9 +43,11 @@ namespace SquareTD
                 handle.AddShot();
                 m_launcher.Fire(lookId, from, aimed.Transform.position, speed, 0f, effectScale, () =>
                                 {
-                                    foreach (ITarget target in CollectTargetsInSquare(impactCell, radius))
+                                    List<ITarget> hits = CollectTargetsInSquare(impactCell, radius);
+                                    ITarget center = aimed.IsAlive && hits.Contains(aimed) ? aimed : hits.Find(t => t.IsAlive);
+                                    tower.CountSkillHit(center, SkillCountPerVolley);
+                                    foreach (ITarget target in hits)
                                     {
-                                        tower.CountSkillHit(target);
                                         ProjectileHitResolver.HitSingle(target, MakeBasicHit(tower, stats, target, isCritical));
                                         tower.OnBasicHitLanded(target);
                                     }

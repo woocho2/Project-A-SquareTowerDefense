@@ -37,8 +37,6 @@ namespace SquareTD
 
         public void RunEnemyTurnStart()
         {
-            if (m_zones != null) BuffZoneAction.RunZoneTurns(m_zones, m_slots);
-
             for (int i = 0; i < m_slots.Count; i++)
             {
                 TowerController tower = m_slots.Get(i);

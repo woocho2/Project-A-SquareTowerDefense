@@ -81,24 +81,24 @@ namespace SquareTD.Tests
         private static void SetPrivate(System.Type type, object target, string property, object value) =>
             type.GetProperty(property, BindingFlags.Public | BindingFlags.Instance).GetSetMethod(true).Invoke(target, new[] { value });
 
-        // 존 주인 타워와 쌓인 스택. 60(최대)이면 스킬 2
-        protected static Zone MakeZone(TowerController owner, bool isBuff, float stack)
-        {
-            var zone = new Zone(owner, isBuff);
-            zone.AddStack(stack, owner.Stats.Stack);
-            return zone;
-        }
+        // 존 주인 타워의 존
+        protected static Zone MakeZone(TowerController owner, bool isBuff) => new Zone(owner, isBuff);
 
-        // 그 존 위에 선 타워가 버프를 받음 (버프 타워가 행동했을 때와 같음)
+        // 그 존 위에 선 타워가 스킬 1을 받음 (버프 타워가 행동했을 때와 같음)
         protected static void Receive(Zone zone, TowerController receiver)
         {
             zone.PlaceAt(receiver.SlotIndex);
-            BuffZoneAction.GiveBuff(zone, receiver);
+            SupportBuffs.GiveSkill1(zone, receiver);
         }
 
-        // 디버프존을 밟은 것과 같음: 그 문양의 규칙이 만든 효과를 적에게 검
-        protected static void Debuff(Zone zone, EnemyController enemy) =>
-            enemy.Status.Add(SkillRegistry.GetDebuffRule(zone.Emblem).CreateEffect(zone, enemy));
+        // 스킬 2를 받음 (버프 타워의 스킬 카운트가 찼을 때와 같음)
+        protected static void ReceiveSkill2(TowerController owner, TowerController receiver) =>
+            SupportBuffs.GiveSkill2(SupportCast.Skill2(owner, false), receiver);
+
+        // 디버프존을 밟은 것과 같음 (스킬 1). skill2면 스킬 2가 걸린 것과 같음
+        protected static void Debuff(TowerController owner, EnemyController enemy, bool skill2 = false) =>
+            DebuffZoneAction.Apply(SkillRegistry.GetDebuffRule(owner.Definition.Emblem),
+                                   skill2 ? SupportCast.Skill2(owner, false) : SupportCast.Skill1(owner), enemy, skill2 ? -1 : 0);
 
         protected static float Sum(List<StatModifier> modifiers, StatType stat)
         {

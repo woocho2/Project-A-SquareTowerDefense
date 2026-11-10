@@ -1,6 +1,8 @@
+using System.Collections.Generic;
+
 namespace SquareTD
 {
-    // 타워의 바뀌는 상태 (남은 행동, 우선순위, 수정자, 스택, 적중 수, 시간 버프)
+    // 타워의 바뀌는 상태 (남은 행동, 우선순위, 수정자, 차지, 스킬 카운트, 받은 버프, 시간 버프)
     public class TowerState
     {
         public int RemainingAction { get; set; }
@@ -8,13 +10,15 @@ namespace SquareTD
         public TargetPriority TargetPriority { get; set; }
         public StatModifierList Modifiers { get; } = new StatModifierList();
         public TowerStack Stack { get; }
-        public int SkillHitCount { get; set; }
+        public float SkillCount { get; set; }
 
-        public System.Collections.Generic.Dictionary<Zone, string> ReceivedZoneBuffs { get; } = new System.Collections.Generic.Dictionary<Zone, string>();
+        public Dictionary<TowerEmblem, SupportBuffEntry> SupportBuffs { get; } = new Dictionary<TowerEmblem, SupportBuffEntry>();
 
-        public System.Collections.Generic.Dictionary<string, int> TimedBuffs { get; } = new System.Collections.Generic.Dictionary<string, int>();
+        public Dictionary<string, int> TimedBuffs { get; } = new Dictionary<string, int>();
 
-        public System.Collections.Generic.HashSet<string> PersistentSources { get; } = new System.Collections.Generic.HashSet<string>();
+        public HashSet<string> PersistentSources { get; } = new HashSet<string>();
+
+        public Dictionary<string, float> Counters { get; } = new Dictionary<string, float>();
 
         public TowerState(TowerDefinition definition)
         {
@@ -23,36 +27,40 @@ namespace SquareTD
             Stack = new TowerStack(definition.Stack);
         }
 
+        public float GetCounter(string key) => Counters.TryGetValue(key, out float value) ? value : 0f;
+        public void AddCounter(string key, float amount) => Counters[key] = GetCounter(key) + amount;
+
         public void CopyInheritedFrom(TowerState old)
         {
             TargetPriority = old.TargetPriority;
             AttackCellIndex = old.AttackCellIndex;
             Stack.CopyFrom(old.Stack);
-            SkillHitCount = old.SkillHitCount;
+            SkillCount = old.SkillCount;
 
-            foreach (var pair in old.ReceivedZoneBuffs)
+            foreach (var pair in old.Counters) Counters[pair.Key] = pair.Value;
+
+            foreach (var pair in old.SupportBuffs)
             {
-                ReceivedZoneBuffs[pair.Key] = pair.Value;
-                foreach (StatModifier modifier in old.Modifiers.All)
-                {
-                    if (modifier.Source == pair.Value) Modifiers.Add(modifier);
-                }
+                SupportBuffs[pair.Key] = pair.Value.Clone();
+                CopyModifiers(old, global::SquareTD.SupportBuffs.SourceOf(pair.Key));
             }
             foreach (var pair in old.TimedBuffs)
             {
                 TimedBuffs[pair.Key] = pair.Value;
-                foreach (StatModifier modifier in old.Modifiers.All)
-                {
-                    if (modifier.Source == pair.Key) Modifiers.Add(modifier);
-                }
+                CopyModifiers(old, pair.Key);
             }
             foreach (string source in old.PersistentSources)
             {
                 PersistentSources.Add(source);
-                foreach (StatModifier modifier in old.Modifiers.All)
-                {
-                    if (modifier.Source == source) Modifiers.Add(modifier);
-                }
+                CopyModifiers(old, source);
+            }
+        }
+
+        private void CopyModifiers(TowerState old, string source)
+        {
+            foreach (StatModifier modifier in old.Modifiers.All)
+            {
+                if (modifier.Source == source) Modifiers.Add(modifier);
             }
         }
     }

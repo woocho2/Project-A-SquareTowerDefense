@@ -17,7 +17,15 @@ namespace SquareTD
         public int ActionCounter => m_actionCounter;
         private int m_actionCounter;
         private EnemyController m_controller;
-        private void ApplyFace() => EnemyCubeFaces.Apply(m_controller.Stats, m_cube.GetFaceAsset(m_cube.VisibleFace));
+        private void ApplyFace()
+        {
+            EnemyCubeFaceAsset face = m_cube.GetFaceAsset(m_cube.VisibleFace);
+            int adaptive = EarthDebuffRule.AdaptiveFor(m_controller, GameSession.Instance != null ? GameSession.Instance.AdaptiveValue : 0);
+            EnemyCubeFaces.Apply(m_controller.Stats, face, adaptive);
+
+            float healRate = EnemyCubeFaces.GetHealRate(face, adaptive);
+            if (healRate > 0f) m_controller.Heal(m_controller.MaxHp * healRate);
+        }
 
         private void Awake()
         {

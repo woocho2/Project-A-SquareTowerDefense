@@ -12,6 +12,7 @@ namespace SquareTD
 
         public GameMode Mode => m_mode;
         public int BaseLimit { get; private set; }
+        public int AdaptiveValue { get; private set; }
         public int CurrentLimit => BaseLimit + SumLimitModifiers();
         public bool IsOver { get; private set; }
         public EmblemSharedState Shared { get; } = new EmblemSharedState();
@@ -40,18 +41,7 @@ namespace SquareTD
             EnemyManager.Instance.EnemyDied += OnEnemyDied;
         }
 
-        private void OnEnemyDied(KillInfo kill) => Shared.AddDarkness(EmblemSharedState.GetKillCount(kill, HasDarknessBuffTower()));
-
-        private bool HasDarknessBuffTower()
-        {
-            TowerSlots slots = BoardManager.Instance.Slots;
-            for (int i = 0; i < slots.Count; i++)
-            {
-                TowerController tower = slots.Get(i);
-                if (tower != null && tower.Definition.Color == TowerColor.Yellow && tower.Definition.Emblem == TowerEmblem.Darkness) return true;
-            }
-            return false;
-        }
+        private void OnEnemyDied(KillInfo kill) => Shared.AddDarkness(EmblemSharedState.GetKillCount(kill));
 
         protected override void OnDestroy()
         {
@@ -69,6 +59,10 @@ namespace SquareTD
 
         private void OnWaveChanged(int wave)
         {
+            AdaptiveValue = UnityEngine.Random.Range(WaveTable.GetAdaptiveMin(m_mode), WaveTable.GetAdaptiveMax(m_mode) + 1);
+            Debug.Log($"[GameSession] 웨이브 {wave} 적응형 능력치 {AdaptiveValue}");
+            Shared.OnWaveStarted();
+
             int limit = WaveTable.GetEnemyLimit(m_mode, WaveTable.GetCycle(wave));
             if (limit == BaseLimit) return;
 
@@ -98,20 +92,27 @@ namespace SquareTD
 
             Debug.Log($"[GameSession] 한도 {CurrentLimit} (기본 {BaseLimit}{(m_limitModifiers.Count > 0 ? $", 보정 {SumLimitModifiers():+0;-0}" : "")})");
             LimitChanged?.Invoke(CurrentLimit);
+
+            if (CurrentLimit < before && EnemyManager.Instance != null && EnemyManager.Instance.Registry.Count > CurrentLimit)
+                GameOver($"한도가 {CurrentLimit}로 돌아옴, 남은 적 {EnemyManager.Instance.Registry.Count}");
         }
 
-        private void RefreshTowerLimits()
+        public void RefreshTowerLimits()
         {
+            if (BoardManager.Instance == null) return;
+
             var best = new Dictionary<TowerEmblem, int>();
             TowerSlots slots = BoardManager.Instance.Slots;
             for (int i = 0; i < slots.Count; i++)
             {
                 TowerController tower = slots.Get(i);
-                if (tower == null || tower.Definition.Color != TowerColor.Yellow) continue;
+                if (tower == null || !tower.IsAttackTower) continue;
 
-                TowerEmblem emblem = tower.Definition.Emblem;
-                int amount = SkillRegistry.GetBuffRule(emblem).GetLimitModifier(tower, BaseLimit);
-                if (!best.TryGetValue(emblem, out int current) || amount > current) best[emblem] = amount;
+                foreach (TowerEmblem emblem in tower.State.SupportBuffs.Keys)
+                {
+                    if (!BuffRule.HasSkill2(tower, emblem) || best.ContainsKey(emblem)) continue;
+                    best[emblem] = SkillRegistry.GetBuffRule(emblem).GetLimitModifier(BaseLimit);
+                }
             }
 
             ChangeLimit(() =>

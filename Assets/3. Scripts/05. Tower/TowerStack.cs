@@ -9,7 +9,6 @@ namespace SquareTD
         public float Current { get; private set; }
         public int Max { get; private set; }
         public bool IsFull => Current >= Max;
-        public bool ManualRequested { get; private set; }
 
         public event Action Full;
 
@@ -27,10 +26,9 @@ namespace SquareTD
             if (IsFull) Full?.Invoke();
         }
 
-        public void Consume(bool keepHalf = false)
+        public void Consume()
         {
-            Current = keepHalf ? Max * 0.5f : 0f;
-            ManualRequested = false;
+            Current = 0f;
         }
 
         public void SetMax(int max)
@@ -41,11 +39,6 @@ namespace SquareTD
             Current = Mathf.Min(Current, Max);
 
             if (!wasFull && IsFull) Full?.Invoke();
-        }
-
-        public void RequestManualConsume()
-        {
-            if (IsFull) ManualRequested = true;
         }
 
         public void CopyFrom(TowerStack old)

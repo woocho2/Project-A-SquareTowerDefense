@@ -111,15 +111,6 @@ namespace SquareTD.Tests
             Assert.IsFalse(stack.IsFull);
         }
 
-        [Test]
-        public void 해류면_최대의_절반에서_다시()
-        {
-            var stack = new TowerStack(60);
-            stack.Add(60f);
-            stack.Consume(keepHalf: true);
-            Assert.AreEqual(30f, stack.Current, 0.0001f);
-        }
-
         // ── 최대가 바뀔 때 ──
 
         [Test]
@@ -159,31 +150,6 @@ namespace SquareTD.Tests
             Assert.IsFalse(stack.IsFull);
         }
 
-        // ── 수동 소모 ──
-
-        [Test]
-        public void 다_찼을_때만_수동_요청을_받음()
-        {
-            var stack = new TowerStack(10);
-            stack.Add(5f);
-            stack.RequestManualConsume();
-            Assert.IsFalse(stack.ManualRequested, "안 찼으면 무시");
-
-            stack.Add(5f);
-            stack.RequestManualConsume();
-            Assert.IsTrue(stack.ManualRequested);
-        }
-
-        [Test]
-        public void 쓰면_수동_요청도_꺼짐()
-        {
-            var stack = new TowerStack(10);
-            stack.Add(10f);
-            stack.RequestManualConsume();
-            stack.Consume();
-            Assert.IsFalse(stack.ManualRequested);
-        }
-
         // ── 이어받기 ──
 
         [Test]
@@ -205,17 +171,6 @@ namespace SquareTD.Tests
             mithril.CopyFrom(old);
             Assert.AreEqual(30f, mithril.Current, 0.0001f);
             Assert.IsTrue(mithril.IsFull);
-        }
-
-        [Test]
-        public void 수동_요청은_이어받지_않음()
-        {
-            var old = new TowerStack(10);
-            old.Add(10f);
-            old.RequestManualConsume();
-            var created = new TowerStack(10);
-            created.CopyFrom(old);
-            Assert.IsFalse(created.ManualRequested);
         }
     }
 }

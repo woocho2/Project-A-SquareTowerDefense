@@ -1,6 +1,6 @@
 namespace SquareTD
 {
-    // 웨이브·사이클별 적 체력 배율과 적 수 한도 표
+    // 웨이브·사이클별 적 체력 배율, 적 수 한도, 모드별 적응형 능력치 범위 표
     public static class WaveTable
     {
         private static readonly float[] waveMulti = { 1.0f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f, 1.7f, 1.8f, 1.9f };
@@ -141,6 +141,42 @@ namespace SquareTD
 
                 case GameMode.Hard:
                     return cycle * 15;
+
+                default:
+                    return 0;
+            }
+        }
+
+        public static int GetAdaptiveMin(GameMode mode)
+        {
+            switch (mode)
+            {
+                case GameMode.Story:
+                    return 1;
+
+                case GameMode.Normal:
+                    return 3;
+
+                case GameMode.Hard:
+                    return 5;
+
+                default:
+                    return 0;
+            }
+        }
+
+        public static int GetAdaptiveMax(GameMode mode)
+        {
+            switch (mode)
+            {
+                case GameMode.Story:
+                    return 4;
+
+                case GameMode.Normal:
+                    return 6;
+
+                case GameMode.Hard:
+                    return 8;
 
                 default:
                     return 0;

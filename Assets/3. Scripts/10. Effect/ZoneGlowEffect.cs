@@ -97,9 +97,9 @@ namespace SquareTD
 
         private static float Progress(Zone zone)
         {
-            if (zone.Stage == ZoneStage.Skill2) return 1f;
-            int max = zone.Owner != null ? zone.Owner.Stats.Stack : 0;
-            return max > 0 ? Mathf.Clamp01(zone.Stack / max) * 0.999f : 0f;
+            if (zone.Owner == null || zone.Owner.State == null) return 0f;
+            float max = zone.Owner.Stats.SkillCount;
+            return max > 0f ? Mathf.Clamp01(zone.Owner.State.SkillCount / max) * 0.999f : 0f;
         }
 
         private void Rebuild()

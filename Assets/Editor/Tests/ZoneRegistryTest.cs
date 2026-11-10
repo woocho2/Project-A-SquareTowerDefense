@@ -39,49 +39,14 @@ namespace SquareTD.Tests
             return registry.GetByOwner(tower)[0];
         }
 
-        // ── 존 하나: 스택과 단계 ──
+        // ── 존 하나: 자리만 가짐 ──
 
         [Test]
-        public void 처음엔_0스택_스킬1_안_놓음()
+        public void 처음엔_자리를_고르지_않은_존()
         {
             var zone = new Zone(MakeTower(TowerColor.Yellow, TowerEmblem.Sword), true);
-            Assert.AreEqual(0f, zone.Stack);
-            Assert.AreEqual(ZoneStage.Skill1, zone.Stage);
             Assert.IsFalse(zone.IsPlaced);
-        }
-
-        [Test]
-        public void 스택이_문턱에_닿으면_스킬2()
-        {
-            var zone = new Zone(MakeTower(TowerColor.Yellow, TowerEmblem.Sword), true);
-            zone.AddStack(30f, 60);
-            Assert.AreEqual(ZoneStage.Skill1, zone.Stage);
-
-            zone.AddStack(30f, 60);
-            Assert.AreEqual(ZoneStage.Skill2, zone.Stage);
-            Assert.AreEqual(60f, zone.Stack, 0.0001f);
-        }
-
-        [Test]
-        public void 스킬2는_더_쌓지_않고_0으로도_안_돌아감()
-        {
-            var zone = new Zone(MakeTower(TowerColor.Yellow, TowerEmblem.Sword), true);
-            zone.AddStack(60f, 60);
-            zone.AddStack(10f, 120);                // 문턱이 늘어도
-            Assert.AreEqual(60f, zone.Stack, 0.0001f);
-
-            zone.ResetIfSkill1();                   // 컬러 레벨 4가 되어도
-            Assert.AreEqual(ZoneStage.Skill2, zone.Stage);
-            Assert.AreEqual(60f, zone.Stack, 0.0001f);
-        }
-
-        [Test]
-        public void 컬러_레벨_4가_되면_스킬1_존은_0부터()
-        {
-            var zone = new Zone(MakeTower(TowerColor.Yellow, TowerEmblem.Sword), true);
-            zone.AddStack(40f, 60);
-            zone.ResetIfSkill1();
-            Assert.AreEqual(0f, zone.Stack);
+            Assert.AreEqual(-1, zone.CellIndex);
         }
 
         // ── 만들기·지우기 ──
@@ -94,13 +59,11 @@ namespace SquareTD.Tests
 
             registry.EnsureZones(tower, 1, true);
             Zone first = registry.GetByOwner(tower)[0];
-            first.AddStack(20f, 60);
             registry.TryPlace(first, 0);
 
             registry.EnsureZones(tower, 2, true);
             Assert.AreEqual(2, registry.GetByOwner(tower).Count);
             Assert.IsTrue(first.IsPlaced, "기존 존은 그대로");
-            Assert.AreEqual(20f, first.Stack, 0.0001f);
             Assert.IsFalse(registry.GetByOwner(tower)[1].IsPlaced, "새 존만 자리를 고름");
         }
 

@@ -43,7 +43,8 @@ namespace SquareTD
             else if (existing != null)
             {
                 if (existing.IsPermanent && !effect.IsPermanent) return false;
-                bool stronger = effect.IsPermanent && !existing.IsPermanent;
+                if (effect.Rank < existing.Rank) return false;
+                bool stronger = (effect.IsPermanent && !existing.IsPermanent) || effect.Rank > existing.Rank;
                 if (!stronger && effect.Strength < existing.Strength) return false;
             }
 
@@ -93,6 +94,10 @@ namespace SquareTD
         }
 
         public StatusEffect Find(string key) => m_effects.Find(effect => effect.Key == key);
+
+        public void Refresh() => RebuildModifiers();
+
+        public List<StatusEffect> FindAll(Predicate<StatusEffect> match) => m_effects.FindAll(match);
 
         private void RebuildModifiers()
         {
@@ -195,7 +200,7 @@ namespace SquareTD
         {
             ForEach(effect =>
             {
-                effect.CountDown();
+                effect.CountDown(m_owner);
                 effect.OnActed(m_owner);
             });
 

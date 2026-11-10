@@ -237,7 +237,7 @@ namespace SquareTD
             }
             foreach (Zone zone in board.Zones.All)
             {
-                string value = $"{zone.Owner.Definition.Id}@{zone.CellIndex}@{zone.Stage}@{zone.Stack}";
+                string value = $"{zone.Owner.Definition.Id}@{zone.CellIndex}@{zone.Owner.State.SkillCount:0.#}@{zone.Owner.State.Stack.Current:0}";
                 (zone.IsBuff ? buffs : debuffs).Add(value);
             }
             const string header = "run,seed,wave,enemy_turns,variant,spawn_tiles,path_tiles,towers,buff_zones,debuff_zones,frame_delta,unscaled_delta";

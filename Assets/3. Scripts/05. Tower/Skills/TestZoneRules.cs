@@ -2,25 +2,22 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 문양 없는 존이 쓰는 시험용 버프·디버프 규칙
+    // 문양 없는 존이 쓰는 시험용 버프·디버프 규칙 (공격력 +Power% / 방어력 −Power%)
     public class TestBuffRule : BuffRule
     {
-        public override List<StatModifier> GetModifiers(Zone zone, TowerController receiver, string source)
+        public override List<StatModifier> GetModifiers(SupportCast cast, TowerController receiver, string source)
         {
-            float value = zone.Stage == ZoneStage.Skill2 ? 0.2f : 0.1f;
-            return new List<StatModifier> { StatModifier.Percent(source, StatType.Power, value) };
+            return new List<StatModifier> { StatModifier.Percent(source, StatType.Power, cast.Rate) };
         }
     }
 
     public class TestDebuffRule : DebuffRule
     {
-        public override StatusEffect CreateEffect(Zone zone, EnemyController enemy)
+        public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy)
         {
-            float value = Resist(enemy, zone.Stage == ZoneStage.Skill2 ? 0.2f : 0.1f);
-            string key = EmblemDebuffEffect.KeyOf(zone.Emblem);
-            return new EmblemDebuffEffect(zone.Emblem, zone.Stage, zone.Owner.Stats.Duration, value,
-                $"방어 −{value * 100f:0.#}%",
-                StatModifier.Percent(key, StatType.Defense, -value));
+            float value = Resist(enemy, cast.Rate);
+            string key = EmblemDebuffEffect.KeyOf(cast.Emblem);
+            return new EmblemDebuffEffect(cast, $"방어 −{value * 100f:0.#}%", StatModifier.Percent(key, StatType.Defense, -value));
         }
     }
 }

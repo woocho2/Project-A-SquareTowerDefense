@@ -1,28 +1,42 @@
 namespace SquareTD
 {
-    // 적 큐브 윗면의 효과를 스탯 수정자로
+    // 적 큐브 보이는 면의 효과를 적응형 능력치만큼 스탯 수정자·치유로
     public static class EnemyCubeFaces
     {
         public const string Source = "큐브 면";
 
-        private static readonly StatModifier[][] s_faceModifiers =
+        public static StatModifier[] GetModifiers(EnemyCubeFaceAsset face, int adaptive)
         {
-            new StatModifier[0],
-            new[] { StatModifier.Percent(Source, StatType.Defense, 0f) },
-            new[] { StatModifier.Flat(Source, StatType.ActionGainPerTurn, 0f) },
-            new[] { StatModifier.Flat(Source, StatType.SpeedMin, 0f),
-                    StatModifier.Flat(Source, StatType.SpeedMax, 0f) },
-            new[] { StatModifier.Percent(Source, StatType.DamageTaken, 0f) },
-            new StatModifier[0],
-        };
+            switch (face)
+            {
+                case EnemyCubeFaceAsset.Defense:
+                    return new[] { StatModifier.Percent(Source, StatType.Defense, 0.05f * adaptive) };
 
-        public static StatModifier[] GetModifiers(EnemyCubeFaceAsset face) => s_faceModifiers[(int)face];
+                case EnemyCubeFaceAsset.Action:
+                    return new[] { StatModifier.Flat(Source, StatType.ActionGainPerTurn, adaptive) };
 
-        public static void Apply(EnemyStats stats, EnemyCubeFaceAsset face)
+                case EnemyCubeFaceAsset.Mobility:
+                    return new[] { StatModifier.Flat(Source, StatType.SpeedMin, adaptive),
+                                   StatModifier.Flat(Source, StatType.SpeedMax, adaptive) };
+
+                case EnemyCubeFaceAsset.Locked:
+                    return new[] { StatModifier.Percent(Source, StatType.DamageTaken, 0.1f * adaptive) };
+
+                case EnemyCubeFaceAsset.Hourglass:
+                    return new[] { StatModifier.Percent(Source, StatType.DamageTaken, -0.1f * adaptive) };
+
+                default:
+                    return new StatModifier[0];
+            }
+        }
+
+        public static float GetHealRate(EnemyCubeFaceAsset face, int adaptive) => face == EnemyCubeFaceAsset.SelfHeal ? 0.1f * adaptive : 0f;
+
+        public static void Apply(EnemyStats stats, EnemyCubeFaceAsset face, int adaptive)
         {
             stats.Modifiers.RemoveBySource(Source);
 
-            foreach(StatModifier modifier in GetModifiers(face))
+            foreach(StatModifier modifier in GetModifiers(face, adaptive))
             {
                 stats.Modifiers.Add(modifier);
             }

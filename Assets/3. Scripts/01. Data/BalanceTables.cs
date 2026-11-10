@@ -50,7 +50,7 @@ namespace SquareTD
     public static class BalanceTables
     {
         public const int MaxColorLevel = 5;
-        public const int MaxColorLevelWithBonus = 6;
+        public const int MaxColorLevelWithBonus = MaxColorLevel;
 
         private static readonly TierRow[] s_tierRows =
         {
@@ -67,10 +67,9 @@ namespace SquareTD
             ColorLevelRow.Identity,
             new ColorLevelRow(0, 1f, 1f, 1f, 0),
             new ColorLevelRow(0, 2f, 1.5f, 1f, 0),
-            new ColorLevelRow(1, 2f, 2f, 1f, 0),
-            new ColorLevelRow(1, 2f, 2.5f, 1/2f, 0),
-            new ColorLevelRow(2, 4f, 4f, 1/2f, 1),
-            new ColorLevelRow(2, 6f, 4f, 1/2f, 2),
+            new ColorLevelRow(1, 4f, 2f, 1f, 0),
+            new ColorLevelRow(1, 8f, 2.5f, 1/2f, 0),
+            new ColorLevelRow(2, 16f, 4f, 1/2f, 1),
         };
 
         private static readonly int[] s_colorUpgradeCosts = { 0, 4, 12, 48, 240, 0 };

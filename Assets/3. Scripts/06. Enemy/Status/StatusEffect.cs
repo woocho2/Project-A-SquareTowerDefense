@@ -10,6 +10,7 @@ namespace SquareTD
         public virtual bool IsPermanent => false;
         public virtual bool IsStrongCC => false;
         public virtual float Strength => 0f;
+        public virtual int Rank => 0;
 
         public int RemainingActions { get; private set; }
         public bool IsExpired => !IsPermanent && RemainingActions <= 0;
@@ -19,10 +20,12 @@ namespace SquareTD
             RemainingActions = durationActions;
         }
 
-        public void CountDown()
+        public void CountDown(EnemyController enemy)
         {
-            if (!IsPermanent) RemainingActions--;
+            if (!IsPermanent && ShouldCountDown(enemy)) RemainingActions--;
         }
+
+        protected virtual bool ShouldCountDown(EnemyController enemy) => true;
 
         public virtual IReadOnlyList<StatModifier> GetModifiers() => Array.Empty<StatModifier>();
         public virtual void OnAdded(EnemyController enemy) { }

@@ -1,10 +1,9 @@
 namespace SquareTD
 {
-    // 빙결 — 다음 행동 한 번 못 움직임
+    // 빙결 — 다음 행동 한 번 행동 불가, 그동안 받은 피해의 30%를 풀릴 때 한 번에
     public class FreezeEffect : ImmobilizeEffect
     {
-        public const float ThawRate = 0.25f;
-        public const float ColdBonus = 0.25f;
+        public const float ThawRate = 0.3f;
 
         public float DamageWhileFrozen { get; private set; }
 
@@ -14,13 +13,6 @@ namespace SquareTD
         {
             EnemyStatusEffects status = target?.Body != null ? target.Body.Status : target?.Status;
             return status != null && status.Find(ImmobilizeKey) is FreezeEffect;
-        }
-
-        public override float ModifyIncomingDamage(EnemyController enemy, DamageInfo info, float damage)
-        {
-            if (info.Attacker == null) return damage;
-            if (BuffRule.ReceivedStage(info.Attacker, TowerEmblem.Ice) != ZoneStage.Skill2) return damage;
-            return damage * (1f + ColdBonus);
         }
 
         public override void OnDamageTaken(EnemyController enemy, DamageInfo info, float damage)
@@ -40,6 +32,6 @@ namespace SquareTD
             });
         }
 
-        public override string Describe() => $"빙결: 다음 행동 한 번 0 / 0, 풀릴 때 받은 피해 {DamageWhileFrozen:0.#}의 25%";
+        public override string Describe() => $"빙결: 다음 행동 한 번 0 / 0, 풀릴 때 받은 피해 {DamageWhileFrozen:0.#}의 30%";
     }
 }

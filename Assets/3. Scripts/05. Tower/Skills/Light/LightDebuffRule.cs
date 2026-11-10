@@ -1,63 +1,69 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SquareTD
 {
-    // 빛 디버프 — 잔영 · 잔상
+    // 빛 디버프 — 쉬머 · 배니시 (실명 스택, 디버프 타워도 실명을 쌓아 100마다 초월 카운트 +Tier, 초월 웨이브의 배니시는 모든 적 즉사,
+    //                           배니시 최대 체력 -10%, 빛 타워가 실명인 적을 치면 최종 피해 +20%)
     public class LightDebuffRule : DebuffRule
     {
-        public const float ShadowRelay = 2f;
-        public const float AfterimageRelay = 4f;
+        public const string TowerBlindKey = "실명";
+        public const float BlindPerTranscend = 100f;
+        public const float VanishMaxHpCut = 0.1f;
+        public const float LightFinalDamage = 0.2f;
 
-        private readonly Func<PathOccupancy> m_occupancy;
-        private readonly Func<int, Vector3> m_cellPosition;
-
-        public LightDebuffRule(Func<PathOccupancy> occupancy, Func<int, Vector3> cellPosition)
+        public override void OnApply(SupportCast cast, EnemyController enemy)
         {
-            m_occupancy = occupancy;
-            m_cellPosition = cellPosition;
+            float amount = Resist(enemy, cast.Amount);
+            BlindEffect.Add(enemy, amount);
+            AddTowerBlind(cast.Owner, cast.Amount);
         }
 
-        public override StatusEffect CreateEffect(Zone zone, EnemyController enemy)
+        public override void OnSkill2(SupportCast cast)
         {
-            float hpRate = SkillFormula.ZoneValue(zone);
-            float relay = zone.Stage == ZoneStage.Skill2 ? AfterimageRelay : ShadowRelay;
-            return new LightDebuffEffect(zone, hpRate, relay, m_occupancy, m_cellPosition);
+            if (!EmblemSharedState.Current.IsTranscendWave || EnemyManager.Instance == null) return;
+            foreach (EnemyController enemy in new List<EnemyController>(EnemyManager.Instance.Registry.Alive))
+                enemy.Execute(new DamageInfo { Attacker = cast.Owner, Source = DamageSource.Skill, Emblem = TowerEmblem.Light });
+        }
+
+        public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy) =>
+            cast.IsSkill2 ? new LightDebuffEffect(cast, Mathf.Min(Resist(enemy, VanishMaxHpCut), 0.95f)) : null;
+
+        public static void AddTowerBlind(TowerController tower, float amount)
+        {
+            if (tower == null || tower.State == null || amount <= 0f) return;
+            float before = tower.State.GetCounter(TowerBlindKey);
+            tower.State.AddCounter(TowerBlindKey, amount);
+            int crossed = Mathf.FloorToInt(tower.State.GetCounter(TowerBlindKey) / BlindPerTranscend) - Mathf.FloorToInt(before / BlindPerTranscend);
+            if (crossed > 0) EmblemSharedState.Current.AddTranscend(crossed * tower.Definition.Tier);
         }
     }
 
     public class LightDebuffEffect : EmblemDebuffEffect
     {
-        private readonly float m_hpRate;
-        private readonly float m_relay;
-        private readonly Func<PathOccupancy> m_occupancy;
-        private readonly Func<int, Vector3> m_cellPosition;
+        private readonly float m_maxHpCut;
 
-        public LightDebuffEffect(Zone zone, float hpRate, float relay, Func<PathOccupancy> occupancy, Func<int, Vector3> cellPosition)
-            : base(TowerEmblem.Light, zone.Stage, zone.Owner.Stats.Duration, hpRate,
-                   $"더미 (본체 최대 체력의 {hpRate * 100f:0.##}%), 더미가 받은 피해 ×{relay:0}을 본체가 받음")
+        public LightDebuffEffect(SupportCast cast, float maxHpCut)
+            : base(cast, $"최대 체력 −{maxHpCut * 100f:0.#}%, 빛 타워에게 실명인 동안 최종 피해 +20%")
         {
-            m_hpRate = hpRate;
-            m_relay = relay;
-            m_occupancy = occupancy;
-            m_cellPosition = cellPosition;
+            m_maxHpCut = maxHpCut;
         }
 
         public override void OnAdded(EnemyController enemy)
         {
-            DummyTarget existing = DummyTarget.Find(enemy);
-            if (existing != null)
-            {
-                existing.RelayMultiplier = m_relay;
-                return;
-            }
-
-            Vector3 position = m_cellPosition != null ? m_cellPosition(enemy.PathIndex) : enemy.transform.position;
-            DummyTarget.Spawn(enemy, m_occupancy?.Invoke(), position, enemy.MaxHp * m_hpRate, m_relay);
+            if (m_maxHpCut > 0f) enemy.Health.ScaleMax(1f - m_maxHpCut);
         }
 
-        public override void OnActed(EnemyController enemy) => DummyTarget.Find(enemy)?.CountDownPrism();
+        public override void OnRemoved(EnemyController enemy)
+        {
+            if (m_maxHpCut > 0f) enemy.Health.ScaleMax(1f / (1f - m_maxHpCut));
+        }
 
-        public override void OnDeath(EnemyController enemy, KillInfo kill) => DummyTarget.Find(enemy)?.Despawn();
+        public override float ModifyIncomingDamage(EnemyController enemy, DamageInfo info, float damage)
+        {
+            TowerController attacker = info.Attacker;
+            if (attacker == null || attacker.Definition.Emblem != TowerEmblem.Light || !BlindEffect.IsBlind(enemy)) return damage;
+            return damage * (1f + LightDebuffRule.LightFinalDamage);
+        }
     }
 }

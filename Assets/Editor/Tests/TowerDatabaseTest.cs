@@ -232,7 +232,7 @@ namespace SquareTD.Tests
             Assert.AreEqual(action, stats.Action);
             Assert.AreEqual(count, stats.AttackCount);
             Assert.AreEqual(stack, stats.Stack);
-            Assert.AreEqual(duration, stats.Duration);
+            Assert.AreEqual(duration, stats.SkillCount, 0.0001f);
         }
     }
 }

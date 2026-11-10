@@ -2,43 +2,34 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 버프 규칙의 베이스 (문양마다 하나)
+    // 버프 규칙의 베이스 (문양마다 하나). 스킬 1·스킬 2의 값은 SupportCast로 받음
     public abstract class BuffRule
     {
-        public abstract List<StatModifier> GetModifiers(Zone zone, TowerController receiver, string source);
+        public abstract List<StatModifier> GetModifiers(SupportCast cast, TowerController receiver, string source);
 
-        public virtual bool UsesOwnerStack => false;
+        public virtual int GetLimitModifier(int baseLimit) => 0;
 
-        public virtual int GetLimitModifier(TowerController owner, int baseLimit) => 0;
+        public virtual void OnSkill2(SupportCast cast) { }
 
-        public virtual void OnGiveBuff(Zone zone, TowerController receiver) { }
+        public virtual void OnOwnerActed(TowerController owner) { }
 
-        public virtual void OnTaken(Zone zone, TowerController receiver) { }
+        public virtual void OnGiveSkill1(SupportCast cast, TowerController receiver) { }
 
-        public virtual void OnReceiverActed(Zone zone, TowerController receiver) { }
+        public virtual void OnReceiverActed(SupportCast cast, TowerController receiver) { }
 
-        public virtual void OnReceiverHit(Zone zone, TowerController receiver, ITarget target) { }
+        public virtual void OnReceiverHit(SupportCast cast, TowerController receiver, ITarget target) { }
 
-        public virtual bool OnZoneTurn(Zone zone) => false;
-
-        protected static bool IsSynergy(Zone zone, TowerController receiver)
+        protected static bool IsSynergy(SupportCast cast, TowerController receiver)
         {
-            AttackAttribute attribute = zone.Owner.Definition.Attribute;
-            if (attribute != AttackAttribute.None) return receiver.Definition.Attribute == attribute;
-            return receiver.Definition.Emblem == zone.Emblem;
+            if (!cast.IsSkill2) return false;
+            if (cast.Attribute != AttackAttribute.None) return receiver.Definition.Attribute == cast.Attribute;
+            return receiver.Definition.Emblem == cast.Emblem;
         }
 
-        public static ZoneStage ReceivedStage(TowerController tower, TowerEmblem emblem)
+        public static bool HasSkill2(TowerController tower, TowerEmblem emblem)
         {
-            ZoneStage best = ZoneStage.None;
-            if (tower == null || tower.State == null) return best;
-
-            foreach (Zone zone in tower.State.ReceivedZoneBuffs.Keys)
-            {
-                if (zone.Emblem != emblem || zone.Stage == ZoneStage.Discharge) continue;
-                if (zone.Stage > best) best = zone.Stage;
-            }
-            return best;
+            SupportCast? cast = SupportBuffs.GetActive(tower, emblem);
+            return cast.HasValue && cast.Value.IsSkill2;
         }
     }
 }
