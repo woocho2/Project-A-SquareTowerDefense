@@ -14,7 +14,7 @@ namespace SquareTD
         public static TowerFinalStats Calculate(TowerDefinition definition, TowerDefinition tier1Definition, TowerState state, int colorLevel)
         {
             bool receivesBuffs = definition.Color == TowerColor.Red || definition.Color == TowerColor.Blue;
-            int level = GetUsedLevel(colorLevel, state.Modifiers, receivesBuffs);
+            int level = Mathf.Clamp(colorLevel, 1, BalanceTables.MaxColorLevel);
 
             TowerDefinition baseDefinition = tier1Definition ?? definition;
             float[] values = ReadBase(baseDefinition);
@@ -28,6 +28,7 @@ namespace SquareTD
             StatModifierList applied = receivesBuffs ? state.Modifiers : AllColorModifiers(state.Modifiers);
             ApplyModifiers(values, applied);
             sources = BuildSources(baseValues, applied);
+            ApplyAttackCountLock(values);
             ApplyLimits(values);
 
             return new TowerFinalStats(values, baseValues, level, sources);
@@ -59,15 +60,6 @@ namespace SquareTD
             }
 
             return sources;
-        }
-
-        private static int GetUsedLevel(int colorLevel, StatModifierList modifiers, bool receivesBuffs)
-        {
-            if (!receivesBuffs) return colorLevel;
-
-            int bonus = (int)modifiers.Sum(StatType.ColorLevelBonus).flat;
-
-            return Mathf.Min(colorLevel + bonus, BalanceTables.MaxColorLevelWithBonus);
         }
 
         private static float[] ReadBase(TowerDefinition definition)
@@ -117,11 +109,17 @@ namespace SquareTD
         {
             for (int i = 1; i < values.Length; i++)
             {
-                StatType stat = (StatType)i;
-                if (stat == StatType.ColorLevelBonus) continue;
-
-                values[i] = modifiers.Apply(stat, values[i]);
+                values[i] = modifiers.Apply((StatType)i, values[i]);
             }
+        }
+
+        private static void ApplyAttackCountLock(float[] values)
+        {
+            if (values[(int)StatType.AttackCountLock] <= 0f) return;
+
+            int attackCount = Mathf.Max(1, Mathf.RoundToInt(values[(int)StatType.AttackCount]));
+            values[(int)StatType.Power] *= attackCount;
+            values[(int)StatType.AttackCount] = 1f;
         }
 
         private static void ApplyLimits(float[] values)

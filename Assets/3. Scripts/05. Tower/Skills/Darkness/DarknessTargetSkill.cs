@@ -5,8 +5,8 @@ namespace SquareTD
     // 어둠 단일 — 심연 (Power × AbilityValue × (1 + 침식 카운트 × 0.01))
     public class DarknessTargetSkill : AttackSkill
     {
-        public DarknessTargetSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
-            : base(grid, occupancy, stackModes) { }
+        public DarknessTargetSkill(BoardGrid grid, PathOccupancy occupancy)
+            : base(grid, occupancy) { }
 
         protected override List<ITarget> GetArea(TowerController owner, ITarget mainTarget) => SkillArea.Single(mainTarget);
 

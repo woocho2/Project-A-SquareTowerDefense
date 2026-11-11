@@ -47,11 +47,7 @@ namespace SquareTD
         public static void GetBonusReward(KillInfo kill, ref int gold, ref int gem)
         {
             float goldRate = 0f;
-            if (kill.Enemy != null && kill.Enemy.Status != null)
-            {
-                goldRate += kill.Enemy.Status.GetGoldBonusRate(kill);
-                gem += kill.Enemy.Status.RollGemBonus(kill);
-            }
+            if (kill.Enemy != null && kill.Enemy.Status != null) gem += kill.Enemy.Status.RollGemBonus(kill);
 
             TowerController killer = kill.Damage.Attacker;
             float reward = killer != null && killer.Stats != null ? killer.Stats.Get(StatType.RewardBonus) : 0f;

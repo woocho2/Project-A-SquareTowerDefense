@@ -110,8 +110,6 @@ namespace SquareTD
         {
             EnemyTurnStarted?.Invoke();
             m_towerRunner.RunEnemyTurnStart();
-            foreach (EnemyController enemy in new List<EnemyController>(EnemyManager.Instance.Registry.Alive))
-                enemy.Status.OnEnemyTurnStart();
         }
 
         private IEnumerator MoveAllEnemies()

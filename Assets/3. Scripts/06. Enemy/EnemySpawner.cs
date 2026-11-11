@@ -51,12 +51,19 @@ namespace SquareTD
             }
         }
 
-        private void SpawnOne(EnemySpawnEntry entry, int wave)
+        public EnemyController SpawnNormalWithHp(int wave, float hp)
+        {
+            EnemyController enemy = SpawnOne(m_normal, wave);
+            if (enemy != null) enemy.Health.Reset(hp);
+            return enemy;
+        }
+
+        private EnemyController SpawnOne(EnemySpawnEntry entry, int wave)
         {
             if (entry.Definition == null || entry.Pool == null)
             {
                 Debug.LogWarning("[EnemySpawner] 적 정의가 비어 있어 소환하지 않음");
-                return;
+                return null;
             }
 
             EnemyController enemy = entry.Pool.Get();
@@ -73,6 +80,7 @@ namespace SquareTD
             {
                 m_bossTimer.Add(enemy);
             }
+            return enemy;
         }
     }
 }

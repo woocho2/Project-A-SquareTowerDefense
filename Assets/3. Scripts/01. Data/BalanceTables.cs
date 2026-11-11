@@ -50,7 +50,6 @@ namespace SquareTD
     public static class BalanceTables
     {
         public const int MaxColorLevel = 5;
-        public const int MaxColorLevelWithBonus = MaxColorLevel;
 
         private static readonly TierRow[] s_tierRows =
         {
@@ -82,7 +81,7 @@ namespace SquareTD
 
         public static ColorLevelRow GetColorLevelRow(int level, TowerColor color)
         {
-            level = Mathf.Clamp(level, 1, MaxColorLevelWithBonus);
+            level = Mathf.Clamp(level, 1, MaxColorLevel);
             ColorLevelRow row = s_colorLevelRows[level];
 
             if (color != TowerColor.Blue) return row;

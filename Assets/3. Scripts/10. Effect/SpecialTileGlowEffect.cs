@@ -68,14 +68,6 @@ namespace SquareTD
                 Place($"Path {i} {type}", board.GetWorldPosition(board.Grid.GetPathCell(i)), size, shape, color, sortingLayer, tileOrder);
             }
 
-            for (int i = 0; i < board.Grid.SpawnCount; i++)
-            {
-                SpawnTileType type = board.Tiles.GetSpawnTile(i);
-                if (type == SpawnTileType.None) continue;
-                (int shape, Color color) = SpawnLook(type);
-                Place($"Spawn {i} {type}", board.GetWorldPosition(board.Grid.GetSpawnCell(i)), size, shape, color, sortingLayer, tileOrder);
-            }
-
             DOTween.To(() => m_phase, value => { m_phase = value; m_material.SetFloat(s_phaseId, value); }, 1f, 1f)
                 .SetEase(Ease.Linear)
                 .SetLoops(-1, LoopType.Incremental)
@@ -90,22 +82,9 @@ namespace SquareTD
 
         private static (int shape, Color color) PathLook(PathTileType type) => type switch
         {
-            PathTileType.Defense => (0, new Color(0.35f, 0.65f, 1f)),
-            PathTileType.Speed => (1, new Color(1f, 0.85f, 0.25f)),
-            PathTileType.ActionCount => (2, new Color(1f, 0.55f, 0.2f)),
-            PathTileType.Heal => (3, new Color(0.35f, 1f, 0.5f)),
             PathTileType.Purify => (4, new Color(0.9f, 0.95f, 1f)),
             PathTileType.Bifrost => (5, new Color(0.8f, 0.6f, 1f)),
-            _ => (0, Color.white),
-        };
-
-        private static (int shape, Color color) SpawnLook(SpawnTileType type) => type switch
-        {
-            SpawnTileType.Power => (6, new Color(1f, 0.3f, 0.3f)),
-            SpawnTileType.ActionCount => (7, new Color(0.3f, 0.95f, 1f)),
-            SpawnTileType.AttackCount => (8, new Color(0.8f, 0.45f, 1f)),
-            SpawnTileType.Mastery => (9, new Color(1f, 0.82f, 0.35f)),
-            _ => (6, Color.white),
+            _ => (4, Color.white),
         };
 
         private void Place(string name, Vector3 position, float size, int shape, Color color, int sortingLayer, int sortingOrder)

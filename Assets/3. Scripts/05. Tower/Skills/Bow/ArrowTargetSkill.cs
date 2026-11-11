@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 활 단일 — 은화살
+    // 활 단일 — 헤비 볼트 (그 적의 최대 체력의 (Power × AbilityValue)% 피해, 저항력과 무관)
     public class ArrowTargetSkill : AttackSkill
     {
-        public ArrowTargetSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
-            : base(grid, occupancy, stackModes) { }
+        public ArrowTargetSkill(BoardGrid grid, PathOccupancy occupancy)
+            : base(grid, occupancy) { }
 
         protected override List<ITarget> GetArea(TowerController owner, ITarget mainTarget)
         {
@@ -15,9 +15,9 @@ namespace SquareTD
 
         protected override void OnHitTarget(TowerController owner, ITarget target, DamageInfo hit)
         {
-            DamageInfo silver = hit;
-            silver.BaseDamage = target.MaxHp * hit.BaseDamage / 100f;
-            ProjectileHitResolver.HitSingle(target, silver);
+            DamageInfo bolt = hit;
+            bolt.BaseDamage = target.MaxHp * hit.BaseDamage * SkillFormula.PercentRate;
+            ProjectileHitResolver.HitSingle(target, bolt);
         }
     }
 }

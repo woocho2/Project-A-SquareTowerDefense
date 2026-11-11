@@ -97,9 +97,7 @@ namespace SquareTD
 
         private static void CollectSpawn(int spawnIndex, List<Entry> entries)
         {
-            BoardManager board = BoardManager.Instance;
-            AddTile(SpecialTileText.Describe(board.Tiles.GetSpawnTile(spawnIndex)), entries);
-            foreach (Zone zone in board.Zones.GetAtSpawn(spawnIndex)) entries.Add(ZoneEntry(zone));
+            foreach (Zone zone in BoardManager.Instance.Zones.GetAtSpawn(spawnIndex)) entries.Add(ZoneEntry(zone));
         }
 
         private static void CollectPath(int pathIndex, List<Entry> entries)
@@ -140,7 +138,7 @@ namespace SquareTD
         {
             string emblem = EmblemNames.GetEmblemName(zone.Emblem);
             string kind = zone.IsBuff ? "버프존" : "디버프존";
-            string stageName = SkillDescriptions.GetZoneStageName(zone);
+            string skillName = SkillDescriptions.GetZoneSkillName(zone);
             int maxStack = zone.Owner != null ? zone.Owner.Stats.Stack : 0;
             string progress = zone.Owner != null ? $"스킬 카운트 {zone.Owner.State.SkillCount:0.#} / {zone.Owner.Stats.SkillCount:0.#} · 차지 {zone.Owner.State.Stack.Current:0} / {maxStack}" : "-";
             string owner = zone.Owner != null ? zone.Owner.name : "-";
@@ -148,9 +146,9 @@ namespace SquareTD
 
             return new Entry
             {
-                Title = $"{emblem} {kind} · {stageName}",
+                Title = $"{emblem} {kind} · {skillName}",
                 Summary = progress,
-                Detail = $"{emblem} {kind} · {stageName}\n{progress}\n존 주인: {owner}\n\n{rule}",
+                Detail = $"{emblem} {kind} · {skillName}\n{progress}\n존 주인: {owner}\n\n{rule}",
                 IsDebuff = !zone.IsBuff,
             };
         }

@@ -4,21 +4,8 @@
 흐름: 20번 기획 → 21번 계획(이 문서, 남은 것만) → 22번 리팩토링 내역서(끝낸 것). 끝난 수업은 22번으로 옮기고 여기서 지움.
       수업 중·수업 뒤의 질문과 답은 23번 수업 질문 노트에 수업별로 그때그때 더함 (Claude가 따로 부탁받지 않아도).
 
->>> 먼저 할 것: 스킬을 새 기획으로 — 2단계 (1단계 공통 틀은 2026-11-10에 끝남, 22번. Unity Run All은 아직)
-    0. Unity Run All. 바뀐 동작에 걸려 실패하는 테스트를 고침. 옛 존 스택 테스트 12개 파일은 프로젝트 밖 _Recovery\OldTests로 옮겨 둠
-    1. 무기 공격 스킬 12개를 20번 4-3 ~ 4-8장대로 (지금은 옛 구현. 스킬 치명타가 꺼져 휠윈드의 사거리 안 치명타도 없음)
-         검    보이드 슬래시: 맵 전체 피해만 / 블레이드 스톰: 검기 10번(÷10) + 잃은 체력의 (Power × AV)% 폭발
-         도끼  휠윈드: 맵 전체, 사거리 안의 적은 반드시 치명타 / 블러드 레이지: (레벨 × Tier)번 행동 동안 치명 100%, 공격력 +(Power × AV)%, 행동 카운트 +1
-         활    애로우 레인: (레벨 × Tier) 턴, 매 턴 × 0.2, 겹쳐 깔림 / 헤비 볼트: 최대 체력의 (Power × AV)%
-         창    랠리 배너: 사거리 안 아군 공격력·치명타 확률 +(Power × AV)% / 헤드헌트: 창 (Tier × 레벨)개, 체력 높은 적부터, 하나에 × 0.2
-         방패  콘커션: 착탄 범위, 1행동 기절 / 리바운드: (Tier × 레벨)번 튕김, 한 번에 × 0.2, 튕길 적이 없으면 남은 피해를 합쳐 마지막에
-         해머  저지먼트: 착탄 범위, 맞은편 칸으로 날림 + 그 칸 타일 효과 / 아머 크러시: 8번(÷8), 마지막에 1행동 방어력 0
-    2. 얼음 디버프 시너지: 딥 프리즈 동안 얼음 타워가 한기·빙결인 적을 치면 AttackCount 광역 +1, 단일 +2 (아직 없음)
-    3. 기획에서 정할 것: 대지 양분(아군에게 주는 성장 스택 수), 바람 버프 치명타 피해의 차감치 (지금 임시 50)
-    4. 임시로 처리한 곳: 창 모아 찌르기의 "AttackCount 1 고정"(지금은 −(원래 − 1)), 빛 프리즘의 초월 2배(지금은 쓰는 순간이 초월 웨이브인지로만)
-    5. 문양별 새 테스트 (옛 EmblemExampleTest 대신 14문양의 버프·디버프·공격 스킬)
-    6. 21번 구조 줄 정리: ZoneStage, GetLevelBonus(만개), OnZoneTurn, OnReceiverHit, TimedTowerBuff의 광채·광휘, PrismEffect·DummyTarget 등 옛 연결.
-       안 쓰게 된 파일(PrismEffect, DummyTarget 등)은 쓰는 곳을 확인하고 지울지 정함
+>>> 먼저 할 것: 스킬을 새 기획으로 — 2단계 남은 것 (스킬 코드·문양별 테스트·옛 코드 정리는 2026-11-11에 끝남, 22번)
+    3. 저항력을 어디까지 적용할지 사용자와 한 번에 상의 (저지먼트 날려 보내기 확률, 아머 크러시의 방어력 0 등 AI가 해석한 곳)
     7. 게임에서 문양마다 보기
 
 >>> 다음 수업: 41 — 시너지 타워
@@ -32,7 +19,7 @@
     수업 27(규칙의 틀과 검)은 2026-10-28에 끝남 (22번). 게임에서 검 버프·디버프 확인은 아직 (타워·적 카드로 볼 수 있음).
     문양 순서 (2026-10-28 사용자): 엠블럼 순서대로 — 검 27, 도끼 28, 활 29, 창 30, 방패 31, 해머 32, 불 33, 물 34, 대지 35, 바람 36, 얼음 37, 전기 38, 빛 39, 어둠 40.
     수업 23은 2026-10-26에 끝남 (22번).
-    수업 22는 2026-10-26에 끝남 (22번). UI 확인(타일 정보 패널 글자, 스폰 타일 위 타워의 스탯)은 아직 — 같은 날 연결한 UI와 함께 볼 것.
+    수업 22는 2026-10-26에 끝남 (22번). UI 확인(타일 정보 패널 글자)은 아직 — 같은 날 연결한 UI와 함께 볼 것.
     수업 21은 2026-10-26에 끝남 (22번). DebugCheat의 N·P 임시 키는 수업 22에서 지움.
     수업 20은 2026-10-23에 끝남 (22번). 같은 날 UI 일부를 먼저 연결함 (6부 수업 44 칸).
     수업 19는 2026-10-23에 끝남 (22번).
@@ -158,14 +145,12 @@
       이 게임은 그 순간이 몰림: 웨이브 시작에 최대 40마리 동시 소환(한 판 일반 적 720마리), 단일 타워 한 번 행동에 수십 발.
   쓰는 곳: 적, 투사체, 이펙트, 대미지 숫자, 적 정보 패널의 목록 항목.
   안 쓰는 곳: 타워. 플레이어 턴의 조작으로만 생기고(한 판 160기 안팎) 상태가 많아, 초기화를 빠뜨릴 위험이 얻는 것보다 큼.
-              더미. 적 한 마리에 하나뿐이고 수가 적음.
   조심: 풀의 가장 흔한 버그는 "지난번에 쓰던 상태가 남아 있는 것". 꺼낼 때 지울 목록을 정해 둠.
 
 [상태 패턴] — 수업 9, 18
   "지금 무슨 상태인가"를 if로 여기저기 묻지 않고, 상태 객체가 "이 상태에서 무엇을 할 수 있는가"를 답함.
-  왜: 플레이어 턴에만 생성·합성이 되고, 적 턴에도 스택 소모 버튼은 됨. 입력도 같은 클릭이 모드마다 뜻이 다름.
+  왜: 플레이어 턴에만 생성·합성·이동·존 고르기가 됨. 입력도 같은 클릭이 모드마다 뜻이 다름.
   쓰는 곳: 턴 상태 5종, 입력 모드 4종.
-  안 쓰는 곳: 존의 단계(스킬 1 / 스킬 2 / 불길 / 충전·과충전·방전). 넷 이하라 enum으로 충분.
 
 [옵저버 (C# event)] — 수업 10
   알리는 쪽은 "바뀌었다"고만 외치고, 듣고 싶은 쪽이 구독함. 이벤트 목록은 4장 [4-2].
@@ -174,8 +159,8 @@
   조심: 구독(+=)과 해제(-=)는 짝으로. 해제를 잊으면 파괴된 오브젝트를 부르다 에러.
 
 [인터페이스] — 수업 15
-  "이것을 할 수 있다"는 약속만 정하고 내용은 각자. ITarget(맞을 수 있는 대상)을 적과 더미가 함께 지킴.
-  왜: 타워는 적을 쏘는지 더미를 쏘는지 몰라도 됨. 더미(수업 39)가 생겨도 타겟 고르기·피해 코드를 고치지 않음.
+  "이것을 할 수 있다"는 약속만 정하고 내용은 각자. ITarget(맞을 수 있는 대상)을 적과 테스트의 가짜 대상이 함께 지킴.
+  왜: 타워는 진짜 적인지 몰라도 됨. 그래서 테스트에서 가짜 대상으로 타겟 고르기·피해 코드를 그대로 확인함.
 
 [전략 패턴] — 수업 15, 17, 22, 25, 27 ~ 40
   "같은 때에 같은 함수를 부르되, 내용이 종류마다 다른 것"을 클래스로 나눔. 부르는 쪽은 종류를 모름.
@@ -183,7 +168,7 @@
       switch로 하면 문양 하나를 고칠 때 여러 switch를 함께 고쳐야 하고, 하나를 빠뜨려도 컴파일 에러가 나지 않음.
       전략으로 하면 문양 하나 = 파일 넷 (광역 스킬, 단일 스킬, 버프 규칙, 디버프 규칙).
       타겟 우선순위는 플레이어가 판 도중에 바꿈 → 전략 객체만 갈아 끼우면 됨.
-  쓰는 곳: 공격 방식 4, 타겟 우선순위 6, 특수 타일 효과 10, 상태 효과 9, 장판 2, 공격 스킬 28, 버프·디버프 규칙 28.
+  쓰는 곳: 공격 방식 4, 타겟 우선순위 6, 특수 타일 효과 2 (정화, 비프로스트), 상태 효과 9, 장판 2, 공격 스킬 28, 버프·디버프 규칙 28.
 
 [템플릿 메서드] — 수업 23, 27
   베이스 클래스가 순서를 쥐고, 자식은 빈칸만 채움.
@@ -217,15 +202,13 @@
 ----------------------------------------------------------------------
 [4-1] 적 1턴의 단계 — TurnManager가 이 순서로 직접 부름 (20번 1장 [적 1턴의 순서])
 ----------------------------------------------------------------------
-  ⓪ 적 턴 시작   타워: 서 있는 칸의 버프존을 다시 모음 (벗어났으면 즉시 끝). 스킬·시간 버프의 "턴 시작"
-                 적: 상태 효과의 "턴 시작" (도깨비불 스택 비우기 등)
+  ⓪ 적 턴 시작   타워: 서 있는 칸의 버프존을 다시 모음 (벗어났으면 즉시 끝). 스킬의 "턴 시작" (불 브레스)
   ① 적 이동      적마다 행동 카운터 → 행동하는 적은 "다음 이동을 정할 때" 훅 → 주사위 → 이동 → "이동한 뒤" 훅
-                 (상태 유지 감소, 저항 감소, 프리즘 감소, 터뷸런스). 행동 불가(0 / 0)도 행동으로 셈
-  ② 버프·디버프 타워  보드 순서로 행동력 → 존에 스택 → 단계 갱신 → 버프 전달 (확률 버프 굴림, 불길·과충전 순환)
-  ③ 멈춘 칸의 효과    적마다: 디버프존 밟기(스택 + 효과) → 특수 타일(멈춰 있는 동안 / 매 턴) → 비프로스트·정화 → 회복은 마지막
-                      (같은 턴에 치유 감소가 먼저 걸리게. 20번 1장 끝줄)
+                 (상태 유지 감소, 저항 감소, 윈드 시어·터뷸런스). 행동 불가(0 / 0)도 행동으로 셈
+  ② 버프·디버프 타워  보드 순서로 행동력 → 차지 +1·스킬 카운트 → 존 위 타워에 스킬 1 → 차면 스킬 2 (아군 전체·적 전체)
+  ③ 멈춘 칸의 효과    행동한 적마다: 디버프존 밟기(스킬 1) → 정화·비프로스트 (길 위 특수 타일은 이 둘뿐, 2026-11-11)
   ④ 공격 타워    보드 순서로 한 기씩: 행동력 → 스킬 2 발동 확인 → 기본 공격 → AttackHandle이 끝날 때까지 기다림 → 다음 타워
-  ⑤ 디버프 경과  상태 효과의 "매 턴"(지속 피해, 빙결·속박 확률, 감전의 전하) → 장판 피해(애로우 레인·블랙홀) → 장판 남은 턴 감소
+  ⑤ 디버프 경과  상태 효과의 "매 턴"(화상·둠 레퀴엠·출혈, 아쿠아 프리즌·하이페리온) → 장판 피해(애로우 레인·블랙홀) → 장판 남은 턴 감소
   ⑥ 보스 제한 턴  보스·중간 보스마다 1 감소, 0이면 게임 오버
   적 턴 10번 뒤 → 소환 전 판정 → 다음 웨이브
 
@@ -244,7 +227,7 @@
   TowerManager                     BuildCostChanged (비용)        PlayerTurnPanel
   TowerManager                     SelectionChanged (타워)        TowerInfoPanel, TowerController(사거리 표시)
   ColorUpgradeState                LevelChanged (컬러, 레벨)      TowerManager(그 컬러의 타워 다시 계산), TowerInfoPanel
-  TowerStack                       Full (타워)                    TowerController(수동 소모 타워 빛남), TowerInfoPanel(스택 소모 버튼)
+  TowerStack                       Full                           TowerInfoPanel(카드 다시 그림)
   PathOccupancy                    CellChanged (칸 번호)          BoardPresenter("x N")
   ZoneRegistry                     ZoneChanged (존)               ZoneInfoPanel, TurnManager(턴 종료 검사), (나중의 타일 이펙트)
   BoardManager                     LayoutGenerated                TileinfoPanel, (나중의 타일 이펙트)
@@ -254,104 +237,108 @@
 ----------------------------------------------------------------------
 [4-3] 공용 자료형
 ----------------------------------------------------------------------
-ITarget — 맞을 수 있는 대상 (적과 더미가 지킴)
-  위치(Transform), PathIndex, IsAlive, IsBoss, IsDummy, Body(본체 적. 적이면 자기 자신),
+ITarget — 맞을 수 있는 대상 (적과 테스트의 가짜 대상이 지킴)
+  위치(Transform), PathIndex, IsAlive, IsBoss, Body(본체 적. 적이면 자기 자신, 가짜 대상은 null),
   Stats(EnemyStats, 수업 21에서 더함), Status(EnemyStatusEffects, 수업 25에서 더함), CurrentHp, MaxHp, TakeDamage(DamageInfo),
-  SetSortingOrder(int) (같은 칸에 선 대상들의 그리는 순서. BoardPresenter가 부름. 더미도 칸 위에 서므로 약속에 넣음)
+  SetSortingOrder(int) (같은 칸에 선 대상들의 그리는 순서. BoardPresenter가 부름)
   점유(PathOccupancy)와 타겟 고르기는 ITarget으로. 적 수 한도·보상은 EnemyManager의 목록(진짜 적만)으로.
 
 DamageInfo — 한 번의 피해 (struct)
-  Attacker(타워, 없으면 null), Source(Basic 기본 공격 / Skill 스킬 / Dot 매 턴 / Ground 장판 / Tile 맵 / Relay 더미 → 본체),
+  Attacker(타워, 없으면 null), Source(Basic 기본 공격 / Skill 스킬 / Dot 매 턴 / Ground 장판 / Tile 맵 / Relay 다른 피해에 붙는 피해: 추가타·연쇄),
   Emblem, Attribute(베기·찌르기·타격), BaseDamage, IsCritical, CritMultiplier, ArmorPenetration, Distance(날아간 칸),
-  ChangesMovement(이동력을 바꾸거나 멈추게 한 공격), ForceFixed(어둠 900: 전부 고정 피해)
+  ChangesMovement(이동력을 바꾸거나 멈추게 한 공격), ForceFixed(어둠 900: 전부 고정 피해), StunChance(기절 확률. 콘커션 1)
 KillInfo — 막타 (struct): Enemy(죽은 적), Damage(막타의 DamageInfo), SpawnWave, Kind
 
 StatType — 스탯 이름 (enum)
   타워  Power, Range, MaxAction, ActionGainPerTurn, AttackCount, Mastery, CritRate, CritDamage, AbilityValue, Duration,
-        MaxStack, StackValue, StackGainRate, ArmorPenetration, DistanceBonus, FinalDamage, BonusDamage, ColorLevelBonus
+        MaxStack, StackValue, StackGainRate, ArmorPenetration, DistanceDamage, DistanceDamageBonus, FinalDamage, BonusDamage,
+        ChargeBonus, LostHpDamage, AttackCountLock(창 모아 찌르기), GoldBonus, GoldDoubleChance, RewardBonus, ForceFixedDamage
+        (12번은 옛 ColorLevelBonus를 지운 빈 번호. 스탯 배열 크기는 가장 큰 번호 + 1)
   적    Defense, SpeedMin, SpeedMax, MaxAction, ActionGainPerTurn, DamageTaken, CritDamageTaken, HealReceived,
-        MapBuffRate, FixedDamageRatio, MaxHp
+        FixedDamageRatio, MaxHp (27번은 옛 MapBuffRate를 지운 빈 번호)
 StatModifier — (출처 이름, StatType, 값, Percent 또는 Flat). Percent는 전부 더해 기본값에 곱하고, Flat(정수형)은 따로 더함.
 
 RuleContext — 규칙이 읽는 판의 정보 (규칙이 매니저를 직접 찾지 않게 묶어서 넘김)
   Gold, EnemyLimit, BaseEnemyLimit, Wave, Cycle, Mode, DarknessCount, GetColorLevel(컬러), Random, Board(조회용)
 
-ZoneStage — Skill1, Skill2, FireBlaze(불길), Charge·Overcharge·Discharge(전기의 충전·과충전·방전)
-
 ----------------------------------------------------------------------
 [4-4] 훅 — 규칙이 끼어드는 자리 (베이스 클래스의 virtual 함수. 쓰는 문양만 덮어씀)
 ----------------------------------------------------------------------
-AttackSkill (공격 타워의 스킬 2)
-  CheckTrigger            광역·단일 모두 타워의 적중 수 (TowerController.CountSkillHit)   (공통, 베이스가 처리)
-  CastOnSelf              피해 대신 자기에게 시간 버프 (TimedTowerBuff)            도끼 단일(블러드 레이지)
-  GetArea  (빈칸)         범위: 착탄 / 맵 전체 / 사거리 안 / 대상 하나 / 연쇄       모든 문양
-  OnHitTarget  (빈칸)     범위의 대상마다 피해와 부가 효과                          모든 문양
-  ModifyOutgoingDamage    대상에 따라 피해 배율                                    도끼 광역(끝 칸 ×1.5)·불·바람·대지·전기·빛·어둠
-  OnBasicHit              이 타워의 기본 공격이 맞았을 때                          바람(터뷸런스 대상 공격 시 스킬 카운트 +2), 전기 광역(전하 1), 빛 단일(도깨비불)
-  ModifyOwnerStats        자기 강화를 최종 스탯에                                 바람 단일(템페스트), 대지(성장)
-  OnOwnerActed / OnEnemyTurnStart   그 타워의 행동 / ⓪ (시간 버프의 유지 감소는 TimedTowerBuff.CountDown이 행동 끝에)   바람 단일
-BuffRule (버프 타워의 규칙. 받는 쪽은 존 위의 공격 타워)
-  GetModifiers            존의 단계 → 받는 타워의 수정자 (속성 시너지·같은 문양 맞물림 포함)   모든 문양
-  OnBuffTowerActed        버프 타워가 행동할 때 (확률로 터지는 버프 굴림, 단계 순환)          빛(확률), 불·전기(순환)
-  OnZoneTurn              턴마다 단계 타이머                                                불·전기
-  OnReceiverActed         존 위 타워가 행동할 때                                            (지금 쓰는 문양 없음)
-  OnReceiverHit           존 위 타워가 적을 맞혔을 때                                       전기(과충전의 전하)
-  ModifyStackGain / OnStackConsumed   존 위 타워의 스택이 쌓이는 양 / 썼을 때               물(웰스프링·오버플로우)
-  GetLevelBonus           존 위 타워의 컬러 레벨 +                                           옛 만개 연결. 새 대지 기획에서는 사용하지 않음
-  GetLimitModifier        적 수 한도 보정                                                   방패(이지스 +50%)
-  GetRewardBonus          존 위 타워가 처치했을 때 보상                                     어둠(카운트 600)
-  GetSelfStackMode        스택을 존이 아니라 버프 타워 자신이 가짐                           방패
-DebuffRule / StatusEffect (적에게 걸린 효과)
-  GetModifiers            적의 수정자 (방어, 받는 피해, 치유, 이동력, Action)                 대부분
-  OnEnemyTurnStart        ⓪                                                                 빛(도깨비불 비우기)
-  OnDecideMove            다음 이동의 범위를 바꿈                                           바람(윈드 시어), 물(급류·쓰나미), 어둠(블랙홀), 해머(1 / 1)
-  OnMoved                 이동한 뒤 (칸 수)                                                 바람(윈드 시어·터뷸런스의 다음 턴 이동 거리 피해), 빛(프리즘 감소)
-  OnActed                 그 적이 행동할 때마다 (유지 감소)                                  모든 시간 효과 (베이스가 처리)
-  OnTurn                  ⑤ 매 턴                                                           검·불(지속 피해), 얼음·대지(CC 확률), 전기(감전)
-  OnBeforeHit             맞기 전, 공격의 치명 확률·기절 확률 보정                           활(핀 포인트)
-  ModifyIncomingDamage    피해 계산에 끼어듦 (고정 피해 전환, 받는 피해 증가)                검, 활, 창, 물, 어둠
-  OnDamageTaken           피해가 들어간 뒤                                                  도끼(처형), 빛(프리즘 폭발, 더미 → 본체), 얼음(해동 모으기)
-  OnExpire                효과가 끝날 때                                                    얼음(해동)
-  OnDeath                 그 적이 죽을 때 (보상 보정, 카운트)                                해머(잭팟), 어둠(잠식·침식)
+AttackSkill (공격 타워의 스킬 2. 발동은 TowerController.CountSkillHit이 세는 스킬 카운트, 차지는 베이스가 씀)
+  GetArea  (빈칸)          범위: 착탄 / 맵 전체 / 대상 하나 (SkillArea)              피해를 주는 스킬
+  OnHitTarget  (빈칸)      범위의 대상마다 피해와 부가 효과                           피해를 주는 스킬
+  CastInstead              범위 피해 대신 따로 씀 (자기·아군 버프, 장판, 상태 효과, 여러 번 나눠 침)
+                                                                                      활·창·빛·어둠 광역, 도끼·창·방패·불·물·바람·빛 단일
+  RollCritical             반드시 치명타                                              바람 광역, 얼음 단일
+  IsCriticalAgainst        대상에 따라 치명타                                         도끼 광역(사거리 안)
+  ModifyOutgoingDamage     대상에 따라 피해 배율                                      불·물·바람·얼음·전기·어둠
+  OnFired                  쏜 뒤 (자기 성장)                                          대지(어스퀘이크·소잉)
+  OnEnemyTurnStart         ⓪                                                          불 단일(브레스)
+  BlocksBasicAttack        기본 공격을 막음                                           불 단일(브레스)
+  NeedsLivingTarget        false면 맞은 적이 그사이 죽어도 쏨                          자기·아군에게 거는 스킬
+BuffRule (버프 타워의 규칙. 스킬 1은 존 위의 공격 타워, 스킬 2는 아군 공격 타워 전체)
+  GetModifiers             스킬 1·2 → 받는 타워의 수정자 (속성 시너지·같은 문양 맞물림 포함)   모든 문양
+  OnOwnerActed             버프 타워가 행동할 때                                      어둠(카운트)
+  OnGiveSkill1             존 위 타워에게 스킬 1을 줄 때                              빛(확률로 초월 카운트)
+  OnSkill2                 스킬 2가 발동할 때 한 번                                   빛(초월 카운트), 어둠(카운트)
+  OnReceiverActed          받는 타워가 행동할 때                                      해머·어둠(다시 계산), 대지·바람·전기·빛(시너지)
+  OnReceiverHit            받는 타워가 적을 맞혔을 때                                 창(치유 감소), 바람(밀기), 전기(전하), 어둠(즉사)
+  GetLimitModifier         적 수 한도 보정                                            방패(이지스 +50%)
+DebuffRule (디버프 타워의 규칙)
+  OnApply                  걸 때 한 번 (스택, 즉사, 성장)                             도끼, 원소 8종 전부
+  CreateEffect             적에게 남는 효과 (EmblemDebuffEffect)                      대부분
+  OnSkill2                 스킬 2가 발동할 때 한 번                                   바람(가속), 전기(전하 2배), 빛(초월 웨이브면 모두 즉사)
+StatusEffect (적에게 걸린 효과)
+  GetModifiers             적의 수정자 (방어, 받는 피해, 치유, 이동력, Action)        대부분
+  OnAdded / OnRemoved      걸릴 때 / 빠질 때                                          검·대지·빛(최대 체력), 방패(저항력)
+  OnDecideMove             다음 이동의 범위                                           바람, 물(미끄러짐), 아쿠아 프리즌, 실명, 행동 불가
+  OnMoved                  이동한 뒤 (칸 수)                                          바람(이동한 칸만큼 피해)
+  OnTurn                   ⑤ 매 턴                                                    검(둠 레퀴엠), 화상, 출혈, 아쿠아 프리즌, 하이페리온
+  ModifyIncomingDamage     피해 계산에 끼어듦 (고정 피해 전환, 받는 피해 증가)        검, 방패, 물, 얼음, 빛, 어둠
+  ModifyDefense            방어력을 바꿈                                              해머 단일(아머 크러시)
+  OnDamageTaken            피해가 들어간 뒤                                           도끼(즉사), 활(추가타), 창(출혈), 불(화상), 대지(추가 피해), 바람(스킬 카운트), 전기(연쇄), 빙결(모으기)
+  GetCritRateBonus         그 적을 치는 치명타 확률                                   활(핀 포인트)
+  OnExpire / OnDeath / RollGemBonus   끝날 때 / 죽을 때 / 젬                          빙결(해동) / 침식(카운트) / 해머(잭팟)
+  ShouldCountDown          유지 시간을 셀지                                           디버프존 위에 선 동안의 스킬 1 (EmblemDebuffEffect)
 GroundEffect (장판)
-  OnTurn(⑤ 피해), GetPull(적의 이동을 끌어당김)                                             활(애로우 레인), 어둠(블랙홀)
+  OnTurn(⑤ 피해), Covers, PullCenter·ModifyMove(끌어당김)                             활(애로우 레인), 어둠(블랙홀)
 
 ----------------------------------------------------------------------
 [4-5] 문양 56종이 들어가는 자리 — 이 표가 "다 구현할 수 있는가"의 답
 ----------------------------------------------------------------------
 각 문양 = 광역 스킬 2 · 단일 스킬 2 · 버프 규칙 · 디버프 규칙 (파일 넷). 오른쪽은 그 문양이 쓰는 공용 틀.
 
-검 (4-3장)    광역 보이드 슬래시: 맵 전체 피해만              | 단일 블레이드 스톰: 검기 10번(÷10) + 폭발 막타 1번(기준식), 치명 1번
+검 (4-3장)    광역 보이드 슬래시: 맵 전체 피해만              | 단일 블레이드 스톰: 검기 10번(÷10) + 폭발 막타 1번(잃은 체력의 (Power × AV)%)
               버프 브레이브 소드·글로리 소드: 공격력, 최종 피해, 베기면 치명 확률 | 디버프 위더링 커스·둠 레퀴엠: 최대 체력 감소(현재도 비율, 끝나면 되돌림), 둠은 매 턴 최대 체력 % 피해, 베기 피격 시 고정 피해 전환
               → 속성 시너지(DamageInfo.Attribute), OnTurn, ModifyIncomingDamage
-도끼 (4-4장)  광역 휠윈드: 사거리 안 전체, 끝 칸 ×1.5, 반드시 치명 | 단일 블러드 레이지: 자기 버프(치명 100%, 공격력 +, 행동 카운트 +1) 레벨×2 행동
+도끼 (4-4장)  광역 휠윈드: 맵 전체, 사거리 안의 적만 반드시 치명 | 단일 블러드 레이지: 자기 버프(치명 100%, 공격력 +, 행동 카운트 +1) 레벨×Tier 행동
               버프 워 송·웰컴 투 발할라: 치명 피해, 발할라는 Action −1 | 디버프 데스 센텐스·엑스큐션: 즉사 기준(센텐스는 밟은 턴, 엑스큐션은 피해마다), 엑스큐션은 받는 피해 +10%, 베기면 엑스큐션 기준 +10%
-              → SkillArea.InRange, CastOnSelf, TimedTowerBuff, GetLimitModifier, OnDamageTaken, EnemyController.Execute
-활 (4-5장)    광역 애로우 레인: 쏘아 올린 뒤 ⑤마다 맵 전체 ×0.4, 여러 개가 따로 남음 | 단일 헤비 볼트: 최대 체력 % 피해 (저항 무관)
-              버프 요정·스피릿 보우: 거리 비례 피해, 사거리 +1, 찌르기는 최대치 | 디버프 락 온·핀 포인트: 받는 최종 피해, 받는 치명 피해, 찌르기 공격의 치명 확률 +
+              → AttackSkill.IsCriticalAgainst, CastInstead, TimedTowerBuff, GetLimitModifier, OnDamageTaken, EnemyController.Execute
+활 (4-5장)    광역 애로우 레인: 쏘아 올린 뒤 레벨×Tier 턴 ⑤마다 맵 전체 ×0.2, 여러 개가 따로 남음 | 단일 헤비 볼트: 최대 체력 % 피해 (저항 무관)
+              버프 엘븐 사이트·스피릿 보우: 거리 비례 피해, 사거리 +1, 찌르기는 최대치 | 디버프 락 온·핀 포인트: 받는 최종 피해, 핀 포인트 받는 치명 확률 +10%, 찌르기 피해의 20% 추가타
               → GroundEffect(ArrowRain), 거리 배율, StatusEffect.GetCritRateBonus
 창 (4-6장)    광역 랠리 배너: 사거리 안 아군 공격 타워(자기 포함)에 공격력·치명 확률 +(Power×AV)%, 레벨×Tier 행동 | 단일 헤드헌트: 창 (Tier × 레벨)개를 체력 높은 적부터, 하나에 Power×AV×0.2, 죽으면 다음 적으로
-              버프 원 포인트·원 스트라이크: AttackCount 1 고정 + 공격력 × 원래 AttackCount, 그 위에 공격력 증가, 원 스트라이크는 치명 확률 +10%·방어 관통 10%, 찌르기는 맞은 적 받는 치유 −40% | 디버프 래서레이트·헤머리지: 받은 피해의 비율만큼 출혈(레벨×Tier 적 턴, 피해마다 따로 쌓임), 헤머리지는 최소·최대 이동력 −1, 찌르기로 생긴 출혈은 피해 2배
-              → CastInstead + TimedTowerBuff(다른 타워에게), 적의 타워별 창 스택(OnBasicHit), 방어 관통 스탯, 받는 치유 스탯, ModifyIncomingDamage
+              버프 원 포인트·원 스트라이크: AttackCount 1 고정 + 공격력 × 원래 AttackCount(다른 버프 포함), 그 위에 공격력 증가, 원 스트라이크는 치명 확률 +10%·방어 관통 10%, 찌르기는 맞은 적 받는 치유 −40% | 디버프 래서레이트·헤머리지: 받은 피해의 비율만큼 출혈(레벨×Tier 적 턴, 피해마다 따로 쌓임), 헤머리지는 최소·최대 이동력 −1, 찌르기로 생긴 출혈은 피해 2배
+              → CastInstead + TimedTowerBuff(다른 타워에게), StatType.AttackCountLock(TowerStatCalculator가 마지막에 적용), 방어 관통 스탯, 받는 치유 스탯, ModifyIncomingDamage
 방패 (4-7장)  광역 콘커션: 착탄 범위 기절 1행동                 | 단일 리바운드: 방패가 맵 전체 적에게(가장 가까운 적부터) Tier×레벨번 튕김, 한 번에 Power×AV×0.2, 튕길 적이 없으면 남은 피해를 한 번에
               버프 프로텍트·이지스: 최종 피해 × 한도, 이지스 동안 한도 +50%(끝날 때 바로 판정), 타격 공격력 +한도×0.2% | 디버프 서프레스·락다운: 저항력 감소, 락다운 최대 이동력 −2, 타격 피격 시 최종 피해 +5%
-              → ImmobilizeEffect, GetSelfStackMode, GetLimitModifier, RuleContext.EnemyLimit, OnBeforeHit
+              → ImmobilizeEffect(DamageInfo.StunChance 1), GetLimitModifier(이지스), EnemyResistance.AddCut(서프레스)
 해머 (4-8장)  광역 저지먼트: 착탄 범위 피해 + 맞은 적을 맞은편 칸으로 날려 보냄 | 단일 아머 크러시: 8연타(÷8), 막타는 1행동 방어력 0
-              버프 그리드·골드 러쉬: 골드 비례 추가 피해, 골드 러쉬 동안 골드 +50%, 타격 처치 50% 골드 +100% | 디버프 크랙·잭팟: 방어력 감소, 잭팟 사망 젬 +1, 타격 처치 50% 젬 +1
-              → SpeedLockEffect, RuleContext.Gold, OnReceiverActed, OnDeath·KillInfo
+              버프 길딩·골든 터치: 골드 비례 추가 피해, 골든 터치 동안 골드 +50%, 타격 처치 50% 골드 +100% | 디버프 크랙·잭팟: 방어력 감소, 잭팟 사망 젬 +1, 타격 처치 50% 젬 +1
+              → BoardGrid.GetBifrostPartner(맞은편), ArmorCrushEffect(StatusEffect.ModifyDefense), RuleContext.Gold, OnReceiverActed, OnDeath·KillInfo
 불 (4-9장)    광역 메테오: 맵 전체, 화상 스택 1당 +1%           | 단일 브레스: 레벨×Tier 턴 동안 맵에서 체력 가장 많은 적을 쫓음, 화상 스택 +1, 스택 1당 +1%, 그동안 기본 공격 없음
               버프 피닉스 페더·라이징 피닉스: 공격 횟수 ×2, 공격력 +(Power − 50)%, 라이징 피닉스 동안 아군 공격력 +10%, 불 타워 치명 피해 +20% | 디버프 이그나이트·인페르노: 화상 스택 부여(치유 −20%, 매 턴 최대 체력 0.1×스택%), 인페르노 동안 화상 피해 2배, 불 타워 공격 시 스택 +Tier×레벨
-              → OnZoneTurn(순환), OnTurn, 같은 칸 조회(PathOccupancy)
+              → BurnEffect(화상 스택, OnTurn), OnEnemyTurnStart(브레스)
 물 (4-10장)   광역 쓰나미: 맵 전체, 맞은 적은 즉시 −3 ~ +3칸 무작위로 밀려남 | 단일 아쿠아 프리즌: 레벨×Tier 동안 이동력 0 / 0, 갇힌 동안 매 턴 Power×AV
               버프 웰스프링·오버플로우: 차지 쌓이는 양 %, 오버플로우 동안 차지 배율 ×1.5, 물 타워는 잃은 체력 비례 최대 +10% | 디버프 미스트·세이렌 송: 젖음 스택(최대 이동력 −스택×0.1, 최소 1), 세이렌 송 동안 받는 피해 +10%, 물 타워에 맞으면 +10% 더·다음 행동 이동력 +2
-              → ForcedMoveEffect, OnDecideMove, ModifyStackGain, DamageInfo.ChangesMovement, MapBuffRate
+              → WetEffect(젖음 스택), OnDecideMove(미끄러짐), AquaPrisonEffect, StatType.ChargeBonus·StackGainRate·LostHpDamage
 대지 (4-11장) 공통 패시브 성장: 적이 아닌 아군 타워 자신에게 누적. 양분은 문양·컬러와 관계없이 모든 아군에게 부여. 대지는 성장 스택을 고유 효과에 활용하며 티어 강화로 이어받음
-              광역: 기본 공격 록 블래스트(Rock Blast)는 지면이 솟아올라 타격. 스킬 어스퀘이크(Earthquake)는 맵 전체 피해·다음 행동 스킵, 쓸 때마다 자기 성장 스택만큼 AV 누적 증가
-              단일 노움: 기본 공격 머드 샷(Mud Shot), 스킬 소잉(Sowing). Power·치명타 피해·치명타 확률·AttackCount 중 무작위 하나 성장. AttackCount는 소수를 보관해 정수 부분만 반영
+              광역 노움: 기본 공격 록 블래스트(Rock Blast)는 지면이 솟아올라 타격. 스킬 어스퀘이크(Earthquake)는 맵 전체 피해·다음 행동 스킵, 쓸 때마다 자기 성장 스택만큼 AV 누적 증가
+              단일 드루이드: 기본 공격 머드 샷(Mud Shot), 스킬 소잉(Sowing). Power·치명타 피해·치명타 확률·AttackCount 중 무작위 하나 성장. AttackCount는 소수를 보관해 정수 부분만 반영
               버프 버드(Bud)·블로섬(Blossom): AV %, 블로섬은 버프 타워 Tier만큼 최대 SkillCount 감소(최소 1). 블로섬을 받는 대지 타워는 공격마다 성장 +1
               디버프 루트 드레인(Root Drain)·라이프 하베스트(Life Harvest): 적이 존을 밟을 때마다 자기 성장 +1, (공통 식 × 자기 성장 스택)%만큼 적 최대 체력·방어력 감소·아군에게 양분으로 성장 스택 부여. 라이프 하베스트는 적 최대 적응형 능력치 -1
               디버프 시너지: 대지 타워가 타격하면 그 공격 타워 자신의 성장 스택만큼 추가 피해
-              → 새 기획에 맞춘 규칙 코드·테스트 동기화 필요. 이번에는 문서만 갱신하며, 옛 만개의 컬러 레벨 +1 연결은 새 효과로 교체할 대상
+              → Growth(타워의 성장 스택), OnReceiverActed(블로섬 시너지), EarthDebuffRule.AdaptiveFor. 양분(아군에게 주는 성장)은 기획 미정 (맨 위 3)
 바람 (4-12장) 공통 패시브 가속: 아군 타워 자신에게 적용. 윈드 시어·터뷸런스가 모든 아군에게 각 공통식만큼 스택 부여. 가속 상태(스택 보유 중)면 최대 Action -1. 지속 누적 성장 구조가 아니며 가속 스택은 사라지지 않음
               광역 기본 거스트(Gust), 스킬 윈드 슬래쉬(Wind Slash): 반드시 치명, 가속 시 치명타 피해에 가속 스택% 추가, 피해 ÷ 범위의 적 수
               단일 기본 윈드 커터(Wind Cutter), 스킬 템페스트(Tempest): 공통 식 확률로 공격 횟수 +2. 가속 시 발동 확률에 가속 스택%p 추가, 공격 횟수는 +4. 유지 시간은 레벨 × Tier번 행동
@@ -379,7 +366,7 @@ GroundEffect (장판)
 어둠 (4-16장) 키워드 침식: 적의 침식 스택(디버프 없음, 죽으면 스택만큼 판 공용 침식 카운트 +). 버프를 받는 아군이 침식 상태로 카운트 단계표 효과
               광역 블랙홀: 범위 안 적을 매 턴 1칸 끌어당김, 매 턴 Power × AV × 0.3, 막타 카운트 +5 | 단일 심연: × (1 + 카운트 × 0.01)
               버프 디바우어·글러트니: 카운트 +, 단계표 10개(누적). 고유 타격마다 0.5% 즉사(보스 포함, +50), 시너지 어둠 타워 1%
-              디버프 미아즈마·다크 플레이그: 침식 스택 + 같은 양 카운트 +. 고유 침식 적 추가 피해 +10%, 시너지 어둠 타워가 치면 그 타일의 모든 적 침식 스택 +1 (카운트는 바로 안 오름)
+              디버프 미아즈마·다크 고스펠: 침식 스택 + 같은 양 카운트 +. 고유 침식 적 추가 피해 +10%, 시너지 어둠 타워가 치면 그 타일의 모든 적 침식 스택 +1 (카운트는 바로 안 오름)
               → EmblemSharedState(카운트), GroundEffect(BlackHole), GetRewardBonus, DamageInfo.ForceFixed, OnDeath
 
 ----------------------------------------------------------------------
@@ -411,8 +398,8 @@ GroundEffect (장판)
   B9   사망 처리의 재진입 [23-2-5]                      사망은 한 번만. 즉사(처형 등) 뒤에는 그 피해 처리를 바로 끝냄           14
   B10  치명타가 뜨면 거리 보정이 사라짐 [23-2-11]       피해 = Power × 거리 보너스 × 치명 배율. 셋을 곱하는 순서를 테스트로 고정   14
   B11  치명 확률 0인데 치명이 나옴 (G-2)                판정은 Random.value < 확률 (<= 가 아님)                                  14
-  B12  회복 타일이 한 턴에 두 번 [23-2-7]               ③를 부르는 곳은 TurnManager 하나                                        22
-  B13  방어 타일 보정을 디버프가 덮어씀 [23-2-9]        Set 함수로 값을 덮어쓰지 않음. 모든 보정은 출처별 수정자로 더함        21
+  B12  멈춘 칸의 효과가 한 턴에 두 번 [23-2-7]          ③를 부르는 곳은 TurnManager 하나                                        22
+  B13  큐브 면 보정을 디버프가 덮어씀 [23-2-9]          Set 함수로 값을 덮어쓰지 않음. 모든 보정은 출처별 수정자로 더함        21
   B14  버프 타워의 자리 순서에 따라 결과가 다름 [23-2-16]  ② 지원 타워와 ④ 공격 타워의 단계를 나눔 (4장 4-1)                   9, 26
   B15  장판을 옮길 때 일부 칸의 효과가 남음 [24-3-10]   존은 옮길 수 없음. 지울 때는 주인 단위로 전부 (RemoveByOwner)            26
   B16  불이 걸린 턴에 피해가 두 번 [23-2-8]             걸릴 때 따로 피해를 주지 않음. 매 턴 피해는 ⑤에서 한 번               25, 27
@@ -428,7 +415,7 @@ GroundEffect (장판)
 1) 항상 맞아야 하는 것 — #169 InvariantChecker가 적 턴이 끝날 때마다 검사하고 어긋나면 Debug.LogError
    - 날아가는 투사체 0, 끝나지 않은 AttackHandle 0, 돌고 있는 이동 코루틴 0
    - 켜져 있는 적 오브젝트 수 = EnemyRegistry의 수 (죽은 적이 풀로 돌아감)
-   - 점유에 든 대상 수 = 살아 있는 적 수 + 더미 수, 점유의 칸 번호 = 그 대상의 PathIndex
+   - 점유에 든 대상 수 = 살아 있는 적 수, 점유의 칸 번호 = 그 대상의 PathIndex
    - 적마다 사망 이벤트는 많아야 한 번
    - 골드·젬은 음수가 아님
    - 판 위 타워 수 = TowerSlots에 든 수, 존의 주인은 모두 살아 있는 타워
@@ -500,8 +487,8 @@ GroundEffect (장판)
 ----------------------------------------------------------------------
 00. Core — 4
 ----------------------------------------------------------------------
-  1  GameEnums.cs        [enum]    남은 것: 그것을 쓰는 수업에서 enum을 더함 — StatType(수업 20), DamageSource(14), PathTileType·SpawnTileType(22),
-                                             ZoneStage(26), MergeMode(19). 맨 뒤에 더하고, 0번은 None (22번 수업 1에서 정함)
+  1  GameEnums.cs        [enum]    남은 것: 그것을 쓰는 수업에서 enum을 더함 — StatType(수업 20), DamageSource(14), PathTileType(22),
+                                             MergeMode(19). 맨 뒤에 더하고, 0번은 None (22번 수업 1에서 정함)
   3  EmblemNames.cs      [static]  (수업 11) 문양·컬러·티어 이름, 56종 컨셉 이름 표(20번 4장: 소드 마스터, 블레이드 댄서 …), 스킬 이름 표
 
 ----------------------------------------------------------------------
@@ -540,8 +527,7 @@ GroundEffect (장판)
  20  PathOccupancy.cs    [클래스]  (수업 7)  길 칸마다 ITarget 목록(먼저 온 것이 맨 위), 등록·해제·이동, CellChanged
  21  TowerSlots.cs       [클래스]  (수업 12) 스폰 칸마다 타워 하나, 놓기·치우기·이동·교환, 첫 빈 칸
  22  SpecialTileLayout.cs [클래스] (수업 22) 판 시작 배치(비프로스트 먼저, 나머지 섞기), 칸 → 특수 타일 종류
- 23  PathTileEffects.cs  [클래스]  (수업 22) 베이스 + 길 위 6종(방어, 이동력, 행동 카운트, 회복, 정화, 비프로스트)
- 24  SpawnTileEffects.cs [클래스]  (수업 22) 베이스 + 스폰 위 4종(공격력, 행동 카운트, 공격 횟수, 마스터리)
+ 23  PathTileEffects.cs  [클래스]  (수업 22) 베이스 + 길 위 2종(정화, 비프로스트). 맵 버프 4종은 2026-11-11에 지움
  25  Zone.cs             [클래스]  (수업 26) 존 하나: 주인, 칸, 문양, 버프/디버프, 스택, 단계, 단계 타이머
  26  ZoneRegistry.cs     [클래스]  (수업 26) 놓을 수 있는지(칸 종류, 비프로스트, 같은 문양 1·다른 문양 3), 칸·주인으로 찾기, 주인 제거, 미배치 검사
  27  GroundEffect.cs     [클래스]  (수업 29) 장판 베이스: 범위, 남은 턴, 소환 때 정해진 피해, OnTurn, GetPull
@@ -558,13 +544,12 @@ GroundEffect (장판)
  34  TowerTurnRunner.cs  남은 것: ② 지원 타워의 Act(수업 26)
  35  SynergyService.cs   [클래스]  (수업 41) 조합표 14종, 4티어 이상 문양 3종이면 생성·깨지면 제거,
                                              시너지 타워의 TowerDefinition을 조합표로 만듦 (CSV에 없음. ID 6001 ~ 6014가 외형 ID)
- 36  StackModeSettings.cs [클래스] (수업 23) 스택 자동/수동: 전체 + 타워 종류(문양 + 컬러)별 예외
      (#37 DebugCheat는 12. Dev로 옮김. 번호는 그대로)
 한 기
  38  TowerController.cs  [MB]      (수업 13) 정의·상태·공격 방식·스킬을 들고 있음, 행동력(대기 포함), 행동 실행, 최종 Action 변화를 남은 행동력에 반영
  39  TowerState.cs       [클래스]  (수업 13) 남은 행동력, 우선순위, 고른 공격 칸, 받는 존 버프, 시간 버프, 스킬 진행, 성장 — 이어받기 단위
  40  TowerStack.cs       [클래스]  (수업 23) 지금(소수)·최대·StackValue, 쌓기(배율), 쓰기(0 또는 절반), 최대가 줄 때 버림, 수동 소모 요청, Full
- 41  TimedTowerBuff.cs   [클래스]  (수업 28) 타워가 받는 시간 버프(쪼개기, 템페스트, 게일 포스, 광채·광휘): 수정자 + 남은 행동/턴, 다시 걸리면 유지만 새로
+ 41  TimedTowerBuff.cs   [클래스]  (수업 28) 타워가 받는 시간 버프(블러드 레이지, 랠리 배너, 템페스트, 프리즘): 수정자 + 남은 행동/턴, 다시 걸리면 유지만 새로
  42  TowerStatCalculator.cs [static] (수업 13, 20) 레벨 → 티어 표 → 컬러 표 → 수정자 합산 → 한도 → 최종 스탯 + 출처
  43  TowerFinalStats.cs  [클래스]  (수업 13) 계산 결과(만든 뒤 바꾸지 않음) + 출처 목록
  44  StatModifier.cs     [클래스]  (수업 20) StatModifier + 수정자 목록(출처별 등록·해제·합산). 타워와 적이 함께 씀
@@ -613,8 +598,7 @@ GroundEffect (장판)
 129  EnemyCubeFaces.cs   [클래스]  (수업 21) 6면 무작위 배정(재소환 때도), 지금 위 면 → 수정자(수치 미정)
 130  EnemyHitCounter.cs  [클래스]  (수업 23) 단일 스킬 2용 적중 수(문양별, 같은 문양 공유, 발동하면 0)
 131  BossTimer.cs        [클래스]  (수업 10) 제한 턴 20, ⑥에서 감소, 0이면 게임 오버 요청
-132  DeathResolver.cs    [클래스]  (수업 14) 사망 처리 순서: 보상(기본 + 보정) → 재화 → EnemyDied → 점유·목록 해제 → 더미 정리 → 풀 반환
-133  DummyTarget.cs      [MB]      (수업 39) 빛 디버프의 더미: ITarget, 움직이지 않음, 체력, 받은 피해 × 2 / × 4를 본체에, 본체와 함께 사라짐
+132  DeathResolver.cs    [클래스]  (수업 14) 사망 처리 순서: 보상(기본 + 보정) → 재화 → EnemyDied → 점유·목록 해제 → 풀 반환
 170  EnemyCubeMeshVisual.cs   [MB]      (수업 8, 옛 것의 복사본) 큐브 연출: 면 무작위, 구르기, 정방향 점프, 소환 낙하, 그리기 순서, 그림자
 171  EnemyCubeOrientation.cs  [struct]  (수업 8, 옛 것의 복사본) 큐브 자세(정수 세 축) + enum EnemyCubeFace·EnemyCubeFaceAsset·EnemyCubeRollDirection
 172  EnemyCubeRollGeometry.cs [static]  (수업 8, 옛 것의 복사본) 구르는 큐브 중심의 이동 비율
@@ -624,10 +608,7 @@ GroundEffect (장판)
 135  ImmobilizeEffect.cs [클래스]  (수업 25) 다음 행동 한 번 0 / 0 (기절, 속박). 걸 때 강한 CC기 판정, 이미 걸려 있으면 무시
 136  FreezeEffect.cs     [클래스]  (수업 37) 빙결 = Immobilize + 해동(빙결 중 받은 피해의 30%를 풀릴 때)
 137  ForcedMoveEffect.cs [클래스]  (수업 34) 다음 행동 한 번의 이동 고정·보정 (급류 −1칸 / 젖음 −2칸, 쓰나미 이동력 −2)
-138  SpeedLockEffect.cs  [클래스]  (수업 32) 이동력 1 / 1 고정 (망치질), 다른 이동력 감소보다 우선
 139  ChargeEffect.cs     [클래스]  (수업 38) 전하(소수, 상한 없음), 터뜨리면 0, 감전이면 2배로 셈
-140  PrismEffect.cs      [클래스]  (수업 39) 줄어드는 스택(행동마다 −1), 기본 공격에 맞으면 최대 체력 % 폭발, 다시 걸면 더함
-141  WispMarkEffect.cs   [클래스]  (수업 39) 도깨비불: 그 턴 안의 스택(⓪에서 비움), 스택당 피해 +
 142  EmblemDebuffEffect.cs [클래스] (수업 25, 27) 문양 디버프 하나(단계·값·유지·출처 존). 내용은 그 문양의 DebuffRule에 맡김
 
 ----------------------------------------------------------------------
@@ -659,7 +640,7 @@ GroundEffect (장판)
 156  PlayerTurnPanel.cs  [MB 옮김] (수업 44) 생성 버튼과 비용, 컬러·티어 강화 버튼, 턴 종료 버튼
 157  TowerInfoPanel.cs   [MB 옮김] (수업 45) 카드 12칸, 출처 풀어 보기, 판매·스택 소모·우선순위·공격 칸 버튼
 158  TileinfoPanel.cs    [MB 옮김] (수업 45) 특수 타일 설명
-159  EnemyInfoPanel.cs   [MB 옮김] (수업 46) 칸별 대상 목록(더미 포함), 기본·지금 저항력, 걸린 효과, 적중 수. 목록 항목은 풀로
+159  EnemyInfoPanel.cs   [MB 옮김] (수업 46) 칸별 대상 목록, 기본·지금 저항력, 걸린 효과, 적중 수. 목록 항목은 풀로
 160  EnemyListItemUI.cs  [MB 옮김] (수업 46) 목록 한 줄. 옛 EnemyHealthController 대신 ITarget을 받게만
 161  OptionPanel.cs      [MB 옮김] (수업 47) 계속·재시작·메뉴, 스택 자동/수동과 종류별 예외
 162  GameOverPanel.cs    [MB 옮김] (수업 44)
@@ -771,12 +752,12 @@ GroundEffect (장판)
   지금 Start 씬: Main Camera, Canvas(Panel·Button·Text), EventSystem, UIManager_Start(옛 스크립트가 지워져 Missing). 옛 그림 BG_Image_Title(제목 글자가 그림에 박힘)·BG_Image_Menu
 
 ----------------------------------------------------------------------
-수업 43. 게임 속도와 설정 — #14 GameSpeedController, #36 StackModeSettings 저장
+수업 43. 게임 속도 — #14 GameSpeedController
 ----------------------------------------------------------------------
 설계
   GameSpeedController: 배속·일시정지 (Time.timeScale), DebugCheat 키
-  StackModeSettings: 전체 자동/수동과 타워 종류별 예외를 저장·읽기 (ProgressSave와 같은 방식)
-확인: 불 광역만 수동으로 → 불 광역만 다 찬 채 기다림(로그), 다시 켜도 설정이 남아 있음. 배속이 바뀜.
+  (차지는 무조건 자동 소모라 스택 자동/수동 설정은 없음. 20번 4-1장 [Charge])
+확인: 배속이 바뀜.
 
 ######################################################################
 6부. UI와 정리 — 지금 UI를 그대로 두고 스크립트만 (1장 5)
@@ -842,12 +823,12 @@ GroundEffect (장판)
     머리줄 "Lv n | 컨셉 이름"(EmblemNames), 키워드 아이콘, 판매 가격, 칸 누름 → 설명과 출처 (Click Debug 창과 같은 내용)
     버튼: 판매, 우선순위(지금 있음) / 새로: 10번 칸(스택), 스택 소모, 공격 칸 고르기. 합성은 자동이라 버튼 없음 (2026-10-29)
   TileinfoPanel: 특수 타일 설명
-확인: 카드의 값이 Click Debug 창과 같음, 수동 소모 타워가 다 차면 스택 소모 버튼이 켜짐(적 턴에도).
+확인: 카드의 값이 Click Debug 창과 같음.
 
 ----------------------------------------------------------------------
 수업 46. 적 정보와 존 정보 — #159 EnemyInfoPanel, #160 EnemyListItemUI, #164 ZoneInfoPanel
 ----------------------------------------------------------------------
-  EnemyInfoPanel: 칸별 대상 목록(더미 포함), 기본·지금 저항력, 걸린 효과, 새로: 적중 수. 목록 항목은 ObjectPool로
+  EnemyInfoPanel: 칸별 대상 목록, 기본·지금 저항력, 걸린 효과, 새로: 적중 수. 목록 항목은 ObjectPool로
   EnemyListItemUI: EnemyHealthController → ITarget
   ZoneInfoPanel (새): 존을 누르면 스택과 단계, 존 고르기 버튼(PlaceZoneMode)
 확인: 적 정보 패널을 여러 번 열어도 하이어라키의 항목 수가 늘지 않음, 존을 누르면 Click Debug 창과 같은 값.

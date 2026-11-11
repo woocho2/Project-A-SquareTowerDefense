@@ -14,20 +14,11 @@ namespace SquareTD
         [SerializeField] string m_sceneName_Restart;
         [SerializeField] string m_sceneName_Menu = "2. Menu";
 
-        [Header("스택 소모")]
-        [SerializeField] Toggle tgl_autoConsumeStack;
-
         private void Start()
         {
             if (btn_resume != null) btn_resume.onClick.AddListener(HandleResumeClick);
             if (btn_restart != null) btn_restart.onClick.AddListener(HandleRestartClick);
             if (btn_menu != null) btn_menu.onClick.AddListener(HandleQuitClick);
-
-            if (tgl_autoConsumeStack != null)
-            {
-                tgl_autoConsumeStack.isOn = true;
-                tgl_autoConsumeStack.interactable = false;
-            }
         }
 
         private void OnDestroy()

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace SquareTD
 {
@@ -13,11 +12,10 @@ namespace SquareTD
 
         public override List<StatModifier> GetModifiers(SupportCast cast, TowerController receiver, string source)
         {
-            int attackCount = Mathf.Max(1, Mathf.RoundToInt(receiver.Stats.GetBase(StatType.AttackCount)));
             var modifiers = new List<StatModifier>
             {
-                StatModifier.Flat(source, StatType.AttackCount, 1 - attackCount),
-                StatModifier.Percent(source, StatType.Power, attackCount - 1 + cast.Rate),
+                StatModifier.Flat(source, StatType.AttackCountLock, 1f),
+                StatModifier.Percent(source, StatType.Power, cast.Rate),
             };
             if (cast.IsSkill2)
             {

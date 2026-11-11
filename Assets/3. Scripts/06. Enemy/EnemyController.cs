@@ -18,12 +18,12 @@ namespace SquareTD
         public int PathIndex => Movement.PathIndex;
         public bool IsAlive => !Health.IsDead;
         public bool IsBoss => Definition.Kind != EnemyKind.Normal;
-        public bool IsDummy => false;
         public EnemyController Body => this;
         public float CurrentHp => Health.Current;
         public float PreviewDamage(DamageInfo info)
         {
-            float damage = DamageCalculator.Calculate(info, Stats.Get(StatType.Defense), Stats.Get(StatType.DamageTaken), Stats.Get(StatType.FixedDamageRatio));
+            float defense = Status != null ? Status.ModifyDefense(Stats.Get(StatType.Defense)) : Stats.Get(StatType.Defense);
+            float damage = DamageCalculator.Calculate(info, defense, Stats.Get(StatType.DamageTaken), Stats.Get(StatType.FixedDamageRatio));
             return Status != null ? Status.ModifyIncomingDamage(info, damage) : damage;
         }
         public void SetSortingOrder(int order) => Movement.SetSortingOrder(order);
@@ -50,7 +50,6 @@ namespace SquareTD
 
         public void TakeDamage(DamageInfo info)
         {
-            Status.OnBeforeHit(ref info);
             float damage = PreviewDamage(info);
             BalanceRecorder.OnDamage(info, Mathf.Min(damage, CurrentHp));
             bool died = Health.TakeDamage(damage);
@@ -67,7 +66,7 @@ namespace SquareTD
         private void TryStun(DamageInfo info)
         {
             if (!IsAlive) return;
-            float chance = info.StunChance + Status.GetStunChanceBonus(info);
+            float chance = info.StunChance;
             if (chance <= 0f) return;
             if (chance < 1f && Random.value >= chance) return;
             Status.Add(new ImmobilizeEffect("기절"));

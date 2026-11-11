@@ -3,15 +3,15 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 창 광역 — 용맹한 깃창
+    // 창 광역 — 랠리 배너 (Range 안의 아군 공격 타워(자기 포함)에게 (레벨 × Tier)번 행동 동안 공격력·치명타 확률 +(Power × AbilityValue)%)
     public class SpearSplashSkill : AttackSkill
     {
-        public const string Source = "용맹한 깃창";
+        public const string Source = "랠리 배너";
 
         private readonly TowerSlots m_slots;
 
-        public SpearSplashSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes, TowerSlots slots)
-            : base(grid, occupancy, stackModes)
+        public SpearSplashSkill(BoardGrid grid, PathOccupancy occupancy, TowerSlots slots)
+            : base(grid, occupancy)
         {
             m_slots = slots;
         }
@@ -23,14 +23,14 @@ namespace SquareTD
             TimedTowerBuff.Remove(owner.State, Source);
             TowerFinalStats stats = owner.Stats;
 
-            float percent = SkillFormula.AttackSkill(stats.Power, stats.AbilityValue);
-            if (useStack) percent = SkillFormula.WithStack(percent, owner.State.Stack.Max, stats.StackValue);
+            float rate = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * SkillFormula.PercentRate;
+            int duration = EffectDuration(owner);
 
             foreach (TowerController ally in GetAlliesInRange(owner, stats.Range))
             {
-                TimedTowerBuff.Apply(ally.State, Source, stats.ColorLevel * 2,
-                    StatModifier.Percent(Source, StatType.Power, percent / 100f),
-                    StatModifier.Flat(Source, StatType.CritRate, percent / 100f));
+                TimedTowerBuff.Apply(ally.State, Source, duration,
+                    StatModifier.Percent(Source, StatType.Power, rate),
+                    StatModifier.Flat(Source, StatType.CritRate, rate));
             }
             return true;
         }

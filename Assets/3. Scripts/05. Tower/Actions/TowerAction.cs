@@ -47,11 +47,14 @@ namespace SquareTD
 
         protected DamageInfo MakeBasicHit(TowerController tower, TowerFinalStats stats, ITarget target, bool isCritical)
         {
-            float critMultiplier = isCritical ? CriticalRoll.Multiplier(stats.CriticalDamage) : 1f;
             Vector3Int from = m_grid.GetSpawnCell(tower.SlotIndex);
             Vector3Int to = m_grid.GetPathCell(target.PathIndex);
-            int distance = BoardGrid.GetTileDistance(from, to);
-            float skillMultiplier = tower.Skill != null ? tower.Skill.ModifyBasicDamage(tower, target) : 1f;
+            return BasicHit(tower, stats, target, BoardGrid.GetTileDistance(from, to), isCritical);
+        }
+
+        public static DamageInfo BasicHit(TowerController tower, TowerFinalStats stats, ITarget target, int distance, bool isCritical)
+        {
+            float critMultiplier = isCritical ? CriticalRoll.Multiplier(stats.CriticalDamage) : 1f;
 
             return new DamageInfo
             {
@@ -59,7 +62,7 @@ namespace SquareTD
                 Source = DamageSource.Basic,
                 Emblem = tower.Definition.Emblem,
                 Attribute = tower.Definition.Attribute,
-                BaseDamage = DamageCalculator.GetOutgoing(stats.Power, stats.GetDistanceMultiplier(distance), critMultiplier) * stats.FinalDamageMultiplier * skillMultiplier * LostHpMultiplier(stats, target),
+                BaseDamage = DamageCalculator.GetOutgoing(stats.Power, stats.GetDistanceMultiplier(distance), critMultiplier) * stats.FinalDamageMultiplier * LostHpMultiplier(stats, target),
                 IsCritical = isCritical,
                 CritMultiplier = critMultiplier,
                 ArmorPenetration = stats.ArmorPenetration,

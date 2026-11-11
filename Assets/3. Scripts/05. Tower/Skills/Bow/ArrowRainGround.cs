@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 화살비 장판: ⑤마다 맵 전체에 화살이 떨어짐
+    // 애로우 레인 장판: ⑤마다 맵 전체에 화살이 떨어짐
     public class ArrowRainGround : GroundEffect
     {
-        public const float TurnRatio = 0.4f;
+        public const float TurnRatio = 0.2f;
 
         private readonly BoardGrid m_grid;
         private readonly PathOccupancy m_occupancy;
@@ -41,6 +41,6 @@ namespace SquareTD
             SkillEffectTable.PlayArrowRain(Owner, hitPositions);
         }
 
-        public override string Describe() => $"화살비: 매 턴 맵 전체에 {Damage:0.##} 피해, {RemainingTurns}턴 남음";
+        public override string Describe() => $"애로우 레인: 매 턴 맵 전체에 {Damage:0.##} 피해, {RemainingTurns}턴 남음";
     }
 }

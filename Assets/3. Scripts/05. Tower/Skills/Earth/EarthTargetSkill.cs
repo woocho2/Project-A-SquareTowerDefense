@@ -9,8 +9,8 @@ namespace SquareTD
         public const string GrowthSource = "소잉 성장";
         public const string AttackCountKey = "소잉 AttackCount";
 
-        public EarthTargetSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
-            : base(grid, occupancy, stackModes) { }
+        public EarthTargetSkill(BoardGrid grid, PathOccupancy occupancy)
+            : base(grid, occupancy) { }
 
         protected override List<ITarget> GetArea(TowerController owner, ITarget mainTarget) => SkillArea.Single(mainTarget);
 

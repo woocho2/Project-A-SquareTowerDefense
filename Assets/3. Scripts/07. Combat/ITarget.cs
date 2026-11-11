@@ -9,7 +9,6 @@ namespace SquareTD
         int PathIndex { get; }
         bool IsAlive { get; }
         bool IsBoss { get; }
-        bool IsDummy { get; }
         EnemyController Body { get; }
         float CurrentHp { get; }
         float MaxHp { get; }

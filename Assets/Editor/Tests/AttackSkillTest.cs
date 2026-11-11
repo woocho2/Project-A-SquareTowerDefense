@@ -39,8 +39,7 @@ namespace SquareTD.Tests
         private OccupyingFakeTarget MakeTarget(int pathIndex, float hp = 1000f) =>
             new OccupyingFakeTarget(m_occupancy, pathIndex, hp, m_root.transform);
 
-        private DamageOnlySkill MakeSkill(StackModeSettings modes = null) =>
-            new DamageOnlySkill(m_grid, m_occupancy, modes ?? new StackModeSettings());
+        private DamageOnlySkill MakeSkill() => new DamageOnlySkill(m_grid, m_occupancy);
 
         // ── 범위 ──
 
@@ -132,15 +131,15 @@ namespace SquareTD.Tests
         // ── 치명 ──
 
         [Test]
-        public void 치명은_한_번_굴려_모든_대상에_같이()
+        public void 스킬에는_치명타가_없음()
         {
             var targets = new List<OccupyingFakeTarget> { MakeTarget(0), MakeTarget(2), MakeTarget(4) };
             MakeSkill().Fire(MakeTower(1101, critRate: 1f), null);
 
             foreach (OccupyingFakeTarget target in targets)
             {
-                Assert.IsTrue(target.Hits[0].IsCritical);
-                Assert.AreEqual(40f, target.Hits[0].BaseDamage, 0.0001f, "20 × 치명 배율 2");
+                Assert.IsFalse(target.Hits[0].IsCritical, "치명타 확률 100%여도 스킬은 치명 없음 (20번 4-1장 [스킬의 치명타])");
+                Assert.AreEqual(20f, target.Hits[0].BaseDamage, 0.0001f);
             }
         }
 

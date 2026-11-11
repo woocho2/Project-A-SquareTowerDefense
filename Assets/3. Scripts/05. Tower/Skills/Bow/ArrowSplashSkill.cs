@@ -2,13 +2,13 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 활 광역 — 화살비
+    // 활 광역 — 애로우 레인 ((레벨 × Tier) 턴 동안 ⑤마다 맵 전체에 Power × AbilityValue × 0.2. 여러 개가 따로 깔림)
     public class ArrowSplashSkill : AttackSkill
     {
         private readonly GroundEffectRegistry m_grounds;
 
-        public ArrowSplashSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes, GroundEffectRegistry grounds)
-            : base(grid, occupancy, stackModes)
+        public ArrowSplashSkill(BoardGrid grid, PathOccupancy occupancy, GroundEffectRegistry grounds)
+            : base(grid, occupancy)
         {
             m_grounds = grounds;
         }
@@ -16,11 +16,9 @@ namespace SquareTD
         protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
         {
             TowerFinalStats stats = owner.Stats;
-            float damage = SkillFormula.AttackSkill(stats.Power, stats.AbilityValue) * ArrowRainGround.TurnRatio;
-            if (useStack) damage = SkillFormula.WithStack(damage, owner.State.Stack.Max, stats.StackValue);
-            damage *= stats.FinalDamageMultiplier;
+            float damage = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * ArrowRainGround.TurnRatio * stats.FinalDamageMultiplier;
 
-            m_grounds?.Add(new ArrowRainGround(owner, m_grid, m_occupancy, damage, stats.ColorLevel * 2));
+            m_grounds?.Add(new ArrowRainGround(owner, m_grid, m_occupancy, damage, EffectDuration(owner)));
             return true;
         }
 

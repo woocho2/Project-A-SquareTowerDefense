@@ -2,55 +2,40 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 창 단일 — 뽑아찢기
+    // 창 단일 — 헤드헌트 (창 (Tier × 레벨)개를 Range 안에서 체력이 가장 높은 적부터 꽂음, 하나에 Power × AbilityValue × 0.2. 그 적이 죽으면 다음으로 높은 적에게)
     public class SpearTargetSkill : AttackSkill
     {
-        private struct Spears
-        {
-            public int Count;
-            public int SpawnWave;
-        }
+        public const float SpearRatio = 0.2f;
 
-        private readonly Dictionary<ITarget, Spears> m_spears = new Dictionary<ITarget, Spears>();
-
-        public SpearTargetSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
-            : base(grid, occupancy, stackModes) { }
+        public SpearTargetSkill(BoardGrid grid, PathOccupancy occupancy)
+            : base(grid, occupancy) { }
 
         public override bool NeedsLivingTarget => false;
 
-        public int GetSpears(ITarget target)
-        {
-            if (target == null || !m_spears.TryGetValue(target, out Spears spears)) return 0;
-            return spears.SpawnWave == SpawnWaveOf(target) ? spears.Count : 0;
-        }
+        public static int SpearCount(TowerController owner) => SkillFormula.EffectDuration(owner);
 
-        public override void OnBasicHit(TowerController owner, ITarget target)
+        protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
         {
-            if (target == null || !target.IsAlive) return;
-            m_spears[target] = new Spears { Count = GetSpears(target) + 1, SpawnWave = SpawnWaveOf(target) };
-        }
+            ITarget target = HighestInRange(owner);
+            if (target == null) return false;
 
-        protected override List<ITarget> GetArea(TowerController owner, ITarget mainTarget)
-        {
-            var area = new List<ITarget>();
-            foreach (ITarget target in SkillArea.WholeMap(m_grid, m_occupancy))
+            TowerFinalStats stats = owner.Stats;
+            float damage = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * SpearRatio;
+            int spears = SpearCount(owner);
+
+            for (int i = 0; i < spears; i++)
             {
-                if (target.IsAlive && GetSpears(target) > 0) area.Add(target);
+                if (!target.IsAlive) target = HighestInRange(owner);
+                if (target == null) break;
+                ProjectileHitResolver.HitSingle(target, MakeSkillHit(owner, stats, target, damage, false));
             }
-            return area;
+            return true;
         }
 
-        protected override float ModifyOutgoingDamage(TowerController owner, ITarget target)
-        {
-            return GetSpears(target);
-        }
+        private ITarget HighestInRange(TowerController owner) =>
+            HighestHp(SkillArea.InRange(m_grid, m_occupancy, m_grid.GetSpawnCell(owner.SlotIndex), owner.Stats.Range));
 
-        protected override void OnHitTarget(TowerController owner, ITarget target, DamageInfo hit)
-        {
-            m_spears.Remove(target);
-            ProjectileHitResolver.HitSingle(target, hit);
-        }
-
-        private static int SpawnWaveOf(ITarget target) => target.Body != null ? target.Body.SpawnWave : 0;
+        protected override List<ITarget> GetArea(TowerController owner, ITarget mainTarget) => new List<ITarget>();
+        protected override void OnHitTarget(TowerController owner, ITarget target, DamageInfo hit) { }
     }
 }

@@ -61,7 +61,10 @@ namespace SquareTD
         {
             AdaptiveValue = UnityEngine.Random.Range(WaveTable.GetAdaptiveMin(m_mode), WaveTable.GetAdaptiveMax(m_mode) + 1);
             Debug.Log($"[GameSession] 웨이브 {wave} 적응형 능력치 {AdaptiveValue}");
+            if (EnemyManager.Instance != null)
+                foreach (EnemyController enemy in EnemyManager.Instance.Registry.Alive) enemy.Movement.RefreshFace();
             Shared.OnWaveStarted();
+            LightSplashSkill.RefreshTranscendAll();
 
             int limit = WaveTable.GetEnemyLimit(m_mode, WaveTable.GetCycle(wave));
             if (limit == BaseLimit) return;

@@ -5,8 +5,8 @@ namespace SquareTD
     // 불 광역 — 메테오 (맵 전체, × (1 + 화상 스택 × 0.01))
     public class FireSplashSkill : AttackSkill
     {
-        public FireSplashSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
-            : base(grid, occupancy, stackModes) { }
+        public FireSplashSkill(BoardGrid grid, PathOccupancy occupancy)
+            : base(grid, occupancy) { }
 
         protected override List<ITarget> GetArea(TowerController owner, ITarget mainTarget) => SkillArea.WholeMap(m_grid, m_occupancy);
 

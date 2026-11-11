@@ -37,13 +37,13 @@ namespace SquareTD.Tests
             Assert.AreEqual("소드 마스터", EmblemNames.GetConceptName(TowerEmblem.Sword, TowerColor.Red));
             Assert.AreEqual("잭 프로스트", EmblemNames.GetConceptName(TowerEmblem.Ice, TowerColor.Blue));
             Assert.AreEqual("골드스미스", EmblemNames.GetConceptName(TowerEmblem.Hammer, TowerColor.Yellow));
-            Assert.AreEqual("레이스", EmblemNames.GetConceptName(TowerEmblem.Darkness, TowerColor.Purple));
+            Assert.AreEqual("폴스 프로펫", EmblemNames.GetConceptName(TowerEmblem.Darkness, TowerColor.Purple));
         }
 
         [Test]
         public void 컨셉_이름_ID로()
         {
-            Assert.AreEqual("화염술사", EmblemNames.GetConceptName(2107));
+            Assert.AreEqual("플레임위자드", EmblemNames.GetConceptName(2107));
             Assert.AreEqual("가디언", EmblemNames.GetConceptName(5305));
         }
 

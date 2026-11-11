@@ -9,8 +9,8 @@ namespace SquareTD
         public const int AttackCountBonus = 2;
         public const int AcceleratedBonus = 4;
 
-        public WindTargetSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
-            : base(grid, occupancy, stackModes) { }
+        public WindTargetSkill(BoardGrid grid, PathOccupancy occupancy)
+            : base(grid, occupancy) { }
 
         public override bool NeedsLivingTarget => false;
 

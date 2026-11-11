@@ -1,0 +1,30 @@
+﻿{
+    "PngSize":  [
+                    2048,
+                    2048
+                ],
+    "PixelFormat":  "Format32bppArgb",
+    "PPU":  2048,
+    "SpriteCount":  2,
+    "Slices":  [
+                   {
+                       "Name":  "1_Sword_Death Knight_Full",
+                       "X":  0,
+                       "Y":  0,
+                       "Width":  2048,
+                       "Height":  2048
+                   },
+                   {
+                       "Name":  "1_Sword_Death Knight_Face",
+                       "X":  1007,
+                       "Y":  1510,
+                       "Width":  256,
+                       "Height":  256
+                   }
+               ],
+    "GuidPreserved":  true,
+    "FullSpriteIDPreserved":  true,
+    "FacePlacement":  "Temporary helmet center; user requested manual adjustment",
+    "FileChecksPassed":  true,
+    "UnityPlayVerified":  false
+}

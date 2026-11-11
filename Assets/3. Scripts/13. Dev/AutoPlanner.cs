@@ -15,8 +15,6 @@ namespace SquareTD
         private const float BuffZoneValue = 0.5f;
         private const float BuffZoneSkill2Value = 0.8f;
         private const float DebuffCellBonus = 0.5f;
-        private const float GenericActionTileValue = 0.6f;
-        private const float GenericAttackTileValue = 0.5f;
         private const int DefaultRange = 2;
 
 
@@ -63,17 +61,14 @@ namespace SquareTD
             AssignPrioritySlots(board);
         }
 
-        private static TowerFinalStats Forecast(BoardManager board, TowerController tower, int slot, bool map, bool buffs, Zone extra = null)
+        private static TowerFinalStats Forecast(BoardManager board, TowerController tower, int slot, bool buffs, Zone extra = null)
         {
             TowerDefinition definition = tower.Definition;
             var state = new TowerState(definition);
             var received = new HashSet<string>();
             foreach (TowerEmblem emblem in tower.State.SupportBuffs.Keys) received.Add(SupportBuffs.SourceOf(emblem));
             foreach (StatModifier modifier in tower.State.Modifiers.All)
-                if (modifier.Source != SpawnTileEffects.Source && !received.Contains(modifier.Source))
-                    state.Modifiers.Add(modifier);
-            if (map)
-                foreach (StatModifier modifier in SpawnTileEffects.GetModifiers(board.Tiles.GetSpawnTile(slot)))
+                if (!received.Contains(modifier.Source))
                     state.Modifiers.Add(modifier);
             if (buffs && tower.IsAttackTower)
             {
@@ -129,14 +124,12 @@ namespace SquareTD
 
         private static float PlacementValue(BoardManager board, TowerController tower, int slot)
         {
-            TowerFinalStats plain = Forecast(board, tower, slot, false, false);
-            TowerFinalStats mapped = Forecast(board, tower, slot, true, false);
-            TowerFinalStats buffed = Forecast(board, tower, slot, true, true);
+            TowerFinalStats plain = Forecast(board, tower, slot, false);
+            TowerFinalStats buffed = Forecast(board, tower, slot, true);
             float a = Worth(board, tower, plain, slot);
-            float b = Worth(board, tower, mapped, slot);
             float c = Worth(board, tower, buffed, slot);
             if (tower.IsAttackTower && board.Grid.GetPathIndicesInSquare(board.Grid.GetSpawnCell(slot), buffed.Range).Count == 0) return -1000000f;
-            float score = a + PriorityWeight(0) * (b - a) + PriorityWeight(1) * (c - b);
+            float score = a + PriorityWeight(1) * (c - a);
             if (tower.IsAttackTower)
                 score += PriorityWeight(2) * Mathf.Max(0f, c) * DebuffCoverage(board, tower, slot, buffed.Range);
             StrategyPolicy policy = StrategySearch.ActivePolicy;
@@ -177,8 +170,8 @@ namespace SquareTD
                     {
                         TowerController tower = board.Slots.Get(i);
                         if (tower == null || !tower.IsAttackTower) continue;
-                        float before = Worth(board, tower, Forecast(board, tower, slot, true, true), slot);
-                        TowerFinalStats received = Forecast(board, tower, slot, true, true, zone);
+                        float before = Worth(board, tower, Forecast(board, tower, slot, true), slot);
+                        TowerFinalStats received = Forecast(board, tower, slot, true, zone);
                         float after = Worth(board, tower, received, slot);
                         float value = PriorityWeight(1) * (after - before) +
                             0.1f * PriorityWeight(0) * before +
@@ -190,7 +183,7 @@ namespace SquareTD
                     }
                     if (float.IsNegativeInfinity(bestReceiver))
                         bestReceiver = Coverage(board, slot, ReferenceRange(board)) *
-                            (1f + PriorityWeight(0) * TileBonus(board, slot, null) + PriorityWeight(1) * BuffBonus(board, slot));
+                            (1f + PriorityWeight(1) * BuffBonus(board, slot));
                     if (bestReceiver > highest) { highest = bestReceiver; best = slot; }
                 }
                 if (best >= 0) board.Zones.TryPlace(zone, best);
@@ -450,7 +443,7 @@ namespace SquareTD
                 for (int slot = 0; slot < board.Grid.SpawnCount; slot++)
                 {
                     if (!board.Zones.CanPlace(zone, slot, out _)) continue;
-                    float value = Coverage(board, slot, range) * (1f + TileBonus(board, slot, null) + BuffBonus(board, slot));
+                    float value = Coverage(board, slot, range) * (1f + BuffBonus(board, slot));
                     if (value > bestValue)
                     {
                         best = slot;
@@ -486,7 +479,7 @@ namespace SquareTD
                 for (int slot = 0; slot < slots.Count; slot++)
                 {
                     if (taken[slot]) continue;
-                    float value = Coverage(board, slot, tower.Stats.Range) * (1f + TileBonus(board, slot, tower) + BuffBonus(board, slot));
+                    float value = Coverage(board, slot, tower.Stats.Range) * (1f + BuffBonus(board, slot));
                     if (slot == tower.SlotIndex) value *= StayBonus;
                     if (value > bestValue)
                     {
@@ -508,7 +501,7 @@ namespace SquareTD
                     for (int slot = 0; slot < slots.Count; slot++)
                     {
                         if (taken[slot]) continue;
-                        float value = Coverage(board, slot, generalRange) * (1f + TileBonus(board, slot, null) + BuffBonus(board, slot));
+                        float value = Coverage(board, slot, generalRange) * (1f + BuffBonus(board, slot));
                         if (value < lowest)
                         {
                             best = slot;
@@ -575,26 +568,6 @@ namespace SquareTD
             foreach (Zone zone in board.Zones.GetAtSpawn(slot))
                 bonus += BuffZoneValue;
             return bonus;
-        }
-
-        private static float TileBonus(BoardManager board, int slot, TowerController tower)
-        {
-            SpawnTileType tile = board.Tiles != null ? board.Tiles.GetSpawnTile(slot) : SpawnTileType.None;
-            switch (tile)
-            {
-                case SpawnTileType.Power:
-                    return 0.3f;
-                case SpawnTileType.AttackCount:
-                    return tower != null ? 1f / Mathf.Max(1, tower.Stats.AttackCount) : GenericAttackTileValue;
-                case SpawnTileType.ActionCount:
-                    if (tower == null) return GenericActionTileValue;
-                    int action = Mathf.Max(1, tower.Stats.Action);
-                    return action / (float)Mathf.CeilToInt(action / 2f) - 1f;
-                case SpawnTileType.Mastery:
-                    return 0.4f;
-                default:
-                    return 0f;
-            }
         }
 
         private static int ReferenceRange(BoardManager board)

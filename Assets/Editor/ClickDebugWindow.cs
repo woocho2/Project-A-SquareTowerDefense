@@ -110,7 +110,6 @@ namespace SquareTD
         {
             BoardManager board = BoardManager.Instance;
             Header($"스폰 칸 {spawnIndex}");
-            Row("특수 타일", board.Tiles.GetSpawnTile(spawnIndex).ToString());
             DrawZones("버프존", board.Zones.GetAtSpawn(spawnIndex));
 
             TowerController tower = board.Slots.Get(spawnIndex);

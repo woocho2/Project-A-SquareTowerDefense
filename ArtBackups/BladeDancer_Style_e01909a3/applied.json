@@ -1,0 +1,35 @@
+{
+  "asset": "Assets/4. Asset/2. Tower/TowerCharacter/Normal/1_Sword_Balde Dancer.png",
+  "source": "C:/Users/user/.codex/generated_images/01a113e3-050d-77a2-9b09-b97ca0dcaa81/exec-cb428f0c-085c-498a-912c-5c549acc01a9.png",
+  "generation": "Built-in image_gen; generated source 1254x1254",
+  "savedSize": [
+    2048,
+    2048
+  ],
+  "resize": "HighQualityBicubic deterministic resampling with premultiplied alpha; no further AI detail generation",
+  "ppu": 2048,
+  "full": {
+    "name": "1_Sword_Balde Dancer_Full",
+    "x": 0,
+    "y": 0,
+    "width": 2048,
+    "height": 2048
+  },
+  "face": {
+    "name": "1_Sword_Balde Dancer_Face",
+    "x": 943,
+    "y": 1547,
+    "width": 256,
+    "height": 256,
+    "pupilInTopLeftCoordinates": {
+      "x": 1071,
+      "y": 373
+    }
+  },
+  "prompts": {
+    "style": "Use case: style-transfer. Restyle IMAGE 1, the ORIGINAL Blade Dancer, to match the polished 2D Japanese anime LINEWORK AND COLOR RENDERING of IMAGE 2, the newly approved Sword Master.\n\nIMAGE 1 is the sole CHARACTER AND DESIGN source. Preserve the original character's face identity, expression, eyes, skin tone, deep navy long high ponytail, exact costume layout and black/navy/lavender/silver color relationships, arm bands, cuffs, buckles, flowing fabric panels, boots, both original STRAIGHT silver swords, pose with one arm overhead and one arm extended, one lifted bent knee and one extended supporting leg, camera angle, body proportions and composition. The user has reverted to this original design; do not introduce any details from later rejected redesigns. Do not add a face veil, change the hair to short loose hair, substitute curved sabers, or change the costume construction. Preserve the original game-character presentation, without exaggerating anatomy or adding any emphasis.\n\nIMAGE 2 is only the APPROVED CURRENT RENDERING STYLE: controlled clean continuous contours, delicate facial lines, slightly stronger outer contours than interior structure, natural coherent form shading with restrained material rendering. Use clear broad hair shapes and connected highlights following the hair flow; no repeated light-dark stripe artifacts or dense fine strands. Give cloth a moderate number of functional folds, neither dense tiny wrinkles nor featureless rubber surfaces. Render the steel blades with clear straight edges and simple planar highlights; no gratuitous gloss, etched decoration or extra details.\n\nThe character should visibly belong to the same 2D anime game illustration set as IMAGE 2, while remaining recognizably the ORIGINAL Blade Dancer of IMAGE 1. Maintain her existing expression and head/body alignment and preserve anatomical naturalness of both hands. Do not copy the male face, red cape, leather clothes, central longsword pose or palette from image 2. No new objects or effects. No crosshatching, grid patterns, diagonal bands, grain, paper texture, blurry upscaling, painterly realism or 3D render shading. Natural shading, no forced fixed two-tone palette.\n\nOne full-body character on a genuinely TRANSPARENT square canvas, requested 2048x2048. All original swords, raised hand, long hair, fabric and boots fully within the image, with minimal top/bottom clearance. No backdrop, ground shadow, text, label, frame or watermark. This is a faithful style update, not a redesign.",
+    "pale": "Make ONE precise color adjustment to the attached ORIGINAL Blade Dancer style update: lighten ONLY THE SKIN to a noticeably paler, fair ivory complexion. Apply the same fair ivory skin tone consistently to the face, neck, shoulders, arms, hands and visible legs. Reduce the existing warm peach/tan cast. Keep natural subtle warm/cool skin shading and clear form; do not make featureless pure white skin or erase facial features.\n\nPreserve EVERYTHING ELSE EXACTLY: the original face identity, expression, black eyes, long high NAVY ponytail and hair rendering, all costume design and black/navy/lavender/silver colors, clothing coverage, arm bands and buckles, boots, BOTH STRAIGHT SILVER SWORDS, fingers and hand grips, dance pose, lifted bent knee and supporting leg, body proportions, camera angle, silhouette, cloth flow, linework and shading style. Do not change hairstyle, outfit, weapons, pose or expression. Do not add a mask, accessories, effects or decoration. Do not lighten the hair, clothes, metal or outlines.\n\nSame polished clean 2D Japanese anime game illustration, clear controlled contours and restrained natural material shading. No grid, crosshatching, noise or extra texture. Exactly one full-body figure on genuine alpha TRANSPARENT background, square requested 2048x2048. All raised hand, blades, hair, cloth and boots within frame, minimal vertical margin. No scenery, ground shadow, text, labels or border. Skin tone adjustment only.",
+    "balancedSkin": "Precise SKIN TONE correction only. IMAGE 1 is the current Blade Dancer edit target, whose skin was made TOO PALE. IMAGE 2 is her previous warmer skin tone and is ONLY a skin-color comparison reference.\nSet all visible skin to a natural LIGHT IVORY tone roughly HALFWAY BETWEEN the very pale skin in image 1 and the warmer peach skin in image 2. The result must be noticeably LESS WHITE and less washed out than image 1, retaining a subtle natural peach warmth and readable soft shadows. Just modestly fairer than the original warmer reference, not porcelain white, gray, bleached or strongly pink. Keep coherent skin form shading, including delicate shadows around face, neck, hands and joints. Do not brighten the whole image or change exposure.\n\nCHANGE ONLY SKIN COLOR on face, neck, shoulders, arms, hands and exposed legs. Preserve every other detail of IMAGE 1 exactly: face identity and expression, black eyes, long high navy ponytail, original black/navy/lavender/silver costume, arm bands and buckles, boots and fabric panels, BOTH STRAIGHT silver swords, both hand grips, dance pose, one bent lifted knee and one extended leg, exact proportions, camera, silhouette, linework and updated anime shading. Do not add a mask, change the hair, redesign clothes, alter body anatomy or recolor any non-skin material.\nClean 2D Japanese anime game illustration. Single full-body character, genuine transparent square background, requested 2048x2048, all hair, raised hand, swords, cloth and boots within frame with minimal vertical margin. No backdrop, ground shadow, text, border, aura, grain, grid or new details. Skin color correction only."
+  },
+  "unityPlayVerified": false
+}

@@ -7,15 +7,15 @@ namespace SquareTD
     {
         public const string GrowthSource = "어스퀘이크 성장";
 
-        public EarthSplashSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
-            : base(grid, occupancy, stackModes) { }
+        public EarthSplashSkill(BoardGrid grid, PathOccupancy occupancy)
+            : base(grid, occupancy) { }
 
         protected override List<ITarget> GetArea(TowerController owner, ITarget mainTarget) => SkillArea.WholeMap(m_grid, m_occupancy);
 
         protected override void OnHitTarget(TowerController owner, ITarget target, DamageInfo hit)
         {
             ProjectileHitResolver.HitSingle(target, hit);
-            if (target.IsAlive && target.Body != null && !target.IsDummy) target.Body.Status.Add(new ImmobilizeEffect("어스퀘이크"));
+            if (target.IsAlive && target.Body != null) target.Body.Status.Add(new ImmobilizeEffect("어스퀘이크"));
         }
 
         protected override void OnFired(TowerController owner, int hitCount)

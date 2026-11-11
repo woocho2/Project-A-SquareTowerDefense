@@ -217,12 +217,12 @@ namespace SquareTD.Tests
             Assert.AreEqual(speed, definition.ProjectileSpeed, 0.0001f);
         }
 
-        [TestCase(1204, 1, 6, 3, 100, 75)]
-        [TestCase(2201, 1, 6, 3, 95, 71)]
-        [TestCase(4102, 1, 7, 2, 80, 80)]
-        [TestCase(4102, 4, 7, 3, 40, 80)]
-        [TestCase(5204, 5, 2, 9, 25, 38)]
-        public void 공격타워_실제계산은_기본값에_성장을_한번_적용(int id, int level, int action, int count, int stack, int duration)
+        [TestCase(1204, 1, 6, 3, 100, 75f)]
+        [TestCase(2201, 1, 6, 3, 95, 71.25f)]
+        [TestCase(4102, 1, 7, 2, 80, 80f)]
+        [TestCase(4102, 4, 7, 3, 40, 80f)]
+        [TestCase(5204, 5, 2, 9, 25, 37.5f)]
+        public void 공격타워_실제계산은_기본값에_성장을_한번_적용(int id, int level, int action, int count, int stack, float duration)
         {
             var database = new TowerDatabase();
             database.Load(AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Resources/TowerData.csv").text);

@@ -67,8 +67,6 @@ namespace SquareTD
             return TowerStatCalculator.Calculate(Definition, m_tier1Definition, State, level);
         }
 
-        public void SetSpawnTile(SpawnTileType type) => SpawnTileEffects.Apply(State.Modifiers, type);
-
         public bool TickAction()
         {
             int gain = Mathf.RoundToInt(Stats.Get(StatType.ActionGainPerTurn));
@@ -91,7 +89,6 @@ namespace SquareTD
                 State.Stack.Add(1f + Stats.Get(StatType.StackGainRate));
                 SupportBuffs.ForEachActive(this, (rule, cast) => rule.OnReceiverActed(cast, this));
             }
-            m_skill?.OnOwnerActed(this);
             yield return m_action.Act(this, Stats, handle);
 
             TimedTowerBuff.CountDown(State);
@@ -132,7 +129,6 @@ namespace SquareTD
 
         public void OnBasicHitLanded(ITarget target)
         {
-            m_skill?.OnBasicHit(this, target);
             SupportBuffs.ForEachActive(this, (rule, cast) => rule.OnReceiverHit(cast, this, target));
         }
 

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace SquareTD
 {
@@ -41,24 +40,12 @@ namespace SquareTD
 
         public void Apply(EnemyController enemy)
         {
-            enemy.Stats.Modifiers.RemoveBySource(PathTileEffect.Source);
+            if (!enemy.Movement.ActedThisTurn) return;
 
-            if (m_zones != null && enemy.Movement.ActedThisTurn && enemy.Movement.ActionStartIndex != enemy.PathIndex)
-                StepZones(enemy);
+            if (m_zones != null && enemy.Movement.ActionStartIndex != enemy.PathIndex) StepZones(enemy);
+            if (!enemy.IsAlive) return;
 
-            PathTileType tile = m_layout.GetPathTile(enemy.PathIndex);
-            PathTileEffect effect = PathTileEffects.Get(tile);
-            if (effect == null) return;
-
-            float rate = enemy.Stats.Get(StatType.MapBuffRate);
-            foreach (StatModifier modifier in effect.GetStandingModifiers())
-            {
-                enemy.Stats.Modifiers.Add(Mathf.Approximately(rate, 1f) ? modifier : Scale(modifier, rate));
-            }
-
-            if (enemy.Movement.ActedThisTurn) effect.OnStopped(enemy, m_grid, m_layout);
-
-            effect.OnTurnStanding(enemy);
+            PathTileEffects.Get(m_layout.GetPathTile(enemy.PathIndex))?.OnStopped(enemy, m_grid, m_layout);
         }
 
         public void StepZones(EnemyController enemy)
@@ -70,9 +57,5 @@ namespace SquareTD
                 DebuffZoneAction.Step(zone, enemy);
             }
         }
-
-        private static StatModifier Scale(StatModifier modifier, float rate) => modifier.IsPercent
-            ? StatModifier.Percent(modifier.Source, modifier.Stat, modifier.Value * rate)
-            : StatModifier.Flat(modifier.Source, modifier.Stat, modifier.Value * rate);
     }
 }

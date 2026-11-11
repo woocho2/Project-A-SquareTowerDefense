@@ -17,17 +17,19 @@ namespace SquareTD
 
         public override void OnSkill2(SupportCast cast) => Acceleration.AddToAll(cast.Amount);
 
-        public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy) => new WindDebuffEffect(cast);
+        public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy) => new WindDebuffEffect(cast, Resist(enemy, cast.Amount));
     }
 
     public class WindDebuffEffect : EmblemDebuffEffect
     {
+        private readonly float m_damagePerStep;
         private bool m_pending = true;
 
-        public WindDebuffEffect(SupportCast cast)
-            : base(cast, $"다음 이동 최소·최대 +{WindDebuffRule.GustSpeed}, 이동한 칸 × {cast.Amount:0.##} 피해" + (cast.IsSkill2 ? $", 최대 Action +{WindDebuffRule.TurbulenceAction}" : ""),
+        public WindDebuffEffect(SupportCast cast, float damagePerStep)
+            : base(cast, $"다음 이동 최소·최대 +{WindDebuffRule.GustSpeed}, 이동한 칸 × {damagePerStep:0.##} 피해" + (cast.IsSkill2 ? $", 최대 Action +{WindDebuffRule.TurbulenceAction}" : ""),
                    cast.IsSkill2 ? new[] { StatModifier.Flat(KeyOf(TowerEmblem.Wind), StatType.MaxAction, WindDebuffRule.TurbulenceAction) } : new StatModifier[0])
         {
+            m_damagePerStep = damagePerStep;
         }
 
         public override MoveRange OnDecideMove(EnemyController enemy, MoveRange range)
@@ -46,7 +48,7 @@ namespace SquareTD
                 Attacker = Cast.Owner,
                 Source = DamageSource.Dot,
                 Emblem = TowerEmblem.Wind,
-                BaseDamage = Mathf.Abs(steps) * Cast.Amount,
+                BaseDamage = Mathf.Abs(steps) * m_damagePerStep,
                 ForceFixed = true,
             });
         }

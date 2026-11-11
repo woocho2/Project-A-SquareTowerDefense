@@ -68,8 +68,7 @@ namespace SquareTD
             EnemyController body = target.Body;
             string name = body != null && body.Definition != null ? body.Definition.DisplayName : target.Transform.name;
 
-            if (target.IsDummy) name = $"[잔상] {name}";
-            else if (target.IsBoss) name = $"[BOSS] {name}";
+            if (target.IsBoss) name = $"[BOSS] {name}";
             return name;
         }
 

@@ -3,23 +3,27 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 전기 버프 — 펄스 · 하이퍼 펄스 (AttackCount ×3, 공격력·치명타 확률·치명타 피해 감소, 타격마다 전하,
+    // 전기 버프 — 펄스 · 하이퍼 펄스 (AttackCount ×3, 공격력·치명타 확률·치명타 피해 (계산식 − 100)%, 타격마다 전하,
     //                                하이퍼 펄스 공격마다 스킬 카운트 +1, 전기 타워는 전하 2배)
     public class ElectricBuffRule : BuffRule
     {
         public const float ElectricChargeMultiplier = 2f;
         public const float HyperSkillCount = 1f;
         public const string HyperReadyKey = "하이퍼 펄스 스킬 카운트";
+        public const float PenaltyBase = 100f;
+
+        public static float StatRate(SupportCast cast) => (cast.Amount - PenaltyBase) * SkillFormula.PercentRate;
 
         public override List<StatModifier> GetModifiers(SupportCast cast, TowerController receiver, string source)
         {
             int attackCount = Mathf.Max(1, Mathf.RoundToInt(receiver.Stats.GetBase(StatType.AttackCount)));
+            float rate = StatRate(cast);
             return new List<StatModifier>
             {
                 StatModifier.Flat(source, StatType.AttackCount, attackCount * 2),
-                StatModifier.Percent(source, StatType.Power, -cast.Rate),
-                StatModifier.Flat(source, StatType.CritRate, -cast.Rate),
-                StatModifier.Flat(source, StatType.CritDamage, -cast.Rate),
+                StatModifier.Percent(source, StatType.Power, rate),
+                StatModifier.Flat(source, StatType.CritRate, rate),
+                StatModifier.Flat(source, StatType.CritDamage, rate),
             };
         }
 

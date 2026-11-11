@@ -17,13 +17,20 @@ namespace SquareTD
         public int ActionCounter => m_actionCounter;
         private int m_actionCounter;
         private EnemyController m_controller;
-        private void ApplyFace()
-        {
-            EnemyCubeFaceAsset face = m_cube.GetFaceAsset(m_cube.VisibleFace);
-            int adaptive = EarthDebuffRule.AdaptiveFor(m_controller, GameSession.Instance != null ? GameSession.Instance.AdaptiveValue : 0);
-            EnemyCubeFaces.Apply(m_controller.Stats, face, adaptive);
+        private int CurrentAdaptive() =>
+            EarthDebuffRule.AdaptiveFor(m_controller, GameSession.Instance != null ? GameSession.Instance.AdaptiveValue : 0);
 
-            float healRate = EnemyCubeFaces.GetHealRate(face, adaptive);
+        public void RefreshFace()
+        {
+            if (m_cube == null || m_controller == null) return;
+            EnemyCubeFaces.Apply(m_controller.Stats, m_cube.GetFaceAsset(m_cube.VisibleFace), CurrentAdaptive(), m_controller.IsBoss);
+        }
+
+        private void Land()
+        {
+            RefreshFace();
+
+            float healRate = EnemyCubeFaces.GetHealRate(m_cube.GetFaceAsset(m_cube.VisibleFace), CurrentAdaptive());
             if (healRate > 0f) m_controller.Heal(m_controller.MaxHp * healRate);
         }
 
@@ -41,7 +48,7 @@ namespace SquareTD
             PathIndex = startIndex;
             m_actionCounter = m_controller.Stats.GetMoveRange().Action;
             m_cube.RandomizeForSpawn();
-            ApplyFace();
+            Land();
         }
 
         public IEnumerator TakeTurn()
@@ -58,7 +65,7 @@ namespace SquareTD
 
             int steps = RollDice(range);
             yield return MoveSteps(steps);
-            ApplyFace();
+            if (steps != 0) Land();
             OnMoved(steps);
 
             m_controller.Status.OnActed();
@@ -132,6 +139,7 @@ namespace SquareTD
         public void TeleportTo(int pathIndex)
         {
             BoardManager board = BoardManager.Instance;
+            if (board == null) return;
             int fromIndex = PathIndex;
             PathIndex = board.Grid.WrapPathIndex(pathIndex);
             transform.position = board.GetWorldPosition(board.Grid.GetPathCell(PathIndex));

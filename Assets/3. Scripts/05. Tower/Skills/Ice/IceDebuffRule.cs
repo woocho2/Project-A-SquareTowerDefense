@@ -1,9 +1,20 @@
 namespace SquareTD
 {
-    // 얼음 디버프 — 프로스트바이트 · 딥 프리즈 (한기 스택, 딥 프리즈는 한기를 모두 없애고 빙결, 그동안 한기·빙결인 적 받는 피해 +50%)
+    // 얼음 디버프 — 프로스트바이트 · 딥 프리즈 (한기 스택, 딥 프리즈는 한기를 모두 없애고 빙결, 그동안 한기·빙결인 적 받는 피해 +50%,
+    //                                         얼음 타워가 그 적을 공격하면 AttackCount 광역 +1, 단일 +2)
     public class IceDebuffRule : DebuffRule
     {
         public const float DeepFreezeDamageTaken = 0.5f;
+        public const int SplashAttackCountBonus = 1;
+        public const int TargetAttackCountBonus = 2;
+
+        public static int AttackCountBonus(TowerController tower, ITarget target)
+        {
+            if (tower == null || target == null || !tower.IsAttackTower || tower.Definition.Emblem != TowerEmblem.Ice) return 0;
+            if (!EmblemDebuffEffect.HasSkill2(target, TowerEmblem.Ice)) return 0;
+            if (!ChillEffect.IsChilled(target) && !FreezeEffect.IsFrozen(target)) return 0;
+            return tower.IsSplash ? SplashAttackCountBonus : TargetAttackCountBonus;
+        }
 
         public override void OnApply(SupportCast cast, EnemyController enemy)
         {

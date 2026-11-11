@@ -30,19 +30,15 @@ namespace SquareTD
         public virtual IReadOnlyList<StatModifier> GetModifiers() => Array.Empty<StatModifier>();
         public virtual void OnAdded(EnemyController enemy) { }
         public virtual void OnRemoved(EnemyController enemy) { }
-        public virtual void OnEnemyTurnStart(EnemyController enemy) { }
         public virtual MoveRange OnDecideMove(EnemyController enemy, MoveRange range) => range;
         public virtual void OnMoved(EnemyController enemy, int steps) { }
-        public virtual void OnActed(EnemyController enemy) { }
         public virtual void OnTurn(EnemyController enemy) { }
-        public virtual void OnBeforeHit(EnemyController enemy, ref DamageInfo info) { }
         public virtual float ModifyIncomingDamage(EnemyController enemy, DamageInfo info, float damage) => damage;
+        public virtual float ModifyDefense(float defense) => defense;
         public virtual void OnDamageTaken(EnemyController enemy, DamageInfo info, float damage) { }
         public virtual float GetCritRateBonus(TowerController attacker) => 0f;
-        public virtual float GetStunChanceBonus(DamageInfo info) => 0f;
         public virtual void OnExpire(EnemyController enemy) { }
         public virtual void OnDeath(EnemyController enemy, KillInfo kill) { }
-        public virtual float GetGoldBonusRate(KillInfo kill) => 0f;
         public virtual int RollGemBonus(KillInfo kill) => 0;
 
         public abstract string Describe();

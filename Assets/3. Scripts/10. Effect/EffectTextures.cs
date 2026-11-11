@@ -25,6 +25,8 @@ namespace SquareTD
         public const string BlackHoleVortex = "FX_BlackHoleVortex";
         public const string Fireball = "FX_Fireball";
         public const string Snowball = "FX_Snowball";
+        public const string LightSword = "FX_LightSword";
+        public const string GreatAxe = "FX_GreatAxe";
 
         private static readonly Dictionary<string, Texture2D> s_cache = new Dictionary<string, Texture2D>();
         private static readonly Dictionary<string, Texture2D> s_proceduralCache = new Dictionary<string, Texture2D>();
@@ -58,7 +60,7 @@ namespace SquareTD
         private static Texture2D MakeProcedural(string name)
         {
             bool strip = name == SlashTrail || name == SlashLine || name == Spark;
-            int width = strip ? 256 : 128;
+            int width = strip || name == GreatAxe ? 256 : 128;
             int height = strip ? 32 : 128;
             var texture = new Texture2D(width, height, TextureFormat.RGBA32, false)
             {
@@ -181,6 +183,36 @@ namespace SquareTD
                     float a = 1f - Mathf.SmoothStep(-0.04f, 0.02f, d);
                     float shine = 0.7f + 0.3f * Mathf.Clamp01(p.y * 3f + 0.5f);
                     return new Color(shine, shine, shine, a);
+                }
+                case LightSword:
+                {
+                    float ax = Mathf.Abs(p.x);
+                    float bladeWidth = 0.16f * Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(-1f, -0.55f, p.y));
+                    float blade = (1f - Mathf.SmoothStep(bladeWidth - 0.03f, bladeWidth + 0.01f, ax)) * (1f - Mathf.SmoothStep(0.4f, 0.44f, p.y));
+                    float guard = (1f - Mathf.SmoothStep(0.05f, 0.07f, Mathf.Abs(p.y - 0.5f))) * (1f - Mathf.SmoothStep(0.5f, 0.56f, ax));
+                    float grip = (1f - Mathf.SmoothStep(0.06f, 0.08f, ax)) * Mathf.SmoothStep(0.5f, 0.52f, p.y) * (1f - Mathf.SmoothStep(0.8f, 0.82f, p.y));
+                    float pommel = 1f - Mathf.SmoothStep(0.07f, 0.1f, new Vector2(p.x, p.y - 0.88f).magnitude);
+                    float solid = Mathf.Max(Mathf.Max(blade, guard), Mathf.Max(grip, pommel));
+                    float halo = Mathf.Exp(-ax * 6f) * (1f - Mathf.SmoothStep(0.85f, 1f, Mathf.Abs(p.y))) * 0.35f;
+                    return new Color(1f, 1f, 1f, Mathf.Clamp01(solid + halo));
+                }
+                case GreatAxe:
+                {
+                    var q = new Vector2(p.x, p.y * 0.5f);
+                    float aa = 0.012f;
+                    float handle = (1f - Mathf.SmoothStep(0.03f, 0.03f + aa, Mathf.Abs(q.y)))
+                                 * (1f - Mathf.SmoothStep(0.9f, 0.9f + aa, q.x)) * Mathf.SmoothStep(-0.97f, -0.97f + aa, q.x);
+                    float outer = (q - new Vector2(0.65f, -0.25f)).magnitude - 0.66f;
+                    float beard = 0.42f - (q - new Vector2(0.32f, -0.12f)).magnitude;
+                    float right = 0.3f - (q - new Vector2(1.25f, 0.3f)).magnitude;
+                    float blade = Mathf.Max(Mathf.Max(outer, beard), Mathf.Max(right, -q.y));
+                    float eye = Mathf.Max(Mathf.Abs(q.y) - 0.08f, Mathf.Max(0.76f - q.x, q.x - 0.94f));
+                    float head = 1f - Mathf.SmoothStep(-aa, aa, Mathf.Min(blade, eye));
+                    float edge = (1f - Mathf.SmoothStep(0f, 0.05f, -outer)) * Mathf.SmoothStep(0f, 0.01f, -blade);
+                    float shade = Mathf.Lerp(0.62f, 1f, edge);
+                    float alpha = Mathf.Max(handle, head);
+                    float gray = head >= handle ? shade : 0.5f;
+                    return new Color(gray, gray, gray, alpha);
                 }
                 default:
                     return new Color(1f, 1f, 1f, Mathf.Exp(-p.sqrMagnitude * 3f) * (1f - Mathf.SmoothStep(0.85f, 1f, p.magnitude)));

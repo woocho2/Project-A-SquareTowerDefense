@@ -8,8 +8,8 @@ namespace SquareTD
     {
         public const int PushRange = 3;
 
-        public WaterSplashSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
-            : base(grid, occupancy, stackModes) { }
+        public WaterSplashSkill(BoardGrid grid, PathOccupancy occupancy)
+            : base(grid, occupancy) { }
 
         protected override List<ITarget> GetArea(TowerController owner, ITarget mainTarget) => SkillArea.WholeMap(m_grid, m_occupancy);
 
@@ -20,7 +20,7 @@ namespace SquareTD
         protected override void OnHitTarget(TowerController owner, ITarget target, DamageInfo hit)
         {
             EnemyController enemy = target.Body;
-            bool pushes = enemy != null && !target.IsDummy && enemy.IsAlive && Chance.Roll(enemy.Resistance.ResistWeak(1f));
+            bool pushes = enemy != null && enemy.IsAlive && Chance.Roll(enemy.Resistance.ResistWeak(1f));
             DamageInfo wave = hit;
             wave.ChangesMovement = pushes;
             ProjectileHitResolver.HitSingle(target, wave);

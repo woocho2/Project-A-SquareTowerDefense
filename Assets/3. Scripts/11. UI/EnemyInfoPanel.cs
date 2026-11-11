@@ -719,11 +719,7 @@ namespace SquareTD
             RectTransform content = m_buffContent != null ? m_buffContent : m_buffScrollRect != null ? m_buffScrollRect.content : null;
             if (content == null) return;
 
-            var descriptions = new List<string>();
-            BoardManager board = BoardManager.Instance;
-            PathTileType tile = board.Tiles.GetPathTile(m_selectedTarget.PathIndex);
-            if (SpecialTileText.IsStandingBuff(tile)) descriptions.Add(SpecialTileText.Describe(tile, m_selectedTarget.PathIndex, board.Grid));
-            if (descriptions.Count == 0) descriptions.Add("적용 중인 버프 없음\n현재 적에게 적용된 버프가 없습니다.");
+            var descriptions = new List<string> { "적용 중인 버프 없음\n현재 적에게 적용된 버프가 없습니다." };
 
             CreateEntries(content, descriptions, m_spawnedBuffEntries);
             if (m_buffScrollRect != null) m_buffScrollRect.verticalNormalizedPosition = 1f;

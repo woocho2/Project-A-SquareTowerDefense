@@ -44,16 +44,17 @@ namespace SquareTD
             SupportCast cast = SupportSkillCount.TakeSkill2Cast(tower);
             BuffRule rule = SkillRegistry.GetBuffRule(tower.Definition.Emblem);
 
-            int count = 0;
+            var receivers = new List<TowerController>();
             for (int i = 0; i < m_slots.Count; i++)
             {
                 TowerController receiver = m_slots.Get(i);
                 if (receiver == null || !receiver.IsAttackTower) continue;
                 SupportBuffs.GiveSkill2(cast, receiver);
-                count++;
+                receivers.Add(receiver);
             }
             rule.OnSkill2(cast);
-            Debug.Log($"[Buff] {tower.name} 스킬 2 발동 → 아군 공격 타워 {count}기, 값 {cast.Amount:0.##}, {cast.Duration}번 행동 동안");
+            SkillEffectTable.PlaySupportSkill(tower, receivers);
+            Debug.Log($"[Buff] {tower.name} 스킬 2 발동 → 아군 공격 타워 {receivers.Count}기, 값 {cast.Amount:0.##}, {cast.Duration}번 행동 동안");
         }
 
         public override void OnRemoved(TowerController tower)

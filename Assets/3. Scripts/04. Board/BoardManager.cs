@@ -114,8 +114,7 @@ namespace SquareTD
             for (int i = 0; i < Grid.SpawnCount; i++)
             {
                 Vector3 pos = GetWorldPosition(Grid.GetSpawnCell(i));
-                SpawnTileType tile = Tiles != null ? Tiles.GetSpawnTile(i) : SpawnTileType.None;
-                string label = tile == SpawnTileType.None ? i.ToString() : $"{i} {tile}";
+                string label = i.ToString();
                 if (Zones != null) label += ZoneLabel(Zones.GetAtSpawn(i));
                 UnityEditor.Handles.Label(pos, label, spawnStyle);
             }

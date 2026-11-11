@@ -5,8 +5,8 @@ namespace SquareTD
     // 문양 없이 피해만 주는 시험 스킬
     public class DamageOnlySkill : AttackSkill
     {
-        public DamageOnlySkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
-            : base(grid, occupancy, stackModes) { }
+        public DamageOnlySkill(BoardGrid grid, PathOccupancy occupancy)
+            : base(grid, occupancy) { }
 
         protected override List<ITarget> GetArea(TowerController owner, ITarget mainTarget)
         {

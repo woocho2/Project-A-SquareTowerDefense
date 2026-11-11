@@ -19,7 +19,14 @@ namespace SquareTD
 
     public class TowerFinalStats
     {
-        public static readonly int StatCount = System.Enum.GetValues(typeof(StatType)).Length;
+        public static readonly int StatCount = MaxStatValue() + 1;
+
+        private static int MaxStatValue()
+        {
+            int max = 0;
+            foreach (StatType stat in System.Enum.GetValues(typeof(StatType))) max = System.Math.Max(max, (int)stat);
+            return max;
+        }
 
         private readonly float[] m_values;
         private readonly float[] m_baseValues;

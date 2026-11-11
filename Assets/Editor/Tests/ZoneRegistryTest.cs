@@ -141,8 +141,7 @@ namespace SquareTD.Tests
             var layout = new SpecialTileLayout();
             layout.Generate(m_grid, new SpecialTileCounts
             {
-                Defense = 0, Speed = 0, PathActionCount = 0, Heal = 0, Purify = 0,
-                Power = 0, SpawnActionCount = 0, AttackCount = 0, Mastery = 0,
+                Purify = 0,
             }, new System.Random(1));
             ZoneRegistry registry = MakeRegistry(layout);
             TowerController tower = MakeTower(TowerColor.Purple, TowerEmblem.Sword);

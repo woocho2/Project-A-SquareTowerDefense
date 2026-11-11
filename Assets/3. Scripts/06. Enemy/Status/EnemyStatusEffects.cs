@@ -141,7 +141,6 @@ namespace SquareTD
             foreach (Action action in pending) action();
         }
 
-        public void OnEnemyTurnStart() => ForEach(effect => effect.OnEnemyTurnStart(m_owner));
         public void OnMoved(int steps) => ForEach(effect => effect.OnMoved(m_owner, steps));
         public void OnTurn() => ForEach(effect => effect.OnTurn(m_owner));
         public void OnDamageTaken(DamageInfo info, float damage) => ForEach(effect => effect.OnDamageTaken(m_owner, info, damage), stopWhenDead: false);
@@ -154,25 +153,11 @@ namespace SquareTD
             return bonus;
         }
 
-        public float GetGoldBonusRate(KillInfo kill)
-        {
-            float bonus = 0f;
-            foreach (StatusEffect effect in m_effects) bonus += effect.GetGoldBonusRate(kill);
-            return bonus;
-        }
-
         public int RollGemBonus(KillInfo kill)
         {
             int gems = 0;
             foreach (StatusEffect effect in m_effects) gems += effect.RollGemBonus(kill);
             return gems;
-        }
-
-        public float GetStunChanceBonus(DamageInfo info)
-        {
-            float bonus = 0f;
-            foreach (StatusEffect effect in m_effects) bonus += effect.GetStunChanceBonus(info);
-            return bonus;
         }
 
         public MoveRange DecideMove(MoveRange range)
@@ -182,11 +167,11 @@ namespace SquareTD
             return result;
         }
 
-        public void OnBeforeHit(ref DamageInfo info)
+        public float ModifyDefense(float defense)
         {
-            DamageInfo result = info;
-            ForEach(effect => effect.OnBeforeHit(m_owner, ref result));
-            info = result;
+            float result = defense;
+            foreach (StatusEffect effect in m_effects) result = effect.ModifyDefense(result);
+            return result;
         }
 
         public float ModifyIncomingDamage(DamageInfo info, float damage)
@@ -198,11 +183,7 @@ namespace SquareTD
 
         public void OnActed()
         {
-            ForEach(effect =>
-            {
-                effect.CountDown(m_owner);
-                effect.OnActed(m_owner);
-            });
+            ForEach(effect => effect.CountDown(m_owner));
 
             var expired = m_effects.FindAll(effect => effect.IsExpired);
             if (expired.Count == 0) return;

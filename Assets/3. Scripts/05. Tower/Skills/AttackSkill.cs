@@ -8,13 +8,11 @@ namespace SquareTD
     {
         protected readonly BoardGrid m_grid;
         protected readonly PathOccupancy m_occupancy;
-        private readonly StackModeSettings m_stackModes;
 
-        protected AttackSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
+        protected AttackSkill(BoardGrid grid, PathOccupancy occupancy)
         {
             m_grid = grid;
             m_occupancy = occupancy;
-            m_stackModes = stackModes;
         }
 
         public int Fire(TowerController owner, ITarget mainTarget)
@@ -47,7 +45,8 @@ namespace SquareTD
             {
                 if (!target.IsAlive) continue;
 
-                DamageInfo hit = MakeSkillHit(owner, stats, target, damage * ModifyOutgoingDamage(owner, target), isCritical);
+                bool targetCritical = isCritical || IsCriticalAgainst(owner, target);
+                DamageInfo hit = MakeSkillHit(owner, stats, target, damage * ModifyOutgoingDamage(owner, target), targetCritical);
 
                 float dealt = target.PreviewDamage(hit);
                 minDealt = Mathf.Min(minDealt, dealt);
@@ -81,16 +80,26 @@ namespace SquareTD
 
         protected virtual bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack) => false;
         protected virtual bool RollCritical(TowerController owner, TowerFinalStats stats, ITarget mainTarget) => false;
+        protected virtual bool IsCriticalAgainst(TowerController owner, ITarget target) => false;
 
         protected static float ChargedAbility(TowerFinalStats stats, bool useStack) =>
-            useStack ? SkillFormula.ChargedAbility(stats.AbilityValue, stats.Stack, stats.StackValue) : stats.AbilityValue;
+            useStack ? SkillFormula.ChargedAbility(stats.AbilityValue, stats.Stack, stats.StackValue) * (1f + stats.Get(StatType.ChargeBonus))
+                     : stats.AbilityValue;
+
+        protected static ITarget HighestHp(List<ITarget> candidates)
+        {
+            ITarget best = null;
+            foreach (ITarget target in candidates)
+            {
+                if (!target.IsAlive) continue;
+                if (best == null || target.CurrentHp > best.CurrentHp) best = target;
+            }
+            return best;
+        }
 
         protected static int EffectDuration(TowerController owner) => SkillFormula.EffectDuration(owner);
         protected virtual float ModifyOutgoingDamage(TowerController owner, ITarget target) => 1f;
-        public virtual void OnBasicHit(TowerController owner, ITarget target) { }
-        public virtual void OnOwnerActed(TowerController owner) { }
         public virtual void OnEnemyTurnStart(TowerController owner) { }
-        public virtual float ModifyBasicDamage(TowerController owner, ITarget target) => 1f;
         protected virtual void OnFired(TowerController owner, int hitCount) { }
 
         protected static void Grow(TowerController owner, string source, StatType stat, float amount)

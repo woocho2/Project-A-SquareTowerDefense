@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 화염술사 기본 공격 — 타격 범위의 길 타일마다 같은 크기의 불기둥이 솟음
+    // 플레임위자드 기본 공격 — 타격 범위의 길 타일마다 같은 크기의 불기둥이 솟음
     [DisallowMultipleComponent]
     public sealed class FireSplashAttackEffect : MonoBehaviour, IShotEffect
     {

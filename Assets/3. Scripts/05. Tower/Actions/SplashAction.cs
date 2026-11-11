@@ -36,6 +36,7 @@ namespace SquareTD
                 if (inRange.Count == 0) yield break;
 
                 ITarget aimed = selector.Select(TargetSelector.PreferAttackCell(inRange, tower.State.AttackCellIndex), towerCell, m_grid);
+                if (s == 0) volleyCount += IceDebuffRule.AttackCountBonus(tower, aimed);
                 Vector3Int impactCell = m_grid.GetPathCell(aimed.PathIndex);
                 bool isCritical = CriticalRoll.Roll(CriticalRoll.RateAgainst(tower, stats, aimed));
                 Vector3 from = tower.transform.position;

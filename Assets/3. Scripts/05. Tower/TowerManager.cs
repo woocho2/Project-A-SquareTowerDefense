@@ -22,7 +22,6 @@ namespace SquareTD
 
         public TowerDatabase Database { get; private set; }
         public ColorUpgradeState ColorLevels { get; private set; }
-        public StackModeSettings StackModes { get; private set; } = new StackModeSettings();
         public int BuildCost { get; private set; } = StartBuildCost;
         public TowerController Selected { get; private set; }
 
@@ -64,7 +63,7 @@ namespace SquareTD
 
         private void Start()
         {
-            m_factory = new TowerFactory(m_towerPrefab, m_towerParent, BoardManager.Instance, Database, ColorLevels, StackModes);
+            m_factory = new TowerFactory(m_towerPrefab, m_towerParent, BoardManager.Instance, Database, ColorLevels);
             m_mergeEffect = EffectSpace.Make<TowerMergeEffect>(transform, "Tower Merge Effect");
         }
 
@@ -324,7 +323,6 @@ namespace SquareTD
         {
             BoardManager board = BoardManager.Instance;
             tower.SetSlot(slot, board.GetWorldPosition(board.Grid.GetSpawnCell(slot)));
-            tower.SetSpawnTile(board.Tiles.GetSpawnTile(slot));
         }
     }
 }

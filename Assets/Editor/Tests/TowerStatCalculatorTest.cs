@@ -45,7 +45,7 @@ namespace SquareTD.Tests
             Assert.AreEqual(3, stats.AttackCount);
             Assert.AreEqual(30, stats.Stack);
             Assert.AreEqual(2.5f, stats.StackValue, 0.0001f);
-            Assert.AreEqual(2f, stats.SkillCount, 0.0001f, "5 × 0.5 = 2.5 → 반올림 2");
+            Assert.AreEqual(2.5f, stats.SkillCount, 0.0001f, "5 × 0.5 = 2.5. SkillCount는 소수로 둠 (20번 10장)");
         }
 
         [Test]
@@ -93,9 +93,9 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 쓸_레벨은_최대_5()
+        public void 레벨_5는_AbilityValue_16배()
         {
-            TowerFinalStats stats = Calc(Def(1101), null, 5, StatModifier.Flat("보정", StatType.ColorLevelBonus, 1f));
+            TowerFinalStats stats = Calc(Def(1101), null, 5);
 
             Assert.AreEqual(5, stats.ColorLevel);
             Assert.AreEqual(32f, stats.AbilityValue, 0.0001f, "2 × 16");
@@ -122,9 +122,7 @@ namespace SquareTD.Tests
         [Test]
         public void 버프_타워는_수정자를_받지_않음()
         {
-            TowerFinalStats stats = Calc(Def(1301), null, 5,
-                StatModifier.Percent("버프", StatType.Power, 0.5f),
-                StatModifier.Flat("보정", StatType.ColorLevelBonus, 1f));
+            TowerFinalStats stats = Calc(Def(1301), null, 5, StatModifier.Percent("버프", StatType.Power, 0.5f));
 
             Assert.AreEqual(10f, stats.Power, 0.0001f);
             Assert.AreEqual(5, stats.ColorLevel);

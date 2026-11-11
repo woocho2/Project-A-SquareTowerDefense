@@ -25,7 +25,6 @@ namespace SquareTD.Tests
             public int PathIndex { get; }
             public bool IsAlive => CurrentHp > 0f;
             public bool IsBoss => false;
-            public bool IsDummy => false;
             public EnemyController Body => null;
             public float CurrentHp { get; private set; }
             public float MaxHp { get; }
@@ -61,7 +60,7 @@ namespace SquareTD.Tests
             go.transform.SetParent(m_root.transform);
             var tower = go.AddComponent<TowerController>();
             var definition = new TowerDefinition(id, 10f, 2, 3, 1, 0f, 0f, 1, 60, duration, 2f, 5f, TargetPriority.Closest);
-            AttackSkill skill = withSkill ? new DamageOnlySkill(m_grid, m_occupancy, new StackModeSettings()) : null;
+            AttackSkill skill = withSkill ? new DamageOnlySkill(m_grid, m_occupancy) : null;
             tower.Init(definition, 0, null, null, null, skill);
             return tower;
         }
@@ -183,7 +182,7 @@ namespace SquareTD.Tests
             OccupyingFakeTarget target = OnMap(3);
             Assert.IsTrue(Hits(tower, target, 1));
             Assert.AreEqual(1, target.Hits.Count);
-            Assert.AreEqual(0f, tower.State.SkillCount, 0.0001f);
+            Assert.AreEqual(1f, tower.State.SkillCount, 0.0001f, "남겨 둔 5 + 이번 적중 1 = 6에서 5를 쓰고 1이 남음 (넘친 만큼 이어 셈)");
         }
 
         [Test]

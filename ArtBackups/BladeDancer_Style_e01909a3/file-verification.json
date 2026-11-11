@@ -1,0 +1,30 @@
+﻿{
+    "PngSize":  [
+                    2048,
+                    2048
+                ],
+    "PixelFormat":  "Format32bppArgb",
+    "PPU":  2048,
+    "SpriteCount":  2,
+    "Slices":  [
+                   {
+                       "Name":  "1_Sword_Balde Dancer_Full",
+                       "X":  0,
+                       "Y":  0,
+                       "Width":  2048,
+                       "Height":  2048
+                   },
+                   {
+                       "Name":  "1_Sword_Balde Dancer_Face",
+                       "X":  943,
+                       "Y":  1547,
+                       "Width":  256,
+                       "Height":  256
+                   }
+               ],
+    "GuidPreserved":  true,
+    "SpriteIDsPreserved":  true,
+    "InternalIDsPreserved":  true,
+    "FileChecksPassed":  true,
+    "UnityPlayVerified":  false
+}

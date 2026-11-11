@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -7,66 +9,70 @@ namespace SquareTD
     // 개발용 단축키와 키 목록
     public class DebugCheat : MonoBehaviour
     {
+        private const float DummyHp = 50000000f;
+
         private bool m_autoEndTurn;
-
-        private sealed class TagLogFilter : ILogHandler
-        {
-            public readonly ILogHandler Inner;
-            private readonly string m_tag;
-
-            public TagLogFilter(ILogHandler inner, string tag)
-            {
-                Inner = inner;
-                m_tag = tag;
-            }
-
-            public void LogFormat(LogType logType, Object context, string format, params object[] args)
-            {
-                if (logType == LogType.Log)
-                {
-                    string message = args != null && args.Length > 0 ? string.Format(format, args) : format;
-                    if (!message.Contains(m_tag)) return;
-                }
-                Inner.LogFormat(logType, context, format, args);
-            }
-
-            public void LogException(System.Exception exception, Object context) => Inner.LogException(exception, context);
-        }
-
-        private TagLogFilter m_logFilter;
-
-        private void SetLogFilter(string tag)
-        {
-            if (m_logFilter != null)
-            {
-                Debug.unityLogger.logHandler = m_logFilter.Inner;
-                m_logFilter = null;
-            }
-            if (tag == null) return;
-
-            m_logFilter = new TagLogFilter(Debug.unityLogger.logHandler, tag);
-            Debug.unityLogger.logHandler = m_logFilter;
-        }
 
         private void Start()
         {
             EnemyManager.Instance.CountChanged += OnEnemyCountChanged;
             CurrencyManager.Instance.Changed += OnCurrencyChanged;
-            TurnManager.Instance.EnemyTurnEnded += OnEnemyTurnEnded;
-        }
-
-        private static void OnEnemyTurnEnded(int turn)
-        {
-            Debug.Log($"[Skill] ── 적 턴 {turn} 끝: 남은 적 {EnemyManager.Instance.Registry.Count}");
         }
 
         private void OnDestroy()
         {
             if (EnemyManager.Instance != null) EnemyManager.Instance.CountChanged -= OnEnemyCountChanged;
             if (CurrencyManager.Instance != null) CurrencyManager.Instance.Changed -= OnCurrencyChanged;
-            if (TurnManager.Instance != null) TurnManager.Instance.EnemyTurnEnded -= OnEnemyTurnEnded;
-            SetLogFilter(null);
             if (m_speedIndex != 0) Time.timeScale = 1f;
+        }
+
+        private static void SpawnDummy()
+        {
+            EnemyController enemy = EnemyManager.Instance.SpawnForDebug(DummyHp);
+            if (enemy != null) Debug.Log($"[DebugCheat] 체력 {DummyHp:N0} 허수아비 → {enemy.PathIndex}번 칸");
+        }
+
+        private void PreviewSkill()
+        {
+            TowerController tower = TowerManager.Instance.Selected;
+            if (tower == null)
+            {
+                Debug.Log("[DebugCheat] 타워를 먼저 클릭하세요");
+                return;
+            }
+
+            var hits = new List<Vector3>();
+            foreach (EnemyController enemy in EnemyManager.Instance.Registry.Alive)
+                if (enemy != null && enemy.IsAlive) hits.Add(enemy.transform.position);
+            if (hits.Count == 0) hits.Add(tower.transform.position + Vector3.right * EffectSpace.CellWorldSize() * 2f);
+
+            Debug.Log($"[DebugCheat] {tower.name} 스킬 연출 보기 (피해 없음, 적 {hits.Count}곳)");
+            StartCoroutine(PlaySkillPreview(tower, hits));
+        }
+
+        private static IEnumerator PlaySkillPreview(TowerController tower, List<Vector3> hits)
+        {
+            yield return SkillCutIn.Play(tower);
+            if (tower == null) yield break;
+            if (!tower.IsAttackTower)
+            {
+                SkillEffectTable.PlaySupportSkill(tower, AllyAttackTowers(), true);
+                yield break;
+            }
+            SkillEffectTable.PlayCast(tower);
+            SkillEffectTable.Play(tower, hits[0], hits);
+        }
+
+        private static List<TowerController> AllyAttackTowers()
+        {
+            var towers = new List<TowerController>();
+            TowerSlots slots = BoardManager.Instance.Slots;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                TowerController tower = slots.Get(i);
+                if (tower != null && tower.IsAttackTower) towers.Add(tower);
+            }
+            return towers;
         }
 
         private static readonly float[] s_speeds = { 1f, 2f, 3f };
@@ -187,13 +193,6 @@ namespace SquareTD
                 return;
             }
 
-            if (keyboard.kKey.wasPressedThisFrame)
-            {
-                bool turnOn = m_logFilter == null;
-                SetLogFilter(turnOn ? "[Skill]" : null);
-                Debug.LogWarning($"[DebugCheat] 로그 필터 {(turnOn ? "켬: [Skill]만" : "끔: 전부")}");
-            }
-
             if (keyboard.spaceKey.wasPressedThisFrame)
             {
                 TurnManager.Instance.OnClickEndTurn();
@@ -235,19 +234,11 @@ namespace SquareTD
                 StartPickAttackCell();
             }
 
-            if (keyboard.uKey.wasPressedThisFrame) TowerManager.Instance.TryTierUpgrade(TowerManager.Instance.Selected);
             if (keyboard.hKey.wasPressedThisFrame) CurrencyManager.Instance.AddGem(100);
-
-            if (keyboard.lKey.wasPressedThisFrame)
-            {
-                TowerController selected = TowerManager.Instance.Selected;
-                if (selected == null) Debug.Log("[DebugCheat] 컬러 강화할 타워를 먼저 클릭하세요");
-                else TowerManager.Instance.TryUpgradeColor(selected.Definition.Color);
-            }
-
             if (keyboard.pKey.wasPressedThisFrame) NextTargetPriority();
-            if (keyboard.vKey.wasPressedThisFrame) RequestStackConsume();
             if (keyboard.f1Key.wasPressedThisFrame) m_showKeys = !m_showKeys;
+            if (keyboard.digit1Key.wasPressedThisFrame || keyboard.numpad1Key.wasPressedThisFrame) SpawnDummy();
+            if (keyboard.digit2Key.wasPressedThisFrame || keyboard.numpad2Key.wasPressedThisFrame) PreviewSkill();
             if (keyboard.zKey.wasPressedThisFrame) StartPlaceZone();
             if (keyboard.digit5Key.wasPressedThisFrame || keyboard.numpad5Key.wasPressedThisFrame) NextGameSpeed();
             if (keyboard.digit8Key.wasPressedThisFrame) SpawnAllTier1(TowerEmblem.Sword, TowerEmblem.Hammer);
@@ -263,17 +254,16 @@ namespace SquareTD
             "Space 턴 종료   A 자동 진행   R 다시 시작",
             "5 배속 1 → 2 → 3 → 1",
             "B 생성   G 골드 +1000   H 젬 +100",
+            "1 체력 5천만 허수아비 소환 (피해 확인용)",
             "── 고른 타워 ──",
-            "U 티어 강화   L 컬러 강화   X 판매",
-            "C 공격 칸 고르기   P 우선순위 다음",
+            "X 판매   C 공격 칸 고르기   P 우선순위 다음",
+            "2 스킬 연출 보기 (피해 없음)",
             "Z 존 자리 고르기 (버프·디버프 타워)",
-            "V 수동 스택 소모 (적 턴에도)",
-            "── 보기 ──",
             "── 타워 세우기 ──",
             "T + 숫자 4자리  ID로 세우기 (예: T 1101 = 브론즈 소드 마스터)",
             "8 무기 1티어 24종   9 원소 1티어 32종   0 전부 판매",
             "  (칸이 모자라면 0으로 판 뒤 같은 키 → 이어서)",
-            "K [Skill] 로그만   Tools > Click Debug 창",
+            "Tools > Click Debug 창",
         };
 
         private void OnGUI()
@@ -311,13 +301,6 @@ namespace SquareTD
             int index = System.Array.IndexOf(s_priorityOrder, tower.State.TargetPriority);
             tower.State.TargetPriority = s_priorityOrder[(index + 1) % s_priorityOrder.Length];
             Debug.Log($"[DebugCheat] {tower.name} 우선순위 → {tower.State.TargetPriority}");
-        }
-
-        private static void RequestStackConsume()
-        {
-            TowerController tower = TowerManager.Instance.Selected;
-            if (tower == null || !tower.IsAttackTower) return;
-            Debug.Log($"[DebugCheat] {tower.name} 차지는 다 차면 자동으로 씀 ({tower.State.Stack.Current:0} / {tower.State.Stack.Max})");
         }
 
         private void StartPlaceZone()

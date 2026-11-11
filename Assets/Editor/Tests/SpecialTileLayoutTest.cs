@@ -30,13 +30,6 @@ namespace SquareTD.Tests
             return count;
         }
 
-        private static int CountSpawn(SpecialTileLayout layout, BoardGrid grid, SpawnTileType type)
-        {
-            int count = 0;
-            for (int i = 0; i < grid.SpawnCount; i++) if (layout.GetSpawnTile(i) == type) count++;
-            return count;
-        }
-
         [Test]
         public void 섞어도_원소를_잃거나_더하지_않음()
         {
@@ -80,25 +73,8 @@ namespace SquareTD.Tests
             SpecialTileLayout layout = Generate(grid, new SpecialTileCounts(), 7);
 
             Assert.AreEqual(2, CountPath(layout, grid, PathTileType.Bifrost));
-            Assert.AreEqual(2, CountPath(layout, grid, PathTileType.Defense));
-            Assert.AreEqual(2, CountPath(layout, grid, PathTileType.Speed));
-            Assert.AreEqual(2, CountPath(layout, grid, PathTileType.ActionCount));
-            Assert.AreEqual(2, CountPath(layout, grid, PathTileType.Heal));
             Assert.AreEqual(1, CountPath(layout, grid, PathTileType.Purify));
-            Assert.AreEqual(40 - 11, CountPath(layout, grid, PathTileType.None));
-        }
-
-        [Test]
-        public void 스폰_타일이_개수대로_깔림()
-        {
-            BoardGrid grid = MakeGrid();
-            SpecialTileLayout layout = Generate(grid, new SpecialTileCounts(), 7);
-
-            Assert.AreEqual(2, CountSpawn(layout, grid, SpawnTileType.Power));
-            Assert.AreEqual(2, CountSpawn(layout, grid, SpawnTileType.ActionCount));
-            Assert.AreEqual(2, CountSpawn(layout, grid, SpawnTileType.AttackCount));
-            Assert.AreEqual(1, CountSpawn(layout, grid, SpawnTileType.Mastery));
-            Assert.AreEqual(20 - 7, CountSpawn(layout, grid, SpawnTileType.None));
+            Assert.AreEqual(40 - 3, CountPath(layout, grid, PathTileType.None));
         }
 
         [Test]
@@ -123,7 +99,7 @@ namespace SquareTD.Tests
             SpecialTileLayout layout = Generate(grid, new SpecialTileCounts { Bifrost = false }, 7);
 
             Assert.AreEqual(0, CountPath(layout, grid, PathTileType.Bifrost));
-            Assert.AreEqual(2, CountPath(layout, grid, PathTileType.Defense));
+            Assert.AreEqual(1, CountPath(layout, grid, PathTileType.Purify));
         }
 
         [Test]
@@ -147,7 +123,6 @@ namespace SquareTD.Tests
             SpecialTileLayout b = Generate(grid, new SpecialTileCounts(), 42);
 
             for (int i = 0; i < grid.PathCount; i++) Assert.AreEqual(a.GetPathTile(i), b.GetPathTile(i));
-            for (int i = 0; i < grid.SpawnCount; i++) Assert.AreEqual(a.GetSpawnTile(i), b.GetSpawnTile(i));
         }
 
         [Test]
@@ -174,7 +149,7 @@ namespace SquareTD.Tests
             layout.Generate(grid, new SpecialTileCounts(), new System.Random(1));
             layout.Generate(grid, new SpecialTileCounts(), new System.Random(2));
 
-            Assert.AreEqual(2, CountPath(layout, grid, PathTileType.Defense));
+            Assert.AreEqual(1, CountPath(layout, grid, PathTileType.Purify));
             Assert.AreEqual(2, CountPath(layout, grid, PathTileType.Bifrost));
         }
 
@@ -182,11 +157,10 @@ namespace SquareTD.Tests
         public void 칸보다_많으면_있는_칸까지만()
         {
             BoardGrid grid = MakeGrid(6, 2);
-            SpecialTileLayout layout = Generate(grid, new SpecialTileCounts(), 3);     // 경고 로그가 뜸 (테스트 실패는 아님)
+            SpecialTileLayout layout = Generate(grid, new SpecialTileCounts { Purify = 5 }, 3);     // 경고 로그가 뜸 (테스트 실패는 아님)
 
             Assert.AreEqual(2, CountPath(layout, grid, PathTileType.Bifrost));
             Assert.AreEqual(0, CountPath(layout, grid, PathTileType.None), "남은 4칸이 다 채워져야 함");
-            Assert.AreEqual(0, CountSpawn(layout, grid, SpawnTileType.None));
         }
 
         [Test]
@@ -205,7 +179,6 @@ namespace SquareTD.Tests
             SpecialTileLayout layout = Generate(MakeGrid(), new SpecialTileCounts(), 1);
             Assert.AreEqual(PathTileType.None, layout.GetPathTile(-1));
             Assert.AreEqual(PathTileType.None, layout.GetPathTile(40));
-            Assert.AreEqual(SpawnTileType.None, layout.GetSpawnTile(20));
         }
     }
 }

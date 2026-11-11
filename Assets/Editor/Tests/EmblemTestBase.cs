@@ -119,8 +119,6 @@ namespace SquareTD.Tests
 
         protected static float Lost(EnemyController enemy) => enemy.MaxHp - enemy.CurrentHp;
 
-        protected static StackModeSettings Auto() => new StackModeSettings();
-
         // 코루틴을 끝까지 (안에서 넘긴 코루틴도)
         protected static void RunToEnd(IEnumerator routine)
         {

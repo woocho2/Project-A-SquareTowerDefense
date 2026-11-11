@@ -226,7 +226,7 @@ namespace SquareTD
             for (int slot = 0; slot < board.Grid.SpawnCount; slot++)
             {
                 Vector3Int cell = board.Grid.GetSpawnCell(slot);
-                spawn.Add($"{slot}@{board.Tiles.GetSpawnTile(slot)}@{cell.x}:{cell.y}");
+                spawn.Add($"{slot}@None@{cell.x}:{cell.y}");
                 TowerController tower = board.Slots.Get(slot);
                 if (tower != null) towers.Add($"{tower.Definition.Id}@{slot}@{tower.Stats.Range}@{tower.Stats.Action}@{tower.Stats.AttackCount}");
             }

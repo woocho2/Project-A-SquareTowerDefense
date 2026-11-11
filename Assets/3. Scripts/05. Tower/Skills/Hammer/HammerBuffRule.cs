@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 해머 버프 — 그리드 · 골드 러쉬 (현재 골드 비례 추가 피해, 골드 러쉬 골드 보상 +50%, 타격 처치 50%로 골드 +100%)
+    // 해머 버프 — 길딩 · 골든 터치 (현재 골드 비례 추가 피해, 골든 터치 골드 보상 +50%, 타격 처치 50%로 골드 +100%)
     public class HammerBuffRule : BuffRule
     {
         public const float RushGoldBonus = 0.5f;

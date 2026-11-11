@@ -5,13 +5,13 @@ namespace SquareTD
     // 물 단일 — 아쿠아 프리즌 ((Tier × 레벨) 턴 동안 가둠(0 / 0), 매 턴 Power × AbilityValue × (1 + 젖음 × 0.01). 저항하면 갇히지 않고 피해만 저항만큼 줄어 들어감)
     public class WaterTargetSkill : AttackSkill
     {
-        public WaterTargetSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
-            : base(grid, occupancy, stackModes) { }
+        public WaterTargetSkill(BoardGrid grid, PathOccupancy occupancy)
+            : base(grid, occupancy) { }
 
         protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
         {
             EnemyController enemy = mainTarget?.Body;
-            if (enemy == null || !enemy.IsAlive || mainTarget.IsDummy) return false;
+            if (enemy == null || !enemy.IsAlive) return false;
 
             TowerFinalStats stats = owner.Stats;
             float damage = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * stats.FinalDamageMultiplier;

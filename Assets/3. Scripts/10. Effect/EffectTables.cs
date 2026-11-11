@@ -45,6 +45,7 @@ namespace SquareTD
         private static FireSplashSkillEffect s_fireSplash;
         private static IceSplashSkillEffect s_iceSplash;
         private static DarknessSplashSkillEffect s_darknessSplash;
+        private static SwordBuffSkillEffect s_swordBuff;
 
         public static void Play(TowerController owner, Vector3? mainPosition, IReadOnlyList<Vector3> hitPositions)
         {
@@ -57,10 +58,10 @@ namespace SquareTD
             switch ((owner.Definition.Emblem, owner.Definition.Color))
             {
                 case (TowerEmblem.Axe, TowerColor.Red):
-                    s_axeSplash.Play(from, from, (owner.Stats.Range * 2 + 1) * cell, cell);
+                    s_axeSplash.Play(Camera.main, from, hitPositions, owner.Stats.Range, cell);
                     break;
                 case (TowerEmblem.Sword, TowerColor.Red):
-                    s_swordSplash.Play(Camera.main, from, hitPositions, cell, null);
+                    s_swordSplash.Play(Camera.main, hitPositions, cell);
                     break;
                 case (TowerEmblem.Sword, TowerColor.Blue):
                     s_swordTarget.Play(hitPositions[0], cell);
@@ -82,6 +83,25 @@ namespace SquareTD
                     break;
                 case (TowerEmblem.Ice, TowerColor.Red):
                     s_iceSplash.Play(Camera.main, hitPositions, cell);
+                    break;
+            }
+        }
+
+        public static void PlaySupportSkill(TowerController owner, IReadOnlyList<TowerController> receivers, bool preview = false)
+        {
+            if (!Application.isPlaying || owner == null) return;
+
+            EnsureHolder();
+            float cell = EffectSpace.CellWorldSize();
+            var points = new List<Vector3>();
+            if (receivers != null)
+                foreach (TowerController receiver in receivers)
+                    if (receiver != null) points.Add(receiver.transform.position);
+
+            switch ((owner.Definition.Emblem, owner.Definition.Color))
+            {
+                case (TowerEmblem.Sword, TowerColor.Yellow):
+                    s_swordBuff.Play(Camera.main, owner.transform.position, points, cell, preview);
                     break;
             }
         }
@@ -134,6 +154,7 @@ namespace SquareTD
             s_fireSplash = EffectSpace.Make<FireSplashSkillEffect>(s_holder.transform, "Meteor Skill Effect");
             s_iceSplash = EffectSpace.Make<IceSplashSkillEffect>(s_holder.transform, "Blizzard Skill Effect");
             s_darknessSplash = EffectSpace.Make<DarknessSplashSkillEffect>(s_holder.transform, "Black Hole Skill Effect");
+            s_swordBuff = EffectSpace.Make<SwordBuffSkillEffect>(s_holder.transform, "Glory Sword Skill Effect");
         }
     }
 

@@ -9,8 +9,8 @@ namespace SquareTD
 
         private readonly GroundEffectRegistry m_grounds;
 
-        public DarknessSplashSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes, GroundEffectRegistry grounds)
-            : base(grid, occupancy, stackModes)
+        public DarknessSplashSkill(BoardGrid grid, PathOccupancy occupancy, GroundEffectRegistry grounds)
+            : base(grid, occupancy)
         {
             m_grounds = grounds;
         }

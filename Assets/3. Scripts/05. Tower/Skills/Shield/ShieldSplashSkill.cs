@@ -2,13 +2,13 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 방패 광역 — 배쉬
+    // 방패 광역 — 콘커션 (착탄 범위의 적에게 Power × AbilityValue, 맞은 적은 1행동 기절. 강한 CC라 저항력으로만 막음)
     public class ShieldSplashSkill : AttackSkill
     {
-        public const float StunChance = 0.2f;
+        public const float StunChance = 1f;
 
-        public ShieldSplashSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
-            : base(grid, occupancy, stackModes) { }
+        public ShieldSplashSkill(BoardGrid grid, PathOccupancy occupancy)
+            : base(grid, occupancy) { }
 
         protected override List<ITarget> GetArea(TowerController owner, ITarget mainTarget)
         {
@@ -18,9 +18,9 @@ namespace SquareTD
 
         protected override void OnHitTarget(TowerController owner, ITarget target, DamageInfo hit)
         {
-            DamageInfo bash = hit;
-            bash.StunChance = StunChance;
-            ProjectileHitResolver.HitSingle(target, bash);
+            DamageInfo concussion = hit;
+            concussion.StunChance = StunChance;
+            ProjectileHitResolver.HitSingle(target, concussion);
         }
     }
 }

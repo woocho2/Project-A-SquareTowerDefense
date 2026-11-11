@@ -10,17 +10,15 @@ namespace SquareTD
         private readonly BoardManager m_board;
         private readonly TowerDatabase m_database;
         private readonly ColorUpgradeState m_colorLevels;
-        private readonly StackModeSettings m_stackModes;
 
         public TowerFactory(TowerController prefab, Transform parent, BoardManager board,
-                            TowerDatabase database, ColorUpgradeState colorLevels, StackModeSettings stackModes)
+                            TowerDatabase database, ColorUpgradeState colorLevels)
         {
             m_prefab = prefab;
             m_parent = parent;
             m_board = board;
             m_database = database;
             m_colorLevels = colorLevels;
-            m_stackModes = stackModes;
         }
 
         private TowerDefinition FindTier1(TowerDefinition definition)
@@ -50,7 +48,6 @@ namespace SquareTD
             }
 
             tower.Init(definition, slotIndex, CreateAction(definition.Color), FindTier1(definition), m_colorLevels, CreateSkill(definition));
-            tower.SetSpawnTile(m_board.Tiles.GetSpawnTile(slotIndex));
             m_board.Zones.EnsureZonesFor(tower);
             return tower;
         }
@@ -80,9 +77,9 @@ namespace SquareTD
         {
             if (definition.Color != TowerColor.Red && definition.Color != TowerColor.Blue) return null;
 
-            AttackSkill skill = SkillRegistry.CreateAttackSkill(definition.Color, definition.Emblem, m_board.Grid, m_board.Occupancy, m_stackModes);
+            AttackSkill skill = SkillRegistry.CreateAttackSkill(definition.Color, definition.Emblem, m_board.Grid, m_board.Occupancy);
             if (skill != null) return skill;
-            return new DamageOnlySkill(m_board.Grid, m_board.Occupancy, m_stackModes);
+            return new DamageOnlySkill(m_board.Grid, m_board.Occupancy);
         }
 
         public void Destroy(TowerController tower)
@@ -104,7 +101,6 @@ namespace SquareTD
             created.Init(newDefinition, slot, CreateAction(newDefinition.Color), FindTier1(newDefinition), m_colorLevels, CreateSkill(newDefinition));
 
             if (inheritState) created.State.CopyInheritedFrom(old.State);
-            created.SetSpawnTile(m_board.Tiles.GetSpawnTile(slot));
             m_board.Zones.EnsureZonesFor(created);
 
             old.OnRemoved();

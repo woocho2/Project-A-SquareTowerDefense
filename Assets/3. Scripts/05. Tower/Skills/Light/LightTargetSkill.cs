@@ -10,8 +10,8 @@ namespace SquareTD
         public const float DoubleGrowth = 2f;
         public const float TranscendGrowth = 4f;
 
-        public LightTargetSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
-            : base(grid, occupancy, stackModes) { }
+        public LightTargetSkill(BoardGrid grid, PathOccupancy occupancy)
+            : base(grid, occupancy) { }
 
         protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
         {
@@ -23,13 +23,13 @@ namespace SquareTD
             {
                 foreach (ITarget target in SkillArea.WholeMap(m_grid, m_occupancy))
                 {
-                    if (target.IsAlive && !target.IsDummy && target.Body != null) target.Body.Status.Add(new HyperionEffect(owner, turns, damage, TranscendGrowth));
+                    if (target.IsAlive && target.Body != null) target.Body.Status.Add(new HyperionEffect(owner, turns, damage, TranscendGrowth));
                 }
                 return true;
             }
 
             EnemyController enemy = mainTarget?.Body;
-            if (enemy == null || !enemy.IsAlive || mainTarget.IsDummy) return false;
+            if (enemy == null || !enemy.IsAlive) return false;
             enemy.Status.Add(new HyperionEffect(owner, turns, damage * FirstRatio, DoubleGrowth));
             return true;
         }

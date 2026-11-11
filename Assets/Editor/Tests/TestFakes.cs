@@ -31,7 +31,6 @@ namespace SquareTD.Tests
         public int PathIndex { get; }
         public bool IsAlive => CurrentHp > 0f;
         public bool IsBoss => false;
-        public bool IsDummy => false;
         public EnemyController Body => null;
         public float CurrentHp { get; private set; }
         public float MaxHp { get; }

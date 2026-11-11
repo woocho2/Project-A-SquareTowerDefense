@@ -8,8 +8,8 @@ namespace SquareTD
         public const string TurnsKey = "브레스 남은 턴";
         public const string DamageKey = "브레스 피해";
 
-        public FireTargetSkill(BoardGrid grid, PathOccupancy occupancy, StackModeSettings stackModes)
-            : base(grid, occupancy, stackModes) { }
+        public FireTargetSkill(BoardGrid grid, PathOccupancy occupancy)
+            : base(grid, occupancy) { }
 
         public override bool NeedsLivingTarget => false;
 
@@ -28,23 +28,12 @@ namespace SquareTD
             if (owner.State.GetCounter(TurnsKey) <= 0f) return;
             owner.State.AddCounter(TurnsKey, -1f);
 
-            ITarget target = MostHp();
+            ITarget target = HighestHp(SkillArea.WholeMap(m_grid, m_occupancy));
             if (target == null) return;
 
             float damage = owner.State.GetCounter(DamageKey) * FireSplashSkill.BurnMultiplier(target);
             ProjectileHitResolver.HitSingle(target, MakeSkillHit(owner, owner.Stats, target, damage, false));
             if (target.IsAlive) BurnEffect.Add(target.Body, 1f);
-        }
-
-        private ITarget MostHp()
-        {
-            ITarget best = null;
-            foreach (ITarget target in SkillArea.WholeMap(m_grid, m_occupancy))
-            {
-                if (!target.IsAlive || target.IsDummy) continue;
-                if (best == null || target.CurrentHp > best.CurrentHp) best = target;
-            }
-            return best;
         }
 
         protected override List<ITarget> GetArea(TowerController owner, ITarget mainTarget) => new List<ITarget>();

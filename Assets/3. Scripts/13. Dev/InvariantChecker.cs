@@ -36,8 +36,8 @@ namespace SquareTD
             {
                 occupiedCount += occupancy.GetAt(i).Count;
             }
-            if (occupiedCount != registry.Count + DummyTarget.Count)
-                Debug.LogError($"[InvariantChecker] 점유 {occupiedCount} ≠ 명단 {registry.Count} + 더미 {DummyTarget.Count}");
+            if (occupiedCount != registry.Count)
+                Debug.LogError($"[InvariantChecker] 점유 {occupiedCount} ≠ 명단 {registry.Count}");
 
             foreach (EnemyController enemy in registry.Alive)
             {

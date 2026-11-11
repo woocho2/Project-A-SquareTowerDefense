@@ -36,6 +36,14 @@ namespace SquareTD
             CountChanged?.Invoke(Registry.Count);
         }
 
+        public EnemyController SpawnForDebug(float hp)
+        {
+            int wave = WaveManager.Instance != null ? Mathf.Max(1, WaveManager.Instance.CurrentWave) : 1;
+            EnemyController enemy = m_spawner.SpawnNormalWithHp(wave, hp);
+            CountChanged?.Invoke(Registry.Count);
+            return enemy;
+        }
+
         public bool IsAnyEnemyMoving()
         {
             foreach (EnemyController enemy in Registry.Alive)

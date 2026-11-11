@@ -10,36 +10,21 @@ namespace SquareTD
     {
         [Header("길")]
         public bool Bifrost = true;
-        public int Defense = 2;
-        public int Speed = 2;
-        public int PathActionCount = 2;
-        public int Heal = 2;
         public int Purify = 1;
-
-        [Header("타워 스폰")]
-        public int Power = 2;
-        public int SpawnActionCount = 2;
-        public int AttackCount = 2;
-        public int Mastery = 1;
     }
 
     public class SpecialTileLayout
     {
         private PathTileType[] m_pathTiles = Array.Empty<PathTileType>();
-        private SpawnTileType[] m_spawnTiles = Array.Empty<SpawnTileType>();
 
         public event Action LayoutGenerated;
 
         public PathTileType GetPathTile(int pathIndex) =>
             pathIndex >= 0 && pathIndex < m_pathTiles.Length ? m_pathTiles[pathIndex] : PathTileType.None;
 
-        public SpawnTileType GetSpawnTile(int spawnIndex) =>
-            spawnIndex >= 0 && spawnIndex < m_spawnTiles.Length ? m_spawnTiles[spawnIndex] : SpawnTileType.None;
-
         public void Generate(BoardGrid grid, SpecialTileCounts counts, System.Random random)
         {
             m_pathTiles = new PathTileType[grid.PathCount];
-            m_spawnTiles = new SpawnTileType[grid.SpawnCount];
 
             var pathCells = new List<int>();
             for (int i = 0; i < grid.PathCount; i++) pathCells.Add(i);
@@ -57,26 +42,10 @@ namespace SquareTD
             }
 
             var pathTypes = new List<PathTileType>();
-            AddRepeated(pathTypes, PathTileType.Defense, counts.Defense);
-            AddRepeated(pathTypes, PathTileType.Speed, counts.Speed);
-            AddRepeated(pathTypes, PathTileType.ActionCount, counts.PathActionCount);
-            AddRepeated(pathTypes, PathTileType.Heal, counts.Heal);
             AddRepeated(pathTypes, PathTileType.Purify, counts.Purify);
 
             Shuffle(pathCells, random);
             PlaceInOrder(pathCells, pathTypes, m_pathTiles);
-
-            var spawnCells = new List<int>();
-            for (int i = 0; i < grid.SpawnCount; i++) spawnCells.Add(i);
-
-            var spawnTypes = new List<SpawnTileType>();
-            AddRepeated(spawnTypes, SpawnTileType.Power, counts.Power);
-            AddRepeated(spawnTypes, SpawnTileType.ActionCount, counts.SpawnActionCount);
-            AddRepeated(spawnTypes, SpawnTileType.AttackCount, counts.AttackCount);
-            AddRepeated(spawnTypes, SpawnTileType.Mastery, counts.Mastery);
-
-            Shuffle(spawnCells, random);
-            PlaceInOrder(spawnCells, spawnTypes, m_spawnTiles);
 
             LayoutGenerated?.Invoke();
         }

@@ -105,7 +105,7 @@ namespace SquareTD.Tests
         {
             TowerController tower = MakeTower(1101);
             for (int i = 0; i < 10; i++) RunAct(tower);
-            tower.SetSpawnTile(SpawnTileType.Power);     // Changed → RecalculateStats
+            tower.State.Modifiers.Add(StatModifier.Percent("시험", StatType.Power, 0.3f));     // Changed → RecalculateStats
 
             Assert.AreEqual(10f, tower.State.Stack.Current, 0.0001f);
             Assert.AreEqual(60, tower.State.Stack.Max);

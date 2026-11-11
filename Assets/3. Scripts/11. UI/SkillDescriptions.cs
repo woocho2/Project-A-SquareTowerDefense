@@ -11,7 +11,7 @@ namespace SquareTD
             { "애로우 레인", "헤비 볼트", "엘븐 사이트 → 스피릿 보우", "락 온 → 핀 포인트" },
             { "랠리 배너", "헤드헌트", "원 포인트 → 원 스트라이크", "래서레이트 → 헤머리지" },
             { "콘커션", "리바운드", "프로텍트 → 이지스", "서프레스 → 락다운" },
-            { "저지먼트", "아머 크러시", "그리드 → 골드 러쉬", "크랙 → 잭팟" },
+            { "저지먼트", "아머 크러시", "길딩 → 골든 터치", "크랙 → 잭팟" },
             { "메테오", "브레스", "피닉스 페더 → 라이징 피닉스", "이그나이트 → 인페르노" },
             { "쓰나미", "아쿠아 프리즌", "웰스프링 → 오버플로우", "미스트 → 세이렌 송" },
             { "어스퀘이크", "소잉", "버드 → 블로섬", "루트 드레인 → 라이프 하베스트" },
@@ -19,7 +19,7 @@ namespace SquareTD
             { "블리자드", "아이시클 레인", "프로스트 아머 → 앱솔루트 제로", "프로스트바이트 → 딥 프리즈" },
             { "라이트닝 볼텍스", "오버로드", "펄스 → 하이퍼 펄스", "스태틱 필드 → 스태틱 스톰" },
             { "프리즘", "하이페리온", "헤일로 → 어센션", "쉬머 → 배니시" },
-            { "블랙홀", "심연", "디바우어 → 글러트니", "미아즈마 → 다크 플레이그" },
+            { "블랙홀", "심연", "디바우어 → 글러트니", "미아즈마 → 다크 고스펠" },
         };
 
         public static string GetName(TowerDefinition definition)
@@ -73,7 +73,7 @@ namespace SquareTD
 
                 case (TowerEmblem.Hammer, TowerColor.Red): return $"{count} 착탄 범위의 적에게 {damage:0.##} 피해, 맞은편 칸으로 날려 보냄";
                 case (TowerEmblem.Hammer, TowerColor.Blue): return $"{count} 8번 공격 (합계 {damage:0.##}), 마지막에 1행동 방어력 0";
-                case (TowerEmblem.Hammer, TowerColor.Yellow): return $"추가 피해 +(값 × 현재 골드)%. {support}\n골드 러쉬 골드 +50%, 타격 처치 50%로 골드 +100%";
+                case (TowerEmblem.Hammer, TowerColor.Yellow): return $"추가 피해 +(값 × 현재 골드)%. {support}\n골든 터치 골드 +50%, 타격 처치 50%로 골드 +100%";
                 case (TowerEmblem.Hammer, TowerColor.Purple): return $"방어력 −%. {support}\n잭팟인 적이 죽으면 젬 +1, 타격 처치 50%로 +1";
 
                 case (TowerEmblem.Fire, TowerColor.Red): return $"{count} 맵 전체의 적에게 {damage:0.##} × (1 + 화상 × 1%) 피해";
@@ -103,7 +103,7 @@ namespace SquareTD
 
                 case (TowerEmblem.Electricity, TowerColor.Red): return $"{count} 맵 전체의 적에게 {damage:0.##} 피해, 전하 +(Tier × 레벨 × 최대 Charge)";
                 case (TowerEmblem.Electricity, TowerColor.Blue): return $"{count} 맵 전체의 적에게 {damage:0.##} × (1 + 전하 × 1%), 전하를 터뜨림";
-                case (TowerEmblem.Electricity, TowerColor.Yellow): return $"AttackCount ×3, 공격력·치명타 −%, 타격마다 전하. {support}\n하이퍼 펄스 스킬 카운트 +1, 전기는 전하 2배";
+                case (TowerEmblem.Electricity, TowerColor.Yellow): return $"AttackCount ×3, 공격력·치명타 (계산식 − 100)%, 타격마다 전하. {support}\n하이퍼 펄스 스킬 카운트 +1, 전기는 전하 2배";
                 case (TowerEmblem.Electricity, TowerColor.Purple): return $"전하 +값. {support}\n스태틱 스톰 발동 때 전하 2배, 전기 타워가 치면 연쇄";
 
                 case (TowerEmblem.Light, TowerColor.Red): return $"{count} 아군 공격 타워의 공격력·치명타 +{damage:0.##}% ({duration}번 행동). 초월 웨이브 2배 + AttackCount·Mastery +1";
@@ -114,7 +114,7 @@ namespace SquareTD
                 case (TowerEmblem.Darkness, TowerColor.Red): return $"{count} {duration}턴 블랙홀, 매 턴 {damage * 0.3f:0.##} 피해와 1칸 끌어당김. 막타면 침식 카운트 +5";
                 case (TowerEmblem.Darkness, TowerColor.Blue): return $"{count} 그 적에게 {damage:0.##} × (1 + 침식 카운트 × 1%)\n지금 침식 카운트 {EmblemSharedState.Current.DarknessCount:0}";
                 case (TowerEmblem.Darkness, TowerColor.Yellow): return $"침식 카운트 +값, 카운트 단계표. {support}\n글러트니 타격마다 0.5% 즉사 (+50), 어둠은 1%\n지금 침식 카운트 {EmblemSharedState.Current.DarknessCount:0}";
-                case (TowerEmblem.Darkness, TowerColor.Purple): return $"침식 스택과 같은 양의 카운트 +값. {support}\n다크 플레이그 침식인 적 추가 피해 +10%, 어둠 타워가 치면 그 타일 침식 +1";
+                case (TowerEmblem.Darkness, TowerColor.Purple): return $"침식 스택과 같은 양의 카운트 +값. {support}\n다크 고스펠 침식인 적 추가 피해 +10%, 어둠 타워가 치면 그 타일 침식 +1";
             }
 
             switch (definition.Color)
@@ -127,7 +127,7 @@ namespace SquareTD
             }
         }
 
-        public static string GetZoneStageName(Zone zone)
+        public static string GetZoneSkillName(Zone zone)
         {
             TowerColor color = zone.IsBuff ? TowerColor.Yellow : TowerColor.Purple;
             int emblem = (int)zone.Emblem;

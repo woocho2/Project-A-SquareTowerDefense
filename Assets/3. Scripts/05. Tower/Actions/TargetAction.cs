@@ -40,6 +40,7 @@ namespace SquareTD
                     if (inRange.Count == 0) yield break;
 
                     ITarget shotTarget = PickTarget(selector, inRange, incoming, towerCell, tower.State.AttackCellIndex);
+                    if (s == 0 && j == 0) volleyCount += IceDebuffRule.AttackCountBonus(tower, shotTarget);
                     bool isCritical = CriticalRoll.Roll(CriticalRoll.RateAgainst(tower, stats, shotTarget));
                     DamageInfo hit = MakeBasicHit(tower, stats, shotTarget, isCritical);
                     float expected = shotTarget.PreviewDamage(hit);

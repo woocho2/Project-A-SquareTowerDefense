@@ -1,0 +1,37 @@
+﻿{
+    "Asset":  "Assets/4. Asset/2. Tower/TowerCharacter/Normal/01_Sword_SwordMaster.png",
+    "OriginalWidth":  1254,
+    "OriginalHeight":  1254,
+    "FinalWidth":  2048,
+    "FinalHeight":  2048,
+    "ResizeMethod":  "System.Drawing HighQualityBicubic, premultiplied alpha, TileFlipXY, no AI redraw or sharpening",
+    "OriginalHash":  "F908442E18CD1E1A8880ACAD1C947F7D50538ABC0487A3F547084815A4F61A28",
+    "FinalHash":  "ECDCAFACA2EF06DBCAE526C1379FFBD7FBA45C4282FA1C47172DBB791CB81F88",
+    "Guid":  "2376b2e0c87045c49b13266f3597de7b",
+    "MetaExistedBefore":  false,
+    "PPU":  1254,
+    "FaceEyeTopLeftOrigin":  {
+                                 "y":  148,
+                                 "description":  "Character anatomical left pupil, viewer right eye",
+                                 "x":  989
+                             },
+    "Full":  {
+                 "name":  "01_Sword_SwordMaster_Full",
+                 "width":  2048,
+                 "y":  0,
+                 "spriteID":  "db8981a2f7564b668e4bc5d3b6f075ef",
+                 "internalID":  21300000,
+                 "x":  0,
+                 "height":  2048
+             },
+    "Face":  {
+                 "name":  "01_Sword_SwordMaster_Face",
+                 "width":  256,
+                 "y":  1772,
+                 "spriteID":  "422ff6d805c04efeb0f18c73b428ba2d",
+                 "internalID":  21300002,
+                 "x":  861,
+                 "height":  256
+             },
+    "UnityPlayVerified":  false
+}

@@ -78,7 +78,6 @@ namespace SquareTD
         Duration = 9,
         MaxStack = 10,
         StackValue = 11,
-        ColorLevelBonus = 12,
         Defense = 13,
         SpeedMin = 14,
         SpeedMax = 15,
@@ -93,32 +92,19 @@ namespace SquareTD
         BonusDamage = 24,
         StackGainRate = 25,
         StackKeepHalf = 26,
-        MapBuffRate = 27,
         RewardBonus = 28,
         ForceFixedDamage = 29,
         GoldBonus = 30,
         GoldDoubleChance = 31,
         ChargeBonus = 32,
         LostHpDamage = 33,
+        AttackCountLock = 34,
     }
 
     public enum PathTileType
     {
         None = 0,
-        Defense = 1,
-        Speed = 2,
-        ActionCount = 3,
-        Heal = 4,
         Purify = 5,
         Bifrost = 6,
-    }
-
-    public enum SpawnTileType
-    {
-        None = 0,
-        Power = 1,
-        ActionCount = 2,
-        AttackCount = 3,
-        Mastery = 4,
     }
 }

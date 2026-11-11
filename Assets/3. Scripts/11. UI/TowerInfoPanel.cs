@@ -49,8 +49,7 @@ namespace SquareTD
         [SerializeField] Button btn_sellTower;
         [SerializeField] TextMeshProUGUI txt_sellTowerValue;
 
-        [Header("스택 소모와 공격할 칸")]
-        [SerializeField] Button btn_consumeStack;
+        [Header("공격할 칸")]
         [SerializeField] Button btn_pickAttackCell;
 
         [Header("카드 앞·뒤 (2026-10-28) — 앞: 스탯 칸·스킬 칸의 수치 / 뒤: 기본 공격·스킬 설명")]
@@ -106,7 +105,6 @@ namespace SquareTD
             foreach (Button merge in new[] { btn_combineColor, btn_combineEmblem, btn_combineExact })
                 if (merge != null) merge.gameObject.SetActive(false);
             if (btn_sellTower != null) btn_sellTower.onClick.AddListener(HandleSellTowerClick);
-            if (btn_consumeStack != null) btn_consumeStack.onClick.AddListener(HandleConsumeStackClick);
             if (btn_pickAttackCell != null) btn_pickAttackCell.onClick.AddListener(HandlePickAttackCellClick);
             foreach (Graphic area in m_flipAreas) MakeFlipButton(area);
 
@@ -149,7 +147,6 @@ namespace SquareTD
             if (btn_previousTarget != null) btn_previousTarget.onClick.RemoveListener(HandlePreviousTargetClick);
             if (btn_nextTarget != null) btn_nextTarget.onClick.RemoveListener(HandleNextTargetClick);
             if (btn_sellTower != null) btn_sellTower.onClick.RemoveListener(HandleSellTowerClick);
-            if (btn_consumeStack != null) btn_consumeStack.onClick.RemoveListener(HandleConsumeStackClick);
             if (btn_pickAttackCell != null) btn_pickAttackCell.onClick.RemoveListener(HandlePickAttackCellClick);
         }
 
@@ -427,7 +424,6 @@ namespace SquareTD
         {
             if (btn_sellTower != null) btn_sellTower.interactable = CanPlayerAct && !TowerId.IsSynergy(m_selectedTower.Definition.Id)
                                                                  && !TowerManager.Instance.IsMergingTower(m_selectedTower);
-            if (btn_consumeStack != null) btn_consumeStack.interactable = CanRequestConsume();
             if (btn_pickAttackCell != null) btn_pickAttackCell.interactable = CanPlayerAct && m_selectedTower.IsAttackTower;
         }
 
@@ -451,13 +447,6 @@ namespace SquareTD
             if (m_selectedTower == null) return;
             if (TowerManager.Instance.TrySell(m_selectedTower)) CloseAfterTowerRemoved();
         }
-
-        private bool CanRequestConsume()
-        {
-            return false;
-        }
-
-        private void HandleConsumeStackClick() => UpdateTowerInfo();
 
         private TowerStack m_watchedStack;
 

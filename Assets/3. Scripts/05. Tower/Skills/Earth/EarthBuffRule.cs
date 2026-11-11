@@ -30,5 +30,15 @@ namespace SquareTD
             if (tower == null || tower.State == null || amount <= 0f) return;
             tower.State.AddCounter(Key, amount);
         }
+
+        public static void AddToOthers(TowerSlots slots, TowerController except, float amount)
+        {
+            if (slots == null) return;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                TowerController tower = slots.Get(i);
+                if (tower != except) Add(tower, amount);
+            }
+        }
     }
 }

@@ -1,120 +1,231 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
 namespace SquareTD
 {
-    // 도끼 대회전 — 원형 참격과 사거리 끝 칸의 도끼날 강조
+    // 바이킹(광역 도끼) 스킬 2 휠윈드 연출 — 대도끼가 빠르게 한 바퀴 돈 뒤 맵 전체의 적이 베임
     [DisallowMultipleComponent]
     public sealed class AxeSplashSkillEffect : MonoBehaviour
     {
-        private static readonly Color s_edge = new Color(1f, 0.28f, 0.065f);
-        private static readonly Color s_hot = new Color(1.35f, 1f, 0.55f);
+        private static readonly Color s_steel = new Color(0.92f, 0.9f, 0.9f);
+        private static readonly Color s_blood = new Color(0.85f, 0.05f, 0.07f);
+        private static readonly Color s_hot = new Color(1f, 0.6f, 0.55f);
+        private static readonly Color s_crit = new Color(1f, 0.92f, 0.9f);
 
-        [SerializeField, Min(0.01f)] private float m_spinDuration = 0.28f;
-        [SerializeField, Min(0f)] private float m_holdDuration = 0.05f;
-        [SerializeField, Min(0.01f)] private float m_fadeDuration = 0.22f;
+        [Header("대도끼")]
+        [Tooltip("도끼 전체 길이 (칸)")]
+        [SerializeField] private float m_axeLength = 3f;
+        [SerializeField] private float m_appear = 0.2f;
+        [Tooltip("돌기 전에 뒤로 젖히는 각도")]
+        [SerializeField] private float m_backSwing = 30f;
+        [SerializeField] private float m_windUp = 0.6f;
+        [Header("한 바퀴")]
+        [SerializeField] private float m_spinDuration = 0.45f;
+        [Tooltip("시작 방향 (90 = 위). 시계 반대 방향으로 한 바퀴")]
+        [SerializeField] private float m_startAngle = 90f;
+        [SerializeField] private float m_trailDegrees = 140f;
+        [SerializeField] private float m_ghostInterval = 0.025f;
+        [SerializeField] private float m_ghostLife = 0.14f;
+        [Header("타격")]
+        [Tooltip("다 돈 뒤 적들이 맞기까지의 간격")]
+        [SerializeField] private float m_hitDelay = 0.15f;
+        [SerializeField] private float m_hitStagger = 0.08f;
+        [SerializeField] private float m_finish = 0.8f;
 
-        private EffectQuadPool m_pool;
+        private readonly System.Random m_random = new System.Random();
+        private EffectQuadPool m_axePool;
+        private EffectQuadPool m_rimPool;
+        private EffectQuadPool m_ghostPool;
+        private EffectQuadPool m_trailPool;
+        private EffectQuadPool m_cutPool;
+        private EffectQuadPool m_ringPool;
+        private EffectQuadPool m_flarePool;
+        private EffectQuadPool m_glowPool;
         private EffectParticles m_sparks;
+        private EffectParticles m_motes;
+        private Sequence m_sequence;
 
         private void Awake()
         {
-            m_pool = new EffectQuadPool(transform, "AxeWhirl", "Viking Whirl", 28, EffectTextures.SlashTrail);
-            m_sparks = new EffectParticles(transform, "Whirl Edge Sparks", EffectTextures.Spark,
-                true, 1.4f, 31, true, 0.5f, false, true);
+            m_axePool = new EffectQuadPool(transform, "EffectSprite", "Whirlwind Axe", 31, EffectTextures.GreatAxe, false, null, true);
+            m_rimPool = new EffectQuadPool(transform, "EffectSprite", "Whirlwind Axe Rim", 30, EffectTextures.GreatAxe, true, null, true);
+            m_ghostPool = new EffectQuadPool(transform, "EffectSprite", "Whirlwind Axe Ghost", 29, EffectTextures.GreatAxe, true, null, true);
+            m_trailPool = new EffectQuadPool(transform, "EffectSprite", "Whirlwind Trail", 28, EffectTextures.SlashTrail, true, ArcMesh.Get(m_trailDegrees, 0.35f));
+            m_cutPool = new EffectQuadPool(transform, "EffectSprite", "Whirlwind Cut", 32, EffectTextures.SlashLine, true);
+            m_ringPool = new EffectQuadPool(transform, "EffectSprite", "Whirlwind Ring", 29, EffectTextures.Ring, true);
+            m_flarePool = new EffectQuadPool(transform, "EffectSprite", "Whirlwind Flare", 33, EffectTextures.Flare, true);
+            m_glowPool = new EffectQuadPool(transform, "EffectSprite", "Whirlwind Glow", 27, EffectTextures.Glow, true);
+            m_sparks = new EffectParticles(transform, "Whirlwind Sparks", EffectTextures.Spark, true, 2.5f, 34, true, 1f, false);
+            m_motes = new EffectParticles(transform, "Whirlwind Motes", EffectTextures.Glow, true, 2.5f, 29, false, 0f, false);
         }
 
-        private void OnDestroy() => m_pool?.Dispose();
-
-        public void Play(Vector3 owner, Vector3 center, float areaWorldSize, float cellWorldSize)
+        private void OnDisable()
         {
-            if (!m_pool.IsReady) return;
+            if (m_sequence != null && m_sequence.IsActive()) m_sequence.Kill();
+            m_sequence = null;
+        }
+
+        private void OnDestroy()
+        {
+            m_axePool?.Dispose(); m_rimPool?.Dispose(); m_ghostPool?.Dispose(); m_trailPool?.Dispose();
+            m_cutPool?.Dispose(); m_ringPool?.Dispose(); m_flarePool?.Dispose(); m_glowPool?.Dispose();
+        }
+
+        public void Play(Camera camera, Vector3 origin, IReadOnlyList<Vector3> hitPoints, int range, float cellWorldSize)
+        {
+            if (!m_axePool.IsReady) return;
+            if (m_sequence != null && m_sequence.IsActive()) m_sequence.Kill();
 
             float cell = Mathf.Max(0.01f, cellWorldSize);
-            float area = Mathf.Max(cell, areaWorldSize);
-            int range = Mathf.Max(0, Mathf.RoundToInt((area / cell - 1f) * 0.5f));
-            List<Vector3> edges = GetEdgeTileCenters(center, range);
-            EffectQuad sweep = Prepare(center, area, 0f);
-            EffectQuad floor = Prepare(center, area, 1f);
-            floor.SetSorting(SortingLayer.NameToID("MapTile"), 23);
-            var markers = new EffectQuad[edges.Count];
-            var flashed = new bool[edges.Count];
-            for (int i = 0; i < edges.Count; i++)
+            float length = cell * m_axeLength;
+            var hits = new List<Hit>();
+            if (hitPoints != null)
             {
-                markers[i] = Prepare(edges[i], cell, 2f);
-                markers[i].SetSorting(SortingLayer.NameToID("MapTile"), 26);
-                markers[i].SetFloat(EffectQuad.AlphaId, 0.8f);
+                foreach (Vector3 point in hitPoints)
+                {
+                    Vector3 offset = point - origin;
+                    float direction = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg;
+                    bool critical = Mathf.Max(Mathf.Abs(offset.x), Mathf.Abs(offset.y)) <= (range + 0.5f) * cell;
+                    hits.Add(new Hit { Point = point, Direction = direction, Critical = critical });
+                }
             }
 
-            float progress = 0f;
-            float fade = 1f;
-            Sequence sequence = DOTween.Sequence().SetLink(sweep.GameObject, LinkBehaviour.KillOnDisable);
-            sequence.Append(DOTween.To(() => progress, value => progress = value, 1f, m_spinDuration).SetEase(Ease.Linear));
-            sequence.AppendInterval(m_holdDuration);
-            sequence.Append(DOTween.To(() => fade, value => fade = value, 0f, m_fadeDuration).SetEase(Ease.InQuad));
-            sequence.OnUpdate(() =>
+            float spinStart = m_windUp;
+            float spinEnd = spinStart + m_spinDuration;
+            float hitAt = spinEnd + m_hitDelay;
+            EffectActivity.HoldFor(hitAt + m_finish + 0.1f);
+
+            EffectQuad rim = Prepare(m_rimPool, s_blood, 2.2f);
+            EffectQuad axe = Prepare(m_axePool, s_steel, 1.1f);
+            EffectQuad trail = m_trailPool.Get();
+            float trailRadius = length * 0.8f;
+            trail.Transform.position = origin;
+            trail.Transform.localScale = new Vector3(trailRadius, trailRadius, 1f);
+            trail.SetColor(s_blood);
+            trail.SetFloat(EffectQuad.IntensityId, 2.5f);
+            trail.SetFloat(EffectQuad.AlphaId, 0f);
+
+            float angle = m_startAngle, size = 0f, trailAlpha = 0f, alpha = 1f;
+            Sequence s = DOTween.Sequence().SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            m_sequence = s;
+
+            s.InsertCallback(0f, () => PlayGather(origin, cell));
+            s.Insert(0f, DOTween.To(() => size, v => size = v, 1f, m_appear).SetEase(Ease.OutBack));
+            s.Insert(m_appear, DOTween.To(() => angle, v => angle = v, m_startAngle - m_backSwing, m_windUp - m_appear).SetEase(Ease.OutQuad));
+            s.Insert(spinStart, DOTween.To(() => angle, v => angle = v, m_startAngle + 360f, m_spinDuration).SetEase(Ease.InQuad));
+            s.Insert(spinStart, DOTween.To(() => trailAlpha, v => trailAlpha = v, 0.9f, m_spinDuration * 0.3f));
+            for (float t = 0f; t < m_spinDuration; t += m_ghostInterval)
+                s.InsertCallback(spinStart + t, () => Ghost(origin, angle, length));
+            s.InsertCallback(spinEnd, () =>
             {
-                sweep.SetFloat(EffectQuad.ProgressId, progress);
-                sweep.SetFloat(EffectQuad.AlphaId, fade);
-                floor.SetFloat(EffectQuad.ProgressId, progress);
-                floor.SetFloat(EffectQuad.AlphaId, fade * 0.35f);
-                for (int i = 0; i < markers.Length; i++)
+                TexturedFx.Pop(m_flarePool, HeadPosition(origin, angle, length), 0f, cell * 0.3f, cell * 1.6f, Color.white, 3.5f, 0f, 0.08f, 0.16f);
+                ScreenShake.Play(0.04f, 0.1f);
+            });
+            s.Insert(spinEnd, DOTween.To(() => trailAlpha, v => trailAlpha = v, 0f, 0.2f));
+            s.Insert(spinEnd + 0.05f, DOTween.To(() => alpha, v => alpha = v, 0f, 0.25f).SetEase(Ease.InQuad));
+            s.InsertCallback(hitAt, () =>
+            {
+                PlayFinish(origin, cell);
+                foreach (Hit hit in hits)
                 {
-                    Vector3 direction = edges[i] - center;
-                    float angle = Mathf.Repeat(Mathf.Atan2(direction.y, direction.x) / (Mathf.PI * 2f), 1f);
-                    float passed = progress - angle;
-                    float pulse = passed < 0f ? 0f : Mathf.Clamp01(1f - passed / 0.16f);
-                    markers[i].SetFloat(EffectQuad.ProgressId, pulse);
-                    markers[i].SetFloat(EffectQuad.AlphaId, fade * (0.65f + pulse * 0.35f));
-                    if (!flashed[i] && passed >= 0f)
-                    {
-                        flashed[i] = true;
-                        m_sparks.Burst(edges[i], 3, s_hot, cell, cell * 2.5f,
-                            cell * 0.025f, cell * 0.06f, 0.12f, 0.24f, direction, 45f, cell * 0.12f);
-                    }
+                    Hit target = hit;
+                    DOVirtual.DelayedCall(Range(0f, m_hitStagger), () => PlayHit(target, cell)).SetLink(gameObject, LinkBehaviour.KillOnDisable);
                 }
             });
-            sequence.InsertCallback(m_spinDuration * 0.5f, () => ScreenShake.Play(0.045f, 0.14f));
-            sequence.OnKill(() =>
+            s.AppendInterval(m_finish);
+
+            s.OnUpdate(() =>
             {
-                foreach (EffectQuad marker in markers) m_pool.Release(marker);
-                m_pool.Release(floor);
-                m_pool.Release(sweep);
+                Place(axe, origin, angle, length * size, alpha);
+                Place(rim, origin, angle, length * size * 1.04f, alpha);
+                trail.Transform.rotation = Quaternion.Euler(0f, 0f, angle - m_trailDegrees * 0.5f);
+                trail.SetFloat(EffectQuad.AlphaId, trailAlpha);
+            });
+            s.OnKill(() =>
+            {
+                m_axePool.Release(axe);
+                m_rimPool.Release(rim);
+                m_trailPool.Release(trail);
+                m_sequence = null;
             });
         }
 
-        private EffectQuad Prepare(Vector3 center, float size, float shape)
+        private struct Hit
         {
-            EffectQuad quad = m_pool.Get();
-            quad.Transform.position = center;
-            quad.Transform.localScale = new Vector3(size, size, 1f);
-            quad.SetSorting(SortingLayer.NameToID("Projectile"), 28);
-            quad.SetColor(s_edge);
-            quad.SetColorById(EffectQuad.Color2Id, s_hot);
-            quad.SetFloat(EffectQuad.ShapeId, shape);
-            quad.SetFloat(EffectQuad.ProgressId, 0f);
-            quad.SetFloat(EffectQuad.AlphaId, 0f);
+            public Vector3 Point;
+            public float Direction;
+            public bool Critical;
+        }
+
+        private static EffectQuad Prepare(EffectQuadPool pool, Color color, float intensity)
+        {
+            EffectQuad quad = pool.Get();
+            quad.Transform.localScale = Vector3.zero;
+            quad.SetColor(color);
+            quad.SetFloat(EffectQuad.IntensityId, intensity);
             return quad;
         }
 
-        private static List<Vector3> GetEdgeTileCenters(Vector3 position, int range)
+        private static void Place(EffectQuad quad, Vector3 origin, float angle, float length, float alpha)
         {
-            var centers = new List<Vector3>();
-            BoardManager board = BoardManager.Instance;
-            if (board == null || board.Grid == null || !board.TryGetPoint(position, out BoardPoint point)) return centers;
-            Vector3Int origin;
-            if (point.IsSpawn) origin = board.Grid.GetSpawnCell(point.SpawnIndex);
-            else if (point.IsPath) origin = board.Grid.GetPathCell(point.PathIndex);
-            else return centers;
-
-            foreach (int index in board.Grid.GetPathIndicesInSquare(origin, range))
-            {
-                Vector3Int cell = board.Grid.GetPathCell(index);
-                if (BoardGrid.GetTileDistance(origin, cell) == range)
-                    centers.Add(board.GetWorldPosition(cell));
-            }
-            return centers;
+            float radians = angle * Mathf.Deg2Rad;
+            quad.Transform.SetPositionAndRotation(origin + new Vector3(Mathf.Cos(radians), Mathf.Sin(radians), 0f) * (length * 0.48f),
+                Quaternion.Euler(0f, 0f, angle));
+            quad.Transform.localScale = new Vector3(Mathf.Max(0.001f, length), Mathf.Max(0.001f, length * 0.5f), 1f);
+            quad.SetFloat(EffectQuad.AlphaId, alpha);
         }
+
+        private static Vector3 HeadPosition(Vector3 origin, float angle, float length)
+        {
+            float radians = angle * Mathf.Deg2Rad;
+            return origin + new Vector3(Mathf.Cos(radians), Mathf.Sin(radians), 0f) * (length * 0.78f);
+        }
+
+        private void Ghost(Vector3 origin, float angle, float length)
+        {
+            EffectQuad ghost = m_ghostPool.Get();
+            ghost.SetColor(s_blood);
+            ghost.SetFloat(EffectQuad.IntensityId, 2f);
+            float alpha = 0.5f;
+            Place(ghost, origin, angle, length, alpha);
+            DOTween.To(() => alpha, v => { alpha = v; ghost.SetFloat(EffectQuad.AlphaId, v); }, 0f, m_ghostLife)
+                .SetEase(Ease.OutQuad)
+                .SetLink(ghost.GameObject, LinkBehaviour.KillOnDisable)
+                .OnKill(() => m_ghostPool.Release(ghost));
+        }
+
+        private void PlayGather(Vector3 origin, float cell)
+        {
+            m_motes.Gather(origin, 20, s_blood, cell * 2.2f, cell * 0.1f, m_windUp);
+            TexturedFx.Pop(m_glowPool, origin, 0f, cell * 0.3f, cell * 2f, s_blood, 1.8f, 0f, m_windUp, 0.2f, Ease.InCubic);
+        }
+
+        private void PlayHit(Hit hit, float cell)
+        {
+            float angle = hit.Direction + 90f + Range(-12f, 12f);
+            float length = cell * (hit.Critical ? 2.2f : 1.4f);
+            Color color = hit.Critical ? s_crit : s_blood;
+            TexturedFx.Swipe(m_cutPool, hit.Point, angle, new Vector3(length, cell * (hit.Critical ? 0.34f : 0.24f), 1f), color,
+                hit.Critical ? 4f : 2.8f, 0f, 0.05f, 0.05f, 0.2f);
+            TexturedFx.Pop(m_ringPool, hit.Point, 0f, cell * 0.2f, cell * (hit.Critical ? 1.6f : 1f), s_blood, 2f, 0f, 0.22f, 0.22f, Ease.OutCubic);
+            float radians = (hit.Direction + 90f) * Mathf.Deg2Rad;
+            var direction = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians));
+            m_sparks.Burst(hit.Point, hit.Critical ? 10 : 5, hit.Critical ? s_hot : s_blood, cell * 2f, cell * 6f, cell * 0.05f, cell * 0.1f,
+                0.2f, 0.4f, direction, 60f);
+            if (hit.Critical)
+                TexturedFx.Pop(m_flarePool, hit.Point, Range(0f, 45f), cell * 0.3f, cell * 1.4f, Color.white, 3.5f, 0f, 0.07f, 0.16f);
+        }
+
+        private void PlayFinish(Vector3 origin, float cell)
+        {
+            TexturedFx.Pop(m_ringPool, origin, 0f, cell * 0.3f, cell * 5f, s_blood, 2.2f, 0f, 0.5f, 0.45f, Ease.OutCubic);
+            TexturedFx.Pop(m_ringPool, origin, 0f, cell * 0.2f, cell * 3f, s_hot, 2.5f, 0f, 0.3f, 0.3f, Ease.OutCubic);
+            m_sparks.Burst(origin, 20, s_blood, cell * 3f, cell * 8f, cell * 0.06f, cell * 0.12f, 0.3f, 0.5f);
+            ScreenShake.Play(0.08f, 0.2f);
+            ImpactFx.Punch(0.02f, 0.2f);
+        }
+
+        private float Range(float min, float max) => Mathf.Lerp(min, max, (float)m_random.NextDouble());
     }
 }
