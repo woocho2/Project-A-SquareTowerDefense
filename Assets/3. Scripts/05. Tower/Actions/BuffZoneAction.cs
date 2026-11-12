@@ -32,6 +32,7 @@ namespace SquareTD
 
                 SupportBuffs.GiveSkill1(zone, receiver);
                 rule.OnGiveSkill1(SupportCast.Skill1(tower), receiver);
+                SkillEffectTable.PlaySupportContact(tower, receiver.transform.position, false);
             }
 
             int fires = SupportSkillCount.Advance(tower);

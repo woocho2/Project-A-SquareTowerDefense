@@ -1,0 +1,250 @@
+fileFormatVersion: 2
+guid: c872a337eae3e3e42b0bec2551628ddc
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6050110207205090282
+    second: 08_Water_1_WaveCatcher_0
+  - first:
+      213: 5181414546472811359
+    second: 08_Water_1_WaveCatcher_1
+  - first:
+      213: 7238177485550434141
+    second: 08_Water_1_WaveCatcher_2
+  - first:
+      213: -5381271577752328004
+    second: 08_Water_1_WaveCatcher_3
+  - first:
+      213: 851632560285347367
+    second: 08_Water_1_WaveCatcher_4
+  - first:
+      213: -5773131807338992217
+    second: 08_Water_1_WaveCatcher_5
+  - first:
+      213: -5837303235003066093
+    second: 08_Water_1_WaveCatcher_6
+  - first:
+      213: -3280219228092751521
+    second: 08_Water_1_WaveCatcher_7
+  - first:
+      213: 6921935581160447968
+    second: 08_Water_1_WaveCatcher_8
+  - first:
+      213: -8918911800556011568
+    second: 08_Water_1_WaveCatcher_9
+  - first:
+      213: 8139728226071248529
+    second: 08_Water_1_WaveCatcher_10
+  - first:
+      213: -4126902283768919793
+    second: 08_Water_1_WaveCatcher_11
+  - first:
+      213: 6934325743905295156
+    second: 08_Water_1_WaveCatcher_12
+  - first:
+      213: -1695225742467741311
+    second: 08_Water_1_WaveCatcher_13
+  - first:
+      213: 5777888192132107579
+    second: 08_Water_1_WaveCatcher_14
+  - first:
+      213: 8482881274012527157
+    second: 08_Water_1_WaveCatcher_15
+  - first:
+      213: -5954993970889460578
+    second: 08_Water_1_WaveCatcher_16
+  - first:
+      213: 75075489755238015
+    second: 08_Water_1_WaveCatcher_17
+  - first:
+      213: -6525174847273229129
+    second: 08_Water_1_WaveCatcher_18
+  - first:
+      213: 3016396334209331847
+    second: 08_Water_1_WaveCatcher_19
+  - first:
+      213: 6815246736874149632
+    second: 08_Water_1_WaveCatcher_20
+  - first:
+      213: -16348021713415404
+    second: 08_Water_1_WaveCatcher_21
+  - first:
+      213: 6896065234405124760
+    second: 08_Water_1_WaveCatcher_22
+  - first:
+      213: -6751629642577642258
+    second: 08_Water_1_WaveCatcher_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 2048
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: 08_Water_1_WaveCatcher_Full
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 2048
+        height: 2048
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ee5c9254a3cc1f54785389e3f7e66f9e
+      internalID: -409724288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 08_Water_1_WaveCatcher_Face
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 1746
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5431a7cfe1534854884e1d1a2274d347
+      internalID: -678189955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: ce2c9cab225ba8e4c9e1d920160bdd2e
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      08_Water_1_WaveCatcher_Face: -678189955
+      08_Water_1_WaveCatcher_Full: -409724288
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

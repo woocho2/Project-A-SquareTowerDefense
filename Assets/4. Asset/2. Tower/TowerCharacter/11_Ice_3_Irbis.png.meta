@@ -1,0 +1,229 @@
+fileFormatVersion: 2
+guid: 7eeb0b12c39fe6543baf8b8e22d06097
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3067502574159913894
+    second: 11_Ice_3_Irbis_0
+  - first:
+      213: 2752846051409097194
+    second: 11_Ice_3_Irbis_1
+  - first:
+      213: -1852680250562120933
+    second: 11_Ice_3_Irbis_2
+  - first:
+      213: -8809185115273151766
+    second: 11_Ice_3_Irbis_3
+  - first:
+      213: 6607491545456741972
+    second: 11_Ice_3_Irbis_4
+  - first:
+      213: 2865305408151058232
+    second: 11_Ice_3_Irbis_5
+  - first:
+      213: 2004229087279096309
+    second: 11_Ice_3_Irbis_6
+  - first:
+      213: 1598906580991898505
+    second: 11_Ice_3_Irbis_7
+  - first:
+      213: 5821723066634823650
+    second: 11_Ice_3_Irbis_8
+  - first:
+      213: 5963944605143292227
+    second: 11_Ice_3_Irbis_9
+  - first:
+      213: -6606741948828501776
+    second: 11_Ice_3_Irbis_10
+  - first:
+      213: 3360319405558018485
+    second: 11_Ice_3_Irbis_11
+  - first:
+      213: 1980297391011844795
+    second: 11_Ice_3_Irbis_12
+  - first:
+      213: -5595106146659654127
+    second: 11_Ice_3_Irbis_13
+  - first:
+      213: 7849198096906469980
+    second: 11_Ice_3_Irbis_14
+  - first:
+      213: 5344533902235358773
+    second: 11_Ice_3_Irbis_15
+  - first:
+      213: 442351705294195452
+    second: 11_Ice_3_Irbis_16
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 2048
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: 11_Ice_3_Irbis_Full
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 2048
+        height: 2048
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 20717c50601e0f24cbc97f79a92c8509
+      internalID: -1729032694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 11_Ice_3_Irbis_Face
+      rect:
+        serializedVersion: 2
+        x: 917
+        y: 1732
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 144baac61ebb9b348a6101235234a754
+      internalID: -307163743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 3e54176c033c95d41a44845f221fc62a
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      11_Ice_3_Irbis_Face: -307163743
+      11_Ice_3_Irbis_Full: -1729032694
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -18,6 +18,7 @@ namespace SquareTD
             bool locked = Chance.Roll(enemy.Resistance.ResistWeak(1f));
             if (!locked) damage = enemy.Resistance.ResistWeak(damage);
             enemy.Status.Add(new AquaPrisonEffect(owner, EffectDuration(owner), damage, locked));
+            SkillEffectTable.PlayPrison(owner, enemy, locked, true);
             return true;
         }
 
@@ -52,6 +53,7 @@ namespace SquareTD
         {
             if (m_turnsLeft <= 0) return;
             m_turnsLeft--;
+            SkillEffectTable.PlayPrison(m_owner, enemy, m_locked, false);
             enemy.TakeDamage(new DamageInfo
             {
                 Attacker = m_owner,

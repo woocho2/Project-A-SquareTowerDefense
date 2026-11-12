@@ -23,7 +23,11 @@ namespace SquareTD
             {
                 foreach (ITarget target in SkillArea.WholeMap(m_grid, m_occupancy))
                 {
-                    if (target.IsAlive && target.Body != null) target.Body.Status.Add(new HyperionEffect(owner, turns, damage, TranscendGrowth));
+                    if (target.IsAlive && target.Body != null)
+                    {
+                        target.Body.Status.Add(new HyperionEffect(owner, turns, damage, TranscendGrowth));
+                        SkillEffectTable.PlayHyperion(owner, target.Body, 0, true);
+                    }
                 }
                 return true;
             }
@@ -31,6 +35,7 @@ namespace SquareTD
             EnemyController enemy = mainTarget?.Body;
             if (enemy == null || !enemy.IsAlive) return false;
             enemy.Status.Add(new HyperionEffect(owner, turns, damage * FirstRatio, DoubleGrowth));
+            SkillEffectTable.PlayHyperion(owner, enemy, 0, true);
             return true;
         }
 
@@ -46,6 +51,7 @@ namespace SquareTD
         private readonly float m_growth;
         private float m_damage;
         private int m_turnsLeft;
+        private int m_visualPulse;
 
         public HyperionEffect(TowerController owner, int turns, float firstDamage, float growth) : base(1)
         {
@@ -65,6 +71,7 @@ namespace SquareTD
             m_turnsLeft--;
             float damage = m_damage;
             m_damage *= m_growth;
+            SkillEffectTable.PlayHyperion(m_owner, enemy, ++m_visualPulse, false);
             enemy.TakeDamage(new DamageInfo { Attacker = m_owner, Source = DamageSource.Skill, Emblem = TowerEmblem.Light, BaseDamage = damage });
             if (m_turnsLeft <= 0 && enemy.IsAlive) enemy.Status.Remove(HyperionKey);
         }

@@ -23,20 +23,28 @@ namespace SquareTD
             int bounces = BounceCount(owner);
             ITarget previous = mainTarget;
             int shieldAt = mainTarget.PathIndex;
+            var visualPath = new List<Vector3>();
+            if (Application.isPlaying && mainTarget.Transform != null) visualPath.Add(mainTarget.Transform.position);
 
             for (int i = 0; i < bounces; i++)
             {
                 ITarget next = NearestExcept(shieldAt, previous);
                 if (next == null)
                 {
-                    if (previous.IsAlive) Hit(owner, stats, previous, damage * (bounces - i));
+                    if (previous.IsAlive)
+                    {
+                        if (Application.isPlaying && previous.Transform != null) visualPath.Add(previous.Transform.position);
+                        Hit(owner, stats, previous, damage * (bounces - i));
+                    }
                     break;
                 }
 
+                if (Application.isPlaying && next.Transform != null) visualPath.Add(next.Transform.position);
                 Hit(owner, stats, next, damage);
                 previous = next;
                 shieldAt = next.PathIndex;
             }
+            SkillEffectTable.PlayRebound(owner, visualPath);
             return true;
         }
 

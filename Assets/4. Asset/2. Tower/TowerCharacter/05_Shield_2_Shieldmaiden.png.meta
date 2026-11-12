@@ -1,0 +1,241 @@
+fileFormatVersion: 2
+guid: f736b16957e33ed47881947eb958a4ac
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8958824323795587687
+    second: 05_Shield_2_Shieldmaiden_0
+  - first:
+      213: -4321560768426145407
+    second: 05_Shield_2_Shieldmaiden_1
+  - first:
+      213: -5892033031871488178
+    second: 05_Shield_2_Shieldmaiden_2
+  - first:
+      213: -8988790676163837629
+    second: 05_Shield_2_Shieldmaiden_3
+  - first:
+      213: -5900773696486077528
+    second: 05_Shield_2_Shieldmaiden_4
+  - first:
+      213: 5538034958102437898
+    second: 05_Shield_2_Shieldmaiden_5
+  - first:
+      213: -5930462033387908998
+    second: 05_Shield_2_Shieldmaiden_6
+  - first:
+      213: 5890558228757779441
+    second: 05_Shield_2_Shieldmaiden_7
+  - first:
+      213: -107020027333155057
+    second: 05_Shield_2_Shieldmaiden_8
+  - first:
+      213: -4029571355317998587
+    second: 05_Shield_2_Shieldmaiden_9
+  - first:
+      213: -2943610359694615628
+    second: 05_Shield_2_Shieldmaiden_10
+  - first:
+      213: -8215895954368502875
+    second: 05_Shield_2_Shieldmaiden_11
+  - first:
+      213: 8055636516054449225
+    second: 05_Shield_2_Shieldmaiden_12
+  - first:
+      213: -5590786742680635423
+    second: 05_Shield_2_Shieldmaiden_13
+  - first:
+      213: -5259239399959725319
+    second: 05_Shield_2_Shieldmaiden_14
+  - first:
+      213: -7214529270750923815
+    second: 05_Shield_2_Shieldmaiden_15
+  - first:
+      213: -8140941073301002123
+    second: 05_Shield_2_Shieldmaiden_16
+  - first:
+      213: -6630735795401186771
+    second: 05_Shield_2_Shieldmaiden_17
+  - first:
+      213: -675526607067640793
+    second: 05_Shield_2_Shieldmaiden_18
+  - first:
+      213: -8811952097987519003
+    second: 05_Shield_2_Shieldmaiden_19
+  - first:
+      213: 969411265898902493
+    second: 05_Shield_2_Shieldmaiden_20
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 2048
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: 05_Shield_2_Shieldmaiden_Full
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 2048
+        height: 2048
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 02fd631e7b1a72f4e87f3ff0645a23b8
+      internalID: -1819560665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 05_Shield_2_Shieldmaiden_Face
+      rect:
+        serializedVersion: 2
+        x: 838
+        y: 1744
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33459e829077c1841a4b96ff7c60df01
+      internalID: 1078017212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 640d10956aa61bc429edc77ca37e254d
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      05_Shield_2_Shieldmaiden_Face: 1078017212
+      05_Shield_2_Shieldmaiden_Full: -1819560665
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

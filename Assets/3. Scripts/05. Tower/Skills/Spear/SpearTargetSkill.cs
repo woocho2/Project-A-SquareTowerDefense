@@ -22,13 +22,16 @@ namespace SquareTD
             TowerFinalStats stats = owner.Stats;
             float damage = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * SpearRatio;
             int spears = SpearCount(owner);
+            var visualPath = new List<UnityEngine.Vector3>();
 
             for (int i = 0; i < spears; i++)
             {
                 if (!target.IsAlive) target = HighestInRange(owner);
                 if (target == null) break;
+                if (UnityEngine.Application.isPlaying && target.Transform != null) visualPath.Add(target.Transform.position);
                 ProjectileHitResolver.HitSingle(target, MakeSkillHit(owner, stats, target, damage, false));
             }
+            SkillEffectTable.PlayHeadhunt(owner, visualPath);
             return true;
         }
 

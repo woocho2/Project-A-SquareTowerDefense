@@ -26,6 +26,7 @@ namespace SquareTD
             if (!Chance.Roll(GetChance(owner, useStack))) return true;
             int bonus = Acceleration.IsAccelerated(owner) ? AcceleratedBonus : AttackCountBonus;
             TimedTowerBuff.Apply(owner.State, Source, EffectDuration(owner), StatModifier.Flat(Source, StatType.AttackCount, bonus));
+            SkillEffectTable.PlayTempest(owner);
             return true;
         }
 

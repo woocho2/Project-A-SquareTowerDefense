@@ -26,12 +26,14 @@ namespace SquareTD
             float rate = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * SkillFormula.PercentRate;
             int duration = EffectDuration(owner);
 
-            foreach (TowerController ally in GetAlliesInRange(owner, stats.Range))
+            List<TowerController> receivers = GetAlliesInRange(owner, stats.Range);
+            foreach (TowerController ally in receivers)
             {
                 TimedTowerBuff.Apply(ally.State, Source, duration,
                     StatModifier.Percent(Source, StatType.Power, rate),
                     StatModifier.Flat(Source, StatType.CritRate, rate));
             }
+            SkillEffectTable.PlayRally(owner, receivers);
             return true;
         }
 

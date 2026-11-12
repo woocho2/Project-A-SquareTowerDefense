@@ -24,12 +24,15 @@ namespace SquareTD
             float rate = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * SkillFormula.PercentRate;
             int duration = EffectDuration(owner);
 
+            var receivers = new List<TowerController>();
             foreach (TowerController tower in AllyAttackTowers(owner))
             {
                 TimedTowerBuff.Apply(tower.State, Source, duration, RateModifiers(Source, rate));
                 tower.State.Counters[RateKey] = rate;
                 RefreshTranscend(tower);
+                receivers.Add(tower);
             }
+            SkillEffectTable.PlayPrism(owner, receivers);
             return true;
         }
 

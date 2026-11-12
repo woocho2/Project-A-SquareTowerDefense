@@ -30,6 +30,7 @@ namespace SquareTD
             sources = BuildSources(baseValues, applied);
             ApplyAttackCountLock(values);
             ApplyLimits(values);
+            ApplyShowcaseOverride(values);
 
             return new TowerFinalStats(values, baseValues, level, sources);
         }
@@ -120,6 +121,18 @@ namespace SquareTD
             int attackCount = Mathf.Max(1, Mathf.RoundToInt(values[(int)StatType.AttackCount]));
             values[(int)StatType.Power] *= attackCount;
             values[(int)StatType.AttackCount] = 1f;
+        }
+
+        // 테스트 모드 F4: 공격 연출 확인용으로 모든 타워의 MaxAction 1 · Range 5 고정
+        public static bool ShowcaseOverride { get; set; }
+        public const int ShowcaseAction = 1;
+        public const int ShowcaseRange = 5;
+
+        private static void ApplyShowcaseOverride(float[] values)
+        {
+            if (!ShowcaseOverride) return;
+            values[(int)StatType.MaxAction] = ShowcaseAction;
+            values[(int)StatType.Range] = ShowcaseRange;
         }
 
         private static void ApplyLimits(float[] values)

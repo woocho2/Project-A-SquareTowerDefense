@@ -36,13 +36,16 @@ namespace SquareTD
             DebuffRule rule = SkillRegistry.GetDebuffRule(tower.Definition.Emblem);
 
             int count = 0;
+            var visualPositions = new List<Vector3>();
             foreach (EnemyController enemy in new List<EnemyController>(m_enemies()))
             {
                 if (enemy == null || !enemy.IsAlive) continue;
+                if (Application.isPlaying) visualPositions.Add(enemy.transform.position);
                 Apply(rule, cast, enemy, -1);
                 count++;
             }
             rule.OnSkill2(cast);
+            SkillEffectTable.PlayDebuffSkill(tower, visualPositions);
             Debug.Log($"[Debuff] {tower.name} 스킬 2 발동 → 적 {count}마리, 값 {cast.Amount:0.##}, {cast.Duration}번 행동 동안");
         }
 
@@ -50,6 +53,7 @@ namespace SquareTD
 
         public static void Step(Zone zone, EnemyController enemy)
         {
+            if (enemy != null) SkillEffectTable.PlaySupportContact(zone.Owner, enemy.transform.position, true);
             Apply(SkillRegistry.GetDebuffRule(zone.Emblem), SupportCast.Skill1(zone.Owner), enemy, zone.CellIndex);
         }
 

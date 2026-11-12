@@ -1,0 +1,229 @@
+fileFormatVersion: 2
+guid: 2040c862c6ccb5a4c8749aa3c10c0e7c
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -361885814338125698
+    second: 10_Wind_3_Zephyros_0
+  - first:
+      213: 2160168686962798169
+    second: 10_Wind_3_Zephyros_1
+  - first:
+      213: 4543622044113893081
+    second: 10_Wind_3_Zephyros_2
+  - first:
+      213: -6804669820970341540
+    second: 10_Wind_3_Zephyros_3
+  - first:
+      213: 5682424219850821895
+    second: 10_Wind_3_Zephyros_4
+  - first:
+      213: 6841382755432989797
+    second: 10_Wind_3_Zephyros_5
+  - first:
+      213: 8816990482926350683
+    second: 10_Wind_3_Zephyros_6
+  - first:
+      213: -4890498165337439984
+    second: 10_Wind_3_Zephyros_7
+  - first:
+      213: -6002121423848388271
+    second: 10_Wind_3_Zephyros_8
+  - first:
+      213: 4615747011116753285
+    second: 10_Wind_3_Zephyros_9
+  - first:
+      213: 8410330626600402419
+    second: 10_Wind_3_Zephyros_10
+  - first:
+      213: 8919026038030140836
+    second: 10_Wind_3_Zephyros_11
+  - first:
+      213: 5488067502555954827
+    second: 10_Wind_3_Zephyros_12
+  - first:
+      213: -4362427108720125956
+    second: 10_Wind_3_Zephyros_13
+  - first:
+      213: -8188470426837491998
+    second: 10_Wind_3_Zephyros_14
+  - first:
+      213: 3692276028056979974
+    second: 10_Wind_3_Zephyros_15
+  - first:
+      213: -6060588021733535888
+    second: 10_Wind_3_Zephyros_16
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 2048
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: 10_Wind_3_Zephyros_Full
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 2048
+        height: 2048
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a01209c0250dd6344999d12df8e4e5ea
+      internalID: 182800315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 10_Wind_3_Zephyros_Face
+      rect:
+        serializedVersion: 2
+        x: 845
+        y: 1723
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2dfbf0e8c7c21e442a62eb209209f1f1
+      internalID: 695158117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: aceb7730d85cc854c96a514551d62e9a
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      10_Wind_3_Zephyros_Face: 695158117
+      10_Wind_3_Zephyros_Full: 182800315
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

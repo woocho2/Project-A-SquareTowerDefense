@@ -24,55 +24,71 @@ namespace SquareTD
             if (EnemyManager.Instance != null) EnemyManager.Instance.CountChanged -= OnEnemyCountChanged;
             if (CurrencyManager.Instance != null) CurrencyManager.Instance.Changed -= OnCurrencyChanged;
             if (m_speedIndex != 0) Time.timeScale = 1f;
+            TowerStatCalculator.ShowcaseOverride = false;
         }
 
-        private static void SpawnDummy()
+        // ── 테스트 모드 (T로 켜고 끔) ──
+        private const int TestGold = 100000;
+        private const int TestGem = 100000;
+        private const float SkillCountGap = 2f;
+        private bool m_testMode;
+
+        private void ToggleTestMode()
         {
-            EnemyController enemy = EnemyManager.Instance.SpawnForDebug(DummyHp);
-            if (enemy != null) Debug.Log($"[DebugCheat] 체력 {DummyHp:N0} 허수아비 → {enemy.PathIndex}번 칸");
+            m_testMode = !m_testMode;
+            Debug.LogWarning($"[DebugCheat] 테스트 모드 {(m_testMode ? "켬" : "끔")}");
         }
 
-        private void PreviewSkill()
+        private void HandleTestModeKeys(Keyboard keyboard)
         {
-            TowerController tower = TowerManager.Instance.Selected;
-            if (tower == null)
+            if (keyboard.f1Key.wasPressedThisFrame)
             {
-                Debug.Log("[DebugCheat] 타워를 먼저 클릭하세요");
-                return;
+                m_typingId = true;
+                m_idBuffer = "";
             }
-
-            var hits = new List<Vector3>();
-            foreach (EnemyController enemy in EnemyManager.Instance.Registry.Alive)
-                if (enemy != null && enemy.IsAlive) hits.Add(enemy.transform.position);
-            if (hits.Count == 0) hits.Add(tower.transform.position + Vector3.right * EffectSpace.CellWorldSize() * 2f);
-
-            Debug.Log($"[DebugCheat] {tower.name} 스킬 연출 보기 (피해 없음, 적 {hits.Count}곳)");
-            StartCoroutine(PlaySkillPreview(tower, hits));
+            if (keyboard.f2Key.wasPressedThisFrame) CurrencyManager.Instance.AddGold(TestGold);
+            if (keyboard.f3Key.wasPressedThisFrame) CurrencyManager.Instance.AddGem(TestGem);
+            if (keyboard.f4Key.wasPressedThisFrame) ToggleShowcase();
+            if (keyboard.f5Key.wasPressedThisFrame) FillSkillCounts();
         }
 
-        private static IEnumerator PlaySkillPreview(TowerController tower, List<Vector3> hits)
-        {
-            yield return SkillCutIn.Play(tower);
-            if (tower == null) yield break;
-            if (!tower.IsAttackTower)
-            {
-                SkillEffectTable.PlaySupportSkill(tower, AllyAttackTowers(), true);
-                yield break;
-            }
-            SkillEffectTable.PlayCast(tower);
-            SkillEffectTable.Play(tower, hits[0], hits);
-        }
-
-        private static List<TowerController> AllyAttackTowers()
+        private static List<TowerController> AllTowers()
         {
             var towers = new List<TowerController>();
             TowerSlots slots = BoardManager.Instance.Slots;
             for (int i = 0; i < slots.Count; i++)
             {
                 TowerController tower = slots.Get(i);
-                if (tower != null && tower.IsAttackTower) towers.Add(tower);
+                if (tower != null) towers.Add(tower);
             }
             return towers;
+        }
+
+        private static void ToggleShowcase()
+        {
+            TowerStatCalculator.ShowcaseOverride = !TowerStatCalculator.ShowcaseOverride;
+            List<TowerController> towers = AllTowers();
+            foreach (TowerController tower in towers) tower.RecalculateStats();
+            Debug.LogWarning(TowerStatCalculator.ShowcaseOverride
+                ? $"[DebugCheat] 공격 연출 모드 켬 — 타워 {towers.Count}기 MaxAction {TowerStatCalculator.ShowcaseAction} · Range {TowerStatCalculator.ShowcaseRange} 고정"
+                : $"[DebugCheat] 공격 연출 모드 끔 — 타워 {towers.Count}기 원래 스탯");
+        }
+
+        private static void FillSkillCounts()
+        {
+            List<TowerController> towers = AllTowers();
+            foreach (TowerController tower in towers)
+            {
+                float target = Mathf.Max(0f, tower.Stats.SkillCount - SkillCountGap);
+                tower.State.SkillCount = Mathf.Max(tower.State.SkillCount, target);
+            }
+            Debug.Log($"[DebugCheat] 타워 {towers.Count}기 스킬 카운트 → 최대 −{SkillCountGap:0}");
+        }
+
+        private static void SpawnDummy()
+        {
+            EnemyController enemy = EnemyManager.Instance.SpawnForDebug(DummyHp);
+            if (enemy != null) Debug.Log($"[DebugCheat] 체력 {DummyHp:N0} 허수아비 → {enemy.PathIndex}번 칸");
         }
 
         private static readonly float[] s_speeds = { 1f, 2f, 3f };
@@ -186,11 +202,11 @@ namespace SquareTD
                 HandleIdInput(keyboard);
                 return;
             }
-            if (keyboard.tKey.wasPressedThisFrame)
+            if (keyboard.tKey.wasPressedThisFrame) ToggleTestMode();
+            if (m_testMode)
             {
-                m_typingId = true;
-                m_idBuffer = "";
-                return;
+                HandleTestModeKeys(keyboard);
+                if (m_typingId) return;
             }
 
             if (keyboard.spaceKey.wasPressedThisFrame)
@@ -219,11 +235,6 @@ namespace SquareTD
                 TowerManager.Instance.TryBuild();
             }
 
-            if (keyboard.gKey.wasPressedThisFrame)
-            {
-                CurrencyManager.Instance.AddGold(1000);
-            }
-
             if (keyboard.xKey.wasPressedThisFrame)
             {
                 TowerManager.Instance.TrySell(TowerManager.Instance.Selected);
@@ -234,11 +245,9 @@ namespace SquareTD
                 StartPickAttackCell();
             }
 
-            if (keyboard.hKey.wasPressedThisFrame) CurrencyManager.Instance.AddGem(100);
             if (keyboard.pKey.wasPressedThisFrame) NextTargetPriority();
-            if (keyboard.f1Key.wasPressedThisFrame) m_showKeys = !m_showKeys;
+            if (keyboard.f12Key.wasPressedThisFrame) m_showKeys = !m_showKeys;
             if (keyboard.digit1Key.wasPressedThisFrame || keyboard.numpad1Key.wasPressedThisFrame) SpawnDummy();
-            if (keyboard.digit2Key.wasPressedThisFrame || keyboard.numpad2Key.wasPressedThisFrame) PreviewSkill();
             if (keyboard.zKey.wasPressedThisFrame) StartPlaceZone();
             if (keyboard.digit5Key.wasPressedThisFrame || keyboard.numpad5Key.wasPressedThisFrame) NextGameSpeed();
             if (keyboard.digit8Key.wasPressedThisFrame) SpawnAllTier1(TowerEmblem.Sword, TowerEmblem.Hammer);
@@ -250,17 +259,15 @@ namespace SquareTD
 
         private static readonly string[] s_keyLines =
         {
-            "F1  키 목록 숨기기",
+            "F12 키 목록 숨기기   T 테스트 모드 켜고 끄기",
             "Space 턴 종료   A 자동 진행   R 다시 시작",
             "5 배속 1 → 2 → 3 → 1",
-            "B 생성   G 골드 +1000   H 젬 +100",
+            "B 생성",
             "1 체력 5천만 허수아비 소환 (피해 확인용)",
             "── 고른 타워 ──",
             "X 판매   C 공격 칸 고르기   P 우선순위 다음",
-            "2 스킬 연출 보기 (피해 없음)",
             "Z 존 자리 고르기 (버프·디버프 타워)",
             "── 타워 세우기 ──",
-            "T + 숫자 4자리  ID로 세우기 (예: T 1101 = 브론즈 소드 마스터)",
             "8 무기 1티어 24종   9 원소 1티어 32종   0 전부 판매",
             "  (칸이 모자라면 0으로 판 뒤 같은 키 → 이어서)",
             "Tools > Click Debug 창",
@@ -276,15 +283,34 @@ namespace SquareTD
                     $"타워 ID: {m_idBuffer}_   (숫자 4자리 · Enter 확인 · Esc 취소)");
             }
 
-            if (!m_showKeys) return;
-
             const float lineHeight = 18f;
-            var area = new Rect(8f, 8f, 330f, lineHeight * s_keyLines.Length + 10f);
-            GUI.Box(area, GUIContent.none);
-            for (int i = 0; i < s_keyLines.Length; i++)
+            float y = 8f;
+            if (m_showKeys)
             {
-                GUI.Label(new Rect(area.x + 6f, area.y + 4f + i * lineHeight, area.width - 12f, lineHeight), s_keyLines[i]);
+                var area = new Rect(8f, y, 330f, lineHeight * s_keyLines.Length + 10f);
+                DrawLines(area, s_keyLines, lineHeight);
+                y = area.yMax + 6f;
             }
+
+            if (m_testMode)
+            {
+                string[] lines =
+                {
+                    "■ 테스트 모드 (T로 끔)",
+                    "F1 타워 ID로 세우기 (예: 1101 = 브론즈 소드 마스터)",
+                    $"F2 골드 +{TestGold:N0}   F3 젬 +{TestGem:N0}",
+                    $"F4 공격 연출: 행동 {TowerStatCalculator.ShowcaseAction} · 사거리 {TowerStatCalculator.ShowcaseRange} [{(TowerStatCalculator.ShowcaseOverride ? "켬" : "끔")}]",
+                    $"F5 모든 타워 스킬 카운트 → 최대 −{SkillCountGap:0}",
+                };
+                DrawLines(new Rect(8f, y, 330f, lineHeight * lines.Length + 10f), lines, lineHeight);
+            }
+        }
+
+        private static void DrawLines(Rect area, string[] lines, float lineHeight)
+        {
+            GUI.Box(area, GUIContent.none);
+            for (int i = 0; i < lines.Length; i++)
+                GUI.Label(new Rect(area.x + 6f, area.y + 4f + i * lineHeight, area.width - 12f, lineHeight), lines[i]);
         }
 
         private static readonly TargetPriority[] s_priorityOrder =

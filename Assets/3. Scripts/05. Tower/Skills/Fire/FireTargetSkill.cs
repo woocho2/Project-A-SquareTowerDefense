@@ -31,6 +31,7 @@ namespace SquareTD
             ITarget target = HighestHp(SkillArea.WholeMap(m_grid, m_occupancy));
             if (target == null) return;
 
+            SkillEffectTable.PlayBreath(owner, target);
             float damage = owner.State.GetCounter(DamageKey) * FireSplashSkill.BurnMultiplier(target);
             ProjectileHitResolver.HitSingle(target, MakeSkillHit(owner, owner.Stats, target, damage, false));
             if (target.IsAlive) BurnEffect.Add(target.Body, 1f);

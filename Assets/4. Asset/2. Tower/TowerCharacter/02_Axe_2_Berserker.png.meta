@@ -1,0 +1,241 @@
+fileFormatVersion: 2
+guid: 941421f48c72de24a94577cf5d7f8e77
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4755122976135291403
+    second: 02_Axe_2_Berserker_0
+  - first:
+      213: -5451942982106223389
+    second: 02_Axe_2_Berserker_1
+  - first:
+      213: 486616863276571268
+    second: 02_Axe_2_Berserker_2
+  - first:
+      213: -3258950186918291824
+    second: 02_Axe_2_Berserker_3
+  - first:
+      213: 402411549808900984
+    second: 02_Axe_2_Berserker_4
+  - first:
+      213: 56433006687308468
+    second: 02_Axe_2_Berserker_5
+  - first:
+      213: -5222844594542698688
+    second: 02_Axe_2_Berserker_6
+  - first:
+      213: -3935024774091309497
+    second: 02_Axe_2_Berserker_7
+  - first:
+      213: -142039932950681469
+    second: 02_Axe_2_Berserker_8
+  - first:
+      213: 7589356341028899076
+    second: 02_Axe_2_Berserker_9
+  - first:
+      213: 7229760006511026772
+    second: 02_Axe_2_Berserker_10
+  - first:
+      213: 4682304446702612020
+    second: 02_Axe_2_Berserker_11
+  - first:
+      213: -2132117340006384242
+    second: 02_Axe_2_Berserker_12
+  - first:
+      213: -6389359076723982387
+    second: 02_Axe_2_Berserker_13
+  - first:
+      213: -6958552981854777939
+    second: 02_Axe_2_Berserker_14
+  - first:
+      213: -7067082774647502504
+    second: 02_Axe_2_Berserker_15
+  - first:
+      213: 2266466136761234162
+    second: 02_Axe_2_Berserker_16
+  - first:
+      213: 3703589642021995607
+    second: 02_Axe_2_Berserker_17
+  - first:
+      213: 1433412333771811765
+    second: 02_Axe_2_Berserker_18
+  - first:
+      213: -7395015094502534773
+    second: 02_Axe_2_Berserker_19
+  - first:
+      213: 4091659445758451464
+    second: 02_Axe_2_Berserker_20
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 2048
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: 02_Axe_2_Berserker_Full
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 2048
+        height: 2048
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 56f47203fce81384a818bf9a66699433
+      internalID: -2110918902
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 02_Axe_2_Berserker_Face
+      rect:
+        serializedVersion: 2
+        x: 838
+        y: 1748
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d1c26fe3466563141b8c4c06993c2802
+      internalID: -1504669519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 0f6a942ed02ce4d47846b3a10a3cee64
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      02_Axe_2_Berserker_Face: -1504669519
+      02_Axe_2_Berserker_Full: -2110918902
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

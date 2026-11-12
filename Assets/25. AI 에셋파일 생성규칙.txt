@@ -20,11 +20,12 @@ AI 에셋파일 생성 기준 규칙
 
 3. 공통: 파일 이름
 
-  저장 폴더: Assets/4. Asset/2. Tower/TowerCharacter/Normal/
-  파일 이름: 문양번호_엠블럼이름_타워이름.png (영문 이름).
-  문양번호는 GameEnums.cs의 TowerEmblem 값을 사용한다. 예: 02_Axe_Viking.png.
+  저장 폴더: Assets/4. Asset/2. Tower/TowerCharacter/ (2026-11-12 사용자 지정)
+  파일 이름: 문양번호_문양이름_컬러번호_캐릭터이름.png (영문 이름, 문양번호 두 자리).
+  문양번호와 문양이름은 GameEnums.cs의 TowerEmblem, 컬러번호는 TowerColor 값을 사용한다. 컬러번호는 1=Red(광역), 2=Blue(단일), 3=Yellow(버프), 4=Purple(디버프). 예: 02_Axe_1_Viking.png.
   이 저장 규칙은 현재 제작 중인 타워의 최종 승인본에 대해 위의 일반 파일 이름 규칙보다 우선한다.
   기존 게임 연결 파일의 일괄 이름 변경이나 아틀라스·카탈로그 교체는 별도 지시가 있을 때 진행한다.
+  시너지 타워는 2026-11-12 사용자 지정으로 00_Synergy_시너지순번_캐릭터이름.png 형식을 사용한다. 예: 00_Synergy_1_Odin.png. 시너지순번은 현재 SynergyCharacterCatalog의 towerID 6001~6014에서 6000을 뺀 값이며 일반 타워의 컬러번호와 구분한다.
 
 4. 타워 캐릭터 — 개별 컨셉과 외형
 
@@ -145,7 +146,7 @@ AI 에셋파일 생성 기준 규칙
 캐릭터 에셋 (일반·시너지 타워와 적):
   캐릭터 한 명당 2048 x 2048 픽셀의 투명 PNG 한 장으로 생성한다. 저장 전 실제 파일 크기가 2048 x 2048인지 확인한다.
   생성 후 Unity Sprite Editor에서 해당 PNG에 에셋명_Full과 에셋명_Face, 두 개의 스프라이트 슬라이스를 만든다. 별도 PNG 두 장으로 분리하는 것이 아니다. 에셋명은 PNG의 확장자를 제외한 이름이다.
-  예: 02_Axe_Viking.png → 02_Axe_Viking_Full / 02_Axe_Viking_Face.
+  예: 02_Axe_1_Viking.png → 02_Axe_1_Viking_Full / 02_Axe_1_Viking_Face.
   슬라이스 전에 Texture Type을 Sprite (2D and UI), Sprite Mode를 Multiple, Pixels Per Unit (PPU)을 2048로 설정하고 Apply한다 (2026-11-11 사용자 최신 지정). Filter는 Bilinear를 사용한다.
   이후 Sprite Editor에서 슬라이스를 설정한다. 해당 캐릭터의 에셋명_Full과 에셋명_Face 두 개만 남기고 다른 스프라이트 조각·자동 슬라이스는 삭제한 뒤 Apply한다.
   PPU 설정은 PNG 픽셀 크기를 나누거나 변경하는 작업이 아니다. 원본 이미지 크기는 2048 x 2048로 유지하며, 조각 삭제는 슬라이스 정의만 삭제하는 것으로 원본 픽셀을 지우지 않는다.

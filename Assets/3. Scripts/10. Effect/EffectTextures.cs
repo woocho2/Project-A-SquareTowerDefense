@@ -32,6 +32,17 @@ namespace SquareTD
         private static readonly Dictionary<string, Texture2D> s_proceduralCache = new Dictionary<string, Texture2D>();
         private static readonly HashSet<string> s_warned = new HashSet<string>();
 
+        // 임시 그림 없이 실제 PNG가 Resources/Effects에 있는지 확인
+        public static bool Has(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return false;
+            if (s_cache.TryGetValue(name, out Texture2D cached) && cached != null) return !cached.name.EndsWith("(Procedural)");
+            Texture2D texture = Resources.Load<Texture2D>("Effects/" + name);
+            if (texture == null) return false;
+            s_cache[name] = texture;
+            return true;
+        }
+
         public static Texture2D Get(string name)
         {
             if (string.IsNullOrEmpty(name)) return Texture2D.whiteTexture;
