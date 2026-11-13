@@ -23,9 +23,9 @@ namespace SquareTD
 
         public StatModifierList Modifiers { get; } = new StatModifierList();
 
-        public EnemyStats(EnemyDefinition definition, int spawnWave)
+        public EnemyStats(EnemyDefinition definition, int spawnWave, float modeMultiplier = 1f)
         {
-            m_base[(int)StatType.Defense] = definition.Defense * WaveTable.GetDefenseMultiplier(spawnWave, definition.Kind);
+            m_base[(int)StatType.Defense] = definition.Defense * WaveTable.GetDefenseMultiplier(spawnWave, definition.Kind) * modeMultiplier;
             m_base[(int)StatType.MaxAction] = definition.Action;
             m_base[(int)StatType.SpeedMax] = definition.SpeedMax;
             m_base[(int)StatType.SpeedMin] = definition.SpeedMin;

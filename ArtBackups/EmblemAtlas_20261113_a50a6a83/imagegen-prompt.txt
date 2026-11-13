@@ -1,0 +1,13 @@
+PRODUCTION EXPORT of this approved fourteen-emblem sheet. The user approves all fourteen designs, sizes and proportions and requests final atlas preparation. Make ONLY these changes:
+1. Remove ONLY the little light beam/refraction stroke INSIDE the woven triangular LIGHT emblem at ROW4 COLUMN1. Its entire central triangular void must be EMPTY/TRANSPARENT. Keep every stripe, corner and cyclic over-under overlap of its outer triangular frame exactly the same.
+2. REMOVE THE DARK NAVY BACKGROUND completely. Output TRUE TRANSPARENT ALPHA PNG. Every white icon should stay in exactly its existing position and retain its approved shape, vertical size and spacing. No opaque canvas behind the symbols.
+3. All icon faces pure WHITE RGB255 and opaque, edge antialiasing only. Dark separator gaps and actual openings become fully transparent, including shield rim/boss separating outlines, bow/string openings, triangle stripe gaps and vortex center.
+
+Do NOT redesign, re-render, rearrange, resize, stretch, smooth away details or add anything. Preserve the current 4x4 grid and all icon silhouettes:
+Row1 Sword / Axe / Bow / Shield.
+Row2 Spear / Hammer / Fire / Water.
+Row3 Earth / Wind / Ice / Electricity.
+Row4 Light / Darkness / empty / empty.
+Keep the shield's thin rim and central boss definition. Sword narrow blade, short guard and three-lobed pommel; axe one broad bearded blade; hammer flat top; fire compact three-point asymmetric flame; earth exactly TWO joined peaks; light triple-striped cyclically interlocking hollow triangle. The only symbol edit is deleting the CENTER BEAM, not altering the triangular frame.
+
+No backdrop, checkerboard image, grid lines, text, labels, badges, frame, material shading, internal gray, gradient, texture, glow, shadow, extra icon or watermark. Preserve all approved heights. Ideally1024x1024 square with transparent background; this layout will be packed into the game's existing atlas while preserving its established slice IDs.

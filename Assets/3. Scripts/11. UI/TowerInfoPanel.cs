@@ -461,7 +461,7 @@ namespace SquareTD
         {
             if (m_selectedTower == null || !m_selectedTower.IsAttackTower || !CanPlayerAct) return;
 
-            BoardInputController input = FindFirstObjectByType<BoardInputController>();
+            BoardInputController input = FindAnyObjectByType<BoardInputController>();
             if (input != null) input.ChangeMode(new PickAttackCellMode(input, m_selectedTower));
         }
 

@@ -1,0 +1,267 @@
+﻿{
+    "AtlasSize":  [
+                      1024,
+                      1024
+                  ],
+    "AtlasGuid":  "7e3f1605aca04ab5b6e525a542b6b7b3",
+    "MetaByteIdenticalToBackup":  true,
+    "SpriteCount":  14,
+    "AllVisibleRGBWhite":  true,
+    "AntialiasPixels":  42975,
+    "MinimumTransparentMargin":  16,
+    "LightCenterAlpha":  0,
+    "Cells":  [
+                  {
+                      "Cell":  0,
+                      "VisiblePixels":  6078,
+                      "Bounds":  [
+                                     91,
+                                     20,
+                                     163,
+                                     236
+                                 ]
+                  },
+                  {
+                      "Cell":  1,
+                      "VisiblePixels":  7228,
+                      "Bounds":  [
+                                     40,
+                                     21,
+                                     212,
+                                     233
+                                 ]
+                  },
+                  {
+                      "Cell":  2,
+                      "VisiblePixels":  32731,
+                      "Bounds":  [
+                                     24,
+                                     21,
+                                     230,
+                                     233
+                                 ]
+                  },
+                  {
+                      "Cell":  3,
+                      "VisiblePixels":  4635,
+                      "Bounds":  [
+                                     63,
+                                     23,
+                                     191,
+                                     233
+                                 ]
+                  },
+                  {
+                      "Cell":  4,
+                      "VisiblePixels":  10800,
+                      "Bounds":  [
+                                     66,
+                                     17,
+                                     189,
+                                     238
+                                 ]
+                  },
+                  {
+                      "Cell":  5,
+                      "VisiblePixels":  20333,
+                      "Bounds":  [
+                                     31,
+                                     24,
+                                     225,
+                                     231
+                                 ]
+                  },
+                  {
+                      "Cell":  6,
+                      "VisiblePixels":  18084,
+                      "Bounds":  [
+                                     53,
+                                     20,
+                                     201,
+                                     236
+                                 ]
+                  },
+                  {
+                      "Cell":  7,
+                      "VisiblePixels":  15588,
+                      "Bounds":  [
+                                     40,
+                                     25,
+                                     214,
+                                     229
+                                 ]
+                  },
+                  {
+                      "Cell":  8,
+                      "VisiblePixels":  9205,
+                      "Bounds":  [
+                                     64,
+                                     24,
+                                     192,
+                                     230
+                                 ]
+                  },
+                  {
+                      "Cell":  9,
+                      "VisiblePixels":  17949,
+                      "Bounds":  [
+                                     31,
+                                     31,
+                                     225,
+                                     224
+                                 ]
+                  },
+                  {
+                      "Cell":  10,
+                      "VisiblePixels":  22379,
+                      "Bounds":  [
+                                     23,
+                                     37,
+                                     231,
+                                     216
+                                 ]
+                  },
+                  {
+                      "Cell":  11,
+                      "VisiblePixels":  18899,
+                      "Bounds":  [
+                                     27,
+                                     30,
+                                     226,
+                                     224
+                                 ]
+                  },
+                  {
+                      "Cell":  12,
+                      "VisiblePixels":  22192,
+                      "Bounds":  [
+                                     32,
+                                     23,
+                                     222,
+                                     232
+                                 ]
+                  },
+                  {
+                      "Cell":  13,
+                      "VisiblePixels":  15826,
+                      "Bounds":  [
+                                     64,
+                                     22,
+                                     190,
+                                     234
+                                 ]
+                  },
+                  {
+                      "Cell":  14,
+                      "VisiblePixels":  0,
+                      "Bounds":  [
+                                     256,
+                                     256,
+                                     -1,
+                                     -1
+                                 ]
+                  },
+                  {
+                      "Cell":  15,
+                      "VisiblePixels":  0,
+                      "Bounds":  [
+                                     256,
+                                     256,
+                                     -1,
+                                     -1
+                                 ]
+                  }
+              ],
+    "RepairedMenuReferences":  13,
+    "MenuChangesLimitedToSpriteReferences":  true,
+    "MenuBeforeApplyBackup":  "menu-before-final-apply-639301463097090772.unity",
+    "MenuBeforeApplySHA256":  "CEB0723186F235FDC8D5EDF9AF114582CECD58FEEB9DAC5EB3BB4241C918DE40",
+    "MenuConnections":  [
+                            {
+                                "Name":  "Shield",
+                                "Component":  "21115172",
+                                "GameObject":  "21115170",
+                                "Sprite":  1003
+                            },
+                            {
+                                "Name":  "Spear",
+                                "Component":  "104574551",
+                                "GameObject":  "104574549",
+                                "Sprite":  1004
+                            },
+                            {
+                                "Name":  "Bow",
+                                "Component":  "322162967",
+                                "GameObject":  "322162965",
+                                "Sprite":  1002
+                            },
+                            {
+                                "Name":  "Hammer",
+                                "Component":  "433615421",
+                                "GameObject":  "433615419",
+                                "Sprite":  1006
+                            },
+                            {
+                                "Name":  "Sword",
+                                "Component":  "599458364",
+                                "GameObject":  "599458362",
+                                "Sprite":  1001
+                            },
+                            {
+                                "Name":  "Fire",
+                                "Component":  "759242121",
+                                "GameObject":  "759242119",
+                                "Sprite":  1007
+                            },
+                            {
+                                "Name":  "Electricity",
+                                "Component":  "769075878",
+                                "GameObject":  "769075876",
+                                "Sprite":  1009
+                            },
+                            {
+                                "Name":  "Axe",
+                                "Component":  "1022370374",
+                                "GameObject":  "1022370372",
+                                "Sprite":  1005
+                            },
+                            {
+                                "Name":  "Ice",
+                                "Component":  "1268042068",
+                                "GameObject":  "1268042066",
+                                "Sprite":  1008
+                            },
+                            {
+                                "Name":  "Darkness",
+                                "Component":  "1389912765",
+                                "GameObject":  "1389912763",
+                                "Sprite":  1013
+                            },
+                            {
+                                "Name":  "Light",
+                                "Component":  "1395854677",
+                                "GameObject":  "1395854675",
+                                "Sprite":  1012
+                            },
+                            {
+                                "Name":  "Wind",
+                                "Component":  "1764517426",
+                                "GameObject":  "1764517424",
+                                "Sprite":  1010
+                            },
+                            {
+                                "Name":  "Water",
+                                "Component":  "1823250735",
+                                "GameObject":  "1823250733",
+                                "Sprite":  1014
+                            },
+                            {
+                                "Name":  "Earth",
+                                "Component":  "1967955380",
+                                "GameObject":  "1967955378",
+                                "Sprite":  1011
+                            }
+                        ],
+    "TowerIcons14ReferencesCorrectAndUnchanged":  true,
+    "UnityPlayTested":  false
+}

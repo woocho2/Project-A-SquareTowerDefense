@@ -65,7 +65,7 @@ namespace SquareTD
 
             TowerManager.Instance.SelectionChanged += HandleSelectionChanged;
             TowerManager.Instance.TowerRemoved += HandleTowerRemoved;
-            m_input = FindFirstObjectByType<BoardInputController>();
+            m_input = FindAnyObjectByType<BoardInputController>();
             if (m_input != null) m_input.Clicked += HandleBoardClicked;
             TowerManager.Instance.TowerReplaced += HandleTowerReplaced;
         }

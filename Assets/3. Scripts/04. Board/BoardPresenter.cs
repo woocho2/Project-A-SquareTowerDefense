@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace SquareTD
 {
@@ -14,6 +15,25 @@ namespace SquareTD
         private void Start()
         {
             BoardManager.Instance.Occupancy.CellChanged += OnCellChanged;
+            ApplyStageColors();
+        }
+
+        private void ApplyStageColors()
+        {
+            StageDefinition stage = GameSession.Instance != null ? GameSession.Instance.Stage : null;
+            BoardManager board = BoardManager.Instance;
+            if (stage == null || board.PathTilemap == null) return;
+
+            board.PathTilemap.color = stage.PathColor;
+            if (board.SpawnTilemap != null) board.SpawnTilemap.color = stage.SpawnColor;
+
+            GridLayout grid = board.PathTilemap.layoutGrid;
+            if (grid == null) return;
+            foreach (Tilemap tilemap in grid.GetComponentsInChildren<Tilemap>(true))
+            {
+                if (tilemap.name == "Direction") tilemap.color = stage.AccentColor;
+                else if (tilemap.name == "Frame") tilemap.color = stage.FrameColor;
+            }
         }
 
         private void OnDestroy()

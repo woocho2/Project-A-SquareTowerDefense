@@ -1534,3 +1534,22 @@ A.
 - 실행 중인 본 탐색: strategy_20261029_234533_420. 완료 전 중간1위는 잠정치.
 자료: Balance/StrategySearch_20261029, Balance/strategy_20261029_234533_420_strategy_search.json 및 _strategy_summary.md.
 
+
+
+[길 화살표 — PathDirectionArrows] (2026-11-13)
+Q. "PathDirectionArrows는 모르겠다" ([B] SetTransformMatrix 줄에서 막힘)
+A.
+- 하는 일: 길 칸마다 다음 번호 칸이 어느 쪽인지 보고 화살표 타일을 그쪽으로 돌림. 화살표 그림(Board_Arrow)은 원래 오른쪽(→).
+- dir = 다음 칸 - 지금 칸. 길 칸은 붙어 있어서 (1,0) 오른쪽 / (0,1) 위 / (-1,0) 왼쪽 / (0,-1) 아래 넷 중 하나.
+- Mathf.Atan2(y, x)는 방향을 각도로 바꿈 (라디안 → Mathf.Rad2Deg를 곱해 도). 오른쪽 0°, 위 90°, 왼쪽 180°, 아래 -90°.
+- 타일맵의 칸은 GameObject가 아니라 transform.rotation이 없음. 대신 칸마다 행렬(Matrix4x4: 위치·회전·크기를 한 번에 담은 값)을 넣음.
+  Matrix4x4.Rotate(…)로 회전만 담은 행렬을 만들고, tilemap.SetTransformMatrix(칸, 행렬)로 그 칸에 넣음.
+- 타일에 LockTransform 플래그가 있으면 행렬이 안 먹으므로 SetTileFlags(칸, TileFlags.None)로 먼저 풂.
+- 정답: tilemap.SetTransformMatrix(cell, rotation);  — 두 값은 빼기가 아니라 쉼표로 넘김.
+Q. "Matrix4x4는 유니티 제공 함수야?"
+A.
+- Unity가 제공하는 자료형(struct). 함수가 아님. UnityEngine 안에 있어 using UnityEngine;만 있으면 씀. Vector3·Quaternion과 같은 종류.
+  Vector3 = 위치·방향, Quaternion = 회전, Matrix4x4 = 위치·회전·크기를 한 번에 (4×4 숫자 16개).
+- Matrix4x4.Rotate(…)는 그 struct에 딸린 static 함수 (Vector3.Distance, Quaternion.Euler와 같은 모양).
+  같은 무리: Matrix4x4.Translate(위치), Matrix4x4.Scale(크기), Matrix4x4.TRS(위치, 회전, 크기).
+- 평소엔 transform이 대신 들고 있어 직접 볼 일이 적음. 타일맵 칸은 transform이 없어서 행렬을 직접 넘긴 것.

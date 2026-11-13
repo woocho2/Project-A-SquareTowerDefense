@@ -19,6 +19,8 @@ namespace SquareTD
 
         private bool m_endTurnRequested;
         [SerializeField] private float m_attackSafetySeconds = 10f;
+        [SerializeField] private float m_phaseGap = 0.5f;
+        private bool m_anyMoved;
 
         private TowerTurnRunner m_towerRunner;
         private EnemyTileEffectApplier m_tileApplier;
@@ -74,14 +76,21 @@ namespace SquareTD
             {
                 wave.NextWave();
                 Debug.Log($"[TurnManager] 웨이브 {wave.CurrentWave} 시작");
-                if (!session.CheckBeforeSpawn(EnemyManager.Instance.Registry.Count)) yield break;
-                EnemyManager.Instance.SpawnWave(wave.CurrentWave);
 
                 ChangeState(new PlayerTurnState());
                 m_endTurnRequested = false;
                 while (!m_endTurnRequested) yield return null;
 
                 ChangeState(new EnemyTurnState());
+                if (!session.CheckBeforeSpawn(EnemyManager.Instance.Registry.Count)) yield break;
+                List<EnemyController> spawned = EnemyManager.Instance.SpawnWave(wave.CurrentWave);
+                yield return EnemySpawnIntro.Play(spawned);
+                yield return Gap(spawned.Count > 0);
+
+                int adaptive = session.RollAdaptive();
+                yield return AdaptiveDiceRoll.Play(adaptive, WaveTable.GetAdaptiveMin(session.Mode), WaveTable.GetAdaptiveMax(session.Mode));
+                yield return Gap(true);
+
                 int turns = wave.IsLastWave ? LastWaveEnemyTurns : EnemyTurnsPerWave;
                 for (int turn = 1; turn <= turns; turn++)
                 {
@@ -97,13 +106,35 @@ namespace SquareTD
             Debug.Log($"[TurnManager] 적 턴 {turn}");
             EnemyTurnStart();
             yield return EffectActivity.WaitUntilIdle();
-            yield return MoveAllEnemies();
-            yield return SupportTowersPhase();
-            TileEffectsPhase();
+            yield return BuffTowersPhase();
+            yield return Gap(m_towerRunner.LastActed > 0);
             yield return AttackTowersPhase();
-            DebuffPhase();
+            yield return Gap(m_towerRunner.LastActed > 0);
+            yield return Gap(AdaptivePhase());
+            yield return MoveAllEnemies();
+            yield return Gap(m_anyMoved);
+            yield return DebuffTowersPhase();
+            TileEffectsPhase();
+            yield return Gap(m_towerRunner.LastActed > 0);
+            yield return Gap(DotPhase());
             BossTimerPhase();
             EnemyTurnEnded?.Invoke(turn);
+        }
+
+        private IEnumerator Gap(bool happened)
+        {
+            if (!happened || m_phaseGap <= 0f || SimulationRunner.IsOn) yield break;
+            yield return new WaitForSeconds(m_phaseGap);
+        }
+
+        private bool AdaptivePhase()
+        {
+            bool healed = false;
+            foreach (EnemyController enemy in new List<EnemyController>(EnemyManager.Instance.Registry.Alive))
+            {
+                if (enemy.IsAlive && enemy.Movement.ApplyAdaptive()) healed = true;
+            }
+            return healed;
         }
 
         private void EnemyTurnStart()
@@ -121,23 +152,29 @@ namespace SquareTD
             }
 
             while (EnemyManager.Instance.IsAnyEnemyMoving()) yield return null;
+            m_anyMoved = enemies.Exists(enemy => enemy.Movement.ActedThisTurn);
         }
 
         private IEnumerator AttackTowersPhase() { yield return m_towerRunner.RunAttackTowers(); }
-        private IEnumerator SupportTowersPhase() { yield return m_towerRunner.RunSupportTowers(); }
+        private IEnumerator BuffTowersPhase() { yield return m_towerRunner.RunBuffTowers(); }
+        private IEnumerator DebuffTowersPhase() { yield return m_towerRunner.RunDebuffTowers(); }
         private void TileEffectsPhase()
         {
             m_tileApplier.ApplyAll(EnemyManager.Instance.Registry.Alive);
         }
 
-        private void DebuffPhase()
+        private bool DotPhase()
         {
+            bool any = BoardManager.Instance.Grounds.All.Count > 0;
             foreach (EnemyController enemy in new List<EnemyController>(EnemyManager.Instance.Registry.Alive))
             {
-                if (enemy.IsAlive) enemy.Status.OnTurn();
+                if (!enemy.IsAlive) continue;
+                if (enemy.Status.Effects.Count > 0) any = true;
+                enemy.Status.OnTurn();
             }
 
             BoardManager.Instance.Grounds.RunTurn();
+            return any;
         }
 
         private void BossTimerPhase()

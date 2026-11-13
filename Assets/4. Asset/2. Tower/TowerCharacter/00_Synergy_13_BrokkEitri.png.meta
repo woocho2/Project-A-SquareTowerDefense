@@ -153,13 +153,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 00_Synergy_13_BrokkEitri_Face
+      name: 00_Synergy_13_BrokkEitri_Right
       rect:
         serializedVersion: 2
-        x: 1446
-        y: 1492
-        width: 256
-        height: 256
+        x: 1535
+        y: 1495
+        width: 150
+        height: 300
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -170,6 +170,28 @@ TextureImporter:
       bones: []
       spriteID: f508c7e27e6bee84e85d9128d6db05cd
       internalID: -170496561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 00_Synergy_13_BrokkEitri_Left
+      rect:
+        serializedVersion: 2
+        x: 524
+        y: 1554
+        width: 150
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 126de5174389b1d48bd679493a9e47fc
+      internalID: -986655110
       vertices: []
       indices: 
       edges: []
@@ -188,8 +210,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      00_Synergy_13_BrokkEitri_Face: -170496561
       00_Synergy_13_BrokkEitri_Full: -1926704928
+      00_Synergy_13_BrokkEitri_Left: -986655110
+      00_Synergy_13_BrokkEitri_Right: -170496561
       Tower_Synergy_BrokkEitri_TwoTone_0: -8245864758009007432
       Tower_Synergy_BrokkEitri_TwoTone_1: -7280247492955321108
   mipmapLimitGroupName: 

@@ -26,12 +26,24 @@ namespace SquareTD
             EnemyCubeFaces.Apply(m_controller.Stats, m_cube.GetFaceAsset(m_cube.VisibleFace), CurrentAdaptive(), m_controller.IsBoss);
         }
 
+        private bool m_healPending;
+
         private void Land()
         {
             RefreshFace();
+            m_healPending = true;
+        }
+
+        public bool ApplyAdaptive()
+        {
+            RefreshFace();
+            if (!m_healPending) return false;
+            m_healPending = false;
 
             float healRate = EnemyCubeFaces.GetHealRate(m_cube.GetFaceAsset(m_cube.VisibleFace), CurrentAdaptive());
-            if (healRate > 0f) m_controller.Heal(m_controller.MaxHp * healRate);
+            if (healRate <= 0f) return false;
+            m_controller.Heal(m_controller.MaxHp * healRate);
+            return true;
         }
 
         private void Awake()

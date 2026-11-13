@@ -1,0 +1,50 @@
+﻿{
+    "ApprovedPreview":  "ArtPreviews/Enemy_Jotunheim_20261113/FrostGiantChief/Jotunheim_FrostGiantChief_Preview_v1.png",
+    "Destination":  "Assets/4. Asset/4. Enemy/TwoTone/Jotunheim_FrostGiantChief.png",
+    "SourceDimensions":  [
+                             1254,
+                             1254
+                         ],
+    "SavedDimensions":  [
+                            2048,
+                            2048
+                        ],
+    "Method":  "Approved image resized uniformly to 2032px inside 2048px transparent canvas; 8px padding; no redraw or sharpening",
+    "PPU":  2048,
+    "Guid":  "9e409f1d2c5a47adbcfbb308306dd914",
+    "Slices":  [
+                   {
+                       "Name":  "Jotunheim_FrostGiantChief_Full",
+                       "ID":  "4600000000000131",
+                       "X":  0,
+                       "Y":  0,
+                       "Width":  2048,
+                       "Height":  2048
+                   },
+                   {
+                       "Name":  "Jotunheim_FrostGiantChief_Face",
+                       "ID":  "4600000000000132",
+                       "X":  932,
+                       "Y":  1787,
+                       "Width":  256,
+                       "Height":  256
+                   }
+               ],
+    "CharacterLeftEyeSourceTopLeft":  [
+                                          649,
+                                          77
+                                      ],
+    "CharacterLeftEyeFinalTopLeft":  [
+                                         1060,
+                                         133
+                                     ],
+    "CornerAlpha":  [
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+    "SpriteNamesIDsGuidAndAppearanceReferencesPreserved":  true,
+    "MetadataChangesLimitedToSliceRects":  true,
+    "UnityPlayTested":  false
+}

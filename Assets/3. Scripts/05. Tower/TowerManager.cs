@@ -58,6 +58,12 @@ namespace SquareTD
             Database.Load(m_towerCsv.text);
             ColorLevels = new ColorUpgradeState();
 
+            if (StartSettings.IsSet && StartSettings.Emblems.Count > 0)
+            {
+                m_selectedEmblems.Clear();
+                m_selectedEmblems.AddRange(StartSettings.Emblems);
+            }
+
             ColorLevels.LevelChanged += HandleColorLevelChanged;
         }
 

@@ -185,15 +185,7 @@ MonoBehaviour:
   - {x: -5, y: -2, z: 0}
   m_tileCounts:
     Bifrost: 1
-    Defense: 2
-    Speed: 2
-    PathActionCount: 2
-    Heal: 2
     Purify: 1
-    Power: 2
-    SpawnActionCount: 2
-    AttackCount: 2
-    Mastery: 1
   m_layoutSeed: 0
 --- !u!4 &1287105
 Transform:
@@ -319,6 +311,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.TurnManager
   m_attackSafetySeconds: 10
+  m_phaseGap: 0.5
 --- !u!4 &238421518
 Transform:
   m_ObjectHideFlags: 0
@@ -3893,6 +3886,7 @@ GameObject:
   - component: {fileID: 1768091550}
   - component: {fileID: 1768091552}
   - component: {fileID: 1768091551}
+  - component: {fileID: 1768091553}
   m_Layer: 11
   m_Name: Direction
   m_TagString: Untagged
@@ -4357,6 +4351,18 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &1768091553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1768091549}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d897e2e08dea3048b13dd7c0b60688b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.PathDirectionArrows
 --- !u!1 &1771618199
 GameObject:
   m_ObjectHideFlags: 0
@@ -4517,6 +4523,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.GameSession
   m_mode: 2
+  m_stage: {fileID: 11400000, guid: c0bdb361d6d141e48222c6b442d9a0ee, type: 2}
 --- !u!4 &1838845913
 Transform:
   m_ObjectHideFlags: 0

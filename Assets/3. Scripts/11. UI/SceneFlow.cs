@@ -23,6 +23,19 @@ namespace SquareTD
             SceneManager.LoadScene(sceneName);
         }
 
+        public static bool LoadStage(StageDefinition stage, string fallbackScene = null)
+        {
+            string sceneName = stage != null && !string.IsNullOrEmpty(stage.SceneName) ? stage.SceneName : fallbackScene;
+            if (string.IsNullOrEmpty(sceneName) || !Application.CanStreamedLevelBeLoaded(sceneName))
+            {
+                Debug.LogWarning($"[SceneFlow] '{sceneName}' 씬이 아직 없거나 Build Settings 목록에 없어 입장하지 않음");
+                return false;
+            }
+
+            Load(sceneName);
+            return true;
+        }
+
         public static void Quit()
         {
 #if UNITY_EDITOR

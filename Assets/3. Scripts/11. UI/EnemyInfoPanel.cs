@@ -157,7 +157,7 @@ namespace SquareTD
                 m_buffEntryPrefab = Resources.Load<GameObject>("BuffPrefab");
                 if (m_buffEntryPrefab == null)
                 {
-                    TileinfoPanel tileInfoPanel = FindFirstObjectByType<TileinfoPanel>(FindObjectsInactive.Include);
+                    TileinfoPanel tileInfoPanel = FindAnyObjectByType<TileinfoPanel>(FindObjectsInactive.Include);
                     if (tileInfoPanel != null && tileInfoPanel.BuffEntryPrefab != null) m_buffEntryPrefab = tileInfoPanel.BuffEntryPrefab;
                 }
             }
@@ -697,7 +697,7 @@ namespace SquareTD
         private static string GetMaxHpChangeText(EnemyController body)
         {
             if (body == null || body.Definition == null) return "";
-            float spawnMaxHp = body.Definition.MaxHP * WaveTable.GetHpMultiplier(body.SpawnWave, body.Definition.Kind);
+            float spawnMaxHp = body.SpawnMaxHp;
             if (spawnMaxHp <= 0f || Mathf.Approximately(spawnMaxHp, body.MaxHp)) return "";
             return $" (최대 {body.MaxHp / spawnMaxHp * 100f - 100f:+0.#;-0.#}%)";
         }

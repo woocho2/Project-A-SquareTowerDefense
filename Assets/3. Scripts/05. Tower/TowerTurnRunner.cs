@@ -13,6 +13,7 @@ namespace SquareTD
         private readonly Func<IEnumerator> m_waitForVisuals;
 
         public static bool LogActions = false;
+        public int LastActed { get; private set; }
 
         public TowerTurnRunner(TowerSlots slots, float safetySeconds, ZoneRegistry zones = null, Func<IEnumerator> waitForVisuals = null)
         {
@@ -22,15 +23,21 @@ namespace SquareTD
             m_waitForVisuals = waitForVisuals;
         }
 
-        public IEnumerator RunSupportTowers()
+        public IEnumerator RunBuffTowers() => RunSupportTowers(buff: true);
+        public IEnumerator RunDebuffTowers() => RunSupportTowers(buff: false);
+
+        private IEnumerator RunSupportTowers(bool buff)
         {
+            LastActed = 0;
             for (int i = 0; i < m_slots.Count; i++)
             {
                 TowerController tower = m_slots.Get(i);
                 if (tower == null || tower.IsAttackTower) continue;
+                if ((tower.Definition.Color == TowerColor.Yellow) != buff) continue;
                 if (!tower.TickAction()) continue;
+                LastActed++;
 
-                if (LogActions) Debug.Log($"[TowerTurnRunner] ② {tower.name} 행동");
+                if (LogActions) Debug.Log($"[TowerTurnRunner] {(buff ? "버프" : "디버프")} {tower.name} 행동");
                 yield return tower.Act(new AttackHandle());
             }
         }
@@ -50,14 +57,16 @@ namespace SquareTD
 
         public IEnumerator RunAttackTowers()
         {
+            LastActed = 0;
             for (int i = 0; i < m_slots.Count; i++)
             {
                 TowerController tower = m_slots.Get(i);
                 if (tower == null || !tower.IsAttackTower) continue;
 
                 if (!tower.TickAction()) continue;
+                LastActed++;
 
-                if (LogActions) Debug.Log($"[TowerTurnRunner] ④ {tower.name} 행동");
+                if (LogActions) Debug.Log($"[TowerTurnRunner] 공격 {tower.name} 행동");
                 var handle = new AttackHandle();
                 yield return tower.Act(handle);
                 yield return WaitForHandle(tower, handle);

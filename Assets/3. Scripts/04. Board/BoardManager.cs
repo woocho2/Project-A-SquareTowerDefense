@@ -13,6 +13,9 @@ namespace SquareTD
         [SerializeField] private SpecialTileCounts m_tileCounts = new SpecialTileCounts();
         [SerializeField] private int m_layoutSeed;
 
+        public Tilemap PathTilemap => m_pathTilemap;
+        public Tilemap SpawnTilemap => m_spawnTilemap;
+
         public BoardGrid Grid { get; private set; }
 
         public SpecialTileLayout Tiles { get; private set; }

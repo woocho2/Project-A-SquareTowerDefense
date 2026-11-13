@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d7a3c1e9b2f4a6c8e0d1f3b5a7c9e21, type: 3}
+  m_Name: 04. Midgard
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.StageDefinition
+  <Number>k__BackingField: 4
+  <DisplayName>k__BackingField: 미드가르드
+  <EnglishName>k__BackingField: Midgard
+  <SceneName>k__BackingField: 6. Stage4
+  <SpawnColor>k__BackingField: {r: 0.915, g: 0.97, b: 0.965, a: 1}
+  <PathColor>k__BackingField: {r: 0.05, g: 0.18, b: 0.36, a: 1}
+  <AccentColor>k__BackingField: {r: 0.38, g: 0.84, b: 0.82, a: 1}
+  <FrameColor>k__BackingField: {r: 0.24, g: 0.68, b: 0.72, a: 1}
+  <Normal>k__BackingField:
+    <Name>k__BackingField: 바다뱀
+    <Appearance>k__BackingField: {fileID: 11400000, guid: 03e1f270042db64ec01907fafa2b41f0, type: 2}
+  <MiddleBoss>k__BackingField:
+    <Name>k__BackingField: 큰 바다뱀
+    <Appearance>k__BackingField: {fileID: 11400000, guid: 22128430f29db3c99592d30ebf942df4, type: 2}
+  <FinalBoss>k__BackingField:
+    <Name>k__BackingField: 요르문간드
+    <Appearance>k__BackingField: {fileID: 11400000, guid: cc22dd4d97b9ed209d509f22d86c87fc, type: 2}
+  <StoryEmblems>k__BackingField:
+  - 6
+  - 3
+  <RagnarokCycles>k__BackingField: []

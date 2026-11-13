@@ -12,8 +12,9 @@ namespace SquareTD
         public readonly float StackValue;
         public readonly int Mastery;
         public readonly float SkillCount;
+        public readonly float AbilityValue;
 
-        public TierRow(int action, float power, int attackCount, float maxStack, float stackValue, int mastery, float skillCount)
+        public TierRow(int action, float power, int attackCount, float maxStack, float stackValue, int mastery, float skillCount, float abilityValue)
         {
             Action = action;
             Power = power;
@@ -22,9 +23,10 @@ namespace SquareTD
             StackValue = stackValue;
             Mastery = mastery;
             SkillCount = skillCount;
+            AbilityValue = abilityValue;
         }
 
-        public static readonly TierRow Identity = new TierRow(0, 1f, 0, 1f, 1f, 0, 1f);
+        public static readonly TierRow Identity = new TierRow(0, 1f, 0, 1f, 1f, 0, 1f, 1f);
     }
 
     public readonly struct ColorLevelRow
@@ -51,38 +53,63 @@ namespace SquareTD
     {
         public const int MaxColorLevel = 5;
 
-        private static readonly TierRow[] s_tierRows =
+        private static readonly TierRow[] s_attackTierRows =
         {
             TierRow.Identity,
-            new TierRow(0, 1f, 0, 1f, 1f, 0, 1f),
-            new TierRow(-1, 2f, 0, 0.95f, 1f, 0, 0.95f),
-            new TierRow(-2, 4f, 1, 0.9f, 1f, 0, 0.9f),
-            new TierRow(-3, 8f, 1, 0.8f, 1.5f, 0, 0.8f),
-            new TierRow(-4, 16f, 2, 0.5f, 2.5f, 1, 0.5f),
+            new TierRow(0, 1f, 0, 1f, 1f, 0, 1f, 1f),
+            new TierRow(-1, 2f, 0, 0.95f, 1f, 0, 0.95f, 1f),
+            new TierRow(-2, 4f, 1, 0.9f, 1f, 0, 0.9f, 1f),
+            new TierRow(-3, 8f, 1, 0.8f, 1.5f, 0, 0.8f, 1.5f),
+            new TierRow(-4, 16f, 2, 0.5f, 2.5f, 1, 0.5f, 3f),
         };
 
-        private static readonly ColorLevelRow[] s_colorLevelRows =
+        private static readonly TierRow[] s_supportTierRows =
+        {
+            TierRow.Identity,
+            new TierRow(0, 1f, 0, 1f, 1f, 0, 1f, 1f),
+            new TierRow(-1, 1.5f, 0, 0.95f, 1f, 0, 0.95f, 1f),
+            new TierRow(-2, 2f, 1, 0.9f, 1f, 0, 0.9f, 1f),
+            new TierRow(-3, 3f, 1, 0.8f, 1.5f, 0, 0.8f, 1.5f),
+            new TierRow(-4, 4.5f, 2, 0.5f, 2.5f, 1, 0.5f, 3f),
+        };
+
+        private static readonly ColorLevelRow[] s_attackColorLevelRows =
         {
             ColorLevelRow.Identity,
             new ColorLevelRow(0, 1f, 1f, 1f, 0),
-            new ColorLevelRow(0, 2f, 1.5f, 1f, 0),
-            new ColorLevelRow(1, 4f, 2f, 1f, 0),
-            new ColorLevelRow(1, 8f, 2.5f, 1/2f, 0),
-            new ColorLevelRow(2, 16f, 4f, 1/2f, 1),
+            new ColorLevelRow(0, 1.25f, 1.5f, 1f, 0),
+            new ColorLevelRow(1, 1.5f, 2f, 1f, 0),
+            new ColorLevelRow(1, 2f, 2.5f, 1/2f, 0),
+            new ColorLevelRow(2, 3f, 4f, 1/2f, 1),
+        };
+
+        private static readonly ColorLevelRow[] s_supportColorLevelRows =
+        {
+            ColorLevelRow.Identity,
+            new ColorLevelRow(0, 1f, 1f, 1f, 0),
+            new ColorLevelRow(0, 1.25f, 1.5f, 1f, 0),
+            new ColorLevelRow(1, 1.5f, 2f, 1f, 0),
+            new ColorLevelRow(1, 2f, 2.5f, 1/2f, 0),
+            new ColorLevelRow(2, 3f, 4f, 1/2f, 1),
         };
 
         private static readonly int[] s_colorUpgradeCosts = { 0, 4, 12, 48, 240, 0 };
 
-        public static TierRow GetTierRow(int tier)
+        public static bool IsSupport(TowerColor color) => color == TowerColor.Yellow || color == TowerColor.Purple;
+
+        public static TierRow GetTierRow(int tier) => GetTierRow(tier, TowerColor.Red);
+
+        public static TierRow GetTierRow(int tier, TowerColor color)
         {
-            if (tier < 1 || tier >= s_tierRows.Length) return TierRow.Identity;
-            return s_tierRows[tier];
+            TierRow[] rows = IsSupport(color) ? s_supportTierRows : s_attackTierRows;
+            if (tier < 1 || tier >= rows.Length) return TierRow.Identity;
+            return rows[tier];
         }
 
         public static ColorLevelRow GetColorLevelRow(int level, TowerColor color)
         {
             level = Mathf.Clamp(level, 1, MaxColorLevel);
-            ColorLevelRow row = s_colorLevelRows[level];
+            ColorLevelRow row = (IsSupport(color) ? s_supportColorLevelRows : s_attackColorLevelRows)[level];
 
             if (color != TowerColor.Blue) return row;
 

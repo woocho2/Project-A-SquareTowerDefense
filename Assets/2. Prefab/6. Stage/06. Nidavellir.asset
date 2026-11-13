@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d7a3c1e9b2f4a6c8e0d1f3b5a7c9e21, type: 3}
+  m_Name: 06. Nidavellir
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.StageDefinition
+  <Number>k__BackingField: 6
+  <DisplayName>k__BackingField: 니다벨리르
+  <EnglishName>k__BackingField: Nidavellir
+  <SceneName>k__BackingField: 8. Stage6
+  <SpawnColor>k__BackingField: {r: 0.95, g: 0.93, b: 0.975, a: 1}
+  <PathColor>k__BackingField: {r: 0.24, g: 0.14, b: 0.35, a: 1}
+  <AccentColor>k__BackingField: {r: 0.9, g: 0.66, b: 0.3, a: 1}
+  <FrameColor>k__BackingField: {r: 0.78, g: 0.5, b: 0.2, a: 1}
+  <Normal>k__BackingField:
+    <Name>k__BackingField: 타락한 드워프
+    <Appearance>k__BackingField: {fileID: 11400000, guid: 089a0b42dfa8ea90df9dd39b12d5c1b3, type: 2}
+  <MiddleBoss>k__BackingField:
+    <Name>k__BackingField: 타락한 드워프 장인
+    <Appearance>k__BackingField: {fileID: 11400000, guid: 44b697f4365fb7c73f2b97687b601936, type: 2}
+  <FinalBoss>k__BackingField:
+    <Name>k__BackingField: 파프니르
+    <Appearance>k__BackingField: {fileID: 11400000, guid: bb34d3c03760cf74fc7f75ffefdf69f7, type: 2}
+  <StoryEmblems>k__BackingField:
+  - 2
+  <RagnarokCycles>k__BackingField: []

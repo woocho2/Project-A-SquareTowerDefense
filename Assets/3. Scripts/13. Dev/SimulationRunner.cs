@@ -28,8 +28,8 @@ namespace SquareTD
         public int MergeCountB = 2;
 
         public bool CompareDeckModes;
-        public int NormalDeckCount = 4;
-        public int HardDeckCount = 6;
+        public int NormalDeckCount = EmblemSelectPanel.NormalCount;
+        public int HardDeckCount = EmblemSelectPanel.HardCount;
         public string CsvSha256 = "";
 
         public bool SearchStrategies;
@@ -179,7 +179,7 @@ namespace SquareTD
 
             foreach (Camera camera in Camera.allCameras) camera.enabled = false;
             if (m_settings.IsControlled && Application.isBatchMode)
-                foreach (Canvas canvas in FindObjectsByType<Canvas>(FindObjectsSortMode.None)) canvas.enabled = false;
+                foreach (Canvas canvas in FindObjectsByType<Canvas>()) canvas.enabled = false;
 
             string emblems = ApplyGameOptions();
             string modeName = GameSession.Instance != null ? GetField<GameMode>(GameSession.Instance, "m_mode").ToString() : "";
@@ -210,7 +210,7 @@ namespace SquareTD
             {
                 GameMode mode = GameSession.Instance != null ? GetField<GameMode>(GameSession.Instance, "m_mode") : GameMode.Normal;
                 int requested = m_settings.GetDeckCount(m_run);
-                int count = requested > 0 ? requested : mode == GameMode.Hard ? 8 : 6;
+                int count = requested > 0 ? requested : EmblemSelectPanel.GetCount(mode);
                 var pool = new List<TowerEmblem>();
                 for (int i = (int)TowerEmblem.Sword; i <= (int)TowerEmblem.Darkness; i++) pool.Add((TowerEmblem)i);
 

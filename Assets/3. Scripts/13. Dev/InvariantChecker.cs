@@ -27,7 +27,7 @@ namespace SquareTD
             if (EnemyManager.Instance.IsAnyEnemyMoving())
                 Debug.LogError("[InvariantChecker] 적 턴이 끝났는데 움직이는 적이 있음");
 
-            int activeCount = FindObjectsByType<EnemyController>(FindObjectsSortMode.None).Length;
+            int activeCount = FindObjectsByType<EnemyController>().Length;
             if (activeCount != registry.Count)
                 Debug.LogError($"[InvariantChecker] 켜진 적 {activeCount} ≠ 명단 {registry.Count}");
 

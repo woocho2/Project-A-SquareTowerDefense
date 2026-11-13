@@ -37,16 +37,22 @@ namespace SquareTD
             Movement = GetComponent<EnemyMovement>();
         }
 
-        public void Setup(EnemyDefinition definition, EnemyPool pool, int spawnWave)
+        public void Setup(EnemyDefinition definition, EnemyPool pool, int spawnWave, string displayName = null)
         {
             Definition = definition;
             Pool = pool;
             SpawnWave = spawnWave;
-            Stats = new EnemyStats(definition, spawnWave);
+            DisplayName = string.IsNullOrEmpty(displayName) ? definition.DisplayName : displayName;
+            ModeMultiplier = WaveTable.GetModeStatMultiplier(GameSession.CurrentMode);
+            Stats = new EnemyStats(definition, spawnWave, ModeMultiplier);
             Resistance = new EnemyResistance(definition.BaseResistance);
             Status = new EnemyStatusEffects(this, Stats.Modifiers, Resistance);
-            Health.Reset(definition.MaxHP * WaveTable.GetHpMultiplier(spawnWave, definition.Kind));
+            Health.Reset(SpawnMaxHp);
         }
+
+        public string DisplayName { get; private set; }
+        public float ModeMultiplier { get; private set; } = 1f;
+        public float SpawnMaxHp => Definition.MaxHP * WaveTable.GetHpMultiplier(SpawnWave, Definition.Kind) * ModeMultiplier;
 
         public void TakeDamage(DamageInfo info)
         {

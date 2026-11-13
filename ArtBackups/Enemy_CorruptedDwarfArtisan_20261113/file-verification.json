@@ -1,0 +1,50 @@
+﻿{
+    "ApprovedPreview":  "ArtPreviews/Enemy_Nidavellir_20261113/CorruptedDwarfArtisan/Nidavellir_CorruptedDwarfArtisan_Preview_v1.png",
+    "Destination":  "Assets/4. Asset/4. Enemy/TwoTone/Nidavellir_CorruptedDwarfArtisan.png",
+    "SourceDimensions":  [
+                             1254,
+                             1254
+                         ],
+    "SavedDimensions":  [
+                            2048,
+                            2048
+                        ],
+    "Method":  "Approved image resized uniformly to 2032px inside 2048px transparent canvas; 8px padding; no redraw or sharpening",
+    "PPU":  2048,
+    "Guid":  "ba4480353c6148f49730660a210bd167",
+    "Slices":  [
+                   {
+                       "Name":  "Nidavellir_CorruptedDwarfArtisan_Full",
+                       "ID":  "4600000000000161",
+                       "X":  0,
+                       "Y":  0,
+                       "Width":  2048,
+                       "Height":  2048
+                   },
+                   {
+                       "Name":  "Nidavellir_CorruptedDwarfArtisan_Face",
+                       "ID":  "4600000000000162",
+                       "X":  924,
+                       "Y":  1705,
+                       "Width":  256,
+                       "Height":  256
+                   }
+               ],
+    "CharacterLeftEyeSourceTopLeft":  [
+                                          644,
+                                          128
+                                      ],
+    "CharacterLeftEyeFinalTopLeft":  [
+                                         1052,
+                                         215
+                                     ],
+    "CornerAlpha":  [
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+    "SpriteNamesIDsGuidAndAppearanceReferencesPreserved":  true,
+    "MetadataChangesLimitedToSliceRects":  true,
+    "UnityPlayTested":  false
+}

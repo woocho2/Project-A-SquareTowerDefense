@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SquareTD
@@ -26,14 +27,15 @@ namespace SquareTD
 
         private void Start()
         {
-            m_spawner = new EnemySpawner(BoardManager.Instance, Registry, m_normal, m_middleBoss, m_finalBoss, BossTimer);
+            m_spawner = new EnemySpawner(BoardManager.Instance, Registry, m_normal, m_middleBoss, m_finalBoss, BossTimer, GameSession.Instance != null ? GameSession.Instance.Stage : null);
             m_deathResolver = new DeathResolver(BoardManager.Instance, Registry, BossTimer, CurrencyManager.Instance, GameSession.Instance);
         }
 
-        public void SpawnWave(int wave)
+        public List<EnemyController> SpawnWave(int wave)
         {
-            m_spawner.SpawnWave(wave);
+            List<EnemyController> spawned = m_spawner.SpawnWave(wave);
             CountChanged?.Invoke(Registry.Count);
+            return spawned;
         }
 
         public EnemyController SpawnForDebug(float hp)

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d7a3c1e9b2f4a6c8e0d1f3b5a7c9e21, type: 3}
+  m_Name: 09. Hel
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.StageDefinition
+  <Number>k__BackingField: 9
+  <DisplayName>k__BackingField: 헬
+  <EnglishName>k__BackingField: Hel
+  <SceneName>k__BackingField: 11. Stage9
+  <SpawnColor>k__BackingField: {r: 0.85, g: 0.94, b: 0.925, a: 1}
+  <PathColor>k__BackingField: {r: 0.07, g: 0.08, b: 0.09, a: 1}
+  <AccentColor>k__BackingField: {r: 0.25, g: 0.76, b: 0.69, a: 1}
+  <FrameColor>k__BackingField: {r: 0.16, g: 0.6, b: 0.55, a: 1}
+  <Normal>k__BackingField:
+    <Name>k__BackingField: 망자
+    <Appearance>k__BackingField: {fileID: 11400000, guid: cfb9de39e2e29e75fc963d9ddcc33ee9, type: 2}
+  <MiddleBoss>k__BackingField:
+    <Name>k__BackingField: 가름
+    <Appearance>k__BackingField: {fileID: 11400000, guid: 4565cbad7a4f31d35457f6ae2cd9761a, type: 2}
+  <FinalBoss>k__BackingField:
+    <Name>k__BackingField: 헬
+    <Appearance>k__BackingField: {fileID: 11400000, guid: 15cb10e47d7a7f0962b5aeb6dec68eed, type: 2}
+  <StoryEmblems>k__BackingField:
+  - 14
+  <RagnarokCycles>k__BackingField: []

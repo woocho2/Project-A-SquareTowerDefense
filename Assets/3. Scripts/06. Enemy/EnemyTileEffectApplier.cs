@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 적 턴 ③: 멈춘 칸의 효과를 적용
+    // 적 턴 ⑤: 멈춘 칸의 효과를 적용
     public class EnemyTileEffectApplier
     {
         private readonly BoardGrid m_grid;

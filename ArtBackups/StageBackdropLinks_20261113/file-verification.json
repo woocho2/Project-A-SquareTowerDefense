@@ -1,0 +1,157 @@
+﻿{
+    "ConnectedStageCount":  9,
+    "Connections":  [
+                        {
+                            "Stage":  2,
+                            "World":  "Alfheim",
+                            "Korean":  "알프헤임",
+                            "Scene":  "Assets/1. Scenes/4. Stage2.unity",
+                            "PNG":  "Assets/4. Asset/1. BackGround/Alfheim_Backdrop_TopDown_1920x1080.png",
+                            "Meta":  "Assets/4. Asset/1. BackGround/Alfheim_Backdrop_TopDown_1920x1080.png.meta",
+                            "Guid":  "b3841011abd3844428dea566fc2b591e",
+                            "SpriteID":  "-5689256641619548818",
+                            "SpriteName":  "Alfheim_Backdrop_TopDown_1920x1080_0",
+                            "PPU":  72,
+                            "WorldSize":  [
+                                              26.666666666666668,
+                                              15
+                                          ]
+                        },
+                        {
+                            "Stage":  3,
+                            "World":  "Vanaheim",
+                            "Korean":  "바나헤임",
+                            "Scene":  "Assets/1. Scenes/5. Stage3.unity",
+                            "PNG":  "Assets/4. Asset/1. BackGround/Vanaheim_Backdrop_TopDown_1920x1080.png",
+                            "Meta":  "Assets/4. Asset/1. BackGround/Vanaheim_Backdrop_TopDown_1920x1080.png.meta",
+                            "Guid":  "4463df4285706a64ca1addb43ae95587",
+                            "SpriteID":  "7208309148412276455",
+                            "SpriteName":  "Vanaheim_Backdrop_TopDown_1920x1080_0",
+                            "PPU":  72,
+                            "WorldSize":  [
+                                              26.666666666666668,
+                                              15
+                                          ]
+                        },
+                        {
+                            "Stage":  4,
+                            "World":  "Midgard",
+                            "Korean":  "미드가르드",
+                            "Scene":  "Assets/1. Scenes/6. Stage4.unity",
+                            "PNG":  "Assets/4. Asset/1. BackGround/Midgard_Backdrop_TopDown_1920x1080.png",
+                            "Meta":  "Assets/4. Asset/1. BackGround/Midgard_Backdrop_TopDown_1920x1080.png.meta",
+                            "Guid":  "5e4db02d5ab39b645aee12bcfc52ab6c",
+                            "SpriteID":  "-6567677043815790353",
+                            "SpriteName":  "Midgard_Backdrop_TopDown_1920x1080_0",
+                            "PPU":  72,
+                            "WorldSize":  [
+                                              26.666666666666668,
+                                              15
+                                          ]
+                        },
+                        {
+                            "Stage":  5,
+                            "World":  "Jotunheim",
+                            "Korean":  "요툰헤임",
+                            "Scene":  "Assets/1. Scenes/7. Stage5.unity",
+                            "PNG":  "Assets/4. Asset/1. BackGround/Jotunheim_Backdrop_TopDown_1920x1080.png",
+                            "Meta":  "Assets/4. Asset/1. BackGround/Jotunheim_Backdrop_TopDown_1920x1080.png.meta",
+                            "Guid":  "babcf3fbf802dc04f81d075fd73c7ecd",
+                            "SpriteID":  "4116108374712889810",
+                            "SpriteName":  "Jotunheim_Backdrop_TopDown_1920x1080_0",
+                            "PPU":  72,
+                            "WorldSize":  [
+                                              26.666666666666668,
+                                              15
+                                          ]
+                        },
+                        {
+                            "Stage":  6,
+                            "World":  "Nidavellir",
+                            "Korean":  "니다벨리르",
+                            "Scene":  "Assets/1. Scenes/8. Stage6.unity",
+                            "PNG":  "Assets/4. Asset/1. BackGround/Nidavellir_Backdrop_TopDown_1920x1080.png",
+                            "Meta":  "Assets/4. Asset/1. BackGround/Nidavellir_Backdrop_TopDown_1920x1080.png.meta",
+                            "Guid":  "882ec0438d90d914eaddc1fd8abb6e31",
+                            "SpriteID":  "2879657133003092968",
+                            "SpriteName":  "Nidavellir_Backdrop_TopDown_1920x1080_0",
+                            "PPU":  72,
+                            "WorldSize":  [
+                                              26.666666666666668,
+                                              15
+                                          ]
+                        },
+                        {
+                            "Stage":  7,
+                            "World":  "Niflheim",
+                            "Korean":  "니플헤임",
+                            "Scene":  "Assets/1. Scenes/9. Stage7.unity",
+                            "PNG":  "Assets/4. Asset/1. BackGround/Niflheim_Backdrop_TopDown_1920x1080.png",
+                            "Meta":  "Assets/4. Asset/1. BackGround/Niflheim_Backdrop_TopDown_1920x1080.png.meta",
+                            "Guid":  "7a22abfc7f7b44a449352e707721ad5a",
+                            "SpriteID":  "8508435230596674318",
+                            "SpriteName":  "Niflheim_Backdrop_TopDown_1920x1080_0",
+                            "PPU":  72,
+                            "WorldSize":  [
+                                              26.666666666666668,
+                                              15
+                                          ]
+                        },
+                        {
+                            "Stage":  8,
+                            "World":  "Muspelheim",
+                            "Korean":  "무스펠헤임",
+                            "Scene":  "Assets/1. Scenes/10. Stage8.unity",
+                            "PNG":  "Assets/4. Asset/1. BackGround/Muspelheim_Backdrop_TopDown_1920x1080.png",
+                            "Meta":  "Assets/4. Asset/1. BackGround/Muspelheim_Backdrop_TopDown_1920x1080.png.meta",
+                            "Guid":  "1b0adb2ac2a40f348abf14dafbb82adc",
+                            "SpriteID":  "8100315196715976421",
+                            "SpriteName":  "Muspelheim_Backdrop_TopDown_1920x1080_0",
+                            "PPU":  72,
+                            "WorldSize":  [
+                                              26.666666666666668,
+                                              15
+                                          ]
+                        },
+                        {
+                            "Stage":  9,
+                            "World":  "Hel",
+                            "Korean":  "헬",
+                            "Scene":  "Assets/1. Scenes/11. Stage9.unity",
+                            "PNG":  "Assets/4. Asset/1. BackGround/Hel_Backdrop_TopDown_1920x1080.png",
+                            "Meta":  "Assets/4. Asset/1. BackGround/Hel_Backdrop_TopDown_1920x1080.png.meta",
+                            "Guid":  "985a42ecfbfbed04bb22f5118a1be3af",
+                            "SpriteID":  "-7495617332921683464",
+                            "SpriteName":  "Hel_Backdrop_TopDown_1920x1080_0",
+                            "PPU":  72,
+                            "WorldSize":  [
+                                              26.666666666666668,
+                                              15
+                                          ]
+                        },
+                        {
+                            "Stage":  10,
+                            "World":  "Ragnarok",
+                            "Korean":  "라그나로크",
+                            "Scene":  "Assets/1. Scenes/12. Stage10.unity",
+                            "PNG":  "Assets/4. Asset/1. BackGround/Ragnarok_Backdrop_TopDown_1920x1080.png",
+                            "Meta":  "Assets/4. Asset/1. BackGround/Ragnarok_Backdrop_TopDown_1920x1080.png.meta",
+                            "Guid":  "0d7432123421a94419449b65f780f174",
+                            "SpriteID":  "6439276797812419089",
+                            "SpriteName":  "Ragnarok_Backdrop_TopDown_1920x1080_0",
+                            "PPU":  72,
+                            "WorldSize":  [
+                                              26.666666666666668,
+                                              15
+                                          ]
+                        }
+                    ],
+    "SceneChanges":  "Only BackGround SpriteRenderer.m_Sprite, one per scene",
+    "ImporterChanges":  "Only spritePixelsToUnits, 100 -\u003e 72, matches existing Asgard size",
+    "PNGsUnchanged":  true,
+    "Stage1Unchanged":  true,
+    "SceneMetaGUIDsUnchanged":  true,
+    "SpriteGUIDsAndIDsAndRectsUnchanged":  true,
+    "GameCodeChanged":  false,
+    "UnityPlayTested":  false
+}

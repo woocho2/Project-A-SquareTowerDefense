@@ -338,7 +338,7 @@ namespace SquareTD
                 return;
             }
 
-            BoardInputController input = FindFirstObjectByType<BoardInputController>();
+            BoardInputController input = FindAnyObjectByType<BoardInputController>();
             if (input != null) input.ChangeMode(new PlaceZoneMode(input, tower, BoardManager.Instance.Zones));
         }
 
@@ -351,7 +351,7 @@ namespace SquareTD
                 return;
             }
 
-            BoardInputController input = FindFirstObjectByType<BoardInputController>();
+            BoardInputController input = FindAnyObjectByType<BoardInputController>();
             if (input != null) input.ChangeMode(new PickAttackCellMode(input, tower));
         }
 

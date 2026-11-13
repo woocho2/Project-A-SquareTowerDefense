@@ -6,11 +6,30 @@ using UnityEngine;
 namespace SquareTD
 {
     // 한 판의 진행: 적 수 한도(기본 + 보정), 게임 오버·클리어
+    public static class StartSettings
+    {
+        public static bool IsSet { get; private set; }
+        public static GameMode Mode { get; private set; }
+        public static StageDefinition Stage { get; private set; }
+        public static IReadOnlyList<TowerEmblem> Emblems { get; private set; } = new List<TowerEmblem>();
+
+        public static void Set(GameMode mode, StageDefinition stage, IEnumerable<TowerEmblem> emblems)
+        {
+            Mode = mode;
+            Stage = stage;
+            Emblems = new List<TowerEmblem>(emblems);
+            IsSet = true;
+        }
+    }
+
     public class GameSession : Singleton<GameSession>
     {
         [SerializeField] private GameMode m_mode = GameMode.Normal;
+        [SerializeField] private StageDefinition m_stage;
 
         public GameMode Mode => m_mode;
+        public StageDefinition Stage => m_stage;
+        public static GameMode CurrentMode => Instance != null ? Instance.m_mode : GameMode.Normal;
         public int BaseLimit { get; private set; }
         public int AdaptiveValue { get; private set; }
         public int CurrentLimit => BaseLimit + SumLimitModifiers();
@@ -29,6 +48,13 @@ namespace SquareTD
             if (Instance != this) return;
 
             DOTween.SetTweensCapacity(500, 200);
+
+            if (StartSettings.IsSet)
+            {
+                m_stage = StartSettings.Stage;
+                m_mode = StartSettings.Mode;
+            }
+            Debug.Log($"[GameSession] {(m_stage != null ? m_stage.DisplayName : "스테이지 없음")} · {m_mode}");
         }
 
         private void Start()
@@ -57,12 +83,17 @@ namespace SquareTD
             if (EnemyManager.Instance != null) EnemyManager.Instance.EnemyDied -= OnEnemyDied;
         }
 
-        private void OnWaveChanged(int wave)
+        public int RollAdaptive()
         {
             AdaptiveValue = UnityEngine.Random.Range(WaveTable.GetAdaptiveMin(m_mode), WaveTable.GetAdaptiveMax(m_mode) + 1);
-            Debug.Log($"[GameSession] 웨이브 {wave} 적응형 능력치 {AdaptiveValue}");
+            Debug.Log($"[GameSession] 웨이브 {WaveManager.Instance.CurrentWave} 적응형 능력치 {AdaptiveValue}");
             if (EnemyManager.Instance != null)
                 foreach (EnemyController enemy in EnemyManager.Instance.Registry.Alive) enemy.Movement.RefreshFace();
+            return AdaptiveValue;
+        }
+
+        private void OnWaveChanged(int wave)
+        {
             Shared.OnWaveStarted();
             LightSplashSkill.RefreshTranscendAll();
 

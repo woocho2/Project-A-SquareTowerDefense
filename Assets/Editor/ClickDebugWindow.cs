@@ -43,7 +43,7 @@ namespace SquareTD
             m_wasPressed = isPressed;
             if (!pressedNow) return;
 
-            Camera camera = Camera.main != null ? Camera.main : FindFirstObjectByType<Camera>();
+            Camera camera = Camera.main != null ? Camera.main : FindAnyObjectByType<Camera>();
             if (camera == null || BoardManager.Instance == null) return;
 
             RecordClick(camera, Mouse.current.position.ReadValue());
@@ -248,7 +248,7 @@ namespace SquareTD
             MoveRange range = stats.GetMoveRange();
 
             Header($"{enemy.name}  ({enemy.Definition.Kind})");
-            float spawnMaxHp = enemy.Definition.MaxHP * WaveTable.GetHpMultiplier(enemy.SpawnWave, enemy.Definition.Kind);
+            float spawnMaxHp = enemy.SpawnMaxHp;
             string maxHpChange = Mathf.Approximately(spawnMaxHp, enemy.MaxHp) ? "" : $"  (처음 최대 {spawnMaxHp:0.#} → {enemy.MaxHp / spawnMaxHp * 100f - 100f:+0.#;-0.#}%)";
             Row("체력", $"{enemy.CurrentHp:0.#} / {enemy.MaxHp:0.#}{maxHpChange}");
             Row("방어력", $"{stats.Get(StatType.Defense):0.#}  (기본 {stats.GetBase(StatType.Defense):0.#})");
