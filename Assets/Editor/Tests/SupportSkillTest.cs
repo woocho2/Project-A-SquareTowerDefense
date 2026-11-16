@@ -3,7 +3,7 @@ using NUnit.Framework;
 namespace SquareTD.Tests
 {
     // 새 공통 틀 (20번 4-1장): 버프·디버프의 스킬 1 + 스킬 2, 스킬 카운트, 차지, 키워드 스택, 판 공용 카운트
-    //   타워: Power 10, AbilityValue 2, AttackCount 1, 최대 차지 60, SkillCount 5, 브론즈·컬러 1 → 스킬 1 값 10, 스킬 2 값 30, 유지 1번 행동
+    //   타워: Power 10, AbilityValue 2, AttackCount 1, 최대 차지 60, SkillCount 5, 브론즈·컬러 1 → 스킬 1 값 10, 스킬 2 값 30, 유지 2번 행동
     public class SupportSkillTest : EmblemTestBase
     {
         private const float Eps = 0.0001f;
@@ -42,8 +42,10 @@ namespace SquareTD.Tests
             ReceiveSkill2(buff, receiver);
 
             SupportBuffs.CountDown(receiver);
+            Assert.AreEqual(13f, receiver.Stats.Power, Eps, "1번 행동 뒤에는 아직 스킬 2");
 
-            Assert.AreEqual(11f, receiver.Stats.Power, Eps, "브론즈·컬러 1은 1번 행동 뒤에 끝남");
+            SupportBuffs.CountDown(receiver);
+            Assert.AreEqual(11f, receiver.Stats.Power, Eps, "2번 행동 뒤에 끝남");
         }
 
         // ── 스킬 카운트 ──
@@ -107,7 +109,9 @@ namespace SquareTD.Tests
 
             MoveEnemyTo(enemy, 1);
             enemy.Status.OnActed();
-            Assert.IsFalse(EmblemDebuffEffect.Has(enemy, TowerEmblem.Sword), "벗어난 뒤 1번 행동하면 꺼짐");
+            Assert.IsTrue(EmblemDebuffEffect.Has(enemy, TowerEmblem.Sword), "벗어난 뒤 1번 행동으로는 남음");
+            enemy.Status.OnActed();
+            Assert.IsFalse(EmblemDebuffEffect.Has(enemy, TowerEmblem.Sword), "벗어난 뒤 2번 행동하면 꺼짐");
         }
 
         [Test]

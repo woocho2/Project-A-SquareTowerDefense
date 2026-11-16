@@ -8,7 +8,7 @@ namespace SquareTD
     // TowerData.csv(1티어만)를 읽고 2~5티어 정의를 1티어에서 만들어 ID로 찾게 해 줌
     public class TowerDatabase
     {
-        private const int MaxTier = 5;
+        private const int MaxTier = TowerId.MaxTier;
 
         private readonly Dictionary<int, TowerDefinition> m_byId = new Dictionary<int, TowerDefinition>();
 
@@ -99,7 +99,7 @@ namespace SquareTD
                 ReadFloat(cells, columns, "CriticalDamage"),
                 ReadInt(cells, columns, "Mastery"),
                 ReadInt(cells, columns, "Stack"),
-                ReadInt(cells, columns, "Duration"),
+                ReadFloat(cells, columns, "Duration"),
                 ReadFloat(cells, columns, "AbilityValue"),
                 ReadFloat(cells, columns, "ProjectileSpeed"),
                 ReadEnum(cells, columns, "TargetPriority"));

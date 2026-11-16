@@ -12,7 +12,7 @@ namespace SquareTD
 
         public override bool NeedsLivingTarget => false;
 
-        public static int SpearCount(TowerController owner) => SkillFormula.EffectDuration(owner);
+        public static int SpearCount(TowerController owner) => SkillFormula.LevelTierCount(owner);
 
         protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
         {

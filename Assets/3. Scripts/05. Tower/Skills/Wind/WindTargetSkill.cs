@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 바람 단일 — 템페스트 ((Power × AbilityValue (+ 가속))% 확률로 (레벨 × Tier)번 행동 동안 AttackCount +2, 가속 상태면 +4)
+    // 바람 단일 — 템페스트 ((Power × AbilityValue (+ 가속))% 확률로 2번 행동 동안 AttackCount +2, 가속 상태면 +4)
     public class WindTargetSkill : AttackSkill
     {
         public const string Source = "템페스트";
@@ -25,7 +25,7 @@ namespace SquareTD
         {
             if (!Chance.Roll(GetChance(owner, useStack))) return true;
             int bonus = Acceleration.IsAccelerated(owner) ? AcceleratedBonus : AttackCountBonus;
-            TimedTowerBuff.Apply(owner.State, Source, EffectDuration(owner), StatModifier.Flat(Source, StatType.AttackCount, bonus));
+            TimedTowerBuff.Apply(owner.State, Source, SkillFormula.EffectActions, StatModifier.Flat(Source, StatType.AttackCount, bonus));
             SkillEffectTable.PlayTempest(owner);
             return true;
         }

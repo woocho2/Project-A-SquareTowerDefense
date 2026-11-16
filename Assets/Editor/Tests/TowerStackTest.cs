@@ -163,7 +163,7 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 미스릴이_되면_새_최대를_넘는_만큼_버림()
+        public void 티어가_올라_최대가_줄면_넘는_만큼_버림()
         {
             var old = new TowerStack(60);
             old.Add(50f);

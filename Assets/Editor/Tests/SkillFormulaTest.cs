@@ -84,11 +84,16 @@ namespace SquareTD.Tests
         // ── 유지 시간 ──
 
         [Test]
-        public void 유지_시간은_레벨_곱하기_Tier()
+        public void 유지_시간은_행동_2번으로_고정()
         {
-            Assert.AreEqual(1, SkillFormula.EffectDuration(1, 1));
-            Assert.AreEqual(12, SkillFormula.EffectDuration(3, 4));
-            Assert.AreEqual(25, SkillFormula.EffectDuration(5, 5));
+            Assert.AreEqual(2, SkillFormula.EffectActions);
+        }
+
+        [Test]
+        public void 개수는_레벨_곱하기_Tier()
+        {
+            Assert.AreEqual(1, SkillFormula.LevelTierCount(1, 1));
+            Assert.AreEqual(12, SkillFormula.LevelTierCount(3, 4));
         }
     }
 }

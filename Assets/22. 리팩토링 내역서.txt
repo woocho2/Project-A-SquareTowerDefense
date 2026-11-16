@@ -1952,3 +1952,162 @@
 - (같은 날 사용자: "도끼가 빠르게 한바퀴 구르고 그다음에 타격하도록") 0.6초 모으기 → 0.45초에 빠르게 한 바퀴 → 0.15초 뒤 모든 적이 한꺼번에(0.08초 안에) 베임 + 충격파·흔들림 → 0.8초 마무리. 약 2초
 - (같은 날 사용자: "도끼느낌이 전혀 안드는데") 선 대신 실제 대도끼 모양(긴 자루 + 수염 달린 넓은 날, FX_GreatAxe를 코드로 그림)이 바이킹을 축으로 한 바퀴 돎.
     나타남(0.2초) → 뒤로 30° 젖힘 → 0.45초에 빠르게 한 바퀴(잔상·도끼머리 궤적·붉은 테두리) → 섬광과 함께 사라짐 → 0.15초 뒤 모든 적이 베임
+
+[적] 최종 보스의 큐브 면 → 고유 기믹 호출 연결 (2026-11-16, 사용자 요청 — AI가 수정)   확인 상태: 게임·에디터 테스트 코드 컴파일 오류 0, 컴파일된 게임 DLL의 순수 면 판정 42항목 통과. Unity Test Runner·실제 플레이는 미확인
+- 중간 보스에는 별도 기믹 없음. 최종 보스만 자물쇠(받는 피해 증가) 면을 고유 기믹으로 대체함.
+- EnemyCubeFaces: bool isBoss 대신 EnemyKind로 구분. 일반·중간 보스에는 받는 피해 증가를 적용하고, 최종 보스의 해당 면에는 적용하지 않음. 다른 면은 기존대로.
+- EnemyController: BossSkillTriggered 이벤트와 TryTriggerBossSkill 추가. 살아 있는 최종 보스의 자물쇠 면에서만 호출함.
+- EnemyMovement: 착지 뒤 적응형 효과 단계에서 한 번 호출. RefreshFace(웨이브 주사위·대지 효과에 따른 수치 갱신)만으로는 호출하지 않음. 움직이지 않고 같은 면을 유지하는 동안 재발동하지 않음.
+- TurnManager: 적응형 단계의 처리 여부에 치유와 기믹 호출을 함께 반영해 기존 단계 간격을 적용함.
+- 테스트: EnemyControllerTest에 적 종류·다른 면·사망·착지당 한 번 호출 검증 10케이스 추가. EmblemRuleTest의 기존 보스 판정을 최종·중간 보스로 구분하도록 수정. Unity Test Runner 실행은 아직.
+- 개별 보스의 실제 능력·연출은 아직 미정. 현재는 이벤트 호출 구조만 연결했으며 이벤트 구독으로 개별 기믹을 붙일 수 있음.
+
+[밸런스] 1웨이브 섬멸률로 공격 타워 CSV 조정 — 노말 (2026-11-16, 사용자 요청)
+- 목표 (사용자): 1웨이브 적을 2웨이브 종료까지, 노말은 광역·단일 중 2기로 80% 섬멸. 스토리(1기 80%)·하드(2기 50%)는 다음에.
+  처음에는 1웨이브 종료까지로 쟀으나, 타워가 1웨이브에 한 번만 행동하고 적이 거의 움직이지 않아 Power ×20으로도 45%라 기준을 2웨이브 종료로 바꿈 (사용자).
+- 시뮬레이션 모드 추가: -simWaveProbe (브론즈·1레벨 공격 타워 N기를 무작위로, 사거리 안 길 칸이 가장 많은 자리에 놓고 1웨이브 적 섬멸률을 셈).
+  옵션 -simProbeTowers, -simProbeWaves, -simMode, 실험용 보정 -simSplashPowerPct·-simSinglePowerPct·-simSplashAction·-simSingleAction·-simEnemyAction·-simSplashMastery·-simRange.
+  결과 Balance/probe_*_probe.csv, *_probe_summary.txt (평균, 80%·50% 이상 판 비율, 조합별, 타워별). 200판에 약 1 ~ 2분.
+- 기준값(노말 2기, 2웨이브 종료): 평균 25% (단일 2기 44%, 광역+단일 25%, 광역 2기 0%).
+- 적용 (공격 타워 28행, 버프·디버프·적 데이터는 그대로): 광역 Power ×10, Action −4, Range +1, Mastery 1 → 2 / 단일 Power ×1.5, Action −3, Range +1.
+  적용 전 CSV는 Assets/98. _Recovery/TowerData (2026-11-16 1웨이브 밸런스 전).csv.txt.
+- 적용 후 200판: 평균 87.7%, 80% 이상 74.5%판 (단일 2기 92.7%, 광역+단일 88.2%, 광역 2기 79.8%). TowerDatabaseTest의 CSV 기준값을 새 값으로.
+- 이어서 Power를 낮춤 (사용자): 광역 × 0.85, 단일 × 0.6 (처음 값 기준 광역 × 8.5, 단일 × 0.9). 예: 소드 마스터 4.2 → 35.7, 블레이드 댄서 11.4 → 10.26.
+  200판: 평균 79.4%, 80% 이상 54%판 (단일 2기 80.8%, 광역+단일 79.4%, 광역 2기 77.6%). TowerDatabaseTest의 1101 Power 35.7.
+- Unity Run All은 아직.
+[밸런스] 공격 타워 실버 보정 (2026-11-16, 사용자 요청)
+- 2티어 기본 공격 기댓값을 1티어의 1.5배로: 공격 티어 표의 실버를 Power ×2·Action −1 → Power ×1.5·Action +0 (BalanceTables s_attackTierRows). 지원 타워 표는 그대로.
+  전에는 Action을 줄인 뒤라 실버가 브론즈의 2.4 ~ 3배였음. 20번 10장 표 갱신, BalanceTablesTest·TowerDatabaseTest(2201 Action 4) 맞춤. Unity Run All은 아직.
+[기획·코드] 미스릴 삭제, 4티어(다이아)가 최종 (2026-11-16, 사용자 요청: 소환 칸에 비해 종류가 많아 5티어까지 가기 어려움)
+- 티어 1 브론즈 / 2 실버 / 3 골드 / 4 다이아. ID 4xxx가 다이아. 타워 224종 (TowerId.MaxTier = 4, TowerDatabase가 2 ~ 4티어를 만듦).
+- 티어 표(공격·지원)에서 미스릴 줄을 뺌. 다이아 줄은 그대로 (Action −4, 공격 Power ×16 / 지원 ×4.5, AttackCount +2, Mastery +1, 최대 Charge ×0.5, ChargeValue ×2.5, SkillCount ×0.5, AV ×3).
+- 티어 강화 5 / 15 / 45젬 (골드 → 다이아가 45), 합성은 1 ~ 3티어만, 판매 젬 1 / 3 / 9 / 27.
+- 그림: 4티어는 옛 다이아(5번) 색·테두리 반짝임·아이콘을 씀 (TowerId.VisualTier: TowerVisual, TowerIcons, TowerInfoPanel 카드, SkillCutIn). 티어 이름표에서 미스릴을 뺌.
+- 20번: 티어 이름, 224종, ID 예, 10장 티어 표, 8장 합성·강화·판매, 시너지 타워 조건(4티어 = 다이아)을 고침.
+- 테스트: 5xxx → 4xxx, 미스릴을 쓰던 테스트는 골드·다이아 값으로 (TowerStatCalculator, TowerDatabase 224종, TowerProgression, TowerManager, TowerStackConnection, BalanceTables, EmblemNames). 컴파일 확인, Unity Run All은 아직.
+[밸런스] 공격 타워 골드 보정 (2026-11-16, 사용자 요청)
+- 골드 기본 공격 기댓값을 실버의 평균 2.5배로: Power ×4·Action −2·AttackCount +1 → Power ×2.45·Action +0·AttackCount +1 (AttackCount +1은 사용자가 유지).
+  타워마다 실버의 2.04배(브론즈 AttackCount 4) ~ 3.27배(1), 28종 평균 2.50배. 지원 타워 표는 그대로. 20번 10장, BalanceTablesTest·TowerDatabaseTest(3102 Action 6) 맞춤.
+[밸런스] 공격 타워 다이아 보정 (2026-11-16, 사용자 요청)
+- 다이아 기본 공격 기댓값을 골드의 평균 5배로: Power ×16·Action −4·AttackCount +2 → Power ×6.15·Action −1·AttackCount +1(골드와 같음). Mastery +1은 유지.
+  Mastery +1로 단일의 발사 수가 2배라 단일은 골드의 평균 6.8배, 광역은 3.2배(범위 증가는 계산 밖). 28종 평균 5배. 지원 타워 표는 그대로.
+- 20번 10장 표(AttackCount를 공격·지원으로 나눔)·스킬 세기 18.45배·Action 설명 갱신. 테스트: BalanceTablesTest, TowerStatCalculatorTest(다이아 61.5), TowerDatabaseTest(4204 Action 2·AttackCount 8), TowerControllerTest(4101 Action 2).
+[경제] 판매 골드 반환, 시작 타워 4기 (2026-11-16, 사용자 요청)
+- 판매: 골드 50 + (웨이브 − 1) × 5 (TowerManager.GetSellGold, 지금 WaveManager.CurrentWave 기준). 젬은 1 / 3 / 9 / 27 → 골드 티어 1, 다이아 5, 브론즈·실버 0.
+  타워 정보 카드의 판매 값은 "75G" / "75G + 1젬"으로 (TowerInfoPanel이 따로 계산하던 3^(티어−1)을 지움).
+- 시작 골드 300 → 500, 생성 비용 50에서 시작 → 100에서 시작 (+5씩은 그대로). 첫 턴 4기 = 100 + 105 + 110 + 115 = 430, 70 남음.
+  CurrencyManager 기본값과 Stage1 ~ 10 씬 값, TowerManager.StartBuildCost. 최대 비용 1500(MaxBuildCost)은 지움.
+- 20번 8장 [재화]·[타워 생성]·[판매]에 적고 "다이아는 한 판에 많아야 2기" 의도를 넣음. TowerManagerTest 맞춤.
+[경제] 보스 젬 줄임, 컬러 강화 목표 (2026-11-16, 사용자 요청)
+- 보스 젬: 최종 보스 20 × 사이클² → 15 × 사이클², 중간 보스 10 × 사이클² → 5 × 사이클² (WaveTable.GetKillReward). 골드는 그대로.
+  1 ~ 39웨이브 젬 수입 580 → 360 (중간 150 + 최종 210). 40웨이브 최종 보스 240.
+- 목표: 한 컬러 레벨 5(304) + 남는 젬으로 다른 컬러 레벨 4, 세 컬러 레벨 3, 티어 강화 중 하나. 20번 8장의 옛 진행 목표 표(네 컬러 2 → … → 한 컬러 5)를 이것으로 바꿈.
+- 간이 계산(20칸, 24종, 2,000판): 옛 580젬에서는 젬을 티어 강화에 다 쓰면 다이아 9기 안팎, 옛 컬러 계획을 먼저 지키면 3기.
+- 20번 4-8장 해머 참고 줄(젬 600 / 360), 8장 표, 다이아·레벨 5 스킬 55.35배를 고침. WaveTableTest 맞춤.
+[밸런스] 공격 타워 스킬 피해 = 기본 공격의 1.2 / 1.5 / 2 / 5배 (2026-11-16, 사용자 요청)
+- CSV 공격 타워 28종 AbilityValue 1.5 → 1.2. 백업: Assets/98. _Recovery/TowerData (2026-11-16 스킬 AbilityValue 1.2 전).csv.txt.
+- 공격 티어 표 AbilityValue ×1 / ×1 / ×1 / ×3 → ×1 / ×1.25 / ×5/3 / ×25/6. 지원 표는 그대로.
+- 20번 10장 표(AbilityValue를 공격·지원으로 나눔)와 설명, 8장 다이아·레벨 5 스킬 76.875배. BalanceTablesTest 맞춤·추가.
+[시뮬] 배치 실행에 -simMode (BalanceSimulationWindow.RunBatch). 노말 전체 판 20판: 전부 중간·최종 보스 제한 턴으로 6·11웨이브 패배.
+[테스트] Unity EditMode 배치 실행(-runTests) 655개 전부 통과 (2026-11-16)
+- 처음 실행에서 7개 실패 → 고침: 컬러 레벨 5 AbilityValue ×16 → ×3 기대값(TowerStatCalculatorTest 2개, TowerControllerTest), 미스릴 삭제로 1티어 한 줄이 4티어까지 4개(TowerDatabaseTest 2개),
+  덱 비교 테스트에 노말 4 / 하드 6 문양 지정(TowerProgressionTest), 요르문간드 추가 소환 테스트.
+- 요르문간드 테스트(위): 에디터 테스트에서는 Awake가 불리지 않아 EnemyPool·EnemyController.Movement·EnemyMovement의 컨트롤러가 비어 있었음 → 처음 쓸 때 채움 (게임 동작은 같음).
+[밸런스] 보스 목표: 10웨이브 통과 노말 90%, 하드 50% (2026-11-16, 사용자 요청)
+- 시뮬 도구: -simSingle(한 묶음만), -simStopWave N(N웨이브 보스를 넘기면 통과로 끝냄), 게임 오버 때 남은 보스 체력을 *_boss.csv에 씀.
+  AutoPlanner 티어 가치 2배씩 → 지금 기본 공격 기댓값 1 / 1.5 / 3.75 / 18.75.
+- 처음 4기 보장: 첫 생성은 광역, 두 번째는 단일 (TowerManager.GetGuaranteedColor). 보스를 거의 없게 해도 상한이 70%였던 원인
+  (공격 타워 0 ~ 1기로 시작하는 판, 중간 보스에게 피해 0인 판). 보장 뒤 상한 97.5%. 사용자가 이것만 고름 (보스 이동력·초반 골드는 그대로).
+- 보스 기본값: 중간 보스 체력 300 → 70 (방어 15 그대로), 최종 보스 체력 1000 → 150, 방어 200 → 50 (2. Prefab/4·5 에셋).
+  노말 100판 (중간·최종): 300/1000·200 0% → 100/250·50 82% → 70/180·50 89% → 70/150·50 90%.
+- 하드 능력치 배율 1.5 → 1.375 (WaveTable.GetModeStatMultiplier). 하드 100판: 1.5 35%, 1.25 72%, 1.4 46%, 1.375 52%.
+- 20번 3장 기본 능력치 표·보스 목표, 9장 하드 배율. WaveTableTest·TowerManagerTest 맞춤. 시뮬은 자동 플레이 기준이라 실제 플레이와 다를 수 있음.
+[시뮬] 판 기록(BalanceRecorder) 칸 밀림 고침 (2026-11-16, 사용자 요청)
+- games.csv 머리줄은 merge_to5가 남아 있는데 줄은 4티어까지만 써서 그 뒤 칸이 하나씩 밀림 → 요약의 피해 0인 판·쓴 젬 0·생성 막힘 60 등이 엉뚱한 칸을 읽음.
+- 머리줄을 TowerId.MaxTier로 만듦: t1 ~ t4·t6(시너지), merge_to2 ~ 4, first_t2 ~ 4·first_t6. 요약·A/B 비교·덱 화력 표도 같은 목록을 씀. 티어 이름(실버·골드·다이아)으로 표시.
+- 확인: 노말 40판 머리줄 37칸 = 줄 37칸, 요약 정상. TowerProgressionTest에 머리줄 테스트 추가.
+[밸런스] 스킬 2는 3웨이브에 한 번, 유지 시간은 2로 고정 (2026-11-16, 사용자 요청)
+- 브론즈 공격 타워 SkillCount = 30 ÷ Action × (광역 AttackCount / 단일 AttackCount × Mastery). 광역 100 → 5 ~ 22.5, 단일 75 → 12 ~ 40.
+  CSV Duration을 소수로 읽음 (TowerDefinition.Duration float, TowerDatabase ReadFloat). 백업: Assets/98. _Recovery/TowerData (2026-11-16 SkillCount 3웨이브 전).csv.txt.
+- 유지 시간: SkillFormula.EffectDuration(레벨 × Tier) → EffectActions = 2. 버프·디버프 스킬 2, 디버프존 스킬 1의 남는 시간, 블러드 레이지·템페스트·프리즘·랠리 배너,
+  브레스·하이페리온·아쿠아 프리즌·애로우 레인·블랙홀, 출혈.
+  개수(헤드헌트 창, 리바운드 튕김, 연쇄, 화상·전하 양)는 SkillFormula.LevelTierCount로 나눠 레벨 × Tier 그대로.
+- 20번 4-1장 유지 시간 규칙, 문양별 장의 유지 문구, 8장, 10장 SkillCount 기준. 테스트 13개 기대값을 2로 (Element·Weapon·Support·EmblemRule·SkillFormula). EditMode 659개 통과.
+- 이어서 (사용자): 턴으로 세는 것은 3턴 (SkillFormula.EffectTurns = 3) — 브레스·하이페리온·아쿠아 프리즌·애로우 레인·블랙홀·출혈. 행동으로 세는 것은 2번 그대로.
+[밸런스] 공격 타워의 컬러 강화는 스킬 피해만 (2026-11-16, 사용자 요청)
+- 컬러 표 공격·지원 모두 AttackCount(+0/+0/+1/+1/+2, 단일 2배)를 뺌. Mastery 레벨 5 +1은 네 컬러 모두 유지 (사용자가 이어서 정함).
+  AbilityValue·차지 위력·최대 Charge는 그대로.
+[밸런스] 보스 다시 맞춤 (2026-11-16, 사용자 요청: 스킬·컬러 표를 바꾼 뒤)
+- 바꾼 뒤 그대로(70 / 150·50) 노말 96%. 중간·최종 보스 체력을 올려 노말 100판씩: 90/200 94%, 110/260 92%·95%, 115/275 92%·87%, 120/290 86%·92%, 130/320 87%.
+- 중간 보스 체력 70 → 115, 최종 보스 150 → 275 (방어 15 / 50 그대로). 노말 200판 89.5%, 하드(×1.375) 100판 49%.
+- 하드 두 번째 100판은 BalanceTables.cs가 밖에서 고치는 중(컴파일 안 되는 줄)이라 멈춤. 그 수정이 끝난 뒤 다시 재야 함.
+[밸런스] 티어·컬러 표 중간점으로, 컬러 표의 AttackCount 칸 삭제 (2026-11-16, 사용자가 표를 고치고 AI가 정리)
+- 사용자: 티어 표를 네 컬러 공용으로 (Power만 공격 ×2.45 / ×6.15, 지원 ×2 / ×4). 다이아 Action −1, 최대 Charge ×0.75, 차지 위력 ×2, SkillCount ×0.95 / ×0.9 / ×0.8,
+  AbilityValue ×1.25 / ×2.5 / ×6.25. 컬러 표 차지 위력 ×1.1 / ×1.2 / ×1.5 / ×2, 지원 최대 Charge ×0.8 / ×0.7. 컬러 강화 비용 10 / 20 / 40 / 80.
+- AI: ColorLevelRow에서 AttackCount 칸을 지움 (Identity 맞춤, 블루 2배 분기 삭제, TowerStatCalculator.ApplyColorLevel의 AttackCount 줄 삭제).
+- 테스트: BalanceTablesTest를 새 표로 다시 씀(공격·지원 티어 표, 공격·지원 컬러 표), ColorUpgradeState·TowerStatCalculator·TowerDatabase·TowerStackConnection 기대값. EditMode 662개 통과.
+- 20번 10장 티어 표·스킬 배율(1.2 / 1.5 / 3 / 7.5), 8장 컬러 표·비용·젬 목표의 숫자.
+- 바뀐 표로 노말 100판(보스 115 / 275): 92%. 보스 값 그대로. 하드는 아직.
+[시너지] 시너지 타워 틀과 오딘 (2026-11-16, 사용자 요청: 포트폴리오를 빨리 마치려고 효과를 단순하게)
+- 기획: 전용칸(사용자가 씬에 만듦)에 처음부터 놓음. 덱과 겹치는 수가 많은 순. 티어 합 = 재료 3문양 × 4컬러의 가장 높은 티어 합(최대 48).
+  공격 시너지는 브론즈 단일 평균 × 티어 합. 오딘: 매 적 턴 맵 전체 체력 (0.5 × 티어 합)% 이하 즉사, 보스 포함.
+- SynergyRecipes.cs(01. Data): 조합표 14종(ID 6001 ~ 6014, SynergyCharacterCatalog와 같은 번호), Pick, TierSum·HighestTiers, MakeBase·WithTierSum.
+- SynergyEffects.cs(05. Tower): OdinThreshold, OdinExecute. 아직 판에 연결하지 않음 (전용칸이 씬에 생긴 뒤 연결).
+- SynergyTest 9개 (조합 규칙, 티어 합, 고르는 순서, 오딘 기준·즉사). EditMode 671개 통과. csproj에 새 파일 3개를 손으로 넣음.
+- 20번 9장의 "다이아 3종이면 자동 생성, 깨지면 사라짐"을 전용칸 규칙으로 바꿈.
+- 이어서 (사용자): 시너지 타워는 스탯 없이 효과 하나만 → 기준값(MakeBase·WithTierSum)을 지움. 계수는 TierRate = 티어 합 × 0.5%로 공용.
+  토르: 판 시작 때 무작위 길 타일 1칸(PickThorStormIndex), 매 적 턴 그 칸의 적에게 최대 체력 × TierRate 고정 피해(ThorStorm, ForceFixed).
+  SynergyTest에 토르 2개. EditMode 673개 통과.
+  로키: 매 적 턴 무작위 적 1기(보스 제외, LokiCandidates)를 무작위 공격 타워에서 가장 가까운 길 타일(NearestPathIndex)로 TeleportTo (LokiPull).
+  SynergyTest에 로키 2개. EditMode 675개 통과.
+  헬: 매 적 턴 무작위 적 1기(보스 포함)에게 최대 체력 × TierRate 고정 피해로 빼앗음(HelSteal). HelDeathCount.Ratio += 빼앗은 양 ÷ (그 웨이브 일반 적 최대 체력 × 10),
+  1이 되면 보스를 뺀 적 전체 즉사(HelExecuteAll)하고 0으로. UI는 Ratio로 (사용자). SynergyTest에 헬 3개.
+  수르트: SurtrSword.Stacks 매 적 턴 +1, 100이면 맵 위의 적 전체(보스 포함)에게 잃은 체력 × TierRate 고정 피해(SurtrBurn), 0으로. Ratio 있음. SynergyTest에 수르트 2개.
+  이어서 (사용자): 시너지 스택 공용(SynergyStack) — 매 적 턴 n = 0.5 × 티어 합씩, 100이면 터지고 0. 헬·수르트·프레이가 씀.
+    헬: 매 적 턴 무작위 적 1기 최대 체력 2% 고정 피해(HelDrain) + 스택, 다 차면 보스 뺀 전체 즉사. (빼앗은 체력 ÷ 일반 적 × 10 방식은 지움)
+    수르트: 다 차면 잃은 체력의 10% 고정 (n%가 아님). 프레이: 다 찰 때마다 Blessings +1 (모든 타워 AttackCount +1, 판에 연결은 아직).
+  SynergyTest 16개. EditMode 680개 통과.
+  이어서 (사용자): 헬의 데스 카운트는 1000에 참 (SynergyStack에 최대값 인자). 프레이: 다 차면 판 위의 모든 타워(버프·디버프 포함)가 다음 행동 한 번에
+  AttackCount +1 (FreyBless, TimedTowerBuff 1번 행동). 버프·디버프 타워도 받도록 TowerStatCalculator.AllColorSources에 FreySource 추가.
+- 20번 8장 [컬러 강화] 표를 공격·지원으로 나눔, 단일 AttackCount 2배 설명 지움. 테스트: BalanceTables·TowerStatCalculator·TowerDatabase(3102 레벨 4 AttackCount 2, 4204 레벨 5 AttackCount 4). EditMode 660개 통과.
+
+[적] 최종 보스 9종 고유 기믹 실행 연결 (2026-11-16, 사용자 요청 — Codex 구현)
+확인 상태: Unity EditMode 전체 658개 통과(실패 0). 보스 전용 BossMechanicTest 31개 + BossMechanicIntegrationTest 8개 통과. 실제 게임 화면·PlayMode의 연출 검수는 아직.
+- StageDefinition.GetBossMechanic: 스테이지 1~9를 각 보스에 대응. 라그나로크는 사이클별 원본 스테이지의 기믹을 사용함.
+- EnemySpawner.Setup → EnemyController.BossMechanic에 지정. 살아 있는 최종 보스의 자물쇠 면만 BossMechanicService.Trigger로 연결. 일반 적·중간 보스는 기존 받는 피해 증가 적용.
+- 로키: 해당 판의 선택 문양·현재 티어 안에서 다른 타워 정의로 일시 변경. 이미르: 행동·Action 카운트·턴 시작 스킬 진행 정지와 청색 얼음 표시. 파프니르: 2티어 이상만 티어 -1.
+  이 세 기믹은 시너지·합성 진행 중인 타워·이미 단일 기믹에 걸린 타워를 제외. 후보가 없으면 무효. 적용 중 합성·티어 강화 불가.
+  같은 타워 객체·자리·상태를 유지하며 끝나면 원래 정의로 복구. 원래 지원 타워의 존 자리도 복구 가능한 곳에 재배치함.
+- 엘프 족장: 자신 포함 생존 적 전체를 최대 체력 × 눈금 ×10% 치유. 기존 치유 감소·최대 체력 적용.
+- 상급 정령: 자신 포함 생존 적 전체의 최대 체력·방어력·저항력 +50%, 눈금 적 턴 뒤 복구. 최대 체력 변경 시 기존 ScaleMax 방식으로 현재 체력 비율 유지. 저항력 상한 100%와 기존 CC 누적 보존.
+  StatusEffect.IsDebuff로 적의 버프·디버프를 구분하고 정화 타일은 RemoveDebuffs를 호출. 정령 강화가 정화로 함께 지워지지 않는 회귀 테스트 추가.
+- 요르문간드: 정규 일반 적 소환이 0인 보스 웨이브에도 별도 소환 함수로 눈금만큼 추가. 원래 보스의 스테이지·소환 웨이브 기준의 일반 적을 사용하고 등록·점유·적 수 UI를 갱신. 기존 큐브 소환 연출 연결.
+- 펜리르: 전체 타워 Action +1, 추가 Action 최대 +5. 수르트: 활성 효과 중 가장 큰 눈금 ×5% 공격력 감소, 공격 횟수 최대 -3·최종 최소 1.
+  각 발동의 만료 턴을 따로 보관하며 적 턴 끝에 만료. 발동한 턴에는 지속 시간을 차감하지 않고 이후 적 턴으로 계산함. 초 단위 코루틴 대신 게임 루프의 적 턴에 동기화하므로 배속·일시정지에서 시간 오차가 없음.
+  생성·합성 결과에는 기존 보스 디버프를 이어 주지 않음. 젬 티어 강화는 기존 버프 계승 규칙대로 펜리르·수르트의 남은 효과를 계승함.
+- 헬: 사용자 추가 확정에 따라 노말 70·하드 50. GameSession 인스펙터에서 수정 가능. 목표 이상이면 판매 보상 없이 모든 타워·존·선택을 제거하고 카운트를 0으로 초기화. 기존 보스 제한 20턴 유지.
+- 신규 코드: 05. Tower/TowerBossEffects.cs, 06. Enemy/BossMechanicService.cs, 06. Enemy/Status/BossSpiritBlessing.cs (각 .meta).
+- 연결 수정: 00. Core/GameEnums.cs, 01. Data/StageDefinition.cs, 02. Flow/GameSession.cs·TurnManager.cs,
+  05. Tower/TowerController.cs·TowerState.cs·TowerStatCalculator.cs·TowerFactory.cs·TowerManager.cs·TowerProgression.cs·TowerVisual.cs,
+  06. Enemy/EnemyController.cs·EnemySpawner.cs·EnemyManager.cs·EnemyResistance.cs.
+  정화 연결 수정: 04. Board/PathTileEffects.cs, 06. Enemy/Status/StatusEffect.cs·EnemyStatusEffects.cs.
+- 신규 테스트: Assets/Editor/Tests/BossMechanicTest.cs, BossMechanicIntegrationTest.cs (각 .meta).
+- 검증 결과: Library/BossMechanicsVerification/verified-all.xml, verified-all.log. 이전 실행의 기존 수치·데이터 기대값 실패는 병행 작업에서 정리되었고, 최종 전체 실행은 658개 통과.
+- 씬·프리팹·스테이지 에셋의 추가 연결은 필요 없음. 아트 교체·CSV/밸런스 수치 조정·커밋은 이 기믹 구현 작업에서 하지 않음.
+
+[적 외형] 단순 프레임·피해 면 색·최종 보스 공용 배지 (2026-11-16, 사용자 요청 — Codex)
+- 몬스터 6종 면 재질에 타워와 같은 Board_Decoration_Thin을 공유. Common 원본 PNG는 변경하지 않음.
+- Enemy_State_Badges_Atlas.png에서 받는 피해 증가(자물쇠)를 검정, 감소(모래시계)를 회색으로 변경. 나머지 네 칸·알파·기존 .meta 유지.
+- 신규 Enemy_Boss_Gimmick_Badge.png(256×256), Enemy_State_BossGimmick.mat. 최종 보스만 자물쇠 표시를 왕관으로 바꾸며 일반 적·중간 보스는 유지.
+- EnemyCubeMeshVisual·EnemyMovement·EnemyController에 표시 연결, Enemy.prefab에 재질 참조 한 칸 추가. 면의 논리 ID와 기믹 효과는 변경하지 않음.
+- Editor/EnemyCubeVisualSetup.cs: 재적용 및 표시 검증 도구. 내장 image_gen 생성 후 배지 마감, 전달 프롬프트와 방법은 ArtPreviews/EnemyCubeIcons_20261116/README.md.
+- 확인: C# 컴파일 오류 0개(기존 경고 3개). 격리 Unity에서 실제 메시·셰이더·재질 렌더, 여섯 면 보스 교체·ID 유지·일반 적으로 풀 재사용 시 복귀 확인.
+  파일 크기·투명 여백·기존 .meta·다른 네 배지의 픽셀·전체 알파 보존 검증. 메인 씬 실제 PlayMode는 미확인(병행 밸런스 작업 중).
+- 미리보기·검증 JSON: ArtPreviews/EnemyCubeIcons_20261116. 작업 전 원본·메타 백업 24개: ArtBackups/EnemyCubeVisual_20261116_01. 커밋하지 않음.
+[티어 외형] 옛 다이아 5번 변환 제거 (2026-11-16, 사용자 요청 — Codex)
+- TowerId.DiamondVisualTier·VisualTier 삭제. TowerVisual·TowerIcons·TowerInfoPanel·SkillCutIn이 실제 티어(일반 1~4, 시너지 6)를 직접 사용함.
+- TowerVisual 기본 색상·Tower.prefab 색상·TowerInfoCardView 대체 배지 색에서 옛 미스릴 항목을 제거하고 4번째를 다이아 색으로 연결.
+- Resources/TowerIcons.asset은 브론즈·실버·골드·다이아 네 항목. 기존 개별 배지 GUID가 실제 파일에 없어 현재 Tower_Card_Tier_Atlas의 해당 슬라이스로 연결 복구.
+- PNG·슬라이스·.meta는 변경하지 않음. internalID 21300005는 기존 다이아 스프라이트 식별자로 유지하며 게임 티어와 별개.
+- 검증: C# 컴파일 오류 0개, 기존 PlayerTurnPanel CS0649 경고 3개. 런타임 코드의 변환 함수·상수 참조 없음, 네 배지 참조·원래 다이아 색·메타 유지 확인. 실제 Unity PlayMode는 미확인(병행 밸런스 실행 중).
+- 에셋 원본·.meta 백업: ArtBackups/TierVisual_20261116. 커밋하지 않음.

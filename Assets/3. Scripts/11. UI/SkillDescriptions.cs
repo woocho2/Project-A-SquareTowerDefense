@@ -40,7 +40,7 @@ namespace SquareTD
             float damage = SkillFormula.AttackSkill(stats.Power, stats.AbilityValue);
             float skill1 = SkillFormula.SupportSkill1(stats.Power);
             float skill2 = SkillFormula.SupportSkill2(stats.Power, stats.AbilityValue);
-            int duration = SkillFormula.EffectDuration(stats.ColorLevel, definition.Tier);
+            int duration = SkillFormula.EffectActions;
             string count = $"스킬 카운트 {stats.SkillCount:0.#}마다";
             string support = $"스킬 1 {skill1:0.##}, 스킬 2 {skill2:0.##} ({duration}번 행동 동안)";
 

@@ -60,6 +60,16 @@ namespace SquareTD
                 default: return null;
             }
         }
+
+        public BossMechanicKind GetBossMechanic(int cycle)
+        {
+            if (RagnarokCycles != null && RagnarokCycles.Length > 0)
+            {
+                StageDefinition source = RagnarokCycles[Mathf.Clamp(cycle - 1, 0, RagnarokCycles.Length - 1)];
+                if (source != null && source != this) return source.GetBossMechanic(cycle);
+            }
+            return Number >= 1 && Number <= 9 ? (BossMechanicKind)Number : BossMechanicKind.None;
+        }
     }
 
     [Serializable]

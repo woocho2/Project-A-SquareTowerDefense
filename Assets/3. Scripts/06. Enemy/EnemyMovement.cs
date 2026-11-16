@@ -23,24 +23,27 @@ namespace SquareTD
         public void RefreshFace()
         {
             if (m_cube == null || m_controller == null) return;
-            EnemyCubeFaces.Apply(m_controller.Stats, m_cube.GetFaceAsset(m_cube.VisibleFace), CurrentAdaptive(), m_controller.IsBoss);
+            EnemyCubeFaces.Apply(m_controller.Stats, m_cube.GetFaceAsset(m_cube.VisibleFace), CurrentAdaptive(), m_controller.Definition.Kind);
         }
 
-        private bool m_healPending;
+        private bool m_faceEffectPending;
 
         private void Land()
         {
             RefreshFace();
-            m_healPending = true;
+            m_faceEffectPending = true;
         }
 
         public bool ApplyAdaptive()
         {
             RefreshFace();
-            if (!m_healPending) return false;
-            m_healPending = false;
+            if (!m_faceEffectPending) return false;
+            m_faceEffectPending = false;
 
-            float healRate = EnemyCubeFaces.GetHealRate(m_cube.GetFaceAsset(m_cube.VisibleFace), CurrentAdaptive());
+            EnemyCubeFaceAsset face = m_cube.GetFaceAsset(m_cube.VisibleFace);
+            if (m_controller.TryTriggerBossSkill(face)) return true;
+
+            float healRate = EnemyCubeFaces.GetHealRate(face, CurrentAdaptive());
             if (healRate <= 0f) return false;
             m_controller.Heal(m_controller.MaxHp * healRate);
             return true;
@@ -53,6 +56,7 @@ namespace SquareTD
 
         public void Init(int startIndex)
         {
+            if (m_controller == null) m_controller = GetComponent<EnemyController>();
             transform.localScale = Vector3.one;
             IsMoving = false;
             ActedThisTurn = false;
@@ -160,5 +164,9 @@ namespace SquareTD
 
         public void SetSortingOrder(int order) => m_cube.SetSortingOrder(order);
         public void SetAppearance(EnemyCubeAppearance appearance) => m_cube.SetAppearance(appearance);
+        public void SetFinalBoss(bool isFinalBoss)
+        {
+            if (m_cube != null) m_cube.SetFinalBoss(isFinalBoss);
+        }
     }
 }

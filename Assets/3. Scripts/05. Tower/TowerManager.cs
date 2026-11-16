@@ -9,10 +9,11 @@ namespace SquareTD
     // 타워 생성·판매·합성·강화·이동을 맡는 매니저
     public class TowerManager : Singleton<TowerManager>
     {
-        public const int StartBuildCost = 50;
+        public const int StartBuildCost = 100;
         public const int BuildCostStep = 5;
-        public const int MaxBuildCost = 1500;
-        private static readonly int[] s_sellGems = { 0, 1, 3, 9, 27, 81 };
+        public const int SellGoldBase = 50;
+        public const int SellGoldPerWave = 5;
+        private static readonly int[] s_sellGems = { 0, 0, 0, 1, 5 };
 
         [SerializeField] private TextAsset m_towerCsv;
         [SerializeField] private TowerController m_towerPrefab;
@@ -25,7 +26,9 @@ namespace SquareTD
         public int BuildCost { get; private set; } = StartBuildCost;
         public TowerController Selected { get; private set; }
 
-        public static int GetSellGem(int tier) => tier >= 1 && tier <= 5 ? s_sellGems[tier] : 0;
+        public static int GetSellGem(int tier) => tier >= 1 && tier <= TowerId.MaxTier ? s_sellGems[tier] : 0;
+        public static int GetSellGold(int wave) => SellGoldBase + Mathf.Max(0, wave - 1) * SellGoldPerWave;
+        public static int CurrentSellGold => GetSellGold(WaveManager.Instance != null ? WaveManager.Instance.CurrentWave : 1);
 
         public event Action<TowerController> TowerAdded;
         public event Action<int> BuildCostChanged;
@@ -100,7 +103,7 @@ namespace SquareTD
             if (tower == null) return false;
 
             CurrencyManager.Instance.TrySpendGold(BuildCost);
-            BuildCost = Mathf.Min(BuildCost + BuildCostStep, MaxBuildCost);
+            BuildCost += BuildCostStep;
             Debug.Log($"[TowerManager] {tower.name} → {slotIndex}번 칸, 다음 비용 {BuildCost}");
             TowerAdded?.Invoke(tower);
             BuildCostChanged?.Invoke(BuildCost);
@@ -125,13 +128,26 @@ namespace SquareTD
             return tower;
         }
 
+        public static TowerColor GetGuaranteedColor(int buildIndex)
+        {
+            switch (buildIndex)
+            {
+                case 0: return TowerColor.Red;
+                case 1: return TowerColor.Blue;
+                default: return TowerColor.None;
+            }
+        }
+
+        private int BuildIndex => (BuildCost - StartBuildCost) / BuildCostStep;
+
         private bool TryPickRandomTier1(out TowerDefinition definition)
         {
             definition = null;
             if (m_selectedEmblems.Count == 0) return false;
 
             TowerEmblem emblem = m_selectedEmblems[Random.Range(0, m_selectedEmblems.Count)];
-            TowerColor color = (TowerColor)Random.Range((int)TowerColor.Red, (int)TowerColor.Purple + 1);
+            TowerColor color = GetGuaranteedColor(BuildIndex);
+            if (color == TowerColor.None) color = (TowerColor)Random.Range((int)TowerColor.Red, (int)TowerColor.Purple + 1);
             return Database.TryGet(TowerId.Make(1, color, emblem), out definition);
         }
 
@@ -161,10 +177,12 @@ namespace SquareTD
                 return false;
             }
 
+            int gold = CurrentSellGold;
             int gem = GetSellGem(tower.Definition.Tier);
-            Debug.Log($"[TowerManager] {tower.name} 판매, 젬 +{gem}");
+            Debug.Log($"[TowerManager] {tower.name} 판매, 골드 +{gold}, 젬 +{gem}");
             RemoveTower(tower);
-            CurrencyManager.Instance.AddGem(gem);
+            CurrencyManager.Instance.AddGold(gold);
+            if (gem > 0) CurrencyManager.Instance.AddGem(gem);
             return true;
         }
 
@@ -228,7 +246,7 @@ namespace SquareTD
         public bool TryTierUpgrade(TowerController tower)
         {
             if (!TurnManager.Instance.Current.CanPlayerAct) return false;
-            if (tower == null || IsMergingTower(tower)) return false;
+            if (tower == null || IsMergingTower(tower) || tower.State.BossEffects.BlocksProgression) return false;
 
             int cost = TowerProgression.GetTierUpgradeCost(tower.Definition.Tier);
             if (cost <= 0 || TowerId.IsSynergy(tower.Definition.Id))
@@ -251,6 +269,7 @@ namespace SquareTD
             if (created == null) return false;
 
             CurrencyManager.Instance.TrySpendGem(cost);
+            created.State.BossEffects.CopyDebuffsFrom(tower.State.BossEffects);
             Debug.Log($"[TowerManager] 티어 강화 → {created.name}, 젬 −{cost}");
             TowerReplaced?.Invoke(tower, created);
             if (Selected == tower) Select(created);
@@ -329,6 +348,46 @@ namespace SquareTD
         {
             BoardManager board = BoardManager.Instance;
             tower.SetSlot(slot, board.GetWorldPosition(board.Grid.GetSpawnCell(slot)));
+        }
+
+        public bool TryChangeForBoss(TowerController tower, TowerDefinition definition, IReadOnlyList<int> zoneCells = null)
+        {
+            if (tower == null || definition == null || IsMergingTower(tower)) return false;
+            if (BoardManager.Instance.Slots.Get(tower.SlotIndex) != tower) return false;
+            m_factory.ChangeDefinition(tower, definition, zoneCells);
+            TowerReplaced?.Invoke(tower, tower);
+            if (Selected == tower) SelectionChanged?.Invoke(tower);
+            return true;
+        }
+
+        public TowerDefinition PickBossTransformation(TowerController tower)
+        {
+            var options = new List<TowerDefinition>();
+            foreach (TowerDefinition candidate in Database.All)
+            {
+                if (candidate.Tier == tower.Definition.Tier && candidate.Id != tower.Definition.Id &&
+                    !TowerId.IsSynergy(candidate.Id) && m_selectedEmblems.Contains(candidate.Emblem)) options.Add(candidate);
+            }
+            return options.Count == 0 ? null : options[Random.Range(0, options.Count)];
+        }
+
+        public void RefreshAfterBossEffects()
+        {
+            if (Selected != null) SelectionChanged?.Invoke(Selected);
+            RequestAutoMerge();
+        }
+
+        public void DestroyAllForBoss()
+        {
+            if (m_mergeRoutine != null) StopCoroutine(m_mergeRoutine);
+            m_mergeRoutine = null;
+            m_merging.Clear();
+            TowerSlots slots = BoardManager.Instance.Slots;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                TowerController tower = slots.Get(i);
+                if (tower != null) RemoveTower(tower);
+            }
         }
     }
 }

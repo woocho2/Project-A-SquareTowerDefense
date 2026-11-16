@@ -111,12 +111,14 @@ namespace SquareTD
             yield return AttackTowersPhase();
             yield return Gap(m_towerRunner.LastActed > 0);
             yield return Gap(AdaptivePhase());
+            yield return EnemySpawnIntro.Play(GameSession.Instance.BossMechanics.TakeSummons());
             yield return MoveAllEnemies();
             yield return Gap(m_anyMoved);
             yield return DebuffTowersPhase();
             TileEffectsPhase();
             yield return Gap(m_towerRunner.LastActed > 0);
             yield return Gap(DotPhase());
+            GameSession.Instance.BossMechanics.EndTurn();
             BossTimerPhase();
             EnemyTurnEnded?.Invoke(turn);
         }
@@ -129,16 +131,17 @@ namespace SquareTD
 
         private bool AdaptivePhase()
         {
-            bool healed = false;
+            bool applied = false;
             foreach (EnemyController enemy in new List<EnemyController>(EnemyManager.Instance.Registry.Alive))
             {
-                if (enemy.IsAlive && enemy.Movement.ApplyAdaptive()) healed = true;
+                if (enemy.IsAlive && enemy.Movement.ApplyAdaptive()) applied = true;
             }
-            return healed;
+            return applied;
         }
 
         private void EnemyTurnStart()
         {
+            GameSession.Instance.BossMechanics.BeginTurn();
             EnemyTurnStarted?.Invoke();
             m_towerRunner.RunEnemyTurnStart();
         }

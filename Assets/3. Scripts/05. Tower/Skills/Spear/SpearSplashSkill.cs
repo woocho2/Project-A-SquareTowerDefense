@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 창 광역 — 랠리 배너 (Range 안의 아군 공격 타워(자기 포함)에게 (레벨 × Tier)번 행동 동안 공격력·치명타 확률 +(Power × AbilityValue)%)
+    // 창 광역 — 랠리 배너 (Range 안의 아군 공격 타워(자기 포함)에게 2번 행동 동안 공격력·치명타 확률 +(Power × AbilityValue)%)
     public class SpearSplashSkill : AttackSkill
     {
         public const string Source = "랠리 배너";
@@ -24,7 +24,7 @@ namespace SquareTD
             TowerFinalStats stats = owner.Stats;
 
             float rate = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * SkillFormula.PercentRate;
-            int duration = EffectDuration(owner);
+            int duration = SkillFormula.EffectActions;
 
             List<TowerController> receivers = GetAlliesInRange(owner, stats.Range);
             foreach (TowerController ally in receivers)

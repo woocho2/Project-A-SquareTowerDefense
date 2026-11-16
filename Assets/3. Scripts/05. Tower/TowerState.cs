@@ -9,6 +9,7 @@ namespace SquareTD
         public int AttackCellIndex { get; set; } = -1;
         public TargetPriority TargetPriority { get; set; }
         public StatModifierList Modifiers { get; } = new StatModifierList();
+        public TowerBossEffects BossEffects { get; } = new TowerBossEffects();
         public TowerStack Stack { get; }
         public float SkillCount { get; set; }
 

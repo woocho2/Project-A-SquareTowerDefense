@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace SquareTD
 {
@@ -10,15 +11,17 @@ namespace SquareTD
         private readonly BoardManager m_board;
         private readonly TowerDatabase m_database;
         private readonly ColorUpgradeState m_colorLevels;
+        private readonly System.Action<GameObject> m_destroy;
 
         public TowerFactory(TowerController prefab, Transform parent, BoardManager board,
-                            TowerDatabase database, ColorUpgradeState colorLevels)
+                            TowerDatabase database, ColorUpgradeState colorLevels, System.Action<GameObject> destroy = null)
         {
             m_prefab = prefab;
             m_parent = parent;
             m_board = board;
             m_database = database;
             m_colorLevels = colorLevels;
+            m_destroy = destroy ?? (go => Object.Destroy(go));
         }
 
         private TowerDefinition FindTier1(TowerDefinition definition)
@@ -43,7 +46,7 @@ namespace SquareTD
             if (!m_board.Slots.TryPlace(tower, slotIndex))
             {
                 Debug.LogError($"[TowerFactory] {slotIndex}번 칸에 이미 타워가 있어 놓지 못함");
-                Object.Destroy(tower.gameObject);
+                m_destroy(tower.gameObject);
                 return null;
             }
 
@@ -85,7 +88,17 @@ namespace SquareTD
         public void Destroy(TowerController tower)
         {
             m_board.Slots.Remove(tower.SlotIndex);
-            Object.Destroy(tower.gameObject);
+            m_destroy(tower.gameObject);
+        }
+
+        public void ChangeDefinition(TowerController tower, TowerDefinition definition, IReadOnlyList<int> zoneCells = null)
+        {
+            tower.ChangeDefinition(definition, FindTier1(definition), CreateAction(definition.Color), m_colorLevels, CreateSkill(definition));
+            m_board.Zones.EnsureZonesFor(tower);
+            if (zoneCells == null) return;
+            List<Zone> zones = m_board.Zones.GetByOwner(tower);
+            for (int i = 0; i < zones.Count && i < zoneCells.Count; i++)
+                if (zoneCells[i] >= 0) m_board.Zones.TryPlace(zones[i], zoneCells[i]);
         }
 
         public TowerController Replace(TowerController old, TowerDefinition newDefinition, bool inheritState)
@@ -106,7 +119,7 @@ namespace SquareTD
             old.OnRemoved();
             m_board.Slots.Remove(slot);
             m_board.Slots.TryPlace(created, slot);
-            Object.Destroy(old.gameObject);
+            m_destroy(old.gameObject);
             return created;
         }
     }

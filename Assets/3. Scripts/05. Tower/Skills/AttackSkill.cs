@@ -97,7 +97,6 @@ namespace SquareTD
             return best;
         }
 
-        protected static int EffectDuration(TowerController owner) => SkillFormula.EffectDuration(owner);
         protected virtual float ModifyOutgoingDamage(TowerController owner, ITarget target) => 1f;
         public virtual void OnEnemyTurnStart(TowerController owner) { }
         protected virtual void OnFired(TowerController owner, int hitCount) { }

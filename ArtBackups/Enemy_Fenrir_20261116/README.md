@@ -1,0 +1,11 @@
+# 펜리르 확정본 적용 전 백업
+
+승인된 ArtPreviews/Enemy_Niflheim_20261116/Fenrir/Niflheim_Fenrir_Preview_v1.png를 Assets/4. Asset/4. Enemy/TwoTone/Niflheim_Fenrir.png에 적용했습니다.
+
+- 생성 원본은 1254×1254입니다. 비율 유지하여 2032×2032로 확대하고 사방 8px 투명 여백을 둔 2048×2048 PNG로 저장했습니다. 재생성·샤프닝하지 않았습니다.
+- PPU 2048과 기존 임포트 설정을 유지했습니다. Full은 전체 2048×2048, Face는 캐릭터 왼쪽 눈동자 중심의 256×256입니다.
+- GUID·스프라이트 이름·ID를 유지했습니다. 메타 변경은 슬라이스 영역뿐이며, Fenrir_Appearance의 큐브 Face·UI Full 참조를 유지했습니다.
+- 기존 PNG·메타와 Appearance 에셋·메타 4개를 원래 상대 경로로 백업했습니다. manifest.json의 SHA-256 검증을 완료했습니다.
+- file-verification.json에 파일 검증 결과, face-slice-preview.png에 Face 영역을 저장했습니다. Unity 실제 임포트·플레이는 확인하지 않았습니다.
+
+복원하려면 Unity를 닫고 이 폴더의 Assets 아래 파일을 프로젝트의 같은 상대 경로에 덮어쓰세요. 이후 해당 파일에 추가한 변경도 덮어쓰므로 먼저 보관하세요.

@@ -157,6 +157,8 @@ namespace SquareTD
             bool compareDecks = Array.IndexOf(args, "-simDeckRanking") >= 0;
             bool placement = Array.IndexOf(args, "-simPlacementRanking") >= 0;
             bool smoke = Array.IndexOf(args, "-simPlacementSmoke") >= 0;
+            bool probe = Array.IndexOf(args, "-simWaveProbe") >= 0;
+            if (probe && (search || placement || smoke || compareDecks)) throw new ArgumentException("1웨이브 섬멸률은 다른 비교 모드와 따로 실행해 주세요.");
             if (search && (placement || smoke || compareDecks)) throw new ArgumentException("전략 탐색은 다른 비교 모드와 따로 실행해 주세요.");
             if ((placement || smoke) && compareDecks) throw new ArgumentException("배치 비교와 덱 비교는 따로 실행해 주세요.");
             var settings = new SimulationSettings
@@ -164,7 +166,18 @@ namespace SquareTD
                 Active = true,
                 Runs = BatchInt(args, "-simRuns", 20),
                 FirstSeed = BatchInt(args, "-simSeed", 1),
-                CompareMergeCounts = !compareDecks && !placement && !smoke && !search,
+                CompareMergeCounts = !compareDecks && !placement && !smoke && !search && !probe && Array.IndexOf(args, "-simSingle") < 0,
+                StopWave = BatchInt(args, "-simStopWave", 0),
+                WaveProbe = probe,
+                ProbeTowers = BatchInt(args, "-simProbeTowers", 2),
+                ProbeWaves = BatchInt(args, "-simProbeWaves", 2),
+                ProbeSplashPower = BatchInt(args, "-simSplashPowerPct", 100) / 100f,
+                ProbeSinglePower = BatchInt(args, "-simSinglePowerPct", 100) / 100f,
+                ProbeSplashAction = BatchInt(args, "-simSplashAction", 0),
+                ProbeSingleAction = BatchInt(args, "-simSingleAction", 0),
+                ProbeEnemyAction = BatchInt(args, "-simEnemyAction", 0),
+                ProbeSplashMastery = BatchInt(args, "-simSplashMastery", 0),
+                ProbeRange = BatchInt(args, "-simRange", 0),
                 SearchStrategies = search,
                 SearchSmoke = searchSmoke,
                 SearchCandidates = BatchInt(args, "-simCandidates", searchSmoke ? 2 : 500),
@@ -177,11 +190,11 @@ namespace SquareTD
                 HardDeckCount = 6,
                 MergeCountA = BatchInt(args, "-simMergeA", 3),
                 MergeCountB = BatchInt(args, "-simMergeB", 2),
-                Mode = s_modeValues[Mathf.Clamp(EditorPrefs.GetInt("SquareTD.Sim.Mode", 0), 0, s_modeValues.Length - 1)],
+                Mode = probe || Array.IndexOf(args, "-simMode") >= 0 ? BatchInt(args, "-simMode", (int)GameMode.Normal) : s_modeValues[Mathf.Clamp(EditorPrefs.GetInt("SquareTD.Sim.Mode", 0), 0, s_modeValues.Length - 1)],
                 RandomEmblems = compareDecks || EditorPrefs.GetBool("SquareTD.Sim.RandomEmblems", false),
                 TimeScale = Mathf.Clamp(EditorPrefs.GetFloat("SquareTD.Sim.TimeScale", 100f), 1f, 100f),
                 GameTimeoutSeconds = Mathf.Max(30f, EditorPrefs.GetFloat("SquareTD.Sim.Timeout", 900f)),
-                ResultName = (searchSmoke ? "strategy_smoke_" : search ? "strategy_" : placement ? "placement_" : smoke ? "placement_smoke_" : compareDecks ? "deck_" : "batch_") + DateTime.Now.ToString("yyyyMMdd_HHmmss_fff"),
+                ResultName = (probe ? "probe_" : searchSmoke ? "strategy_smoke_" : search ? "strategy_" : placement ? "placement_" : smoke ? "placement_smoke_" : compareDecks ? "deck_" : "batch_") + DateTime.Now.ToString("yyyyMMdd_HHmmss_fff"),
             };
             if (settings.SearchCandidates < 1 || settings.SearchCandidates > 10000 || settings.SearchRepeats < 1 ||
                 settings.SearchRepeats > 100 || settings.SearchMinRepeats < 1 || settings.SearchMinRepeats > settings.SearchRepeats)
@@ -381,14 +394,14 @@ namespace SquareTD
                     if (result == "Clear") emblemClears[emblem] = emblemClears.TryGetValue(emblem, out int c) ? c + 1 : 1;
                 }
 
-                for (int tier = 2; tier <= 6; tier++)
+                foreach (int tier in BalanceRecorder.FirstColumns)
                 {
-                    int first = Int(game[$"first_t{tier}"]);
+                    int first = Int(Cell(game, $"first_t{tier}"));
                     if (first <= 0) continue;
                     firstSums[tier] += first;
                     firstCounts[tier]++;
                 }
-                for (int tier = 2; tier <= 5; tier++) mergeSums[tier] += Int(game[$"merge_to{tier}"]);
+                foreach (int tier in BalanceRecorder.MergeColumns) mergeSums[tier] += Int(Cell(game, $"merge_to{tier}"));
             }
 
             text.AppendLine($"밸런스 시뮬레이션 요약 — {name}");
@@ -407,13 +420,15 @@ namespace SquareTD
             text.AppendLine();
 
             text.AppendLine("[합성]");
-            for (int tier = 2; tier <= 6; tier++)
+            foreach (int tier in BalanceRecorder.FirstColumns)
             {
-                string label = tier == 6 ? "시너지" : $"{tier}티어";
+                string label = tier == TowerId.SynergyTier ? "시너지" : $"{EmblemNames.GetTierName(tier)}({tier}티어)";
                 string average = firstCounts[tier] > 0 ? $"{firstSums[tier] / firstCounts[tier]:0.0}웨이브" : "-";
                 text.AppendLine($"  {label} 처음 나온 웨이브 평균 {average} (나온 판 {firstCounts[tier]}/{count})");
             }
-            text.AppendLine($"  판당 합성 →2 {mergeSums[2] / count:0.0}, →3 {mergeSums[3] / count:0.0}, →4 {mergeSums[4] / count:0.0}, →5 {mergeSums[5] / count:0.0}");
+            var merges = new List<string>();
+            foreach (int tier in BalanceRecorder.MergeColumns) merges.Add($"→{tier} {mergeSums[tier] / count:0.0}");
+            text.AppendLine($"  판당 합성 {string.Join(", ", merges)}");
             text.AppendLine($"  칸이 꽉 차 생성을 못 한 웨이브 판당 {blockedSum / count:0.0}");
             text.AppendLine();
 
@@ -484,7 +499,7 @@ namespace SquareTD
             text.AppendLine("Clear/GameOver 판만 사용. 등장하지 않은 타워는 순위에서 제외. 서로 다른 티어·덱·배치가 섞인 실전 표본.");
             text.AppendLine("기본 공격 횟수·스킬 계수·보조 타워의 영향이 포함됨. Power·AbilityValue는 현재 임시값.");
             text.AppendLine("같은 시드는 시작 상태를 맞추며, 연출 난수와 프레임 차이까지 고정하는 재현성은 아직 미확보.");
-            text.AppendLine("동일 티어 비교는 CSV의 tier=1~5, 전체 티어 합산은 tier=0. 즉사량은 피해로 환산하지 않음.");
+            text.AppendLine($"동일 티어 비교는 CSV의 tier=1~{TowerId.MaxTier}, 전체 티어 합산은 tier=0. 즉사량은 피해로 환산하지 않음.");
             text.AppendLine("TowerData SHA256: " + settings.CsvSha256);
             foreach (string mode in new[] { "Normal", "Hard" })
             {
@@ -530,7 +545,7 @@ namespace SquareTD
                 text.AppendLine($"[{mode}] 완료 {completed}/{settings.Runs}판, 제외 {games - completed}판, 클리어 {Percent(clear, completed)}, 평균 웨이브 {(completed > 0 ? (waves / completed).ToString("0.##", CultureInfo.InvariantCulture) : "-")}");
                 text.AppendLine("순위 이름 / 방식 / 턴당 합계 / 기본 / 스킬 / 장판 / 기타 / 출전 판 / 기수×적턴");
                 AppendDptRanking(text, csv, mode, 0, all.Values);
-                for (int tier = 1; tier <= 5; tier++)
+                for (int tier = 1; tier <= TowerId.MaxTier; tier++)
                 {
                     var rows = new List<DptRecord>();
                     foreach (DptRecord row in byTier.Values) if (TowerId.GetTier(row.Id) == tier) rows.Add(row);
@@ -736,7 +751,12 @@ namespace SquareTD
             seeds.UnionWith(b.Keys);
             var pairedA = new List<Dictionary<string, string>>();
             var pairedB = new List<Dictionary<string, string>>();
-            var csv = new StringBuilder("seed,valid_pair,a_result,b_result,mode,emblems,a_merge_count,b_merge_count,a_wave,b_wave,a_gold,b_gold,a_gem,b_gem,a_gem_spent,b_gem_spent,a_merge_to2,b_merge_to2,a_merge_to3,b_merge_to3,a_merge_to4,b_merge_to4,a_merge_to5,b_merge_to5,a_first_t2,b_first_t2,a_first_t3,b_first_t3,a_first_t4,b_first_t4,a_first_t5,b_first_t5\n");
+            var pairedFields = new List<string> { "wave", "gold", "gem", "gem_spent" };
+            foreach (int tier in BalanceRecorder.MergeColumns) pairedFields.Add($"merge_to{tier}");
+            foreach (int tier in BalanceRecorder.FirstColumns) pairedFields.Add($"first_t{tier}");
+            var pairedHeader = new List<string> { "seed", "valid_pair", "a_result", "b_result", "mode", "emblems", "a_merge_count", "b_merge_count" };
+            foreach (string field in pairedFields) { pairedHeader.Add("a_" + field); pairedHeader.Add("b_" + field); }
+            var csv = new StringBuilder(string.Join(",", pairedHeader) + "\n");
             int incomplete = 0, mismatched = 0, unfinished = 0, paired = 0, clearA = 0, clearB = 0;
             foreach (int seed in seeds)
             {
@@ -765,7 +785,7 @@ namespace SquareTD
                 var cells = new List<string> { seed.ToString(CultureInfo.InvariantCulture), valid ? "1" : "0",
                     Value(rowA, "result"), Value(rowB, "result"), Value(rowA ?? rowB, "mode"),
                     Value(rowA ?? rowB, "emblems"), Value(rowA, "merge_count"), Value(rowB, "merge_count") };
-                foreach (string field in new[] { "wave", "gold", "gem", "gem_spent", "merge_to2", "merge_to3", "merge_to4", "merge_to5", "first_t2", "first_t3", "first_t4", "first_t5" })
+                foreach (string field in pairedFields)
                 {
                     cells.Add(Value(rowA, field));
                     cells.Add(Value(rowB, field));
@@ -781,20 +801,20 @@ namespace SquareTD
             text.AppendLine("같은 초기 시드라도 행동과 합성이 달라지면 이후 난수 소비 순서는 달라질 수 있음.");
             text.AppendLine();
             text.AppendLine($"클리어: A {Percent(clearA, pairedA.Count)} / B {Percent(clearB, pairedB.Count)}");
-            foreach (var metric in new[]
+            var metrics = new List<string[]>
             {
                 new[] { "wave", "도달 웨이브" }, new[] { "gold", "종료 시 골드" }, new[] { "gem", "종료 시 젬" },
                 new[] { "gem_spent", "강화에 쓴 젬" }, new[] { "gem_tier_ups", "젬 티어 강화 횟수" },
                 new[] { "gem_color_ups", "컬러 강화 횟수" }, new[] { "rerolls", "판매 후 재소환 횟수" },
-                new[] { "blocked_waves", "생성 공간 부족 웨이브" }, new[] { "merge_to2", "2티어 합성 횟수" },
-                new[] { "merge_to3", "3티어 합성 횟수" }, new[] { "merge_to4", "4티어 합성 횟수" },
-                new[] { "merge_to5", "5티어 합성 횟수" }
-            })
+                new[] { "blocked_waves", "생성 공간 부족 웨이브" },
+            };
+            foreach (int tier in BalanceRecorder.MergeColumns) metrics.Add(new[] { $"merge_to{tier}", $"{tier}티어 합성 횟수" });
+            foreach (string[] metric in metrics)
                 AppendComparisonMetric(text, metric[1], pairedA, pairedB, metric[0], false);
             text.AppendLine();
             text.AppendLine("첫 등장 웨이브: 해당 티어를 얻은 판만 평균, 괄호는 도달 판 수/유효 완료 짝.");
-            for (int tier = 2; tier <= 6; tier++)
-                AppendComparisonMetric(text, tier == 6 ? "시너지 첫 등장" : $"{tier}티어 첫 등장", pairedA, pairedB, $"first_t{tier}", true);
+            foreach (int tier in BalanceRecorder.FirstColumns)
+                AppendComparisonMetric(text, tier == TowerId.SynergyTier ? "시너지 첫 등장" : $"{tier}티어 첫 등장", pairedA, pairedB, $"first_t{tier}", true);
             File.WriteAllText(Path.Combine(folder, settings.ResultName + "_paired.csv"), csv.ToString(), new UTF8Encoding(false));
             string summaryPath = Path.Combine(folder, settings.ResultName + "_comparison.txt");
             File.WriteAllText(summaryPath, text.ToString(), new UTF8Encoding(false));

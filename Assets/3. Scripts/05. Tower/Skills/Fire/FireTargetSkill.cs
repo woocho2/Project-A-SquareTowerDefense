@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 불 단일 — 브레스 ((레벨 × Tier) 턴 동안 매 턴 체력이 가장 많은 적에게 Power × AbilityValue × (1 + 화상 × 0.01), 맞으면 화상 +1. 그동안 기본 공격 없음)
+    // 불 단일 — 브레스 (3턴 동안 매 턴 체력이 가장 많은 적에게 Power × AbilityValue × (1 + 화상 × 0.01), 맞으면 화상 +1. 그동안 기본 공격 없음)
     public class FireTargetSkill : AttackSkill
     {
         public const string TurnsKey = "브레스 남은 턴";
@@ -18,7 +18,7 @@ namespace SquareTD
         protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
         {
             TowerFinalStats stats = owner.Stats;
-            owner.State.Counters[TurnsKey] = EffectDuration(owner);
+            owner.State.Counters[TurnsKey] = SkillFormula.EffectTurns;
             owner.State.Counters[DamageKey] = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack));
             return true;
         }

@@ -88,6 +88,13 @@ namespace SquareTD
             return count;
         }
 
+        public int RemoveDebuffs()
+        {
+            List<StatusEffect> debuffs = m_effects.FindAll(effect => effect.IsDebuff);
+            foreach (StatusEffect effect in debuffs) Remove(effect.Key);
+            return debuffs.Count;
+        }
+
         public bool Has(string key)
         {
             return Find(key) != null;

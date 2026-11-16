@@ -44,6 +44,7 @@ namespace SquareTD
             State.RemainingAction = Stats.Action;
             State.Stack.SetMax(Stats.Stack);
             State.Modifiers.Changed += RecalculateStats;
+            State.BossEffects.Changed += RecalculateStats;
             name = $"{definition.Id} {EmblemNames.GetConceptName(definition.Id)}";
             GetComponent<TowerVisual>().Apply(definition);
             m_action = action;
@@ -55,7 +56,7 @@ namespace SquareTD
             Stats = CalculateStats();
 
             int diff = Stats.Action - oldAction;
-            State.RemainingAction = Mathf.Max(0, State.RemainingAction + diff);
+            if (!State.BossEffects.IsFrozen) State.RemainingAction = Mathf.Max(0, State.RemainingAction + diff);
             State.Stack.SetMax(Stats.Stack);
         }
 
@@ -69,6 +70,7 @@ namespace SquareTD
 
         public bool TickAction()
         {
+            if (State.BossEffects.IsFrozen) return false;
             int gain = Mathf.RoundToInt(Stats.Get(StatType.ActionGainPerTurn));
             State.RemainingAction = Mathf.Max(0, State.RemainingAction - (1 + gain));
             if (State.RemainingAction > 0) return false;
@@ -99,7 +101,7 @@ namespace SquareTD
 
         public void OnEnemyTurnStart()
         {
-            if (m_skill == null) return;
+            if (m_skill == null || State.BossEffects.IsFrozen) return;
             m_skill.OnEnemyTurnStart(this);
         }
 
@@ -190,6 +192,21 @@ namespace SquareTD
         public void OnRemoved()
         {
             m_action?.OnRemoved(this);
+        }
+
+        public void ChangeDefinition(TowerDefinition definition, TowerDefinition tier1, TowerAction action,
+                                     ColorUpgradeState colorLevels, AttackSkill skill)
+        {
+            m_action?.OnRemoved(this);
+            Definition = definition;
+            m_tier1Definition = tier1;
+            m_colorLevels = colorLevels;
+            m_action = action;
+            m_skill = skill;
+            m_pendingSkills.Clear();
+            name = $"{definition.Id} {EmblemNames.GetConceptName(definition.Id)}";
+            GetComponent<TowerVisual>().Apply(definition);
+            RecalculateStats();
         }
     }
 }

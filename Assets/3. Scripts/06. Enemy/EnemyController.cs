@@ -6,7 +6,12 @@ namespace SquareTD
     public class EnemyController : MonoBehaviour, ITarget
     {
         public EnemyDefinition Definition { get; private set; }
-        public EnemyMovement Movement { get; private set; }
+        private EnemyMovement m_movement;
+        public EnemyMovement Movement
+        {
+            get => m_movement != null ? m_movement : m_movement = GetComponent<EnemyMovement>();
+            private set => m_movement = value;
+        }
         public EnemyHealth Health { get; } = new EnemyHealth();
         public EnemyPool Pool { get; private set; }
         public int SpawnWave { get; private set; }
@@ -20,6 +25,20 @@ namespace SquareTD
         public bool IsBoss => Definition.Kind != EnemyKind.Normal;
         public EnemyController Body => this;
         public float CurrentHp => Health.Current;
+        public event System.Action<EnemyController> BossSkillTriggered;
+        public BossMechanicKind BossMechanic { get; private set; }
+        public int DeathCount { get; private set; }
+
+        public bool TryTriggerBossSkill(EnemyCubeFaceAsset face)
+        {
+            if (!IsAlive || Definition == null || !EnemyCubeFaces.IsBossSkillFace(face, Definition.Kind)) return false;
+            GameSession session = GameSession.Instance;
+            if (session != null)
+                session.BossMechanics.Trigger(this, EarthDebuffRule.AdaptiveFor(this, session.AdaptiveValue), session.HelDeathTarget);
+            BossSkillTriggered?.Invoke(this);
+            return true;
+        }
+
         public float PreviewDamage(DamageInfo info)
         {
             float defense = Status != null ? Status.ModifyDefense(Stats.Get(StatType.Defense)) : Stats.Get(StatType.Defense);
@@ -34,20 +53,33 @@ namespace SquareTD
 
         private void Awake()
         {
-            Movement = GetComponent<EnemyMovement>();
+            m_movement = GetComponent<EnemyMovement>();
         }
 
-        public void Setup(EnemyDefinition definition, EnemyPool pool, int spawnWave, string displayName = null)
+        public void Setup(EnemyDefinition definition, EnemyPool pool, int spawnWave, string displayName = null,
+                          BossMechanicKind bossMechanic = BossMechanicKind.None)
         {
             Definition = definition;
             Pool = pool;
             SpawnWave = spawnWave;
+            BossMechanic = definition.Kind == EnemyKind.FinalBoss ? bossMechanic : BossMechanicKind.None;
+            DeathCount = 0;
             DisplayName = string.IsNullOrEmpty(displayName) ? definition.DisplayName : displayName;
             ModeMultiplier = WaveTable.GetModeStatMultiplier(GameSession.CurrentMode);
             Stats = new EnemyStats(definition, spawnWave, ModeMultiplier);
             Resistance = new EnemyResistance(definition.BaseResistance);
             Status = new EnemyStatusEffects(this, Stats.Modifiers, Resistance);
             Health.Reset(SpawnMaxHp);
+            Movement?.SetFinalBoss(definition.Kind == EnemyKind.FinalBoss);
+        }
+
+        public bool AddDeathCount(int dice, int target)
+        {
+            if (dice <= 0 || target <= 0) return false;
+            DeathCount += dice;
+            if (DeathCount < target) return false;
+            DeathCount = 0;
+            return true;
         }
 
         public string DisplayName { get; private set; }

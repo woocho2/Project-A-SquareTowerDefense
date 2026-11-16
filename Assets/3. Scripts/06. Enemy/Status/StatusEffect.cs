@@ -9,6 +9,7 @@ namespace SquareTD
         public abstract string Key { get; }
         public virtual bool IsPermanent => false;
         public virtual bool IsStrongCC => false;
+        public virtual bool IsDebuff => true;
         public virtual float Strength => 0f;
         public virtual int Rank => 0;
 

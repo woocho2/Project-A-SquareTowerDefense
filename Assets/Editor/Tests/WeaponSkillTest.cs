@@ -73,7 +73,7 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 블러드_레이지는_자기에게_치명_100_공격력_행동_카운트를_레벨_곱하기_티어번()
+        public void 블러드_레이지는_자기에게_치명_100_공격력_행동_카운트를_2번()
         {
             TowerController tower = MakeTower(3202);
             float power = tower.Stats.Power;
@@ -84,7 +84,7 @@ namespace SquareTD.Tests
             Assert.AreEqual(1f, tower.Stats.Get(StatType.CritRate), Eps);
             Assert.AreEqual(power * (1f + rate), tower.Stats.Power, Eps);
             Assert.AreEqual(1f, tower.Stats.Get(StatType.ActionGainPerTurn), Eps);
-            Assert.AreEqual(3, TimedTowerBuff.GetRemaining(tower.State, AxeTargetSkill.Source), "컬러 1 × 3티어");
+            Assert.AreEqual(2, TimedTowerBuff.GetRemaining(tower.State, AxeTargetSkill.Source), "티어·레벨과 무관하게 2번");
         }
 
         [Test]
@@ -105,7 +105,7 @@ namespace SquareTD.Tests
         // ── 활 ──
 
         [Test]
-        public void 애로우_레인은_레벨_곱하기_티어_턴_동안_매_턴_0점2배()
+        public void 애로우_레인은_3턴_동안_매_턴_0점2배()
         {
             var grounds = new GroundEffectRegistry();
             OccupyingFakeTarget a = MakeTarget(0), b = MakeTarget(4);
@@ -114,7 +114,7 @@ namespace SquareTD.Tests
 
             new ArrowSplashSkill(m_grid, m_occupancy, grounds).Fire(tower, a);
             Assert.AreEqual(0, a.Hits.Count, "쏘아 올릴 때는 피해 없음");
-            Assert.AreEqual(3, grounds.All[0].RemainingTurns, "컬러 1 × 3티어");
+            Assert.AreEqual(3, grounds.All[0].RemainingTurns, "티어·레벨과 무관하게 3턴");
 
             for (int i = 0; i < 3; i++) grounds.RunTurn();
 
@@ -170,9 +170,9 @@ namespace SquareTD.Tests
 
             Assert.AreEqual(nearPower * (1f + rate), near.Stats.Power, Eps, "스폰 0번 → 2번은 거리 2 (사거리 2 안)");
             Assert.AreEqual(rate, near.Stats.Get(StatType.CritRate), Eps);
-            Assert.AreEqual(1, TimedTowerBuff.GetRemaining(near.State, SpearSplashSkill.Source));
+            Assert.AreEqual(2, TimedTowerBuff.GetRemaining(near.State, SpearSplashSkill.Source));
             Assert.AreEqual(0, TimedTowerBuff.GetRemaining(far.State, SpearSplashSkill.Source), "스폰 1번은 거리 3");
-            Assert.AreEqual(1, TimedTowerBuff.GetRemaining(owner.State, SpearSplashSkill.Source), "자기 자신도");
+            Assert.AreEqual(2, TimedTowerBuff.GetRemaining(owner.State, SpearSplashSkill.Source), "자기 자신도");
             Assert.AreEqual(0, TimedTowerBuff.GetRemaining(buffTower.State, SpearSplashSkill.Source), "버프 타워는 받지 않음");
         }
 

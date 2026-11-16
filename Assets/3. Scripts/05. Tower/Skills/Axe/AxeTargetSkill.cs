@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 도끼 단일 — 블러드 레이지 (자기에게 (레벨 × Tier)번 행동 동안 치명타 확률 100%, 공격력 +(Power × AbilityValue)%, 매 턴 행동 카운트 +1)
+    // 도끼 단일 — 블러드 레이지 (자기에게 2번 행동 동안 치명타 확률 100%, 공격력 +(Power × AbilityValue)%, 매 턴 행동 카운트 +1)
     public class AxeTargetSkill : AttackSkill
     {
         public const string Source = "블러드 레이지";
@@ -19,7 +19,7 @@ namespace SquareTD
 
             float percent = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack));
 
-            TimedTowerBuff.Apply(owner.State, Source, EffectDuration(owner),
+            TimedTowerBuff.Apply(owner.State, Source, SkillFormula.EffectActions,
                 StatModifier.Flat(Source, StatType.CritRate, 1f),
                 StatModifier.Percent(Source, StatType.Power, percent * SkillFormula.PercentRate),
                 StatModifier.Flat(Source, StatType.ActionGainPerTurn, 1f));

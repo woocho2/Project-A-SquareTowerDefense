@@ -119,7 +119,7 @@ namespace SquareTD
                     return 1;
 
                 case GameMode.Hard:
-                    return 1.5f;
+                    return 1.375f;
 
                 default:
                     return 0;
@@ -202,12 +202,12 @@ namespace SquareTD
 
                 case EnemyKind.MiddleBoss:
                     gold = 500 * rewardMulti;
-                    gem = 10 * rewardMulti;
+                    gem = 5 * rewardMulti;
                     return;
 
                 case EnemyKind.FinalBoss:
                     gold = 1000 * rewardMulti;
-                    gem = 20 * rewardMulti;
+                    gem = 15 * rewardMulti;
                     return;
 
                 default:

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 물 단일 — 아쿠아 프리즌 ((Tier × 레벨) 턴 동안 가둠(0 / 0), 매 턴 Power × AbilityValue × (1 + 젖음 × 0.01). 저항하면 갇히지 않고 피해만 저항만큼 줄어 들어감)
+    // 물 단일 — 아쿠아 프리즌 (3턴 동안 가둠(0 / 0), 매 턴 Power × AbilityValue × (1 + 젖음 × 0.01). 저항하면 갇히지 않고 피해만 저항만큼 줄어 들어감)
     public class WaterTargetSkill : AttackSkill
     {
         public WaterTargetSkill(BoardGrid grid, PathOccupancy occupancy)
@@ -17,7 +17,7 @@ namespace SquareTD
             float damage = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * stats.FinalDamageMultiplier;
             bool locked = Chance.Roll(enemy.Resistance.ResistWeak(1f));
             if (!locked) damage = enemy.Resistance.ResistWeak(damage);
-            enemy.Status.Add(new AquaPrisonEffect(owner, EffectDuration(owner), damage, locked));
+            enemy.Status.Add(new AquaPrisonEffect(owner, SkillFormula.EffectTurns, damage, locked));
             SkillEffectTable.PlayPrison(owner, enemy, locked, true);
             return true;
         }

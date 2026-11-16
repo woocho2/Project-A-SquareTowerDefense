@@ -46,6 +46,13 @@ namespace SquareTD
             return enemy;
         }
 
+        public List<EnemyController> SpawnAdditionalNormals(int wave, int count)
+        {
+            List<EnemyController> spawned = m_spawner.SpawnAdditionalNormals(wave, count);
+            CountChanged?.Invoke(Registry.Count);
+            return spawned;
+        }
+
         public bool IsAnyEnemyMoving()
         {
             foreach (EnemyController enemy in Registry.Alive)

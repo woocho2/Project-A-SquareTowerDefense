@@ -8,13 +8,13 @@ namespace SquareTD
     public static class TowerProgression
     {
         public const int MergeCount = 3;
-        private static readonly int[] s_tierUpgradeCosts = { 0, 5, 15, 45, 135 };
+        private static readonly int[] s_tierUpgradeCosts = { 0, 5, 15, 45 };
 
-        public static int GetTierUpgradeCost(int tier) => tier >= 1 && tier <= 4 ? s_tierUpgradeCosts[tier] : 0;
+        public static int GetTierUpgradeCost(int tier) => tier >= 1 && tier < TowerId.MaxTier ? s_tierUpgradeCosts[tier] : 0;
 
         public static bool CanMergeFrom(TowerDefinition definition)
         {
-            return definition.Tier >= 1 && definition.Tier <= 4 && !TowerId.IsSynergy(definition.Id);
+            return definition.Tier >= 1 && definition.Tier < TowerId.MaxTier && !TowerId.IsSynergy(definition.Id);
         }
 
         public static bool TryFindMergeGroup(TowerSlots slots, Func<TowerController, bool> isBusy,
@@ -29,7 +29,7 @@ namespace SquareTD
             for (int i = 0; i < slots.Count; i++)
             {
                 TowerController tower = slots.Get(i);
-                if (tower == null || !CanMergeFrom(tower.Definition)) continue;
+                if (tower == null || !CanMergeFrom(tower.Definition) || tower.State.BossEffects.BlocksProgression) continue;
                 if (isBusy != null && isBusy(tower)) continue;
 
                 int id = tower.Definition.Id;

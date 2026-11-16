@@ -25,27 +25,22 @@ namespace SquareTD
             float[] baseValues = (float[])values.Clone();
             var sources = new List<StatSource>();
 
-            StatModifierList applied = receivesBuffs ? state.Modifiers : AllColorModifiers(state.Modifiers);
+            StatModifierList applied = new StatModifierList();
+            foreach (StatModifier modifier in state.Modifiers.All)
+                if (receivesBuffs || AllColorSources.Contains(modifier.Source)) applied.Add(modifier);
+            state.BossEffects.AddModifiersTo(applied);
             ApplyModifiers(values, applied);
             sources = BuildSources(baseValues, applied);
             ApplyAttackCountLock(values);
             ApplyLimits(values);
+            if (state.BossEffects.AttackCountPenalty > 0)
+                values[(int)StatType.AttackCount] = Mathf.Max(1, values[(int)StatType.AttackCount]);
             ApplyShowcaseOverride(values);
 
             return new TowerFinalStats(values, baseValues, level, sources);
         }
 
-        public static readonly HashSet<string> AllColorSources = new HashSet<string> { Acceleration.Key };
-
-        private static StatModifierList AllColorModifiers(StatModifierList modifiers)
-        {
-            var list = new StatModifierList();
-            foreach (StatModifier modifier in modifiers.All)
-            {
-                if (AllColorSources.Contains(modifier.Source)) list.Add(modifier);
-            }
-            return list;
-        }
+        public static readonly HashSet<string> AllColorSources = new HashSet<string> { Acceleration.Key, SynergyEffects.FreySource };
 
         private static List<StatSource> BuildSources(float[] baseValues, StatModifierList modifiers)
         {
@@ -100,7 +95,6 @@ namespace SquareTD
         {
             ColorLevelRow row = BalanceTables.GetColorLevelRow(level, color);
 
-            values[(int)StatType.AttackCount] += row.AttackCount;
             values[(int)StatType.AbilityValue] *= row.AbilityValue;
             values[(int)StatType.StackValue] *= row.StackValue;
             values[(int)StatType.MaxStack] *= row.MaxStack;

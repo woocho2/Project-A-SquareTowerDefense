@@ -1,15 +1,16 @@
 namespace SquareTD
 {
-    // 적 큐브 보이는 면의 효과를 적응형 능력치만큼 스탯 수정자·치유로 (보스는 자물쇠의 받는 피해 증가가 없음 — 그 자리는 보스 고유 스킬)
+    // 적 큐브 면 효과와 최종 보스의 고유 기믹 면 판정
     public static class EnemyCubeFaces
     {
         public const string Source = "큐브 면";
 
-        public static bool IsBossSkillFace(EnemyCubeFaceAsset face) => face == EnemyCubeFaceAsset.Locked;
+        public static bool IsBossSkillFace(EnemyCubeFaceAsset face, EnemyKind kind) =>
+            kind == EnemyKind.FinalBoss && face == EnemyCubeFaceAsset.Locked;
 
-        public static StatModifier[] GetModifiers(EnemyCubeFaceAsset face, int adaptive, bool isBoss = false)
+        public static StatModifier[] GetModifiers(EnemyCubeFaceAsset face, int adaptive, EnemyKind kind = EnemyKind.Normal)
         {
-            if (isBoss && IsBossSkillFace(face)) return new StatModifier[0];
+            if (IsBossSkillFace(face, kind)) return new StatModifier[0];
 
             switch (face)
             {
@@ -36,11 +37,11 @@ namespace SquareTD
 
         public static float GetHealRate(EnemyCubeFaceAsset face, int adaptive) => face == EnemyCubeFaceAsset.SelfHeal ? 0.1f * adaptive : 0f;
 
-        public static void Apply(EnemyStats stats, EnemyCubeFaceAsset face, int adaptive, bool isBoss = false)
+        public static void Apply(EnemyStats stats, EnemyCubeFaceAsset face, int adaptive, EnemyKind kind = EnemyKind.Normal)
         {
             stats.Modifiers.RemoveBySource(Source);
 
-            foreach(StatModifier modifier in GetModifiers(face, adaptive, isBoss))
+            foreach(StatModifier modifier in GetModifiers(face, adaptive, kind))
             {
                 stats.Modifiers.Add(modifier);
             }

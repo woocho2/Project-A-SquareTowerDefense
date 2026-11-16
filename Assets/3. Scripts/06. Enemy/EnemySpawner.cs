@@ -68,6 +68,13 @@ namespace SquareTD
             return enemy;
         }
 
+        public List<EnemyController> SpawnAdditionalNormals(int wave, int count)
+        {
+            var spawned = new List<EnemyController>();
+            for (int i = 0; i < count; i++) AddIfSpawned(spawned, SpawnOne(m_normal, wave));
+            return spawned;
+        }
+
         private EnemyController SpawnOne(EnemySpawnEntry entry, int wave)
         {
             if (entry.Definition == null || entry.Pool == null)
@@ -81,7 +88,8 @@ namespace SquareTD
             StageEnemyLook look = m_stage != null ? m_stage.GetLook(definition.Kind, WaveTable.GetCycle(wave)) : null;
             EnemyCubeAppearance appearance = look != null && look.Appearance != null ? look.Appearance : definition.Appearance;
             if (appearance != null) enemy.Movement.SetAppearance(appearance);
-            enemy.Setup(definition, entry.Pool, wave, look != null ? look.Name : null);
+            BossMechanicKind mechanic = m_stage != null ? m_stage.GetBossMechanic(WaveTable.GetCycle(wave)) : BossMechanicKind.None;
+            enemy.Setup(definition, entry.Pool, wave, look != null ? look.Name : null, mechanic);
             int index = Random.Range(0, m_board.Grid.PathCount);
             enemy.Movement.Init(index);
             enemy.transform.position = m_board.GetWorldPosition(m_board.Grid.GetPathCell(index));

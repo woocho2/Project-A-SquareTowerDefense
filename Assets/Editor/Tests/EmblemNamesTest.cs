@@ -27,8 +27,8 @@ namespace SquareTD.Tests
         public void 티어_이름()
         {
             Assert.AreEqual("브론즈", EmblemNames.GetTierName(1));
-            Assert.AreEqual("미스릴", EmblemNames.GetTierName(4));
-            Assert.AreEqual("다이아", EmblemNames.GetTierName(5));
+            Assert.AreEqual("골드", EmblemNames.GetTierName(3));
+            Assert.AreEqual("다이아", EmblemNames.GetTierName(4));
         }
 
         [Test]

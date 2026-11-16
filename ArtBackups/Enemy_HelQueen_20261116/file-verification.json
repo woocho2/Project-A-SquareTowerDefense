@@ -1,0 +1,50 @@
+﻿{
+    "ApprovedPreview":  "Assets/4. Asset/2. Tower/TowerCharacter/00_Synergy_4_Hel.png",
+    "Destination":  "Assets/4. Asset/4. Enemy/TwoTone/Hel_HelQueen.png",
+    "SourceDimensions":  [
+                             2048,
+                             2048
+                         ],
+    "SavedDimensions":  [
+                            2048,
+                            2048
+                        ],
+    "Method":  "Existing approved 2048px tower PNG copied byte-for-byte; no resize, redraw, color changes or sharpening",
+    "PPU":  2048,
+    "Guid":  "49c649b661e04a4194d2dc38b42b3625",
+    "Slices":  [
+                   {
+                       "Name":  "Hel_HelQueen_Full",
+                       "ID":  "4600000000000261",
+                       "X":  0,
+                       "Y":  0,
+                       "Width":  2048,
+                       "Height":  2048
+                   },
+                   {
+                       "Name":  "Hel_HelQueen_Face",
+                       "ID":  "4600000000000262",
+                       "X":  1080,
+                       "Y":  1666,
+                       "Width":  256,
+                       "Height":  256
+                   }
+               ],
+    "CharacterLeftEyeSourceTopLeft":  [
+                                          1208,
+                                          254
+                                      ],
+    "CharacterLeftEyeFinalTopLeft":  [
+                                         1208,
+                                         254
+                                     ],
+    "CornerAlpha":  [
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+    "SpriteNamesIDsGuidAndAppearanceReferencesPreserved":  true,
+    "MetadataChangesLimitedToSliceRects":  true,
+    "UnityPlayTested":  false
+}

@@ -35,70 +35,70 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 다이아는_Power_x16_Action_최소1_Mastery_2()
+        public void 다이아는_Power_x6_15_Action_마이너스1_Mastery_2()
         {
-            TowerFinalStats stats = Calc(Def(5101), Def(1101), 1);
+            TowerFinalStats stats = Calc(Def(4101), Def(1101), 1);
 
-            Assert.AreEqual(160f, stats.Power, 0.0001f);
-            Assert.AreEqual(1, stats.Action, "3 − 4 = −1 → 최소 1");
+            Assert.AreEqual(61.5f, stats.Power, 0.0001f);
+            Assert.AreEqual(2, stats.Action, "3 − 1");
             Assert.AreEqual(2, stats.Mastery);
-            Assert.AreEqual(3, stats.AttackCount);
-            Assert.AreEqual(30, stats.Stack);
-            Assert.AreEqual(2.5f, stats.StackValue, 0.0001f);
-            Assert.AreEqual(2.5f, stats.SkillCount, 0.0001f, "5 × 0.5 = 2.5. SkillCount는 소수로 둠 (20번 10장)");
+            Assert.AreEqual(2, stats.AttackCount);
+            Assert.AreEqual(45, stats.Stack, "60 × 0.75");
+            Assert.AreEqual(2f, stats.StackValue, 0.0001f);
+            Assert.AreEqual(4f, stats.SkillCount, 0.0001f, "5 × 0.8 = 4. SkillCount는 소수로 둠 (20번 10장)");
         }
 
         [Test]
         public void 스탯은_1티어_정의에서_계산함()
         {
-            TowerFinalStats stats = Calc(Def(5101, power: 999f), Def(1101), 1);
+            TowerFinalStats stats = Calc(Def(4101, power: 999f), Def(1101), 1);
 
-            Assert.AreEqual(160f, stats.Power, 0.0001f, "5티어 CSV의 Power가 아니라 1티어 10 × 16");
+            Assert.AreEqual(61.5f, stats.Power, 0.0001f, "4티어(다이아) CSV의 Power가 아니라 1티어 10 × 6.15");
         }
 
         [Test]
         public void 퍼플도_티어가_오르면_Duration이_줄어듦()
         {
-            TowerFinalStats stats = Calc(Def(4401), Def(1401), 1);
+            TowerFinalStats stats = Calc(Def(3401), Def(1401), 1);
 
-            Assert.AreEqual(4f, stats.SkillCount, 0.0001f, "5 × 0.8");
+            Assert.AreEqual(4.5f, stats.SkillCount, 0.0001f, "5 × 0.9 (골드)");
         }
 
         [Test]
-        public void 미스릴에_레벨4면_최대_스택과_StackValue가_곱해짐()
+        public void 다이아에_레벨4면_최대_스택과_StackValue가_곱해짐()
         {
             TowerFinalStats stats = Calc(Def(4101), Def(1101), 4);
 
-            Assert.AreEqual(24, stats.Stack, "60 × 0.8 × 0.5");
-            Assert.AreEqual(3.75f, stats.StackValue, 0.0001f, "1.5 × 2.5");
+            Assert.AreEqual(22, stats.Stack, "60 × 0.75 × 0.5 = 22.5 → 반올림 (짝수로) 22");
+            Assert.AreEqual(3f, stats.StackValue, 0.0001f, "2 × 1.5");
         }
 
         [Test]
-        public void 레벨5는_AbilityValue_x16()
+        public void 레벨5는_AbilityValue_x3()
         {
             TowerFinalStats stats = Calc(Def(1101), null, 5);
 
-            Assert.AreEqual(32f, stats.AbilityValue, 0.0001f, "2 × 16");
-            Assert.AreEqual(3, stats.AttackCount);
-            Assert.AreEqual(2, stats.Mastery);
+            Assert.AreEqual(6f, stats.AbilityValue, 0.0001f, "2 × 3");
+            Assert.AreEqual(1, stats.AttackCount, "컬러 강화는 AttackCount를 올리지 않음");
+            Assert.AreEqual(2, stats.Mastery, "레벨 5는 Mastery +1");
             Assert.AreEqual(5f, stats.SkillCount, 0.0001f, "공격 타워의 Duration은 컬러 강화로 안 바뀜");
         }
 
         [Test]
-        public void 블루는_컬러_강화의_AttackCount가_두_배()
+        public void 블루도_컬러_강화로_AttackCount가_오르지_않음()
         {
             TowerFinalStats stats = Calc(Def(1201), null, 5);
 
-            Assert.AreEqual(5, stats.AttackCount, "1 + 2 × 2");
+            Assert.AreEqual(1, stats.AttackCount);
         }
 
         [Test]
-        public void 레벨_5는_AbilityValue_16배()
+        public void 레벨_5는_ColorLevel_5()
         {
             TowerFinalStats stats = Calc(Def(1101), null, 5);
 
             Assert.AreEqual(5, stats.ColorLevel);
-            Assert.AreEqual(32f, stats.AbilityValue, 0.0001f, "2 × 16");
+            Assert.AreEqual(6f, stats.AbilityValue, 0.0001f, "2 × 3");
         }
 
         [Test]
@@ -114,9 +114,9 @@ namespace SquareTD.Tests
         [Test]
         public void 버프는_티어_표를_지난_값에_붙음()
         {
-            TowerFinalStats stats = Calc(Def(5101), Def(1101), 1, StatModifier.Percent("버프", StatType.Power, 0.5f));
+            TowerFinalStats stats = Calc(Def(4101), Def(1101), 1, StatModifier.Percent("버프", StatType.Power, 0.5f));
 
-            Assert.AreEqual(240f, stats.Power, 0.0001f, "160 × 1.5");
+            Assert.AreEqual(92.25f, stats.Power, 0.0001f, "61.5 × 1.5");
         }
 
         [Test]
@@ -160,14 +160,14 @@ namespace SquareTD.Tests
         [Test]
         public void 출처_퍼센트는_기본값_x_비율()
         {
-            TowerFinalStats stats = Calc(Def(5101), Def(1101), 1, StatModifier.Percent("블레싱", StatType.Power, 0.5f));
+            TowerFinalStats stats = Calc(Def(4101), Def(1101), 1, StatModifier.Percent("블레싱", StatType.Power, 0.5f));
 
-            Assert.AreEqual(160f, stats.GetBase(StatType.Power), 0.0001f);
-            Assert.AreEqual(240f, stats.Power, 0.0001f);
+            Assert.AreEqual(61.5f, stats.GetBase(StatType.Power), 0.0001f);
+            Assert.AreEqual(92.25f, stats.Power, 0.0001f);
             Assert.AreEqual(1, stats.Sources.Count);
             Assert.AreEqual("블레싱", stats.Sources[0].Source);
             Assert.AreEqual(StatType.Power, stats.Sources[0].Stat);
-            Assert.AreEqual(80f, stats.Sources[0].Amount, 0.0001f, "위력 240 = 기본 160 + 블레싱 80");
+            Assert.AreEqual(30.75f, stats.Sources[0].Amount, 0.0001f, "위력 92.25 = 기본 61.5 + 블레싱 30.75");
         }
 
         [Test]

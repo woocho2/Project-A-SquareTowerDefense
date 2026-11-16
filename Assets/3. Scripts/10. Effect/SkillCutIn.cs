@@ -46,13 +46,12 @@ namespace SquareTD
             TowerDefinition definition = tower.Definition;
             int tier = definition.Tier;
             bool synergy = TowerId.IsSynergy(definition.Id);
-            //string tierName = !synergy && tier >= 1 && tier <= 5 ? EmblemNames.GetTierName(tier) + " " : "";
             Color tierColor = visual.TierColor;
             Sprite badge = !synergy && TowerIcons.Instance != null ? TowerIcons.Instance.GetTier(tier) : null;
 
             if (s_instance == null) s_instance = new GameObject("Skill Cut-in").AddComponent<SkillCutIn>();
             s_instance.Show(illustration, SkillDescriptions.GetName(definition), EmblemNames.GetConceptName(definition.Id),
-                tierColor, badge, synergy ? 5 : Mathf.Clamp(tier, 1, 5));
+                tierColor, badge, synergy ? TowerId.SynergyTier : Mathf.Clamp(tier, 1, TowerId.MaxTier));
             yield return new WaitForSeconds(s_instance.Duration);
         }
 

@@ -5,13 +5,13 @@ namespace SquareTD.Tests
     public class ColorUpgradeStateTest
     {
         [Test]
-        public void 처음은_모든_컬러가_레벨1_비용4()
+        public void 처음은_모든_컬러가_레벨1_비용10()
         {
             var state = new ColorUpgradeState();
 
             Assert.AreEqual(1, state.GetLevel(TowerColor.Red));
             Assert.AreEqual(1, state.GetLevel(TowerColor.Purple));
-            Assert.AreEqual(4, state.GetCost(TowerColor.Red));
+            Assert.AreEqual(10, state.GetCost(TowerColor.Red));
         }
 
         [Test]
@@ -26,10 +26,10 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 비용은_지금_레벨을_따름_4_12_48_240()
+        public void 비용은_지금_레벨을_따름_10_20_40_80()
         {
             var state = new ColorUpgradeState();
-            int[] expected = { 4, 12, 48, 240 };
+            int[] expected = { 10, 20, 40, 80 };
 
             foreach (int cost in expected)
             {

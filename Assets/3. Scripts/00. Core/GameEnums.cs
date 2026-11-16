@@ -53,6 +53,20 @@ namespace SquareTD
         Hard = 3
     }
 
+    public enum BossMechanicKind
+    {
+        None = 0,
+        Loki = 1,
+        ElfChief = 2,
+        HighSpirit = 3,
+        Jormungandr = 4,
+        Ymir = 5,
+        Fafnir = 6,
+        Fenrir = 7,
+        Surtr = 8,
+        Hel = 9
+    }
+
     public enum TargetPriority
     {
         None = 0,

@@ -230,12 +230,16 @@ namespace SquareTD
             if (txt_tier != null) txt_tier.text = isSynergy ? "시너지" : GetTierName(tier);
             if (txt_color != null) txt_color.text = isSynergy ? "시너지" : EmblemNames.GetColorName(definition.Color);
             if (txt_emblem != null) txt_emblem.text = isSynergy ? "-" : EmblemNames.GetEmblemName(definition.Emblem);
-            if (txt_sellTowerValue != null) txt_sellTowerValue.text = isSynergy || tier < 1 ? "-" : $"{GetSellGem(tier)}";
+            if (txt_sellTowerValue != null) txt_sellTowerValue.text = isSynergy || tier < 1 ? "-" : GetSellText(tier);
         }
 
-        private static string GetTierName(int tier) => tier >= 1 && tier <= 5 ? EmblemNames.GetTierName(tier) : "-";
+        private static string GetTierName(int tier) => tier >= 1 && tier <= TowerId.MaxTier ? EmblemNames.GetTierName(tier) : "-";
 
-        private static int GetSellGem(int tier) => Mathf.RoundToInt(Mathf.Pow(3f, tier - 1));
+        private static string GetSellText(int tier)
+        {
+            int gem = TowerManager.GetSellGem(tier);
+            return gem > 0 ? $"{TowerManager.CurrentSellGold}G + {gem}젬" : $"{TowerManager.CurrentSellGold}G";
+        }
 
         private void UpdateIdentityImage(TowerDefinition definition)
         {

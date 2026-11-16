@@ -3,7 +3,7 @@ using NUnit.Framework;
 namespace SquareTD.Tests
 {
     // 원소 문양 공격 스킬 16개 (20번 4-9 ~ 4-16장)
-    //   공격 타워: Power 10, AbilityValue 2 → 스킬 피해 20. 3티어는 Power 40 → 80, 유지 3
+    //   공격 타워: Power 10, AbilityValue 2 → 스킬 피해 20. 유지는 티어와 무관하게 2
     //   판: 길 0번 (0,0), 1번 (1,0), 2번 (2,1), 3번 (1,1), 4번 (2,-1)
     public class ElementSkillTest : EmblemTestBase
     {
@@ -35,7 +35,7 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 브레스는_레벨_곱하기_티어_턴_동안_체력이_가장_많은_적을_쫓고_화상을_쌓음()
+        public void 브레스는_3턴_동안_체력이_가장_많은_적을_쫓고_화상을_쌓음()
         {
             EnemyController big = MakeEnemy(0, hp: 2000f), small = MakeEnemy(1, hp: 1000f);
             TowerController tower = MakeTower(3207);
@@ -82,7 +82,11 @@ namespace SquareTD.Tests
 
             enemy.Status.OnTurn();
             Assert.AreEqual(SkillDamage(tower), Lost(enemy), Eps);
-            Assert.IsFalse(enemy.Status.Has(AquaPrisonEffect.PrisonKey), "1턴(1티어 × 컬러 1) 뒤 풀림");
+            Assert.IsTrue(enemy.Status.Has(AquaPrisonEffect.PrisonKey), "1턴 뒤에도 갇혀 있음");
+            enemy.Status.OnTurn();
+            enemy.Status.OnTurn();
+            Assert.AreEqual(SkillDamage(tower) * 3f, Lost(enemy), Eps);
+            Assert.IsFalse(enemy.Status.Has(AquaPrisonEffect.PrisonKey), "3턴 뒤 풀림");
         }
 
         [Test]
@@ -181,7 +185,7 @@ namespace SquareTD.Tests
             new WindTargetSkill(m_grid, m_occupancy).Fire(tower, null);
 
             Assert.AreEqual(5, tower.Stats.AttackCount, "확률 20% + 가속 100% → 반드시 발동");
-            Assert.AreEqual(1, TimedTowerBuff.GetRemaining(tower.State, WindTargetSkill.Source));
+            Assert.AreEqual(2, TimedTowerBuff.GetRemaining(tower.State, WindTargetSkill.Source));
         }
 
         // ── 얼음 ──
@@ -256,7 +260,7 @@ namespace SquareTD.Tests
             Assert.AreEqual(12f, tower.Stats.Power, Eps);
             Assert.AreEqual(0.2f, tower.Stats.CriticalRate, Eps);
             Assert.AreEqual(0.2f, tower.Stats.CriticalDamage, Eps);
-            Assert.AreEqual(1, TimedTowerBuff.GetRemaining(tower.State, LightSplashSkill.Source));
+            Assert.AreEqual(2, TimedTowerBuff.GetRemaining(tower.State, LightSplashSkill.Source));
         }
 
         [Test]
@@ -293,7 +297,7 @@ namespace SquareTD.Tests
             Assert.AreEqual(power * (1f + rate), tower.Stats.Power, Eps, "초월 웨이브가 끝나면 원래대로");
             Assert.AreEqual(attackCount, tower.Stats.AttackCount);
             Assert.AreEqual(mastery, tower.Stats.Mastery);
-            Assert.AreEqual(3, TimedTowerBuff.GetRemaining(tower.State, LightSplashSkill.Source), "프리즘 자체는 남은 행동만큼 그대로");
+            Assert.AreEqual(2, TimedTowerBuff.GetRemaining(tower.State, LightSplashSkill.Source), "프리즘 자체는 남은 행동만큼 그대로");
         }
 
         [Test]
@@ -306,7 +310,7 @@ namespace SquareTD.Tests
             new LightTargetSkill(m_grid, m_occupancy).Fire(tower, enemy);
             for (int i = 0; i < 4; i++) enemy.Status.OnTurn();
 
-            Assert.AreEqual(damage * (0.1f + 0.2f + 0.4f), Lost(enemy), Eps, "3티어 × 컬러 1 = 3턴");
+            Assert.AreEqual(damage * (0.1f + 0.2f + 0.4f), Lost(enemy), Eps, "3턴");
             Assert.IsFalse(enemy.Status.Has(HyperionEffect.HyperionKey));
         }
 
@@ -341,7 +345,10 @@ namespace SquareTD.Tests
 
             Assert.AreEqual(SkillDamage(tower) * DarknessSplashSkill.TurnRatio, inside.Hits[0].BaseDamage, Eps);
             Assert.AreEqual(0, outside.Hits.Count, "Mastery 1은 그 칸만");
-            Assert.AreEqual(0, grounds.All.Count, "1턴 뒤 사라짐");
+            Assert.AreEqual(1, grounds.All.Count, "1턴 뒤에도 남음");
+            grounds.RunTurn();
+            grounds.RunTurn();
+            Assert.AreEqual(0, grounds.All.Count, "3턴 뒤 사라짐");
         }
 
         [Test]

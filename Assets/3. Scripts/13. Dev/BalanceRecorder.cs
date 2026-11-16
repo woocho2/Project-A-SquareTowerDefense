@@ -9,10 +9,28 @@ namespace SquareTD
     // 밸런스 시뮬레이션의 판 기록 — 타워별 피해·처치, 합성, 티어가 처음 나온 웨이브를 모아 판이 끝나면 CSV 두 개에 한 줄씩 씀
     public static class BalanceRecorder
     {
-        public const string GamesHeader =
-            "run,seed,mode,emblems,result,reason,wave,enemy_turns,alive,limit,gold,gem,towers,t1,t2,t3,t4,t5,t6," +
-            "merge_to2,merge_to3,merge_to4,merge_to5,first_t2,first_t3,first_t4,first_t5,first_t6,blocked_waves,kills,total_damage," +
-            "gem_tier_ups,gem_color_ups,gem_spent,rerolls,attack_towers,lineup,variant,merge_count,combat_seed";
+        public static readonly int[] TierColumns = MakeTierColumns(1, true);
+        public static readonly int[] MergeColumns = MakeTierColumns(2, false);
+        public static readonly int[] FirstColumns = MakeTierColumns(2, true);
+        public static readonly string GamesHeader = MakeGamesHeader();
+
+        private static int[] MakeTierColumns(int from, bool withSynergy)
+        {
+            var tiers = new List<int>();
+            for (int tier = from; tier <= TowerId.MaxTier; tier++) tiers.Add(tier);
+            if (withSynergy) tiers.Add(TowerId.SynergyTier);
+            return tiers.ToArray();
+        }
+
+        private static string MakeGamesHeader()
+        {
+            var columns = new List<string> { "run", "seed", "mode", "emblems", "result", "reason", "wave", "enemy_turns", "alive", "limit", "gold", "gem", "towers" };
+            foreach (int tier in TierColumns) columns.Add($"t{tier}");
+            foreach (int tier in MergeColumns) columns.Add($"merge_to{tier}");
+            foreach (int tier in FirstColumns) columns.Add($"first_t{tier}");
+            columns.AddRange(new[] { "blocked_waves", "kills", "total_damage", "gem_tier_ups", "gem_color_ups", "gem_spent", "rerolls", "attack_towers", "lineup", "variant", "merge_count", "combat_seed" });
+            return string.Join(",", columns);
+        }
         public const string TowersHeader = "run,seed,tower_id,name,basic,skill,ground,other,kills,tower_turns";
 
         private sealed class TowerRecord
@@ -173,9 +191,9 @@ namespace SquareTD
                 Text(CurrencyManager.Instance != null ? CurrencyManager.Instance.Gem : 0),
                 Text(towerCount),
             };
-            for (int tier = 1; tier <= 6; tier++) line.Add(Text(tiers[tier]));
-            for (int tier = 2; tier <= 5; tier++) line.Add(Text(s_merges[tier]));
-            for (int tier = 2; tier <= 6; tier++) line.Add(Text(s_firstWave[tier]));
+            foreach (int tier in TierColumns) line.Add(Text(tiers[tier]));
+            foreach (int tier in MergeColumns) line.Add(Text(s_merges[tier]));
+            foreach (int tier in FirstColumns) line.Add(Text(s_firstWave[tier]));
             line.Add(Text(s_blockedWaves));
             line.Add(Text(s_kills));
             line.Add(Text(total));
@@ -194,7 +212,7 @@ namespace SquareTD
             foreach (KeyValuePair<int, TowerRecord> pair in s_towers)
             {
                 TowerRecord record = pair.Value;
-                string name = $"{EmblemNames.GetTierName(Mathf.Clamp(TowerId.GetTier(pair.Key), 1, 5))} {EmblemNames.GetConceptName(pair.Key)}";
+                string name = $"{EmblemNames.GetTierName(Mathf.Clamp(TowerId.GetTier(pair.Key), 1, TowerId.MaxTier))} {EmblemNames.GetConceptName(pair.Key)}";
                 if (TowerId.IsSynergy(pair.Key)) name = $"시너지 {pair.Key}";
                 rows.Append(string.Join(",", Text(s_run), Text(s_seed), Text(pair.Key), Clean(name),
                     Text(record.Basic), Text(record.Skill), Text(record.Ground), Text(record.Other), Text(record.Kills), Text(record.TowerTurns))).Append('\n');

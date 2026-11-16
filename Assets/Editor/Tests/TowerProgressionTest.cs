@@ -48,27 +48,26 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 티어_강화_비용은_5_15_45_135()
+        public void 티어_강화_비용은_5_15_45()
         {
             Assert.AreEqual(5, TowerProgression.GetTierUpgradeCost(1));
             Assert.AreEqual(15, TowerProgression.GetTierUpgradeCost(2));
             Assert.AreEqual(45, TowerProgression.GetTierUpgradeCost(3));
-            Assert.AreEqual(135, TowerProgression.GetTierUpgradeCost(4));
         }
 
         [Test]
-        public void 다섯_티어와_시너지는_티어_강화_비용_0()
+        public void 다이아와_시너지는_티어_강화_비용_0()
         {
-            Assert.AreEqual(0, TowerProgression.GetTierUpgradeCost(5));
+            Assert.AreEqual(0, TowerProgression.GetTierUpgradeCost(4));
             Assert.AreEqual(0, TowerProgression.GetTierUpgradeCost(6));
         }
 
         [Test]
-        public void 일_사_티어만_합성_가능()
+        public void 일_삼_티어만_합성_가능()
         {
             Assert.IsTrue(TowerProgression.CanMergeFrom(Def(1101)));
-            Assert.IsTrue(TowerProgression.CanMergeFrom(Def(4214)));
-            Assert.IsFalse(TowerProgression.CanMergeFrom(Def(5101)));
+            Assert.IsTrue(TowerProgression.CanMergeFrom(Def(3214)));
+            Assert.IsFalse(TowerProgression.CanMergeFrom(Def(4101)));
             Assert.IsFalse(TowerProgression.CanMergeFrom(Def(6001)));
         }
 
@@ -118,11 +117,11 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 다섯_티어와_시너지는_합성하지_않음()
+        public void 다이아와_시너지는_합성하지_않음()
         {
-            Place(5101, 0);
-            Place(5101, 1);
-            Place(5101, 2);
+            Place(4101, 0);
+            Place(4101, 1);
+            Place(4101, 2);
             Place(6001, 3);
             Place(6001, 4);
             Place(6001, 5);
@@ -250,7 +249,7 @@ namespace SquareTD.Tests
         [Test]
         public void 덱_비교는_동일시드_노말넷_하드여섯_합성세기()
         {
-            var settings = new SimulationSettings { CompareDeckModes = true, Runs = 100, FirstSeed = 1, ResultName = "deck" };
+            var settings = new SimulationSettings { CompareDeckModes = true, Runs = 100, FirstSeed = 1, ResultName = "deck", NormalDeckCount = 4, HardDeckCount = 6 };
             Assert.AreEqual(200, settings.TotalRuns);
             Assert.AreEqual(1, settings.GetSeed(0));
             Assert.AreEqual(1, settings.GetSeed(1));
@@ -266,6 +265,19 @@ namespace SquareTD.Tests
         }
 
 
+
+        [Test]
+        public void 판_기록_머리줄은_지금_티어_수를_따름()
+        {
+            var columns = new System.Collections.Generic.List<string>(BalanceRecorder.GamesHeader.Split(','));
+            Assert.Contains("t4", columns);
+            Assert.Contains("t6", columns, "시너지");
+            Assert.Contains("merge_to4", columns);
+            Assert.Contains("first_t6", columns);
+            Assert.IsFalse(columns.Contains("t5"), "미스릴은 없음");
+            Assert.IsFalse(columns.Contains("merge_to5"));
+            Assert.AreEqual(columns.Count, new System.Collections.Generic.HashSet<string>(columns).Count, "같은 이름의 칸이 없음");
+        }
 
         [Test]
         public void 전략_탐색은_같은초기시드와_열번의_전투반복을_구분한다()

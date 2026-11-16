@@ -214,3 +214,7 @@ AI에게 맡길 때: "Balance의 마지막 summary 봐 줘" — AI는 summary만
 - 버프·디버프 28행 모두 발키리와 같게: Power 4, AbilityValue 0.75 (전 Power 3.6 ~ 9, AV 10). 문양 차이는 스킬 효과로만.
 - 티어·컬러 표를 공격(빨강·파랑)과 지원(노랑·보라) 두 벌로 나눔 (BalanceTables). 공격 티어 Power ×1 / 2 / 4 / 8 / 16 (원래), 지원 티어 Power ×1 / 1.5 / 2 / 3 / 4.5.
   AbilityValue 배율과 컬러 표는 두 벌 모두 같은 값으로 시작. 데스나이트는 Power 1, AV 0.2가 적당하다고 봄 (CSV는 아직 4 / 0.75).
+
+[2026-11-16 1웨이브 섬멸률] 22번 같은 날 항목. 실행 예 (에디터를 닫고 프로젝트 루트에서):
+  & "C:\Program Files\Unity\Hub\Editor\6000.6.8f1\Editor\Unity.exe" -batchmode -nographics -projectPath "$PWD" -executeMethod SquareTD.BalanceSimulationWindow.RunBatch -simWaveProbe -simProbeWaves 2 -simProbeTowers 2 -simMode 2 -simRuns 200 -simSeed 1 -logFile "$PWD\Balance\probe_unity.log"
+  노말 2기·2웨이브 종료 평균 87.7% (공격 타워 광역 Power ×10·Action −4·Range +1·Mastery 2, 단일 Power ×1.5·Action −3·Range +1 적용 후).

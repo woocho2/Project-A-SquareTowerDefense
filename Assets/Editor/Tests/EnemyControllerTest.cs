@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,11 +10,11 @@ namespace SquareTD.Tests
         private GameObject m_go;
         private EnemyDefinition m_definition;
 
-        private EnemyController MakeEnemy(float defense)
+        private EnemyController MakeEnemy(float defense, EnemyKind kind = EnemyKind.Normal)
         {
             m_definition = ScriptableObject.CreateInstance<EnemyDefinition>();
             var so = new SerializedObject(m_definition);
-            so.FindProperty("<Kind>k__BackingField").enumValueIndex = (int)EnemyKind.Normal;
+            so.FindProperty("<Kind>k__BackingField").enumValueIndex = (int)kind;
             so.FindProperty("<MaxHP>k__BackingField").floatValue = 1000f;
             so.FindProperty("<Defense>k__BackingField").floatValue = defense;
             so.FindProperty("<Action>k__BackingField").intValue = 3;
@@ -81,5 +82,95 @@ namespace SquareTD.Tests
 
             Assert.AreEqual(50f, enemy.PreviewDamage(Hit(100f)), 0.0001f);
         }
+
+        [TestCase(EnemyKind.Normal, false)]
+        [TestCase(EnemyKind.MiddleBoss, false)]
+        [TestCase(EnemyKind.FinalBoss, true)]
+        public void 자물쇠_면은_최종보스만_기믹을_호출함(EnemyKind kind, bool expected)
+        {
+            EnemyController enemy = MakeEnemy(0f, kind);
+            int calls = 0;
+            enemy.BossSkillTriggered += owner =>
+            {
+                Assert.AreSame(enemy, owner);
+                calls++;
+            };
+
+            EnemyCubeFaces.Apply(enemy.Stats, EnemyCubeFaceAsset.Locked, 5, kind);
+            Assert.AreEqual(expected, enemy.TryTriggerBossSkill(EnemyCubeFaceAsset.Locked));
+            Assert.AreEqual(expected ? 1 : 0, calls);
+            Assert.AreEqual(expected ? 1f : 1.5f, enemy.Stats.Get(StatType.DamageTaken), 0.0001f);
+        }
+
+        [TestCase(EnemyCubeFaceAsset.SelfHeal)]
+        [TestCase(EnemyCubeFaceAsset.Defense)]
+        [TestCase(EnemyCubeFaceAsset.Action)]
+        [TestCase(EnemyCubeFaceAsset.Mobility)]
+        [TestCase(EnemyCubeFaceAsset.Hourglass)]
+        public void 최종보스의_다른_면은_기믹을_호출하지_않음(EnemyCubeFaceAsset face)
+        {
+            EnemyController enemy = MakeEnemy(0f, EnemyKind.FinalBoss);
+            int calls = 0;
+            enemy.BossSkillTriggered += _ => calls++;
+
+            Assert.IsFalse(enemy.TryTriggerBossSkill(face));
+            Assert.AreEqual(0, calls);
+        }
+
+        [Test]
+        public void 죽은_최종보스는_기믹을_호출하지_않음()
+        {
+            EnemyController enemy = MakeEnemy(0f, EnemyKind.FinalBoss);
+            enemy.Health.TakeDamage(enemy.CurrentHp);
+            int calls = 0;
+            enemy.BossSkillTriggered += _ => calls++;
+
+            Assert.IsFalse(enemy.TryTriggerBossSkill(EnemyCubeFaceAsset.Locked));
+            Assert.AreEqual(0, calls);
+        }
+
+        private EnemyMovement MakeMovement(EnemyCubeFaceAsset face)
+        {
+            var visualObject = new GameObject("TestCube");
+            visualObject.transform.SetParent(m_go.transform);
+            visualObject.SetActive(false);
+            var cube = visualObject.AddComponent<EnemyCubeMeshVisual>();
+            var indices = (int[])typeof(EnemyCubeMeshVisual)
+                .GetField("m_faceAssetIndices", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(cube);
+            for (int i = 0; i < indices.Length; i++) indices[i] = (int)face;
+
+            var movement = m_go.AddComponent<EnemyMovement>();
+            typeof(EnemyMovement).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(movement, null);
+            var serialized = new SerializedObject(movement);
+            serialized.FindProperty("m_cube").objectReferenceValue = cube;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            return movement;
+        }
+
+        private static void Land(EnemyMovement movement) => typeof(EnemyMovement)
+            .GetMethod("Land", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(movement, null);
+
+        [Test]
+        public void 기믹은_착지마다_한번만_호출되고_면_수치_갱신으로는_호출되지_않음()
+        {
+            EnemyController enemy = MakeEnemy(0f, EnemyKind.FinalBoss);
+            EnemyMovement movement = MakeMovement(EnemyCubeFaceAsset.Locked);
+            int calls = 0;
+            enemy.BossSkillTriggered += _ => calls++;
+
+            Land(movement);
+            movement.RefreshFace();
+            movement.RefreshFace();
+            Assert.AreEqual(0, calls);
+
+            Assert.IsTrue(movement.ApplyAdaptive(), "기믹도 적응형 효과의 단계 간격을 적용함");
+            Assert.IsFalse(movement.ApplyAdaptive());
+            Assert.AreEqual(1, calls);
+
+            Land(movement);
+            movement.ApplyAdaptive();
+            Assert.AreEqual(2, calls);
+        }
+
     }
 }

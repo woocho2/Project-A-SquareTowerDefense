@@ -1,0 +1,92 @@
+{
+    "AtlasSize":  "384x256",
+    "BossIconSize":  "256x256",
+    "OtherFourCellsUnchanged":  true,
+    "AtlasAlphaPreserved":  true,
+    "BossIconMinimumMargin":  51,
+    "ExistingMetadata":  [
+                             {
+                                 "Path":  "Assets/20. 통합 기획서.txt.meta",
+                                 "Unchanged":  true
+                             },
+                             {
+                                 "Path":  "Assets/2. Prefab/2. Enemy.prefab.meta",
+                                 "Unchanged":  true
+                             },
+                             {
+                                 "Path":  "Assets/3. Scripts/06. Enemy/EnemyController.cs.meta",
+                                 "Unchanged":  true
+                             },
+                             {
+                                 "Path":  "Assets/3. Scripts/06. Enemy/EnemyCubeMeshVisual.cs.meta",
+                                 "Unchanged":  true
+                             },
+                             {
+                                 "Path":  "Assets/3. Scripts/06. Enemy/EnemyMovement.cs.meta",
+                                 "Unchanged":  true
+                             },
+                             {
+                                 "Path":  "Assets/4. Asset/0. Common/Enemy_State_Action.mat.meta",
+                                 "Unchanged":  true
+                             },
+                             {
+                                 "Path":  "Assets/4. Asset/0. Common/Enemy_State_Defense.mat.meta",
+                                 "Unchanged":  true
+                             },
+                             {
+                                 "Path":  "Assets/4. Asset/0. Common/Enemy_State_Heal.mat.meta",
+                                 "Unchanged":  true
+                             },
+                             {
+                                 "Path":  "Assets/4. Asset/0. Common/Enemy_State_Hourglass.mat.meta",
+                                 "Unchanged":  true
+                             },
+                             {
+                                 "Path":  "Assets/4. Asset/0. Common/Enemy_State_Locked.mat.meta",
+                                 "Unchanged":  true
+                             },
+                             {
+                                 "Path":  "Assets/4. Asset/0. Common/Enemy_State_Mobility.mat.meta",
+                                 "Unchanged":  true
+                             },
+                             {
+                                 "Path":  "Assets/4. Asset/4. Enemy/Enemy_State_Badges_Atlas.png.meta",
+                                 "Unchanged":  true
+                             }
+                         ],
+    "FrameMaterials":  [
+                           {
+                               "File":  "Enemy_State_Action.mat",
+                               "UsesThin":  true
+                           },
+                           {
+                               "File":  "Enemy_State_BossGimmick.mat",
+                               "UsesThin":  true
+                           },
+                           {
+                               "File":  "Enemy_State_Defense.mat",
+                               "UsesThin":  true
+                           },
+                           {
+                               "File":  "Enemy_State_Heal.mat",
+                               "UsesThin":  true
+                           },
+                           {
+                               "File":  "Enemy_State_Hourglass.mat",
+                               "UsesThin":  true
+                           },
+                           {
+                               "File":  "Enemy_State_Locked.mat",
+                               "UsesThin":  true
+                           },
+                           {
+                               "File":  "Enemy_State_Mobility.mat",
+                               "UsesThin":  true
+                           }
+                       ],
+    "CompileErrors":  0,
+    "ExistingCompileWarnings":  3,
+    "IsolatedUnityRenderVerified":  true,
+    "FinalBossSwapAndPoolReuseVerified":  true,
+    "MainScenePlayVerified":  false
+}

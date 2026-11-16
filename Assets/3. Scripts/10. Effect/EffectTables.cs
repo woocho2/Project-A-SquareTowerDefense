@@ -187,7 +187,7 @@ namespace SquareTD
                 case (TowerEmblem.Spear, TowerColor.Blue):
                 case (TowerEmblem.Shield, TowerColor.Blue):
                     var route = new List<Vector3> { points[0] };
-                    int count = Mathf.Max(1, SkillFormula.EffectDuration(owner));
+                    int count = Mathf.Max(1, SkillFormula.LevelTierCount(owner));
                     for (int i = 0; i < count; i++) route.Add(points[(i + 1) % points.Count]);
                     if (owner.Definition.Emblem == TowerEmblem.Spear) s_full.Headhunt(owner, route);
                     else s_full.Rebound(owner, route);

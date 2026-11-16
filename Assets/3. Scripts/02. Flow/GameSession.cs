@@ -26,6 +26,8 @@ namespace SquareTD
     {
         [SerializeField] private GameMode m_mode = GameMode.Normal;
         [SerializeField] private StageDefinition m_stage;
+        [SerializeField, Min(1)] private int m_helNormalDeathTarget = 70;
+        [SerializeField, Min(1)] private int m_helHardDeathTarget = 50;
 
         public GameMode Mode => m_mode;
         public StageDefinition Stage => m_stage;
@@ -35,6 +37,8 @@ namespace SquareTD
         public int CurrentLimit => BaseLimit + SumLimitModifiers();
         public bool IsOver { get; private set; }
         public EmblemSharedState Shared { get; } = new EmblemSharedState();
+        public BossMechanicService BossMechanics { get; } = new BossMechanicService();
+        public int HelDeathTarget => Mathf.Max(1, m_mode == GameMode.Hard ? m_helHardDeathTarget : m_helNormalDeathTarget);
 
         public event Action<int> LimitChanged;
 

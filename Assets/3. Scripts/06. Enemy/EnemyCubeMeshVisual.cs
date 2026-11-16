@@ -13,6 +13,7 @@ namespace SquareTD
 
         [SerializeField] private EnemyCubeAppearance m_appearance;
         [SerializeField] private Material[] m_faceAssetPool;
+        [SerializeField] private Material m_bossMechanicMaterial;
         [SerializeField] private float m_spawnHeight = 5f;
         [SerializeField] private float m_spawnFallDuration = 0.34f;
         [SerializeField] private float m_uprightHopDuration = 0.4f;
@@ -23,6 +24,7 @@ namespace SquareTD
         private MeshRenderer m_renderer;
         private MaterialPropertyBlock m_appearanceProperties;
         private Vector3 m_basePosition;
+        private bool m_isFinalBoss;
 
         public bool HasAllFaces { get; private set; }
 
@@ -66,6 +68,19 @@ namespace SquareTD
 
         public void SetSortingOrder(int sortingOrder) => m_renderer.sortingOrder = sortingOrder;
 
+        public void SetFinalBoss(bool isFinalBoss)
+        {
+            m_isFinalBoss = isFinalBoss;
+            if (!HasAllFaces) return;
+            for (int face = 0; face < FaceCount; face++) m_faceMaterials[face] = ResolveMaterial(m_faceAssetIndices[face]);
+            m_renderer.sharedMaterials = m_faceMaterials;
+            ApplyAppearance();
+        }
+
+        private Material ResolveMaterial(int assetIndex) =>
+            m_isFinalBoss && assetIndex == (int)EnemyCubeFaceAsset.Locked && m_bossMechanicMaterial != null
+                ? m_bossMechanicMaterial : m_faceAssetPool[assetIndex];
+
         public void RandomizeForSpawn()
         {
             transform.localPosition = m_basePosition;
@@ -76,7 +91,7 @@ namespace SquareTD
                 {
                     int assetIndex = Random.Range(0, m_faceAssetPool.Length);
                     m_faceAssetIndices[face] = assetIndex;
-                    m_faceMaterials[face] = m_faceAssetPool[assetIndex];
+                    m_faceMaterials[face] = ResolveMaterial(assetIndex);
                 }
                 m_renderer.sharedMaterials = m_faceMaterials;
                 ApplyAppearance();

@@ -26,11 +26,23 @@ namespace SquareTD
         public bool CompareMergeCounts;
         public int MergeCountA = TowerProgression.MergeCount;
         public int MergeCountB = 2;
+        public int StopWave;
 
         public bool CompareDeckModes;
         public int NormalDeckCount = EmblemSelectPanel.NormalCount;
         public int HardDeckCount = EmblemSelectPanel.HardCount;
         public string CsvSha256 = "";
+
+        public bool WaveProbe;
+        public int ProbeTowers = 2;
+        public int ProbeWaves = 2;
+        public float ProbeSplashPower = 1f;
+        public float ProbeSinglePower = 1f;
+        public int ProbeSplashAction;
+        public int ProbeSingleAction;
+        public int ProbeEnemyAction;
+        public int ProbeSplashMastery;
+        public int ProbeRange;
 
         public bool SearchStrategies;
         public bool SearchSmoke;
@@ -172,6 +184,7 @@ namespace SquareTD
             m_ending = false;
             m_playerTurnFrames = 0;
             m_handledWave = -1;
+            m_probeEnemiesAdjusted = false;
             m_gameStartTime = Time.realtimeSinceStartup;
             m_log.LastReason = "";
             m_randomStreams = null;
@@ -241,6 +254,8 @@ namespace SquareTD
                 return;
             }
 
+            if (m_settings.WaveProbe) AdjustProbeEnemies();
+
             if (!turns.Current.CanPlayerAct)
             {
                 m_playerTurnFrames = 0;
@@ -251,6 +266,17 @@ namespace SquareTD
                 Finish("Stuck", "플레이어 턴을 넘기지 못함 (놓지 못한 존 등)");
                 return;
             }
+            if (m_settings.WaveProbe)
+            {
+                ProbeStep(turns);
+                return;
+            }
+            if (PassedStopWave())
+            {
+                Finish("Clear", $"{m_settings.StopWave}웨이브 통과");
+                return;
+            }
+
             bool ready;
             if (m_search == null) ready = AutoPlanner.PlayStep();
             else
@@ -270,6 +296,189 @@ namespace SquareTD
             turns.OnClickEndTurn();
         }
 
+        private readonly List<string> m_probeLines = new List<string>();
+        private readonly List<(string ids, float rate)> m_probeResults = new List<(string, float)>();
+        private string m_probeIds = "";
+        private bool m_probeEnemiesAdjusted;
+
+        private void AdjustProbeEnemies()
+        {
+            if (m_probeEnemiesAdjusted || m_settings.ProbeEnemyAction == 0 || WaveManager.Instance.CurrentWave != 1) return;
+            if (EnemyManager.Instance == null || EnemyManager.Instance.Registry.Count == 0) return;
+            m_probeEnemiesAdjusted = true;
+            foreach (EnemyController enemy in EnemyManager.Instance.Registry.Alive)
+            {
+                int before = enemy.Stats.GetMoveRange().Action;
+                enemy.Stats.Modifiers.Add(StatModifier.Flat("시뮬레이션 보정", StatType.MaxAction, m_settings.ProbeEnemyAction));
+                enemy.Movement.AddActionProgress(before - enemy.Stats.GetMoveRange().Action);
+            }
+        }
+
+        private void ProbeStep(TurnManager turns)
+        {
+            int wave = WaveManager.Instance.CurrentWave;
+            if (wave == 1 && m_handledWave != 1)
+            {
+                m_handledWave = 1;
+                m_probeIds = string.Join("+", PlaceProbeTowers());
+                turns.OnClickEndTurn();
+                return;
+            }
+            if (wave < 2) return;
+            if (wave <= m_settings.ProbeWaves)
+            {
+                if (m_handledWave == wave) return;
+                m_handledWave = wave;
+                turns.OnClickEndTurn();
+                return;
+            }
+
+            int spawned = WaveTable.GetNormalCount(1);
+            int alive = 0;
+            foreach (EnemyController enemy in EnemyManager.Instance.Registry.Alive)
+            {
+                if (enemy.SpawnWave == 1) alive++;
+            }
+            int killed = Mathf.Max(0, spawned - alive);
+            float rate = spawned > 0 ? (float)killed / spawned : 0f;
+            m_probeResults.Add((m_probeIds, rate));
+            m_probeLines.Add($"{m_run},{m_seed},{(GameMode)m_settings.GetMode(m_run)},{m_settings.ProbeTowers},{m_probeIds},{spawned},{killed},{rate:0.###}");
+            Finish("Probe", "");
+        }
+
+        private List<int> PlaceProbeTowers()
+        {
+            var random = new System.Random(unchecked(m_seed * 7919 + 17));
+            var ids = new List<int>();
+            BoardManager board = BoardManager.Instance;
+            TowerManager towers = TowerManager.Instance;
+
+            for (int i = 0; i < m_settings.ProbeTowers; i++)
+            {
+                TowerColor color = random.Next(2) == 0 ? TowerColor.Red : TowerColor.Blue;
+                var emblem = (TowerEmblem)random.Next((int)TowerEmblem.Sword, (int)TowerEmblem.Darkness + 1);
+                if (!towers.Database.TryGet(TowerId.Make(1, color, emblem), out TowerDefinition definition)) continue;
+
+                TowerController tower = towers.SpawnForDebug(definition);
+                if (tower == null) continue;
+
+                bool splash = color == TowerColor.Red;
+                float power = splash ? m_settings.ProbeSplashPower : m_settings.ProbeSinglePower;
+                int action = splash ? m_settings.ProbeSplashAction : m_settings.ProbeSingleAction;
+                if (!Mathf.Approximately(power, 1f)) tower.State.Modifiers.Add(StatModifier.Percent("시뮬레이션 보정", StatType.Power, power - 1f));
+                if (action != 0) tower.State.Modifiers.Add(StatModifier.Flat("시뮬레이션 보정", StatType.MaxAction, action));
+                if (splash && m_settings.ProbeSplashMastery != 0) tower.State.Modifiers.Add(StatModifier.Flat("시뮬레이션 보정", StatType.Mastery, m_settings.ProbeSplashMastery));
+                if (m_settings.ProbeRange != 0) tower.State.Modifiers.Add(StatModifier.Flat("시뮬레이션 보정", StatType.Range, m_settings.ProbeRange));
+
+                int best = BestProbeSlot(board, tower);
+                if (best >= 0 && best != tower.SlotIndex) towers.TryMoveOrSwap(tower, best);
+                ids.Add(definition.Id);
+            }
+            return ids;
+        }
+
+        private static int BestProbeSlot(BoardManager board, TowerController tower)
+        {
+            int best = -1, bestCover = -1;
+            for (int i = 0; i < board.Grid.SpawnCount; i++)
+            {
+                TowerController here = board.Slots.Get(i);
+                if (here != null && here != tower) continue;
+
+                int cover = board.Grid.GetPathIndicesInSquare(board.Grid.GetSpawnCell(i), tower.Stats.Range).Count;
+                if (cover > bestCover)
+                {
+                    bestCover = cover;
+                    best = i;
+                }
+            }
+            return best;
+        }
+
+        private void WriteProbeSummary()
+        {
+            if (m_probeLines.Count == 0) return;
+            Directory.CreateDirectory(SimulationSettings.Folder);
+            string name = m_settings.ResultName;
+            File.WriteAllText(Path.Combine(SimulationSettings.Folder, name + "_probe.csv"),
+                "run,seed,mode,towers,ids,spawned,killed,rate\n" + string.Join("\n", m_probeLines) + "\n");
+
+            var text = new System.Text.StringBuilder();
+            float sum = 0f;
+            int over80 = 0, over50 = 0;
+            foreach ((string _, float rate) in m_probeResults)
+            {
+                sum += rate;
+                if (rate >= 0.8f - 0.0001f) over80++;
+                if (rate >= 0.5f - 0.0001f) over50++;
+            }
+            int count = m_probeResults.Count;
+            text.AppendLine($"1웨이브 적 섬멸률 ({m_settings.ProbeWaves}웨이브 종료까지) — {(GameMode)m_settings.Mode}, 브론즈·1레벨 공격 타워 {m_settings.ProbeTowers}기, {count}판");
+            text.AppendLine($"보정: 광역 Power ×{m_settings.ProbeSplashPower:0.##} Action {m_settings.ProbeSplashAction:+0;-0;0}, 단일 Power ×{m_settings.ProbeSinglePower:0.##} Action {m_settings.ProbeSingleAction:+0;-0;0}, 적 Action {m_settings.ProbeEnemyAction:+0;-0;0}, 광역 Mastery {m_settings.ProbeSplashMastery:+0;-0;0}, Range {m_settings.ProbeRange:+0;-0;0}");
+            text.AppendLine($"평균 {sum / count * 100f:0.#}%, 80% 이상 {over80 * 100f / count:0.#}%판, 50% 이상 {over50 * 100f / count:0.#}%판");
+
+            var byMix = new Dictionary<string, (float sum, int n, int over80)>();
+            foreach ((string ids, float rate) in m_probeResults)
+            {
+                int reds = 0, blues = 0;
+                foreach (string part in ids.Split('+'))
+                {
+                    if (!int.TryParse(part, out int id)) continue;
+                    if (TowerId.GetColor(id) == TowerColor.Red) reds++; else blues++;
+                }
+                string key = $"광역 {reds} + 단일 {blues}";
+                byMix.TryGetValue(key, out var acc);
+                byMix[key] = (acc.sum + rate, acc.n + 1, acc.over80 + (rate >= 0.8f - 0.0001f ? 1 : 0));
+            }
+            text.AppendLine("조합별");
+            foreach (var pair in byMix)
+                text.AppendLine($"  {pair.Key}: 평균 {pair.Value.sum / pair.Value.n * 100f:0.#}%, 80% 이상 {pair.Value.over80 * 100f / pair.Value.n:0.#}%판 ({pair.Value.n}판)");
+
+            var byTower = new Dictionary<int, (float sum, int n)>();
+            foreach ((string ids, float rate) in m_probeResults)
+            {
+                foreach (string part in ids.Split('+'))
+                {
+                    if (!int.TryParse(part, out int id)) continue;
+                    byTower.TryGetValue(id, out var acc);
+                    byTower[id] = (acc.sum + rate, acc.n + 1);
+                }
+            }
+            var order = new List<int>(byTower.Keys);
+            order.Sort((a, b) => (byTower[b].sum / byTower[b].n).CompareTo(byTower[a].sum / byTower[a].n));
+            text.AppendLine("타워별 (그 타워가 들어간 판의 평균)");
+            foreach (int id in order)
+                text.AppendLine($"  {id} {EmblemNames.GetConceptName(id)}: {byTower[id].sum / byTower[id].n * 100f:0.#}% ({byTower[id].n}판)");
+
+            File.WriteAllText(Path.Combine(SimulationSettings.Folder, name + "_probe_summary.txt"), text.ToString());
+        }
+
+        private void WriteBossLine(string result)
+        {
+            EnemyManager enemies = EnemyManager.Instance;
+            if (enemies == null || WaveManager.Instance == null) return;
+            string path = Path.Combine(SimulationSettings.Folder, m_settings.ResultName + "_boss.csv");
+            if (!File.Exists(path)) File.WriteAllText(path, "seed,result,wave,kind,spawn_wave,hp_left,max_hp,left_ratio\n");
+            var line = new System.Text.StringBuilder();
+            foreach (EnemyController enemy in enemies.Registry.Alive)
+            {
+                if (enemy == null || !enemy.IsAlive || !enemy.IsBoss) continue;
+                line.Append(FormattableString.Invariant($"{m_seed},{result},{WaveManager.Instance.CurrentWave},{enemy.Definition.Kind},{enemy.SpawnWave},{enemy.CurrentHp:0.#},{enemy.MaxHp:0.#},{enemy.CurrentHp / enemy.MaxHp:0.###}\n"));
+            }
+            if (line.Length == 0) line.Append($"{m_seed},{result},{WaveManager.Instance.CurrentWave},None,0,0,0,0\n");
+            File.AppendAllText(path, line.ToString());
+        }
+
+        private bool PassedStopWave()
+        {
+            if (m_settings.StopWave <= 0) return false;
+            int wave = WaveManager.Instance.CurrentWave;
+            if (wave <= m_settings.StopWave) return false;
+            if (wave > m_settings.StopWave + 1) return true;
+            EnemyManager enemies = EnemyManager.Instance;
+            return enemies == null || enemies.BossTimer.Count == 0;
+        }
+
         private void OnStateChanged(ITurnState state)
         {
             if (state is GameOverState) Finish("GameOver", m_log.LastReason);
@@ -282,6 +491,7 @@ namespace SquareTD
             m_ending = true;
 
             if (TurnManager.Instance != null) TurnManager.Instance.StateChanged -= OnStateChanged;
+            WriteBossLine(result);
             BalanceRecorder.EndGame(result, reason);
             bool searchNext = m_search == null || m_search.FinishGame(result, WaveManager.Instance.CurrentWave,
                 BalanceRecorder.EnemyTurns, BalanceRecorder.Kills);
@@ -292,6 +502,7 @@ namespace SquareTD
             {
                 m_settings.Done = true;
                 m_settings.Save();
+                if (m_settings.WaveProbe) WriteProbeSummary();
                 Restore();
                 Time.timeScale = 0f;
                 Debug.Log($"[Simulation] {m_run}판 끝 — 결과: {SimulationSettings.Folder}");

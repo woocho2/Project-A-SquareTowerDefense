@@ -1,0 +1,50 @@
+﻿{
+    "ApprovedPreview":  "ArtPreviews/Enemy_Muspelheim_20261116/Surtr/Muspelheim_Surtr_Preview_v2.png",
+    "Destination":  "Assets/4. Asset/4. Enemy/TwoTone/Muspelheim_Surtr.png",
+    "SourceDimensions":  [
+                             1254,
+                             1254
+                         ],
+    "SavedDimensions":  [
+                            2048,
+                            2048
+                        ],
+    "Method":  "Approved image resized uniformly to 2032px inside 2048px transparent canvas; 8px padding; no redraw or sharpening",
+    "PPU":  2048,
+    "Guid":  "12c3e1f62d9f4db19b57731e517c0a3c",
+    "Slices":  [
+                   {
+                       "Name":  "Muspelheim_Surtr_Full",
+                       "ID":  "4600000000000231",
+                       "X":  0,
+                       "Y":  0,
+                       "Width":  2048,
+                       "Height":  2048
+                   },
+                   {
+                       "Name":  "Muspelheim_Surtr_Face",
+                       "ID":  "4600000000000232",
+                       "X":  1019,
+                       "Y":  1680,
+                       "Width":  256,
+                       "Height":  256
+                   }
+               ],
+    "CharacterLeftEyeSourceTopLeft":  [
+                                          703,
+                                          143
+                                      ],
+    "CharacterLeftEyeFinalTopLeft":  [
+                                         1147,
+                                         240
+                                     ],
+    "CornerAlpha":  [
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+    "SpriteNamesIDsGuidAndAppearanceReferencesPreserved":  true,
+    "MetadataChangesLimitedToSliceRects":  true,
+    "UnityPlayTested":  false
+}

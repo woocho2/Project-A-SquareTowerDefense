@@ -8,7 +8,7 @@ namespace SquareTD
     {
         [Tooltip("검, 도끼, 활, 창, 방패, 해머, 불, 물, 대지, 바람, 얼음, 전기, 빛, 어둠 순서")]
         [SerializeField] private Sprite[] m_emblems;
-        [Tooltip("1 브론즈 ~ 5 다이아")]
+        [Tooltip("1 브론즈, 2 실버, 3 골드, 4 다이아")]
         [SerializeField] private Sprite[] m_tiers;
         [SerializeField] private Color m_splashColor = new Color32(226, 93, 98, 255);
         [SerializeField] private Color m_targetColor = new Color32(83, 138, 205, 255);

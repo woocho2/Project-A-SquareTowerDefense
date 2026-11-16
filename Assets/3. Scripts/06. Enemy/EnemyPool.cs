@@ -13,8 +13,11 @@ namespace SquareTD
 
         private ObjectPool<EnemyController> m_pool;
 
-        private void Awake()
+        private void Awake() => EnsurePool();
+
+        private void EnsurePool()
         {
+            if (m_pool != null) return;
             m_pool = new ObjectPool<EnemyController>(
                 CreateEnemy,
                 null,
@@ -25,8 +28,17 @@ namespace SquareTD
                 m_maxSize);
         }
 
-        public EnemyController Get() => m_pool.Get();
-        public void Release(EnemyController enemy) => m_pool.Release(enemy);
+        public EnemyController Get()
+        {
+            EnsurePool();
+            return m_pool.Get();
+        }
+
+        public void Release(EnemyController enemy)
+        {
+            EnsurePool();
+            m_pool.Release(enemy);
+        }
 
         private EnemyController CreateEnemy()
         {

@@ -18,7 +18,7 @@ namespace SquareTD
         private readonly float m_bleedRate;
 
         public SpearDebuffEffect(SupportCast cast, float bleedRate)
-            : base(cast, $"받은 피해의 {bleedRate * 100f:0.##}%가 {cast.Duration}턴 출혈" + (cast.IsSkill2 ? ", 최소·최대 이동력 −1, 찌르기의 출혈 2배" : ""), Modifiers(cast))
+            : base(cast, $"받은 피해의 {bleedRate * 100f:0.##}%가 {SkillFormula.EffectTurns}턴 출혈" + (cast.IsSkill2 ? ", 최소·최대 이동력 −1, 찌르기의 출혈 2배" : ""), Modifiers(cast))
         {
             m_bleedRate = bleedRate;
         }
@@ -37,7 +37,7 @@ namespace SquareTD
 
             float bleed = damage * m_bleedRate;
             if (IsSkill2 && info.Attribute == AttackAttribute.Pierce) bleed *= SpearDebuffRule.PierceBleedMultiplier;
-            BleedEffect.Add(enemy, Cast.Owner, bleed, Cast.Duration);
+            BleedEffect.Add(enemy, Cast.Owner, bleed, SkillFormula.EffectTurns);
         }
     }
 

@@ -195,9 +195,9 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void hard모드이면1점5배율()
+        public void hard모드이면1점375배율()
         {
-            Assert.AreEqual(1.5, WaveTable.GetModeStatMultiplier(GameMode.Hard));
+            Assert.AreEqual(1.375, WaveTable.GetModeStatMultiplier(GameMode.Hard));
         }
 
         [Test]
@@ -242,7 +242,7 @@ namespace SquareTD.Tests
         {
             WaveTable.GetKillReward(EnemyKind.MiddleBoss, 15, out int gold, out int gem);
             Assert.AreEqual(2000, gold);
-            Assert.AreEqual(40, gem);
+            Assert.AreEqual(20, gem);
         }
 
         [Test]
@@ -250,23 +250,23 @@ namespace SquareTD.Tests
         {
             WaveTable.GetKillReward(EnemyKind.MiddleBoss, 35, out int gold, out int gem);
             Assert.AreEqual(8000, gold);
-            Assert.AreEqual(160, gem);
+            Assert.AreEqual(80, gem);
         }
 
         [Test]
-        public void finalBoss_웨이브10_gold_1000_gem_10()
+        public void finalBoss_웨이브10_gold_1000_gem_15()
         {
             WaveTable.GetKillReward(EnemyKind.FinalBoss, 10, out int gold, out int gem);
             Assert.AreEqual(1000, gold);
-            Assert.AreEqual(20, gem);
+            Assert.AreEqual(15, gem);
         }
 
         [Test]
-        public void finalBoss_웨이브40_gold_16000_gem_160()
+        public void finalBoss_웨이브40_gold_16000_gem_240()
         {
             WaveTable.GetKillReward(EnemyKind.FinalBoss, 40, out int gold, out int gem);
             Assert.AreEqual(16000, gold);
-            Assert.AreEqual(320, gem);
+            Assert.AreEqual(240, gem);
         }
     }
 }

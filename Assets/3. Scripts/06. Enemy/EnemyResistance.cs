@@ -7,15 +7,18 @@ namespace SquareTD
     {
         public const float Max = 100f;
 
-        public float Base { get; }
+        private readonly float m_base;
+        private float m_current;
+        private float m_bossMultiplier = 1f;
+        public float Base => Mathf.Min(Max, m_base * m_bossMultiplier);
         public float Cut { get; private set; }
         public float Effective => Mathf.Max(0f, Base - Cut);
-        public float Current { get; private set; }
+        public float Current => Mathf.Min(Max, m_current * m_bossMultiplier);
 
         public EnemyResistance(float basePercent)
         {
-            Base = Mathf.Clamp(basePercent, 0f, Max);
-            Current = Base;
+            m_base = Mathf.Clamp(basePercent, 0f, Max);
+            m_current = m_base;
         }
 
         public bool TryStrongCC() => TryStrongCC(Random.value * Max);
@@ -23,14 +26,14 @@ namespace SquareTD
         public bool TryStrongCC(float roll)
         {
             if (roll < Mathf.Max(0f, Current - Cut)) return false;
-            Current = Mathf.Min(Current + Base, Max);
+            m_current = Mathf.Min(m_current + m_base, Max);
 
             return true;
         }
 
         public void OnActed()
         {
-            Current = Mathf.Max(Base, Current - Base * 0.5f);
+            m_current = Mathf.Max(m_base, m_current - m_base * 0.5f);
         }
 
         public float ResistWeak(float value) => SkillFormula.Resist(value, Effective);
@@ -40,8 +43,10 @@ namespace SquareTD
 
         public void Reset()
         {
-            Current = Base;
+            m_current = m_base;
             Cut = 0f;
         }
+
+        public void SetBossMultiplier(float multiplier) => m_bossMultiplier = Mathf.Max(0f, multiplier);
     }
 }

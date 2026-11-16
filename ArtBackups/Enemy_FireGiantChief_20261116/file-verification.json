@@ -1,0 +1,50 @@
+﻿{
+    "ApprovedPreview":  "ArtPreviews/Enemy_Muspelheim_20261116/FireGiantChief/Muspelheim_FireGiantChief_Preview_v1.png",
+    "Destination":  "Assets/4. Asset/4. Enemy/TwoTone/Muspelheim_FireGiantChief.png",
+    "SourceDimensions":  [
+                             1254,
+                             1254
+                         ],
+    "SavedDimensions":  [
+                            2048,
+                            2048
+                        ],
+    "Method":  "Approved image resized uniformly to 2032px inside 2048px transparent canvas; 8px padding; no redraw or sharpening",
+    "PPU":  2048,
+    "Guid":  "a2df84b91224492e81c9557d4d4597e6",
+    "Slices":  [
+                   {
+                       "Name":  "Muspelheim_FireGiantChief_Full",
+                       "ID":  "4600000000000221",
+                       "X":  0,
+                       "Y":  0,
+                       "Width":  2048,
+                       "Height":  2048
+                   },
+                   {
+                       "Name":  "Muspelheim_FireGiantChief_Face",
+                       "ID":  "4600000000000222",
+                       "X":  1055,
+                       "Y":  1711,
+                       "Width":  256,
+                       "Height":  256
+                   }
+               ],
+    "CharacterLeftEyeSourceTopLeft":  [
+                                          725,
+                                          124
+                                      ],
+    "CharacterLeftEyeFinalTopLeft":  [
+                                         1183,
+                                         209
+                                     ],
+    "CornerAlpha":  [
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+    "SpriteNamesIDsGuidAndAppearanceReferencesPreserved":  true,
+    "MetadataChangesLimitedToSliceRects":  true,
+    "UnityPlayTested":  false
+}

@@ -6,7 +6,7 @@ namespace SquareTD
     // 골드·젬
     public class CurrencyManager : Singleton<CurrencyManager>
     {
-        [SerializeField] private int m_startGold = 300;
+        [SerializeField] private int m_startGold = 500;
         [SerializeField] private int m_startGem = 0;
 
         public int Gold { get; private set; }

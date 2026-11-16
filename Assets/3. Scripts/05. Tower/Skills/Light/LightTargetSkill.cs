@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 빛 단일 — 하이페리온 ((Tier × 레벨) 턴 동안 매 턴 피해, 첫 턴 Power × AbilityValue × 0.1에서 매 턴 2배.
+    // 빛 단일 — 하이페리온 (3턴 동안 매 턴 피해, 첫 턴 Power × AbilityValue × 0.1에서 매 턴 2배.
     //                       초월 웨이브에는 맵 전체의 적에게, 첫 턴 Power × AbilityValue에서 매 턴 4배)
     public class LightTargetSkill : AttackSkill
     {
@@ -17,7 +17,7 @@ namespace SquareTD
         {
             TowerFinalStats stats = owner.Stats;
             float damage = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * stats.FinalDamageMultiplier;
-            int turns = EffectDuration(owner);
+            int turns = SkillFormula.EffectTurns;
 
             if (EmblemSharedState.Current.IsTranscendWave)
             {

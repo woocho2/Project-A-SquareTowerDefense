@@ -1,0 +1,50 @@
+﻿{
+    "ApprovedPreview":  "ArtPreviews/Enemy_Hel_20261116/Garm/Hel_Garm_Preview_v1.png",
+    "Destination":  "Assets/4. Asset/4. Enemy/TwoTone/Hel_Garm.png",
+    "SourceDimensions":  [
+                             1254,
+                             1254
+                         ],
+    "SavedDimensions":  [
+                            2048,
+                            2048
+                        ],
+    "Method":  "Approved image resized uniformly to 2032px inside 2048px transparent canvas; 8px padding; no redraw or sharpening",
+    "PPU":  2048,
+    "Guid":  "1a71349e08484963ad0f0a172265cafc",
+    "Slices":  [
+                   {
+                       "Name":  "Hel_Garm_Full",
+                       "ID":  "4600000000000251",
+                       "X":  0,
+                       "Y":  0,
+                       "Width":  2048,
+                       "Height":  2048
+                   },
+                   {
+                       "Name":  "Hel_Garm_Face",
+                       "ID":  "4600000000000252",
+                       "X":  862,
+                       "Y":  1743,
+                       "Width":  256,
+                       "Height":  256
+                   }
+               ],
+    "CharacterLeftEyeSourceTopLeft":  [
+                                          606,
+                                          104
+                                      ],
+    "CharacterLeftEyeFinalTopLeft":  [
+                                         990,
+                                         177
+                                     ],
+    "CornerAlpha":  [
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+    "SpriteNamesIDsGuidAndAppearanceReferencesPreserved":  true,
+    "MetadataChangesLimitedToSliceRects":  true,
+    "UnityPlayTested":  false
+}

@@ -1553,3 +1553,24 @@ A.
 - Matrix4x4.Rotate(…)는 그 struct에 딸린 static 함수 (Vector3.Distance, Quaternion.Euler와 같은 모양).
   같은 무리: Matrix4x4.Translate(위치), Matrix4x4.Scale(크기), Matrix4x4.TRS(위치, 회전, 크기).
 - 평소엔 transform이 대신 들고 있어 직접 볼 일이 적음. 타일맵 칸은 transform이 없어서 행렬을 직접 넘긴 것.
+
+[티어 보정값 — TierRow] (2026-11-16)
+Q. "TierRow의 readonly struct, 필드, 생성자, Identity 구조가 이해가 안 가요."
+A.
+- TierRow는 한 티어의 보정값 여덟 개를 묶은 자료형. 선언 자체가 계산을 실행하거나 특정 티어를 뜻하지는 않음.
+- public readonly 필드는 밖에서 읽을 수 있고, 생성자로 값을 넣은 다음 직접 바꿀 수 없음. readonly struct는 그 묶음을 읽기 전용 값 형식으로 선언한 것.
+- new TierRow(...)를 실행하면 같은 이름의 생성자가 실행됨. Action = action에서 대문자 Action은 보관할 필드, 소문자 action은 호출할 때 전달받은 값.
+- 예: 공격 타워 2티어 행의 Power = 1.5f. 계산기에서 기본 Power에 이 값을 곱하므로 기본 10이면 15가 됨. TierRow는 숫자 보관, TowerStatCalculator는 계산 담당.
+- Identity는 아무 보정도 하지 않는 값을 담은 공용 행. 더하는 Action·AttackCount·Mastery는 0, 곱하는 Power·MaxStack·StackValue·SkillCount·AbilityValue는 1.
+- static은 각 행마다 따로 두지 않고 TierRow.Identity로 바로 꺼내 쓰는 공용 값이라는 뜻. Identity는 직접 붙인 이름으로, 특별한 C# 문법이 아님.
+
+[티어 번호와 외형 번호 — TowerId] (2026-11-16)
+Q. "DiamondVisualTier = 5는 5티어였던 흔적인가요?"
+A.
+- 맞음. 현재 일반 타워의 최대 티어는 MaxTier = 4지만, 기존 다이아 외형의 번호 5를 계속 사용하기 위한 값.
+- VisualTier(4)는 5, 다른 티어는 그대로 반환. 실제 능력치·강화 티어를 5로 바꾸는 함수는 아님.
+- 질문 당시 외형 선택에 사용하던 연결 값이므로, 에셋 쪽 번호와 호출부를 맞추지 않고 이 상수만 없애면 외형 선택에 영향이 있었음.
+후속 요청: "지우고 싶어요."
+- DiamondVisualTier와 VisualTier를 삭제하고, 타워·티어 아이콘·정보 카드·컷인이 실제 티어를 직접 사용하도록 변경.
+- 티어 색상과 배지 목록에서 옛 미스릴 칸을 빼고 다이아를 4번째로 연결. 끊겨 있던 옛 개별 티어 배지는 현재 Tower_Card_Tier_Atlas의 브론즈·실버·골드·다이아 슬라이스로 교체.
+- 기존 스프라이트의 internalID 21300005는 그 그림의 식별자이므로 유지. 게임 티어 5라는 뜻은 아님. 시너지 티어 6도 기존 규칙대로 유지.

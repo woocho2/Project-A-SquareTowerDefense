@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 어둠 광역 — 블랙홀 (맞은 적의 타일에 (레벨 × Tier) 턴, 매 턴 Power × AbilityValue × 0.3)
+    // 어둠 광역 — 블랙홀 (맞은 적의 타일에 3턴, 매 턴 Power × AbilityValue × 0.3)
     public class DarknessSplashSkill : AttackSkill
     {
         public const float TurnRatio = 0.3f;
@@ -20,7 +20,7 @@ namespace SquareTD
             if (mainTarget == null) return false;
             TowerFinalStats stats = owner.Stats;
             float damage = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * TurnRatio * stats.FinalDamageMultiplier;
-            m_grounds?.Add(new BlackHoleGround(owner, m_grid, m_occupancy, mainTarget.PathIndex, stats.Mastery, damage, EffectDuration(owner)));
+            m_grounds?.Add(new BlackHoleGround(owner, m_grid, m_occupancy, mainTarget.PathIndex, stats.Mastery, damage, SkillFormula.EffectTurns));
             return true;
         }
 

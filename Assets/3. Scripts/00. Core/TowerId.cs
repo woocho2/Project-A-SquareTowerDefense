@@ -3,6 +3,9 @@ namespace SquareTD
     // 타워 ID(티어·컬러·문양 네 자리)를 읽고 만드는 도구
     public static class TowerId
     {
+        public const int MaxTier = 4;
+        public const int SynergyTier = 6;
+
         public static int GetTier(int id)
         {
             return id / 1000;
@@ -30,7 +33,7 @@ namespace SquareTD
 
         public static bool IsSynergy(int id)
         {
-            return GetTier(id) == 6;
+            return GetTier(id) == SynergyTier;
         }
 
         public static AttackAttribute GetAttribute(TowerEmblem emblem)

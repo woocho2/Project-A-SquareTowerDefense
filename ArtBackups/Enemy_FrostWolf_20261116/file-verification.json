@@ -1,0 +1,50 @@
+﻿{
+    "ApprovedPreview":  "ArtPreviews/Enemy_Niflheim_20261116/FrostWolf/Niflheim_FrostWolf_Preview_v1.png",
+    "Destination":  "Assets/4. Asset/4. Enemy/TwoTone/Niflheim_FrostWolf.png",
+    "SourceDimensions":  [
+                             1254,
+                             1254
+                         ],
+    "SavedDimensions":  [
+                            2048,
+                            2048
+                        ],
+    "Method":  "Approved image resized uniformly to 2032px inside 2048px transparent canvas; 8px padding; no redraw or sharpening",
+    "PPU":  2048,
+    "Guid":  "1e92e0d75db140f5a45073ed0be9bbfc",
+    "Slices":  [
+                   {
+                       "Name":  "Niflheim_FrostWolf_Full",
+                       "ID":  "4600000000000181",
+                       "X":  0,
+                       "Y":  0,
+                       "Width":  2048,
+                       "Height":  2048
+                   },
+                   {
+                       "Name":  "Niflheim_FrostWolf_Face",
+                       "ID":  "4600000000000182",
+                       "X":  656,
+                       "Y":  1637,
+                       "Width":  256,
+                       "Height":  256
+                   }
+               ],
+    "CharacterLeftEyeSourceTopLeft":  [
+                                          479,
+                                          170
+                                      ],
+    "CharacterLeftEyeFinalTopLeft":  [
+                                         784,
+                                         283
+                                     ],
+    "CornerAlpha":  [
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+    "SpriteNamesIDsGuidAndAppearanceReferencesPreserved":  true,
+    "MetadataChangesLimitedToSliceRects":  true,
+    "UnityPlayTested":  false
+}

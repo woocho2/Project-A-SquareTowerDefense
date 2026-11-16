@@ -166,10 +166,10 @@ namespace SquareTD.Tests
         [Test]
         public void 처음_남은_행동력은_CSV가_아니라_계산된_Action()
         {
-            TowerController tower = MakeTower(Def(5101), Def(1101), null);
+            TowerController tower = MakeTower(Def(4101), Def(1101), null);
 
-            Assert.AreEqual(1, tower.Stats.Action, "1티어 3 − 4 → 최소 1");
-            Assert.AreEqual(1, tower.State.RemainingAction);
+            Assert.AreEqual(2, tower.Stats.Action, "1티어 3 − 1");
+            Assert.AreEqual(2, tower.State.RemainingAction);
         }
 
         [Test]
@@ -181,7 +181,7 @@ namespace SquareTD.Tests
             TowerController tower = MakeTower(Def(1101), null, colorLevels);
 
             Assert.AreEqual(5, tower.Stats.ColorLevel);
-            Assert.AreEqual(32f, tower.Stats.AbilityValue, 0.0001f, "2 × 16");
+            Assert.AreEqual(6f, tower.Stats.AbilityValue, 0.0001f, "2 × 3");
         }
 
         [Test]

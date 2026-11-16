@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 
@@ -20,11 +21,11 @@ namespace SquareTD
         [Header("프레임 안 캐릭터 (마스크)")]
         [Tooltip("프리팹에서 맞춘 크기·위치를 게임에서도 그대로 씀. 캐릭터 그림이 바뀌어도 프리팹의 그림과 같은 크기로 맞춤")]
         [SerializeField] private SpriteMask m_characterMask;
-        [Header("티어 색상 (장식 테두리, 1 브론즈 ~ 5 다이아)")]
+        [Header("티어 색상 (장식 테두리, 1 브론즈 ~ 4 다이아)")]
         [SerializeField] private Color[] m_tierColors =
         {
             new Color(0.78f, 0.46f, 0.24f), new Color(0.77f, 0.85f, 0.92f), new Color(1f, 0.78f, 0.27f),
-            new Color(0.56f, 0.91f, 0.80f), new Color(0.32f, 0.80f, 1f)
+            new Color(0.32f, 0.80f, 1f)
         };
         [Header("테두리 반짝임·후광 (FrameShine, SelectionGlow 셰이더)")]
         [SerializeField, Min(1f)] private float m_haloScale = 1.5f;
@@ -54,7 +55,28 @@ namespace SquareTD
         public Sprite DecorationSprite => m_decorationRenderer != null ? m_decorationRenderer.sprite : null;
         public Color TierColor => m_decorationRenderer != null ? m_decorationRenderer.color : Color.white;
         public Sprite ColorSprite => IsRegular && m_backgroundRenderer != null ? m_backgroundRenderer.sprite : null;
-        private bool IsRegular => m_appliedTowerID / 1000 >= 1 && m_appliedTowerID / 1000 <= 5;
+        private bool IsRegular => m_appliedTowerID / 1000 >= 1 && m_appliedTowerID / 1000 <= TowerId.MaxTier;
+        private readonly Dictionary<SpriteRenderer, Color> m_frozenColors = new Dictionary<SpriteRenderer, Color>();
+
+        public void SetBossFrozen(bool frozen)
+        {
+            if (frozen)
+            {
+                if (m_frozenColors.Count > 0) return;
+                foreach (SpriteRenderer renderer in GetComponentsInChildren<SpriteRenderer>())
+                {
+                    m_frozenColors[renderer] = renderer.color;
+                    Color ice = Color.Lerp(renderer.color, new Color(0.4f, 0.8f, 1f, renderer.color.a), 0.75f);
+                    renderer.color = ice;
+                }
+            }
+            else
+            {
+                foreach (KeyValuePair<SpriteRenderer, Color> pair in m_frozenColors)
+                    if (pair.Key != null) pair.Key.color = pair.Value;
+                m_frozenColors.Clear();
+            }
+        }
 
         public void Apply(int towerID)
         {
@@ -62,7 +84,7 @@ namespace SquareTD
             CacheRenderers();
             int tier = towerID / 1000;
             int attack = (towerID % 1000) / 100;
-            bool synergy = tier == 6;
+            bool synergy = tier == TowerId.SynergyTier;
             Sprite portrait = null;
             if (synergy)
             {
@@ -90,7 +112,7 @@ namespace SquareTD
             ApplyCharacterFrame(background, canvasSize);
             if (m_decorationRenderer != null && !synergy && tier >= 1 && m_tierColors != null && tier <= m_tierColors.Length)
                 m_decorationRenderer.color = m_tierColors[tier - 1];
-            ApplyFrameShine(synergy ? 6 : Mathf.Clamp(tier, 1, 5));
+            ApplyFrameShine(synergy ? TowerId.SynergyTier : Mathf.Clamp(tier, 1, TowerId.MaxTier));
             UsesCharacterVisual = portrait != null;
             if (portrait == null || background == null || decoration == null)
                 Debug.LogWarning($"[TowerVisual] TowerID {towerID}의 초상·배경·장식 연결을 확인해 주세요.", this);
@@ -144,7 +166,7 @@ namespace SquareTD
             if (s_haloMaterial == null) s_haloMaterial = MakeMaterial("SelectionGlow");
             if (m_shineBlock == null) m_shineBlock = new MaterialPropertyBlock();
             if (m_shinePhase < 0f) m_shinePhase = SimulationRunner.SuppressCosmetics ? 0f : Random.Range(0f, 10f);
-            float strength = (tier - 1) / 5f;
+            float strength = (tier - 1f) / (TowerId.SynergyTier - 1f);
 
             if (s_frameMaterial != null)
             {

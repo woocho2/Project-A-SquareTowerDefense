@@ -244,6 +244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyCubeMeshVisual
   m_appearance: {fileID: 11400000, guid: 7aaec7ab7fa14108bcf5a106da2e1562, type: 2}
+  m_bossMechanicMaterial: {fileID: 2100000, guid: 97026fd0522d496a94291b7382c01ae7, type: 2}
   m_faceAssetPool:
   - {fileID: 2100000, guid: 9df8be1bab4a2fc47921e74135f607a4, type: 2}
   - {fileID: 2100000, guid: b57563c28da8cb0478e2b83544d11bb6, type: 2}

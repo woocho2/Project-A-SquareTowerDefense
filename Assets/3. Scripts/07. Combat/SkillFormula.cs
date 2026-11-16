@@ -20,8 +20,11 @@ namespace SquareTD
 
         public static float Resist(float value, float resistancePercent) => value * (1f - Mathf.Min(resistancePercent, 100f) / 100f);
 
-        public static int EffectDuration(int colorLevel, int tier) => Mathf.Max(1, colorLevel * tier);
+        public const int EffectActions = 2;
+        public const int EffectTurns = 3;
 
-        public static int EffectDuration(TowerController owner) => EffectDuration(owner.Stats.ColorLevel, owner.Definition.Tier);
+        public static int LevelTierCount(int colorLevel, int tier) => Mathf.Max(1, colorLevel * tier);
+
+        public static int LevelTierCount(TowerController owner) => LevelTierCount(owner.Stats.ColorLevel, owner.Definition.Tier);
     }
 }

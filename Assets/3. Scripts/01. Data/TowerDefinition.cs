@@ -12,7 +12,7 @@ namespace SquareTD
         public float CriticalDamage { get; }
         public int Mastery { get; }
         public int Stack { get; }
-        public int Duration { get; }
+        public float Duration { get; }
         public float AbilityValue { get; }
         public float ProjectileSpeed { get; }
         public TargetPriority TargetPriority { get; }
@@ -24,7 +24,7 @@ namespace SquareTD
 
         public TowerDefinition(int id, float power, int range, int action, int attackCount,
                                float criticalRate, float criticalDamage, int mastery, int stack,
-                               int duration, float abilityValue, float projectileSpeed, TargetPriority targetPriority)
+                               float duration, float abilityValue, float projectileSpeed, TargetPriority targetPriority)
         {
             Id = id;
             Power = power;

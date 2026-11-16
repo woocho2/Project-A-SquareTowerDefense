@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 활 광역 — 애로우 레인 ((레벨 × Tier) 턴 동안 ⑤마다 맵 전체에 Power × AbilityValue × 0.2. 여러 개가 따로 깔림)
+    // 활 광역 — 애로우 레인 (3턴 동안 ⑤마다 맵 전체에 Power × AbilityValue × 0.2. 여러 개가 따로 깔림)
     public class ArrowSplashSkill : AttackSkill
     {
         private readonly GroundEffectRegistry m_grounds;
@@ -18,7 +18,7 @@ namespace SquareTD
             TowerFinalStats stats = owner.Stats;
             float damage = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * ArrowRainGround.TurnRatio * stats.FinalDamageMultiplier;
 
-            m_grounds?.Add(new ArrowRainGround(owner, m_grid, m_occupancy, damage, EffectDuration(owner)));
+            m_grounds?.Add(new ArrowRainGround(owner, m_grid, m_occupancy, damage, SkillFormula.EffectTurns));
             return true;
         }
 

@@ -1,0 +1,50 @@
+﻿{
+    "ApprovedPreview":  "ArtPreviews/Enemy_Muspelheim_20261116/FireGiant/Muspelheim_FireGiant_Preview_v1.png",
+    "Destination":  "Assets/4. Asset/4. Enemy/TwoTone/Muspelheim_FireGiant.png",
+    "SourceDimensions":  [
+                             1254,
+                             1254
+                         ],
+    "SavedDimensions":  [
+                            2048,
+                            2048
+                        ],
+    "Method":  "Approved image resized uniformly to 2016px inside 2048px transparent canvas; 16px padding; no redraw or sharpening",
+    "PPU":  2048,
+    "Guid":  "5f8634073f1749a6a21ed19d7b7fffda",
+    "Slices":  [
+                   {
+                       "Name":  "Muspelheim_FireGiant_Full",
+                       "ID":  "4600000000000211",
+                       "X":  0,
+                       "Y":  0,
+                       "Width":  2048,
+                       "Height":  2048
+                   },
+                   {
+                       "Name":  "Muspelheim_FireGiant_Face",
+                       "ID":  "4600000000000212",
+                       "X":  923,
+                       "Y":  1790,
+                       "Width":  256,
+                       "Height":  256
+                   }
+               ],
+    "CharacterLeftEyeSourceTopLeft":  [
+                                          644,
+                                          71
+                                      ],
+    "CharacterLeftEyeFinalTopLeft":  [
+                                         1051,
+                                         130
+                                     ],
+    "CornerAlpha":  [
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+    "SpriteNamesIDsGuidAndAppearanceReferencesPreserved":  true,
+    "MetadataChangesLimitedToSliceRects":  true,
+    "UnityPlayTested":  false
+}

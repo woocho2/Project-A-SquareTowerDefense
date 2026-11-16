@@ -76,10 +76,10 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 미스릴은_최대가_80퍼센트()
+        public void 다이아는_최대가_75퍼센트()
         {
             TowerController tower = MakeTower(4101);
-            Assert.AreEqual(48, tower.State.Stack.Max, "티어 표: 미스릴 최대 스택 ×0.8 → Init에서 SetMax");
+            Assert.AreEqual(45, tower.State.Stack.Max, "티어 표: 다이아 최대 스택 ×0.75 → Init에서 SetMax");
         }
 
         [Test]

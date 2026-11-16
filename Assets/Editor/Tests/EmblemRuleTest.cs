@@ -215,7 +215,11 @@ namespace SquareTD.Tests
             Assert.AreEqual(110f, Lost(enemy), Eps, "100 + 출혈 10 (1턴)");
 
             enemy.Status.OnTurn();
-            Assert.AreEqual(110f, Lost(enemy), Eps, "출혈 턴이 끝남");
+            enemy.Status.OnTurn();
+            Assert.AreEqual(130f, Lost(enemy), Eps, "출혈 10씩 3턴");
+
+            enemy.Status.OnTurn();
+            Assert.AreEqual(130f, Lost(enemy), Eps, "출혈 턴이 끝남");
         }
 
         [Test]
@@ -450,11 +454,12 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 보스는_자물쇠_면의_받는_피해_증가가_없음()
+        public void 최종보스만_자물쇠_면의_받는_피해_증가가_없음()
         {
-            Assert.AreEqual(0, EnemyCubeFaces.GetModifiers(EnemyCubeFaceAsset.Locked, 3, isBoss: true).Length, "그 자리는 보스 고유 스킬");
-            Assert.AreEqual(1, EnemyCubeFaces.GetModifiers(EnemyCubeFaceAsset.Hourglass, 3, isBoss: true).Length, "받는 피해 감소는 보스도 받음");
-            Assert.AreEqual(1, EnemyCubeFaces.GetModifiers(EnemyCubeFaceAsset.Defense, 3, isBoss: true).Length, "다른 면도 보스가 받음");
+            Assert.AreEqual(0, EnemyCubeFaces.GetModifiers(EnemyCubeFaceAsset.Locked, 3, EnemyKind.FinalBoss).Length, "그 자리는 최종 보스 고유 스킬");
+            Assert.AreEqual(1, EnemyCubeFaces.GetModifiers(EnemyCubeFaceAsset.Hourglass, 3, EnemyKind.FinalBoss).Length, "받는 피해 감소는 최종 보스도 받음");
+            Assert.AreEqual(1, EnemyCubeFaces.GetModifiers(EnemyCubeFaceAsset.Defense, 3, EnemyKind.FinalBoss).Length, "다른 면도 최종 보스가 받음");
+            Assert.AreEqual(1, EnemyCubeFaces.GetModifiers(EnemyCubeFaceAsset.Locked, 3, EnemyKind.MiddleBoss).Length, "중간 보스는 받는 피해 증가를 받음");
             Assert.AreEqual(1, EnemyCubeFaces.GetModifiers(EnemyCubeFaceAsset.Locked, 3).Length, "일반 적은 받음");
         }
 

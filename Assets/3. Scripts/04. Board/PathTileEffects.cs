@@ -17,7 +17,7 @@ namespace SquareTD
 
         public override void OnStopped(EnemyController enemy, BoardGrid grid, SpecialTileLayout layout)
         {
-            enemy.Status.RemoveAll();
+            enemy.Status.RemoveDebuffs();
             enemy.Resistance.Reset();
 
             Debug.Log($"[PathTile] {enemy.name} 정화 → 효과 {enemy.Status.Effects.Count}개, 저항 {enemy.Resistance.Current:0.#}%");

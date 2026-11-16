@@ -8,7 +8,7 @@ namespace SquareTD
 
         private static readonly string[] s_colorNames = { "", "광역", "단일", "버프", "디버프" };
 
-        private static readonly string[] s_tierNames = { "", "브론즈", "실버", "골드", "미스릴", "다이아" };
+        private static readonly string[] s_tierNames = { "", "브론즈", "실버", "골드", "다이아" };
 
         private static readonly string[,] s_conceptNames =
         {

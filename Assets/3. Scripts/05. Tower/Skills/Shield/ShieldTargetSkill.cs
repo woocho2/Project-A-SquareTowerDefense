@@ -12,7 +12,7 @@ namespace SquareTD
         public ShieldTargetSkill(BoardGrid grid, PathOccupancy occupancy)
             : base(grid, occupancy) { }
 
-        public static int BounceCount(TowerController owner) => SkillFormula.EffectDuration(owner);
+        public static int BounceCount(TowerController owner) => SkillFormula.LevelTierCount(owner);
 
         protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
         {

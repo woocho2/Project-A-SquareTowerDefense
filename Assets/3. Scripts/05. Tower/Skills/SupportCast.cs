@@ -14,7 +14,7 @@ namespace SquareTD
         public readonly float AbilityValue;
 
         public float Rate => Amount * SkillFormula.PercentRate;
-        public int Duration => SkillFormula.EffectDuration(ColorLevel, Tier);
+        public int Duration => SkillFormula.EffectActions;
 
         public SupportCast(TowerController owner, bool isSkill2, float abilityValue)
         {

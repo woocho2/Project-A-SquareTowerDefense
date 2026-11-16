@@ -28,19 +28,19 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 일티어_한_줄로_2에서_5티어가_생김()
+        public void 일티어_한_줄로_2에서_4티어가_생김()
         {
             TowerDatabase database = Load(Header, "1101,히어로,1.4,1,3,1,0.05,0.7,1,60,5,1.5,5,Boss");
-            Assert.AreEqual(5, database.Count);
+            Assert.AreEqual(4, database.Count);
 
-            TowerDefinition diamond = database.Get(5101);
-            Assert.AreEqual(5, diamond.Tier);
+            TowerDefinition diamond = database.Get(4101);
+            Assert.AreEqual(4, diamond.Tier);
             Assert.AreEqual(TowerColor.Red, diamond.Color);
             Assert.AreEqual(TowerEmblem.Sword, diamond.Emblem);
             Assert.AreEqual(1.4f, diamond.Power, 0.0001f);
             Assert.AreEqual(3, diamond.Action);
             Assert.AreEqual(TargetPriority.Boss, diamond.TargetPriority);
-            Assert.IsFalse(database.TryGet(6101, out _));
+            Assert.IsFalse(database.TryGet(5101, out _));
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace SquareTD.Tests
             TowerDatabase database = Load(Header,
                 "1101,히어로,1.4,1,3,1,0.05,0.7,1,60,5,1.5,5,Closest",
                 "3101,히어로,9.9,1,3,1,0.05,0.7,1,60,5,1.5,5,Closest");
-            Assert.AreEqual(5, database.Count);
+            Assert.AreEqual(4, database.Count);
             Assert.AreEqual(9.9f, database.Get(3101).Power, 0.0001f);
             Assert.AreEqual(1.4f, database.Get(4101).Power, 0.0001f);
         }
@@ -68,7 +68,7 @@ namespace SquareTD.Tests
             Assert.AreEqual(0.5f, fire.CriticalDamage, 0.0001f);
             Assert.AreEqual(1, fire.Mastery);
             Assert.AreEqual(60, fire.Stack);
-            Assert.AreEqual(6, fire.Duration);
+            Assert.AreEqual(6f, fire.Duration, 0.0001f);
             Assert.AreEqual(2f, fire.AbilityValue, 0.0001f);
             Assert.AreEqual(4f, fire.ProjectileSpeed, 0.0001f);
             Assert.AreEqual(TargetPriority.Boss, fire.TargetPriority);
@@ -121,7 +121,7 @@ namespace SquareTD.Tests
                 "1101,히어로,1.4,1,3,1,0.05,0.7,1,60,5,1.5,5,Closest",
                 "1102,바이킹,abc,1,5,1,0.03,1.05,1,60,5,1.5,5,Closest",
                 "1103,레인저,0.98,4,3,1,0.055,0.49,1,60,5,1.5,5,Closest");
-            Assert.AreEqual(10, database.Count);
+            Assert.AreEqual(8, database.Count, "읽은 1티어 2줄 × 티어 4개");
             Assert.IsFalse(database.TryGet(1102, out _));
             Assert.IsFalse(database.TryGet(2102, out _));
         }
@@ -149,7 +149,7 @@ namespace SquareTD.Tests
             TowerDatabase database = Load(Header,
                 "1101,히어로,1.4,1,3,1,0.05,0.7,1,60,5,1.5,5,Closest",
                 "1101,히어로,9.9,1,3,1,0.05,0.7,1,60,5,1.5,5,Closest");
-            Assert.AreEqual(5, database.Count);
+            Assert.AreEqual(4, database.Count, "1티어 1줄 × 티어 4개");
             Assert.AreEqual(1.4f, database.Get(1101).Power, 0.0001f);
         }
 
@@ -172,7 +172,7 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 진짜_TowerData_csv_280종()
+        public void 진짜_TowerData_csv_224종()
         {
             var csv = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Resources/TowerData.csv");
             Assert.IsNotNull(csv, "Assets/Resources/TowerData.csv가 없음");
@@ -180,11 +180,11 @@ namespace SquareTD.Tests
             var database = new TowerDatabase();
             database.Load(csv.text);
 
-            Assert.AreEqual(280, database.Count);
+            Assert.AreEqual(224, database.Count);
             Assert.AreEqual(TowerEmblem.Fire, database.Get(2107).Emblem);
-            Assert.AreEqual(4.2f, database.Get(1101).Power, 0.0001f);
-            Assert.AreEqual(4.2f, database.Get(5101).Power, 0.0001f);
-            for (int tier = 1; tier <= 5; tier++)
+            Assert.AreEqual(35.7f, database.Get(1101).Power, 0.0001f);
+            Assert.AreEqual(35.7f, database.Get(4101).Power, 0.0001f);
+            for (int tier = 1; tier <= 4; tier++)
             {
                 for (int color = 1; color <= 4; color++)
                 {
@@ -197,12 +197,12 @@ namespace SquareTD.Tests
             }
         }
 
-        [TestCase(1101, 9, 2, 0.15f, 0.50f, 1, 100, 100, 15f)]
-        [TestCase(1201, 7, 3, 0.25f, 0.30f, 1, 100, 75, 25f)]
-        [TestCase(1102, 10, 1, 0.10f, 0.75f, 1, 100, 100, 15f)]
-        [TestCase(1204, 6, 3, 0.30f, 0.10f, 2, 100, 75, 25f)]
-        [TestCase(1211, 8, 4, 0.30f, 0.30f, 2, 100, 75, 25f)]
-        public void 공격타워_CSV는_확정한_기준값을_가짐(int id, int action, int count, float crit, float critDamage, int range, int stack, int duration, float speed)
+        [TestCase(1101, 5, 2, 0.15f, 0.50f, 2, 100, 12f, 15f)]
+        [TestCase(1201, 4, 3, 0.25f, 0.30f, 2, 100, 22.5f, 25f)]
+        [TestCase(1102, 6, 1, 0.10f, 0.75f, 2, 100, 5f, 15f)]
+        [TestCase(1204, 3, 3, 0.30f, 0.10f, 3, 100, 30f, 25f)]
+        [TestCase(1211, 5, 4, 0.30f, 0.30f, 3, 100, 24f, 25f)]
+        public void 공격타워_CSV는_확정한_기준값을_가짐(int id, int action, int count, float crit, float critDamage, int range, int stack, float duration, float speed)
         {
             var database = new TowerDatabase();
             database.Load(AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Resources/TowerData.csv").text);
@@ -213,15 +213,15 @@ namespace SquareTD.Tests
             Assert.AreEqual(critDamage, definition.CriticalDamage, 0.0001f);
             Assert.AreEqual(range, definition.Range);
             Assert.AreEqual(stack, definition.Stack);
-            Assert.AreEqual(duration, definition.Duration);
+            Assert.AreEqual(duration, definition.Duration, 0.0001f);
             Assert.AreEqual(speed, definition.ProjectileSpeed, 0.0001f);
         }
 
-        [TestCase(1204, 1, 6, 3, 100, 75f)]
-        [TestCase(2201, 1, 6, 3, 95, 71.25f)]
-        [TestCase(4102, 1, 7, 2, 80, 80f)]
-        [TestCase(4102, 4, 7, 3, 40, 80f)]
-        [TestCase(5204, 5, 2, 9, 25, 37.5f)]
+        [TestCase(1204, 1, 3, 3, 100, 30f)]
+        [TestCase(2201, 1, 4, 3, 100, 21.375f)]
+        [TestCase(3102, 1, 6, 2, 100, 4.5f)]
+        [TestCase(3102, 4, 6, 2, 50, 4.5f)]
+        [TestCase(4204, 5, 2, 4, 38, 24f)]
         public void 공격타워_실제계산은_기본값에_성장을_한번_적용(int id, int level, int action, int count, int stack, float duration)
         {
             var database = new TowerDatabase();
