@@ -31,7 +31,7 @@ namespace SquareTD
             int chunks = Mathf.RoundToInt(4f + 10f * weight);
             for (int i = 0; i < chunks; i++) PlayChunk(shapePool, random, center, size, delay);
 
-            DOVirtual.DelayedCall(delay, () => ScreenShake.Play(0.05f + 0.15f * weight, 0.12f + 0.15f * weight));
+            DOVirtual.DelayedCall(delay, () => ScreenShake.Play(0.05f + 0.15f * weight, 0.12f + 0.15f * weight), false);
         }
 
         public static void PlayDustRing(EffectQuadPool shapePool, Vector3 center, float size, float delay)
@@ -101,7 +101,7 @@ namespace SquareTD
             int chunks = Mathf.RoundToInt(4f + 10f * weight);
             for (int i = 0; i < chunks; i++) PlayChunk(shapePool, random, center, size, delay);
 
-            DOVirtual.DelayedCall(delay, () => ScreenShake.Play(0.05f + 0.15f * weight, 0.12f + 0.15f * weight));
+            DOVirtual.DelayedCall(delay, () => ScreenShake.Play(0.05f + 0.15f * weight, 0.12f + 0.15f * weight), false);
         }
 
         public static void PlayGhost(EffectQuadPool shapePool, Transform source, Color color, float alpha, float fade)

@@ -3,13 +3,11 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 자동 진행의 판단 — 생성, 젬 쓰기(티어·컬러 강화), 칸이 꽉 차면 쓸모없는 1티어를 팔고 다시 뽑기, 버프존·디버프존 자리와 타워 자리 고르기
+    // 자동 진행의 판단 — 생성(판 → 대기석), 대기석 타워 올리기, 경험치 사기, 칸이 다 차면 쓸모없는 1티어를 팔고 다시 뽑기, 존과 타워 자리 고르기
     public static class AutoPlanner
     {
         private const float SupportWeight = 0.7f;
-        private const float ColorLevelValue = 0.25f;
         private const float BreakPairPenalty = 0.5f;
-        private static readonly TowerColor[] s_colors = { TowerColor.Red, TowerColor.Blue, TowerColor.Yellow, TowerColor.Purple };
 
         private const float StayBonus = 1.05f;
         private const float BuffZoneValue = 0.5f;
@@ -274,28 +272,68 @@ namespace SquareTD
             TowerManager towers = TowerManager.Instance;
             if (towers == null || towers.IsMerging) return false;
 
+            BoardManager board = BoardManager.Instance;
             while (CurrencyManager.Instance.Gold >= towers.BuildCost
-                   && BoardManager.Instance.Slots.TryGetFirstEmpty(out _)
+                   && board.Slots.TryGetFirstEmpty(out _)
                    && towers.TryBuild()) { }
             if (towers.IsMerging) return false;
-            if (TrySpendGems(towers)) return false;
+            if (PromoteFromBench(board, towers)) return false;
+            if (TryBuyXp(towers)) return false;
+            if (CurrencyManager.Instance.Gold >= towers.BuildCost && board.Bench != null && board.Bench.TryGetFirstEmpty(out _)
+                && towers.TryBuild()) return false;
             if (TryReroll(towers)) return false;
 
             PlanTurn();
             return !towers.IsMerging;
         }
 
+        private static float BenchValue(TowerController tower) => TierWeight(tower.Definition.Tier) * RoleWeight(tower);
+
+        public static bool PromoteFromBench(BoardManager board, TowerManager towers)
+        {
+            if (board.Bench == null || board.Bench.Count == 0) return false;
+
+            TowerController best = null;
+            foreach (TowerController tower in board.GetTowers(TowerPlace.Bench))
+                if (!towers.IsMergingTower(tower) && (best == null || BenchValue(tower) > BenchValue(best))) best = tower;
+            if (best == null) return false;
+            if (board.Slots.TryGetFirstEmpty(out int empty)) return towers.TryMoveTo(best, TowerPlace.Board, empty);
+
+            TowerController worst = null;
+            foreach (TowerController tower in board.GetTowers(TowerPlace.Board))
+            {
+                if (towers.IsMergingTower(tower) || tower.State.BossEffects.BlocksProgression) continue;
+                if (worst == null || BenchValue(tower) < BenchValue(worst)) worst = tower;
+            }
+            if (worst == null || BenchValue(best) <= BenchValue(worst) * 1.01f) return false;
+            return towers.TryMoveTo(best, TowerPlace.Board, worst.SlotIndex);
+        }
+
+        public const int MaxRerollsPerWave = 3;
+        private static int s_rerollWave = -1;
+        private static int s_rerollsThisWave;
+
         public static bool TryReroll(TowerManager towers)
         {
             BoardManager board = BoardManager.Instance;
-            if (CurrencyManager.Instance.Gold < towers.BuildCost || board.Slots.TryGetFirstEmpty(out _)) return false;
+            if (CurrencyManager.Instance.Gold < towers.BuildCost || TowerManager.TryGetBuildSlot(board, out _, out _)) return false;
+
+            int wave = WaveManager.Instance != null ? WaveManager.Instance.CurrentWave : 0;
+            if (s_rerollWave != wave)
+            {
+                s_rerollWave = wave;
+                s_rerollsThisWave = 0;
+            }
+            if (s_rerollsThisWave >= MaxRerollsPerWave) return false;
+
+            List<TowerController> pool = board.GetTowers(TowerPlace.Bench);
+            if (pool.Count == 0) pool = board.GetTowers(TowerPlace.Board);
 
             TowerController worst = null;
             float worstValue = float.MaxValue;
-            for (int i = 0; i < board.Slots.Count; i++)
+            foreach (TowerController tower in pool)
             {
-                TowerController tower = board.Slots.Get(i);
-                if (tower == null || tower.Definition.Tier != 1 || towers.IsMergingTower(tower)) continue;
+                if (tower.Definition.Tier != 1 || towers.IsMergingTower(tower)) continue;
                 if (CountOthers(board, tower.Definition.Id, tower) > 0) continue;
 
                 float value = RoleWeight(tower);
@@ -311,89 +349,20 @@ namespace SquareTD
             }
             if (worst == null || !towers.TrySell(worst)) return false;
 
+            s_rerollsThisWave++;
             BalanceRecorder.NoteReroll();
             towers.TryBuild();
             return true;
         }
 
-        public static bool TrySpendGems(TowerManager towers)
+        public static bool TryBuyXp(TowerManager towers)
         {
-            BoardManager board = BoardManager.Instance;
-            StrategyPolicy policy = StrategySearch.ActivePolicy;
-            bool searching = policy != null && !policy.Baseline;
-            int gem = Mathf.Max(0, CurrencyManager.Instance.Gem - (searching ? policy.GemReserve : 0));
-            float bestRatio = 0f;
-            TowerController bestTower = null;
-            TowerColor bestColor = TowerColor.None;
-
-            for (int i = 0; i < board.Slots.Count; i++)
-            {
-                TowerController tower = board.Slots.Get(i);
-                if (tower == null || towers.IsMergingTower(tower) || TowerId.IsSynergy(tower.Definition.Id) || searching && policy.UpgradeMode == 2) continue;
-
-                int tier = tower.Definition.Tier;
-                int cost = TowerProgression.GetTierUpgradeCost(tier);
-                int nextId = TowerId.GetNextTier(tower.Definition.Id);
-                if (cost <= 0 || cost > gem || !towers.Database.TryGet(nextId, out _)) continue;
-
-                float value = (TierWeight(tier + 1) - TierWeight(tier)) * RoleWeight(tower);
-                if (CountOthers(board, nextId, tower) >= 2) value += TierWeight(tier + 1) * RoleWeight(tower);
-                if (CountOthers(board, tower.Definition.Id, tower) == 1) value -= TierWeight(tier) * BreakPairPenalty * RoleWeight(tower);
-
-                float ratio = value * (searching ? policy.TierScale : 1f) / cost;
-                if (ratio > bestRatio)
-                {
-                    bestRatio = ratio;
-                    bestTower = tower;
-                    bestColor = TowerColor.None;
-                }
-            }
-
-            foreach (TowerColor color in s_colors)
-            {
-                if (searching && policy.UpgradeMode == 1) continue;
-                ColorUpgradeState levels = towers.ColorLevels;
-                int cost = levels.CanUpgrade(color) ? levels.GetCost(color) : 0;
-                if (cost <= 0 || cost > gem) continue;
-
-                float value = 0f;
-                for (int i = 0; i < board.Slots.Count; i++)
-                {
-                    TowerController tower = board.Slots.Get(i);
-                    if (tower != null && tower.Definition.Color == color) value += TierWeight(tower.Definition.Tier) * RoleWeight(tower);
-                }
-
-                float ratio = value * ColorLevelValue * (searching ? policy.ColorScale : 1f) / cost;
-                if (ratio > bestRatio)
-                {
-                    bestRatio = ratio;
-                    bestTower = null;
-                    bestColor = color;
-                }
-            }
-
-            if (bestTower != null)
-            {
-                int cost = TowerProgression.GetTierUpgradeCost(bestTower.Definition.Tier);
-                BalanceRecorder.BeginGemTierUp();
-                int target = bestTower.Definition.Id;
-                bool upgraded = towers.TryTierUpgrade(bestTower);
-                BalanceRecorder.EndGemTierUp(upgraded ? cost : 0);
-                if (upgraded) BalanceRecorder.NoteSearchAction("tier_upgrade", target, cost);
-                return upgraded;
-            }
-            if (bestColor != TowerColor.None)
-            {
-                int cost = towers.ColorLevels.GetCost(bestColor);
-                bool upgraded = towers.TryUpgradeColor(bestColor);
-                if (upgraded)
-                {
-                    BalanceRecorder.NoteGemColorUp(cost);
-                    BalanceRecorder.NoteSearchAction("color_upgrade", (int)bestColor, cost);
-                }
-                return upgraded;
-            }
-            return false;
+            if (towers.ColorLevels.IsMax || BoardManager.Instance.Slots.TryGetFirstEmpty(out _)) return false;
+            if (CurrencyManager.Instance.Gold < towers.BuildCost + BalanceTables.XpPurchaseCost) return false;
+            if (!towers.TryBuyXp()) return false;
+            BalanceRecorder.NoteXpPurchase(BalanceTables.XpPurchaseCost);
+            BalanceRecorder.NoteSearchAction("buy_xp", towers.ColorLevels.Level, BalanceTables.XpPurchaseCost);
+            return true;
         }
 
         private static readonly float[] s_tierWeights = { 1f, 1f, 1.5f, 3.75f, 18.75f };
@@ -408,11 +377,8 @@ namespace SquareTD
         private static int CountOthers(BoardManager board, int id, TowerController except)
         {
             int count = 0;
-            for (int i = 0; i < board.Slots.Count; i++)
-            {
-                TowerController tower = board.Slots.Get(i);
-                if (tower != null && tower != except && tower.Definition.Id == id) count++;
-            }
+            foreach (TowerController tower in board.GetBoardAndBenchTowers())
+                if (tower != except && tower.Definition.Id == id) count++;
             return count;
         }
 

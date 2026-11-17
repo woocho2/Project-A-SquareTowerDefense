@@ -15,7 +15,6 @@ namespace SquareTD
         [SerializeField] Image img_life;
         [SerializeField] Image img_shield;
         [SerializeField] TextMeshProUGUI txt_currentGold;
-        [SerializeField] TextMeshProUGUI txt_currentGem;
         [SerializeField] TextMeshProUGUI txt_currentGameSpeed;
         [SerializeField] TextMeshProUGUI txt_bossTurns;
 
@@ -37,7 +36,7 @@ namespace SquareTD
 
             UpdateWaveText(WaveManager.Instance.CurrentWave);
             UpdateLimitText();
-            UpdateCurrencyText(CurrencyManager.Instance.Gold, CurrencyManager.Instance.Gem);
+            UpdateCurrencyText(CurrencyManager.Instance.Gold);
             UpdateGameSpeedText(1f);
             UpdateBossTurnsText();
             if (img_shield != null) img_shield.enabled = false;
@@ -82,10 +81,9 @@ namespace SquareTD
             txt_currentLimit.text = $"{EnemyManager.Instance.Registry.Count}/{GameSession.Instance.CurrentLimit}";
         }
 
-        private void UpdateCurrencyText(int gold, int gem)
+        private void UpdateCurrencyText(int gold)
         {
             if (txt_currentGold != null) txt_currentGold.text = $"{gold}";
-            if (txt_currentGem != null) txt_currentGem.text = $"{gem}";
         }
 
         private void UpdateGameSpeedText(float speed)

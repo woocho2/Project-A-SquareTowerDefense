@@ -7,6 +7,7 @@ namespace SquareTD
     public sealed class BossMechanicService
     {
         public int CurrentTurn { get; private set; }
+        public System.Func<bool> Blocker { get; set; }
         private readonly List<EnemyController> m_summons = new List<EnemyController>();
 
         public void BeginTurn() => CurrentTurn++;
@@ -33,6 +34,11 @@ namespace SquareTD
         {
             if (boss == null || !boss.IsAlive || dice <= 0 || boss.Definition.Kind != EnemyKind.FinalBoss) return;
             BossMechanicKind kind = boss.BossMechanic;
+            if (kind != BossMechanicKind.None && Blocker != null && Blocker())
+            {
+                Debug.Log($"[Boss] {boss.DisplayName} 기믹 무력화");
+                return;
+            }
             switch (kind)
             {
                 case BossMechanicKind.Loki:
@@ -108,7 +114,9 @@ namespace SquareTD
         public void EndTurn()
         {
             bool unlocked = false;
-            foreach (TowerController tower in Towers())
+            List<TowerController> towers = Towers();
+            if (BoardManager.Instance != null && BoardManager.Instance.Bench != null) towers.AddRange(BoardManager.Instance.GetTowers(TowerPlace.Bench));
+            foreach (TowerController tower in towers)
             {
                 TowerBossEffects effects = tower.State.BossEffects;
                 bool locked = effects.BlocksProgression;

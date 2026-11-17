@@ -24,6 +24,7 @@ namespace SquareTD
 
         public static string GetName(TowerDefinition definition)
         {
+            if (SynergyRecipes.TryGet(definition.Id, out SynergyRecipes.Recipe recipe)) return recipe.Name + "의 권능";
             int emblem = (int)definition.Emblem, color = (int)definition.Color - 1;
             if (emblem < 1 || emblem >= s_names.GetLength(0) || color < 0 || color > 3) return "스킬";
             return s_names[emblem, color];
@@ -37,6 +38,7 @@ namespace SquareTD
 
         public static string GetDescription(TowerDefinition definition, TowerFinalStats stats)
         {
+            if (TowerId.IsSynergy(definition.Id)) return GetSynergyDescription(definition.Id);
             float damage = SkillFormula.AttackSkill(stats.Power, stats.AbilityValue);
             float skill1 = SkillFormula.SupportSkill1(stats.Power);
             float skill2 = SkillFormula.SupportSkill2(stats.Power, stats.AbilityValue);
@@ -123,9 +125,28 @@ namespace SquareTD
                 case TowerColor.Blue: return $"{count} 그 순간 맞은 적에게 {damage:0.##} 피해";
                 case TowerColor.Yellow: return $"존 위의 공격 타워에게 버프. {support}";
                 case TowerColor.Purple: return $"존을 밟은 적에게 디버프. {support}";
-                default: return "시너지 타워 (효과 미정)";
+                default: return "이 타워에는 자동 공격 스킬이 없습니다.";
             }
         }
+
+        private static string GetSynergyDescription(int id) => id switch
+        {
+            SynergyEffects.OdinId => $"체력이 {OdinSkill.HpRate * 100:0}% 이하인 적을 처형합니다. 보스는 {OdinSkill.BossHpRate * 100:0}% 이하일 때 처형합니다.",
+            SynergyEffects.ThorId => $"무작위 길 {ThorSkill.StormCount}곳에 {ThorSkill.StormTurns}턴 동안 번개 폭풍을 만듭니다. 매 적 턴 최대 체력의 {ThorSkill.DamageRate * 100:0}% 고정 피해를 줍니다.",
+            SynergyEffects.LokiId => "플레이어 턴에 길 두 칸을 선택합니다. 두 칸의 적을 서로 바꾸고 행동 카운트를 초기화합니다.",
+            SynergyEffects.HelId => "보스를 제외한 모든 적을 즉시 처형합니다.",
+            SynergyEffects.SurtrId => $"보스를 포함한 모든 적에게 잃은 체력의 {SurtrSkill.LostHpRate * 100:0}% 고정 피해를 줍니다.",
+            SynergyEffects.FreyId => $"판 위 모든 일반 타워의 공격 횟수를 다음 {FreySkill.Actions}번 행동 동안 1 늘립니다.",
+            SynergyEffects.BaldrId => $"스택이 차면 권능을 1회 저장합니다. 최대 {BaldrSkill.MaxCharges}회 저장하며 사용 후 다음 보스 기믹을 1회 막습니다.",
+            SynergyEffects.SkadiId => $"모든 적의 최소·최대 이동력을 다음 {SkadiSkill.Actions}번 행동 동안 {SkadiSkill.SpeedCut:0} 줄입니다.",
+            SynergyEffects.FreyjaId => $"{FreyjaSkill.Turns}턴 동안 적 처치 골드가 2배가 됩니다.",
+            SynergyEffects.YmirId => $"보스를 포함한 모든 적이 다음 {YmirSkill.Actions}번 행동 동안 움직일 수 없게 합니다.",
+            SynergyEffects.UllrId => $"판 위 모든 일반 타워가 다음 {UllrSkill.Actions}번 행동 동안 공격 피해의 {UllrSkill.FollowUpRate * 100:0}%만큼 고정 추가타를 줍니다.",
+            SynergyEffects.BrynhildId => "적 수 한도로 발생하는 게임 오버를 1회 막습니다. 보스 처치 제한 턴은 막지 못합니다.",
+            SynergyEffects.BrokkrId => $"판 위 일반 타워의 티어 합에 {BrokkrSkill.GoldPerTier}를 곱한 만큼 골드를 얻습니다.",
+            SynergyEffects.NjordId => $"플레이어 턴에 길 한 칸을 선택합니다. {NjordSkill.Turns}턴 동안 적이 그 칸을 지나치지 못하고 멈춥니다.",
+            _ => "타워 아래의 스킬 버튼으로 권능을 사용합니다."
+        };
 
         public static string GetZoneSkillName(Zone zone)
         {

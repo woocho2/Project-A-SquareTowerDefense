@@ -84,7 +84,7 @@ namespace SquareTD
             {
                 ImpactFx.Frame(new Color(1f, 0.55f, 0.25f, 0.22f), 0.05f);
                 ScreenShake.Play(0.06f, 0.25f);
-            }).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            }, false).SetLink(gameObject, LinkBehaviour.KillOnDisable);
         }
 
         private void PlayMeteor(Vector3 land, float size, float travel, float startAt, bool big)

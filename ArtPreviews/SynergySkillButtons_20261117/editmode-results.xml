@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="46" result="Passed" total="46" passed="46" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-17 05:07:21Z" end-time="2026-11-17 05:07:23Z" duration="1.8095452">
+  <test-suite type="TestSuite" id="1000" name="Project A" fullname="Project A" runstate="Runnable" testcasecount="712" result="Passed" start-time="2026-11-17 05:07:21Z" end-time="2026-11-17 05:07:23Z" duration="1.809545" total="46" passed="46" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1783" name="Assembly-CSharp-Editor.dll" fullname="D:/MyGitHub/ProjectA/Project-A-SquareTowerDefense/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll" runstate="Runnable" testcasecount="712" result="Passed" start-time="2026-11-17 05:07:21Z" end-time="2026-11-17 05:07:23Z" duration="1.791935" total="46" passed="46" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="5992" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1784" name="SquareTD" fullname="SquareTD" runstate="Runnable" testcasecount="712" result="Passed" start-time="2026-11-17 05:07:21Z" end-time="2026-11-17 05:07:23Z" duration="1.784814" total="46" passed="46" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1785" name="Tests" fullname="SquareTD.Tests" runstate="Runnable" testcasecount="712" result="Passed" start-time="2026-11-17 05:07:21Z" end-time="2026-11-17 05:07:23Z" duration="1.777963" total="46" passed="46" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1435" name="SynergySkillButtonTest" fullname="SquareTD.Tests.SynergySkillButtonTest" classname="SquareTD.Tests.SynergySkillButtonTest" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-11-17 05:07:21Z" end-time="2026-11-17 05:07:23Z" duration="1.717041" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1446" name="공용_타워에_버튼_프리팹이_연결되고_충전_비율이_표시됨" fullname="SquareTD.Tests.SynergySkillButtonTest.공용_타워에_버튼_프리팹이_연결되고_충전_비율이_표시됨" methodname="공용_타워에_버튼_프리팹이_연결되고_충전_비율이_표시됨" classname="SquareTD.Tests.SynergySkillButtonTest" runstate="Runnable" seed="1795839485" result="Passed" start-time="2026-11-17 05:07:21Z" end-time="2026-11-17 05:07:23Z" duration="1.676054" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1440" name="길_선택_스킬은_플레이어턴만" fullname="SquareTD.Tests.SynergySkillButtonTest.길_선택_스킬은_플레이어턴만" classname="SquareTD.Tests.SynergySkillButtonTest" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.015681" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1438" name="길_선택_스킬은_플레이어턴만(6003)" fullname="SquareTD.Tests.SynergySkillButtonTest.길_선택_스킬은_플레이어턴만(6003)" methodname="길_선택_스킬은_플레이어턴만" classname="SquareTD.Tests.SynergySkillButtonTest" runstate="Runnable" seed="769317964" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.001367" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1439" name="길_선택_스킬은_플레이어턴만(6014)" fullname="SquareTD.Tests.SynergySkillButtonTest.길_선택_스킬은_플레이어턴만(6014)" methodname="길_선택_스킬은_플레이어턴만" classname="SquareTD.Tests.SynergySkillButtonTest" runstate="Runnable" seed="1426236312" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000243" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1441" name="뇨르드는_길_한칸_선택_뒤_스택을_소모하고_선택_종료" fullname="SquareTD.Tests.SynergySkillButtonTest.뇨르드는_길_한칸_선택_뒤_스택을_소모하고_선택_종료" methodname="뇨르드는_길_한칸_선택_뒤_스택을_소모하고_선택_종료" classname="SquareTD.Tests.SynergySkillButtonTest" runstate="Runnable" seed="1296670525" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.005731" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Synergy] 뇨르드: 멈춤 칸으로 만들 길을 고르세요. 버튼을 다시 누르면 취소합니다.
+[Synergy] 뇨르드 스킬 발동 (1번째)
+]]></output>
+            </test-case>
+            <test-case id="1442" name="로키는_서로_다른_두칸을_선택해야_소모" fullname="SquareTD.Tests.SynergySkillButtonTest.로키는_서로_다른_두칸을_선택해야_소모" methodname="로키는_서로_다른_두칸을_선택해야_소모" classname="SquareTD.Tests.SynergySkillButtonTest" runstate="Runnable" seed="1002317179" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.002206" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Synergy] 로키: 서로 바꿀 길 두 칸을 고르세요. 버튼을 다시 누르면 취소합니다.
+[Synergy] 로키 스킬 발동 (1번째)
+]]></output>
+            </test-case>
+            <test-case id="1445" name="발드르는_스택이_비어도_보관한_횟수가_있으면_사용_가능" fullname="SquareTD.Tests.SynergySkillButtonTest.발드르는_스택이_비어도_보관한_횟수가_있으면_사용_가능" methodname="발드르는_스택이_비어도_보관한_횟수가_있으면_사용_가능" classname="SquareTD.Tests.SynergySkillButtonTest" runstate="Runnable" seed="904176110" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000355" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1444" name="선택_도중_적턴이_되면_사용하지_않음" fullname="SquareTD.Tests.SynergySkillButtonTest.선택_도중_적턴이_되면_사용하지_않음" methodname="선택_도중_적턴이_되면_사용하지_않음" classname="SquareTD.Tests.SynergySkillButtonTest" runstate="Runnable" seed="334411060" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000722" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Synergy] 로키: 서로 바꿀 길 두 칸을 고르세요. 버튼을 다시 누르면 취소합니다.
+]]></output>
+            </test-case>
+            <test-case id="1443" name="선택_취소나_길밖_클릭은_스택을_소모하지_않음" fullname="SquareTD.Tests.SynergySkillButtonTest.선택_취소나_길밖_클릭은_스택을_소모하지_않음" methodname="선택_취소나_길밖_클릭은_스택을_소모하지_않음" classname="SquareTD.Tests.SynergySkillButtonTest" runstate="Runnable" seed="778127400" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.001010" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[Synergy] 로키: 서로 바꿀 길 두 칸을 고르세요. 버튼을 다시 누르면 취소합니다.
+[Synergy] 로키: 서로 바꿀 길 두 칸을 고르세요. 버튼을 다시 누르면 취소합니다.
+]]></output>
+            </test-case>
+            <test-case id="1436" name="충전_전이나_일시정지_종료_상태에서는_버튼_비활성" fullname="SquareTD.Tests.SynergySkillButtonTest.충전_전이나_일시정지_종료_상태에서는_버튼_비활성" methodname="충전_전이나_일시정지_종료_상태에서는_버튼_비활성" classname="SquareTD.Tests.SynergySkillButtonTest" runstate="Runnable" seed="35171375" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000320" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1437" name="충전된_일반_시너지_스킬은_플레이어턴과_적턴에_사용_가능" fullname="SquareTD.Tests.SynergySkillButtonTest.충전된_일반_시너지_스킬은_플레이어턴과_적턴에_사용_가능" methodname="충전된_일반_시너지_스킬은_플레이어턴과_적턴에_사용_가능" classname="SquareTD.Tests.SynergySkillButtonTest" runstate="Runnable" seed="1917833351" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000248" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1447" name="SynergyTest" fullname="SquareTD.Tests.SynergyTest" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" testcasecount="36" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.058205" total="36" passed="36" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1484" name="뇨르드는_플레이어_턴에_고른_칸을_5턴_동안_멈춤_칸으로" fullname="SquareTD.Tests.SynergyTest.뇨르드는_플레이어_턴에_고른_칸을_5턴_동안_멈춤_칸으로" methodname="뇨르드는_플레이어_턴에_고른_칸을_5턴_동안_멈춤_칸으로" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1104597712" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.002108" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1452" name="덱과_겹치는_수가_많은_시너지부터_칸_수만큼" fullname="SquareTD.Tests.SynergyTest.덱과_겹치는_수가_많은_시너지부터_칸_수만큼" methodname="덱과_겹치는_수가_많은_시너지부터_칸_수만큼" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="337448655" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.002266" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1449" name="두_시너지가_재료를_2개_이상_나누지_않음" fullname="SquareTD.Tests.SynergyTest.두_시너지가_재료를_2개_이상_나누지_않음" methodname="두_시너지가_재료를_2개_이상_나누지_않음" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="632859213" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.001779" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1473" name="로키는_A의_적을_B로_B의_적을_A로" fullname="SquareTD.Tests.SynergyTest.로키는_A의_적을_B로_B의_적을_A로" methodname="로키는_A의_적을_B로_B의_적을_A로" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="2090192622" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.006117" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1472" name="로키는_플레이어_턴에_서로_다른_두_칸일_때만" fullname="SquareTD.Tests.SynergyTest.로키는_플레이어_턴에_서로_다른_두_칸일_때만" methodname="로키는_플레이어_턴에_서로_다른_두_칸일_때만" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="830691674" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000179" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1478" name="발드르는_스택_500마다_무력화_1회_최대_2회_버튼으로_다음_기믹_한_번" fullname="SquareTD.Tests.SynergyTest.발드르는_스택_500마다_무력화_1회_최대_2회_버튼으로_다음_기믹_한_번" methodname="발드르는_스택_500마다_무력화_1회_최대_2회_버튼으로_다음_기믹_한_번" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="532086512" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000421" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1483" name="브록과_에이트리는_일반_타워의_티어_합_곱하기_200골드" fullname="SquareTD.Tests.SynergyTest.브록과_에이트리는_일반_타워의_티어_합_곱하기_200골드" methodname="브록과_에이트리는_일반_타워의_티어_합_곱하기_200골드" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1039125188" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.008366" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TowerVisual] TowerID 1101의 초상·배경·장식 연결을 확인해 주세요.
+[TowerVisual] TowerID 3201의 초상·배경·장식 연결을 확인해 주세요.
+[TowerVisual] TowerID 4301의 초상·배경·장식 연결을 확인해 주세요.
+]]></output>
+            </test-case>
+            <test-case id="1482" name="브륀힐드는_한도_게임_오버를_막는_보호를_한_번_줌" fullname="SquareTD.Tests.SynergyTest.브륀힐드는_한도_게임_오버를_막는_보호를_한_번_줌" methodname="브륀힐드는_한도_게임_오버를_막는_보호를_한_번_줌" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="870139937" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000296" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1475" name="수르트는_잃은_체력의_10퍼센트_고정_피해이고_다친_적만_맞음" fullname="SquareTD.Tests.SynergyTest.수르트는_잃은_체력의_10퍼센트_고정_피해이고_다친_적만_맞음" methodname="수르트는_잃은_체력의_10퍼센트_고정_피해이고_다친_적만_맞음" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1692778580" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.003083" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1479" name="스카디는_맵_전체_적의_이동력을_5번_행동_동안_5씩" fullname="SquareTD.Tests.SynergyTest.스카디는_맵_전체_적의_이동력을_5번_행동_동안_5씩" methodname="스카디는_맵_전체_적의_이동력을_5번_행동_동안_5씩" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1604786093" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.002048" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1453" name="스택은_매_턴_티어_합만큼_쌓이고_다_차면_멈춤" fullname="SquareTD.Tests.SynergyTest.스택은_매_턴_티어_합만큼_쌓이고_다_차면_멈춤" methodname="스택은_매_턴_티어_합만큼_쌓이고_다_차면_멈춤" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="221154235" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000242" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1454" name="스택이_다_차기_전에는_버튼을_눌러도_발동하지_않고_쓰면_0으로" fullname="SquareTD.Tests.SynergyTest.스택이_다_차기_전에는_버튼을_눌러도_발동하지_않고_쓰면_0으로" methodname="스택이_다_차기_전에는_버튼을_눌러도_발동하지_않고_쓰면_0으로" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1407850381" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000247" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-suite type="ParameterizedMethod" id="1469" name="시너지마다_스택_최대" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.008493" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1455" name="시너지마다_스택_최대(6001,1000.0f)" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대(6001,1000.0f)" methodname="시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1244027195" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000453" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1456" name="시너지마다_스택_최대(6002,250.0f)" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대(6002,250.0f)" methodname="시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1133469162" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000321" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1457" name="시너지마다_스택_최대(6003,250.0f)" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대(6003,250.0f)" methodname="시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1787618491" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000088" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1458" name="시너지마다_스택_최대(6004,1000.0f)" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대(6004,1000.0f)" methodname="시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="6121378" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000127" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1459" name="시너지마다_스택_최대(6005,500.0f)" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대(6005,500.0f)" methodname="시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1566968123" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000100" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1460" name="시너지마다_스택_최대(6006,500.0f)" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대(6006,500.0f)" methodname="시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1440139002" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000149" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1461" name="시너지마다_스택_최대(6007,500.0f)" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대(6007,500.0f)" methodname="시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1419840300" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000076" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1462" name="시너지마다_스택_최대(6008,250.0f)" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대(6008,250.0f)" methodname="시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1984455809" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000099" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1463" name="시너지마다_스택_최대(6009,500.0f)" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대(6009,500.0f)" methodname="시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1491174260" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000123" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1464" name="시너지마다_스택_최대(6010,1000.0f)" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대(6010,1000.0f)" methodname="시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1048437647" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000126" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1465" name="시너지마다_스택_최대(6011,750.0f)" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대(6011,750.0f)" methodname="시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1629662232" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000125" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1466" name="시너지마다_스택_최대(6012,1000.0f)" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대(6012,1000.0f)" methodname="시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1930930641" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000077" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1467" name="시너지마다_스택_최대(6013,750.0f)" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대(6013,750.0f)" methodname="시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1996059950" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000130" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1468" name="시너지마다_스택_최대(6014,250.0f)" fullname="SquareTD.Tests.SynergyTest.시너지마다_스택_최대(6014,250.0f)" methodname="시너지마다_스택_최대" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1248663269" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000075" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-case id="1470" name="오딘은_체력_50퍼센트_이하인_일반_적과_10퍼센트_이하인_보스를_즉사" fullname="SquareTD.Tests.SynergyTest.오딘은_체력_50퍼센트_이하인_일반_적과_10퍼센트_이하인_보스를_즉사" methodname="오딘은_체력_50퍼센트_이하인_일반_적과_10퍼센트_이하인_보스를_즉사" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="431708234" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.001885" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1481" name="울르는_모든_타워의_다음_행동_5번_동안_공격마다_50퍼센트_추가타" fullname="SquareTD.Tests.SynergyTest.울르는_모든_타워의_다음_행동_5번_동안_공격마다_50퍼센트_추가타" methodname="울르는_모든_타워의_다음_행동_5번_동안_공격마다_50퍼센트_추가타" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1982557056" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.002378" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TowerVisual] TowerID 1101의 초상·배경·장식 연결을 확인해 주세요.
+[TowerVisual] TowerID 1201의 초상·배경·장식 연결을 확인해 주세요.
+]]></output>
+            </test-case>
+            <test-case id="1480" name="이미르는_맵_전체_적이_다음_행동_5번_동안_행동_불가" fullname="SquareTD.Tests.SynergyTest.이미르는_맵_전체_적이_다음_행동_5번_동안_행동_불가" methodname="이미르는_맵_전체_적이_다음_행동_5번_동안_행동_불가" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="2004202445" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.001714" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1448" name="조합표는_14종이고_문양마다_정확히_3번" fullname="SquareTD.Tests.SynergyTest.조합표는_14종이고_문양마다_정확히_3번" methodname="조합표는_14종이고_문양마다_정확히_3번" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1473644776" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.001929" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1471" name="토르는_길_타일_5곳에_5턴_동안_매_턴_최대_체력_4퍼센트" fullname="SquareTD.Tests.SynergyTest.토르는_길_타일_5곳에_5턴_동안_매_턴_최대_체력_4퍼센트" methodname="토르는_길_타일_5곳에_5턴_동안_매_턴_최대_체력_4퍼센트" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1675523480" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.001901" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1450" name="티어_합은_재료_문양_3개_곱하기_컬러_4개의_가장_높은_티어" fullname="SquareTD.Tests.SynergyTest.티어_합은_재료_문양_3개_곱하기_컬러_4개의_가장_높은_티어" methodname="티어_합은_재료_문양_3개_곱하기_컬러_4개의_가장_높은_티어" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1266652196" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000837" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1451" name="티어_합의_최대는_48" fullname="SquareTD.Tests.SynergyTest.티어_합의_최대는_48" methodname="티어_합의_최대는_48" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1896401004" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000299" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1476" name="프레이는_모든_타워의_다음_행동_5번_동안_AttackCount_플러스1" fullname="SquareTD.Tests.SynergyTest.프레이는_모든_타워의_다음_행동_5번_동안_AttackCount_플러스1" methodname="프레이는_모든_타워의_다음_행동_5번_동안_AttackCount_플러스1" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="2015857548" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.001894" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[[TowerVisual] TowerID 1101의 초상·배경·장식 연결을 확인해 주세요.
+[TowerVisual] TowerID 1301의 초상·배경·장식 연결을 확인해 주세요.
+]]></output>
+            </test-case>
+            <test-case id="1477" name="프레이야는_5턴_동안_처치_골드_2배" fullname="SquareTD.Tests.SynergyTest.프레이야는_5턴_동안_처치_골드_2배" methodname="프레이야는_5턴_동안_처치_골드_2배" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="848606554" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000559" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1474" name="헬은_스택만_쌓고_스킬은_보스를_뺀_전체_즉사" fullname="SquareTD.Tests.SynergyTest.헬은_스택만_쌓고_스킬은_보스를_뺀_전체_즉사" methodname="헬은_스택만_쌓고_스킬은_보스를_뺀_전체_즉사" classname="SquareTD.Tests.SynergyTest" runstate="Runnable" seed="1656047123" result="Passed" start-time="2026-11-17 05:07:23Z" end-time="2026-11-17 05:07:23Z" duration="0.000790" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/user/AppData/LocalLow/DefaultCompany/Project A\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

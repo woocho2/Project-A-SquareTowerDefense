@@ -137,7 +137,7 @@ namespace SquareTD
             {
                 TexturedFx.Pop(m_flarePool, center, 0f, cell * 0.2f, hole.Size * 1.6f, m_edgeColor, 2.5f, 0f, 0.1f, 0.25f);
                 ScreenShake.Play(0.02f, 0.12f);
-            }).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            }, false).SetLink(gameObject, LinkBehaviour.KillOnDisable);
         }
 
         private void Open(BlackHoleGround ground)
@@ -179,7 +179,7 @@ namespace SquareTD
                 m_motes.Gather(center, 30, m_edgeColor, hole.Area * 0.8f, cell * 0.12f, m_openDuration);
                 ScreenShake.Play(0.03f, 0.25f);
                 ImpactFx.Punch(0.02f, 0.3f);
-            }).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            }, false).SetLink(gameObject, LinkBehaviour.KillOnDisable);
         }
 
         private void PlayOrb(Vector3 from, Vector3 to, float cell, float duration)

@@ -27,6 +27,7 @@ namespace SquareTD
         public int MergeCountA = TowerProgression.MergeCount;
         public int MergeCountB = 2;
         public int StopWave;
+        public int SupportVariant;
 
         public bool CompareDeckModes;
         public int NormalDeckCount = EmblemSelectPanel.NormalCount;
@@ -103,6 +104,11 @@ namespace SquareTD
         public static bool IsOn { get; private set; }
         public static int CurrentSeed { get; private set; }
         public static bool SuppressCosmetics { get; private set; }
+        public const int SupportOff = 1;
+        public const int AttackOnly = 2;
+        public static int SupportVariant { get; private set; }
+        public static bool SupportsDisabled => IsOn && SupportVariant == SupportOff;
+        public static bool AttackOnlyBuilds => IsOn && SupportVariant == AttackOnly;
 
         private SimulationSettings m_settings;
         private QuietLogHandler m_log;
@@ -142,6 +148,7 @@ namespace SquareTD
             UnityEngine.Random.InitState(m_seed);
             IsOn = true;
             SuppressCosmetics = settings.IsControlled;
+            SupportVariant = settings.SupportVariant;
 
             m_originalLog = Debug.unityLogger.logHandler;
             m_log = new QuietLogHandler(m_originalLog);
@@ -168,6 +175,7 @@ namespace SquareTD
         {
             IsOn = false;
             SuppressCosmetics = false;
+            SupportVariant = 0;
             AutoPlanner.ResetPlacement();
             StrategySearch.Reset();
             Time.captureDeltaTime = m_originalCaptureDelta;
@@ -200,7 +208,12 @@ namespace SquareTD
             BalanceRecorder.BeginGame(m_settings.GetPairIndex(m_run), m_seed, modeName, emblems,
                 m_settings.GetVariant(m_run), m_settings.GetMergeCount(m_run), m_search != null ? m_search.CombatSeed : 0);
 
-            if (TurnManager.Instance != null) TurnManager.Instance.StateChanged += OnStateChanged;
+            m_bossTrace.Clear();
+            if (TurnManager.Instance != null)
+            {
+                TurnManager.Instance.StateChanged += OnStateChanged;
+                TurnManager.Instance.EnemyTurnEnded += TraceBoss;
+            }
         }
 
         private string ApplyGameOptions()
@@ -467,6 +480,40 @@ namespace SquareTD
             }
             if (line.Length == 0) line.Append($"{m_seed},{result},{WaveManager.Instance.CurrentWave},None,0,0,0,0\n");
             File.AppendAllText(path, line.ToString());
+
+            if (line.ToString().Contains(",None,") || m_bossTrace.Length == 0) return;
+            string tracePath = Path.Combine(SimulationSettings.Folder, m_settings.ResultName + "_bosstrace.csv");
+            if (!File.Exists(tracePath)) File.WriteAllText(tracePath, "seed,wave,turn,boss_path,boss_hp,move,towers(slot:id:distance/range/remaining_action)\n");
+            File.AppendAllText(tracePath, m_bossTrace.ToString());
+        }
+
+        private readonly System.Text.StringBuilder m_bossTrace = new System.Text.StringBuilder();
+
+        private void TraceBoss(int turn)
+        {
+            BoardManager board = BoardManager.Instance;
+            if (board == null || EnemyManager.Instance == null) return;
+            foreach (EnemyController enemy in EnemyManager.Instance.Registry.Alive)
+            {
+                if (enemy == null || !enemy.IsAlive || !enemy.IsBoss) continue;
+                Vector3Int cell = board.Grid.GetPathCell(enemy.PathIndex);
+                var towers = new List<string>();
+                for (int i = 0; i < board.Slots.Count; i++)
+                {
+                    TowerController tower = board.Slots.Get(i);
+                    if (tower == null || !tower.IsAttackTower) continue;
+                    int distance = BoardGrid.GetTileDistance(board.Grid.GetSpawnCell(i), cell);
+                    towers.Add($"{i}:{tower.Definition.Id}:{distance}/{tower.Stats.Range}/{tower.State.RemainingAction}");
+                }
+                MoveRange move = enemy.Stats.GetMoveRange();
+                bool occupied = false;
+                foreach (ITarget target in board.Occupancy.GetAt(enemy.PathIndex)) if (ReferenceEquals(target.Body, enemy)) occupied = true;
+                var effects = new List<string>();
+                foreach (StatusEffect effect in enemy.Status.Effects) effects.Add(effect.Key);
+                float probe = enemy.PreviewDamage(new DamageInfo { BaseDamage = 100f, Source = DamageSource.Basic });
+                m_bossTrace.Append(FormattableString.Invariant(
+                    $"{m_seed},{WaveManager.Instance.CurrentWave},{turn},{enemy.PathIndex},{enemy.CurrentHp:0.#},{move.Min}~{move.Max}/{move.Action},{string.Join("|", towers)},occ={occupied} taken={enemy.Stats.Get(StatType.DamageTaken):0.##} def={enemy.Stats.Get(StatType.Defense):0.#} probe100={probe:0.#} fx={string.Join("+", effects)}\n"));
+            }
         }
 
         private bool PassedStopWave()

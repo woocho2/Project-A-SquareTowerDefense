@@ -23,7 +23,7 @@ namespace SquareTD
         {
             int volleyCount = stats.AttackCount;
             ShotTiming timing = tower.ShotTiming;
-            int lookId = ProjectileCatalog.GetLookId(tower.Definition.Id);
+            int lookId = ProjectileManager.GetLookId(tower.Definition.Id);
             float speed = tower.Definition.ProjectileSpeed;
             int radius = GetAreaRadius(stats.Mastery);
             float effectScale = GetAreaSide(stats.Mastery);

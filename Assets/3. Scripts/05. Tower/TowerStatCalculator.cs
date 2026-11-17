@@ -40,7 +40,7 @@ namespace SquareTD
             return new TowerFinalStats(values, baseValues, level, sources);
         }
 
-        public static readonly HashSet<string> AllColorSources = new HashSet<string> { Acceleration.Key, SynergyEffects.FreySource };
+        public static readonly HashSet<string> AllColorSources = new HashSet<string> { Acceleration.Key, FreySkill.Source };
 
         private static List<StatSource> BuildSources(float[] baseValues, StatModifierList modifiers)
         {

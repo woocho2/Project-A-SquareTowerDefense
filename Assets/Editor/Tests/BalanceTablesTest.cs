@@ -117,20 +117,20 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 컬러_강화_비용은_10_20_40_80()
+        public void 레벨업_경험치는_20_40_80_160()
         {
-            Assert.AreEqual(10, BalanceTables.GetColorUpgradeCost(1));
-            Assert.AreEqual(20, BalanceTables.GetColorUpgradeCost(2));
-            Assert.AreEqual(40, BalanceTables.GetColorUpgradeCost(3));
-            Assert.AreEqual(80, BalanceTables.GetColorUpgradeCost(4));
+            Assert.AreEqual(20, BalanceTables.GetXpToNext(1));
+            Assert.AreEqual(40, BalanceTables.GetXpToNext(2));
+            Assert.AreEqual(80, BalanceTables.GetXpToNext(3));
+            Assert.AreEqual(160, BalanceTables.GetXpToNext(4));
         }
 
         [Test]
-        public void 레벨5_이상은_비용_0()
+        public void 레벨5_이상은_경험치_0()
         {
-            Assert.AreEqual(0, BalanceTables.GetColorUpgradeCost(5));
-            Assert.AreEqual(0, BalanceTables.GetColorUpgradeCost(6));
-            Assert.AreEqual(0, BalanceTables.GetColorUpgradeCost(0));
+            Assert.AreEqual(0, BalanceTables.GetXpToNext(5));
+            Assert.AreEqual(0, BalanceTables.GetXpToNext(6));
+            Assert.AreEqual(0, BalanceTables.GetXpToNext(0));
         }
     }
 }

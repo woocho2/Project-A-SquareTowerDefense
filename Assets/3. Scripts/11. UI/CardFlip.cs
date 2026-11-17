@@ -4,52 +4,57 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 정보 카드 뒤집기 연출
+    // 정보 패널과 내용 페이지의 페이드 전환
     public static class CardFlip
     {
-        public const float FlipDuration = 0.28f;
-        public const float SpinDuration = 0.5f;
-        public const int SpinTurns = 4;
+        public const float FlipDuration = 0.18f;
+        public const float SpinDuration = 0.22f;
 
         public static Sequence Flip(Transform card, Action swap, float duration = FlipDuration) =>
-            Spin(card, card, swap, 1, duration);
+            Fade(Group(card), Group(card), card, swap, duration);
 
-        public static Sequence Spin(Transform from, Transform to, Action swap, int turns = SpinTurns, float duration = SpinDuration)
+        public static Sequence ChangePage(Transform owner, GameObject from, GameObject to, Action afterSwap = null, float duration = FlipDuration)
         {
-            DOTween.Kill(from, true);
-            if (to != from) DOTween.Kill(to, true);
-            turns = Mathf.Max(1, turns);
-            float perDegree = duration / (turns * 180f);
-
-            Sequence sequence = DOTween.Sequence().SetId(from).SetUpdate(true);
-            sequence.Append(Turn(from, 0f, 90f, 90f * perDegree, turns == 1 ? Ease.InQuad : Ease.InSine));
-            for (int i = 1; i < turns; i++)
+            return Fade(Group(from.transform), Group(to.transform), owner, () =>
             {
-                sequence.Append(Turn(from, -90f, 90f, 180f * perDegree, Ease.Linear));
-            }
-            sequence.AppendCallback(() =>
-            {
-                from.localRotation = Quaternion.identity;
-                swap?.Invoke();
-                to.localRotation = Quaternion.Euler(0f, -90f, 0f);
-            });
-            sequence.Append(Turn(to, -90f, 0f, 90f * perDegree, turns == 1 ? Ease.OutQuad : Ease.OutBack));
-            sequence.OnKill(() =>
-            {
-                if (from != null) from.localRotation = Quaternion.identity;
-                if (to != null) to.localRotation = Quaternion.identity;
-            });
-            return sequence;
+                from.SetActive(false);
+                to.SetActive(true);
+                afterSwap?.Invoke();
+            }, duration);
         }
 
-        private static Tween Turn(Transform card, float start, float end, float duration, Ease ease)
+        public static Sequence Spin(Transform from, Transform to, Action swap, float duration = SpinDuration) =>
+            Fade(Group(from), Group(to), Group(from), swap, duration);
+
+        private static CanvasGroup Group(Transform target)
         {
-            float angle = start;
-            return DOTween.To(() => angle, value =>
+            CanvasGroup group = target.GetComponent<CanvasGroup>();
+            if (group == null) group = target.gameObject.AddComponent<CanvasGroup>();
+            return group;
+        }
+
+        private static Sequence Fade(CanvasGroup from, CanvasGroup to, object id, Action swap, float duration)
+        {
+            DOTween.Kill(id, true);
+            bool fromInteractable = from.interactable, toInteractable = to.interactable;
+            from.alpha = 1f;
+            from.interactable = to.interactable = false;
+            duration = Mathf.Max(0.05f, duration);
+            void Restore()
             {
-                angle = value;
-                if (card != null) card.localRotation = Quaternion.Euler(0f, value, 0f);
-            }, end, duration).SetEase(ease).OnStart(() => angle = start);
+                if (from != null) { from.alpha = 1f; from.interactable = fromInteractable; }
+                if (to != null) { to.alpha = 1f; to.interactable = toInteractable; }
+            }
+            return DOTween.Sequence().SetId(id).SetUpdate(true)
+                .Append(from.DOFade(0f, duration * 0.4f).SetEase(Ease.InQuad))
+                .AppendCallback(() =>
+                {
+                    swap?.Invoke();
+                    if (from != to) from.alpha = 1f;
+                    to.alpha = 0f;
+                })
+                .Append(to.DOFade(1f, duration * 0.6f).SetEase(Ease.OutQuad))
+                .OnComplete(Restore).OnKill(Restore);
         }
     }
 }

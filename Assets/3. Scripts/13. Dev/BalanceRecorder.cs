@@ -24,11 +24,11 @@ namespace SquareTD
 
         private static string MakeGamesHeader()
         {
-            var columns = new List<string> { "run", "seed", "mode", "emblems", "result", "reason", "wave", "enemy_turns", "alive", "limit", "gold", "gem", "towers" };
+            var columns = new List<string> { "run", "seed", "mode", "emblems", "result", "reason", "wave", "enemy_turns", "alive", "limit", "gold", "towers" };
             foreach (int tier in TierColumns) columns.Add($"t{tier}");
             foreach (int tier in MergeColumns) columns.Add($"merge_to{tier}");
             foreach (int tier in FirstColumns) columns.Add($"first_t{tier}");
-            columns.AddRange(new[] { "blocked_waves", "kills", "total_damage", "gem_tier_ups", "gem_color_ups", "gem_spent", "rerolls", "attack_towers", "lineup", "variant", "merge_count", "combat_seed" });
+            columns.AddRange(new[] { "blocked_waves", "kills", "total_damage", "xp_purchases", "rerolls", "attack_towers", "lineup", "variant", "merge_count", "combat_seed", "bench", "synergy_uses" });
             return string.Join(",", columns);
         }
         public const string TowersHeader = "run,seed,tower_id,name,basic,skill,ground,other,kills,tower_turns";
@@ -56,10 +56,7 @@ namespace SquareTD
         private static int s_enemyTurns;
         private static int s_blockedWaves;
         private static int s_kills;
-        private static bool s_gemTierUpPending;
-        private static int s_gemTierUps;
-        private static int s_gemColorUps;
-        private static int s_gemSpent;
+        private static int s_xpPurchases;
         private static int s_rerolls;
         private static string s_variant;
         private static int s_mergeCount;
@@ -95,10 +92,7 @@ namespace SquareTD
             s_enemyTurns = 0;
             s_blockedWaves = 0;
             s_kills = 0;
-            s_gemTierUpPending = false;
-            s_gemTierUps = 0;
-            s_gemColorUps = 0;
-            s_gemSpent = 0;
+            s_xpPurchases = 0;
             s_rerolls = 0;
             s_recording = true;
 
@@ -127,26 +121,15 @@ namespace SquareTD
 
         public static void CountBlockedWave() => s_blockedWaves++;
 
-        public static void BeginGemTierUp() => s_gemTierUpPending = true;
-
-        public static void EndGemTierUp(int cost)
-        {
-            s_gemTierUpPending = false;
-            if (!s_recording || cost <= 0) return;
-            s_gemTierUps++;
-            s_gemSpent += cost;
-        }
-
         public static void NoteReroll()
         {
             if (s_recording) s_rerolls++;
         }
 
-        public static void NoteGemColorUp(int cost)
+        public static void NoteXpPurchase(int goldCost)
         {
-            if (!s_recording || cost <= 0) return;
-            s_gemColorUps++;
-            s_gemSpent += cost;
+            if (!s_recording || goldCost <= 0) return;
+            s_xpPurchases++;
         }
 
         public static void EndGame(string result, string reason)
@@ -188,7 +171,6 @@ namespace SquareTD
                 Text(EnemyManager.Instance != null ? EnemyManager.Instance.Registry.Count : 0),
                 Text(GameSession.Instance != null ? GameSession.Instance.CurrentLimit : 0),
                 Text(CurrencyManager.Instance != null ? CurrencyManager.Instance.Gold : 0),
-                Text(CurrencyManager.Instance != null ? CurrencyManager.Instance.Gem : 0),
                 Text(towerCount),
             };
             foreach (int tier in TierColumns) line.Add(Text(tiers[tier]));
@@ -197,15 +179,18 @@ namespace SquareTD
             line.Add(Text(s_blockedWaves));
             line.Add(Text(s_kills));
             line.Add(Text(total));
-            line.Add(Text(s_gemTierUps));
-            line.Add(Text(s_gemColorUps));
-            line.Add(Text(s_gemSpent));
+            line.Add(Text(s_xpPurchases));
             line.Add(Text(s_rerolls));
             line.Add(Text(attackCount));
             line.Add(string.Join("|", lineup));
             line.Add(Clean(s_variant));
             line.Add(Text(s_mergeCount));
             line.Add(Text(s_combatSeed));
+            line.Add(Text(BoardManager.Instance != null ? BoardManager.Instance.GetTowers(TowerPlace.Bench).Count : 0));
+            var synergyUses = new List<string>();
+            if (TowerManager.Instance != null && TowerManager.Instance.Synergy != null)
+                foreach (SynergyBoard.Entry entry in TowerManager.Instance.Synergy.Entries) synergyUses.Add($"{entry.Recipe.Id}:{entry.Uses}");
+            line.Add(string.Join("|", synergyUses));
             Append(s_gamesPath, GamesHeader, string.Join(",", line) + "\n");
 
             var rows = new StringBuilder();
@@ -284,7 +269,7 @@ namespace SquareTD
         {
             if (created == null) return;
             int tier = created.Definition.Tier;
-            if (old != null && tier > old.Definition.Tier && tier < s_merges.Length && !s_gemTierUpPending) s_merges[tier]++;
+            if (old != null && tier > old.Definition.Tier && tier < s_merges.Length) s_merges[tier]++;
             NoteTier(created);
         }
 

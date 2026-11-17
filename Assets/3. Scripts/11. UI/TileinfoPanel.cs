@@ -71,6 +71,7 @@ namespace SquareTD
 
         private void OnDisable()
         {
+            DG.Tweening.DOTween.Kill(transform);
             if (!m_subscribed) return;
             if (UIManager.Instance != null) UIManager.Instance.SelectedTileChanged -= Refresh;
             if (BoardManager.Instance != null) BoardManager.Instance.Zones.ZoneChanged -= HandleZoneChanged;
@@ -167,6 +168,7 @@ namespace SquareTD
                 entries.Add(new Entry { Title = "효과 없음", Summary = "이 칸에는 특수 타일과 존이 없습니다.", Detail = "이 칸에는 특수 타일과 존이 없습니다." });
             }
 
+            float nextY = m_entrySpacing;
             for (int i = 0; i < entries.Count; i++)
             {
                 Entry entry = entries[i];
@@ -175,18 +177,25 @@ namespace SquareTD
                 button.gameObject.SetActive(true);
 
                 var rect = (RectTransform)button.transform;
-                rect.anchoredPosition = new Vector2(0f, -m_entrySpacing - i * (m_entryHeight + m_entrySpacing));
-                rect.sizeDelta = new Vector2(rect.sizeDelta.x, m_entryHeight);
+                rect.anchoredPosition = new Vector2(0f, -nextY);
 
                 if (button.targetGraphic != null) button.targetGraphic.color = entry.IsDebuff ? m_debuffColor : m_buffColor;
                 TextMeshProUGUI text = button.GetComponentInChildren<TextMeshProUGUI>(true);
-                if (text != null) text.text = string.IsNullOrEmpty(entry.Summary) ? $"<b>{entry.Title}</b>" : $"<b>{entry.Title}</b>\n<size=80%>{entry.Summary}</size>";
+                float height = m_entryHeight;
+                if (text != null)
+                {
+                    text.text = string.IsNullOrEmpty(entry.Summary) ? $"<b>{entry.Title}</b>" : $"<b>{entry.Title}</b>\n<size=90%>{entry.Summary}</size>";
+                    height = Mathf.Max(height, text.GetPreferredValues(text.text, rect.rect.width - 24f, Mathf.Infinity).y + 22f);
+                    text.rectTransform.sizeDelta = new Vector2(text.rectTransform.sizeDelta.x, height - 18f);
+                }
+                rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
+                nextY += height + m_entrySpacing;
 
                 button.onClick.AddListener(() => ShowDetail(entry));
                 m_spawned.Add(button.gameObject);
             }
 
-            m_listContent.sizeDelta = new Vector2(m_listContent.sizeDelta.x, entries.Count * (m_entryHeight + m_entrySpacing) + m_entrySpacing);
+            m_listContent.sizeDelta = new Vector2(m_listContent.sizeDelta.x, nextY);
             if (m_list != null) m_list.verticalNormalizedPosition = 1f;
         }
 
@@ -195,21 +204,13 @@ namespace SquareTD
             if (m_detailTitle != null) m_detailTitle.text = entry.Title;
             if (m_detailText != null) m_detailText.text = entry.Detail;
             if (m_front == null || m_back == null) return;
-            CardFlip.Flip(transform, () =>
-            {
-                m_front.SetActive(false);
-                m_back.SetActive(true);
-            });
+            CardFlip.ChangePage(transform, m_front, m_back);
         }
 
         private void FlipToFront()
         {
             if (m_front == null || m_back == null || m_front.activeSelf) return;
-            CardFlip.Flip(transform, () =>
-            {
-                m_back.SetActive(false);
-                m_front.SetActive(true);
-            });
+            CardFlip.ChangePage(transform, m_back, m_front);
         }
 
         private void ShowFront()

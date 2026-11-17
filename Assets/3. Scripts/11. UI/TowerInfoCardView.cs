@@ -138,16 +138,7 @@ namespace SquareTD
                 return;
             }
 
-            float half = Mathf.Max(0.025f, flipDuration * 0.5f);
-            m_flip = DOTween.Sequence()
-                .Append(flipRoot.DOLocalRotate(new Vector3(0f, 90f, 0f), half).SetEase(Ease.InOutSine))
-                .AppendCallback(() =>
-                {
-                    SetFace(detail, skill);
-                    flipRoot.localRotation = Quaternion.Euler(0f, -90f, 0f);
-                })
-                .Append(flipRoot.DOLocalRotate(Vector3.zero, half).SetEase(Ease.InOutSine))
-                .SetUpdate(true)
+            m_flip = CardFlip.Flip(flipRoot, () => SetFace(detail, skill), flipDuration)
                 .SetLink(gameObject, LinkBehaviour.KillOnDisable);
         }
 
@@ -164,6 +155,7 @@ namespace SquareTD
             int visualEmblem, int tierIndex, int attackIndex, string skillName)
         {
             SetImage(portrait, character, Color.white);
+            if (portrait != null) { portrait.type = Image.Type.Simple; portrait.preserveAspect = true; }
             bool useSword = visualEmblem == 1;
             SetImage(emblemIcon, useSword && swordIcon != null ? swordIcon : emblem,
                 useSword ? Color.white : new Color(0.65f, 0.42f, 0.22f));

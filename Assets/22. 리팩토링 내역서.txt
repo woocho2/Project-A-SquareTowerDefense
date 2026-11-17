@@ -1775,7 +1775,7 @@
 - 20번 1장 [적응형 능력치]: 웨이브 시작 전에 판 전체에서 적응형 주사위를 한 번 굴려, 그 웨이브 내내 모든 적의 큐브 면 효과 크기로 씀.
 - 범위는 모드별: 스토리 1 ~ 4, 노말 3 ~ 6, 하드 5 ~ 8. WaveTable.GetAdaptiveMin/Max.
 - GameSession.AdaptiveValue: OnWaveChanged에서 굴림 (TurnManager가 NextWave 뒤에 SpawnWave를 하므로 새 웨이브의 적은 새 값으로 시작).
-- EnemyCubeFaces: 자가치유 최대 체력의 눈금 × 10% 치유(GetHealRate, 착지할 때 한 번), 방어 +눈금 × 5%, 이동력 최소·최대 +눈금,
+- EnemyCubeFaces: 자가치유 최대 체력의 눈금 × 2.5% 치유(GetHealRate·HealPerAdaptive, 착지할 때 한 번. 2026-11-17 10%에서 낮춤), 방어 +눈금 × 5%, 이동력 최소·최대 +눈금,
   행동력 ActionGainPerTurn +눈금, 자물쇠 받는 피해 +눈금 × 10%, 모래시계 받는 피해 -눈금 × 10%. EnemyMovement.ApplyFace가 값을 넘김.
 - 대지 라이프 하베스트의 "걸린 적의 적응형 능력치 -1"은 대지 디버프를 구현할 때 함께 넣음 (아직 코드 없음).
 - 테스트: EnemyCubeFacesTest(면별 값), WaveTableTest(모드별 범위). Run All 확인 필요.
@@ -2069,6 +2069,62 @@
   SynergyTest 16개. EditMode 680개 통과.
   이어서 (사용자): 헬의 데스 카운트는 1000에 참 (SynergyStack에 최대값 인자). 프레이: 다 차면 판 위의 모든 타워(버프·디버프 포함)가 다음 행동 한 번에
   AttackCount +1 (FreyBless, TimedTowerBuff 1번 행동). 버프·디버프 타워도 받도록 TowerStatCalculator.AllColorSources에 FreySource 추가.
+  발드르 (2026-11-17): BaldrNullify — 스택 500마다 Charges +1 (최대 2, 2면 쌓지 않음), Use()는 버튼용(Charges → Pending),
+  TryBlockMechanic()은 보스 기믹이 발동할 때 부를 곳 (Pending이 있으면 1 쓰고 막음). 버튼·BossMechanicService 연결은 판 연결 때.
+  SynergyTest에 발드르 2개. 컴파일 확인, Unity 에디터가 열려 있어 EditMode 배치 실행은 못 함.
+[시너지] 모든 시너지를 "스택을 쌓고 버튼으로 스킬"로 다시 짬 (2026-11-17, 사용자 요청)
+- SynergyEffects.cs를 다시 씀: SynergyStack(다 차면 멈춤, Consume으로 0), SynergySkill(Tick·IsReady·TryUse·Cast), SynergyContext(적·타워·점유·격자·플레이어 턴·로키의 A/B), SynergyEffects.Create(id).
+- 오딘 1000: 체력 50% 이하 전체 즉사(보스 포함). 토르 250: 서로 다른 길 타일 5곳, 3턴(EffectTurns) 동안 매 적 턴 최대 체력 4%.
+  로키 250: 플레이어 턴에만 A·B 칸의 적을 맞바꿈, 행동 카운트 처음부터(EnemyMovement.ResetActionProgress), 도착 칸 즉시 판정(EnemyTileEffectApplier.ApplyForcedStop).
+  헬 1000: 매 적 턴 무작위 1기 2% + 스킬은 보스 뺀 전체 즉사. 수르트 100, 프레이 100, 스카디 250(맵 전체 5번 행동 동안 이동력 −5), 발드르 500(무력화 최대 2회).
+- 예전 매 턴 효과(오딘 n% 즉사, 토르 1칸, 로키 1기 옮기기)와 TierRate는 지움. 토르의 유지 3턴은 "턴으로 세는 것은 3턴" 규칙을 따름 (사용자가 따로 정하지 않음).
+- SynergyTest를 다시 씀 (조합표 5, 스택·버튼 3 + 최대 8, 효과 10). 컴파일 확인. Unity 에디터가 열려 있어 EditMode는 아직 못 돌림.
+- 이어서 (사용자): 수르트·프레이 스택 최대 100 → 500.
+- 이어서 (사용자): 시너지 버프·디버프·장판은 5턴 (SynergyEffects.EffectTurns = 5). 오딘은 보스만 10% 이하에서 즉사. 토르 5턴. 헬의 매 턴 2% 깎기 삭제.
+  프레이 행동 5번 동안. 프레이야(6009) 추가: 5턴 동안 처치 골드 2배 — EmblemSharedState.GoldDoubleTurns(StartGoldDouble·CountDownGoldDouble),
+  DeathResolver.GetBonusReward에서 골드 +100%. 프레이야 Tick에서 남은 턴을 셈 → 판에 연결할 때 Tick은 적 턴이 끝날 때 불러야 5턴을 다 씀.
+  프레이야 스택 최대 500 (사용자 확인).
+- 이미르(6010): 1000, 맵 위의 적 전체(보스 포함) 다음 행동 5번 동안 0 / 0. 기절(ImmobilizeEffect)은 강한 CC라 저항력·중복에 막히므로
+  따로 YmirFrozenEffect(강한 CC가 아님)로 둠. SynergyTest에 이미르 1개.
+- 울르(6011): 750, 모든 타워에 "울르의 축복"(TimedTowerBuff 5번 행동). EnemyController.TakeDamage에서 살아 있으면 UllrSkill.TryFollowUp —
+  공격자가 축복 중이고 기본·스킬·장판 피해면 그 피해의 50%를 Relay·고정으로 한 번 더 (Relay는 다시 추가타 안 함). SynergyTest에 울르 1개.
+- 브륀힐드(6012): 1000, EmblemSharedState.LimitShields +1. GameSession의 한도 게임 오버 두 곳(CheckBeforeSpawn, 한도가 줄어들 때)을 LimitGameOver로 모아
+  보호가 있으면 1 쓰고 막음. 보스 제한 턴(TurnManager)은 그대로. SynergyTest에 1개.
+- 이어서 (사용자): 스택 계수 0.5 → 1 (SynergyEffects.PercentPerTier). n = 티어 합, 최대 48. 테스트의 턴 수를 맞춤.
+- 브록 & 에이트리(6013): 750, 판 위 일반 타워의 티어 합 × 2 젬 (BrokkrSkill.GemAmount, CurrencyManager.AddGem). SynergyTest에 1개.
+- 뇨르드(6014): 250, 플레이어 턴에 고른 길 타일을 5턴 동안 멈춤 칸으로 (EmblemSharedState.StopTiles, 뇨르드 Tick에서 셈).
+  EnemyMovement.MoveSteps가 한 칸씩 갈 때 멈춤 칸에 들어서면 거기서 멈춤. SynergyTest에 1개 (걷기 자체는 DOTween·BoardManager가 있어 EditMode로 못 봄).
+- 시너지 14종 효과를 모두 정함.
+[정리] 안 쓰는 탄 에셋 경로를 코드에서 걷어냄 (2026-11-17, 사용자 요청)
+- 기본 공격 28종(101 ~ 114, 201 ~ 214)이 모두 ShotEffectTable(코드로 그리는 탄 연출)에 있어, ProjectileCatalog로 넘어가는 대체 경로는 쓰이지 않았음.
+- ProjectileManager에서 탄 프리팹·카탈로그·풀·적중 이펙트 풀을 지우고 ShotEffectTable만 씀 (없는 모양이면 경고 후 바로 맞힘). GetLookId를 ProjectileManager로 옮김.
+- Projectile.cs, ProjectileCatalog.cs, HitEffect.cs 삭제 (git에 있음). 컴파일 확인.
+- 에셋(사용자가 옮김): 4. Asset/3. Projectile 폴더, 2. Prefab/4. Effect의 ProjectileCatalog.asset·Projectile.prefab, 10. Animation/Effect의 Water_Hit.anim·.controller,
+  4. Asset/6. Effect의 적중 이펙트 112개(Hit_*_30_v4, Sword_Splash/Target_30_v3의 prefab·anim·controller·png). 카탈로그 말고는 아무 데서도 쓰지 않음을 GUID로 확인.
+  교체가 아니라 안 쓰는 파일 정리라 Recovery 보관 없이 지워도 됨 (git에 .meta까지 있음).
+- 확인 (사용자, 2026-11-17): Unity Test Runner EditMode 전부 통과, 플레이에서 탄·시너지 정리 뒤 문제 없음.
+[경제] 컬러별 젬 강화 → 플레이어 레벨 (골드로 경험치) (2026-11-17, 사용자 요청)
+- ColorUpgradeState를 플레이어 레벨로: Level·Xp·XpToNext·IsMax·AddXp(넘친 경험치는 넘어감), GetLevel(color)는 네 컬러 같은 Level.
+  이벤트 LevelChanged(int)·XpChanged. TryUpgrade·GetCost·CanUpgrade 삭제.
+- BalanceTables: 컬러 강화 비용 표 → GetXpToNext 20 / 40 / 80 / 160, GoldPerXp 5, XpPerPurchase 1 (사용자: 한 번 누르면 1).
+- TowerManager.TryUpgradeColor(젬) → TryBuyXp(골드 5). 레벨이 오르면 모든 타워 다시 계산. TowerInfoPanel 이벤트 맞춤.
+- PlayerTurnPanel: 컬러 4칸(m_colorUpgrades)을 지우고 btn_buyXp·txt_buyXpCost·txt_level·txt_xp·img_xpFill(선택) — 씬에서 연결해야 함.
+- AutoPlanner: 젬은 티어 강화에만, 칸이 다 찼고 골드가 생성 비용 + 5 이상이면 경험치를 삼. StrategySearch의 컬러 비용 참조 삭제.
+  판 기록 gem_color_ups → xp_purchases. 테스트: ColorUpgradeStateTest 다시 씀, BalanceTables·TowerStackConnection·TowerController 맞춤. 컴파일 확인.
+- 20번 8장 [재화], [컬러 강화 — 젬] → [플레이어 레벨 — 골드로 경험치], 젬 목표(컬러) 삭제.
+- 이어서 (사용자): 경험치 1 = 골드 100 (GoldPerXp 5 → 100). 레벨 5까지 30,000골드.
+[경제] 젬을 없애고 재화를 골드 하나로 (2026-11-17, 사용자 요청)
+- CurrencyManager: Gem·AddGem·TrySpendGem·m_startGem 삭제, Changed(int gold). 시작 골드 500 → 1000 (생성 250 × 4기), Stage1 ~ 10 씬 값도.
+- 티어 강화 삭제: TowerManager.TryTierUpgrade, TowerProgression.GetTierUpgradeCost, PlayerTurnPanel의 티어 강화 버튼(btn_tierUpgrade·txt_tierUpgradeValue).
+- 생성 비용 100에서 +5씩 → 250 고정 (TowerManager.FixedBuildCost, 보장 컬러는 BuildCount로). 판매: 웨이브 식·젬 → 티어별 200 / 600 / 1800 / 5400 (2026-11-17 250 / 700 / 2000 / 5000에서 낮춤, 다시 뽑기 1회 50골드).
+- 처치 보상: WaveTable.GetKillReward가 골드만 돌려줌. 중간 보스 500 → 1000 × 사이클², 최종 보스 1000 → 2500 × 사이클², 보스 젬 삭제.
+- 해머 잭팟: 젬 +1(타격 50%로 +1) → 골드 +100, 타격 타워가 처치하면 +100 더 (확률 없음). RollGemBonus → RollGoldBonus.
+- 브록 & 에이트리: 티어 합 × 2 젬 → × 200골드. GameInfoPanel의 젬 글자(txt_currentGem) 삭제. DebugCheat F3은 젬 대신 플레이어 레벨 +1.
+- 자동 플레이·전략 탐색에서 젬 쓰기(TrySpendGems) 삭제, 판 기록에서 gem·gem_tier_ups·gem_spent 칸 삭제.
+- 테스트: TowerManager·WaveTable·EmblemRule(잭팟)·Synergy(프레이야·브록)·TowerProgression 맞춤. 컴파일 확인.
+- 20번 8장 [재화]·[타워 생성]·[합성](이어받기를 티어 강화에서 옮김)·[판매]·[처치 보상], 4-8장 잭팟, 9장 브록, 티어 강화를 가리키던 곳을 고침.
+- 이어서 (사용자): 시작 골드 1000 → 500 (처음 2기). CurrencyManager 기본값·Stage1 ~ 10 씬.
+- 이어서 (사용자, C안): 일반 적 10 → 30 × 사이클, 중간 보스 1000 → 500 × 사이클², 최종 보스 2500 → 1500 × 사이클². 한 판 약 12만 5천. WaveTableTest 맞춤.
 - 20번 8장 [컬러 강화] 표를 공격·지원으로 나눔, 단일 AttackCount 2배 설명 지움. 테스트: BalanceTables·TowerStatCalculator·TowerDatabase(3102 레벨 4 AttackCount 2, 4204 레벨 5 AttackCount 4). EditMode 660개 통과.
 
 [적] 최종 보스 9종 고유 기믹 실행 연결 (2026-11-16, 사용자 요청 — Codex 구현)
@@ -2111,3 +2167,71 @@
 - PNG·슬라이스·.meta는 변경하지 않음. internalID 21300005는 기존 다이아 스프라이트 식별자로 유지하며 게임 티어와 별개.
 - 검증: C# 컴파일 오류 0개, 기존 PlayerTurnPanel CS0649 경고 3개. 런타임 코드의 변환 함수·상수 참조 없음, 네 배지 참조·원래 다이아 색·메타 유지 확인. 실제 Unity PlayMode는 미확인(병행 밸런스 실행 중).
 - 에셋 원본·.meta 백업: ArtBackups/TierVisual_20261116. 커밋하지 않음.
+[씬 외형] 대기석·시너지 받침판 (2026-11-17, 사용자 요청 — Codex)
+- Stage1의 SeatBoard·SynergyBoard를 기존 금색 BoardFrame 9조각과 같은 재질로 다시 배치. 한 줄 대기석에는 가로 판, 시너지 공간에는 세로 판.
+- Wating Seat 12칸·Synergy 6칸의 타일/좌표/변환 유지. 받침판은 각각 9개 타일, 슬롯보다 뒤(Order 1)에 렌더.
+- 두 장식 판에 복제되어 있던 SpecialTileGlowEffect·ZoneGlowEffect만 제거. 실제 보드·슬롯·경험치 투자·UI 버튼 코드는 수정하지 않음. 신규 PNG 없음.
+- Editor/SupportBoardLayoutTool.cs 메뉴 도구로 적용하고 씬 저장. 자동 실행 요청 파일은 제거.
+- 확인: Unity 에디터 API 적용·저장·슬롯 보존·씬 GUID 유지, 1920×1080 실제 씬 렌더 확인. 실제 PlayMode 미확인.
+- 도구 컴파일은 기존 런타임 DLL 참조로 통과. 전체 재컴파일은 병행 경험치/컬러 강화 API·테스트 변경으로 미완료이며 이 코드들은 수정하지 않음.
+- 비교 렌더·검증: ArtPreviews/SupportBoards_20261117. 작업 전 씬·.meta: ArtBackups/SupportBoards_20261117_102927. 커밋하지 않음.
+[씬 외형] 현재 메인 보드의 패스 타일 검정색 (2026-11-17, 사용자 요청 — Codex)
+- Stage1의 Path 타일맵 색과 현재 스테이지 01. Asgard.asset의 PathColor를 RGBA(0,0,0,1)로 변경. BoardPresenter의 시작 시 색 적용 뒤에도 검정을 유지함.
+- 길 타일 32칸의 배치·변환 유지. 스폰 칸·테두리·길 화살표·대기석·시너지 판은 변경하지 않음. 다른 스테이지의 고유 색은 그대로.
+- Unity 에디터 API로 씬·색상 저장. 스테이지 파일의 부수적인 직렬화 형식 변경은 원래 표현으로 유지해 최종 차이는 PathColor 한 줄뿐. 기존 .meta/GUID 유지.
+- 실제 씬 렌더 검수. 전체 C# 컴파일 오류·경고 0개. PlayMode는 별도 미확인.
+- 미리보기·검증: ArtPreviews/SupportBoards_20261117/black-path.png, black-path.json. 백업: ArtBackups/BlackPath_20261117_103944.
+[씬 외형 정정] 길 그림이 아닌, 패스 칸 아래의 보드 바탕만 검정 (2026-11-17, 사용자 범위 확인)
+- 위의 '패스 타일 검정색' 중간 적용은 요청을 오해한 것으로 폐기. Path 타일맵과 Asgard.PathColor를 원래 남색으로 복원했으며 스테이지 에셋은 최초 변경 전 백업과 바이트 일치.
+- Main BoardTile에서 실제 패스와 겹치는 32칸의 vertex color만 검정. 기존 보드 셰이더가 이 색을 사용하므로 새로운 셰이더·PNG·마스크 없이 타일 사이 공간까지 검게 이어짐.
+- 해당 바탕 칸의 LockColor만 해제. 나머지 보드 색·길/보드 배치·스폰 칸·금색 외곽선·화살표·대기석·시너지 판 유지 확인.
+- SupportBoardLayoutTool 메뉴도 '패스 칸 아래 보드 바탕 검정색 적용'으로 정리. 재사용 시 길 그림·스테이지 색은 변경하지 않음. 일회성 자동 실행 제거.
+- 실제 Unity 에디터 렌더·씬 저장 확인. 최종 미리보기·검증: ArtPreviews/SupportBoards_20261117/path-background.png 및 path-background.json. PlayMode 별도 미확인.
+- 정정 전 백업: ArtBackups/PathBackground_20261117_105138. 최초 정상 길 색: ArtBackups/BlackPath_20261117_103944.
+[UI] 시너지 타워 아래 스킬 사용 버튼 (2026-11-17, 사용자 요청 — Codex)
+- 공용 Tower.prefab에 SynergySkillButton 바인딩을 추가하고 SynergySkillButton.prefab을 연결. 시너지 타워에만 월드 UI 생성, 일반 타워·시뮬레이션은 생성하지 않음.
+- 타워 아래 충전 비율 바·퍼센트, 준비 시 금색 스킬 버튼. 발드르는 저장 횟수 표시. 준비/사용 반응은 DOTween.
+- 기존 SynergyBoard.TryUse 연결. 로키는 서로 다른 길 2칸, 뇨르드는 길 1칸 선택. 취소·플레이어 턴 종료 시 미소모. 준비 전·일시정지·게임 종료에서는 차단.
+- 두 대상 선택 스킬만 플레이어 턴 제한, 다른 시너지의 적 턴 수동 사용 유지. 기존 스킬 효과·스택·수치는 변경하지 않음.
+- 시너지 받침판 아래 공간을 0.35 늘림. 실제 슬롯 좌표·6칸과 대기석/메인 보드 유지.
+- 코드: 11. UI/SynergySkillButton.cs·SynergySkillButtonView.cs, 12. Input/PickSynergyTargetMode.cs.
+- 에디터: SynergySkillButtonSetup.cs·SynergySkillButtonVerification.cs; SupportBoardLayoutTool의 판 맞추기도 버튼 여유 공간 유지.
+- 검증: 전체 컴파일 오류·경고 0. 새 SynergySkillButtonTest 10 + 기존 SynergyTest 36 = 46개 통과.
+  실제 Stage1 PlayMode에서 6기 UI·충전 전 차단·완료 후 버튼 이벤트·UI Raycast·로키 선택/소모·일반 타워 UI 미생성 확인. 준비/충전 Game View 캡처 보관.
+- 결과/미리보기: ArtPreviews/SynergySkillButtons_20261117. 수정 전 프리팹/씬/.meta: ArtBackups/SynergySkillButtons_20261117. 커밋하지 않음.
+[UI] 타워·타일·적 정보 패널 가독성 정리 (2026-11-17, 사용자 요청 — Codex)
+- 공용 UICanvas.prefab의 세 패널을 Unity Prefab API로 수정. 300×760 크기·오른쪽 위 정렬·아이보리/남색/금색 틀을 통일. 패널 루트와 컨트롤러 참조 유지.
+- 이름 24~26px, 수치/본문 18px, 항목명 16px 기준. 수치는 한 줄씩 표시하고 긴 스킬/효과 설명은 스크롤. 남아 있던 Group_TierUpTower와 수동 합성 UI 제거.
+- 타워: Full 일러스트와 그림자 연결 유지, 문양/역할/현재 티어/현재 레벨, 스킬 카운트·차지 표기, 공격 대상 이전/다음·칸 지정·판매 버튼 연결. 시너지는 일반 공격 스탯 대신 재료 문양·시너지 스택·사용 횟수 및 실제 구현된 권능 설명 표시.
+- 타일: 적용 효과 목록과 상세 설명, 명시적인 목록 복귀 버튼. 긴 항목은 텍스트 길이에 맞춰 높이를 늘림.
+- 적: 목록은 Face, 상세는 Full. 체력 바·능력치·상태 목록·목록 복귀를 정리하고 보스 종류와 남은 처치 턴을 이름과 분리.
+- 공통 상단의 타일/타워/적 전환과 닫기 버튼 연결. 기존 DOTween 카드 넘김 유지.
+- CanvasScaler를 고정 픽셀에서 1920×1080 기준 ScaleWithScreenSize/세로 맞춤으로 변경. 기존 한글 폰트에는 프로젝트에 있는 LiberationSans SDF fallback을 추가해 가운데점·곱하기 기호의 네모 표시를 해결. 새 PNG 제작 없음.
+- 파일 검증: Stage1~Stage10에서 공용 패널 레이아웃과 직렬화 참조 확인, 기존 .meta 8개 해시 일치. 씬 파일은 저장/수정하지 않음.
+- Unity Stage1 PlayMode: 53개 검증 항목 통과. 타워/서포트/시너지 선택, 전신/그림자, 타겟 변경, 설명 스크롤, 타일 목록/상세/복귀/전환, 적 목록/상세/상태/보스 턴, 닫기와 실제 판매 골드 지급을 확인. 최종 캡처에서 텍스트 넘침 0, 누락 기호 경고 0, 새 콘솔 오류 0. 전체 스테이지 클리어/배포 빌드는 실행하지 않음.
+- 기존 오류 별도: Stage1 TowerManager.m_towerParent가 씬 오브젝트가 아닌 Tower.prefab의 Transform을 가리켜 타워 생성 시 'Cannot instantiate objects with a parent which is persistent'가 8회 발생. UI 검증 결과에서 existingErrors로 구분했으며 해당 씬/게임 코드는 변경하지 않음.
+- 원본 8파일과 .meta 8파일 백업: ArtBackups/InfoPanels_20261117. 결과/미리보기/파일 해시: ArtPreviews/InfoPanels_20261117. 커밋하지 않음.
+[UI] 회전 카드 제거·전신 비율 수정 (2026-11-17, 사용자 후속 요청 — Codex)
+- CardFlip의 회전/스핀을 약 0.2초 DOTween 페이드로 변경. 타워 능력치/설명, 타일 목록/상세, 적 능력치/상태는 내용 영역만 전환하여 제목·일러스트 유지. 타워/적/타일 패널 사이 전환도 회전 제거.
+- 전환 중 페이지 버튼 중복 입력 방지, 취소/비활성화 시 알파와 상호작용 복원. 사용하지 않는 TowerInfoCardView의 자체 회전도 동일한 페이드로 통일.
+- 전신이 가로로 늘어났던 원인: 틀과 같은 Sliced Image를 사용해 preserveAspect가 적용되지 않음. 타워 전신·그림자·적 전신/목록 얼굴을 Simple + Preserve Aspect로 수정. Full/Face PNG·슬라이스·GUID는 변경하지 않음.
+- InfoPanelLayoutTool에 전신 비율만 고치는 메뉴 추가, 이후 전체 레이아웃 재생성 시에도 Simple 설정 유지. 기존 공용 UICanvas에는 해당 이미지 설정만 적용.
+- 검증: Stage1~10 공용 프리팹 참조 확인, Stage1 PlayMode 78항목 통과. 실제 전환 중 중간 알파값과 회전 없음, 내용 전환 중 제목/그림 유지 확인. 전신 메쉬의 가로·세로 비율을 스프라이트의 투명 패딩까지 반영해 검증. 텍스트 넘침 0·새 오류 0. 앞서 기록한 기존 TowerFactory 부모 참조 오류 8회는 별도 기록하며 수정하지 않음.
+- 원본 9파일과 .meta 9파일 백업: ArtBackups/InfoPanelTransitions_20261117. 결과·스크린샷·해시: ArtPreviews/InfoPanelTransitions_20261117. 씬 파일을 저장하지 않았고 커밋하지 않음.
+[보드] 대기석 12칸·시너지 6칸 연결 (2026-11-17, 사용자 요청 — Claude)
+- BoardManager: 씬의 "Wating Seat"·"Synergy" 타일맵을 찾아(직렬화 칸이 비면 이름으로) Bench·SynergySlots(TowerSlots)를 만듦. 타일맵이 없는 Stage2~10은 0칸.
+- TowerPlace(Board·Bench·Synergy)와 TowerController.Place. 생성은 판 → 대기석 순(TowerManager.TryGetBuildSlot). 대기석은 행동·존·시너지 티어 합에서 빠짐.
+- 합성은 판 + 대기석을 함께 봄. 남는 타워는 판 위 타워 우선(TowerProgression.TryFindMergeGroup 목록판). 판 ↔ 대기석 이동·교환 TryMoveTo, 판에서 나가면 존·스킬 1 버프를 뗌.
+- 시너지: SynergyBoard가 시작 때 SynergyRecipes.Pick으로 시너지 칸에 타워를 세우고, 매 적 턴이 끝날 때 판 위 티어 합으로 Tick. 발드르는 BossMechanicService.Blocker로 최종 보스 기믹을 막음.
+- 테스트 모드(T)·시뮬레이션에서는 시너지 스킬 자동 사용(SynergyAutoUse, 로키·뇨르드 칸은 공격 타워가 많이 닿는 칸). F6 시너지 스택 가득.
+- AutoPlanner: 대기석 타워 올리기·바꾸기(PromoteFromBench), 판이 차면 대기석 생성, 다시 뽑기는 대기석부터·웨이브당 3번. 기록에 bench·synergy_uses 열.
+- 테스트: 대기석 합성 3개 추가. EditMode 712개 통과.
+[버그] 기본 공격 피해가 늦게 들어가던 문제 (2026-11-17 — Claude)
+- 10. Effect의 DOVirtual.DelayedCall이 기본값(배속 무시)이라 배속을 올리면 착탄 콜백이 턴 안에 안 와서 피해가 늦게 다른 칸에 들어감. 19곳을 게임 시간 기준(false)으로. ImpactFx는 그대로.
+- 고친 뒤 시뮬레이션 로그의 탄·점유 경고 수백 건 → 0건.
+[밸런스] 자가치유·판매가 (2026-11-17, 사용자)
+- 자가치유 눈금 × 10% → 2.5% (EnemyCubeFaces.HealPerAdaptive). 판매 250 / 700 / 2000 / 5000 → 200 / 600 / 1800 / 5400.
+- 노말 10웨이브: Stage1 덱 92.5~95%, 무작위 덱 77.5~90% (40판, 판마다 흔들림 ±7%).
+[시뮬레이션 도구] (2026-11-17 — Claude)
+- -simSceneDeck(씬에 저장된 덱), -simSupport 0/1/2(그대로 / 버프·디버프 효과 끔 / 생성 때 광역·단일만). 보스가 살아남은 판은 *_bosstrace.csv(턴마다 보스 위치·체력·타워 거리·상태).
+- 버프·디버프 실험 Stage1 덱 40판·20웨이브: 그대로 36/40, 효과 끔 35/40, 공격만 40/40. 무작위 덱 세 묶음은 남음.

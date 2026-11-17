@@ -50,8 +50,8 @@ namespace SquareTD
         [SerializeField] private Vector2 m_flipButtonSize = new Vector2(46f, 35f);
         [SerializeField, Min(0.05f)] private float m_flipDuration = 0.2f;
 
-        private const float ListStartY = -45f;
-        private const float ListSpacing = 82f;
+        private const float ListStartY = -8f;
+        private const float ListSpacing = 100f;
 
         private readonly List<EnemyListItemUI> m_listItems = new List<EnemyListItemUI>();
         private readonly List<GameObject> m_spawnedBuffEntries = new List<GameObject>();
@@ -96,6 +96,7 @@ namespace SquareTD
 
         private void OnDisable()
         {
+            DG.Tweening.DOTween.Kill(transform);
             Unsubscribe();
         }
 
@@ -139,7 +140,12 @@ namespace SquareTD
 
         private void HandleEnemyTurnEnded(int turn)
         {
-            if (IsDetailVisible) UpdateStatsText();
+            if (IsDetailVisible)
+            {
+                UpdateStatsText();
+                RefreshBuffEntries();
+                RefreshDebuffEntries();
+            }
             else RefreshListDisplays();
         }
 
@@ -228,12 +234,7 @@ namespace SquareTD
             GameObject to = m_showingBack ? m_detailFront : m_detailBack;
             m_showingBack = !m_showingBack;
 
-            m_flipTween = CardFlip.Flip(transform, () =>
-            {
-                from.SetActive(false);
-                to.SetActive(true);
-                UpdateFlipLabel();
-            }, m_flipDuration);
+            m_flipTween = CardFlip.ChangePage(transform, from, to, UpdateFlipLabel, m_flipDuration);
         }
 
         private void SetDetailFace(bool showBack)
@@ -248,7 +249,7 @@ namespace SquareTD
 
         private void UpdateFlipLabel()
         {
-            if (m_txtFlipDetail != null) m_txtFlipDetail.text = m_showingBack ? "스탯" : "버프";
+            if (m_txtFlipDetail != null) m_txtFlipDetail.text = m_showingBack ? "< 능력치 보기" : "상태 효과 보기 >";
         }
 
         private void FindExistingScrollRects()
@@ -483,7 +484,7 @@ namespace SquareTD
                 ? BoardManager.Instance.Occupancy.GetAt(m_currentPathIndex)
                 : new List<ITarget>();
 
-            if (m_txtListTitle != null) m_txtListTitle.text = $"타일 위 적 목록 ({targets.Count}마리)";
+            if (m_txtListTitle != null) m_txtListTitle.text = $"길 {m_currentPathIndex}번 칸\n적 {targets.Count}마리";
             if (m_txtNoEnemies != null) m_txtNoEnemies.gameObject.SetActive(targets.Count == 0);
 
             RectTransform content = m_listContent != null ? m_listContent : m_listScrollRect != null ? m_listScrollRect.content : null;
@@ -542,7 +543,7 @@ namespace SquareTD
             rect.anchorMax = new Vector2(0.5f, 1f);
             rect.pivot = new Vector2(0.5f, 1f);
             rect.anchoredPosition = new Vector2(0f, ListStartY - index * ListSpacing);
-            rect.sizeDelta = new Vector2(width, 74f);
+            rect.sizeDelta = new Vector2(width, 90f);
         }
 
         private static float GetEntryWidth(RectTransform content)
@@ -634,6 +635,7 @@ namespace SquareTD
 
             if (m_imgPortrait != null)
             {
+                m_imgPortrait.type = Image.Type.Simple;
                 m_imgPortrait.sprite = definition != null && definition.Appearance != null
                     ? definition.Appearance.FullSprite : null;
                 m_imgPortrait.preserveAspect = true;
@@ -641,7 +643,6 @@ namespace SquareTD
             }
 
             string title = EnemyListItemUI.GetDisplayName(m_selectedTarget);
-            if (body != null && body.IsBoss) title += $" 남은 턴 {EnemyManager.Instance.BossTimer.GetRemaining(body)}";
             if (m_txtDetailTitle != null) m_txtDetailTitle.text = title;
 
             int hp = Mathf.CeilToInt(m_selectedTarget.CurrentHp);
@@ -657,7 +658,8 @@ namespace SquareTD
 
             if (definition == null) return;
 
-            if (m_txtEnemyType != null) m_txtEnemyType.text = GetKindName(definition.Kind);
+            if (m_txtEnemyType != null) m_txtEnemyType.text = GetKindName(definition.Kind) +
+                (body.IsBoss ? $" · 처치까지 {EnemyManager.Instance.BossTimer.GetRemaining(body)}턴" : "");
 
             EnemyStats stats = body.Stats;
             float defense = stats.Get(StatType.Defense);
@@ -719,7 +721,7 @@ namespace SquareTD
             RectTransform content = m_buffContent != null ? m_buffContent : m_buffScrollRect != null ? m_buffScrollRect.content : null;
             if (content == null) return;
 
-            var descriptions = new List<string> { "적용 중인 버프 없음\n현재 적에게 적용된 버프가 없습니다." };
+            var descriptions = new List<string> { "적용 중인 버프 없음" };
 
             CreateEntries(content, descriptions, m_spawnedBuffEntries);
             if (m_buffScrollRect != null) m_buffScrollRect.verticalNormalizedPosition = 1f;
@@ -734,7 +736,7 @@ namespace SquareTD
 
             var descriptions = new List<string>();
             descriptions.AddRange(StatusTextFormatter.DescribeAll(m_selectedTarget.Status));
-            if (descriptions.Count == 0) descriptions.Add("적용 중인 디버프 없음\n현재 적에게 적용된 디버프가 없습니다.");
+            if (descriptions.Count == 0) descriptions.Add("적용 중인 디버프 없음");
 
             CreateEntries(content, descriptions, m_spawnedDebuffEntries);
             if (m_debuffScrollRect != null) m_debuffScrollRect.verticalNormalizedPosition = 1f;
@@ -742,8 +744,7 @@ namespace SquareTD
 
         private void CreateEntries(RectTransform content, List<string> descriptions, List<GameObject> spawnedList)
         {
-            const float startY = -40f;
-            const float spacing = 75f;
+            float nextY = 4f;
 
             for (int i = 0; i < descriptions.Count; i++)
             {
@@ -754,17 +755,24 @@ namespace SquareTD
                 rect.anchorMin = new Vector2(0.5f, 1f);
                 rect.anchorMax = new Vector2(0.5f, 1f);
                 rect.pivot = new Vector2(0.5f, 1f);
-                rect.anchoredPosition = new Vector2(0f, startY - i * spacing);
-                rect.sizeDelta = new Vector2(GetEntryWidth(content), 70f);
+                rect.anchoredPosition = new Vector2(0f, -nextY);
+                float width = GetEntryWidth(content);
+                float height = 70f;
 
                 TextMeshProUGUI txt = entry.GetComponentInChildren<TextMeshProUGUI>(true);
-                if (txt != null) txt.text = descriptions[i];
+                if (txt != null)
+                {
+                    txt.text = descriptions[i];
+                    height = Mathf.Max(height, txt.GetPreferredValues(txt.text, width - 20f, Mathf.Infinity).y + 20f);
+                    txt.rectTransform.sizeDelta = new Vector2(width - 20f, height - 16f);
+                }
+                rect.sizeDelta = new Vector2(width, height);
+                nextY += height + 8f;
 
                 spawnedList.Add(entry);
             }
 
-            float totalHeight = Mathf.Max(content.rect.height, Mathf.Abs(startY) + descriptions.Count * spacing + 20f);
-            content.sizeDelta = new Vector2(content.sizeDelta.x, totalHeight);
+            content.sizeDelta = new Vector2(content.sizeDelta.x, nextY);
         }
 
         private GameObject CreateDefaultInfoEntry(RectTransform parent, int index)

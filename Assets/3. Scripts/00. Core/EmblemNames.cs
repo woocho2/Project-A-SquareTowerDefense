@@ -37,6 +37,7 @@ namespace SquareTD
 
         public static string GetConceptName(int towerId)
         {
+            if (TowerId.IsSynergy(towerId)) return SynergyRecipes.TryGet(towerId, out SynergyRecipes.Recipe recipe) ? recipe.Name : "시너지";
             return GetConceptName(TowerId.GetEmblem(towerId), TowerId.GetColor(towerId));
         }
     }

@@ -107,6 +107,12 @@ namespace SquareTD
             }
         }
 
+        public static void ClearZones(TowerController receiver)
+        {
+            foreach (SupportBuffEntry entry in new List<SupportBuffEntry>(receiver.State.SupportBuffs.Values))
+                if (entry.Zone != null) TakeSkill1(entry.Zone, receiver);
+        }
+
         private static SupportBuffEntry Entry(TowerController receiver, TowerEmblem emblem)
         {
             if (!receiver.State.SupportBuffs.TryGetValue(emblem, out SupportBuffEntry entry))

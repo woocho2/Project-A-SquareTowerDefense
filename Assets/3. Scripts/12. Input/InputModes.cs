@@ -8,16 +8,30 @@ namespace SquareTD
         public readonly Vector3 World;
         public readonly int PathIndex;
         public readonly int SpawnIndex;
+        public readonly int BenchIndex;
+        public readonly int SynergyIndex;
 
-        public BoardPoint(Vector3 world, int pathIndex, int spawnIndex)
+        public BoardPoint(Vector3 world, int pathIndex, int spawnIndex, int benchIndex = -1, int synergyIndex = -1)
         {
             World = world;
             PathIndex = pathIndex;
             SpawnIndex = spawnIndex;
+            BenchIndex = benchIndex;
+            SynergyIndex = synergyIndex;
         }
 
         public bool IsPath => PathIndex >= 0;
         public bool IsSpawn => SpawnIndex >= 0;
+        public bool IsBench => BenchIndex >= 0;
+        public bool IsSynergy => SynergyIndex >= 0;
+
+        public TowerController GetTower(BoardManager board)
+        {
+            if (IsSpawn) return board.Slots.Get(SpawnIndex);
+            if (IsBench) return board.Bench.Get(BenchIndex);
+            if (IsSynergy) return board.SynergySlots.Get(SynergyIndex);
+            return null;
+        }
     }
 
     public interface IInputMode
@@ -48,7 +62,7 @@ namespace SquareTD
 
         public void OnPointerDown(BoardPoint point)
         {
-            m_pressedTower = point.IsSpawn ? BoardManager.Instance.Slots.Get(point.SpawnIndex) : null;
+            m_pressedTower = point.GetTower(BoardManager.Instance);
             m_pressedWorld = point.World;
             TowerManager.Instance.Select(m_pressedTower);
             m_input.NotifyClicked(point);
@@ -86,7 +100,7 @@ namespace SquareTD
 
         public void OnPointerDown(BoardPoint point)
         {
-            if (!point.IsPath || !IsInRange(point.PathIndex))
+            if (!m_tower.IsOnBoard || !point.IsPath || !IsInRange(point.PathIndex))
             {
                 Debug.Log("[Input] 사거리 안의 길 칸만 고를 수 있음");
                 m_input.ChangeMode(new IdleMode(m_input));
@@ -195,7 +209,8 @@ namespace SquareTD
 
         public void OnPointerUp(BoardPoint point)
         {
-            bool moved = point.IsSpawn && TowerManager.Instance.TryMoveOrSwap(m_tower, point.SpawnIndex);
+            bool moved = point.IsSpawn ? TowerManager.Instance.TryMoveTo(m_tower, TowerPlace.Board, point.SpawnIndex)
+                : point.IsBench && TowerManager.Instance.TryMoveTo(m_tower, TowerPlace.Bench, point.BenchIndex);
             if (!moved) ReturnToSlot();
             m_input.ChangeMode(new IdleMode(m_input));
         }
@@ -208,7 +223,7 @@ namespace SquareTD
 
         private void ReturnToSlot()
         {
-            m_tower.transform.position = BoardManager.Instance.GetSpawnWorldPosition(m_tower.SlotIndex);
+            m_tower.transform.position = BoardManager.Instance.GetPlaceWorldPosition(m_tower.Place, m_tower.SlotIndex);
         }
     }
 }

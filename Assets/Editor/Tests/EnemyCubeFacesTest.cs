@@ -133,9 +133,9 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 자가치유_면만_눈금_곱하기_10퍼센트_치유()
+        public void 자가치유_면만_눈금_곱하기_2점5퍼센트_치유()
         {
-            Assert.AreEqual(0.4f, EnemyCubeFaces.GetHealRate(EnemyCubeFaceAsset.SelfHeal, 4), 0.0001f);
+            Assert.AreEqual(0.1f, EnemyCubeFaces.GetHealRate(EnemyCubeFaceAsset.SelfHeal, 4), 0.0001f);
             Assert.AreEqual(0f, EnemyCubeFaces.GetHealRate(EnemyCubeFaceAsset.Defense, 4), 0.0001f);
         }
     }

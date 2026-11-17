@@ -1,53 +1,28 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace SquareTD
 {
-    // 플레이어 턴의 버튼들 (생성, 컬러 강화, 턴 종료 등)
+    // 플레이어 턴의 버튼들 (생성, 경험치 구매, 턴 종료)
     public class PlayerTurnPanel : MonoBehaviour
     {
-        [Serializable]
-        private class ColorUpgradeSlot
-        {
-            public TowerColor color;
-            public Button button;
-            public TextMeshProUGUI txt_level;
-            public TextMeshProUGUI txt_cost;
-        }
-
         [SerializeField] Button btn_createTower;
         [SerializeField] TextMeshProUGUI txt_createTowerValue;
-        [SerializeField] ColorUpgradeSlot[] m_colorUpgrades =
-        {
-            new ColorUpgradeSlot { color = TowerColor.Red },
-            new ColorUpgradeSlot { color = TowerColor.Blue },
-            new ColorUpgradeSlot { color = TowerColor.Yellow },
-            new ColorUpgradeSlot { color = TowerColor.Purple },
-        };
-        [SerializeField] Button btn_tierUpgrade;
-        [SerializeField] TextMeshProUGUI txt_tierUpgradeValue;
+        [SerializeField] Button btn_buyXp;
+        [SerializeField] TextMeshProUGUI txt_buyXpCost;
+        [SerializeField] TextMeshProUGUI txt_level;
+        [SerializeField] TextMeshProUGUI txt_xp;
+        [SerializeField] Image img_xpFill;
         [SerializeField] Button btn_turnEnd;
-
-        private TowerController m_selectedTower;
 
         private void Start()
         {
-            TowerManager.Instance.BuildCostChanged += HandleBuildCostChanged;
             CurrencyManager.Instance.Changed += HandleCurrencyChanged;
-            TowerManager.Instance.SelectionChanged += HandleTowerSelected;
-            TowerManager.Instance.ColorLevels.LevelChanged += HandleColorLevelChanged;
-            TowerManager.Instance.TowerReplaced += HandleTowerReplaced;
-            TowerManager.Instance.TowerRemoved += HandleTowerRemoved;
+            TowerManager.Instance.ColorLevels.XpChanged += Refresh;
 
             if (btn_createTower != null) btn_createTower.onClick.AddListener(HandleCreateTowerClick);
-            foreach (ColorUpgradeSlot slot in m_colorUpgrades)
-            {
-                TowerColor color = slot.color;
-                if (slot.button != null) slot.button.onClick.AddListener(() => HandleColorUpgradeClick(color));
-            }
-            if (btn_tierUpgrade != null) btn_tierUpgrade.onClick.AddListener(HandleTierUpgradeClick);
+            if (btn_buyXp != null) btn_buyXp.onClick.AddListener(HandleBuyXpClick);
             if (btn_turnEnd != null) btn_turnEnd.onClick.AddListener(HandleTurnEndClick);
 
             Refresh();
@@ -60,50 +35,15 @@ namespace SquareTD
 
         private void OnDestroy()
         {
-            if (TowerManager.Instance != null)
-            {
-                TowerManager.Instance.BuildCostChanged -= HandleBuildCostChanged;
-                TowerManager.Instance.SelectionChanged -= HandleTowerSelected;
-                TowerManager.Instance.ColorLevels.LevelChanged -= HandleColorLevelChanged;
-                TowerManager.Instance.TowerReplaced -= HandleTowerReplaced;
-                TowerManager.Instance.TowerRemoved -= HandleTowerRemoved;
-            }
+            if (TowerManager.Instance != null) TowerManager.Instance.ColorLevels.XpChanged -= Refresh;
             if (CurrencyManager.Instance != null) CurrencyManager.Instance.Changed -= HandleCurrencyChanged;
 
             if (btn_createTower != null) btn_createTower.onClick.RemoveListener(HandleCreateTowerClick);
-            foreach (ColorUpgradeSlot slot in m_colorUpgrades)
-            {
-                if (slot.button != null) slot.button.onClick.RemoveAllListeners();
-            }
-            if (btn_tierUpgrade != null) btn_tierUpgrade.onClick.RemoveListener(HandleTierUpgradeClick);
+            if (btn_buyXp != null) btn_buyXp.onClick.RemoveListener(HandleBuyXpClick);
             if (btn_turnEnd != null) btn_turnEnd.onClick.RemoveListener(HandleTurnEndClick);
         }
 
-        private void HandleBuildCostChanged(int cost) => Refresh();
-
-        private void HandleCurrencyChanged(int gold, int gem) => Refresh();
-
-        private void HandleColorLevelChanged(TowerColor color, int level) => Refresh();
-
-        private void HandleTowerSelected(TowerController tower)
-        {
-            m_selectedTower = tower;
-            Refresh();
-        }
-
-        private void HandleTowerReplaced(TowerController old, TowerController created)
-        {
-            if (m_selectedTower != old) return;
-            m_selectedTower = created;
-            Refresh();
-        }
-
-        private void HandleTowerRemoved(TowerController tower)
-        {
-            if (m_selectedTower != tower) return;
-            m_selectedTower = null;
-            Refresh();
-        }
+        private void HandleCurrencyChanged(int gold) => Refresh();
 
         private void Refresh()
         {
@@ -111,41 +51,14 @@ namespace SquareTD
             if (txt_createTowerValue != null) txt_createTowerValue.text = $"{buildCost}";
             if (btn_createTower != null) btn_createTower.interactable = CurrencyManager.Instance.Gold >= buildCost;
 
-            RefreshColorUpgrades();
-            RefreshTierUpgrade();
-        }
+            ColorUpgradeState level = TowerManager.Instance.ColorLevels;
+            int cost = level.IsMax ? 0 : BalanceTables.XpPurchaseCost;
 
-        private void RefreshColorUpgrades()
-        {
-            ColorUpgradeState levels = TowerManager.Instance.ColorLevels;
-            int gem = CurrencyManager.Instance.Gem;
-
-            foreach (ColorUpgradeSlot slot in m_colorUpgrades)
-            {
-                int cost = levels.GetCost(slot.color);
-                if (slot.txt_level != null) slot.txt_level.text = $"Lv.{levels.GetLevel(slot.color)}";
-                if (slot.txt_cost != null) slot.txt_cost.text = FormatUpgradeCost(cost);
-                if (slot.button != null) slot.button.interactable = cost > 0 && gem >= cost;
-            }
-        }
-
-        private void RefreshTierUpgrade()
-        {
-            if (m_selectedTower == null)
-            {
-                if (txt_tierUpgradeValue != null) txt_tierUpgradeValue.text = "-";
-                if (btn_tierUpgrade != null) btn_tierUpgrade.interactable = false;
-                return;
-            }
-
-            int tierCost = TowerId.IsSynergy(m_selectedTower.Definition.Id) ? 0 : TowerProgression.GetTierUpgradeCost(m_selectedTower.Definition.Tier);
-            if (txt_tierUpgradeValue != null) txt_tierUpgradeValue.text = FormatUpgradeCost(tierCost);
-            if (btn_tierUpgrade != null) btn_tierUpgrade.interactable = tierCost > 0 && CurrencyManager.Instance.Gem >= tierCost;
-        }
-
-        private static string FormatUpgradeCost(int cost)
-        {
-            return cost > 0 ? $"{cost}" : "MAX";
+            if (txt_level != null) txt_level.text = $"Lv.{level.Level}";
+            if (txt_xp != null) txt_xp.text = level.IsMax ? "MAX" : $"{level.Xp} / {level.XpToNext}";
+            if (img_xpFill != null) img_xpFill.fillAmount = level.IsMax ? 1f : (float)level.Xp / level.XpToNext;
+            if (txt_buyXpCost != null) txt_buyXpCost.text = cost > 0 ? $"{cost}" : "MAX";
+            if (btn_buyXp != null) btn_buyXp.interactable = cost > 0 && CurrencyManager.Instance.Gold >= cost;
         }
 
         private void HandleCreateTowerClick()
@@ -153,20 +66,9 @@ namespace SquareTD
             TowerManager.Instance.TryBuild();
         }
 
-        private void HandleColorUpgradeClick(TowerColor color)
+        private void HandleBuyXpClick()
         {
-            TowerManager.Instance.TryUpgradeColor(color);
-        }
-
-        private void HandleTierUpgradeClick()
-        {
-            if (m_selectedTower == null)
-            {
-                Debug.LogWarning("[PlayerTurnPanel] 티어 강화할 타워가 선택되지 않음");
-                return;
-            }
-
-            TowerManager.Instance.TryTierUpgrade(m_selectedTower);
+            TowerManager.Instance.TryBuyXp();
         }
 
         private void HandleTurnEndClick()

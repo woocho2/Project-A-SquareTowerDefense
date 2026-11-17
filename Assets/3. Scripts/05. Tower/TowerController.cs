@@ -20,6 +20,8 @@ namespace SquareTD
         public int BuildOrder { get; private set; }
 
         public int SlotIndex { get; private set; }
+        public TowerPlace Place { get; private set; } = TowerPlace.Board;
+        public bool IsOnBoard => Place == TowerPlace.Board;
         public bool IsAttackTower => Definition.Color == TowerColor.Red || Definition.Color == TowerColor.Blue;
 
         private TowerDefinition m_tier1Definition;
@@ -31,11 +33,13 @@ namespace SquareTD
         public bool IsTarget => Definition.Color == TowerColor.Blue;
 
         public void Init(TowerDefinition definition, int slotIndex, TowerAction action,
-                         TowerDefinition tier1Definition = null, ColorUpgradeState colorLevels = null, AttackSkill skill = null)
+                         TowerDefinition tier1Definition = null, ColorUpgradeState colorLevels = null, AttackSkill skill = null,
+                         TowerPlace place = TowerPlace.Board)
         {
             m_skill = skill;
             Definition = definition;
             SlotIndex = slotIndex;
+            Place = place;
             BuildOrder = ++s_nextBuildOrder;
             m_tier1Definition = tier1Definition;
             m_colorLevels = colorLevels;
@@ -181,12 +185,15 @@ namespace SquareTD
 
         private static int AliveEnemyCount() => EnemyManager.Instance != null ? EnemyManager.Instance.Registry.Count : 0;
 
-        public void SetSlot(int slotIndex, Vector3 position)
+        public void SetSlot(int slotIndex, Vector3 position) => SetPlace(TowerPlace.Board, slotIndex, position);
+
+        public void SetPlace(TowerPlace place, int slotIndex, Vector3 position)
         {
             State.AttackCellIndex = -1;
+            Place = place;
             SlotIndex = slotIndex;
             transform.position = position;
-            m_action?.OnMoved(this);
+            if (place == TowerPlace.Board) m_action?.OnMoved(this);
         }
 
         public void OnRemoved()

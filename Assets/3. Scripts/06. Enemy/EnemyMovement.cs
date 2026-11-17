@@ -111,6 +111,7 @@ namespace SquareTD
                 Vector3 target = board.GetWorldPosition(board.Grid.GetPathCell(nextIndex));
                 yield return MoveOneTile(target);
                 PathIndex = nextIndex;
+                if (EmblemSharedState.Current.IsStopTile(PathIndex)) break;
             }
 
             board.Occupancy.Move(m_controller, fromIndex, PathIndex);
@@ -151,6 +152,12 @@ namespace SquareTD
         }
 
         public void AddActionProgress(int amount) => m_actionCounter -= amount;
+
+        public void ResetActionProgress()
+        {
+            if (m_controller == null) m_controller = GetComponent<EnemyController>();
+            m_actionCounter = m_controller.Stats.GetMoveRange().Action;
+        }
 
         public void TeleportTo(int pathIndex)
         {

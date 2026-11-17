@@ -37,6 +37,9 @@ namespace SquareTD
         [SerializeField] TextMeshProUGUI txt_duration;
         [SerializeField] TextMeshProUGUI txt_mastery;
         [SerializeField] TextMeshProUGUI txt_stack;
+        [SerializeField] GameObject m_regularStats;
+        [SerializeField] GameObject m_synergyStats;
+        [SerializeField] TextMeshProUGUI txt_synergyProgress;
 
         [Header("설명")]
         [SerializeField] TextMeshProUGUI txt_default;
@@ -93,6 +96,7 @@ namespace SquareTD
 
         private void OnDisable()
         {
+            DG.Tweening.DOTween.Kill(transform);
             Unsubscribe();
         }
 
@@ -125,11 +129,7 @@ namespace SquareTD
         {
             if (m_front == null || m_back == null) return;
             bool toBack = m_front.activeSelf;
-            CardFlip.Flip(transform, () =>
-            {
-                m_front.SetActive(!toBack);
-                m_back.SetActive(toBack);
-            });
+            CardFlip.ChangePage(transform, toBack ? m_front : m_back, toBack ? m_back : m_front);
         }
 
         private void ShowFront()
@@ -160,6 +160,7 @@ namespace SquareTD
             TowerManager.Instance.TowerAdded += HandleBoardChanged;
             TowerManager.Instance.TowerRemoved += HandleBoardChanged;
             TowerManager.Instance.ColorLevels.LevelChanged += HandleColorLevelChanged;
+            if (TowerManager.Instance.Synergy != null) TowerManager.Instance.Synergy.Used += HandleSynergyUsed;
             m_subscribed = true;
         }
 
@@ -179,13 +180,15 @@ namespace SquareTD
                 TowerManager.Instance.TowerAdded -= HandleBoardChanged;
                 TowerManager.Instance.TowerRemoved -= HandleBoardChanged;
                 TowerManager.Instance.ColorLevels.LevelChanged -= HandleColorLevelChanged;
+                if (TowerManager.Instance.Synergy != null) TowerManager.Instance.Synergy.Used -= HandleSynergyUsed;
             }
             m_subscribed = false;
         }
 
         private void HandleBoardChanged(TowerController tower) => UpdateTowerInfo();
 
-        private void HandleColorLevelChanged(TowerColor color, int level) => UpdateTowerInfo();
+        private void HandleColorLevelChanged(int level) => UpdateTowerInfo();
+        private void HandleSynergyUsed(SynergyBoard.Entry entry) => UpdateTowerInfo();
 
         private void HandleTowerSelected(TowerController tower)
         {
@@ -211,7 +214,7 @@ namespace SquareTD
             int towerId = definition.Id;
 
             int colorLevel = stats.ColorLevel;
-            if (txt_level != null) txt_level.text = cardView != null ? $"Lv.{colorLevel}" : $"{colorLevel}";
+            if (txt_level != null) txt_level.text = $"Lv.{colorLevel}";
             if (txt_name != null) txt_name.text = EmblemNames.GetConceptName(towerId);
 
             UpdateIdentityText(definition);
@@ -220,6 +223,22 @@ namespace SquareTD
             UpdateStatText(definition, stats);
             UpdateDescriptionText(definition, stats);
             UpdateButtons();
+            UpdateSynergyInfo(definition);
+        }
+
+        private void UpdateSynergyInfo(TowerDefinition definition)
+        {
+            bool synergy = TowerId.IsSynergy(definition.Id);
+            if (m_regularStats != null) m_regularStats.SetActive(!synergy);
+            if (m_synergyStats != null) m_synergyStats.SetActive(synergy);
+            if (!synergy || txt_synergyProgress == null) return;
+            SynergyBoard board = TowerManager.Instance != null ? TowerManager.Instance.Synergy : null;
+            SynergyBoard.Entry entry = board?.Find(m_selectedTower);
+            if (entry == null) { txt_synergyProgress.text = "시너지 정보를 불러오는 중입니다."; return; }
+            var names = new List<string>();
+            foreach (TowerEmblem emblem in entry.Recipe.Emblems) names.Add(EmblemNames.GetEmblemName(emblem));
+            txt_synergyProgress.text = $"재료 문양\n{string.Join(" · ", names)}\n\n시너지 스택  {entry.Skill.Stack.Stacks:0.#} / {entry.Skill.Stack.MaxStacks:0.#}\n매 적 턴 +{SynergyEffects.TierValue(board.GetTierSum(entry)):0.#}\n\n사용 횟수  {entry.Uses}회";
+            if (entry.Skill is BaldrSkill baldr) txt_synergyProgress.text += $"\n보유 {baldr.Charges}회 · 방어 대기 {baldr.Pending}회";
         }
 
         private void UpdateIdentityText(TowerDefinition definition)
@@ -237,8 +256,7 @@ namespace SquareTD
 
         private static string GetSellText(int tier)
         {
-            int gem = TowerManager.GetSellGem(tier);
-            return gem > 0 ? $"{TowerManager.CurrentSellGold}G + {gem}젬" : $"{TowerManager.CurrentSellGold}G";
+            return $"{TowerManager.GetSellGold(tier)}G";
         }
 
         private void UpdateIdentityImage(TowerDefinition definition)
@@ -279,6 +297,7 @@ namespace SquareTD
         private static void UpdatePortrait(Image image, Sprite sprite)
         {
             if (image == null) return;
+            image.type = Image.Type.Simple;
             image.sprite = sprite;
             image.preserveAspect = true;
             image.enabled = sprite != null;
@@ -318,7 +337,7 @@ namespace SquareTD
             SetText(txt_attackCount, isSupport ? $"{stats.AttackCount}스택" : $"{stats.AttackCount}회");
             SetText(txt_criticalRate, isSupport ? UnusedStatText : $"{stats.CriticalRate * 100f:0.##}%{GetBonusText(stats, StatType.CritRate, 100f, "%")}");
             SetText(txt_criticalDamage, isSupport ? UnusedStatText : $"{CriticalRoll.Multiplier(stats.CriticalDamage) * 100f:0.##}%");
-            SetText(txt_abilityValue, cardView != null ? $"x{stats.AbilityValue:0.##}" : $"×{stats.AbilityValue:0.##}");
+            SetText(txt_abilityValue, $"x{stats.AbilityValue:0.##}");
             SetText(txt_duration, GetDurationText(definition.Color, stats, m_selectedTower.State));
             SetText(txt_mastery, GetMasteryText(definition.Color, stats));
             SetText(txt_stack, GetStackText(isSupport, stats));
@@ -413,7 +432,7 @@ namespace SquareTD
                     SetText(txt_default, $"존 {stats.Mastery}개를 밟은 적에게 스킬 1\n행동마다 스킬 카운트 +{stats.AttackCount}, 차면 적 전체에게 스킬 2");
                     break;
                 default:
-                    SetText(txt_default, "시너지 타워 (효과 미정)");
+                    SetText(txt_default, "매 적 턴, 재료 문양 타워의 티어 합만큼 시너지 스택을 얻습니다. 스택이 차면 타워 아래의 스킬 버튼으로 사용합니다.");
                     break;
             }
 

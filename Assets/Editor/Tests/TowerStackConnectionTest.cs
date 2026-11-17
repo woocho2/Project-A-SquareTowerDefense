@@ -90,9 +90,7 @@ namespace SquareTD.Tests
             for (int i = 0; i < 50; i++) RunAct(tower);
             Assert.AreEqual(50f, tower.State.Stack.Current, 0.0001f);
 
-            colors.TryUpgrade(TowerColor.Red);      // 2
-            colors.TryUpgrade(TowerColor.Red);      // 3
-            colors.TryUpgrade(TowerColor.Red);      // 4: 최대 스택 ×1/2
+            colors.AddXp(20 + 40 + 80);             // 레벨 4: 최대 스택 ×1/2
             tower.RecalculateStats();               // 판에서는 TowerManager가 LevelChanged를 듣고 부름
 
             Assert.AreEqual(30, tower.State.Stack.Max);

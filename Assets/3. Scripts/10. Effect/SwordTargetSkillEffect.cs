@@ -57,14 +57,14 @@ namespace SquareTD
             }
 
             TexturedFx.Pop(m_glowPool, target, 0f, size * 0.2f, size * 1.3f, s_qi, 1.2f, gatherAt, m_gatherDuration + m_stormDuration, 0.12f);
-            DOVirtual.DelayedCall(stormAt, () => ScreenShake.Play(0.02f, m_stormDuration)).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            DOVirtual.DelayedCall(stormAt, () => ScreenShake.Play(0.02f, m_stormDuration), false).SetLink(gameObject, LinkBehaviour.KillOnDisable);
             for (float at = stormAt; at < burstAt; at += 0.1f)
             {
-                DOVirtual.DelayedCall(at, () => m_sparks.Burst(target, 4, s_qi, size * 1.5f, size * 3f, size * 0.05f, size * 0.09f, 0.15f, 0.25f))
+                DOVirtual.DelayedCall(at, () => m_sparks.Burst(target, 4, s_qi, size * 1.5f, size * 3f, size * 0.05f, size * 0.09f, 0.15f, 0.25f), false)
                     .SetLink(gameObject, LinkBehaviour.KillOnDisable);
             }
 
-            DOVirtual.DelayedCall(burstAt - 0.05f, () => ImpactFx.Slow(0.3f, 0.1f)).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            DOVirtual.DelayedCall(burstAt - 0.05f, () => ImpactFx.Slow(0.3f, 0.1f), false).SetLink(gameObject, LinkBehaviour.KillOnDisable);
             DOVirtual.DelayedCall(burstAt, () =>
             {
                 ImpactFx.Frame(new Color(0.75f, 0.9f, 1f, 0.55f), 0.05f);
@@ -74,7 +74,7 @@ namespace SquareTD
                 TexturedFx.Pop(m_flarePool, target, 0f, size * 0.4f, size * 2.2f, Color.white, 3f, 0f, 0.12f, 0.3f);
                 TexturedFx.Pop(m_flarePool, target, 45f, size * 0.3f, size * 1.6f, s_blade, 2.5f, 0.03f, 0.12f, 0.3f);
                 m_sparks.Burst(target, m_burstSparks, s_blade, size * 3f, size * 9f, size * 0.08f, size * 0.16f, 0.25f, 0.5f);
-            }).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            }, false).SetLink(gameObject, LinkBehaviour.KillOnDisable);
         }
 
         private void PlayQi(Vector3 target, float size, float slashAt, float gatherAt, float burstAt, Color color)

@@ -9,6 +9,8 @@ namespace SquareTD.Tests
 
         private static DamageInfo Hit(float damage) => new DamageInfo { BaseDamage = damage, Source = DamageSource.Basic };
 
+        // ── 조합표·티어 합 ──
+
         [Test]
         public void 조합표는_14종이고_문양마다_정확히_3번()
         {
@@ -65,108 +67,147 @@ namespace SquareTD.Tests
             Assert.AreEqual(SynergyEffects.OdinId, picked[0].Id, "3개 모두 겹침");
         }
 
-        [TestCase(12, 0.06f)]
-        [TestCase(48, 0.24f)]
-        [TestCase(0, 0f)]
-        public void 시너지_계수는_티어_합_곱하기_0점5퍼센트(int tierSum, float rate)
+        // ── 공용 스택·버튼 ──
+
+        [Test]
+        public void 스택은_매_턴_티어_합만큼_쌓이고_다_차면_멈춤()
         {
-            Assert.AreEqual(rate, SynergyEffects.TierRate(tierSum), Eps);
+            var stack = new SynergyStack(100f);
+
+            for (int i = 0; i < 8; i++) Assert.IsFalse(stack.Gain(12), $"{i + 1}턴: 12씩");
+            Assert.AreEqual(0.96f, stack.Ratio, Eps);
+            Assert.IsTrue(stack.Gain(12), "9턴째 100");
+            Assert.IsFalse(stack.Gain(12), "다 찬 뒤에는 더 쌓지 않음");
+            Assert.AreEqual(100f, stack.Stacks, Eps);
+
+            stack.Consume();
+            Assert.AreEqual(0f, stack.Stacks, Eps);
         }
 
         [Test]
-        public void 토르의_번개_폭풍은_그_칸의_적에게_최대_체력의_비율_고정_피해()
+        public void 스택이_다_차기_전에는_버튼을_눌러도_발동하지_않고_쓰면_0으로()
         {
-            EnemyController inside = MakeEnemy(0, hp: 1000f, defense: 100f), outside = MakeEnemy(1, hp: 1000f);
+            var surtr = new SurtrSkill();
+            var context = new SynergyContext { Enemies = new List<EnemyController>() };
 
-            int hits = SynergyEffects.ThorStorm(m_occupancy, 0, 12);
+            Assert.IsFalse(surtr.TryUse(context));
+            for (int i = 0; i < 10; i++) surtr.Tick(context, 48);
+            Assert.IsFalse(surtr.IsReady, "48씩 10턴이면 480");
+            surtr.Tick(context, 48);
+            Assert.IsTrue(surtr.IsReady, "11턴째 500");
+            Assert.IsTrue(surtr.TryUse(context));
+            Assert.AreEqual(0f, surtr.Stack.Stacks, Eps);
+            Assert.IsFalse(surtr.IsReady);
+        }
 
-            Assert.AreEqual(1, hits);
-            Assert.AreEqual(60f, Lost(inside), Eps, "1000 × 6%, 방어력과 무관");
-            Assert.AreEqual(0f, Lost(outside), Eps);
+        [TestCase(SynergyEffects.OdinId, 1000f)]
+        [TestCase(SynergyEffects.ThorId, 250f)]
+        [TestCase(SynergyEffects.LokiId, 250f)]
+        [TestCase(SynergyEffects.HelId, 1000f)]
+        [TestCase(SynergyEffects.SurtrId, 500f)]
+        [TestCase(SynergyEffects.FreyId, 500f)]
+        [TestCase(SynergyEffects.BaldrId, 500f)]
+        [TestCase(SynergyEffects.SkadiId, 250f)]
+        [TestCase(SynergyEffects.FreyjaId, 500f)]
+        [TestCase(SynergyEffects.YmirId, 1000f)]
+        [TestCase(SynergyEffects.UllrId, 750f)]
+        [TestCase(SynergyEffects.BrynhildId, 1000f)]
+        [TestCase(SynergyEffects.BrokkrId, 750f)]
+        [TestCase(SynergyEffects.NjordId, 250f)]
+        public void 시너지마다_스택_최대(int id, float max)
+        {
+            SynergySkill skill = SynergyEffects.Create(id);
+            Assert.AreEqual(id, skill.Id);
+            Assert.AreEqual(max, skill.Stack.MaxStacks, Eps);
+        }
+
+        private static void Fill(SynergySkill skill, SynergyContext context)
+        {
+            for (int i = 0; i < 100 && !skill.Stack.IsFull; i++) skill.Tick(context, 48);
+        }
+
+        // ── 효과 ──
+
+        [Test]
+        public void 오딘은_체력_50퍼센트_이하인_일반_적과_10퍼센트_이하인_보스를_즉사()
+        {
+            EnemyController half = MakeEnemy(0, hp: 1000f), high = MakeEnemy(1, hp: 1000f), bossLow = MakeBoss(2, 1000f), bossMid = MakeBoss(3, 1000f);
+            half.TakeDamage(Hit(500f));
+            high.TakeDamage(Hit(400f));
+            bossLow.TakeDamage(Hit(900f));
+            bossMid.TakeDamage(Hit(600f));
+            var context = new SynergyContext { Enemies = new List<EnemyController> { half, high, bossLow, bossMid } };
+            var odin = new OdinSkill();
+            Fill(odin, context);
+
+            Assert.IsTrue(odin.TryUse(context));
+
+            Assert.IsFalse(half.IsAlive, "일반 50%");
+            Assert.IsTrue(high.IsAlive, "일반 60%");
+            Assert.IsFalse(bossLow.IsAlive, "보스 10%");
+            Assert.IsTrue(bossMid.IsAlive, "보스 40%는 살아남음");
         }
 
         [Test]
-        public void 토르의_자리는_길_타일_중_하나()
+        public void 토르는_길_타일_5곳에_5턴_동안_매_턴_최대_체력_4퍼센트()
         {
-            for (int i = 0; i < 50; i++)
-            {
-                int index = SynergyEffects.PickThorStormIndex(40);
-                Assert.That(index, Is.InRange(0, 39));
-            }
-            Assert.AreEqual(-1, SynergyEffects.PickThorStormIndex(0));
+            var context = new SynergyContext { Enemies = new List<EnemyController>(), Grid = m_grid, Occupancy = m_occupancy };
+            var thor = new ThorSkill();
+            Fill(thor, context);
+            Assert.IsTrue(thor.TryUse(context));
+
+            Assert.AreEqual(5, thor.Storms.Count);
+            var cells = new HashSet<int>();
+            foreach (var storm in thor.Storms) cells.Add(storm.pathIndex);
+            Assert.AreEqual(5, cells.Count, "서로 다른 5칸");
+
+            EnemyController inside = MakeEnemy(thor.Storms[0].pathIndex, hp: 1000f, defense: 100f);
+            for (int i = 0; i < 6; i++) thor.Tick(context, 0);
+
+            Assert.AreEqual(200f, Lost(inside), Eps, "1000 × 4% × 5턴, 방어력과 무관");
+            Assert.AreEqual(0, thor.Storms.Count);
         }
 
         [Test]
-        public void 오딘은_기준_이하인_적을_즉사시키고_보스도_포함()
+        public void 로키는_플레이어_턴에_서로_다른_두_칸일_때만()
         {
-            EnemyController low = MakeEnemy(0, hp: 1000f), high = MakeEnemy(1, hp: 1000f);
-            low.TakeDamage(Hit(950f));
-            high.TakeDamage(Hit(900f));
+            var context = new SynergyContext { Grid = m_grid, Occupancy = m_occupancy, PathA = 0, PathB = 3 };
+            Assert.IsFalse(LokiSkill.CanSwap(context), "적 턴에는 못 씀");
 
-            int killed = SynergyEffects.OdinExecute(new List<EnemyController> { low, high }, 12);
+            context.IsPlayerTurn = true;
+            Assert.IsTrue(LokiSkill.CanSwap(context));
 
-            Assert.AreEqual(1, killed);
-            Assert.IsFalse(low.IsAlive, "5% ≤ 6%");
-            Assert.IsTrue(high.IsAlive, "10% > 6%");
+            context.PathB = 0;
+            Assert.IsFalse(LokiSkill.CanSwap(context), "같은 칸");
         }
 
         [Test]
-        public void 로키는_보스를_고르지_않음()
+        public void 로키는_A의_적을_B로_B의_적을_A로()
         {
-            EnemyController normal = MakeEnemy(0), boss = MakeEnemy(1);
-            var so = new UnityEditor.SerializedObject(boss.Definition);
-            so.FindProperty("<Kind>k__BackingField").enumValueIndex = (int)EnemyKind.MiddleBoss;
-            so.ApplyModifiedPropertiesWithoutUndo();
+            EnemyController a1 = MakeEnemy(0), a2 = MakeEnemy(0), b1 = MakeEnemy(3), other = MakeEnemy(5);
 
-            List<EnemyController> candidates = SynergyEffects.LokiCandidates(new List<EnemyController> { normal, boss });
+            (List<EnemyController> toB, List<EnemyController> toA) = LokiSkill.Plan(m_occupancy, 0, 3);
 
-            Assert.AreEqual(1, candidates.Count);
-            Assert.AreSame(normal, candidates[0]);
+            CollectionAssert.AreEquivalent(new[] { a1, a2 }, toB);
+            CollectionAssert.AreEquivalent(new[] { b1 }, toA);
+            CollectionAssert.DoesNotContain(toB, other);
         }
 
         [Test]
-        public void 로키가_데려오는_자리는_그_타워에서_가장_가까운_길_타일()
+        public void 헬은_스택만_쌓고_스킬은_보스를_뺀_전체_즉사()
         {
-            for (int slot = 0; slot < m_grid.SpawnCount; slot++)
-            {
-                int index = SynergyEffects.NearestPathIndex(m_grid, slot);
-                int distance = BoardGrid.GetTileDistance(m_grid.GetPathCell(index), m_grid.GetSpawnCell(slot));
-                for (int i = 0; i < m_grid.PathCount; i++)
-                    Assert.LessOrEqual(distance, BoardGrid.GetTileDistance(m_grid.GetPathCell(i), m_grid.GetSpawnCell(slot)), $"칸 {slot}");
-            }
-        }
+            EnemyController enemy = MakeEnemy(0, hp: 1000f), boss = MakeBoss(1, 100000f);
+            var context = new SynergyContext { Enemies = new List<EnemyController> { enemy, boss } };
+            var hel = new HelSkill();
 
-        [Test]
-        public void 헬은_매_턴_무작위_적_1기의_최대_체력_2퍼센트를_깎고_스택을_n만큼()
-        {
-            EnemyController enemy = MakeEnemy(0, hp: 1000f, defense: 100f);
-            var count = new HelDeathCount();
+            hel.Tick(context, 12);
+            Assert.AreEqual(0f, Lost(enemy), Eps, "매 턴 체력을 깎지 않음");
+            Assert.AreEqual(12f, hel.Stack.Stacks, Eps, "티어 합 12");
 
-            int killed = count.Tick(new List<EnemyController> { enemy }, 12);
-
-            Assert.AreEqual(0, killed);
-            Assert.AreEqual(20f, Lost(enemy), Eps, "1000 × 2%, 방어력과 무관");
-            Assert.AreEqual(6f, count.Stack.Stacks, Eps, "0.5 × 티어 합 12");
-        }
-
-        [Test]
-        public void 헬의_데스_카운트가_차면_보스를_뺀_적_전체_즉사하고_0으로()
-        {
-            EnemyController big = MakeEnemy(0, hp: 10000f), other = MakeEnemy(1, hp: 1000f), boss = MakeEnemy(2, hp: 100000f);
-            var so = new UnityEditor.SerializedObject(boss.Definition);
-            so.FindProperty("<Kind>k__BackingField").enumValueIndex = (int)EnemyKind.FinalBoss;
-            so.ApplyModifiedPropertiesWithoutUndo();
-            var count = new HelDeathCount();
-            var enemies = new List<EnemyController> { big, other, boss };
-
-            for (int i = 0; i < 41; i++) Assert.AreEqual(0, count.Tick(enemies, 48), $"{i + 1}턴");
-            int killed = count.Tick(enemies, 48);
-
-            Assert.AreEqual(2, killed, "티어 합 48이면 24씩, 42턴째 1000");
+            Fill(hel, context);
+            Assert.IsTrue(hel.TryUse(context));
+            Assert.IsFalse(enemy.IsAlive);
             Assert.IsTrue(boss.IsAlive, "보스는 즉사하지 않음");
-            Assert.IsFalse(other.IsAlive);
-            Assert.IsFalse(big.IsAlive);
-            Assert.AreEqual(0f, count.Stack.Stacks, Eps);
         }
 
         [Test]
@@ -175,57 +216,182 @@ namespace SquareTD.Tests
             EnemyController hurt = MakeEnemy(0, hp: 1000f, defense: 100f), full = MakeEnemy(1, hp: 1000f);
             hurt.TakeDamage(Hit(500f));
             float lostBefore = Lost(hurt);
+            var context = new SynergyContext { Enemies = new List<EnemyController> { hurt, full } };
+            var surtr = new SurtrSkill();
+            Fill(surtr, context);
 
-            int hits = SynergyEffects.SurtrBurn(new List<EnemyController> { hurt, full });
+            Assert.IsTrue(surtr.TryUse(context));
 
-            Assert.AreEqual(1, hits);
             Assert.AreEqual(lostBefore * 1.1f, Lost(hurt), Eps, "잃은 체력 × 10%, 방어력과 무관");
-            Assert.AreEqual(0f, Lost(full), Eps, "잃은 체력이 없으면 0");
+            Assert.AreEqual(0f, Lost(full), Eps);
         }
 
         [Test]
-        public void 시너지_스택은_매_턴_0점5_곱하기_티어_합씩_쌓이고_100이면_터지고_0으로()
-        {
-            var stack = new SynergyStack();
-
-            for (int i = 0; i < 16; i++) Assert.IsFalse(stack.Gain(12), $"{i + 1}턴: 6씩");
-            Assert.AreEqual(0.96f, stack.Ratio, Eps);
-
-            Assert.IsTrue(stack.Gain(12), "17턴째 100");
-            Assert.AreEqual(0f, stack.Stacks, Eps);
-        }
-
-        [Test]
-        public void 수르트와_프레이는_스택이_차는_턴에_터짐()
-        {
-            EnemyController enemy = MakeEnemy(0, hp: 1000f);
-            enemy.TakeDamage(Hit(500f));
-            var sword = new SurtrSword();
-            var blessing = new FreyBlessing();
-            var towers = new List<TowerController> { MakeTower(1101) };
-
-            for (int i = 0; i < 4; i++)
-            {
-                Assert.AreEqual(0, sword.Tick(new List<EnemyController> { enemy }, 48));
-                Assert.AreEqual(0, blessing.Tick(towers, 48));
-            }
-
-            Assert.AreEqual(1, sword.Tick(new List<EnemyController> { enemy }, 48), "티어 합 48이면 24씩, 5턴째 100");
-            Assert.AreEqual(1, blessing.Tick(towers, 48));
-        }
-
-        [Test]
-        public void 프레이의_가호는_모든_타워의_다음_행동_한_번에_AttackCount_플러스1()
+        public void 프레이는_모든_타워의_다음_행동_5번_동안_AttackCount_플러스1()
         {
             TowerController attack = MakeTower(1101, slot: 0), buff = MakeTower(1301, slot: 1);
             int attackBefore = attack.Stats.AttackCount, buffBefore = buff.Stats.AttackCount;
+            var context = new SynergyContext { Towers = new List<TowerController> { attack, buff } };
+            var frey = new FreySkill();
+            Fill(frey, context);
 
-            int blessed = SynergyEffects.FreyBless(new List<TowerController> { attack, buff });
+            Assert.IsTrue(frey.TryUse(context));
 
-            Assert.AreEqual(2, blessed, "버프·디버프 타워도 받음");
             Assert.AreEqual(attackBefore + 1, attack.Stats.AttackCount);
-            Assert.AreEqual(buffBefore + 1, buff.Stats.AttackCount);
-            Assert.AreEqual(1, TimedTowerBuff.GetRemaining(attack.State, SynergyEffects.FreySource), "행동 한 번 동안");
+            Assert.AreEqual(buffBefore + 1, buff.Stats.AttackCount, "버프·디버프 타워도 받음");
+            Assert.AreEqual(5, TimedTowerBuff.GetRemaining(attack.State, FreySkill.Source), "행동 5번 동안");
+        }
+
+        [Test]
+        public void 프레이야는_5턴_동안_처치_골드_2배()
+        {
+            var context = new SynergyContext();
+            var freyja = new FreyjaSkill();
+            Fill(freyja, context);
+            Assert.IsTrue(freyja.TryUse(context));
+            Assert.AreEqual(5, EmblemSharedState.Current.GoldDoubleTurns);
+
+            int gold = 10;
+            DeathResolver.GetBonusReward(new KillInfo(), ref gold);
+            Assert.AreEqual(20, gold, "골드 2배");
+
+            for (int i = 0; i < 5; i++) freyja.Tick(context, 0);
+            Assert.AreEqual(0, EmblemSharedState.Current.GoldDoubleTurns);
+            gold = 10;
+            DeathResolver.GetBonusReward(new KillInfo(), ref gold);
+            Assert.AreEqual(10, gold, "5턴이 지나면 원래대로");
+        }
+
+        [Test]
+        public void 발드르는_스택_500마다_무력화_1회_최대_2회_버튼으로_다음_기믹_한_번()
+        {
+            var context = new SynergyContext();
+            var baldr = new BaldrSkill();
+            Assert.IsFalse(baldr.TryUse(context), "무력화가 없으면 못 씀");
+
+            for (int i = 0; i < 11; i++) baldr.Tick(context, 48);
+            Assert.AreEqual(1, baldr.Charges, "48씩 11턴이면 500");
+            for (int i = 0; i < 11; i++) baldr.Tick(context, 48);
+            Assert.AreEqual(2, baldr.Charges);
+            for (int i = 0; i < 30; i++) baldr.Tick(context, 48);
+            Assert.AreEqual(2, baldr.Charges, "2회가 차 있으면 더 쌓지 않음");
+            Assert.AreEqual(0f, baldr.Stack.Stacks, Eps);
+
+            Assert.IsTrue(baldr.TryUse(context));
+            Assert.AreEqual(1, baldr.Charges);
+            Assert.IsTrue(baldr.TryBlockMechanic(), "다음 기믹을 막음");
+            Assert.IsFalse(baldr.TryBlockMechanic(), "그다음 기믹은 막지 않음");
+        }
+
+        [Test]
+        public void 스카디는_맵_전체_적의_이동력을_5번_행동_동안_5씩()
+        {
+            EnemyController a = MakeEnemy(0, speedMin: 6, speedMax: 10), b = MakeEnemy(1, speedMin: 6, speedMax: 10);
+            var context = new SynergyContext { Enemies = new List<EnemyController> { a, b } };
+            var skadi = new SkadiSkill();
+            Fill(skadi, context);
+
+            Assert.IsTrue(skadi.TryUse(context));
+
+            Assert.AreEqual(1f, a.Stats.Get(StatType.SpeedMin), Eps);
+            Assert.AreEqual(5f, a.Stats.Get(StatType.SpeedMax), Eps);
+            Assert.IsTrue(b.Status.Has(SkadiSkill.Key));
+        }
+
+        [Test]
+        public void 이미르는_맵_전체_적이_다음_행동_5번_동안_행동_불가()
+        {
+            EnemyController enemy = MakeEnemy(0, resistance: 100f), boss = MakeBoss(1, 1000f);
+            enemy.Status.Add(new ImmobilizeEffect("기절"));
+            var context = new SynergyContext { Enemies = new List<EnemyController> { enemy, boss } };
+            var ymir = new YmirSkill();
+            Fill(ymir, context);
+
+            Assert.IsTrue(ymir.TryUse(context));
+
+            Assert.IsTrue(enemy.Status.Has(YmirFrozenEffect.FrozenKey), "저항력 100, 이미 기절이어도 걸림");
+            Assert.IsTrue(boss.Status.Has(YmirFrozenEffect.FrozenKey), "보스도");
+            MoveRange range = boss.Status.DecideMove(new MoveRange(3, 5, 4));
+            Assert.AreEqual(0, range.Min);
+            Assert.AreEqual(0, range.Max);
+
+            for (int i = 0; i < 5; i++) boss.Status.OnActed();
+            Assert.IsFalse(boss.Status.Has(YmirFrozenEffect.FrozenKey), "5번 행동 뒤 풀림");
+        }
+
+        [Test]
+        public void 울르는_모든_타워의_다음_행동_5번_동안_공격마다_50퍼센트_추가타()
+        {
+            TowerController blessed = MakeTower(1101, slot: 0), plain = MakeTower(1201, slot: 1);
+            EnemyController a = MakeEnemy(0, hp: 1000f), b = MakeEnemy(1, hp: 1000f);
+            var context = new SynergyContext { Towers = new List<TowerController> { blessed } };
+            var ullr = new UllrSkill();
+            Fill(ullr, context);
+
+            Assert.IsTrue(ullr.TryUse(context));
+            Assert.AreEqual(5, TimedTowerBuff.GetRemaining(blessed.State, UllrSkill.Source));
+
+            a.TakeDamage(new DamageInfo { Attacker = blessed, BaseDamage = 100f, Source = DamageSource.Basic });
+            b.TakeDamage(new DamageInfo { Attacker = plain, BaseDamage = 100f, Source = DamageSource.Basic });
+
+            Assert.AreEqual(150f, Lost(a), Eps, "100 + 추가타 50 (추가타가 또 추가타를 부르지 않음)");
+            Assert.AreEqual(100f, Lost(b), Eps, "울르를 받지 않은 타워는 그대로");
+        }
+
+        [Test]
+        public void 브륀힐드는_한도_게임_오버를_막는_보호를_한_번_줌()
+        {
+            var context = new SynergyContext();
+            var brynhild = new BrynhildSkill();
+            Fill(brynhild, context);
+
+            Assert.IsTrue(brynhild.TryUse(context));
+
+            Assert.AreEqual(1, EmblemSharedState.Current.LimitShields);
+            Assert.IsTrue(EmblemSharedState.Current.TryUseLimitShield(), "한 번 막음");
+            Assert.IsFalse(EmblemSharedState.Current.TryUseLimitShield(), "두 번째는 못 막음");
+        }
+
+        [Test]
+        public void 브록과_에이트리는_일반_타워의_티어_합_곱하기_200골드()
+        {
+            var towers = new List<TowerController>
+            {
+                MakeTower(1101, slot: 0),
+                MakeTower(3201, slot: 1),
+                MakeTower(4301, slot: 2),
+            };
+
+            Assert.AreEqual((1 + 3 + 4) * 200, BrokkrSkill.GoldAmount(towers));
+            Assert.AreEqual(0, BrokkrSkill.GoldAmount(new List<TowerController>()));
+        }
+
+        [Test]
+        public void 뇨르드는_플레이어_턴에_고른_칸을_5턴_동안_멈춤_칸으로()
+        {
+            var njord = new NjordSkill();
+            var context = new SynergyContext { Grid = m_grid, PathA = 4 };
+            Fill(njord, context);
+
+            Assert.IsFalse(njord.TryUse(context), "적 턴에는 못 씀");
+            context.IsPlayerTurn = true;
+            Assert.IsTrue(njord.TryUse(context));
+            Assert.IsTrue(EmblemSharedState.Current.IsStopTile(4));
+            Assert.IsFalse(EmblemSharedState.Current.IsStopTile(5));
+
+            for (int i = 0; i < 4; i++) njord.Tick(context, 0);
+            Assert.IsTrue(EmblemSharedState.Current.IsStopTile(4), "4턴 뒤에도 남음");
+            njord.Tick(context, 0);
+            Assert.IsFalse(EmblemSharedState.Current.IsStopTile(4), "5턴 뒤 사라짐");
+        }
+
+        private EnemyController MakeBoss(int pathIndex, float hp)
+        {
+            EnemyController boss = MakeEnemy(pathIndex, hp: hp);
+            var so = new UnityEditor.SerializedObject(boss.Definition);
+            so.FindProperty("<Kind>k__BackingField").enumValueIndex = (int)EnemyKind.FinalBoss;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return boss;
         }
 
         private static TowerDefinition Def(int id) =>

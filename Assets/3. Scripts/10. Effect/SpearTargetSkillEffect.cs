@@ -60,8 +60,8 @@ namespace SquareTD
                 sequence.OnKill(() => m_pool.Release(spear));
             }
 
-            DOVirtual.DelayedCall(lastStab, () => ScreenShake.Play(0.03f, m_holdBeforeRip)).SetLink(gameObject, LinkBehaviour.KillOnDisable);
-            DOVirtual.DelayedCall(ripAt, () => PlayRend(target, cell)).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            DOVirtual.DelayedCall(lastStab, () => ScreenShake.Play(0.03f, m_holdBeforeRip), false).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            DOVirtual.DelayedCall(ripAt, () => PlayRend(target, cell), false).SetLink(gameObject, LinkBehaviour.KillOnDisable);
         }
 
         private void PlayRend(Vector3 target, float cell)

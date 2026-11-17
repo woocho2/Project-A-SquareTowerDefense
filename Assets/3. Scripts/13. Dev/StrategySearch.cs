@@ -322,7 +322,7 @@ namespace SquareTD
             {
                 bool upgradeFirst = Policy.ShopOrder == 1 || Policy.ShopOrder == 3;
                 bool sellFirst = Policy.ShopOrder >= 2;
-                if (upgradeFirst && AutoPlanner.TrySpendGems(manager)) { m_actions++; return false; }
+                if (upgradeFirst && AutoPlanner.TryBuyXp(manager)) { m_actions++; return false; }
                 if (sellFirst && TrySell(manager)) { m_actions++; return false; }
                 int count = 0;
                 BoardManager board = BoardManager.Instance;
@@ -332,7 +332,7 @@ namespace SquareTD
                     board.Slots.TryGetFirstEmpty(out _) && manager.TryBuild())
                 { m_actions++; return false; }
                 if (!sellFirst && TrySell(manager)) { m_actions++; return false; }
-                if (!upgradeFirst && AutoPlanner.TrySpendGems(manager)) { m_actions++; return false; }
+                if (!upgradeFirst && AutoPlanner.TryBuyXp(manager)) { m_actions++; return false; }
             }
             AutoPlanner.PlanTurn();
             return true;
@@ -342,20 +342,14 @@ namespace SquareTD
         {
             if (m_sales >= Policy.SaleLimit) return false;
             BoardManager board = BoardManager.Instance;
-            int attackers = 0, desired = 0;
+            if (board.Slots.TryGetFirstEmpty(out _)) return false;
+            int attackers = 0;
             for (int i = 0; i < board.Slots.Count; i++)
             {
                 TowerController tower = board.Slots.Get(i);
-                if (tower == null) continue;
-                if (tower.IsAttackTower)
-                {
-                    attackers++;
-                    int cost = Policy.UpgradeMode == 2 && manager.ColorLevels.CanUpgrade(tower.Definition.Color)
-                        ? manager.ColorLevels.GetCost(tower.Definition.Color) : TowerProgression.GetTierUpgradeCost(tower.Definition.Tier);
-                    desired = Math.Max(desired, cost + Policy.GemReserve);
-                }
+                if (tower != null && tower.IsAttackTower) attackers++;
             }
-            if (attackers == 0 || CurrencyManager.Instance.Gem >= desired) return false;
+            if (attackers == 0) return false;
             TowerController worst = null;
             float worstValue = float.PositiveInfinity;
             for (int i = 0; i < board.Slots.Count; i++)
@@ -368,9 +362,9 @@ namespace SquareTD
             }
             if (worst == null) return false;
             int target = worst.Definition.Id;
-            int gem = TowerManager.GetSellGem(worst.Definition.Tier);
+            int gold = TowerManager.GetSellGold(worst.Definition.Tier);
             if (!manager.TrySell(worst)) return false;
-            BalanceRecorder.NoteSearchAction("sell", target, gem);
+            BalanceRecorder.NoteSearchAction("sell", target, gold);
             m_sales++;
             return true;
         }

@@ -36,6 +36,7 @@ namespace SquareTD
         {
             TowerColor color = tower.Definition.Color;
             if (color != TowerColor.Yellow && color != TowerColor.Purple) return;
+            if (SimulationRunner.SupportsDisabled) return;
             EnsureZones(tower, tower.Stats.Mastery, color == TowerColor.Yellow);
         }
 

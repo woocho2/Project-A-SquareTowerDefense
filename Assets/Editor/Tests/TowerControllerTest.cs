@@ -176,7 +176,7 @@ namespace SquareTD.Tests
         public void 강화_상태의_레벨로_계산함()
         {
             var colorLevels = new ColorUpgradeState();
-            for (int i = 0; i < 4; i++) colorLevels.TryUpgrade(TowerColor.Red);
+            colorLevels.AddXp(20 + 40 + 80 + 160);
 
             TowerController tower = MakeTower(Def(1101), null, colorLevels);
 

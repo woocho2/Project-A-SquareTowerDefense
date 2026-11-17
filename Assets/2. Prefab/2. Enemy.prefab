@@ -134,6 +134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyMovement
   m_stepDuration: 0.3
+  m_landDuration: 0.1
   m_cube: {fileID: 3439184341432815016}
 --- !u!1 &8851935862707142629
 GameObject:
@@ -244,7 +245,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.EnemyCubeMeshVisual
   m_appearance: {fileID: 11400000, guid: 7aaec7ab7fa14108bcf5a106da2e1562, type: 2}
-  m_bossMechanicMaterial: {fileID: 2100000, guid: 97026fd0522d496a94291b7382c01ae7, type: 2}
   m_faceAssetPool:
   - {fileID: 2100000, guid: 9df8be1bab4a2fc47921e74135f607a4, type: 2}
   - {fileID: 2100000, guid: b57563c28da8cb0478e2b83544d11bb6, type: 2}
@@ -252,14 +252,8 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 45cd667b12bc9be4fa3171d9d56d7ec7, type: 2}
   - {fileID: 2100000, guid: 93ddea613ffb50d4c82f4c3c0b442d5a, type: 2}
   - {fileID: 2100000, guid: 315bc2e23648b9d45aff503bbabe4cbc, type: 2}
-  m_faceAssetIndices: 000000000100000002000000030000000400000005000000
-  m_sideLength: 1
-  m_tileRollDuration: 0.4
-  m_shadowMaterial: {fileID: 2100000, guid: a55c819789d640e48b06cf0a34d2a726, type: 2}
+  m_bossMechanicMaterial: {fileID: 2100000, guid: 97026fd0522d496a94291b7382c01ae7, type: 2}
+  m_spawnHeight: 5
   m_spawnFallDuration: 0.34
-  m_spawnImpactDuration: 0.09
-  m_spawnBounceDuration: 0.16
-  m_spawnHeightInSides: 5
   m_uprightHopDuration: 0.4
-  m_uprightHopHeight: 0.5
-  m_uprightImpactDuration: 0.07
+  m_uprightHopPower: 0.3

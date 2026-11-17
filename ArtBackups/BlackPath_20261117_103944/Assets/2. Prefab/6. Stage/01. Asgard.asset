@@ -1,0 +1,101 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d7a3c1e9b2f4a6c8e0d1f3b5a7c9e21, type: 3}
+  m_Name: 01. Asgard
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.StageDefinition
+  <Number>k__BackingField: 1
+  <DisplayName>k__BackingField: 아스가르드
+  <EnglishName>k__BackingField: Asgard
+  <SceneName>k__BackingField: 3. Stage1
+  <SpawnColor>k__BackingField: {r: 1, g: 0.9955778, b: 0.9292453, a: 1}
+  <PathColor>k__BackingField: {r: 0.115521535, g: 0.15831763, b: 0.41509432, a: 1}
+  <AccentColor>k__BackingField: {r: 0.9433962, g: 0.833114, b: 0.4761481, a: 1}
+  <FrameColor>k__BackingField: {r: 0.9150943, g: 0.80446446, b: 0.16834284, a: 1}
+  <BoardMin>k__BackingField: {x: -5, y: -3}
+  <BoardSize>k__BackingField: {x: 10, y: 6}
+  <PathCells>k__BackingField:
+  - {x: -5, y: -3}
+  - {x: -4, y: -3}
+  - {x: -3, y: -3}
+  - {x: -2, y: -3}
+  - {x: -2, y: -2}
+  - {x: -1, y: -2}
+  - {x: 0, y: -2}
+  - {x: 1, y: -2}
+  - {x: 1, y: -3}
+  - {x: 2, y: -3}
+  - {x: 3, y: -3}
+  - {x: 4, y: -3}
+  - {x: 4, y: -2}
+  - {x: 4, y: -1}
+  - {x: 4, y: 0}
+  - {x: 4, y: 1}
+  - {x: 4, y: 2}
+  - {x: 3, y: 2}
+  - {x: 2, y: 2}
+  - {x: 1, y: 2}
+  - {x: 1, y: 1}
+  - {x: 0, y: 1}
+  - {x: -1, y: 1}
+  - {x: -2, y: 1}
+  - {x: -2, y: 2}
+  - {x: -3, y: 2}
+  - {x: -4, y: 2}
+  - {x: -5, y: 2}
+  - {x: -5, y: 1}
+  - {x: -5, y: 0}
+  - {x: -5, y: -1}
+  - {x: -5, y: -2}
+  <SpawnCells>k__BackingField:
+  - {x: -1, y: -3}
+  - {x: 0, y: -3}
+  - {x: -4, y: -2}
+  - {x: -3, y: -2}
+  - {x: 2, y: -2}
+  - {x: 3, y: -2}
+  - {x: -4, y: -1}
+  - {x: -3, y: -1}
+  - {x: -2, y: -1}
+  - {x: -1, y: -1}
+  - {x: 0, y: -1}
+  - {x: 1, y: -1}
+  - {x: 2, y: -1}
+  - {x: 3, y: -1}
+  - {x: -4, y: 0}
+  - {x: -3, y: 0}
+  - {x: -2, y: 0}
+  - {x: -1, y: 0}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
+  - {x: 3, y: 0}
+  - {x: -4, y: 1}
+  - {x: -3, y: 1}
+  - {x: 2, y: 1}
+  - {x: 3, y: 1}
+  - {x: -1, y: 2}
+  - {x: 0, y: 2}
+  <Normal>k__BackingField:
+    <Name>k__BackingField: 타락한 발키리
+    <Appearance>k__BackingField: {fileID: 11400000, guid: 7aaec7ab7fa14108bcf5a106da2e1562, type: 2}
+  <MiddleBoss>k__BackingField:
+    <Name>k__BackingField: 타락한 브륀힐드
+    <Appearance>k__BackingField: {fileID: 11400000, guid: cfb2e16c3918432caa6e5ed5111b7df2, type: 2}
+  <FinalBoss>k__BackingField:
+    <Name>k__BackingField: 타락한 로키
+    <Appearance>k__BackingField: {fileID: 11400000, guid: 4b62b8feade6442e94e264d61d6ad239, type: 2}
+  <StoryEmblems>k__BackingField:
+  - 1
+  - 4
+  - 5
+  - 12
+  <RagnarokCycles>k__BackingField: []

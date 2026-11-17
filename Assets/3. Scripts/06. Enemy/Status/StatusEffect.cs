@@ -40,7 +40,7 @@ namespace SquareTD
         public virtual float GetCritRateBonus(TowerController attacker) => 0f;
         public virtual void OnExpire(EnemyController enemy) { }
         public virtual void OnDeath(EnemyController enemy, KillInfo kill) { }
-        public virtual int RollGemBonus(KillInfo kill) => 0;
+        public virtual int RollGoldBonus(KillInfo kill) => 0;
 
         public abstract string Describe();
     }

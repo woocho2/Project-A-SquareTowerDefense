@@ -89,7 +89,11 @@ namespace SquareTD
             new ColorLevelRow(3f, 2f, 0.7f, 1),
         };
 
-        private static readonly int[] s_colorUpgradeCosts = { 0, 10, 20, 40, 80, 0 };
+        private static readonly int[] s_xpToNext = { 0, 20, 40, 80, 160, 0 };
+
+        public const int GoldPerXp = 100;
+        public const int XpPerPurchase = 1;
+        public const int XpPurchaseCost = GoldPerXp * XpPerPurchase;
 
         public static bool IsSupport(TowerColor color) => color == TowerColor.Yellow || color == TowerColor.Purple;
 
@@ -108,10 +112,10 @@ namespace SquareTD
             return (IsSupport(color) ? s_supportColorLevelRows : s_attackColorLevelRows)[level];
         }
 
-        public static int GetColorUpgradeCost(int level)
+        public static int GetXpToNext(int level)
         {
             if (level < 1 || level >= MaxColorLevel) return 0;
-            return s_colorUpgradeCosts[level];
+            return s_xpToNext[level];
         }
     }
 }

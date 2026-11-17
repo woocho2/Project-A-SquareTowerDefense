@@ -4,13 +4,10 @@ using System.Linq;
 
 namespace SquareTD
 {
-    // 자동 합성의 묶음 찾기와 티어 강화 비용
+    // 자동 합성의 묶음 찾기
     public static class TowerProgression
     {
         public const int MergeCount = 3;
-        private static readonly int[] s_tierUpgradeCosts = { 0, 5, 15, 45 };
-
-        public static int GetTierUpgradeCost(int tier) => tier >= 1 && tier < TowerId.MaxTier ? s_tierUpgradeCosts[tier] : 0;
 
         public static bool CanMergeFrom(TowerDefinition definition)
         {
@@ -20,15 +17,22 @@ namespace SquareTD
         public static bool TryFindMergeGroup(TowerSlots slots, Func<TowerController, bool> isBusy,
                                              out TowerController keep, out List<TowerController> materials, int mergeCount = MergeCount)
         {
+            var towers = new List<TowerController>();
+            for (int i = 0; i < slots.Count; i++) towers.Add(slots.Get(i));
+            return TryFindMergeGroup(towers, isBusy, out keep, out materials, mergeCount);
+        }
+
+        public static bool TryFindMergeGroup(IEnumerable<TowerController> towers, Func<TowerController, bool> isBusy,
+                                             out TowerController keep, out List<TowerController> materials, int mergeCount = MergeCount)
+        {
             if (mergeCount < 2) throw new ArgumentOutOfRangeException(nameof(mergeCount));
             keep = null;
             materials = null;
 
             var groups = new Dictionary<int, List<TowerController>>();
             var order = new List<int>();
-            for (int i = 0; i < slots.Count; i++)
+            foreach (TowerController tower in towers)
             {
-                TowerController tower = slots.Get(i);
                 if (tower == null || !CanMergeFrom(tower.Definition) || tower.State.BossEffects.BlocksProgression) continue;
                 if (isBusy != null && isBusy(tower)) continue;
 
@@ -47,7 +51,11 @@ namespace SquareTD
                 if (group.Count < mergeCount) continue;
 
                 List<TowerController> candidates = group.OrderBy(t => t.BuildOrder).Take(mergeCount).ToList();
-                keep = candidates.Take(mergeCount - 1).OrderBy(t => t.SlotIndex).First();
+                List<TowerController> pool = candidates.Where(t => t.IsOnBoard).ToList();
+                if (pool.Count == 0) pool = candidates;
+                List<TowerController> older = pool.Where(t => candidates.IndexOf(t) < mergeCount - 1).ToList();
+                if (older.Count > 0) pool = older;
+                keep = pool.OrderBy(t => t.SlotIndex).First();
                 TowerController kept = keep;
                 materials = candidates.Where(t => t != kept).ToList();
                 return true;

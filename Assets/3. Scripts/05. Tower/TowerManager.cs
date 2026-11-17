@@ -6,14 +6,11 @@ using Random = UnityEngine.Random;
 
 namespace SquareTD
 {
-    // 타워 생성·판매·합성·강화·이동을 맡는 매니저
+    // 타워 생성·판매·합성·경험치·이동을 맡는 매니저
     public class TowerManager : Singleton<TowerManager>
     {
-        public const int StartBuildCost = 100;
-        public const int BuildCostStep = 5;
-        public const int SellGoldBase = 50;
-        public const int SellGoldPerWave = 5;
-        private static readonly int[] s_sellGems = { 0, 0, 0, 1, 5 };
+        public const int FixedBuildCost = 250;
+        private static readonly int[] s_sellGold = { 0, 200, 600, 1800, 5400 };
 
         [SerializeField] private TextAsset m_towerCsv;
         [SerializeField] private TowerController m_towerPrefab;
@@ -23,12 +20,11 @@ namespace SquareTD
 
         public TowerDatabase Database { get; private set; }
         public ColorUpgradeState ColorLevels { get; private set; }
-        public int BuildCost { get; private set; } = StartBuildCost;
+        public int BuildCost => FixedBuildCost;
+        public int BuildCount { get; private set; }
         public TowerController Selected { get; private set; }
 
-        public static int GetSellGem(int tier) => tier >= 1 && tier <= TowerId.MaxTier ? s_sellGems[tier] : 0;
-        public static int GetSellGold(int wave) => SellGoldBase + Mathf.Max(0, wave - 1) * SellGoldPerWave;
-        public static int CurrentSellGold => GetSellGold(WaveManager.Instance != null ? WaveManager.Instance.CurrentWave : 1);
+        public static int GetSellGold(int tier) => tier >= 1 && tier <= TowerId.MaxTier ? s_sellGold[tier] : 0;
 
         public event Action<TowerController> TowerAdded;
         public event Action<int> BuildCostChanged;
@@ -74,6 +70,40 @@ namespace SquareTD
         {
             m_factory = new TowerFactory(m_towerPrefab, m_towerParent, BoardManager.Instance, Database, ColorLevels);
             m_mergeEffect = EffectSpace.Make<TowerMergeEffect>(transform, "Tower Merge Effect");
+
+            Synergy = new SynergyBoard(BoardManager.Instance);
+            Synergy.Spawn(m_factory, m_selectedEmblems);
+            if (TurnManager.Instance != null)
+            {
+                TurnManager.Instance.EnemyTurnEnded += HandleEnemyTurnEnded;
+                TurnManager.Instance.StateChanged += HandleTurnStateChanged;
+            }
+            if (GameSession.Instance != null) GameSession.Instance.BossMechanics.Blocker = Synergy.TryBlockMechanic;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            if (TurnManager.Instance == null) return;
+            TurnManager.Instance.EnemyTurnEnded -= HandleEnemyTurnEnded;
+            TurnManager.Instance.StateChanged -= HandleTurnStateChanged;
+        }
+
+        public SynergyBoard Synergy { get; private set; }
+
+        private void HandleEnemyTurnEnded(int turn) => Synergy?.OnEnemyTurnEnded();
+
+        private void HandleTurnStateChanged(ITurnState state)
+        {
+            if (state is PlayerTurnState) Synergy?.OnPlayerTurnStarted();
+        }
+
+        public static bool TryGetBuildSlot(BoardManager board, out TowerPlace place, out int index)
+        {
+            place = TowerPlace.Board;
+            if (board.Slots.TryGetFirstEmpty(out index)) return true;
+            place = TowerPlace.Bench;
+            return board.Bench != null && board.Bench.TryGetFirstEmpty(out index);
         }
 
         public bool TryBuild()
@@ -83,9 +113,9 @@ namespace SquareTD
                 Debug.Log("[TowerManager] 플레이어 턴이 아니라 만들 수 없음");
                 return false;
             }
-            if (!BoardManager.Instance.Slots.TryGetFirstEmpty(out int slotIndex))
+            if (!TryGetBuildSlot(BoardManager.Instance, out TowerPlace place, out int slotIndex))
             {
-                Debug.Log("[TowerManager] 빈 칸이 없음");
+                Debug.Log("[TowerManager] 판과 대기석에 빈 칸이 없음");
                 return false;
             }
             if (CurrencyManager.Instance.Gold < BuildCost)
@@ -99,12 +129,12 @@ namespace SquareTD
                 return false;
             }
 
-            TowerController tower = m_factory.Create(definition, slotIndex);
+            TowerController tower = m_factory.Create(definition, slotIndex, place);
             if (tower == null) return false;
 
             CurrencyManager.Instance.TrySpendGold(BuildCost);
-            BuildCost += BuildCostStep;
-            Debug.Log($"[TowerManager] {tower.name} → {slotIndex}번 칸, 다음 비용 {BuildCost}");
+            BuildCount++;
+            Debug.Log($"[TowerManager] {tower.name} → {(place == TowerPlace.Bench ? "대기석 " : "")}{slotIndex}번 칸, 골드 −{BuildCost}");
             TowerAdded?.Invoke(tower);
             BuildCostChanged?.Invoke(BuildCost);
             RequestAutoMerge();
@@ -113,13 +143,13 @@ namespace SquareTD
 
         public TowerController SpawnForDebug(TowerDefinition definition)
         {
-            if (!BoardManager.Instance.Slots.TryGetFirstEmpty(out int slotIndex))
+            if (!TryGetBuildSlot(BoardManager.Instance, out TowerPlace place, out int slotIndex))
             {
-                Debug.Log("[TowerManager] 빈 칸이 없음");
+                Debug.Log("[TowerManager] 판과 대기석에 빈 칸이 없음");
                 return null;
             }
 
-            TowerController tower = m_factory.Create(definition, slotIndex);
+            TowerController tower = m_factory.Create(definition, slotIndex, place);
             if (tower != null)
             {
                 TowerAdded?.Invoke(tower);
@@ -138,16 +168,18 @@ namespace SquareTD
             }
         }
 
-        private int BuildIndex => (BuildCost - StartBuildCost) / BuildCostStep;
-
         private bool TryPickRandomTier1(out TowerDefinition definition)
         {
             definition = null;
             if (m_selectedEmblems.Count == 0) return false;
 
             TowerEmblem emblem = m_selectedEmblems[Random.Range(0, m_selectedEmblems.Count)];
-            TowerColor color = GetGuaranteedColor(BuildIndex);
-            if (color == TowerColor.None) color = (TowerColor)Random.Range((int)TowerColor.Red, (int)TowerColor.Purple + 1);
+            TowerColor color = GetGuaranteedColor(BuildCount);
+            if (color == TowerColor.None)
+            {
+                TowerColor last = SimulationRunner.AttackOnlyBuilds ? TowerColor.Blue : TowerColor.Purple;
+                color = (TowerColor)Random.Range((int)TowerColor.Red, (int)last + 1);
+            }
             return Database.TryGet(TowerId.Make(1, color, emblem), out definition);
         }
 
@@ -177,12 +209,10 @@ namespace SquareTD
                 return false;
             }
 
-            int gold = CurrentSellGold;
-            int gem = GetSellGem(tower.Definition.Tier);
-            Debug.Log($"[TowerManager] {tower.name} 판매, 골드 +{gold}, 젬 +{gem}");
+            int gold = GetSellGold(tower.Definition.Tier);
+            Debug.Log($"[TowerManager] {tower.name} 판매, 골드 +{gold}");
             RemoveTower(tower);
             CurrencyManager.Instance.AddGold(gold);
-            if (gem > 0) CurrencyManager.Instance.AddGem(gem);
             return true;
         }
 
@@ -201,8 +231,8 @@ namespace SquareTD
 
         private IEnumerator AutoMergeLoop()
         {
-            TowerSlots slots = BoardManager.Instance.Slots;
-            while (TowerProgression.TryFindMergeGroup(slots, IsMergingTower, out TowerController keep, out List<TowerController> materials, RequiredMergeCount))
+            BoardManager board = BoardManager.Instance;
+            while (TowerProgression.TryFindMergeGroup(board.GetBoardAndBenchTowers(), IsMergingTower, out TowerController keep, out List<TowerController> materials, RequiredMergeCount))
             {
                 if (!Database.TryGet(TowerId.GetNextTier(keep.Definition.Id), out TowerDefinition next))
                 {
@@ -243,117 +273,99 @@ namespace SquareTD
             if (m_mergeEffect != null) m_mergeEffect.PlayPop(created);
         }
 
-        public bool TryTierUpgrade(TowerController tower)
+        public bool TryBuyXp()
         {
             if (!TurnManager.Instance.Current.CanPlayerAct) return false;
-            if (tower == null || IsMergingTower(tower) || tower.State.BossEffects.BlocksProgression) return false;
-
-            int cost = TowerProgression.GetTierUpgradeCost(tower.Definition.Tier);
-            if (cost <= 0 || TowerId.IsSynergy(tower.Definition.Id))
+            if (ColorLevels.IsMax)
             {
-                Debug.Log("[TowerManager] 더 강화할 수 없는 타워 (5티어·시너지)");
-                return false;
-            }
-            if (CurrencyManager.Instance.Gem < cost)
-            {
-                Debug.Log($"[TowerManager] 젬이 모자람 ({CurrencyManager.Instance.Gem} / {cost})");
-                return false;
-            }
-            if (!Database.TryGet(TowerId.GetNextTier(tower.Definition.Id), out TowerDefinition next))
-            {
-                Debug.Log("[TowerManager] 다음 티어가 CSV에 없음");
+                Debug.Log("[TowerManager] 이미 최대 레벨");
                 return false;
             }
 
-            TowerController created = m_factory.Replace(tower, next, true);
-            if (created == null) return false;
+            int cost = BalanceTables.XpPurchaseCost;
+            if (!CurrencyManager.Instance.TrySpendGold(cost))
+            {
+                Debug.Log($"[TowerManager] 골드가 모자람 ({CurrencyManager.Instance.Gold} / {cost})");
+                return false;
+            }
 
-            CurrencyManager.Instance.TrySpendGem(cost);
-            created.State.BossEffects.CopyDebuffsFrom(tower.State.BossEffects);
-            Debug.Log($"[TowerManager] 티어 강화 → {created.name}, 젬 −{cost}");
-            TowerReplaced?.Invoke(tower, created);
-            if (Selected == tower) Select(created);
-            RequestAutoMerge();
+            ColorLevels.AddXp(BalanceTables.XpPerPurchase);
+            Debug.Log($"[TowerManager] 경험치 +{BalanceTables.XpPerPurchase} → 레벨 {ColorLevels.Level} ({ColorLevels.Xp} / {ColorLevels.XpToNext}), 골드 −{cost}");
             return true;
         }
 
-        public bool TryUpgradeColor(TowerColor color)
+        private void HandleColorLevelChanged(int level)
         {
-            if (!TurnManager.Instance.Current.CanPlayerAct) return false;
-            if (!ColorLevels.CanUpgrade(color))
+            BoardManager board = BoardManager.Instance;
+            foreach (TowerController tower in board.GetBoardAndBenchTowers())
             {
-                Debug.Log($"[TowerManager] {color}는 이미 최대 레벨");
-                return false;
-            }
-
-            int cost = ColorLevels.GetCost(color);
-            if (cost <= 0 || CurrencyManager.Instance.Gem < cost)
-            {
-                Debug.Log($"[TowerManager] 젬이 모자람 ({CurrencyManager.Instance.Gem} / {cost})");
-                return false;
-            }
-
-            ColorLevels.TryUpgrade(color);
-            CurrencyManager.Instance.TrySpendGem(cost);
-            Debug.Log($"[TowerManager] {color} 컬러 강화 → 레벨 {ColorLevels.GetLevel(color)}, 젬 −{cost}");
-            return true;
-        }
-
-        private void HandleColorLevelChanged(TowerColor color, int level)
-        {
-            TowerSlots slots = BoardManager.Instance.Slots;
-            for (int i = 0; i < slots.Count; i++)
-            {
-                TowerController tower = slots.Get(i);
-                if (tower == null || tower.Definition.Color != color) continue;
-
                 tower.RecalculateStats();
-
-                ZoneRegistry zones = BoardManager.Instance.Zones;
-                zones.EnsureZonesFor(tower);
+                if (tower.IsOnBoard) board.Zones.EnsureZonesFor(tower);
             }
         }
 
-        public bool TryMoveOrSwap(TowerController tower, int toSlot)
+        public bool TryMoveOrSwap(TowerController tower, int toSlot) => TryMoveTo(tower, TowerPlace.Board, toSlot);
+
+        public bool TryMoveTo(TowerController tower, TowerPlace place, int toSlot)
         {
             if (!TurnManager.Instance.Current.CanPlayerAct) return false;
-            if (tower == null || tower.SlotIndex == toSlot) return false;
+            if (tower == null || place == TowerPlace.Synergy || tower.Place == TowerPlace.Synergy) return false;
+            if (tower.Place == place && tower.SlotIndex == toSlot) return false;
 
-            TowerSlots slots = BoardManager.Instance.Slots;
+            BoardManager board = BoardManager.Instance;
+            TowerSlots to = board.GetSlots(place);
+            if (to == null || toSlot < 0 || toSlot >= to.Count) return false;
+
+            TowerPlace fromPlace = tower.Place;
             int fromSlot = tower.SlotIndex;
-            TowerController other = slots.Get(toSlot);
+            TowerSlots from = board.GetSlots(fromPlace);
+            TowerController other = to.Get(toSlot);
             if (IsMergingTower(tower) || IsMergingTower(other))
             {
                 Debug.Log("[TowerManager] 합성 중인 타워는 옮길 수 없음");
                 return false;
             }
 
-            if (other == null)
+            if (fromPlace == place)
             {
-                if (!slots.TryMove(fromSlot, toSlot)) return false;
-                PlaceAt(tower, toSlot);
+                bool done = other == null ? to.TryMove(fromSlot, toSlot) : to.TrySwap(fromSlot, toSlot);
+                if (!done) return false;
             }
             else
             {
-                if (!slots.TrySwap(fromSlot, toSlot)) return false;
-                PlaceAt(tower, toSlot);
-                PlaceAt(other, fromSlot);
+                from.Remove(fromSlot);
+                if (other != null) to.Remove(toSlot);
+                to.TryPlace(tower, toSlot);
+                if (other != null) from.TryPlace(other, fromSlot);
             }
 
-            Debug.Log($"[TowerManager] {tower.name} {fromSlot} → {toSlot}{(other != null ? $" (교환: {other.name})" : "")}");
+            Relocate(tower, place, toSlot);
+            if (other != null) Relocate(other, fromPlace, fromSlot);
+
+            Debug.Log($"[TowerManager] {tower.name} {PlaceName(fromPlace)}{fromSlot} → {PlaceName(place)}{toSlot}{(other != null ? $" (교환: {other.name})" : "")}");
+            if (fromPlace != place && GameSession.Instance != null) GameSession.Instance.RefreshTowerLimits();
             return true;
         }
 
-        private void PlaceAt(TowerController tower, int slot)
+        private static string PlaceName(TowerPlace place) => place == TowerPlace.Bench ? "대기석 " : "";
+
+        private void Relocate(TowerController tower, TowerPlace place, int slot)
         {
             BoardManager board = BoardManager.Instance;
-            tower.SetSlot(slot, board.GetWorldPosition(board.Grid.GetSpawnCell(slot)));
+            bool wasOnBoard = tower.IsOnBoard;
+            if (wasOnBoard && place != TowerPlace.Board)
+            {
+                tower.OnRemoved();
+                SupportBuffs.ClearZones(tower);
+            }
+            tower.SetPlace(place, slot, board.GetPlaceWorldPosition(place, slot));
+            if (!wasOnBoard && place == TowerPlace.Board) board.Zones.EnsureZonesFor(tower);
         }
 
         public bool TryChangeForBoss(TowerController tower, TowerDefinition definition, IReadOnlyList<int> zoneCells = null)
         {
             if (tower == null || definition == null || IsMergingTower(tower)) return false;
-            if (BoardManager.Instance.Slots.Get(tower.SlotIndex) != tower) return false;
+            if (BoardManager.Instance.GetSlots(tower.Place).Get(tower.SlotIndex) != tower) return false;
             m_factory.ChangeDefinition(tower, definition, zoneCells);
             TowerReplaced?.Invoke(tower, tower);
             if (Selected == tower) SelectionChanged?.Invoke(tower);

@@ -32,7 +32,7 @@ namespace SquareTD
             return null;
         }
 
-        public TowerController Create(TowerDefinition definition, int slotIndex)
+        public TowerController Create(TowerDefinition definition, int slotIndex, TowerPlace place = TowerPlace.Board)
         {
             if (m_prefab == null)
             {
@@ -40,20 +40,25 @@ namespace SquareTD
                 return null;
             }
 
-            Vector3 position = m_board.GetWorldPosition(m_board.Grid.GetSpawnCell(slotIndex));
+            Vector3 position = m_board.GetPlaceWorldPosition(place, slotIndex);
             TowerController tower = Object.Instantiate(m_prefab, position, Quaternion.identity, m_parent);
 
-            if (!m_board.Slots.TryPlace(tower, slotIndex))
+            if (!m_board.GetSlots(place).TryPlace(tower, slotIndex))
             {
-                Debug.LogError($"[TowerFactory] {slotIndex}번 칸에 이미 타워가 있어 놓지 못함");
+                Debug.LogError($"[TowerFactory] {place} {slotIndex}번 칸에 이미 타워가 있어 놓지 못함");
                 m_destroy(tower.gameObject);
                 return null;
             }
 
-            tower.Init(definition, slotIndex, CreateAction(definition.Color), FindTier1(definition), m_colorLevels, CreateSkill(definition));
-            m_board.Zones.EnsureZonesFor(tower);
+            bool synergy = place == TowerPlace.Synergy;
+            tower.Init(definition, slotIndex, synergy ? null : CreateAction(definition.Color), synergy ? null : FindTier1(definition),
+                m_colorLevels, synergy ? null : CreateSkill(definition), place);
+            if (place == TowerPlace.Board) m_board.Zones.EnsureZonesFor(tower);
             return tower;
         }
+
+        public static TowerDefinition MakeSynergyDefinition(int id) =>
+            new TowerDefinition(id, 0f, 0, 0, 0, 0f, 0f, 0, 0, 0f, 0f, 0f, TargetPriority.Closest);
 
         private TowerAction CreateAction(TowerColor color)
         {
@@ -87,13 +92,14 @@ namespace SquareTD
 
         public void Destroy(TowerController tower)
         {
-            m_board.Slots.Remove(tower.SlotIndex);
+            m_board.GetSlots(tower.Place).Remove(tower.SlotIndex);
             m_destroy(tower.gameObject);
         }
 
         public void ChangeDefinition(TowerController tower, TowerDefinition definition, IReadOnlyList<int> zoneCells = null)
         {
             tower.ChangeDefinition(definition, FindTier1(definition), CreateAction(definition.Color), m_colorLevels, CreateSkill(definition));
+            if (!tower.IsOnBoard) return;
             m_board.Zones.EnsureZonesFor(tower);
             if (zoneCells == null) return;
             List<Zone> zones = m_board.Zones.GetByOwner(tower);
@@ -110,15 +116,17 @@ namespace SquareTD
             }
 
             int slot = old.SlotIndex;
+            TowerPlace place = old.Place;
             TowerController created = Object.Instantiate(m_prefab, old.transform.position, Quaternion.identity, m_parent);
-            created.Init(newDefinition, slot, CreateAction(newDefinition.Color), FindTier1(newDefinition), m_colorLevels, CreateSkill(newDefinition));
+            created.Init(newDefinition, slot, CreateAction(newDefinition.Color), FindTier1(newDefinition), m_colorLevels, CreateSkill(newDefinition), place);
 
             if (inheritState) created.State.CopyInheritedFrom(old.State);
-            m_board.Zones.EnsureZonesFor(created);
+            if (place == TowerPlace.Board) m_board.Zones.EnsureZonesFor(created);
 
             old.OnRemoved();
-            m_board.Slots.Remove(slot);
-            m_board.Slots.TryPlace(created, slot);
+            TowerSlots slots = m_board.GetSlots(place);
+            slots.Remove(slot);
+            slots.TryPlace(created, slot);
             m_destroy(old.gameObject);
             return created;
         }

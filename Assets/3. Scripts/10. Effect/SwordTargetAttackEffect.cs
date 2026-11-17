@@ -59,7 +59,7 @@ namespace SquareTD
             TexturedFx.Pop(m_flarePool, from, 45f, 0f, cell * m_glintSize, s_blade, m_glow, 0f, Mathf.Min(0.12f, drawAt), drawAt * 0.6f);
             TexturedFx.Swipe(m_linePool, (from + to) * 0.5f, attackAngle, new Vector3(toTarget.magnitude, cell * 0.18f, 1f), s_blade, m_glow,
                 drawAt, m_streakDuration, 0f, 0.1f);
-            DOVirtual.DelayedCall(cutAt, () => onArrived?.Invoke()).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            DOVirtual.DelayedCall(cutAt, () => onArrived?.Invoke(), false).SetLink(gameObject, LinkBehaviour.KillOnDisable);
 
             float angle = attackAngle + Range(-35f, 35f);
             bool mirror = Range(0f, 1f) < 0.5f;
@@ -76,7 +76,7 @@ namespace SquareTD
                 m_sparks.Burst(to, 10, s_blade, cell * 2.5f, cell * 6f, cell * 0.08f, cell * 0.15f, 0.18f, 0.32f,
                     new Vector2(Mathf.Cos(tangent), Mathf.Sin(tangent)), 80f);
                 ScreenShake.Play(0.03f, 0.07f);
-            }).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            }, false).SetLink(gameObject, LinkBehaviour.KillOnDisable);
         }
 
         private void PlayCrescent(EffectQuadPool pool, Vector3 center, float angle, float radius, bool mirror, Color color, float intensity, float delay)

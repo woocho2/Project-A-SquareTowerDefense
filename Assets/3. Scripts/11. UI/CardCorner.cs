@@ -13,6 +13,16 @@ namespace SquareTD
 
         public static Button Create(RectTransform card, string label, UnityAction onClick)
         {
+            Button authored = card.Find("Btn_PanelSwitch")?.GetComponent<Button>();
+            if (authored != null)
+            {
+                authored.onClick.AddListener(onClick);
+                SetLabel(authored, label);
+                Button close = card.Find("Btn_ClosePanel")?.GetComponent<Button>();
+                if (close != null) close.onClick.AddListener(() => UIManager.Instance.HideInfoPanels());
+                return authored;
+            }
+
             var corner = new GameObject("Btn_CardCorner", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
             var rect = (RectTransform)corner.transform;
             rect.SetParent(card, false);
@@ -50,7 +60,7 @@ namespace SquareTD
         {
             if (corner == null) return;
             TextMeshProUGUI text = corner.GetComponentInChildren<TextMeshProUGUI>(true);
-            if (text != null) text.text = label;
+            if (text != null) text.text = corner.name == "Btn_PanelSwitch" ? label + " 보기" : label;
         }
 
         private static Sprite FoldSprite()

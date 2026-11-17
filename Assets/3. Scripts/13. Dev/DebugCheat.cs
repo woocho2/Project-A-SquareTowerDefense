@@ -15,6 +15,7 @@ namespace SquareTD
 
         private void Start()
         {
+            SynergyBoard.TestAutoUse = m_testMode;
             EnemyManager.Instance.CountChanged += OnEnemyCountChanged;
             CurrencyManager.Instance.Changed += OnCurrencyChanged;
         }
@@ -29,14 +30,14 @@ namespace SquareTD
 
         // ── 테스트 모드 (T로 켜고 끔) ──
         private const int TestGold = 100000;
-        private const int TestGem = 100000;
         private const float SkillCountGap = 2f;
         private bool m_testMode;
 
         private void ToggleTestMode()
         {
             m_testMode = !m_testMode;
-            Debug.LogWarning($"[DebugCheat] 테스트 모드 {(m_testMode ? "켬" : "끔")}");
+            SynergyBoard.TestAutoUse = m_testMode;
+            Debug.LogWarning($"[DebugCheat] 테스트 모드 {(m_testMode ? "켬" : "끔")} (시너지 스킬 자동 사용 {(m_testMode ? "켬" : "끔")})");
         }
 
         private void HandleTestModeKeys(Keyboard keyboard)
@@ -47,9 +48,22 @@ namespace SquareTD
                 m_idBuffer = "";
             }
             if (keyboard.f2Key.wasPressedThisFrame) CurrencyManager.Instance.AddGold(TestGold);
-            if (keyboard.f3Key.wasPressedThisFrame) CurrencyManager.Instance.AddGem(TestGem);
+            if (keyboard.f3Key.wasPressedThisFrame) TowerManager.Instance.ColorLevels.AddXp(BalanceTables.GetXpToNext(TowerManager.Instance.ColorLevels.Level));
             if (keyboard.f4Key.wasPressedThisFrame) ToggleShowcase();
             if (keyboard.f5Key.wasPressedThisFrame) FillSkillCounts();
+            if (keyboard.f6Key.wasPressedThisFrame) FillSynergyStacks();
+        }
+
+        private static void FillSynergyStacks()
+        {
+            SynergyBoard synergy = TowerManager.Instance.Synergy;
+            if (synergy == null || synergy.Entries.Count == 0)
+            {
+                Debug.Log("[DebugCheat] 시너지 타워가 없음 (시너지 칸이 있는 씬인지 확인)");
+                return;
+            }
+            synergy.FillAll();
+            Debug.Log($"[DebugCheat] 시너지 타워 {synergy.Entries.Count}기 스택 가득 → 조건이 맞으면 다음 적 턴 끝·플레이어 턴 시작에 자동 사용");
         }
 
         private static List<TowerController> AllTowers()
@@ -182,13 +196,9 @@ namespace SquareTD
 
         private static void SellAll()
         {
-            TowerSlots slots = BoardManager.Instance.Slots;
             int sold = 0;
-            for (int i = 0; i < slots.Count; i++)
-            {
-                TowerController tower = slots.Get(i);
-                if (tower != null && TowerManager.Instance.TrySell(tower)) sold++;
-            }
+            foreach (TowerController tower in BoardManager.Instance.GetBoardAndBenchTowers())
+                if (TowerManager.Instance.TrySell(tower)) sold++;
             Debug.Log($"[DebugCheat] 타워 {sold}개 판매");
         }
 
@@ -298,9 +308,10 @@ namespace SquareTD
                 {
                     "■ 테스트 모드 (T로 끔)",
                     "F1 타워 ID로 세우기 (예: 1101 = 브론즈 소드 마스터)",
-                    $"F2 골드 +{TestGold:N0}   F3 젬 +{TestGem:N0}",
+$"F2 골드 +{TestGold:N0}   F3 플레이어 레벨 +1",
                     $"F4 공격 연출: 행동 {TowerStatCalculator.ShowcaseAction} · 사거리 {TowerStatCalculator.ShowcaseRange} [{(TowerStatCalculator.ShowcaseOverride ? "켬" : "끔")}]",
                     $"F5 모든 타워 스킬 카운트 → 최대 −{SkillCountGap:0}",
+                    "F6 시너지 스택 가득 (테스트 모드에서는 시너지 스킬 자동 사용)",
                 };
                 DrawLines(new Rect(8f, y, 330f, lineHeight * lines.Length + 10f), lines, lineHeight);
             }
@@ -360,9 +371,9 @@ namespace SquareTD
             Debug.Log($"[DebugCheat] 적 {count} / 한도 {GameSession.Instance.CurrentLimit}");
         }
 
-        private void OnCurrencyChanged(int gold, int gem)
+        private void OnCurrencyChanged(int gold)
         {
-            Debug.Log($"[DebugCheat] 골드 {gold} / 젬 {gem}");
+            Debug.Log($"[DebugCheat] 골드 {gold}");
         }
     }
 }

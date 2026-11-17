@@ -23,10 +23,9 @@ namespace SquareTD
         {
             EnemyController enemy = kill.Enemy;
 
-            WaveTable.GetKillReward(kill.Kind, kill.SpawnWave, out int gold, out int gem);
-            GetBonusReward(kill, ref gold, ref gem);
+            int gold = WaveTable.GetKillReward(kill.Kind, kill.SpawnWave);
+            GetBonusReward(kill, ref gold);
             m_currency.AddGold(gold);
-            m_currency.AddGem(gem);
 
             if (kill.Kind != EnemyKind.Normal)
             {
@@ -44,10 +43,10 @@ namespace SquareTD
             enemy.Pool.Release(enemy);
         }
 
-        public static void GetBonusReward(KillInfo kill, ref int gold, ref int gem)
+        public static void GetBonusReward(KillInfo kill, ref int gold)
         {
-            float goldRate = 0f;
-            if (kill.Enemy != null && kill.Enemy.Status != null) gem += kill.Enemy.Status.RollGemBonus(kill);
+            float goldRate = EmblemSharedState.Current.GoldDoubleTurns > 0 ? 1f : 0f;
+            int flatGold = kill.Enemy != null && kill.Enemy.Status != null ? kill.Enemy.Status.RollGoldBonus(kill) : 0;
 
             TowerController killer = kill.Damage.Attacker;
             float reward = killer != null && killer.Stats != null ? killer.Stats.Get(StatType.RewardBonus) : 0f;
@@ -57,8 +56,7 @@ namespace SquareTD
                 if (Chance.Roll(killer.Stats.Get(StatType.GoldDoubleChance))) goldRate += 1f;
             }
 
-            gold = UnityEngine.Mathf.FloorToInt(gold * (1f + goldRate + reward) + 0.001f);
-            gem = UnityEngine.Mathf.FloorToInt(gem * (1f + reward) + 0.001f);
+            gold = UnityEngine.Mathf.FloorToInt(gold * (1f + goldRate + reward) + 0.001f) + flatGold;
         }
     }
 }

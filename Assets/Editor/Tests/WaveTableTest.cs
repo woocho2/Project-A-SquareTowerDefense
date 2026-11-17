@@ -230,43 +230,16 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void normal_웨이브27_gold_30_gem_0()
+        [TestCase(EnemyKind.Normal, 1, 30)]
+        [TestCase(EnemyKind.Normal, 27, 90)]
+        [TestCase(EnemyKind.MiddleBoss, 5, 500)]
+        [TestCase(EnemyKind.MiddleBoss, 15, 2000)]
+        [TestCase(EnemyKind.MiddleBoss, 35, 8000)]
+        [TestCase(EnemyKind.FinalBoss, 10, 1500)]
+        [TestCase(EnemyKind.FinalBoss, 40, 24000)]
+        public void 처치_골드는_일반_30_곱하기_사이클_보스는_사이클_제곱(EnemyKind kind, int wave, int gold)
         {
-            WaveTable.GetKillReward(EnemyKind.Normal, 27, out int gold, out int gem);
-            Assert.AreEqual(30, gold);
-            Assert.AreEqual(0, gem);
-        }
-
-        [Test]
-        public void middleBoss_웨이브15_gold_2000_gem_20()
-        {
-            WaveTable.GetKillReward(EnemyKind.MiddleBoss, 15, out int gold, out int gem);
-            Assert.AreEqual(2000, gold);
-            Assert.AreEqual(20, gem);
-        }
-
-        [Test]
-        public void middleBoss_웨이브35_gold_8000_gem_80()
-        {
-            WaveTable.GetKillReward(EnemyKind.MiddleBoss, 35, out int gold, out int gem);
-            Assert.AreEqual(8000, gold);
-            Assert.AreEqual(80, gem);
-        }
-
-        [Test]
-        public void finalBoss_웨이브10_gold_1000_gem_15()
-        {
-            WaveTable.GetKillReward(EnemyKind.FinalBoss, 10, out int gold, out int gem);
-            Assert.AreEqual(1000, gold);
-            Assert.AreEqual(15, gem);
-        }
-
-        [Test]
-        public void finalBoss_웨이브40_gold_16000_gem_240()
-        {
-            WaveTable.GetKillReward(EnemyKind.FinalBoss, 40, out int gold, out int gem);
-            Assert.AreEqual(16000, gold);
-            Assert.AreEqual(240, gem);
+            Assert.AreEqual(gold, WaveTable.GetKillReward(kind, wave));
         }
     }
 }

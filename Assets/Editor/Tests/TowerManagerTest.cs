@@ -4,29 +4,26 @@ namespace SquareTD.Tests
 {
     public class TowerManagerTest
     {
-        [Test]
-        public void 판매_젬은_골드_1_다이아_5()
+        [TestCase(1, 200)]
+        [TestCase(2, 600)]
+        [TestCase(3, 1800)]
+        [TestCase(4, 5400)]
+        public void 판매_골드는_티어마다_200_600_1800_5400(int tier, int gold)
         {
-            Assert.AreEqual(0, TowerManager.GetSellGem(1));
-            Assert.AreEqual(0, TowerManager.GetSellGem(2));
-            Assert.AreEqual(1, TowerManager.GetSellGem(3));
-            Assert.AreEqual(5, TowerManager.GetSellGem(4));
+            Assert.AreEqual(gold, TowerManager.GetSellGold(tier));
         }
 
         [Test]
         public void 표_밖의_티어는_0()
         {
-            Assert.AreEqual(0, TowerManager.GetSellGem(0));
-            Assert.AreEqual(0, TowerManager.GetSellGem(5));
+            Assert.AreEqual(0, TowerManager.GetSellGold(0));
+            Assert.AreEqual(0, TowerManager.GetSellGold(5));
         }
 
-        [TestCase(1, 50)]
-        [TestCase(2, 55)]
-        [TestCase(11, 100)]
-        [TestCase(40, 245)]
-        public void 판매_골드는_50에_웨이브마다_5씩(int wave, int gold)
+        [Test]
+        public void 생성_비용은_250_고정()
         {
-            Assert.AreEqual(gold, TowerManager.GetSellGold(wave));
+            Assert.AreEqual(250, TowerManager.FixedBuildCost);
         }
 
         [Test]
@@ -36,12 +33,6 @@ namespace SquareTD.Tests
             Assert.AreEqual(TowerColor.Blue, TowerManager.GetGuaranteedColor(1));
             Assert.AreEqual(TowerColor.None, TowerManager.GetGuaranteedColor(2));
             Assert.AreEqual(TowerColor.None, TowerManager.GetGuaranteedColor(3));
-        }
-
-        [Test]
-        public void 웨이브_0은_1웨이브와_같음()
-        {
-            Assert.AreEqual(50, TowerManager.GetSellGold(0));
         }
     }
 }

@@ -5,77 +5,93 @@ namespace SquareTD.Tests
     public class ColorUpgradeStateTest
     {
         [Test]
-        public void 처음은_모든_컬러가_레벨1_비용10()
+        public void 처음은_레벨1_경험치_0_다음까지_20()
         {
             var state = new ColorUpgradeState();
 
-            Assert.AreEqual(1, state.GetLevel(TowerColor.Red));
-            Assert.AreEqual(1, state.GetLevel(TowerColor.Purple));
-            Assert.AreEqual(10, state.GetCost(TowerColor.Red));
+            Assert.AreEqual(1, state.Level);
+            Assert.AreEqual(0, state.Xp);
+            Assert.AreEqual(20, state.XpToNext);
         }
 
         [Test]
-        public void 강화하면_그_컬러만_오름()
+        public void 레벨은_네_컬러가_함께_씀()
         {
             var state = new ColorUpgradeState();
-
-            Assert.IsTrue(state.TryUpgrade(TowerColor.Red));
+            state.AddXp(20);
 
             Assert.AreEqual(2, state.GetLevel(TowerColor.Red));
-            Assert.AreEqual(1, state.GetLevel(TowerColor.Blue));
+            Assert.AreEqual(2, state.GetLevel(TowerColor.Purple));
         }
 
         [Test]
-        public void 비용은_지금_레벨을_따름_10_20_40_80()
+        public void 경험치_20_40_80_160을_채우면_레벨_5()
         {
             var state = new ColorUpgradeState();
-            int[] expected = { 10, 20, 40, 80 };
+            int[] needs = { 20, 40, 80, 160 };
 
-            foreach (int cost in expected)
+            for (int i = 0; i < needs.Length; i++)
             {
-                Assert.AreEqual(cost, state.GetCost(TowerColor.Blue));
-                state.TryUpgrade(TowerColor.Blue);
+                Assert.AreEqual(needs[i], state.XpToNext, $"레벨 {i + 1}");
+                state.AddXp(needs[i]);
+                Assert.AreEqual(i + 2, state.Level);
             }
+            Assert.IsTrue(state.IsMax);
+            Assert.AreEqual(0, state.XpToNext);
         }
 
         [Test]
-        public void 레벨5에서는_더_못_올리고_비용0()
+        public void 넘친_경험치는_다음_레벨로_넘어감()
         {
             var state = new ColorUpgradeState();
-            for (int i = 0; i < 4; i++) state.TryUpgrade(TowerColor.Yellow);
 
-            Assert.AreEqual(5, state.GetLevel(TowerColor.Yellow));
-            Assert.IsFalse(state.CanUpgrade(TowerColor.Yellow));
-            Assert.IsFalse(state.TryUpgrade(TowerColor.Yellow));
-            Assert.AreEqual(5, state.GetLevel(TowerColor.Yellow));
-            Assert.AreEqual(0, state.GetCost(TowerColor.Yellow));
+            int levels = state.AddXp(25);
+
+            Assert.AreEqual(1, levels);
+            Assert.AreEqual(2, state.Level);
+            Assert.AreEqual(5, state.Xp);
         }
 
         [Test]
-        public void 강화하면_LevelChanged에_컬러와_새_레벨()
+        public void 한_번에_여러_레벨이_오를_수_있음()
         {
             var state = new ColorUpgradeState();
-            TowerColor changedColor = TowerColor.None;
-            int changedLevel = 0;
-            state.LevelChanged += (color, level) => { changedColor = color; changedLevel = level; };
 
-            state.TryUpgrade(TowerColor.Purple);
-
-            Assert.AreEqual(TowerColor.Purple, changedColor);
-            Assert.AreEqual(2, changedLevel);
+            Assert.AreEqual(2, state.AddXp(60));
+            Assert.AreEqual(3, state.Level);
+            Assert.AreEqual(0, state.Xp);
         }
 
         [Test]
-        public void 못_올리면_LevelChanged_없음()
+        public void 최대_레벨에서는_더_쌓이지_않음()
         {
             var state = new ColorUpgradeState();
-            for (int i = 0; i < 4; i++) state.TryUpgrade(TowerColor.Red);
-            int count = 0;
-            state.LevelChanged += (color, level) => count++;
+            state.AddXp(1000);
 
-            state.TryUpgrade(TowerColor.Red);
+            Assert.AreEqual(BalanceTables.MaxColorLevel, state.Level);
+            Assert.AreEqual(0, state.Xp);
+            Assert.AreEqual(0, state.AddXp(10));
+        }
 
+        [Test]
+        public void 레벨이_오를_때만_LevelChanged()
+        {
+            var state = new ColorUpgradeState();
+            int count = 0, last = 0;
+            state.LevelChanged += level => { count++; last = level; };
+
+            state.AddXp(19);
             Assert.AreEqual(0, count);
+            state.AddXp(1);
+            Assert.AreEqual(1, count);
+            Assert.AreEqual(2, last);
+        }
+
+        [Test]
+        public void 경험치는_한_번에_1_골드_100()
+        {
+            Assert.AreEqual(1, BalanceTables.XpPerPurchase);
+            Assert.AreEqual(100, BalanceTables.XpPurchaseCost);
         }
     }
 }

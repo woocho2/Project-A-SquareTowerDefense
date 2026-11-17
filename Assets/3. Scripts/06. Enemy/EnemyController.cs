@@ -95,7 +95,8 @@ namespace SquareTD
 
             if (!died)
             {
-                TryStun(info);
+                UllrSkill.TryFollowUp(this, info, damage);
+                if (IsAlive) TryStun(info);
                 return;
             }
             Die(info);

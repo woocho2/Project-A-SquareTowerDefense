@@ -95,7 +95,6 @@ namespace SquareTD
         private static int CurrentLimit() => GameSession.Instance != null ? GameSession.Instance.CurrentLimit : 20;
         private static int CurrentGold() => CurrencyManager.Instance != null ? CurrencyManager.Instance.Gold : 0;
         private static int CurrentCycle() => WaveManager.Instance != null && WaveManager.Instance.CurrentWave > 0 ? WaveManager.Instance.Cycle : 1;
-        private static void AddGem(int amount) { if (CurrencyManager.Instance != null) CurrencyManager.Instance.AddGem(amount); }
         private static PathOccupancy CurrentOccupancy() => BoardManager.Instance != null ? BoardManager.Instance.Occupancy : null;
         private static UnityEngine.Vector3 PathCellPosition(int pathIndex) =>
             BoardManager.Instance != null ? BoardManager.Instance.GetWorldPosition(BoardManager.Instance.Grid.GetPathCell(pathIndex)) : UnityEngine.Vector3.zero;

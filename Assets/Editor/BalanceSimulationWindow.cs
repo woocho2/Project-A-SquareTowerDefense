@@ -168,6 +168,7 @@ namespace SquareTD
                 FirstSeed = BatchInt(args, "-simSeed", 1),
                 CompareMergeCounts = !compareDecks && !placement && !smoke && !search && !probe && Array.IndexOf(args, "-simSingle") < 0,
                 StopWave = BatchInt(args, "-simStopWave", 0),
+                SupportVariant = BatchInt(args, "-simSupport", 0),
                 WaveProbe = probe,
                 ProbeTowers = BatchInt(args, "-simProbeTowers", 2),
                 ProbeWaves = BatchInt(args, "-simProbeWaves", 2),
@@ -191,7 +192,7 @@ namespace SquareTD
                 MergeCountA = BatchInt(args, "-simMergeA", 3),
                 MergeCountB = BatchInt(args, "-simMergeB", 2),
                 Mode = probe || Array.IndexOf(args, "-simMode") >= 0 ? BatchInt(args, "-simMode", (int)GameMode.Normal) : s_modeValues[Mathf.Clamp(EditorPrefs.GetInt("SquareTD.Sim.Mode", 0), 0, s_modeValues.Length - 1)],
-                RandomEmblems = compareDecks || EditorPrefs.GetBool("SquareTD.Sim.RandomEmblems", false),
+                RandomEmblems = compareDecks || Array.IndexOf(args, "-simSceneDeck") < 0 && EditorPrefs.GetBool("SquareTD.Sim.RandomEmblems", false),
                 TimeScale = Mathf.Clamp(EditorPrefs.GetFloat("SquareTD.Sim.TimeScale", 100f), 1f, 100f),
                 GameTimeoutSeconds = Mathf.Max(30f, EditorPrefs.GetFloat("SquareTD.Sim.Timeout", 900f)),
                 ResultName = (probe ? "probe_" : searchSmoke ? "strategy_smoke_" : search ? "strategy_" : placement ? "placement_" : smoke ? "placement_smoke_" : compareDecks ? "deck_" : "batch_") + DateTime.Now.ToString("yyyyMMdd_HHmmss_fff"),
@@ -432,23 +433,20 @@ namespace SquareTD
             text.AppendLine($"  칸이 꽉 차 생성을 못 한 웨이브 판당 {blockedSum / count:0.0}");
             text.AppendLine();
 
-            float tierUps = 0f, colorUps = 0f, gemSpent = 0f, gemLeft = 0f, goldLeft = 0f, rerolls = 0f;
+            float xpBuys = 0f, goldLeft = 0f, rerolls = 0f;
             var silent = new List<string>();
             foreach (Dictionary<string, string> game in games)
             {
-                tierUps += Int(Cell(game, "gem_tier_ups"));
-                colorUps += Int(Cell(game, "gem_color_ups"));
-                gemSpent += Int(Cell(game, "gem_spent"));
+                xpBuys += Int(Cell(game, "xp_purchases"));
                 rerolls += Int(Cell(game, "rerolls"));
-                gemLeft += Int(game["gem"]);
                 goldLeft += Int(game["gold"]);
                 if (Float(game["total_damage"]) <= 0f)
                     silent.Add($"  시드 {game["seed"]}: {game["wave"]}웨이브, 타워 {game["towers"]}기 중 공격 {Cell(game, "attack_towers")}기 [{Cell(game, "lineup")}]");
             }
-            text.AppendLine("[젬·골드]");
-            text.AppendLine($"  판당 티어 강화 {tierUps / count:0.0}회, 컬러 강화 {colorUps / count:0.0}회, 쓴 젬 {gemSpent / count:0}");
+            text.AppendLine("[골드]");
+            text.AppendLine($"  판당 경험치 구매 {xpBuys / count:0.0}회");
             text.AppendLine($"  칸이 꽉 차 1티어를 팔고 다시 뽑은 횟수 판당 {rerolls / count:0.0}");
-            text.AppendLine($"  판이 끝났을 때 남은 젬 평균 {gemLeft / count:0}, 남은 골드 평균 {goldLeft / count:0}");
+            text.AppendLine($"  판이 끝났을 때 남은 골드 평균 {goldLeft / count:0}");
             if (silent.Count > 0)
             {
                 text.AppendLine($"  피해가 0인 판 {silent.Count}개 (확인 필요)");
@@ -751,7 +749,7 @@ namespace SquareTD
             seeds.UnionWith(b.Keys);
             var pairedA = new List<Dictionary<string, string>>();
             var pairedB = new List<Dictionary<string, string>>();
-            var pairedFields = new List<string> { "wave", "gold", "gem", "gem_spent" };
+            var pairedFields = new List<string> { "wave", "gold", "xp_purchases" };
             foreach (int tier in BalanceRecorder.MergeColumns) pairedFields.Add($"merge_to{tier}");
             foreach (int tier in BalanceRecorder.FirstColumns) pairedFields.Add($"first_t{tier}");
             var pairedHeader = new List<string> { "seed", "valid_pair", "a_result", "b_result", "mode", "emblems", "a_merge_count", "b_merge_count" };
@@ -803,9 +801,8 @@ namespace SquareTD
             text.AppendLine($"클리어: A {Percent(clearA, pairedA.Count)} / B {Percent(clearB, pairedB.Count)}");
             var metrics = new List<string[]>
             {
-                new[] { "wave", "도달 웨이브" }, new[] { "gold", "종료 시 골드" }, new[] { "gem", "종료 시 젬" },
-                new[] { "gem_spent", "강화에 쓴 젬" }, new[] { "gem_tier_ups", "젬 티어 강화 횟수" },
-                new[] { "gem_color_ups", "컬러 강화 횟수" }, new[] { "rerolls", "판매 후 재소환 횟수" },
+                new[] { "wave", "도달 웨이브" }, new[] { "gold", "종료 시 골드" },
+                new[] { "xp_purchases", "경험치 구매 횟수" }, new[] { "rerolls", "판매 후 재소환 횟수" },
                 new[] { "blocked_waves", "생성 공간 부족 웨이브" },
             };
             foreach (int tier in BalanceRecorder.MergeColumns) metrics.Add(new[] { $"merge_to{tier}", $"{tier}티어 합성 횟수" });

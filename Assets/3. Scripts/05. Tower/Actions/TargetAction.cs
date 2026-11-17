@@ -24,7 +24,7 @@ namespace SquareTD
             int shotsPerVolley = GetShotsPerAttack(stats.Mastery);
             ShotTiming timing = tower.ShotTiming;
             Vector3 from = tower.transform.position;
-            int lookId = ProjectileCatalog.GetLookId(tower.Definition.Id);
+            int lookId = ProjectileManager.GetLookId(tower.Definition.Id);
             float speed = tower.Definition.ProjectileSpeed;
             TargetSelector selector = TargetSelector.For(tower.State.TargetPriority);
             Vector3Int towerCell = m_grid.GetSpawnCell(tower.SlotIndex);

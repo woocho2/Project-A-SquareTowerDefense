@@ -183,37 +183,17 @@ namespace SquareTD
             }
         }
 
-        public static void GetKillReward(EnemyKind kind, int spawnWave, out int gold, out int gem)
+        public static int GetKillReward(EnemyKind kind, int spawnWave)
         {
             int cycle = GetCycle(spawnWave);
             int rewardMulti = cycle * cycle;
 
             switch (kind)
             {
-                case EnemyKind.None:
-                    gold = 0;
-                    gem = 0;
-                    return;
-
-                case EnemyKind.Normal:
-                    gold = 10 * GetCycle(spawnWave);
-                    gem = 0;
-                    return;
-
-                case EnemyKind.MiddleBoss:
-                    gold = 500 * rewardMulti;
-                    gem = 5 * rewardMulti;
-                    return;
-
-                case EnemyKind.FinalBoss:
-                    gold = 1000 * rewardMulti;
-                    gem = 15 * rewardMulti;
-                    return;
-
-                default:
-                    gold = 0;
-                    gem = 0;
-                    return;
+                case EnemyKind.Normal: return 30 * cycle;
+                case EnemyKind.MiddleBoss: return 500 * rewardMulti;
+                case EnemyKind.FinalBoss: return 1500 * rewardMulti;
+                default: return 0;
             }
         }
     }

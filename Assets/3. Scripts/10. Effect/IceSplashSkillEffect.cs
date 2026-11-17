@@ -66,14 +66,14 @@ namespace SquareTD
             for (float at = 0f; at < m_stormDuration; at += m_tick)
             {
                 float envelope = Mathf.Sin(Mathf.PI * at / m_stormDuration);
-                DOVirtual.DelayedCall(at, () => EmitStorm(view, width, height, cell, envelope))
+                DOVirtual.DelayedCall(at, () => EmitStorm(view, width, height, cell, envelope), false)
                     .SetLink(gameObject, LinkBehaviour.KillOnDisable);
             }
 
             foreach (Vector3 hit in hitPositions)
             {
                 Vector3 target = hit;
-                DOVirtual.DelayedCall(m_frostAt + Range(0f, m_frostSpread), () => PlayFrost(target, cell))
+                DOVirtual.DelayedCall(m_frostAt + Range(0f, m_frostSpread), () => PlayFrost(target, cell), false)
                     .SetLink(gameObject, LinkBehaviour.KillOnDisable);
             }
 
@@ -81,7 +81,7 @@ namespace SquareTD
             {
                 ImpactFx.Frame(new Color(0.8f, 0.92f, 1f, 0.3f), 0.06f);
                 ScreenShake.Play(0.03f, 0.15f);
-            }).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            }, false).SetLink(gameObject, LinkBehaviour.KillOnDisable);
         }
 
         private void EmitStorm(Vector3 view, float width, float height, float cell, float envelope)

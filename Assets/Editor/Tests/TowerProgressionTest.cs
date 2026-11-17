@@ -48,21 +48,6 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 티어_강화_비용은_5_15_45()
-        {
-            Assert.AreEqual(5, TowerProgression.GetTierUpgradeCost(1));
-            Assert.AreEqual(15, TowerProgression.GetTierUpgradeCost(2));
-            Assert.AreEqual(45, TowerProgression.GetTierUpgradeCost(3));
-        }
-
-        [Test]
-        public void 다이아와_시너지는_티어_강화_비용_0()
-        {
-            Assert.AreEqual(0, TowerProgression.GetTierUpgradeCost(4));
-            Assert.AreEqual(0, TowerProgression.GetTierUpgradeCost(6));
-        }
-
-        [Test]
         public void 일_삼_티어만_합성_가능()
         {
             Assert.IsTrue(TowerProgression.CanMergeFrom(Def(1101)));
@@ -173,6 +158,54 @@ namespace SquareTD.Tests
             Assert.AreEqual(first, keep);
             CollectionAssert.AreEquivalent(new[] { second }, materials);
             CollectionAssert.DoesNotContain(materials, newest);
+        }
+
+        private TowerController Bench(int id, int slot)
+        {
+            var go = new GameObject($"Bench {id}");
+            m_created.Add(go);
+            var tower = go.AddComponent<TowerController>();
+            tower.Init(Def(id), slot, null, null, null, null, TowerPlace.Bench);
+            return tower;
+        }
+
+        [Test]
+        public void 대기석_타워가_먼저_세워졌어도_판_위_타워가_남음()
+        {
+            TowerController benched = Bench(1101, 0);
+            TowerController boardA = Place(1101, 3);
+            TowerController boardB = Place(1101, 1);
+
+            var towers = new List<TowerController> { boardA, boardB, benched };
+            Assert.IsTrue(TowerProgression.TryFindMergeGroup(towers, null, out TowerController keep, out List<TowerController> materials));
+            Assert.AreEqual(boardA, keep, "판 위 둘 중 먼저 세운 셋 안(앞의 두 기)에 드는 3번 칸");
+            CollectionAssert.AreEquivalent(new[] { benched, boardB }, materials);
+        }
+
+        [Test]
+        public void 판_위_타워가_가장_나중이어도_판_위_타워가_남음()
+        {
+            TowerController benchA = Bench(1101, 0);
+            TowerController benchB = Bench(1101, 1);
+            TowerController board = Place(1101, 5);
+
+            var towers = new List<TowerController> { board, benchA, benchB };
+            Assert.IsTrue(TowerProgression.TryFindMergeGroup(towers, null, out TowerController keep, out List<TowerController> materials));
+            Assert.AreEqual(board, keep);
+            CollectionAssert.AreEquivalent(new[] { benchA, benchB }, materials);
+        }
+
+        [Test]
+        public void 셋_다_대기석이면_대기석_앞_칸이_남음()
+        {
+            TowerController a = Bench(1101, 4);
+            TowerController b = Bench(1101, 2);
+            TowerController c = Bench(1101, 0);
+
+            var towers = new List<TowerController> { a, b, c };
+            Assert.IsTrue(TowerProgression.TryFindMergeGroup(towers, null, out TowerController keep, out _));
+            Assert.AreEqual(b, keep);
+            Assert.AreEqual(TowerPlace.Bench, keep.Place);
         }
 
         [Test]

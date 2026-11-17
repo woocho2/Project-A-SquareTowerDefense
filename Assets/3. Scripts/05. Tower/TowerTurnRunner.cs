@@ -29,6 +29,7 @@ namespace SquareTD
         private IEnumerator RunSupportTowers(bool buff)
         {
             LastActed = 0;
+            if (SimulationRunner.SupportsDisabled) yield break;
             for (int i = 0; i < m_slots.Count; i++)
             {
                 TowerController tower = m_slots.Get(i);

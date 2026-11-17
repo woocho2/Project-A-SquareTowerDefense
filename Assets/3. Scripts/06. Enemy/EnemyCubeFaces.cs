@@ -35,7 +35,9 @@ namespace SquareTD
             }
         }
 
-        public static float GetHealRate(EnemyCubeFaceAsset face, int adaptive) => face == EnemyCubeFaceAsset.SelfHeal ? 0.1f * adaptive : 0f;
+        public static float GetHealRate(EnemyCubeFaceAsset face, int adaptive) => face == EnemyCubeFaceAsset.SelfHeal ? HealPerAdaptive * adaptive : 0f;
+
+        public const float HealPerAdaptive = 0.025f;
 
         public static void Apply(EnemyStats stats, EnemyCubeFaceAsset face, int adaptive, EnemyKind kind = EnemyKind.Normal)
         {

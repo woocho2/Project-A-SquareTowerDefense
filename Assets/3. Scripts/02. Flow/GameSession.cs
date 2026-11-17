@@ -132,7 +132,7 @@ namespace SquareTD
             LimitChanged?.Invoke(CurrentLimit);
 
             if (CurrentLimit < before && EnemyManager.Instance != null && EnemyManager.Instance.Registry.Count > CurrentLimit)
-                GameOver($"한도가 {CurrentLimit}로 돌아옴, 남은 적 {EnemyManager.Instance.Registry.Count}");
+                LimitGameOver($"한도가 {CurrentLimit}로 돌아옴, 남은 적 {EnemyManager.Instance.Registry.Count}");
         }
 
         public void RefreshTowerLimits()
@@ -170,11 +170,18 @@ namespace SquareTD
 
         public bool CheckBeforeSpawn(int aliveCount)
         {
-            if (aliveCount > CurrentLimit)
+            if (aliveCount > CurrentLimit) return !LimitGameOver($"남은 적 {aliveCount} > 한도 {CurrentLimit}");
+            return true;
+        }
+
+        private bool LimitGameOver(string reason)
+        {
+            if (Shared.TryUseLimitShield())
             {
-                GameOver($"남은 적 {aliveCount} > 한도 {CurrentLimit}");
+                Debug.Log($"[GameSession] 브륀힐드가 게임 오버를 막음: {reason}");
                 return false;
             }
+            GameOver(reason);
             return true;
         }
 

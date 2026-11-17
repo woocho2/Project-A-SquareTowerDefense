@@ -160,11 +160,11 @@ namespace SquareTD
             return bonus;
         }
 
-        public int RollGemBonus(KillInfo kill)
+        public int RollGoldBonus(KillInfo kill)
         {
-            int gems = 0;
-            foreach (StatusEffect effect in m_effects) gems += effect.RollGemBonus(kill);
-            return gems;
+            int gold = 0;
+            foreach (StatusEffect effect in m_effects) gold += effect.RollGoldBonus(kill);
+            return gold;
         }
 
         public MoveRange DecideMove(MoveRange range)

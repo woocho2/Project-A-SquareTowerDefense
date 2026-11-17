@@ -111,6 +111,8 @@ namespace SquareTD
                 return;
             }
 
+            if ((point.IsBench || point.IsSynergy) && point.GetTower(board) != null) return;
+
             if (point.IsPath)
             {
                 if (board.Occupancy.GetAt(point.PathIndex).Count > 0) ShowEnemyInfoPanel(point.PathIndex);
@@ -148,7 +150,7 @@ namespace SquareTD
             if (tower == null) return;
 
             SelectedTower = tower;
-            SelectedSpawnIndex = tower.SlotIndex;
+            SelectedSpawnIndex = tower.IsOnBoard ? tower.SlotIndex : -1;
             SelectedPathIndex = -1;
             SelectedTowerChanged?.Invoke(tower);
             SetInfoPanel(InfoPanel.Tower);
@@ -310,7 +312,7 @@ namespace SquareTD
         private void SwitchToTileInfoPanel()
         {
             int path = -1, spawn = -1;
-            if (SelectedTower != null) spawn = SelectedTower.SlotIndex;
+            if (SelectedTower != null) spawn = SelectedTower.IsOnBoard ? SelectedTower.SlotIndex : -1;
             else if (SelectedSpawnIndex >= 0) spawn = SelectedSpawnIndex;
             else if (SelectedPathIndex >= 0) path = SelectedPathIndex;
             if (path < 0 && spawn < 0) return;

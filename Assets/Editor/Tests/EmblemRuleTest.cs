@@ -294,18 +294,20 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 해머_디버프_크랙은_방어력_잭팟은_죽으면_젬()
+        public void 해머_디버프_크랙은_방어력_잭팟은_죽으면_골드_100_타격이면_100_더()
         {
             EnemyController cracked = MakeEnemy(defense: 100f), jackpot = MakeEnemy(defense: 100f);
             TowerController tower = MakeTower(1406);
             Debuff(tower, cracked);
             Debuff(tower, jackpot, skill2: true);
-            var kill = new KillInfo { Damage = Hit(1f, AttackAttribute.Slash) };
+            var slashKill = new KillInfo { Damage = Hit(1f, AttackAttribute.Slash) };
+            var bluntKill = new KillInfo { Damage = Hit(1f, AttackAttribute.Blunt, MakeTower(1105, slot: 1)) };
 
             Assert.AreEqual(90f, cracked.Stats.Get(StatType.Defense), Eps);
-            Assert.AreEqual(0, EmblemDebuffEffect.On(cracked, TowerEmblem.Hammer).RollGemBonus(kill));
+            Assert.AreEqual(0, EmblemDebuffEffect.On(cracked, TowerEmblem.Hammer).RollGoldBonus(slashKill));
             Assert.AreEqual(70f, jackpot.Stats.Get(StatType.Defense), Eps);
-            Assert.AreEqual(1, EmblemDebuffEffect.On(jackpot, TowerEmblem.Hammer).RollGemBonus(kill));
+            Assert.AreEqual(100, EmblemDebuffEffect.On(jackpot, TowerEmblem.Hammer).RollGoldBonus(slashKill));
+            Assert.AreEqual(200, EmblemDebuffEffect.On(jackpot, TowerEmblem.Hammer).RollGoldBonus(bluntKill));
         }
 
         // ── 불 ──

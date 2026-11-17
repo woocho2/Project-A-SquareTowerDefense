@@ -77,7 +77,7 @@ namespace SquareTD
             {
                 Impact(center, area, cell);
                 onArrived?.Invoke();
-            }).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            }, false).SetLink(gameObject, LinkBehaviour.KillOnDisable);
         }
 
         private void Chop(EffectQuadPool pool, Vector3 pivot, float radius, Color color, float intensity, float delay, float fade)

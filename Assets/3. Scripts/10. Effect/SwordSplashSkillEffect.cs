@@ -151,7 +151,7 @@ namespace SquareTD
                 {
                     m_sparks.Burst(at, 5, s_white, cell * 3f, cell * 7f, cell * 0.07f, cell * 0.13f, 0.18f, 0.3f, new Vector2(dir.x, dir.y), 35f);
                     m_sparks.Burst(at, 5, s_violet, cell * 3f, cell * 7f, cell * 0.07f, cell * 0.13f, 0.18f, 0.3f, new Vector2(-dir.x, -dir.y), 35f);
-                }).SetLink(gameObject, LinkBehaviour.KillOnDisable);
+                }, false).SetLink(gameObject, LinkBehaviour.KillOnDisable);
             }
         }
 
