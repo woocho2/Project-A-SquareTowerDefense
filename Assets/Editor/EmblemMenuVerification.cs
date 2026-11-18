@@ -71,8 +71,8 @@ namespace SquareTD.EditorTools
         private static Transform Choice(int number) => s_panel.transform.Find("Window/Emblem_" + number.ToString("00"));
         private static void MatchPreview()
         {
-            int[] expected = SynergyRecipes.Pick(s_panel.Selected.ToArray(), 6).Select(recipe => recipe.Id).ToArray();
-            Check(s_panel.Preview.Select(recipe => recipe.Id).SequenceEqual(expected), "예상 목록이 실제 조합 우선순위와 일치");
+            int[] expected = SynergyRecipes.GetRelated(s_panel.Selected.ToArray()).Select(recipe => recipe.Id).ToArray();
+            Check(s_panel.Preview.Select(recipe => recipe.Id).SequenceEqual(expected), "관련 목록이 선택 문양 일치 수 순서와 일치");
         }
         private static void Tick()
         {
@@ -100,8 +100,8 @@ namespace SquareTD.EditorTools
                         StageDefinition stage = AssetDatabase.FindAssets("t:StageDefinition").Select(AssetDatabase.GUIDToAssetPath).Select(AssetDatabase.LoadAssetAtPath<StageDefinition>).First(item => item.Number == 1);
                         s_panel.Open(stage, GameMode.Normal); Time.timeScale = 0; Next(2); break;
                     case 2:
-                        Check(Field<TextMeshProUGUI>("txt_count").text == "0 / 4 선택", "노말 초기 선택 개수 4");
-                        Check(s_panel.transform.Find("Window").Cast<Transform>().Count(child => child.name.StartsWith("Selected_") && child.gameObject.activeSelf) == 4, "노말 선택 칸 4개 표시");
+                        Check(Field<TextMeshProUGUI>("txt_count").text == "0 / 5 선택", "노말 초기 선택 개수 5");
+                        Check(s_panel.transform.Find("Window").Cast<Transform>().Count(child => child.name.StartsWith("Selected_") && child.gameObject.activeSelf) == 5, "노말 선택 칸 5개 표시");
                         Check(!Field<Button>("btn_emblemSelect").interactable, "선택 미완료 시 SELECT 비활성화");
                         Check(!s_panel.TryStart(), "미완료 상태에서 입장 요청 거절");
                         Check(s_panel.Preview.Count == 0, "미선택 상태에 빈 목록 안내");
@@ -110,30 +110,30 @@ namespace SquareTD.EditorTools
                         Click(Choice(1));
                         Check(s_panel.Selected.SequenceEqual(new[] { TowerEmblem.Sword }), "문양 선택과 선택 순서 저장");
                         Check(Choice(1).Find("Selected").gameObject.activeSelf, "선택 체크 표시");
-                        Check(Field<TextMeshProUGUI>("txt_count").text == "1 / 4 선택", "클릭 후 개수 갱신"); MatchPreview();
-                        for (int i = 2; i <= 4; i++) Click(Choice(i));
-                        Check(s_panel.IsReady && Field<Button>("btn_emblemSelect").interactable, "4개 선택하면 입장 활성화");
-                        Click(Choice(5)); Check(s_panel.Selected.Count == 4, "노말 4개 초과 방지");
-                        Click(Choice(1)); Check(s_panel.Selected.Count == 3, "재클릭으로 선택 해제");
+                        Check(Field<TextMeshProUGUI>("txt_count").text == "1 / 5 선택", "클릭 후 개수 갱신"); MatchPreview();
+                        for (int i = 2; i <= 5; i++) Click(Choice(i));
+                        Check(s_panel.IsReady && Field<Button>("btn_emblemSelect").interactable, "5개 선택하면 입장 활성화");
+                        Click(Choice(6)); Check(s_panel.Selected.Count == 5, "노말 5개 초과 방지");
+                        Click(Choice(1)); Check(s_panel.Selected.Count == 4, "재클릭으로 선택 해제");
                         Click(s_panel.transform.Find("Window/Selected_1"));
-                        Check(s_panel.Selected.Count == 2 && s_panel.Selected[1] == TowerEmblem.Spear, "선택 칸 클릭 해제와 순서 압축");
+                        Check(s_panel.Selected.Count == 3 && s_panel.Selected[1] == TowerEmblem.Spear, "선택 칸 클릭 해제와 순서 압축");
                         Next(4); break;
                     case 4:
                         s_panel.SetMode(GameMode.Hard);
-                        for (int i = 1; i <= 14 && s_panel.Selected.Count < 6; i++) if (!s_panel.Selected.Contains((TowerEmblem)i)) Click(Choice(i));
-                        Check(s_panel.RequiredCount == 6 && s_panel.Selected.Count == 6 && s_panel.IsReady, "하드 6개 선택");
-                        Check(Field<TextMeshProUGUI>("txt_count").text == "6 / 6 선택", "하드 선택 개수 표시");
-                        Check(s_panel.transform.Find("Window").Cast<Transform>().Count(child => child.name.StartsWith("Selected_") && child.gameObject.activeSelf) == 6, "하드 선택 칸 6개 표시");
-                        Check(!s_panel.ToggleEmblem(TowerEmblem.Darkness), "하드 6개 초과 방지"); Capture("selection-hard-ready.png");
-                        s_panel.SetMode(GameMode.Normal); Check(s_panel.Selected.Count == 4, "노말 복귀 시 앞의 4개 유지");
+                        for (int i = 1; i <= 14 && s_panel.Selected.Count < 7; i++) if (!s_panel.Selected.Contains((TowerEmblem)i)) Click(Choice(i));
+                        Check(s_panel.RequiredCount == 7 && s_panel.Selected.Count == 7 && s_panel.IsReady, "하드 7개 선택");
+                        Check(Field<TextMeshProUGUI>("txt_count").text == "7 / 7 선택", "하드 선택 개수 표시");
+                        Check(s_panel.transform.Find("Window").Cast<Transform>().Count(child => child.name.StartsWith("Selected_") && child.gameObject.activeSelf) == 7, "하드 선택 칸 7개 표시");
+                        Check(!s_panel.ToggleEmblem(TowerEmblem.Darkness), "하드 7개 초과 방지"); Capture("selection-hard-ready.png");
+                        s_panel.SetMode(GameMode.Normal); Check(s_panel.Selected.Count == 5, "노말 복귀 시 앞의 5개 유지");
                         foreach (TowerEmblem emblem in s_panel.Selected.ToArray()) s_panel.ToggleEmblem(emblem);
-                        foreach (TowerEmblem emblem in new[] { TowerEmblem.Sword, TowerEmblem.Shield, TowerEmblem.Electricity, TowerEmblem.Axe }) s_panel.ToggleEmblem(emblem);
+                        foreach (TowerEmblem emblem in new[] { TowerEmblem.Sword, TowerEmblem.Shield, TowerEmblem.Electricity, TowerEmblem.Axe, TowerEmblem.Spear }) s_panel.ToggleEmblem(emblem);
                         MatchPreview(); Next(5); break;
                     case 5:
                         Field<Button>("btn_back").onClick.Invoke(); Check(!s_panel.IsOpen, "뒤로 가기 동작");
                         StageDefinition selectedStage = AssetDatabase.FindAssets("t:StageDefinition").Select(AssetDatabase.GUIDToAssetPath).Select(AssetDatabase.LoadAssetAtPath<StageDefinition>).First(item => item.Number == 1);
-                        s_panel.Open(selectedStage, GameMode.Normal); Check(s_panel.Selected.Count == 4, "다시 열면 선택 유지");
-                        s_expected = s_panel.Preview.Select(item => item.Id).ToArray(); s_deck = s_panel.Selected.ToArray(); Next(55); break;
+                        s_panel.Open(selectedStage, GameMode.Normal); Check(s_panel.Selected.Count == 5, "다시 열면 선택 유지");
+                        s_expected = SynergyRecipes.Pick(s_panel.Selected.ToArray(), 6).Select(item => item.Id).ToArray(); s_deck = s_panel.Selected.ToArray(); Next(55); break;
                     case 55:
                         AuditText(); Capture("selection-ready.png");
                         Check(Overflows.Count == 0, "선택·시너지 본문 넘침 없음"); Next(6); break;
@@ -149,7 +149,7 @@ namespace SquareTD.EditorTools
                         Check(StartSettings.Emblems.SequenceEqual(s_deck), "선택한 문양 전달"); Next(8, .05); break;
                     case 8:
                         if (SceneManager.GetActiveScene().name != "3. Stage1" || TowerManager.Instance?.Synergy == null) return;
-                        Check(TowerManager.Instance.Synergy.Entries.Select(entry => entry.Recipe.Id).SequenceEqual(s_expected), "실제로 생성된 시너지 타워가 메뉴 예상 목록과 일치");
+                        Check(TowerManager.Instance.Synergy.Entries.Select(entry => entry.Recipe.Id).SequenceEqual(s_expected), "실제로 생성된 시너지 타워는 완성된 조합만 포함");
                         Check(Errors.Count == 0, "새 메뉴·로딩 오류 없음");
                         File.WriteAllText(Folder + "/playmode-result.json", JsonUtility.ToJson(new Report { verified = true, checks = Checks.ToArray(), errors = Errors.ToArray(), existingErrors = Existing.ToArray(), textOverflows = Overflows.ToArray(), selectFrame = s_clickFrame, firstLoadFrame = SceneTransitionOverlay.LastLoadFrame }, true));
                         Finish(); break;

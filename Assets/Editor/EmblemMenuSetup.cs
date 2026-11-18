@@ -188,8 +188,8 @@ namespace SquareTD.EditorTools
                 row.FindPropertyRelative("Ingredients").objectReferenceValue = ingredients; row.FindPropertyRelative("Match").objectReferenceValue = match;
                 card.gameObject.SetActive(false);
             }
-            TextMeshProUGUI empty = Text(window, "EmptySynergy", "문양을 선택하면 함께 등장할\n시너지 타워를 확인할 수 있습니다.", 18, Muted, 1028, 410, 442, 140); empty.alignment = TextAlignmentOptions.Center;
-            Text(window, "PriorityHint", "선택 문양과 많이 겹치는 타워부터 표시합니다", 14, Muted, 1006, 751, 488, 38);
+            TextMeshProUGUI empty = Text(window, "EmptySynergy", "문양을 선택하면 관련 시너지 타워가 표시됩니다.\n재료 3개를 모두 맞추면 스테이지에 등장합니다.", 18, Muted, 1028, 410, 442, 140); empty.alignment = TextAlignmentOptions.Center;
+            Text(window, "PriorityHint", "선택 문양 관련 타워 표시 · 3/3이면 등장", 14, Muted, 1006, 751, 488, 38);
             Box(window, "FooterRule", new Color(Gold.r, Gold.g, Gold.b, .2f), 46, 794, 1448, 1);
             Image backSurface = Box(window, "Back", Card, 46, 820, 180, 52); Button back = MakeButton(backSurface);
             Text(back.transform, "Label", "돌아가기", 18, Color.white, 8, 1, 164, 50).alignment = TextAlignmentOptions.Center;

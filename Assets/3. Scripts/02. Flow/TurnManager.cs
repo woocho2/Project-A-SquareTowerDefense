@@ -17,6 +17,45 @@ namespace SquareTD
         public event Action<int> EnemyTurnEnded;
         public event Action EnemyTurnStarted;
 
+        public bool IsSkipping { get; private set; }
+        public static bool Skipping => Instance != null && Instance.IsSkipping;
+        public float PlaybackSpeed => IsSkipping ? m_speedBeforeSkip : Time.timeScale;
+        public bool CanSkip => !IsSkipping && (Current.CanPlayerAct || Current is EnemyTurnState)
+            && (GameSession.Instance == null || !GameSession.Instance.IsOver)
+            && (UIManager.Instance == null || !UIManager.Instance.IsPaused);
+        private float m_speedBeforeSkip = 1f;
+
+        public bool SkipToNextPlayerTurn()
+        {
+            if (!CanSkip || Time.timeScale <= 0f) return false;
+            if (Current.CanPlayerAct)
+            {
+                OnClickEndTurn();
+                if (!m_endTurnRequested) return false;
+            }
+
+            m_speedBeforeSkip = Time.timeScale;
+            IsSkipping = true;
+            Time.timeScale = 30f;
+            return true;
+        }
+
+        public void CancelSkip()
+        {
+            if (!IsSkipping) return;
+            IsSkipping = false;
+            Time.timeScale = m_speedBeforeSkip;
+        }
+
+        private void OnDisable() => CancelSkip();
+
+        protected override void OnDestroy()
+        {
+            CancelSkip();
+            base.OnDestroy();
+        }
+
+
         private bool m_endTurnRequested;
         [SerializeField] private float m_attackSafetySeconds = 10f;
         [SerializeField] private float m_phaseGap = 0.5f;
@@ -59,6 +98,7 @@ namespace SquareTD
 
         private void ChangeState(ITurnState next)
         {
+            if (!(next is EnemyTurnState)) CancelSkip();
             Current.Exit();
             Current = next;
             next.Enter();
@@ -125,7 +165,7 @@ namespace SquareTD
 
         private IEnumerator Gap(bool happened)
         {
-            if (!happened || m_phaseGap <= 0f || SimulationRunner.IsOn) yield break;
+            if (!happened || m_phaseGap <= 0f || SimulationRunner.IsOn || IsSkipping) yield break;
             yield return new WaitForSeconds(m_phaseGap);
         }
 

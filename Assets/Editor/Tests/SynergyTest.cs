@@ -57,14 +57,57 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 덱과_겹치는_수가_많은_시너지부터_칸_수만큼()
+        public void 재료_세_개가_모두_겹치는_시너지만_등장()
         {
             var deck = new HashSet<TowerEmblem> { TowerEmblem.Spear, TowerEmblem.Electricity, TowerEmblem.Darkness };
 
             List<SynergyRecipes.Recipe> picked = SynergyRecipes.Pick(deck, 2);
 
-            Assert.AreEqual(2, picked.Count);
+            Assert.AreEqual(1, picked.Count);
             Assert.AreEqual(SynergyEffects.OdinId, picked[0].Id, "3개 모두 겹침");
+        }
+
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void 재료가_하나라도_빠지면_등장하지_않음(int matchingCount)
+        {
+            var deck = new HashSet<TowerEmblem>();
+            TowerEmblem[] ingredients = { TowerEmblem.Spear, TowerEmblem.Electricity, TowerEmblem.Darkness };
+            for (int i = 0; i < matchingCount; i++) deck.Add(ingredients[i]);
+            Assert.IsEmpty(SynergyRecipes.Pick(deck, 6));
+        }
+
+        [Test]
+        public void 추가_문양을_골라도_완성된_조합만_칸_수까지_등장()
+        {
+            var deck = new HashSet<TowerEmblem> { TowerEmblem.Spear, TowerEmblem.Electricity, TowerEmblem.Darkness, TowerEmblem.Sword, TowerEmblem.Shield };
+            List<SynergyRecipes.Recipe> picked = SynergyRecipes.Pick(deck, 6);
+            CollectionAssert.AreEqual(new[] { 6001, 6012 }, picked.ConvertAll(recipe => recipe.Id));
+            Assert.AreEqual(6001, SynergyRecipes.Pick(deck, 1)[0].Id);
+            Assert.IsEmpty(SynergyRecipes.Pick(deck, 0));
+        }
+
+        [Test]
+        public void 검을_고르면_검_관련_시너지를_모두_미리보기하되_생성하지_않음()
+        {
+            var deck = new HashSet<TowerEmblem> { TowerEmblem.Sword };
+            CollectionAssert.AreEqual(new[] { 6005, 6006, 6012 },
+                SynergyRecipes.GetRelated(deck).ConvertAll(recipe => recipe.Id));
+            Assert.IsEmpty(SynergyRecipes.Pick(deck, 6));
+        }
+
+        [Test]
+        public void 관련_미리보기는_칸_수로_자르지_않고_일치_수가_많은_순서()
+        {
+            var deck = new HashSet<TowerEmblem>();
+            for (int i = 1; i <= 14; i++) deck.Add((TowerEmblem)i);
+            Assert.AreEqual(14, SynergyRecipes.GetRelated(deck).Count);
+            Assert.AreEqual(6, SynergyRecipes.Pick(deck, 6).Count);
+
+            deck.Clear();
+            deck.Add(TowerEmblem.Sword); deck.Add(TowerEmblem.Shield);
+            Assert.AreEqual(6012, SynergyRecipes.GetRelated(deck)[0].Id);
         }
 
         // ── 공용 스택·버튼 ──

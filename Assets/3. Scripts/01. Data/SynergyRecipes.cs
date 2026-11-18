@@ -60,7 +60,7 @@ namespace SquareTD
             return count;
         }
 
-        public static List<Recipe> Pick(ICollection<TowerEmblem> deck, int slotCount)
+        public static List<Recipe> GetRelated(ICollection<TowerEmblem> deck)
         {
             var picked = new List<Recipe>();
             foreach (Recipe recipe in s_recipes) if (Overlap(recipe, deck) > 0) picked.Add(recipe);
@@ -69,6 +69,13 @@ namespace SquareTD
                 int byOverlap = Overlap(b, deck).CompareTo(Overlap(a, deck));
                 return byOverlap != 0 ? byOverlap : a.Id.CompareTo(b.Id);
             });
+            return picked;
+        }
+
+        public static List<Recipe> Pick(ICollection<TowerEmblem> deck, int slotCount)
+        {
+            var picked = GetRelated(deck);
+            picked.RemoveAll(recipe => Overlap(recipe, deck) != recipe.Emblems.Length);
             if (picked.Count > slotCount) picked.RemoveRange(slotCount, picked.Count - slotCount);
             return picked;
         }

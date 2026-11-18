@@ -150,8 +150,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SquareTD.BoardManager
   m_pathTilemap: {fileID: 2102427781}
   m_spawnTilemap: {fileID: 1535280681}
-  m_benchTilemap: {fileID: 0}
-  m_synergyTilemap: {fileID: 0}
+  m_benchTilemap: {fileID: 66755556}
+  m_synergyTilemap: {fileID: 727758035}
   m_pathCells:
   - {x: -5, y: -3, z: 0}
   - {x: -4, y: -3, z: 0}
@@ -6781,15 +6781,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 540299664011112267, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_text
-      value: "A\uB97C \uB20C\uB7EC \uC790\uB3D9\uC804\uD22C \uC9C4\uD589"
+      value: "\uD134 \uC885\uB8CC"
       objectReference: {fileID: 0}
     - target: {fileID: 540299664011112267, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_fontSize
-      value: 20
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 540299664011112267, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_fontSizeBase
-      value: 20
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 748786723260094937, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_isOrthographic
@@ -7094,6 +7094,14 @@ PrefabInstance:
     - target: {fileID: 5089218814431004054, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_TextStyleHashCode
       value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 5239721580939071530, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5239721580939071530, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -375
       objectReference: {fileID: 0}
     - target: {fileID: 5264849200288182693, guid: e35a0cf045a3af3489700b039aaaa48d, type: 3}
       propertyPath: m_isOrthographic

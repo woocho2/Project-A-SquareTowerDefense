@@ -17,7 +17,7 @@ namespace SquareTD
 
         public static IEnumerator Play(IReadOnlyList<EnemyController> enemies)
         {
-            if (SimulationRunner.IsOn || enemies == null || enemies.Count == 0) yield break;
+            if (SimulationRunner.IsOn || TurnManager.Skipping || enemies == null || enemies.Count == 0) yield break;
 
             float stagger = Mathf.Min(MaxStagger, MaxSpread / enemies.Count);
             float end = 0f;

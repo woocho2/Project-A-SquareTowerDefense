@@ -124,6 +124,13 @@ namespace SquareTD.EditorTools
             for (int i = 0; i < 3; i++) Box(option.transform, "Line_" + i, Gold, 16, 17 + i * 9, 24, 3);
             StyleButton(speed, 56, 56); TopRight((RectTransform)speed.transform, 82);
             TextMeshProUGUI speedText = Text(speed.transform, "Speed", "×1", 20, Paper, 0, 0, 56, 56); speedText.alignment = TextAlignmentOptions.Center;
+            var skipRoot = new GameObject("Group_Skip", typeof(RectTransform), typeof(Image), typeof(Button));
+            skipRoot.layer = 5; skipRoot.transform.SetParent(info.transform, false);
+            Button skip = skipRoot.GetComponent<Button>();
+            StyleButton(skip, 76, 56); TopRight((RectTransform)skip.transform, 148);
+            TextMeshProUGUI skipText = Text(skip.transform, "Skip", "스킵", 18, Paper, 0, 0, 76, 56);
+            skipText.alignment = TextAlignmentOptions.Center;
+            Set(so, "btn_skip", skip); Set(so, "txt_skip", skipText);
             Set(so, "txt_stage", stage); Set(so, "txt_currentWave", wave); Set(so, "txt_currentLimit", life); Set(so, "img_life", lifeFill); Set(so, "txt_currentGold", gold);
             Set(so, "txt_playerLevel", level); Set(so, "txt_playerXp", xp); Set(so, "img_playerXpFill", xpFill); Set(so, "txt_bossTurns", boss); Set(so, "txt_currentGameSpeed", speedText);
             so.ApplyModifiedPropertiesWithoutUndo();
@@ -132,6 +139,8 @@ namespace SquareTD.EditorTools
         {
             var so = new SerializedObject(actions);
             Button create = (Button)so.FindProperty("btn_createTower").objectReferenceValue, end = (Button)so.FindProperty("btn_turnEnd").objectReferenceValue;
+            TextMeshProUGUI endLabel = end.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (endLabel != null) { endLabel.text = "턴 종료"; endLabel.fontSize = 24; }
             Transform keep = actions.transform.Cast<Transform>().First(child => end.transform == child || end.transform.IsChildOf(child));
             create.transform.SetParent(actions.transform, false);
             foreach (Transform child in actions.transform.Cast<Transform>().ToArray()) if (child != keep && child != create.transform) Object.DestroyImmediate(child.gameObject);

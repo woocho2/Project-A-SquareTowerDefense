@@ -17,8 +17,8 @@ namespace SquareTD
             public Image Portrait;
             public TextMeshProUGUI Name, Ingredients, Match;
         }
-        public const int NormalCount = 4;
-        public const int HardCount = 6;
+        public const int NormalCount = 5;
+        public const int HardCount = 7;
         [SerializeField] private Image[] img_emblems = new Image[14];
         [SerializeField] private Image[] img_slots = new Image[HardCount];
         [SerializeField] private Button[] m_choices = new Button[14], m_slotButtons = new Button[HardCount];
@@ -136,12 +136,12 @@ namespace SquareTD
         {
             int stageIndex = m_stage != null ? m_stage.Number - 1 : 0;
             int capacity = stageIndex >= 0 && stageIndex < m_stageSynergyCapacity.Length ? m_stageSynergyCapacity[stageIndex] : 6;
-            m_preview = SynergyRecipes.Pick(m_selected, capacity);
+            m_preview = capacity > 0 ? SynergyRecipes.GetRelated(m_selected) : new List<SynergyRecipes.Recipe>();
             if (m_synergyCount != null) m_synergyCount.text = $"예상 시너지 타워  {m_preview.Count}기";
             if (m_emptySynergy != null)
             {
                 m_emptySynergy.gameObject.SetActive(m_preview.Count == 0);
-                m_emptySynergy.text = capacity == 0 ? "이 스테이지에는 시너지 칸이 없습니다." : "문양을 선택하면 함께 등장할\n시너지 타워를 확인할 수 있습니다.";
+                m_emptySynergy.text = capacity == 0 ? "이 스테이지에는 시너지 칸이 없습니다." : "문양을 선택하면 관련 시너지 타워가 표시됩니다.\n재료 3개를 모두 맞추면 스테이지에 등장합니다.";
             }
             for (int i = 0; i < m_synergyRows.Length; i++)
             {

@@ -384,6 +384,7 @@ namespace SquareTD
         public void Pause()
         {
             if (IsPaused) return;
+            TurnManager.Instance?.CancelSkip();
             m_timeScaleBeforePause = Time.timeScale;
             Time.timeScale = 0f;
             IsPaused = true;

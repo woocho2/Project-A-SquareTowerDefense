@@ -25,6 +25,8 @@ namespace SquareTD
 
         [SerializeField] Button btn_option;
         [SerializeField] Button btn_gameSpeed;
+        [SerializeField] Button btn_skip;
+        [SerializeField] TextMeshProUGUI txt_skip;
 
         private void Start()
         {
@@ -39,6 +41,7 @@ namespace SquareTD
 
             if (btn_option != null) btn_option.onClick.AddListener(HandleOptionClick);
             if (btn_gameSpeed != null) btn_gameSpeed.onClick.AddListener(HandleGameSpeedClick);
+            if (btn_skip != null) btn_skip.onClick.AddListener(HandleSkipClick);
 
             UpdateWaveText(WaveManager.Instance.CurrentWave);
             UpdateLimitText();
@@ -61,6 +64,7 @@ namespace SquareTD
 
             if (btn_option != null) btn_option.onClick.RemoveListener(HandleOptionClick);
             if (btn_gameSpeed != null) btn_gameSpeed.onClick.RemoveListener(HandleGameSpeedClick);
+            if (btn_skip != null) btn_skip.onClick.RemoveListener(HandleSkipClick);
         }
 
         private void UpdateWaveText(int wave)
@@ -107,8 +111,15 @@ namespace SquareTD
 
         private void Update()
         {
-            if (Time.timeScale <= 0 || Mathf.Approximately(m_shownSpeed, Time.timeScale)) return;
-            m_shownSpeed = Time.timeScale; UpdateGameSpeedText(m_shownSpeed);
+            TurnManager turns = TurnManager.Instance;
+            if (btn_skip != null) btn_skip.interactable = turns != null && turns.CanSkip && Time.timeScale > 0f;
+            if (txt_skip != null) txt_skip.text = turns != null && turns.IsSkipping ? "스킵 중" : "스킵";
+            if (btn_gameSpeed != null) btn_gameSpeed.interactable = !TurnManager.Skipping
+                && Time.timeScale > 0f && (UIManager.Instance == null || !UIManager.Instance.IsPaused);
+            float speed = turns != null ? turns.PlaybackSpeed : Time.timeScale;
+            if (speed <= 0f || Mathf.Approximately(m_shownSpeed, speed)) return;
+            m_shownSpeed = speed;
+            UpdateGameSpeedText(speed);
         }
 
         private void UpdatePlayerLevel()
@@ -162,9 +173,11 @@ namespace SquareTD
             UIManager.Instance.ShowOptionPanel();
         }
 
+        private void HandleSkipClick() => TurnManager.Instance?.SkipToNextPlayerTurn();
+
         private void HandleGameSpeedClick()
         {
-            if (Time.timeScale <= 0 || (UIManager.Instance != null && UIManager.Instance.IsPaused)) return;
+            if (Time.timeScale <= 0 || TurnManager.Skipping || (UIManager.Instance != null && UIManager.Instance.IsPaused)) return;
             Time.timeScale = Time.timeScale < 1.5f ? 2f : Time.timeScale < 2.5f ? 3f : 1f;
             UpdateGameSpeedText(Time.timeScale);
         }

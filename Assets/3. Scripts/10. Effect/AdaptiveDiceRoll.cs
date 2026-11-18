@@ -38,7 +38,7 @@ namespace SquareTD
 
         public static IEnumerator Play(int value, int min, int max)
         {
-            if (SimulationRunner.IsOn || !Application.isPlaying) yield break;
+            if (SimulationRunner.IsOn || TurnManager.Skipping || !Application.isPlaying) yield break;
 
             if (s_instance == null) s_instance = new GameObject("Adaptive Dice").AddComponent<AdaptiveDiceRoll>();
             yield return new WaitForSeconds(s_instance.Show(value, min, max));
