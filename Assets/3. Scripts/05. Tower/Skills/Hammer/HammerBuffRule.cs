@@ -6,6 +6,7 @@ namespace SquareTD
     // 해머 버프 — 길딩 · 골든 터치 (현재 골드 비례 추가 피해, 골든 터치 골드 보상 +50%, 타격 처치 50%로 골드 +100%)
     public class HammerBuffRule : BuffRule
     {
+        public const float BronzeDamagePerGold = 0.0005f;
         public const float RushGoldBonus = 0.5f;
         public const float BluntDoubleChance = 0.5f;
 
@@ -18,7 +19,7 @@ namespace SquareTD
 
         public override List<StatModifier> GetModifiers(SupportCast cast, TowerController receiver, string source)
         {
-            var modifiers = new List<StatModifier> { StatModifier.Flat(source, StatType.BonusDamage, cast.Rate * m_currentGold()) };
+            var modifiers = new List<StatModifier> { StatModifier.Flat(source, StatType.BonusDamage, cast.Bronze(BronzeDamagePerGold) * m_currentGold()) };
             if (cast.IsSkill2) modifiers.Add(StatModifier.Flat(source, StatType.GoldBonus, RushGoldBonus));
             if (IsSynergy(cast, receiver)) modifiers.Add(StatModifier.Flat(source, StatType.GoldDoubleChance, BluntDoubleChance));
             return modifiers;

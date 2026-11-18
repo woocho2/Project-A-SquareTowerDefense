@@ -143,7 +143,6 @@ namespace SquareTD
             Row("스킬 계수", $"×{stats.AbilityValue:0.##}");
             Row("Duration", GetDurationText(definition.Color, stats));
             Row("Mastery", $"{stats.Mastery}");
-            Row("스택", support ? $"최대 {stats.Stack}" : $"{state.Stack.Current:0.#} / {state.Stack.Max}  (StackValue ×{stats.StackValue:0.##})");
 
             if (!support)
             {

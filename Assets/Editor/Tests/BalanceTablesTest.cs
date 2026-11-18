@@ -14,31 +14,29 @@ namespace SquareTD.Tests
             Assert.AreEqual(0, row.AttackCount);
         }
 
-        [TestCase(2, 0, 1.5f, 0, 0, 1f, 1f, 0.95f, 1.25f)]
-        [TestCase(3, 0, 2.45f, 1, 0, 1f, 1f, 0.9f, 2.5f)]
-        [TestCase(4, -1, 6.15f, 1, 1, 0.75f, 2f, 0.8f, 6.25f)]
-        public void 공격_티어_표(int tier, int action, float power, int attackCount, int mastery, float maxStack, float stackValue, float skillCount, float abilityValue)
+        [TestCase(2, 0, 1.5f, 0, 0, 0.95f, 1.25f)]
+        [TestCase(3, 0, 2.45f, 1, 0, 0.9f, 2.5f)]
+        [TestCase(4, -1, 6.15f, 1, 1, 0.8f, 6.25f)]
+        public void 공격_티어_표(int tier, int action, float power, int attackCount, int mastery, float skillCount, float abilityValue)
         {
-            AssertTierRow(BalanceTables.GetTierRow(tier, TowerColor.Red), action, power, attackCount, mastery, maxStack, stackValue, skillCount, abilityValue);
+            AssertTierRow(BalanceTables.GetTierRow(tier, TowerColor.Red), action, power, attackCount, mastery, skillCount, abilityValue);
         }
 
-        [TestCase(2, 0, 1.5f, 0, 0, 1f, 1f, 0.95f, 1.25f)]
-        [TestCase(3, 0, 2f, 1, 0, 1f, 1f, 0.9f, 2.5f)]
-        [TestCase(4, -1, 4f, 1, 1, 0.75f, 2f, 0.8f, 6.25f)]
-        public void 지원_티어_표(int tier, int action, float power, int attackCount, int mastery, float maxStack, float stackValue, float skillCount, float abilityValue)
+        [TestCase(2, 0, 1.5f, 0, 0, 0.95f, 2.5f)]
+        [TestCase(3, 0, 2f, 1, 0, 0.9f, 5f)]
+        [TestCase(4, -1, 4f, 1, 1, 0.8f, 10f)]
+        public void 지원_티어_표(int tier, int action, float power, int attackCount, int mastery, float skillCount, float abilityValue)
         {
-            AssertTierRow(BalanceTables.GetTierRow(tier, TowerColor.Yellow), action, power, attackCount, mastery, maxStack, stackValue, skillCount, abilityValue);
-            AssertTierRow(BalanceTables.GetTierRow(tier, TowerColor.Purple), action, power, attackCount, mastery, maxStack, stackValue, skillCount, abilityValue);
+            AssertTierRow(BalanceTables.GetTierRow(tier, TowerColor.Yellow), action, power, attackCount, mastery, skillCount, abilityValue);
+            AssertTierRow(BalanceTables.GetTierRow(tier, TowerColor.Purple), action, power, attackCount, mastery, skillCount, abilityValue);
         }
 
-        private static void AssertTierRow(TierRow row, int action, float power, int attackCount, int mastery, float maxStack, float stackValue, float skillCount, float abilityValue)
+        private static void AssertTierRow(TierRow row, int action, float power, int attackCount, int mastery, float skillCount, float abilityValue)
         {
             Assert.AreEqual(action, row.Action);
             Assert.AreEqual(power, row.Power, 0.0001f);
             Assert.AreEqual(attackCount, row.AttackCount);
             Assert.AreEqual(mastery, row.Mastery);
-            Assert.AreEqual(maxStack, row.MaxStack, 0.0001f);
-            Assert.AreEqual(stackValue, row.StackValue, 0.0001f);
             Assert.AreEqual(skillCount, row.SkillCount, 0.0001f);
             Assert.AreEqual(abilityValue, row.AbilityValue, 0.0001f);
         }
@@ -62,34 +60,19 @@ namespace SquareTD.Tests
 
         // ── 컬러 강화 ──
 
-        [TestCase(1, 1f, 1f, 1f, 0)]
-        [TestCase(2, 1.25f, 1.1f, 1f, 0)]
-        [TestCase(3, 1.5f, 1.2f, 1f, 0)]
-        [TestCase(4, 2f, 1.5f, 0.5f, 0)]
-        [TestCase(5, 3f, 2f, 0.5f, 1)]
-        public void 공격_컬러_표(int level, float abilityValue, float stackValue, float maxStack, int mastery)
+        [TestCase(1, 1f, 0)]
+        [TestCase(2, 1.25f, 0)]
+        [TestCase(3, 1.5f, 0)]
+        [TestCase(4, 2f, 0)]
+        [TestCase(5, 3f, 1)]
+        public void 컬러_표는_네_컬러_공통(int level, float abilityValue, int mastery)
         {
-            foreach (TowerColor color in new[] { TowerColor.Red, TowerColor.Blue })
-                AssertColorRow(BalanceTables.GetColorLevelRow(level, color), abilityValue, stackValue, maxStack, mastery);
-        }
-
-        [TestCase(1, 1f, 1f, 1f, 0)]
-        [TestCase(2, 1.25f, 1.1f, 1f, 0)]
-        [TestCase(3, 1.5f, 1.2f, 1f, 0)]
-        [TestCase(4, 2f, 1.5f, 0.8f, 0)]
-        [TestCase(5, 3f, 2f, 0.7f, 1)]
-        public void 지원_컬러_표(int level, float abilityValue, float stackValue, float maxStack, int mastery)
-        {
-            foreach (TowerColor color in new[] { TowerColor.Yellow, TowerColor.Purple })
-                AssertColorRow(BalanceTables.GetColorLevelRow(level, color), abilityValue, stackValue, maxStack, mastery);
-        }
-
-        private static void AssertColorRow(ColorLevelRow row, float abilityValue, float stackValue, float maxStack, int mastery)
-        {
-            Assert.AreEqual(abilityValue, row.AbilityValue, 0.0001f);
-            Assert.AreEqual(stackValue, row.StackValue, 0.0001f);
-            Assert.AreEqual(maxStack, row.MaxStack, 0.0001f);
-            Assert.AreEqual(mastery, row.Mastery);
+            foreach (TowerColor color in new[] { TowerColor.Red, TowerColor.Blue, TowerColor.Yellow, TowerColor.Purple })
+            {
+                ColorLevelRow row = BalanceTables.GetColorLevelRow(level, color);
+                Assert.AreEqual(abilityValue, row.AbilityValue, 0.0001f);
+                Assert.AreEqual(mastery, row.Mastery);
+            }
         }
 
         [Test]

@@ -3,7 +3,9 @@ namespace SquareTD
     // 불 디버프 — 이그나이트 · 인페르노 (화상 스택, 인페르노 동안 화상 피해 2배, 불 타워가 치면 화상 +Tier × 레벨)
     public class FireDebuffRule : DebuffRule
     {
-        public override void OnApply(SupportCast cast, EnemyController enemy) => BurnEffect.Add(enemy, Resist(enemy, cast.Amount));
+        public const float BronzeBurn = 10f;
+
+        public override void OnApply(SupportCast cast, EnemyController enemy) => BurnEffect.Add(enemy, Resist(enemy, cast.Bronze(BronzeBurn)));
 
         public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy) =>
             cast.IsSkill2 ? new FireDebuffEffect(cast) : null;

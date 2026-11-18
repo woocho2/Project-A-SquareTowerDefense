@@ -73,6 +73,7 @@ namespace SquareTD
             if (m_pressedTower == null) return;
             if (!TurnManager.Instance.Current.CanPlayerAct) return;
             if (TowerId.IsSynergy(m_pressedTower.Definition.Id)) return;
+            if (TowerManager.Instance.IsMergingTower(m_pressedTower)) return;
             if (Vector3.Distance(world, m_pressedWorld) < DragStartDistance) return;
 
             m_input.ChangeMode(new DragTowerMode(m_input, m_pressedTower));
@@ -204,11 +205,13 @@ namespace SquareTD
 
         public void OnPointerDrag(Vector3 world)
         {
+            if (StopIfUnavailable()) return;
             m_tower.transform.position = world;
         }
 
         public void OnPointerUp(BoardPoint point)
         {
+            if (StopIfUnavailable()) return;
             bool moved = point.IsSpawn ? TowerManager.Instance.TryMoveTo(m_tower, TowerPlace.Board, point.SpawnIndex)
                 : point.IsBench && TowerManager.Instance.TryMoveTo(m_tower, TowerPlace.Bench, point.BenchIndex);
             if (!moved) ReturnToSlot();
@@ -217,8 +220,17 @@ namespace SquareTD
 
         public void OnCancel()
         {
+            if (StopIfUnavailable()) return;
             ReturnToSlot();
             m_input.ChangeMode(new IdleMode(m_input));
+        }
+
+        private bool StopIfUnavailable()
+        {
+            if (m_tower != null && !TowerManager.Instance.IsMergingTower(m_tower)) return false;
+            if (m_tower != null) ReturnToSlot();
+            m_input.ChangeMode(new IdleMode(m_input));
+            return true;
         }
 
         private void ReturnToSlot()

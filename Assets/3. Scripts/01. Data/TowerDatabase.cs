@@ -60,7 +60,7 @@ namespace SquareTD
                     int id = TowerId.Make(tier, one.Color, one.Emblem);
                     if (m_byId.ContainsKey(id)) continue;
                     m_byId.Add(id, new TowerDefinition(id, one.Power, one.Range, one.Action, one.AttackCount,
-                        one.CriticalRate, one.CriticalDamage, one.Mastery, one.Stack,
+                        one.CriticalRate, one.CriticalDamage, one.Mastery,
                         one.Duration, one.AbilityValue, one.ProjectileSpeed, one.TargetPriority));
                 }
             }
@@ -98,7 +98,6 @@ namespace SquareTD
                 ReadFloat(cells, columns, "CriticalRate"),
                 ReadFloat(cells, columns, "CriticalDamage"),
                 ReadInt(cells, columns, "Mastery"),
-                ReadInt(cells, columns, "Stack"),
                 ReadFloat(cells, columns, "Duration"),
                 ReadFloat(cells, columns, "AbilityValue"),
                 ReadFloat(cells, columns, "ProjectileSpeed"),

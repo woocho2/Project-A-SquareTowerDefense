@@ -349,12 +349,17 @@ namespace SquareTD
         public void ShowGameOver()
         {
             if (m_panelGameover == null) return;
-            if (m_towerInfoPanel != null) m_towerInfoPanel.SetActive(false);
+            HideInfoPanels();
+            if (m_panelOption != null) m_panelOption.SetActive(false);
+            if (m_panelGameclear != null) m_panelGameclear.SetActive(false);
             m_panelGameover.SetActive(true);
         }
 
         public void ShowGameClear()
         {
+            HideInfoPanels();
+            if (m_panelOption != null) m_panelOption.SetActive(false);
+            if (m_panelGameover != null) m_panelGameover.SetActive(false);
             if (m_panelGameclear != null) m_panelGameclear.SetActive(true);
         }
 

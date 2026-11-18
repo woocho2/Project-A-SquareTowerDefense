@@ -5,12 +5,13 @@ namespace SquareTD
     // 검 디버프 — 위더링 커스 · 둠 레퀴엠 (최대 체력 감소, 둠 레퀴엠 매 턴 최대 체력 1%, 베기 피해의 20% 고정)
     public class SwordDebuffRule : DebuffRule
     {
+        public const float BronzeMaxHpCut = 0.1f;
         public const float DoomTurnRate = 0.01f;
         public const float SlashFixedRatio = 0.2f;
 
         public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy)
         {
-            float maxHpCut = Mathf.Min(Resist(enemy, cast.Rate), 0.95f);
+            float maxHpCut = Mathf.Min(Resist(enemy, cast.Bronze(BronzeMaxHpCut)), 0.95f);
             float turnRate = cast.IsSkill2 ? Resist(enemy, DoomTurnRate) : 0f;
             float fixedRatio = cast.IsSkill2 ? Resist(enemy, SlashFixedRatio) : 0f;
             return new SwordDebuffEffect(cast, maxHpCut, turnRate, fixedRatio);

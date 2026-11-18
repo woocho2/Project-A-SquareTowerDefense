@@ -1602,3 +1602,18 @@ A.
 - Windows 기본 구성에는 포함되지 않음.
 - 현재 PC에서는 Visual Studio 설치 경로의 csi.exe를 확인함. 2022/Community/MSBuild/Current/Bin/Roslyn/csi.exe 및 18/Community/MSBuild/Current/Bin/Roslyn/csi.exe가 있음.
 - PATH에는 csi가 등록되어 있지 않아 명령창에서 csi만 입력하면 찾지 못하지만, 전체 경로로 실행할 수 있음.
+[Unity — 타워 생성 시 persistent parent 오류] (2026-11-18)
+Q. "자꾸 뭔 오류뜬다? 확인점"
+A.
+- 현재 Unity Editor.log에서 반복 확인된 오류는 "Cannot instantiate objects with a parent which is persistent. New object will be created without a parent.". 현재 로그에서 2회이며 TowerFactory.Create 44행의 Instantiate에서 발생함.
+- TowerManager의 m_towerParent(Tower Parent)에 씬 오브젝트 대신 Project 창의 Tower.prefab Transform이 연결되어 있음. 에셋은 생성된 씬 타워의 부모가 될 수 없어 Unity가 부모 없이 생성하고 오류를 기록함.
+- Stage1~10 저장 파일에서 같은 프리팹 참조를 확인. TowerManager 인스펙터의 Tower Parent를 None으로 비우거나 Hierarchy의 실제 씬 Transform으로 연결하면 됨. m_towerPrefab(Tower Prefab)은 생성 원본이므로 그대로 유지.
+- 이 턴은 오류 확인 요청으로 로그·연결만 조사했으며 게임 코드·씬 설정은 수정하지 않음.
+[VS Code — CodeLens·semanticTokens 요청 실패] (2026-11-18)
+Q. "자꾸 Request codeLens/resolve failed, Request textDocument/semanticTokens/range failed가 뜨는데 뭐냐"
+A.
+- VS Code C# 확장의 코드 분석 요청 실패 알림. CodeLens는 참조 개수 등의 표시, semanticTokens는 코드 의미에 따른 색상 표시와 관련됨.
+- 실제 C# 확장 로그에서 두 요청 모두 System.IO.FileNotFoundException: System.Threading.Channels, Version=10.0.0.0 로드 실패를 확인. 프로젝트는 오전 08:58 정상 로드했고 오후 13:31부터 같은 예외를 반복함.
+- 설치된 .NET 10.0.12와 10.0.15에는 해당 DLL이 존재함. 10.0.15 런타임 폴더의 변경 시각은 당일 09:28. 실행 중 분석기와 현재 런타임 설치 상태가 어긋났을 가능성은 있으나 정확한 변경 경위는 확정하지 않음.
+- 우선 Ctrl+Shift+P → C#: Restart Language Server. 계속되면 Developer: Reload Window 또는 파일 저장 후 VS Code를 완전히 종료하고 다시 열기. 재시작 뒤에도 같은 DLL 로드 오류가 반복될 때 런타임/확장 설치 복구를 검토함.
+- 원인 조사만 했고 확장·런타임·프로젝트 코드는 수정하지 않음. 같은 오류의 공식 이슈: https://github.com/dotnet/vscode-csharp/issues/9496

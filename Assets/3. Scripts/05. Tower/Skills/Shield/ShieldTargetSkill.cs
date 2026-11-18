@@ -14,12 +14,12 @@ namespace SquareTD
 
         public static int BounceCount(TowerController owner) => SkillFormula.LevelTierCount(owner);
 
-        protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
+        protected override bool CastInstead(TowerController owner, ITarget mainTarget)
         {
             if (mainTarget == null) return false;
 
             TowerFinalStats stats = owner.Stats;
-            float damage = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * BounceRatio;
+            float damage = SkillFormula.AttackSkill(stats.Power, stats.SkillAbility) * BounceRatio;
             int bounces = BounceCount(owner);
             ITarget previous = mainTarget;
             int shieldAt = mainTarget.PathIndex;

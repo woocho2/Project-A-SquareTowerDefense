@@ -7,9 +7,10 @@ namespace SquareTD
     //                                         전기 타워가 전하인 적을 치면 Tier × 레벨마리에게 연쇄, 피해 × Tier × 5%)
     public class ElectricDebuffRule : DebuffRule
     {
+        public const float BronzeCharge = 20f;
         public const float ChainRatePerTier = 0.05f;
 
-        public override void OnApply(SupportCast cast, EnemyController enemy) => ChargeEffect.Add(enemy, cast.Amount);
+        public override void OnApply(SupportCast cast, EnemyController enemy) => ChargeEffect.Add(enemy, cast.Bronze(BronzeCharge));
 
         public override void OnSkill2(SupportCast cast)
         {

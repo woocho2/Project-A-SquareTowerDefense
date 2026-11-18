@@ -2,8 +2,8 @@ using NUnit.Framework;
 
 namespace SquareTD.Tests
 {
-    // 새 공통 틀 (20번 4-1장): 버프·디버프의 스킬 1 + 스킬 2, 스킬 카운트, 차지, 키워드 스택, 판 공용 카운트
-    //   타워: Power 10, AbilityValue 2, AttackCount 1, 최대 차지 60, SkillCount 5, 브론즈·컬러 1 → 스킬 1 값 10, 스킬 2 값 30, 유지 2번 행동
+    // 새 공통 틀 (20번 4-1장): 버프·디버프의 스킬 1 + 스킬 2, 스킬 카운트, 키워드 스택, 판 공용 카운트
+    //   버프·디버프 타워: 브론즈 기준 Power 4, AV 0.1, AttackCount 1, SkillCount 5 → 검 버프 스킬 1 +50%, 스킬 2 +55%, 유지 2번 행동
     public class SupportSkillTest : EmblemTestBase
     {
         private const float Eps = 0.0001f;
@@ -18,7 +18,7 @@ namespace SquareTD.Tests
 
             Receive(MakeZone(buff, true), receiver);
 
-            Assert.AreEqual(11f, receiver.Stats.Power, Eps, "10 × (1 + 10%)");
+            Assert.AreEqual(15f, receiver.Stats.Power, Eps, "10 × (1 + 50%)");
         }
 
         [Test]
@@ -30,7 +30,7 @@ namespace SquareTD.Tests
             Receive(MakeZone(buff, true), receiver);
             ReceiveSkill2(buff, receiver);
 
-            Assert.AreEqual(13f, receiver.Stats.Power, Eps, "스킬 2만: 10 × (1 + 30%). 스킬 1의 10%는 더하지 않음");
+            Assert.AreEqual(15.5f, receiver.Stats.Power, Eps, "스킬 2만: 10 × (1 + 55%). 스킬 1의 50%는 더하지 않음");
         }
 
         [Test]
@@ -42,23 +42,22 @@ namespace SquareTD.Tests
             ReceiveSkill2(buff, receiver);
 
             SupportBuffs.CountDown(receiver);
-            Assert.AreEqual(13f, receiver.Stats.Power, Eps, "1번 행동 뒤에는 아직 스킬 2");
+            Assert.AreEqual(15.5f, receiver.Stats.Power, Eps, "1번 행동 뒤에는 아직 스킬 2");
 
             SupportBuffs.CountDown(receiver);
-            Assert.AreEqual(11f, receiver.Stats.Power, Eps, "2번 행동 뒤에 끝남");
+            Assert.AreEqual(15f, receiver.Stats.Power, Eps, "2번 행동 뒤에 끝남");
         }
 
         // ── 스킬 카운트 ──
 
         [Test]
-        public void 버프_디버프_타워는_행동마다_스킬_카운트_AttackCount와_차지_1()
+        public void 버프_디버프_타워는_행동마다_스킬_카운트_AttackCount()
         {
             TowerController buff = MakeTower(1301);
 
             SupportSkillCount.Advance(buff, 1f);
 
             Assert.AreEqual(1f, buff.State.SkillCount, Eps);
-            Assert.AreEqual(1f, buff.State.Stack.Current, Eps);
         }
 
         [Test]
@@ -84,15 +83,13 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 다_찬_차지는_스킬2에_쓰고_0으로()
+        public void 스킬2는_늘_Power_곱하기_1_더하기_AbilityValue()
         {
             TowerController buff = MakeTower(1301);
-            buff.State.Stack.Add(60f);
 
             SupportCast cast = SupportSkillCount.TakeSkill2Cast(buff);
 
-            Assert.AreEqual(42f, cast.Amount, Eps, "10 × (1 + 2 × (1 + 60 × 0.01))");
-            Assert.AreEqual(0f, buff.State.Stack.Current, Eps);
+            Assert.AreEqual(SkillFormula.SupportSkill2(buff.Stats.Power, buff.Stats.AbilityValue), cast.Amount, Eps);
         }
 
         // ── 디버프 ──
@@ -129,14 +126,21 @@ namespace SquareTD.Tests
         // ── 키워드 스택 ──
 
         [Test]
-        public void 화상은_매_턴_최대_체력의_0점1_곱하기_스택퍼센트()
+        public void 화상은_움직인_턴에_최대_체력의_0점1_곱하기_스택퍼센트_뒤_절반()
         {
             EnemyController enemy = MakeEnemy(0, hp: 100f);
 
             BurnEffect.Add(enemy, 10f);
             enemy.Status.OnTurn();
+            Assert.AreEqual(100f, enemy.CurrentHp, Eps, "움직이지 않은 턴");
 
+            MarkActed(enemy);
+            enemy.Status.OnTurn();
             Assert.AreEqual(99f, enemy.CurrentHp, Eps, "100 × 0.1% × 10");
+            Assert.AreEqual(5f, BurnEffect.Get(enemy), Eps);
+
+            enemy.Status.OnTurn();
+            Assert.AreEqual(2f, BurnEffect.Get(enemy), Eps, "5 → 2 (소수 버림)");
         }
 
         [Test]
@@ -175,16 +179,25 @@ namespace SquareTD.Tests
         // ── 아군 쪽 스택과 판 공용 값 ──
 
         [Test]
-        public void 가속_스택이_있으면_최대_Action_1_감소_버프_타워도()
+        public void 가속이_20_차면_다음_행동_한_번_최대_Action_1_감소_버프_타워도()
         {
             TowerController attack = MakeTower(1101);
             TowerController buff = MakeTower(1301);
 
             Acceleration.Add(attack, 5f);
-            Acceleration.Add(buff, 5f);
+            Assert.AreEqual(3, attack.Stats.Action, "20 전에는 효과 없음");
 
+            Acceleration.Add(attack, 25f);
+            Acceleration.Add(buff, 20f);
             Assert.AreEqual(2, attack.Stats.Action);
             Assert.AreEqual(2, buff.Stats.Action, "가속은 컬러와 무관하게 받음");
+            Assert.AreEqual(0f, Acceleration.Get(attack), Eps, "넘친 것은 버림");
+
+            Acceleration.Add(attack, 10f);
+            Assert.AreEqual(0f, Acceleration.Get(attack), Eps, "가속 버프 동안은 쌓이지 않음");
+
+            Acceleration.Consume(attack);
+            Assert.AreEqual(3, attack.Stats.Action, "행동하면 풀림");
         }
 
         [Test]

@@ -8,7 +8,7 @@ namespace SquareTD
     {
         private static readonly StatType[] s_intStats =
         {
-            StatType.Range, StatType.MaxAction, StatType.AttackCount, StatType.Mastery, StatType.MaxStack,
+            StatType.Range, StatType.MaxAction, StatType.AttackCount, StatType.Mastery,
         };
 
         public static TowerFinalStats Calculate(TowerDefinition definition, TowerDefinition tier1Definition, TowerState state, int colorLevel)
@@ -69,10 +69,8 @@ namespace SquareTD
             values[(int)StatType.CritRate] = definition.CriticalRate;
             values[(int)StatType.CritDamage] = definition.CriticalDamage;
             values[(int)StatType.Mastery] = definition.Mastery;
-            values[(int)StatType.MaxStack] = definition.Stack;
             values[(int)StatType.Duration] = definition.Duration;
             values[(int)StatType.AbilityValue] = definition.AbilityValue;
-            values[(int)StatType.StackValue] = 1f;
 
             return values;
         }
@@ -84,8 +82,6 @@ namespace SquareTD
             values[(int)StatType.MaxAction] += row.Action;
             values[(int)StatType.Power] *= row.Power;
             values[(int)StatType.AttackCount] += row.AttackCount;
-            values[(int)StatType.MaxStack] *= row.MaxStack;
-            values[(int)StatType.StackValue] *= row.StackValue;
             values[(int)StatType.Mastery] += row.Mastery;
             values[(int)StatType.Duration] *= row.SkillCount;
             values[(int)StatType.AbilityValue] *= row.AbilityValue;
@@ -96,8 +92,6 @@ namespace SquareTD
             ColorLevelRow row = BalanceTables.GetColorLevelRow(level, color);
 
             values[(int)StatType.AbilityValue] *= row.AbilityValue;
-            values[(int)StatType.StackValue] *= row.StackValue;
-            values[(int)StatType.MaxStack] *= row.MaxStack;
             values[(int)StatType.Mastery] += row.Mastery;
         }
 
@@ -137,7 +131,6 @@ namespace SquareTD
 
             values[(int)StatType.MaxAction] = Mathf.Max(1, values[(int)StatType.MaxAction]);
             values[(int)StatType.Duration] = Mathf.Max(1f, values[(int)StatType.Duration]);
-            values[(int)StatType.MaxStack] = Mathf.Max(1, values[(int)StatType.MaxStack]);
             values[(int)StatType.CritRate] = Mathf.Min(1, values[(int)StatType.CritRate]);
             values[(int)StatType.ArmorPenetration] = Mathf.Clamp01(values[(int)StatType.ArmorPenetration]);
         }

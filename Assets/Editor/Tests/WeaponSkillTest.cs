@@ -325,17 +325,16 @@ namespace SquareTD.Tests
         // ── 함께 고친 것 ──
 
         [Test]
-        public void 오버플로우의_차지_배율은_대신_쓰는_스킬에도_들어감()
+        public void 오버플로우의_스킬_피해는_대신_쓰는_스킬에도_들어감()
         {
             var grounds = new GroundEffectRegistry();
             TowerController tower = MakeTower(1103);
-            tower.State.Modifiers.Add(StatModifier.Flat("오버플로우", StatType.ChargeBonus, 0.5f));
-            tower.State.Stack.Add(60f);
-            float charged = tower.Stats.Power * tower.Stats.AbilityValue * 1.6f * 1.5f * ArrowRainGround.TurnRatio;
+            tower.State.Modifiers.Add(StatModifier.Flat("오버플로우", StatType.SkillDamageBonus, 0.5f));
+            float boosted = tower.Stats.Power * tower.Stats.AbilityValue * 1.5f * ArrowRainGround.TurnRatio;
 
             new ArrowSplashSkill(m_grid, m_occupancy, grounds).Fire(tower, null);
 
-            Assert.AreEqual(charged, ((ArrowRainGround)grounds.All[0]).Damage, Eps, "AV × (1 + 60 × 0.01) × 1.5");
+            Assert.AreEqual(boosted, ((ArrowRainGround)grounds.All[0]).Damage, Eps, "AV × 1.5");
         }
 
         [Test]
@@ -366,7 +365,7 @@ namespace SquareTD.Tests
             var go = new UnityEngine.GameObject("Tower 1101");
             go.transform.SetParent(m_root.transform);
             var tower = go.AddComponent<TowerController>();
-            tower.Init(new TowerDefinition(1101, 10f, 2, 3, 3, 0f, 0f, 1, 60, 5, 2f, 5f, TargetPriority.Closest), 0, null);
+            tower.Init(new TowerDefinition(1101, 10f, 2, 3, 3, 0f, 0f, 1, 5, 2f, 5f, TargetPriority.Closest), 0, null);
             float power = tower.Stats.Power;
 
             tower.State.Modifiers.Add(StatModifier.Flat("시험 버프", StatType.AttackCount, 1f));

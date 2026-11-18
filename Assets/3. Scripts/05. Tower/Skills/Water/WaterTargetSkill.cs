@@ -8,13 +8,13 @@ namespace SquareTD
         public WaterTargetSkill(BoardGrid grid, PathOccupancy occupancy)
             : base(grid, occupancy) { }
 
-        protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
+        protected override bool CastInstead(TowerController owner, ITarget mainTarget)
         {
             EnemyController enemy = mainTarget?.Body;
             if (enemy == null || !enemy.IsAlive) return false;
 
             TowerFinalStats stats = owner.Stats;
-            float damage = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * stats.FinalDamageMultiplier;
+            float damage = SkillFormula.AttackSkill(stats.Power, stats.SkillAbility) * stats.FinalDamageMultiplier;
             bool locked = Chance.Roll(enemy.Resistance.ResistWeak(1f));
             if (!locked) damage = enemy.Resistance.ResistWeak(damage);
             enemy.Status.Add(new AquaPrisonEffect(owner, SkillFormula.EffectTurns, damage, locked));

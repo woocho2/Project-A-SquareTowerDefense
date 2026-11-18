@@ -1,0 +1,35 @@
+{
+    "verified": true,
+    "checks": [
+        "공용 로딩 씬에서 메뉴 준비",
+        "랜덤 타워 이름과 소개 표시",
+        "Loading 글자 개별 움직임",
+        "100% 표시 후 메뉴 이동",
+        "이동 후 목적지 요청 해제",
+        "스테이지 이동도 같은 로딩 씬 경유",
+        "100% 표시 후 스테이지 이동",
+        "중복 이동 없이 요청 해제",
+        "선택한 문양 정보 유지",
+        "일시정지 상태에서도 로딩·연출 완료",
+        "재시작도 공용 로딩 씬 경유",
+        "스테이지 재시작 완료",
+        "메뉴 복귀도 공용 로딩 씬 경유",
+        "메뉴 복귀 완료",
+        "새 로딩 오류 없음"
+    ],
+    "errors": [],
+    "existingErrors": [
+        "Cannot instantiate objects with a parent which is persistent. New object will be created without a parent.",
+        "Cannot instantiate objects with a parent which is persistent. New object will be created without a parent.",
+        "Cannot instantiate objects with a parent which is persistent. New object will be created without a parent.",
+        "Cannot instantiate objects with a parent which is persistent. New object will be created without a parent.",
+        "Cannot instantiate objects with a parent which is persistent. New object will be created without a parent.",
+        "Cannot instantiate objects with a parent which is persistent. New object will be created without a parent.",
+        "Cannot instantiate objects with a parent which is persistent. New object will be created without a parent.",
+        "Cannot instantiate objects with a parent which is persistent. New object will be created without a parent.",
+        "Cannot instantiate objects with a parent which is persistent. New object will be created without a parent.",
+        "Cannot instantiate objects with a parent which is persistent. New object will be created without a parent.",
+        "Cannot instantiate objects with a parent which is persistent. New object will be created without a parent.",
+        "Cannot instantiate objects with a parent which is persistent. New object will be created without a parent."
+    ]
+}

@@ -23,6 +23,7 @@ namespace SquareTD
         {
             BuffRule rule = SkillRegistry.GetBuffRule(tower.Definition.Emblem);
             rule.OnOwnerActed(tower);
+            if (SimulationRunner.SupportsGlobal || SimulationRunner.SupportsAura) GiveToAll(tower, rule);
 
             foreach (Zone zone in m_zones.GetByOwner(tower))
             {
@@ -38,6 +39,20 @@ namespace SquareTD
             int fires = SupportSkillCount.Advance(tower);
             for (int i = 0; i < fires; i++) FireSkill2(tower);
             yield break;
+        }
+
+        private void GiveToAll(TowerController tower, BuffRule rule)
+        {
+            SupportCast cast = SupportCast.Skill1(tower);
+            for (int i = 0; i < m_slots.Count; i++)
+            {
+                TowerController receiver = m_slots.Get(i);
+                if (receiver == null || !receiver.IsAttackTower || BuffRule.HasSkill2(receiver, cast.Emblem)) continue;
+                if (SimulationRunner.SupportsAura &&
+                    BoardGrid.GetTileDistance(m_grid.GetSpawnCell(tower.SlotIndex), m_grid.GetSpawnCell(i)) > SimulationRunner.AuraRange) continue;
+                SupportBuffs.GiveSkill2(cast, receiver);
+                rule.OnGiveSkill1(cast, receiver);
+            }
         }
 
         public void FireSkill2(TowerController tower)
@@ -74,7 +89,7 @@ namespace SquareTD
         public static void RefreshReceived(TowerController tower, ZoneRegistry zones) => SupportBuffs.RefreshZones(tower, zones);
     }
 
-    // 버프·디버프 타워의 공통: 행동마다 차지 +1, 스킬 카운트 +AttackCount (치명이면 × (2 + CriticalDamage))
+    // 버프·디버프 타워의 공통: 행동마다 스킬 카운트 +AttackCount (치명이면 × (2 + CriticalDamage))
     public static class SupportSkillCount
     {
         public static int Advance(TowerController tower) => Advance(tower, Random.value);
@@ -82,19 +97,11 @@ namespace SquareTD
         public static int Advance(TowerController tower, float critRoll)
         {
             TowerFinalStats stats = tower.Stats;
-            tower.State.Stack.Add(1f);
-
             float gain = stats.AttackCount;
             if (CriticalRoll.Roll(stats.CriticalRate, critRoll)) gain *= CriticalRoll.Multiplier(stats.CriticalDamage);
             return tower.AddSkillCount(gain);
         }
 
-        public static SupportCast TakeSkill2Cast(TowerController tower)
-        {
-            bool useCharge = tower.State.Stack.IsFull;
-            SupportCast cast = SupportCast.Skill2(tower, useCharge);
-            if (useCharge) tower.State.Stack.Consume();
-            return cast;
-        }
+        public static SupportCast TakeSkill2Cast(TowerController tower) => SupportCast.Skill2(tower);
     }
 }

@@ -31,7 +31,7 @@ namespace SquareTD.Tests
             var go = new GameObject($"Tower {id}");
             go.transform.SetParent(m_root.transform);
             var tower = go.AddComponent<TowerController>();
-            var definition = new TowerDefinition(id, 10f, 2, 3, 1, critRate, 0f, 1, 60, 5, 2f, 5f, TargetPriority.Closest);
+            var definition = new TowerDefinition(id, 10f, 2, 3, 1, critRate, 0f, 1, 5, 2f, 5f, TargetPriority.Closest);
             tower.Init(definition, 0, null);
             return tower;
         }
@@ -103,29 +103,15 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 다_찬_스택은_1점6배로_쓰고_비움()
+        public void 스킬_피해_보정은_계수에_곱해짐()
         {
             OccupyingFakeTarget target = MakeTarget(0);
             TowerController tower = MakeTower(1101);
-            tower.State.Stack.Add(60f);
+            tower.State.Modifiers.Add(StatModifier.Flat("오버플로우", StatType.SkillDamageBonus, 0.5f));
 
             MakeSkill().Fire(tower, null);
 
-            Assert.AreEqual(32f, target.Hits[0].BaseDamage, 0.0001f);
-            Assert.AreEqual(0f, tower.State.Stack.Current, "쓴 스택은 0으로");
-        }
-
-        [Test]
-        public void 안_찬_스택은_쓰지_않고_그대로()
-        {
-            OccupyingFakeTarget target = MakeTarget(0);
-            TowerController tower = MakeTower(1101);
-            tower.State.Stack.Add(30f);
-
-            MakeSkill().Fire(tower, null);
-
-            Assert.AreEqual(20f, target.Hits[0].BaseDamage, 0.0001f, "문턱 전의 스택은 아무 영향도 없음");
-            Assert.AreEqual(30f, tower.State.Stack.Current, 0.0001f);
+            Assert.AreEqual(30f, target.Hits[0].BaseDamage, 0.0001f, "20 × 1.5");
         }
 
         // ── 치명 ──

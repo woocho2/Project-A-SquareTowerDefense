@@ -59,7 +59,7 @@ namespace SquareTD.Tests
             var go = new GameObject($"Tower {id}");
             go.transform.SetParent(m_root.transform);
             var tower = go.AddComponent<TowerController>();
-            var definition = new TowerDefinition(id, 10f, 2, 3, 1, 0f, 0f, 1, 60, duration, 2f, 5f, TargetPriority.Closest);
+            var definition = new TowerDefinition(id, 10f, 2, 3, 1, 0f, 0f, 1, duration, 2f, 5f, TargetPriority.Closest);
             AttackSkill skill = withSkill ? new DamageOnlySkill(m_grid, m_occupancy) : null;
             tower.Init(definition, 0, null, null, null, skill);
             return tower;
@@ -183,16 +183,6 @@ namespace SquareTD.Tests
             Assert.IsTrue(Hits(tower, target, 1));
             Assert.AreEqual(1, target.Hits.Count);
             Assert.AreEqual(1f, tower.State.SkillCount, 0.0001f, "남겨 둔 5 + 이번 적중 1 = 6에서 5를 쓰고 1이 남음 (넘친 만큼 이어 셈)");
-        }
-
-        [Test]
-        public void 광역은_적이_없으면_다_찬_스택도_남음()
-        {
-            TowerController tower = MakeTower(1101, duration: 1);
-            tower.State.Stack.Add(60f);
-
-            Hits(tower, OffMap(), 1);
-            Assert.AreEqual(60f, tower.State.Stack.Current, 0.0001f);
         }
 
         // ── 단일 ──

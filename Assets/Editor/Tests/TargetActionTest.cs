@@ -33,7 +33,7 @@ namespace SquareTD.Tests
             go.transform.SetParent(m_root.transform);
             go.transform.position = new Vector3(3f, 0f, 0f);
             var tower = go.AddComponent<TowerController>();
-            var definition = new TowerDefinition(1201, 10f, 1, 1, attackCount, critRate, critDamage, mastery, 60, 5, 2f, 5f, TargetPriority.Closest);
+            var definition = new TowerDefinition(1201, 10f, 1, 1, attackCount, critRate, critDamage, mastery, 5, 2f, 5f, TargetPriority.Closest);
             tower.Init(definition, 1, null);
             return tower;
         }

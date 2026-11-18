@@ -21,7 +21,7 @@ namespace SquareTD.Tests
 
         private T Track<T>(T item) where T : Object { m_objects.Add(item); return item; }
         private static TowerDefinition Def(int id = 1101, int attacks = 2) =>
-            new TowerDefinition(id, 100f, 2, 4, attacks, 0f, 0f, 1, 60, 5, 2f, 5f, TargetPriority.Closest);
+            new TowerDefinition(id, 100f, 2, 4, attacks, 0f, 0f, 1, 5, 2f, 5f, TargetPriority.Closest);
 
         [TearDown]
         public void Cleanup()

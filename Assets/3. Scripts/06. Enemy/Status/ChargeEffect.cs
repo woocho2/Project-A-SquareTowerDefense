@@ -71,7 +71,7 @@ namespace SquareTD
         public override string Describe() => $"전하 {(int)Stacks}: 받는 피해 +{Stacks * DamageTakenPerStack * 100f:0.##}%";
     }
 
-    // 불 — 화상: 받는 치유 -20%, 매 턴 최대 체력의 (0.1 × 화상 스택)% 피해
+    // 불 — 화상: 받는 치유 -20%, 그 적이 움직인 턴의 디버프 처리 때 최대 체력의 (0.1 × 화상 스택)% 피해, 그 뒤 스택 절반
     public class BurnEffect : EnemyStackEffect
     {
         public const string BurnKey = "화상";
@@ -102,7 +102,7 @@ namespace SquareTD
 
         public override void OnTurn(EnemyController enemy)
         {
-            if (Stacks <= 0f) return;
+            if (Stacks <= 0f || enemy.Movement == null || !enemy.Movement.ActedThisTurn) return;
             enemy.TakeDamage(new DamageInfo
             {
                 Source = DamageSource.Dot,
@@ -110,21 +110,23 @@ namespace SquareTD
                 BaseDamage = enemy.MaxHp * TurnRatePerStack * Stacks * TurnMultiplier,
                 ForceFixed = true,
             });
+            if (enemy.IsAlive) Set(enemy, Mathf.Floor(Stacks / 2f));
         }
 
-        public override string Describe() => $"화상 {(int)Stacks}: 받는 치유 −20%, 매 턴 최대 체력의 {TurnRatePerStack * 100f * Stacks * TurnMultiplier:0.##}% 피해";
+        public override string Describe() => $"화상 {(int)Stacks}: 받는 치유 −20%, 움직인 턴에 최대 체력의 {TurnRatePerStack * 100f * Stacks * TurnMultiplier:0.##}% 피해 뒤 절반";
     }
 
-    // 물 — 젖음: 최대 이동력 -(젖음 × 0.1) (소수 버림)
+    // 물 — 젖음: 10에 닿으면 다음 행동의 최대 이동력 -1, 그 행동이 끝나면 스택 전부 사라짐
     public class WetEffect : EnemyStackEffect
     {
         public const string WetKey = "젖음";
-        public const float SpeedPerStack = 0.1f;
+        public const float SlowAt = 10f;
 
         private WetEffect(float stacks) : base(stacks) { }
 
         public override string Key => WetKey;
-        public int SpeedCut => Mathf.FloorToInt(Stacks * SpeedPerStack + 0.0001f);
+        public bool IsReady => Stacks >= SlowAt;
+        public int SpeedCut => IsReady ? 1 : 0;
 
         public override IReadOnlyList<StatModifier> GetModifiers() => SpeedCut > 0
             ? new[] { StatModifier.Flat(WetKey, StatType.SpeedMax, -SpeedCut) }
@@ -139,20 +141,26 @@ namespace SquareTD
 
         public static float Get(ITarget target) => Get<WetEffect>(target);
 
-        public override string Describe() => $"젖음 {(int)Stacks}: 최대 이동력 −{SpeedCut}";
+        public override void OnMoved(EnemyController enemy, int steps)
+        {
+            if (IsReady) Set(enemy, 0f);
+        }
+
+        public override string Describe() => IsReady ? $"젖음 {(int)Stacks}: 다음 행동 최대 이동력 −1" : $"젖음 {(int)Stacks} / {SlowAt:0}";
     }
 
-    // 얼음 — 한기: 최소·최대 이동력 -1, 50의 배수에 닿을 때마다 빙결
+    // 얼음 — 한기: 25 이상이면 최소·최대 이동력 -1, 50에 닿으면 빙결, 빙결이 풀리면 스택 전부 사라짐
     public class ChillEffect : EnemyStackEffect
     {
         public const string ChillKey = "한기";
-        public const float FreezeEvery = 50f;
+        public const float SlowAt = 25f;
+        public const float FreezeAt = 50f;
 
         private ChillEffect(float stacks) : base(stacks) { }
 
         public override string Key => ChillKey;
 
-        public override IReadOnlyList<StatModifier> GetModifiers() => Stacks > 0f
+        public override IReadOnlyList<StatModifier> GetModifiers() => Stacks >= SlowAt
             ? new[] { StatModifier.Flat(ChillKey, StatType.SpeedMin, -1f), StatModifier.Flat(ChillKey, StatType.SpeedMax, -1f) }
             : System.Array.Empty<StatModifier>();
 
@@ -171,12 +179,17 @@ namespace SquareTD
         public static float Get(ITarget target) => Get<ChillEffect>(target);
         public static bool IsChilled(ITarget target) => Get(target) > 0f;
 
-        protected override void OnStacksChanged(EnemyController enemy, float before)
+        public static void Clear(EnemyController enemy)
         {
-            if (Mathf.FloorToInt(Stacks / FreezeEvery) > Mathf.FloorToInt(before / FreezeEvery)) enemy.Status.Add(new FreezeEffect());
+            if (Find<ChillEffect>(enemy) is ChillEffect chill) chill.Set(enemy, 0f);
         }
 
-        public override string Describe() => $"한기 {(int)Stacks}: 최소·최대 이동력 −1, 50마다 빙결";
+        protected override void OnStacksChanged(EnemyController enemy, float before)
+        {
+            if (before < FreezeAt && Stacks >= FreezeAt && !FreezeEffect.IsFrozen(enemy)) enemy.Status.Add(new FreezeEffect());
+        }
+
+        public override string Describe() => $"한기 {(int)Stacks}: " + (Stacks >= SlowAt ? "최소·최대 이동력 −1, " : "") + $"{FreezeAt:0}에 빙결";
     }
 
     // 어둠 — 침식: 따로 걸리는 디버프 없음. 죽으면 침식 스택만큼 판 공용 침식 카운트 +
@@ -202,38 +215,41 @@ namespace SquareTD
         public override string Describe() => $"침식 {(int)Stacks}: 죽으면 침식 카운트 +{(int)Stacks}";
     }
 
-    // 빛 — 실명: 적 행동 3번 동안 최소·최대 이동력 × -1 (뒤로 걸음)
-    public class BlindEffect : StatusEffect
+    // 빛 — 실명: 10에 닿으면 다음 행동은 최소·최대 이동력 × -1 (뒤로 걸음), 그 행동이 끝나면 스택 전부 사라짐
+    public class BlindEffect : EnemyStackEffect
     {
         public const string BlindKey = "실명";
-        public const int BlindActions = 3;
+        public const float TriggerAt = 10f;
 
-        public float Stacks { get; private set; }
+        private bool m_reversed;
 
-        private BlindEffect(float stacks) : base(BlindActions)
-        {
-            Stacks = stacks;
-        }
+        private BlindEffect(float stacks) : base(stacks) { }
 
         public override string Key => BlindKey;
-        public override float Strength => Stacks;
+        public bool IsReady => Stacks >= TriggerAt;
 
         public static void Add(EnemyController enemy, float amount)
         {
             if (enemy == null || !enemy.IsAlive || amount <= 0f) return;
-            float stacks = amount + (enemy.Status.Find(BlindKey) is BlindEffect existing ? existing.Stacks : 0f);
-            enemy.Status.Remove(BlindKey);
-            enemy.Status.Add(new BlindEffect(stacks));
+            if (Find<BlindEffect>(enemy) is BlindEffect existing) existing.Change(enemy, amount);
+            else enemy.Status.Add(new BlindEffect(amount));
         }
 
-        public static bool IsBlind(ITarget target)
+        public static bool IsBlind(ITarget target) => Get<BlindEffect>(target) > 0f;
+
+        public override MoveRange OnDecideMove(EnemyController enemy, MoveRange range)
         {
-            EnemyStatusEffects status = target?.Body != null ? target.Body.Status : target?.Status;
-            return status != null && status.Has(BlindKey);
+            m_reversed = IsReady;
+            return m_reversed ? new MoveRange(-range.Max, -range.Min, range.Action) : range;
         }
 
-        public override MoveRange OnDecideMove(EnemyController enemy, MoveRange range) => new MoveRange(-range.Max, -range.Min, range.Action);
+        public override void OnMoved(EnemyController enemy, int steps)
+        {
+            if (!m_reversed) return;
+            m_reversed = false;
+            Set(enemy, 0f);
+        }
 
-        public override string Describe() => $"실명 {(int)Stacks}: 뒤로 걸음 ({RemainingActions}회 행동 남음)";
+        public override string Describe() => IsReady ? $"실명 {(int)Stacks}: 다음 행동은 뒤로 걸음" : $"실명 {(int)Stacks} / {TriggerAt:0}";
     }
 }

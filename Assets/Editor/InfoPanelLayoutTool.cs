@@ -57,6 +57,7 @@ namespace SquareTD.EditorTools
                 SetupTower(canvas.GetComponentInChildren<TowerInfoPanel>(true));
                 SetupTile(canvas.GetComponentInChildren<TileinfoPanel>(true));
                 SetupEnemy(canvas.GetComponentInChildren<EnemyInfoPanel>(true));
+                TowerDescriptionSetup.Configure(canvas);
                 UIManager manager = canvas.GetComponentInChildren<UIManager>(true);
                 if (manager != null)
                 {

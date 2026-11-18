@@ -15,11 +15,11 @@ namespace SquareTD
 
         public override bool BlocksBasicAttack(TowerController owner) => owner.State.GetCounter(TurnsKey) > 0f;
 
-        protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
+        protected override bool CastInstead(TowerController owner, ITarget mainTarget)
         {
             TowerFinalStats stats = owner.Stats;
             owner.State.Counters[TurnsKey] = SkillFormula.EffectTurns;
-            owner.State.Counters[DamageKey] = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack));
+            owner.State.Counters[DamageKey] = SkillFormula.AttackSkill(stats.Power, stats.SkillAbility);
             return true;
         }
 

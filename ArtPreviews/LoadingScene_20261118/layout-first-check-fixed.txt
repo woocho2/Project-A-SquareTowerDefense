@@ -1,0 +1,4 @@
+System.InvalidOperationException: 타워 1101 / Name 텍스트가 넘칩니다: 소드 마스터
+  at SquareTD.EditorTools.LoadingSceneVerification.AuditAndCapture () [0x0014d] in D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\Assets\Editor\LoadingSceneVerification.cs:73 
+  at SquareTD.EditorTools.LoadingSceneVerification.Run () [0x00012] in D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\Assets\Editor\LoadingSceneVerification.cs:33 
+  at SquareTD.EditorTools.LoadingSceneSetup.Poll () [0x000a9] in D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\Assets\Editor\LoadingSceneSetup.cs:57 

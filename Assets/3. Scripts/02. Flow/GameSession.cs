@@ -36,6 +36,7 @@ namespace SquareTD
         public int AdaptiveValue { get; private set; }
         public int CurrentLimit => BaseLimit + SumLimitModifiers();
         public bool IsOver { get; private set; }
+        public BattleResults Results { get; } = new BattleResults();
         public EmblemSharedState Shared { get; } = new EmblemSharedState();
         public BossMechanicService BossMechanics { get; } = new BossMechanicService();
         public int HelDeathTarget => Mathf.Max(1, m_mode == GameMode.Hard ? m_helHardDeathTarget : m_helNormalDeathTarget);
@@ -189,6 +190,7 @@ namespace SquareTD
         {
             if (IsOver) return;
             IsOver = true;
+            if (!SimulationRunner.IsOn) Results.Capture(false);
             Debug.Log($"[GameSession] 게임 오버: {reason}");
             TurnManager.Instance.EndGame(new GameOverState());
         }
@@ -197,6 +199,7 @@ namespace SquareTD
         {
             if (IsOver) return;
             IsOver = true;
+            if (!SimulationRunner.IsOn) Results.Capture(true);
             Debug.Log($"[GameSession] 게임 클리어");
             TurnManager.Instance.EndGame(new GameClearState());
         }

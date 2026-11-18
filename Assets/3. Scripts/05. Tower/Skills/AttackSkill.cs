@@ -18,20 +18,14 @@ namespace SquareTD
         public int Fire(TowerController owner, ITarget mainTarget)
         {
             TowerFinalStats stats = owner.Stats;
-            TowerStack stack = owner.State.Stack;
 
-            bool useStack = stack.IsFull;
-
-            if (CastInstead(owner, mainTarget, useStack))
+            if (CastInstead(owner, mainTarget))
             {
-                if (useStack) stack.Consume();
                 SkillEffectTable.PlayCast(owner);
                 return 1;
             }
 
-            float damage = SkillFormula.AttackSkill(stats.Power, stats.AbilityValue);
-            float baseDamage = damage;
-            if (useStack) damage = SkillFormula.WithStack(damage, stack.Max, stats.StackValue) * (1f + stats.Get(StatType.ChargeBonus));
+            float damage = SkillFormula.AttackSkill(stats.Power, stats.SkillAbility);
 
             bool isCritical = RollCritical(owner, stats, mainTarget);
             List<ITarget> area = GetArea(owner, mainTarget);
@@ -61,12 +55,10 @@ namespace SquareTD
 
             if (hitCount > 0)
             {
-                string stackText = useStack ? $" → 스택 {stack.Max:0}개 ×{damage / baseDamage:0.##} = {damage:0.##}" : " (스택 안 씀)";
                 string critText = isCritical ? $" → 치명 ×{CriticalRoll.Multiplier(stats.CriticalDamage):0.##}" : "";
                 string dealtText = Mathf.Approximately(minDealt, maxDealt) ? $"{minDealt:0.##}" : $"{minDealt:0.##} ~ {maxDealt:0.##}";
-                Debug.Log($"[Skill] {owner.name} 스킬 피해: 위력 {stats.Power:0.##} × 능력치 {stats.AbilityValue:0.##} = {baseDamage:0.##}{stackText}{critText} → 방어 뒤 실제 {dealtText} ({hitCount}명)");
+                Debug.Log($"[Skill] {owner.name} 스킬 피해: 위력 {stats.Power:0.##} × 능력치 {stats.SkillAbility:0.##} = {damage:0.##}{critText} → 방어 뒤 실제 {dealtText} ({hitCount}명)");
             }
-            if (useStack && hitCount > 0) stack.Consume();
             if (hitCount > 0) OnFired(owner, hitCount);
             return hitCount;
         }
@@ -78,13 +70,9 @@ namespace SquareTD
 
         public virtual bool BlocksBasicAttack(TowerController owner) => false;
 
-        protected virtual bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack) => false;
+        protected virtual bool CastInstead(TowerController owner, ITarget mainTarget) => false;
         protected virtual bool RollCritical(TowerController owner, TowerFinalStats stats, ITarget mainTarget) => false;
         protected virtual bool IsCriticalAgainst(TowerController owner, ITarget target) => false;
-
-        protected static float ChargedAbility(TowerFinalStats stats, bool useStack) =>
-            useStack ? SkillFormula.ChargedAbility(stats.AbilityValue, stats.Stack, stats.StackValue) * (1f + stats.Get(StatType.ChargeBonus))
-                     : stats.AbilityValue;
 
         protected static ITarget HighestHp(List<ITarget> candidates)
         {

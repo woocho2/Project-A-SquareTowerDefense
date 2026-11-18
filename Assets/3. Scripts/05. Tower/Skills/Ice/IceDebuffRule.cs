@@ -4,6 +4,7 @@ namespace SquareTD
     //                                         얼음 타워가 그 적을 공격하면 AttackCount 광역 +1, 단일 +2)
     public class IceDebuffRule : DebuffRule
     {
+        public const float BronzeChill = 10f;
         public const float DeepFreezeDamageTaken = 0.5f;
         public const int SplashAttackCountBonus = 1;
         public const int TargetAttackCountBonus = 2;
@@ -20,7 +21,7 @@ namespace SquareTD
         {
             if (!cast.IsSkill2)
             {
-                ChillEffect.Add(enemy, Resist(enemy, cast.Amount));
+                ChillEffect.Add(enemy, Resist(enemy, cast.Bronze(BronzeChill)));
                 return;
             }
 

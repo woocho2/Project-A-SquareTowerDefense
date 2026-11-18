@@ -7,7 +7,7 @@ namespace SquareTD.Tests
     public class TowerProgressionTest
     {
         private const string Header =
-            "ID,Name,Power,Range,Action,AttackCount,CriticalRate,CriticalDamage,Mastery,Stack,Duration,AbilityValue,ProjectileSpeed,TargetPriority";
+            "ID,Name,Power,Range,Action,AttackCount,CriticalRate,CriticalDamage,Mastery,Duration,AbilityValue,ProjectileSpeed,TargetPriority";
 
         private readonly List<GameObject> m_created = new List<GameObject>();
         private TowerSlots m_slots;
@@ -26,7 +26,7 @@ namespace SquareTD.Tests
         }
 
         private static TowerDefinition Def(int id) =>
-            new TowerDefinition(id, 10f, 2, 3, 1, 0f, 0f, 1, 60, 5, 2f, 5f, TargetPriority.Closest);
+            new TowerDefinition(id, 10f, 2, 3, 1, 0f, 0f, 1, 5, 2f, 5f, TargetPriority.Closest);
 
         private TowerController Place(int id, int slot)
         {
@@ -41,7 +41,7 @@ namespace SquareTD.Tests
         private static TowerDatabase Database(params int[] ids)
         {
             var lines = new List<string> { Header };
-            foreach (int id in ids) lines.Add($"{id},t,10,2,3,1,0,0,1,60,5,2,5,Closest");
+            foreach (int id in ids) lines.Add($"{id},t,10,2,3,1,0,0,1,5,2,5,Closest");
             var database = new TowerDatabase();
             database.Load(string.Join("\n", lines));
             return database;

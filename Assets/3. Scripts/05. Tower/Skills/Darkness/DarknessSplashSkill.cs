@@ -15,11 +15,11 @@ namespace SquareTD
             m_grounds = grounds;
         }
 
-        protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
+        protected override bool CastInstead(TowerController owner, ITarget mainTarget)
         {
             if (mainTarget == null) return false;
             TowerFinalStats stats = owner.Stats;
-            float damage = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * TurnRatio * stats.FinalDamageMultiplier;
+            float damage = SkillFormula.AttackSkill(stats.Power, stats.SkillAbility) * TurnRatio * stats.FinalDamageMultiplier;
             m_grounds?.Add(new BlackHoleGround(owner, m_grid, m_occupancy, mainTarget.PathIndex, stats.Mastery, damage, SkillFormula.EffectTurns));
             return true;
         }

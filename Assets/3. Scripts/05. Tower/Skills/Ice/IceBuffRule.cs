@@ -7,6 +7,9 @@ namespace SquareTD
     {
         public const int ActionPenalty = 4;
         public const int IceActionPenalty = 2;
+        public const float BronzePower = 0.3f;
+        public const float BronzeCritRate = 0.03f;
+        public const float BronzeCritDamage = 0.45f;
 
         public override List<StatModifier> GetModifiers(SupportCast cast, TowerController receiver, string source)
         {
@@ -14,9 +17,9 @@ namespace SquareTD
             var modifiers = new List<StatModifier>
             {
                 StatModifier.Flat(source, StatType.MaxAction, action),
-                StatModifier.Percent(source, StatType.Power, cast.Rate),
-                StatModifier.Flat(source, StatType.CritRate, cast.Rate),
-                StatModifier.Flat(source, StatType.CritDamage, cast.Rate),
+                StatModifier.Percent(source, StatType.Power, cast.Bronze(BronzePower)),
+                StatModifier.Flat(source, StatType.CritRate, cast.Bronze(BronzeCritRate)),
+                StatModifier.Flat(source, StatType.CritDamage, cast.Bronze(BronzeCritDamage)),
             };
             if (cast.IsSkill2) modifiers.Add(StatModifier.Flat(source, StatType.Mastery, 1f));
             return modifiers;

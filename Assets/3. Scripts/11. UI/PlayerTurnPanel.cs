@@ -11,6 +11,7 @@ namespace SquareTD
         [SerializeField] TextMeshProUGUI txt_createTowerValue;
         [SerializeField] Button btn_buyXp;
         [SerializeField] TextMeshProUGUI txt_buyXpCost;
+        [SerializeField] TextMeshProUGUI txt_xpGain;
         [SerializeField] TextMeshProUGUI txt_level;
         [SerializeField] TextMeshProUGUI txt_xp;
         [SerializeField] Image img_xpFill;
@@ -18,6 +19,7 @@ namespace SquareTD
 
         private void Start()
         {
+            RefreshLayout();
             CurrencyManager.Instance.Changed += HandleCurrencyChanged;
             TowerManager.Instance.ColorLevels.XpChanged += Refresh;
 
@@ -30,7 +32,8 @@ namespace SquareTD
 
         private void OnEnable()
         {
-            if (TowerManager.Instance != null && CurrencyManager.Instance != null) Refresh();
+            RefreshLayout();
+            if (TowerManager.Instance != null && TowerManager.Instance.ColorLevels != null && CurrencyManager.Instance != null) Refresh();
         }
 
         private void OnDestroy()
@@ -45,6 +48,15 @@ namespace SquareTD
 
         private void HandleCurrencyChanged(int gold) => Refresh();
 
+        private void OnRectTransformDimensionsChange() => RefreshLayout();
+        private void RefreshLayout()
+        {
+            float width = ((RectTransform)transform).rect.width;
+            float scale = Mathf.Clamp((width - 1440f) / 440f, .65f, 1f);
+            if (btn_createTower != null) btn_createTower.transform.localScale = Vector3.one * scale;
+            if (btn_buyXp != null) btn_buyXp.transform.localScale = Vector3.one * scale;
+        }
+
         private void Refresh()
         {
             int buildCost = TowerManager.Instance.BuildCost;
@@ -58,6 +70,7 @@ namespace SquareTD
             if (txt_xp != null) txt_xp.text = level.IsMax ? "MAX" : $"{level.Xp} / {level.XpToNext}";
             if (img_xpFill != null) img_xpFill.fillAmount = level.IsMax ? 1f : (float)level.Xp / level.XpToNext;
             if (txt_buyXpCost != null) txt_buyXpCost.text = cost > 0 ? $"{cost}" : "MAX";
+            if (txt_xpGain != null) txt_xpGain.text = level.IsMax ? "완료" : $"+{BalanceTables.XpPerPurchase} EXP";
             if (btn_buyXp != null) btn_buyXp.interactable = cost > 0 && CurrencyManager.Instance.Gold >= cost;
         }
 

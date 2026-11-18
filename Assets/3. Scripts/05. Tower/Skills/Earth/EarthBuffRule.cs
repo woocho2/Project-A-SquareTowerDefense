@@ -5,9 +5,11 @@ namespace SquareTD
     // 대지 버프 — 버드 · 블로섬 (AbilityValue, 블로섬 SkillCount -Tier, 대지 타워는 공격마다 성장 +1)
     public class EarthBuffRule : BuffRule
     {
+        public const float BronzeAbilityValue = 0.05f;
+
         public override List<StatModifier> GetModifiers(SupportCast cast, TowerController receiver, string source)
         {
-            var modifiers = new List<StatModifier> { StatModifier.Percent(source, StatType.AbilityValue, cast.Rate) };
+            var modifiers = new List<StatModifier> { StatModifier.Percent(source, StatType.AbilityValue, cast.Bronze(BronzeAbilityValue)) };
             if (cast.IsSkill2) modifiers.Add(StatModifier.Flat(source, StatType.Duration, -cast.Tier));
             return modifiers;
         }

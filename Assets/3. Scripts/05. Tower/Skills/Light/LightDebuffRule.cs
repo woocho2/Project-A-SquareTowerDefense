@@ -8,15 +8,16 @@ namespace SquareTD
     public class LightDebuffRule : DebuffRule
     {
         public const string TowerBlindKey = "실명";
+        public const float BronzeBlind = 10f;
         public const float BlindPerTranscend = 100f;
         public const float VanishMaxHpCut = 0.1f;
         public const float LightFinalDamage = 0.2f;
 
         public override void OnApply(SupportCast cast, EnemyController enemy)
         {
-            float amount = Resist(enemy, cast.Amount);
+            float amount = Resist(enemy, cast.Bronze(BronzeBlind));
             BlindEffect.Add(enemy, amount);
-            AddTowerBlind(cast.Owner, cast.Amount);
+            AddTowerBlind(cast.Owner, cast.Bronze(BronzeBlind));
         }
 
         public override void OnSkill2(SupportCast cast)

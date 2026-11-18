@@ -3,7 +3,7 @@ using NUnit.Framework;
 namespace SquareTD.Tests
 {
     // 14문양의 버프·디버프 규칙 28개 (20번 4-3 ~ 4-16장)
-    //   버프·디버프 타워: Power 10, AbilityValue 2, 브론즈·컬러 1 → 스킬 1 값 10 (10%), 스킬 2 값 30 (30%), 유지 1번 행동
+    //   버프·디버프 타워: 브론즈 기준 Power 4, AbilityValue 0.1 → 스킬 1 배율 1 (브론즈 값 그대로), 스킬 2 배율 1.1
     //   받는 공격 타워: Power 10, AV 2, AttackCount 1, 최대 Action 3, 사거리 2, 치명타 0. 적: 이동력 2 ~ 4, 행동 주기 3
     //   보드 밖(BoardManager·GameSession 없음)이라 한도는 20, 골드는 0
     public class EmblemRuleTest : EmblemTestBase
@@ -24,7 +24,7 @@ namespace SquareTD.Tests
         {
             TowerController receiver = MakeTower(1103);
             Buff1(1301, receiver);
-            Assert.AreEqual(11f, receiver.Stats.Power, Eps);
+            Assert.AreEqual(15f, receiver.Stats.Power, Eps, "공격력 +50%");
             Assert.AreEqual(0f, receiver.Stats.Get(StatType.FinalDamage), Eps);
         }
 
@@ -35,7 +35,7 @@ namespace SquareTD.Tests
             Buff2(1301, slash);
             Buff2(1301, pierce);
 
-            Assert.AreEqual(13f, slash.Stats.Power, Eps);
+            Assert.AreEqual(15.5f, slash.Stats.Power, Eps, "50% × 1.1");
             Assert.AreEqual(0.1f, slash.Stats.Get(StatType.FinalDamage), Eps);
             Assert.AreEqual(0.1f, slash.Stats.CriticalRate, Eps, "베기 시너지");
             Assert.AreEqual(0f, pierce.Stats.CriticalRate, Eps);
@@ -55,10 +55,10 @@ namespace SquareTD.Tests
         {
             EnemyController enemy = MakeEnemy(hp: 100f);
             Debuff(MakeTower(1401), enemy, skill2: true);
-            Assert.AreEqual(70f, enemy.MaxHp, Eps);
+            Assert.AreEqual(89f, enemy.MaxHp, Eps, "10% × 1.1");
 
             enemy.Status.OnTurn();
-            Assert.AreEqual(0.7f, Lost(enemy), Eps);
+            Assert.AreEqual(0.89f, Lost(enemy), Eps);
         }
 
         [Test]
@@ -80,9 +80,9 @@ namespace SquareTD.Tests
             Buff1(1302, one);
             Buff2(1302, slash);
 
-            Assert.AreEqual(0.1f, one.Stats.CriticalDamage, Eps);
+            Assert.AreEqual(1f, one.Stats.CriticalDamage, Eps, "치명 피해 +100%p");
             Assert.AreEqual(3, one.Stats.Action);
-            Assert.AreEqual(0.5f, slash.Stats.CriticalDamage, Eps, "30% + 베기 20%");
+            Assert.AreEqual(1.3f, slash.Stats.CriticalDamage, Eps, "110% + 베기 20%");
             Assert.AreEqual(2, slash.Stats.Action);
         }
 
@@ -90,14 +90,14 @@ namespace SquareTD.Tests
         public void 도끼_디버프_데스_센텐스는_밟은_턴에_기준_미만이면_즉사()
         {
             EnemyController low = MakeEnemy(hp: 100f), high = MakeEnemy(hp: 100f);
-            low.TakeDamage(Hit(95f));
+            low.TakeDamage(Hit(97f));
             high.TakeDamage(Hit(80f));
 
             TowerController tower = MakeTower(1402);
             Debuff(tower, low);
             Debuff(tower, high);
 
-            Assert.IsFalse(low.IsAlive, "체력 5% < 10%");
+            Assert.IsFalse(low.IsAlive, "체력 3% < 5%");
             Assert.IsTrue(high.IsAlive, "체력 20%");
         }
 
@@ -110,10 +110,10 @@ namespace SquareTD.Tests
             Debuff(tower, alive, skill2: true);
 
             Assert.AreEqual(110f, alive.PreviewDamage(Hit(100f)), Eps);
-            executed.TakeDamage(Hit(70f));
+            executed.TakeDamage(Hit(88f));
             alive.TakeDamage(Hit(50f));
 
-            Assert.IsFalse(executed.IsAlive, "77 피해 → 23% < 30%");
+            Assert.IsFalse(executed.IsAlive, "96.8 피해 → 3.2% < 5.5%");
             Assert.IsTrue(alive.IsAlive, "55 피해 → 45%");
         }
 
@@ -125,11 +125,11 @@ namespace SquareTD.Tests
             Debuff(tower, bySlash, skill2: true);
             Debuff(tower, byPierce, skill2: true);
 
-            bySlash.TakeDamage(Hit(56f, AttackAttribute.Slash));
-            byPierce.TakeDamage(Hit(56f, AttackAttribute.Pierce));
+            bySlash.TakeDamage(Hit(80f, AttackAttribute.Slash));
+            byPierce.TakeDamage(Hit(80f, AttackAttribute.Pierce));
 
-            Assert.IsFalse(bySlash.IsAlive, "38.4% < 40%");
-            Assert.IsTrue(byPierce.IsAlive, "38.4% > 30%");
+            Assert.IsFalse(bySlash.IsAlive, "12% < 15.5%");
+            Assert.IsTrue(byPierce.IsAlive, "12% > 5.5%");
         }
 
         // ── 활 ──
@@ -140,9 +140,9 @@ namespace SquareTD.Tests
             TowerController receiver = MakeTower(1101);
             Buff1(1303, receiver);
 
-            Assert.AreEqual(1.1f, receiver.Stats.GetDistanceMultiplier(1), Eps);
-            Assert.AreEqual(1.2f, receiver.Stats.GetDistanceMultiplier(2), Eps);
-            Assert.AreEqual(1.2f, receiver.Stats.GetDistanceMultiplier(5), Eps, "최대치는 사거리 끝");
+            Assert.AreEqual(1.2f, receiver.Stats.GetDistanceMultiplier(1), Eps);
+            Assert.AreEqual(1.4f, receiver.Stats.GetDistanceMultiplier(2), Eps);
+            Assert.AreEqual(1.4f, receiver.Stats.GetDistanceMultiplier(5), Eps, "최대치는 사거리 끝");
         }
 
         [Test]
@@ -152,7 +152,7 @@ namespace SquareTD.Tests
             Buff2(1303, pierce);
 
             Assert.AreEqual(3, pierce.Stats.Range);
-            Assert.AreEqual(1f + 0.3f * 3f, pierce.Stats.GetDistanceMultiplier(0), Eps);
+            Assert.AreEqual(1f + 0.22f * 3f, pierce.Stats.GetDistanceMultiplier(0), Eps);
         }
 
         [Test]
@@ -175,8 +175,8 @@ namespace SquareTD.Tests
             pierced.TakeDamage(Hit(100f, AttackAttribute.Pierce));
             slashed.TakeDamage(Hit(100f, AttackAttribute.Slash));
 
-            Assert.AreEqual(130f + 26f, Lost(pierced), Eps, "130 + 그 피해의 20%");
-            Assert.AreEqual(130f, Lost(slashed), Eps);
+            Assert.AreEqual(111f + 22.2f, Lost(pierced), Eps, "111 + 그 피해의 20%");
+            Assert.AreEqual(111f, Lost(slashed), Eps);
         }
 
         // ── 창 ──
@@ -188,7 +188,7 @@ namespace SquareTD.Tests
             Buff2(1304, receiver);
 
             Assert.AreEqual(1, receiver.Stats.AttackCount);
-            Assert.AreEqual(13f, receiver.Stats.Power, Eps, "AttackCount 1이라 모아 찌르기 × 1, 공격력 +30%");
+            Assert.AreEqual(18.25f, receiver.Stats.Power, Eps, "AttackCount 1이라 모아 찌르기 × 1, 공격력 +75% × 1.1");
             Assert.AreEqual(0.1f, receiver.Stats.CriticalRate, Eps);
             Assert.AreEqual(0.1f, receiver.Stats.ArmorPenetration, Eps);
         }
@@ -199,7 +199,7 @@ namespace SquareTD.Tests
             TowerController owner = MakeTower(1304), pierce = MakeTower(1103);
             EnemyController enemy = MakeEnemy();
 
-            SkillRegistry.GetBuffRule(TowerEmblem.Spear).OnReceiverHit(SupportCast.Skill2(owner, false), pierce, enemy);
+            SkillRegistry.GetBuffRule(TowerEmblem.Spear).OnReceiverHit(SupportCast.Skill2(owner), pierce, enemy);
 
             Assert.AreEqual(0.6f, enemy.Stats.Get(StatType.HealingTaken), Eps);
         }
@@ -212,14 +212,14 @@ namespace SquareTD.Tests
 
             enemy.TakeDamage(Hit(100f));
             enemy.Status.OnTurn();
-            Assert.AreEqual(110f, Lost(enemy), Eps, "100 + 출혈 10 (1턴)");
+            Assert.AreEqual(105f, Lost(enemy), Eps, "100 + 출혈 5 (1턴)");
 
             enemy.Status.OnTurn();
             enemy.Status.OnTurn();
-            Assert.AreEqual(130f, Lost(enemy), Eps, "출혈 10씩 3턴");
+            Assert.AreEqual(115f, Lost(enemy), Eps, "출혈 5씩 3턴");
 
             enemy.Status.OnTurn();
-            Assert.AreEqual(130f, Lost(enemy), Eps, "출혈 턴이 끝남");
+            Assert.AreEqual(115f, Lost(enemy), Eps, "출혈 턴이 끝남");
         }
 
         [Test]
@@ -233,7 +233,7 @@ namespace SquareTD.Tests
 
             enemy.TakeDamage(Hit(100f, AttackAttribute.Pierce));
             enemy.Status.OnTurn();
-            Assert.AreEqual(160f, Lost(enemy), Eps, "100 + 100 × 30% × 2");
+            Assert.AreEqual(111f, Lost(enemy), Eps, "100 + 100 × 5.5% × 2");
         }
 
         // ── 방패 ──
@@ -243,7 +243,7 @@ namespace SquareTD.Tests
         {
             TowerController receiver = MakeTower(1101);
             Buff1(1305, receiver);
-            Assert.AreEqual(1f + 0.1f * 20f, receiver.Stats.FinalDamageMultiplier, Eps, "한도 20");
+            Assert.AreEqual(1f + 0.005f * 20f, receiver.Stats.FinalDamageMultiplier, Eps, "한도 1당 0.5%, 한도 20");
         }
 
         [Test]
@@ -252,7 +252,7 @@ namespace SquareTD.Tests
             TowerController blunt = MakeTower(1105);
             Buff2(1305, blunt);
 
-            Assert.AreEqual(0.3f * 20f, blunt.Stats.Get(StatType.FinalDamage), Eps);
+            Assert.AreEqual(0.0055f * 20f, blunt.Stats.Get(StatType.FinalDamage), Eps);
             Assert.AreEqual(10f * (1f + 0.002f * 20f), blunt.Stats.Power, Eps, "타격 시너지 +(한도 × 0.2)%");
             Assert.AreEqual(10, SkillRegistry.GetBuffRule(TowerEmblem.Shield).GetLimitModifier(20));
         }
@@ -262,7 +262,7 @@ namespace SquareTD.Tests
         {
             EnemyController enemy = MakeEnemy(resistance: 30f);
             Debuff(MakeTower(1405), enemy);
-            Assert.AreEqual(30f - 10f * 0.7f, enemy.Resistance.Effective, Eps, "깎는 양 10%p도 저항력만큼 줄어 7%p");
+            Assert.AreEqual(30f - 5f * 0.7f, enemy.Resistance.Effective, Eps, "깎는 양 5%p도 저항력만큼 줄어 3.5%p");
         }
 
         [Test]
@@ -285,9 +285,9 @@ namespace SquareTD.Tests
             TowerController owner = MakeTower(1306), blunt = MakeTower(1105);
 
             var gilding = rule.GetModifiers(SupportCast.Skill1(owner), blunt, "s");
-            var touch = rule.GetModifiers(SupportCast.Skill2(owner, false), blunt, "s");
+            var touch = rule.GetModifiers(SupportCast.Skill2(owner), blunt, "s");
 
-            Assert.AreEqual(0.1f * 100f, Sum(gilding, StatType.BonusDamage), Eps);
+            Assert.AreEqual(0.0005f * 100f, Sum(gilding, StatType.BonusDamage), Eps, "골드 1당 0.05%");
             Assert.AreEqual(0f, Sum(gilding, StatType.GoldBonus), Eps);
             Assert.AreEqual(0.5f, Sum(touch, StatType.GoldBonus), Eps);
             Assert.AreEqual(0.5f, Sum(touch, StatType.GoldDoubleChance), Eps, "타격 시너지");
@@ -303,9 +303,9 @@ namespace SquareTD.Tests
             var slashKill = new KillInfo { Damage = Hit(1f, AttackAttribute.Slash) };
             var bluntKill = new KillInfo { Damage = Hit(1f, AttackAttribute.Blunt, MakeTower(1105, slot: 1)) };
 
-            Assert.AreEqual(90f, cracked.Stats.Get(StatType.Defense), Eps);
+            Assert.AreEqual(95f, cracked.Stats.Get(StatType.Defense), Eps);
             Assert.AreEqual(0, EmblemDebuffEffect.On(cracked, TowerEmblem.Hammer).RollGoldBonus(slashKill));
-            Assert.AreEqual(70f, jackpot.Stats.Get(StatType.Defense), Eps);
+            Assert.AreEqual(94.5f, jackpot.Stats.Get(StatType.Defense), Eps);
             Assert.AreEqual(100, EmblemDebuffEffect.On(jackpot, TowerEmblem.Hammer).RollGoldBonus(slashKill));
             Assert.AreEqual(200, EmblemDebuffEffect.On(jackpot, TowerEmblem.Hammer).RollGoldBonus(bluntKill));
         }
@@ -313,12 +313,12 @@ namespace SquareTD.Tests
         // ── 불 ──
 
         [Test]
-        public void 불_버프_피닉스_페더는_공격_횟수_2배_공격력은_값_빼기_50()
+        public void 불_버프_피닉스_페더는_공격_횟수_2배_화력_합계가_10퍼센트()
         {
             TowerController receiver = MakeTower(1101);
             Buff1(1307, receiver);
             Assert.AreEqual(2, receiver.Stats.AttackCount);
-            Assert.AreEqual(6f, receiver.Stats.Power, Eps, "10 × (1 + (10 − 50)%)");
+            Assert.AreEqual(5.5f, receiver.Stats.Power, Eps, "2 × 5.5 = 11 → 합계 +10%");
         }
 
         [Test]
@@ -326,7 +326,7 @@ namespace SquareTD.Tests
         {
             TowerController fire = MakeTower(1107);
             Buff2(1307, fire);
-            Assert.AreEqual(9f, fire.Stats.Power, Eps, "10 × (1 + (30 − 50)% + 10%)");
+            Assert.AreEqual(6.55f, fire.Stats.Power, Eps, "10 × (1 + ((1 + 11%) / 2 − 1) + 10%)");
             Assert.AreEqual(0.2f, fire.Stats.CriticalDamage, Eps);
         }
 
@@ -339,7 +339,12 @@ namespace SquareTD.Tests
             Assert.AreEqual(10f, BurnEffect.Get(enemy), Eps);
             Assert.AreEqual(0.8f, enemy.Stats.Get(StatType.HealingTaken), Eps);
             enemy.Status.OnTurn();
+            Assert.AreEqual(0f, Lost(enemy), Eps, "움직이지 않은 턴은 화상이 터지지 않음");
+
+            MarkActed(enemy);
+            enemy.Status.OnTurn();
             Assert.AreEqual(1000f * 0.001f * 10f, Lost(enemy), Eps);
+            Assert.AreEqual(5f, BurnEffect.Get(enemy), Eps, "터진 뒤 절반");
         }
 
         [Test]
@@ -348,35 +353,41 @@ namespace SquareTD.Tests
             EnemyController enemy = MakeEnemy(hp: 1000f);
             Debuff(MakeTower(1407), enemy, skill2: true);
 
+            MarkActed(enemy);
             enemy.Status.OnTurn();
-            Assert.AreEqual(1000f * 0.001f * 30f * 2f, Lost(enemy), Eps);
+            Assert.AreEqual(1000f * 0.001f * 11f * 2f, Lost(enemy), Eps);
+            Assert.AreEqual(5f, BurnEffect.Get(enemy), Eps, "11 → 5 (소수 버림)");
 
             enemy.TakeDamage(Hit(0f, attacker: MakeTower(1107)));
-            Assert.AreEqual(31f, BurnEffect.Get(enemy), Eps, "+(Tier × 레벨) = 1");
+            Assert.AreEqual(6f, BurnEffect.Get(enemy), Eps, "+(Tier × 레벨) = 1");
         }
 
         // ── 물 ──
 
         [Test]
-        public void 물_버프는_차지_쌓이는_양_오버플로우는_차지_배율과_물_타워의_잃은_체력_비례()
+        public void 물_버프는_스킬_카운트_쌓이는_양_오버플로우는_스킬_피해와_물_타워의_잃은_체력_비례()
         {
             TowerController one = MakeTower(1101), water = MakeTower(1108);
             Buff1(1308, one);
             Buff2(1308, water);
 
-            Assert.AreEqual(0.1f, one.Stats.Get(StatType.StackGainRate), Eps);
-            Assert.AreEqual(0f, one.Stats.Get(StatType.ChargeBonus), Eps);
-            Assert.AreEqual(0.5f, water.Stats.Get(StatType.ChargeBonus), Eps);
+            Assert.AreEqual(WaterBuffRule.BronzeSkillCountGain, one.Stats.Get(StatType.SkillCountGainRate), Eps);
+            Assert.AreEqual(0f, one.Stats.Get(StatType.SkillDamageBonus), Eps);
+            Assert.AreEqual(0.5f, water.Stats.Get(StatType.SkillDamageBonus), Eps);
             Assert.AreEqual(0.1f, water.Stats.Get(StatType.LostHpDamage), Eps);
         }
 
         [Test]
-        public void 물_디버프_미스트는_젖음_10마다_최대_이동력_1()
+        public void 물_디버프_미스트는_젖음_10이면_다음_행동_최대_이동력_1_줄이고_사라짐()
         {
             EnemyController enemy = MakeEnemy();
             Debuff(MakeTower(1408), enemy);
             Assert.AreEqual(10f, WetEffect.Get(enemy), Eps);
             Assert.AreEqual(3f, enemy.Stats.Get(StatType.SpeedMax), Eps);
+
+            enemy.Status.OnMoved(2);
+            Assert.AreEqual(0f, WetEffect.Get(enemy), Eps, "행동 뒤 젖음 전부 사라짐");
+            Assert.AreEqual(4f, enemy.Stats.Get(StatType.SpeedMax), Eps);
         }
 
         [Test]
@@ -405,10 +416,10 @@ namespace SquareTD.Tests
             Buff1(1309, one);
             ReceiveSkill2(owner, earth);
 
-            Assert.AreEqual(2.2f, one.Stats.AbilityValue, Eps);
+            Assert.AreEqual(2.1f, one.Stats.AbilityValue, Eps, "스킬 계수 +5%");
             Assert.AreEqual(4f, earth.Stats.SkillCount, Eps, "5 − 1티어");
 
-            SkillRegistry.GetBuffRule(TowerEmblem.Earth).OnReceiverActed(SupportCast.Skill2(owner, false), earth);
+            SkillRegistry.GetBuffRule(TowerEmblem.Earth).OnReceiverActed(SupportCast.Skill2(owner), earth);
             Assert.AreEqual(1f, Growth.Get(earth), Eps);
         }
 
@@ -420,8 +431,8 @@ namespace SquareTD.Tests
             Debuff(tower, enemy);
 
             Assert.AreEqual(1f, Growth.Get(tower), Eps);
-            Assert.AreEqual(90f, enemy.MaxHp, Eps, "10% × 성장 1");
-            Assert.AreEqual(90f, enemy.Stats.Get(StatType.Defense), Eps);
+            Assert.AreEqual(97.5f, enemy.MaxHp, Eps, "2.5% × 성장 1");
+            Assert.AreEqual(97.5f, enemy.Stats.Get(StatType.Defense), Eps);
         }
 
         [Test]
@@ -448,10 +459,10 @@ namespace SquareTD.Tests
             slots.TryPlace(attack, 1);
             slots.TryPlace(buff, 2);
 
-            Growth.AddToOthers(slots, debuff, SupportCast.Skill1(debuff).Amount);
+            Growth.AddToOthers(slots, debuff, SupportCast.Skill1(debuff).Bronze(EarthDebuffRule.BronzeCut * 100f) * EarthDebuffRule.NourishRate);
 
-            Assert.AreEqual(10f, Growth.Get(attack), Eps, "루트 드레인 +Power");
-            Assert.AreEqual(10f, Growth.Get(buff), Eps, "문양·컬러 무관");
+            Assert.AreEqual(0.25f, Growth.Get(attack), Eps, "루트 드레인 2.5 × 0.1");
+            Assert.AreEqual(0.25f, Growth.Get(buff), Eps, "문양·컬러 무관");
             Assert.AreEqual(0f, Growth.Get(debuff), Eps);
         }
 
@@ -476,10 +487,10 @@ namespace SquareTD.Tests
 
             Assert.AreEqual(2, one.Stats.Action);
             Assert.AreEqual(2, one.Stats.AttackCount);
-            Assert.AreEqual(-0.04f, one.Stats.CriticalRate, Eps, "(10 × 0.1 − 5)%p");
+            Assert.AreEqual(-0.06f, one.Stats.CriticalRate, Eps, "브론즈 −6%p");
             Assert.AreEqual(10f, one.Stats.Power, Eps);
             Assert.AreEqual(11f, two.Stats.Power, Eps, "게일 포스 Power +10%");
-            Assert.AreEqual(-0.02f, two.Stats.CriticalRate, Eps);
+            Assert.AreEqual(-0.054f, two.Stats.CriticalRate, Eps, "−6%p × (2 − 1.1)");
         }
 
         [Test]
@@ -493,9 +504,9 @@ namespace SquareTD.Tests
             Assert.AreEqual(9, range.Max);
 
             enemy.Status.OnMoved(3);
-            Assert.AreEqual(30f, Lost(enemy), Eps, "3칸 × 10");
+            Assert.AreEqual(60f, Lost(enemy), Eps, "3칸 × 최대 체력 2%");
             enemy.Status.OnMoved(3);
-            Assert.AreEqual(30f, Lost(enemy), Eps, "다음 이동 한 번만");
+            Assert.AreEqual(60f, Lost(enemy), Eps, "다음 이동 한 번만");
         }
 
         [Test]
@@ -504,7 +515,7 @@ namespace SquareTD.Tests
             EnemyController enemy = MakeEnemy(hp: 1000f, resistance: 50f);
             Debuff(MakeTower(1410), enemy);
             enemy.Status.OnMoved(3);
-            Assert.AreEqual(15f, Lost(enemy), Eps);
+            Assert.AreEqual(30f, Lost(enemy), Eps, "3칸 × 1%");
         }
 
         [Test]
@@ -524,9 +535,9 @@ namespace SquareTD.Tests
             Buff1(1311, receiver);
 
             Assert.AreEqual(7, receiver.Stats.Action);
-            Assert.AreEqual(11f, receiver.Stats.Power, Eps);
-            Assert.AreEqual(0.1f, receiver.Stats.CriticalRate, Eps);
-            Assert.AreEqual(0.1f, receiver.Stats.CriticalDamage, Eps);
+            Assert.AreEqual(13f, receiver.Stats.Power, Eps);
+            Assert.AreEqual(0.03f, receiver.Stats.CriticalRate, Eps);
+            Assert.AreEqual(0.45f, receiver.Stats.CriticalDamage, Eps);
         }
 
         [Test]
@@ -539,18 +550,24 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 얼음_디버프_프로스트바이트는_한기_스택이고_50마다_빙결()
+        public void 얼음_디버프_프로스트바이트는_한기_25에_이동력_감소_50에_빙결()
         {
             EnemyController enemy = MakeEnemy();
             Debuff(MakeTower(1411), enemy);
 
             Assert.IsTrue(ChillEffect.IsChilled(enemy));
-            Assert.AreEqual(1f, enemy.Stats.Get(StatType.SpeedMin), Eps);
+            Assert.AreEqual(2f, enemy.Stats.Get(StatType.SpeedMin), Eps, "한기 10은 아직 효과 없음");
+
+            ChillEffect.Add(enemy, 15f);
+            Assert.AreEqual(1f, enemy.Stats.Get(StatType.SpeedMin), Eps, "한기 25");
             Assert.AreEqual(3f, enemy.Stats.Get(StatType.SpeedMax), Eps);
             Assert.IsFalse(FreezeEffect.IsFrozen(enemy));
 
-            ChillEffect.Add(enemy, 40f);
+            ChillEffect.Add(enemy, 25f);
             Assert.IsTrue(FreezeEffect.IsFrozen(enemy), "한기 50");
+
+            enemy.Status.Remove(ImmobilizeEffect.ImmobilizeKey);
+            Assert.AreEqual(0f, ChillEffect.Get(enemy), Eps, "빙결이 풀리면 한기 전부 사라짐");
         }
 
         [Test]
@@ -576,22 +593,22 @@ namespace SquareTD.Tests
             EnemyController enemy = MakeEnemy();
 
             Assert.AreEqual(3, receiver.Stats.AttackCount);
-            Assert.AreEqual(1f, receiver.Stats.Power, Eps, "(10 − 100)% = −90%");
-            Assert.AreEqual(-0.9f, receiver.Stats.CriticalRate, Eps);
+            Assert.AreEqual(2f, receiver.Stats.Power, Eps, "값 20 → (20 − 100)% = −80%");
+            Assert.AreEqual(-0.04f, receiver.Stats.CriticalRate, Eps);
 
             SkillRegistry.GetBuffRule(TowerEmblem.Electricity).OnReceiverHit(SupportCast.Skill1(owner), receiver, enemy);
-            Assert.AreEqual(10f, ChargeEffect.Get(enemy), Eps);
+            Assert.AreEqual(20f, ChargeEffect.Get(enemy), Eps);
         }
 
         [Test]
         public void 전기_버프_계산식이_100을_넘으면_공격력과_치명타가_오름()
         {
-            TowerController owner = MakeTower(1312, power: 150f), receiver = MakeTower(1101);
+            TowerController owner = MakeTower(1312, power: 30f), receiver = MakeTower(1101);
             Receive(MakeZone(owner, true), receiver);
 
             Assert.AreEqual(3, receiver.Stats.AttackCount);
-            Assert.AreEqual(15f, receiver.Stats.Power, Eps, "(150 − 100)% = +50%");
-            Assert.AreEqual(0.5f, receiver.Stats.CriticalRate, Eps);
+            Assert.AreEqual(15f, receiver.Stats.Power, Eps, "Power 30 → 값 150 → (150 − 100)% = +50%");
+            Assert.AreEqual(0.22f, receiver.Stats.CriticalRate, Eps, "−4%p × (2 − 7.5)");
         }
 
         [Test]
@@ -600,8 +617,8 @@ namespace SquareTD.Tests
             TowerController owner = MakeTower(1312), electric = MakeTower(1112);
             EnemyController enemy = MakeEnemy();
 
-            SkillRegistry.GetBuffRule(TowerEmblem.Electricity).OnReceiverHit(SupportCast.Skill2(owner, false), electric, enemy);
-            Assert.AreEqual(60f, ChargeEffect.Get(enemy), Eps);
+            SkillRegistry.GetBuffRule(TowerEmblem.Electricity).OnReceiverHit(SupportCast.Skill2(owner), electric, enemy);
+            Assert.AreEqual(44f, ChargeEffect.Get(enemy), Eps, "22 × 2");
         }
 
         [Test]
@@ -609,8 +626,8 @@ namespace SquareTD.Tests
         {
             EnemyController enemy = MakeEnemy(hp: 1000f);
             Debuff(MakeTower(1412), enemy);
-            Assert.AreEqual(10f, ChargeEffect.Get(enemy), Eps);
-            Assert.AreEqual(100.1f, enemy.PreviewDamage(Hit(100f)), Eps, "전하 10 × 0.01%");
+            Assert.AreEqual(20f, ChargeEffect.Get(enemy), Eps);
+            Assert.AreEqual(100.2f, enemy.PreviewDamage(Hit(100f)), Eps, "전하 20 × 0.01%");
         }
 
         // ── 빛 ──
@@ -620,10 +637,10 @@ namespace SquareTD.Tests
         {
             TowerController owner = MakeTower(1313), receiver = MakeTower(1101);
             Receive(MakeZone(owner, true), receiver);
-            Assert.AreEqual(1.1f, receiver.Stats.FinalDamageMultiplier, Eps);
+            Assert.AreEqual(1.05f, receiver.Stats.FinalDamageMultiplier, Eps);
 
             float before = EmblemSharedState.Current.TranscendCount;
-            SkillRegistry.GetBuffRule(TowerEmblem.Light).OnSkill2(SupportCast.Skill2(owner, false));
+            SkillRegistry.GetBuffRule(TowerEmblem.Light).OnSkill2(SupportCast.Skill2(owner));
             Assert.AreEqual(before + 1f, EmblemSharedState.Current.TranscendCount, Eps);
         }
 
@@ -631,7 +648,7 @@ namespace SquareTD.Tests
         public void 빛_버프_어센션을_받는_빛_타워가_행동하면_버프_타워의_스킬_카운트_1()
         {
             TowerController owner = MakeTower(1313), light = MakeTower(1113);
-            SkillRegistry.GetBuffRule(TowerEmblem.Light).OnReceiverActed(SupportCast.Skill2(owner, false), light);
+            SkillRegistry.GetBuffRule(TowerEmblem.Light).OnReceiverActed(SupportCast.Skill2(owner), light);
             Assert.AreEqual(1f, owner.State.SkillCount, Eps);
         }
 
@@ -675,7 +692,7 @@ namespace SquareTD.Tests
 
             Assert.AreEqual(0, below.Count);
             Assert.AreEqual(3, third.Count);
-            Assert.AreEqual(0.1f, Sum(third, StatType.CritDamage), Eps);
+            Assert.AreEqual(0.35f, Sum(third, StatType.CritDamage), Eps, "300 단계 치명 피해 +35%p");
             Assert.AreEqual(10, all.Count);
             Assert.AreEqual(1f, Sum(all, StatType.ForceFixedDamage), Eps, "카운트 900");
         }
@@ -688,8 +705,8 @@ namespace SquareTD.Tests
 
             rule.OnOwnerActed(owner);
             Assert.AreEqual(10f, EmblemSharedState.Current.DarknessCount, Eps);
-            rule.OnSkill2(SupportCast.Skill2(owner, false));
-            Assert.AreEqual(40f, EmblemSharedState.Current.DarknessCount, Eps);
+            rule.OnSkill2(SupportCast.Skill2(owner));
+            Assert.AreEqual(21f, EmblemSharedState.Current.DarknessCount, Eps, "10 + 10 × 1.1");
         }
 
         [Test]
@@ -698,11 +715,11 @@ namespace SquareTD.Tests
             EnemyController enemy = MakeEnemy();
             Debuff(MakeTower(1414), enemy);
 
-            Assert.AreEqual(10f, ErosionEffect.Get(enemy), Eps);
-            Assert.AreEqual(10f, EmblemSharedState.Current.DarknessCount, Eps);
+            Assert.AreEqual(20f, ErosionEffect.Get(enemy), Eps);
+            Assert.AreEqual(20f, EmblemSharedState.Current.DarknessCount, Eps);
 
             enemy.Execute(Hit(0f));
-            Assert.AreEqual(20f, EmblemSharedState.Current.DarknessCount, Eps);
+            Assert.AreEqual(40f, EmblemSharedState.Current.DarknessCount, Eps);
         }
 
         [Test]

@@ -6,13 +6,14 @@ namespace SquareTD
     //                                     어둠 타워가 치면 그 타일의 모든 적 침식 +1)
     public class DarknessDebuffRule : DebuffRule
     {
+        public const float BronzeErosion = 20f;
         public const float PlagueBonusDamage = 0.1f;
         public const float DarkTileErosion = 1f;
 
         public override void OnApply(SupportCast cast, EnemyController enemy)
         {
-            ErosionEffect.Add(enemy, cast.Amount);
-            EmblemSharedState.Current.AddDarkness(cast.Amount);
+            ErosionEffect.Add(enemy, cast.Bronze(BronzeErosion));
+            EmblemSharedState.Current.AddDarkness(cast.Bronze(BronzeErosion));
         }
 
         public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy) =>

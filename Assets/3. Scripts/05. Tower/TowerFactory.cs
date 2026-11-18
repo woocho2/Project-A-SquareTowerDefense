@@ -58,7 +58,7 @@ namespace SquareTD
         }
 
         public static TowerDefinition MakeSynergyDefinition(int id) =>
-            new TowerDefinition(id, 0f, 0, 0, 0, 0f, 0f, 0, 0, 0f, 0f, 0f, TargetPriority.Closest);
+            new TowerDefinition(id, 0f, 0, 0, 0, 0f, 0f, 0, 0f, 0f, 0f, TargetPriority.Closest);
 
         private TowerAction CreateAction(TowerColor color)
         {

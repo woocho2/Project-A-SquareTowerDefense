@@ -55,7 +55,7 @@ namespace SquareTD.Tests
             go.transform.SetParent(m_root.transform);
             var tower = go.AddComponent<TowerController>();
             var action = new FakeAction(m_actOrder);
-            var definition = new TowerDefinition(id, 10f, 1, 1, 1, 0f, 0f, 1, 60, 5, 2f, 5f, TargetPriority.Closest);
+            var definition = new TowerDefinition(id, 10f, 1, 1, 1, 0f, 0f, 1, 5, 2f, 5f, TargetPriority.Closest);
             tower.Init(definition, slot, action);
             m_slots.TryPlace(tower, slot);
             return action;

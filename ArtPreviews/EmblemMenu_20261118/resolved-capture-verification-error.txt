@@ -1,0 +1,4 @@
+System.InvalidOperationException: 실제 클릭 위치 확인: Select
+  at SquareTD.EditorTools.EmblemMenuVerification.Check (System.Boolean condition, System.String label) [0x00015] in D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\Assets\Editor\EmblemMenuVerification.cs:46 
+  at SquareTD.EditorTools.EmblemMenuVerification.Click (UnityEngine.Transform target) [0x0018f] in D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\Assets\Editor\EmblemMenuVerification.cs:63 
+  at SquareTD.EditorTools.EmblemMenuVerification.Tick () [0x0067a] in D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\Assets\Editor\EmblemMenuVerification.cs:129 

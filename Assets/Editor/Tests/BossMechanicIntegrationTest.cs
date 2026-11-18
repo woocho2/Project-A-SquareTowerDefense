@@ -49,8 +49,8 @@ namespace SquareTD.Tests
             Property(m_enemies, "Registry", new EnemyRegistry());
             Property(m_enemies, "BossTimer", new BossTimer());
             var database = new TowerDatabase();
-            database.Load("ID,Power,Range,Action,AttackCount,CriticalRate,CriticalDamage,Mastery,Stack,Duration,AbilityValue,ProjectileSpeed,TargetPriority\n" +
-                          "1101,100,2,4,2,0,0,1,60,5,2,5,Closest\n1201,100,2,4,2,0,0,1,60,5,2,5,Closest");
+            database.Load("ID,Power,Range,Action,AttackCount,CriticalRate,CriticalDamage,Mastery,Duration,AbilityValue,ProjectileSpeed,TargetPriority\n" +
+                          "1101,100,2,4,2,0,0,1,5,2,5,Closest\n1201,100,2,4,2,0,0,1,5,2,5,Closest");
             Property(m_towers, "Database", database);
             Property(m_towers, "ColorLevels", new ColorUpgradeState());
             Field(m_towers, "m_selectedEmblems", new List<TowerEmblem> { TowerEmblem.Sword });
@@ -262,7 +262,7 @@ namespace SquareTD.Tests
         {
             TowerController first = Tower(2101, 0);
             TowerController second = Tower(2101, 1);
-            var support = new TowerDefinition(1301, 10, 2, 3, 1, 0, 0, 1, 60, 5, 2, 5, TargetPriority.Closest);
+            var support = new TowerDefinition(1301, 10, 2, 3, 1, 0, 0, 1, 5, 2, 5, TargetPriority.Closest);
             first.ChangeDefinition(support, support,
                 new BuffZoneAction(m_board.Grid, m_board.Occupancy, m_board.Zones, m_board.Slots), m_towers.ColorLevels, null);
             m_board.Zones.EnsureZones(first, 1, true);

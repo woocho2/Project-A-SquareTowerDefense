@@ -14,13 +14,13 @@ namespace SquareTD
 
         public static int SpearCount(TowerController owner) => SkillFormula.LevelTierCount(owner);
 
-        protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
+        protected override bool CastInstead(TowerController owner, ITarget mainTarget)
         {
             ITarget target = HighestInRange(owner);
             if (target == null) return false;
 
             TowerFinalStats stats = owner.Stats;
-            float damage = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * SpearRatio;
+            float damage = SkillFormula.AttackSkill(stats.Power, stats.SkillAbility) * SpearRatio;
             int spears = SpearCount(owner);
             var visualPath = new List<UnityEngine.Vector3>();
 

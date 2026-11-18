@@ -25,6 +25,18 @@ namespace SquareTD
 
         public override IEnumerator Act(TowerController tower, TowerFinalStats stats, AttackHandle handle)
         {
+            if (SimulationRunner.SupportsGlobal || SimulationRunner.SupportsAura)
+            {
+                DebuffRule rule = SkillRegistry.GetDebuffRule(tower.Definition.Emblem);
+                Vector3Int center = m_grid.GetSpawnCell(tower.SlotIndex);
+                foreach (EnemyController enemy in new List<EnemyController>(m_enemies()))
+                {
+                    if (enemy == null || !enemy.IsAlive) continue;
+                    if (SimulationRunner.SupportsAura &&
+                        BoardGrid.GetTileDistance(center, m_grid.GetPathCell(enemy.PathIndex)) > SimulationRunner.AuraRange) continue;
+                    Apply(rule, SupportCast.Skill1(tower), enemy, -1);
+                }
+            }
             int fires = SupportSkillCount.Advance(tower);
             for (int i = 0; i < fires; i++) FireSkill2(tower);
             yield break;

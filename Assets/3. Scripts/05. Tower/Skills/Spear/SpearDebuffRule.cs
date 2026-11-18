@@ -5,11 +5,12 @@ namespace SquareTD
     // 창 디버프 — 래서레이트 · 헤머리지 (받은 피해의 일부가 출혈, 헤머리지 최소·최대 이동력 -1, 찌르기의 출혈 2배)
     public class SpearDebuffRule : DebuffRule
     {
+        public const float BronzeBleedRate = 0.05f;
         public const float PierceBleedMultiplier = 2f;
 
         public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy)
         {
-            return new SpearDebuffEffect(cast, Resist(enemy, cast.Rate));
+            return new SpearDebuffEffect(cast, Resist(enemy, cast.Bronze(BronzeBleedRate)));
         }
     }
 

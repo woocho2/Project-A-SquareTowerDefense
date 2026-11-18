@@ -133,6 +133,19 @@ namespace SquareTD.Tests
         }
 
         [Test]
+        public void 큐브_6면에는_6종이_중복_없이_하나씩()
+        {
+            var indices = new int[EnemyCubeMeshVisual.FaceCount];
+            for (int run = 0; run < 50; run++)
+            {
+                EnemyCubeMeshVisual.ShuffleFaceAssets(indices);
+                var seen = new System.Collections.Generic.HashSet<int>(indices);
+                Assert.AreEqual(EnemyCubeMeshVisual.FaceCount, seen.Count);
+                for (int asset = 0; asset < EnemyCubeMeshVisual.FaceCount; asset++) Assert.IsTrue(seen.Contains(asset));
+            }
+        }
+
+        [Test]
         public void 자가치유_면만_눈금_곱하기_2점5퍼센트_치유()
         {
             Assert.AreEqual(0.1f, EnemyCubeFaces.GetHealRate(EnemyCubeFaceAsset.SelfHeal, 4), 0.0001f);

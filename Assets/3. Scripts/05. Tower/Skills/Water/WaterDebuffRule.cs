@@ -3,11 +3,12 @@ namespace SquareTD
     // 물 디버프 — 미스트 · 세이렌 송 (젖음 스택, 세이렌 송 받는 피해 +10%, 물 타워에게 맞으면 +10% 더, 다음 행동 이동력 +2)
     public class WaterDebuffRule : DebuffRule
     {
+        public const float BronzeWet = 10f;
         public const float SirenDamageTaken = 0.1f;
         public const float WaterDamageTaken = 0.1f;
         public const int SlipSpeed = 2;
 
-        public override void OnApply(SupportCast cast, EnemyController enemy) => WetEffect.Add(enemy, Resist(enemy, cast.Amount));
+        public override void OnApply(SupportCast cast, EnemyController enemy) => WetEffect.Add(enemy, Resist(enemy, cast.Bronze(BronzeWet)));
 
         public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy) =>
             cast.IsSkill2 ? new WaterDebuffEffect(cast, Resist(enemy, SirenDamageTaken), Resist(enemy, WaterDamageTaken)) : null;

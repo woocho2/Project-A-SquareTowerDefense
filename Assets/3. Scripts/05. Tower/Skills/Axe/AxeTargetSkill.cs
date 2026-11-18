@@ -12,12 +12,12 @@ namespace SquareTD
 
         public override bool NeedsLivingTarget => false;
 
-        protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
+        protected override bool CastInstead(TowerController owner, ITarget mainTarget)
         {
             TimedTowerBuff.Remove(owner.State, Source);
             TowerFinalStats stats = owner.Stats;
 
-            float percent = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack));
+            float percent = SkillFormula.AttackSkill(stats.Power, stats.SkillAbility);
 
             TimedTowerBuff.Apply(owner.State, Source, SkillFormula.EffectActions,
                 StatModifier.Flat(Source, StatType.CritRate, 1f),

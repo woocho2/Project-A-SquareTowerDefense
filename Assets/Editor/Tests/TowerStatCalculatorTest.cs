@@ -6,7 +6,7 @@ namespace SquareTD.Tests
     public class TowerStatCalculatorTest
     {
         private static TowerDefinition Def(int id, float power = 10f, float critRate = 0.1f) =>
-            new TowerDefinition(id, power, 2, 3, 1, critRate, 1.5f, 1, 60, 5, 2f, 5f, TargetPriority.Closest);
+            new TowerDefinition(id, power, 2, 3, 1, critRate, 1.5f, 1, 5, 2f, 5f, TargetPriority.Closest);
 
         private static TowerFinalStats Calc(TowerDefinition definition, TowerDefinition tier1, int level, params StatModifier[] modifiers)
         {
@@ -27,10 +27,8 @@ namespace SquareTD.Tests
             Assert.AreEqual(0.1f, stats.CriticalRate, 0.0001f);
             Assert.AreEqual(1.5f, stats.CriticalDamage, 0.0001f);
             Assert.AreEqual(1, stats.Mastery);
-            Assert.AreEqual(60, stats.Stack);
             Assert.AreEqual(5f, stats.SkillCount, 0.0001f);
             Assert.AreEqual(2f, stats.AbilityValue, 0.0001f);
-            Assert.AreEqual(1f, stats.StackValue, 0.0001f);
             Assert.AreEqual(1, stats.ColorLevel);
         }
 
@@ -43,8 +41,6 @@ namespace SquareTD.Tests
             Assert.AreEqual(2, stats.Action, "3 − 1");
             Assert.AreEqual(2, stats.Mastery);
             Assert.AreEqual(2, stats.AttackCount);
-            Assert.AreEqual(45, stats.Stack, "60 × 0.75");
-            Assert.AreEqual(2f, stats.StackValue, 0.0001f);
             Assert.AreEqual(4f, stats.SkillCount, 0.0001f, "5 × 0.8 = 4. SkillCount는 소수로 둠 (20번 10장)");
         }
 
@@ -64,14 +60,6 @@ namespace SquareTD.Tests
             Assert.AreEqual(4.5f, stats.SkillCount, 0.0001f, "5 × 0.9 (골드)");
         }
 
-        [Test]
-        public void 다이아에_레벨4면_최대_스택과_StackValue가_곱해짐()
-        {
-            TowerFinalStats stats = Calc(Def(4101), Def(1101), 4);
-
-            Assert.AreEqual(22, stats.Stack, "60 × 0.75 × 0.5 = 22.5 → 반올림 (짝수로) 22");
-            Assert.AreEqual(3f, stats.StackValue, 0.0001f, "2 × 1.5");
-        }
 
         [Test]
         public void 레벨5는_AbilityValue_x3()

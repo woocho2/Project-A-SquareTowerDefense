@@ -2235,3 +2235,85 @@
 [시뮬레이션 도구] (2026-11-17 — Claude)
 - -simSceneDeck(씬에 저장된 덱), -simSupport 0/1/2(그대로 / 버프·디버프 효과 끔 / 생성 때 광역·단일만). 보스가 살아남은 판은 *_bosstrace.csv(턴마다 보스 위치·체력·타워 거리·상태).
 - 버프·디버프 실험 Stage1 덱 40판·20웨이브: 그대로 36/40, 효과 끔 35/40, 공격만 40/40. 무작위 덱 세 묶음은 남음.
+
+[UI] 기본 공격·스킬 효과 간결화와 수치 계산 열기 (2026-11-18, 사용자 요청 — Codex)
+- 일반 타워 56종의 설명을 기본 효과/스킬 효과로 분리. 본문은 대상·적용 수치·핵심 효과를 짧게 표시하고, 밑줄 친 숫자를 누르면 현재 공격력·능력 계수·차지·타워별 보정 계산을 확인. 계산 복귀·타워 변경·닫기 처리, DOTween 페이드.
+- 버프/디버프 기본 설명의 스킬 카운트 충전 문구를 실제 존 효과로 교체. 스킬에는 전체 대상에 적용하는 강화 효과를 따로 표시. 타일 정보의 존 설명도 기본 효과를 사용.
+- 실제 SkillFormula 기준 공격 스킬 P×AV, 기본 서포트 P, 스킬 서포트 P×(1+AV)를 사용. 일반 공격 스킬과 직접 시전/서포트의 차지 스택 기준을 구분하고 계산 미리보기는 전투 상태를 변경하지 않음. 옛 젬 보상·도끼 행동 증가·지속 시간 등의 설명을 실제 코드와 맞춤.
+- 공유 UICanvas에 숫자 링크·계산 화면 연결. 정보 패널 레이아웃 재적용 시에도 연결 유지. 전투·밸런스 로직, 씬, 캐릭터 PNG는 변경하지 않음.
+- Unity EditMode 11개 통과, Stage1 PlayMode 실제 클릭 포함 22항목 통과. 새 UI 오류 0·텍스트 넘침 0. 마지막 편집 도구 연결 변경 뒤 Unity 컴파일 성공. 전체 스테이지 클리어·배포 빌드 미실행.
+- 기존 TowerManager persistent parent 참조의 타워 생성 오류 9회는 existingErrors로 별도 기록하며 수정하지 않음.
+- 원본 5파일 + .meta 5파일 백업: ArtBackups/SkillDescriptions_20261118. 원본 .meta 해시 모두 유지. 캡처·검증·변경 파일 해시: ArtPreviews/SkillDescriptions_20261118. 커밋하지 않음.
+[밸런스] 디버프 AbilityValue 0.75 → 0.11 (2026-11-18, 사용자)
+- TowerData.csv 14xx 14줄. 다이아 5레벨 차지 스킬 2가 524% → 약 90%. 스킬 1(Power%)은 그대로 (브론즈 4% ~ 다이아 16%).
+- 버프·디버프 실험(Stage1·무작위 덱, 노말 40판·20웨이브): 그대로·효과 끔·전체에 걸기가 비슷하고 공격만이 가장 높음 → 존 유지, 수치로 조정하기로 함 (21번).
+- 하드 40판 10웨이브: Stage1 덱 57.5%, 무작위 덱 35%.
+[구조] 차지를 모든 타워에서 없앰 (2026-11-18, 사용자)
+- TowerStack·TowerState.Stack, StatType.MaxStack·StackValue·StackGainRate·StackKeepHalf·ChargeBonus, 티어·레벨 표의 최대 차지·차지 위력 칸, SkillFormula.ChargedAbility·WithStack을 지움.
+- 공격 스킬은 늘 Power × AbilityValue (AttackSkill.CastInstead의 useStack 인자 제거, TowerFinalStats.SkillAbility = AV × (1 + SkillDamageBonus)). 버프·디버프 스킬 2는 늘 Power × (1 + AV).
+- 컬러 레벨 표는 네 컬러 공통 하나로 (AV ×1 / 1.25 / 1.5 / 2 / 3, 레벨 5 Mastery +1).
+- 물 버프: 웰스프링 = 스킬 카운트 쌓이는 양 +(Power × 계수)% (StatType.SkillCountGainRate, WaterBuffRule.SkillCountScale 1), 오버플로우 = 스킬 2 피해 +50% (StatType.SkillDamageBonus). 물 타워의 잃은 체력 비례 +10%는 그대로.
+- 전기 광역 라이트닝 볼텍스: 전하 Tier × 레벨 × 10 (ElectricSplashSkill.VortexChargePerTierLevel).
+- UI: 타워 정보의 차지 칸은 "-", 설명의 차지 보정 → 스킬 피해 보정, 타일 정보의 차지 표시 제거. 에디터 ClickDebug·BuffComboDamageTool도 차지 제거.
+- CSV의 Stack 열과 TowerDefinition.Stack(생성자 인자)도 지움. 생성자를 부르던 22곳을 고침.
+- 테스트: 차지 전용 TowerStackTest·TowerStackConnectionTest 삭제, 나머지 고침. EditMode 685개 통과.
+[밸런스] 버프·디버프 스킬 1 브론즈 기준값·스택 규칙·스킬 2 배율 (2026-11-18, 사용자 — Claude)
+- SupportCast.Bronze(값) = 값 × (Amount ÷ 4): 스킬 1은 티어 배율 ×1 / 1.5 / 2 / 4, 스킬 2는 거기에 (1 + AV). SupportCast.Penalty(값) = 값 × (2 − 배율): 티어가 오를수록 패널티가 줄고 다이아에서 이득.
+- 버프·디버프 28종의 스킬 1 값을 21번 표대로 문양별 상수(Bronze...)로 바꿈. 불은 공격 ×2 + 화력 합계 +10%, 전기는 값 20 (공격력 (값 − 100)%, 타격당 전하 = 값), 바람·전기 치명 패널티는 Penalty.
+- 스킬 2: 버프·디버프 기본 AV 0.1 (CSV 13xx·14xx), 티어 AV 배율 ×1 / 2.5 / 5 / 10 → 레벨 1에서 스킬 1의 1.1 / 1.25 / 1.5 / 2배.
+- 스택: 화상 그 적이 움직인 턴에만 터지고 절반, 젖음 10에 다음 행동 최대 이동력 −1 후 사라짐, 한기 25에 이동력 −1·50에 빙결·빙결이 풀리면 사라짐(FreezeEffect.OnRemoved), 실명 10에 다음 행동 뒤로 걸음 후 사라짐(EnemyStackEffect로), 가속 20에 다음 행동 −1(Acceleration.Consume, 그동안 안 쌓임).
+- 설명 문구(TowerDescription)도 새 식으로. 테스트: 버프·디버프 테스트 타워를 브론즈 기준(Power 4, AV 0.1)으로 바꾸고 기대값을 새로 계산. EditMode 685개 통과.
+- 시뮬레이션(40판): 노말 20웨이브 Stage1 덱 36 → 32판, 무작위 덱 33 → 31판. 하드 10웨이브 Stage1 23 → 14판, 무작위 14 → 11판. 이전보다 낮아짐.
+
+[UI] 타워 도감형 로딩 화면 (2026-11-18, 사용자 요청 — Codex)
+- LoadingScene1·LoadingScene2의 옛 UI와 Missing LoadingManager 연결을 공용 LoadingScreen.prefab으로 교체. Unity 에디터 API로 적용했고 씬 GUID·기존 .meta는 유지.
+- 중앙에 무작위 일반 타워 한 명의 Full, 현재 이름·짧은 역할 소개·기본행동·스킬을 표시. CSV와 실제 TowerStatCalculator/TowerDescriptionBuilder를 재사용하며 브론즈·컬러 Lv.1 기준. 배경은 기존 캐릭터 없는 위그드라실 그림 재사용, PNG·슬라이스·카탈로그 변경 없음.
+- 하단 Slider는 LoadSceneAsync의 실제 진행률에 맞춰 DOTween으로 부드럽게 채움. 100% 표시 후 페이드와 목적지 활성화. Loading...은 글자별 시간차로 작은 도약. UI 연출은 시간 배율과 무관하게 동작.
+- SceneFlow.Load/LoadStage/Reload에서 메뉴는 LoadingScene1, 나머지 목적지는 LoadingScene2로 이동 후 비동기 로드. 중복 요청 방지·목적지 검증·이동 후 상태 해제. 직접 실행 기본 목적지는 각각 Menu/Stage1, 최소 표시 1.6초는 인스펙터에서 조정 가능.
+- 파일/화면 검증: 56종 Full·이름·기본/스킬 설명·텍스트 넘침 0. 두 로딩 씬의 컨트롤러 및 Missing Script 검증 통과. 1920×1080·1728×1080 캡처.
+- 실제 PlayMode: 메뉴와 Stage1 전환, 진행률·100%·글자 움직임·중복 이동 방지·선택 정보 유지·일시정지 대응 등 11항목 통과. 새 로딩 오류 0. 기존 TowerFactory persistent parent 오류 6건 별도 기록. 마지막 글자 간격 조정 후 컴파일 및 56종 화면 검증 재실행. 배포 빌드는 수행하지 않음.
+- 원본 3파일 + 메타 3파일 백업: ArtBackups/LoadingScene_20261118. 미리보기·검증·해시·사용법: ArtPreviews/LoadingScene_20261118. 현재 작업 중이던 Start 씬으로 복귀했고 커밋하지 않음.
+[UI] 메뉴 문양 선택·예상 시너지 목록·즉시 로딩 피드백 (2026-11-18, 사용자 요청 — Codex)
+- 메뉴 씬 EmblemPanel을 네이비·금색 창으로 정리. 기존 14문양 PNG/슬라이스 재사용. 선택 문양은 금색 테두리·아이콘·체크, 아래 선택 칸·이름, 위 선택 개수와 남은 개수/완료 안내. 노말 6개·하드 8개 규칙 유지, 재클릭·선택 칸 클릭 해제와 순서 압축, 미완료 입장 방지.
+- 오른쪽에 시너지 얼굴·이름·재료·일치 수를 표시. 실제 SynergyRecipes.Pick 순서 및 해당 스테이지의 시너지 칸 수를 사용. 현재 Stage1=6, Stage2~10=0이므로 칸 없는 스테이지는 예상 0기와 안내 표시. 게임 소환 규칙은 변경하지 않음.
+- SELECT 프레임에 가벼운 SceneTransitionOverlay를 먼저 만들고, 두 프레임 뒤 로딩 씬도 비동기로 로드하도록 SceneFlow 수정. 기존 무거운 로딩 씬의 동기 로드로 메뉴 화면이 남아 있던 구간을 제거. 중복 입장 차단과 선택 문양 전달.
+- Unity PlayMode 40항목 통과. 실제 포인터 선택·제한·해제·모드 전환·닫기/다시 열기, 메뉴 예상 목록과 Stage1 실제 시너지 생성 일치, SELECT 프레임 로딩 표시(프레임 1) 후 비동기 로드 시작(프레임 3), 문양 전달·중복 방지. 텍스트 넘침 0·새 메뉴/로딩 오류 0. 기존 TowerFactory persistent parent 오류 6건은 별도 기록.
+- 메뉴 씬은 Unity API로 수정. 기존 메타 4개 해시 유지. 스테이지 씬은 타일 수만 읽고 저장하지 않음. 원본 4파일과 메타 4파일 백업: ArtBackups/EmblemMenu_20261118 (LoadingSceneController는 확인용 백업만, 변경 없음). 미리보기·검증·파일 해시: ArtPreviews/EmblemMenu_20261118.
+- 배포 빌드·전체 클리어는 수행하지 않았고 커밋하지 않음.
+[사운드] BGM·UI·문양별 공격/명중·스킬 사운드 (2026-11-18, 사용자 요청 — Codex)
+- 직접 합성한 WAV 113개: BGM 3, UI·이벤트 12, 공격 14, 명중 14, 일반 스킬 56, 시너지 14. Assets/4. Asset/6. Audio에 저장. 44.1kHz/16bit, 원본 24.70 MiB. BGM Vorbis Streaming, SFX Vorbis DecompressOnLoad.
+- 자동 생성되는 SoundManager가 씬 간 유지. 메뉴·전투·최종 보스 BGM을 교차 페이드하고, ProjectileManager 발사/도착 및 SkillEffectTable 연출 경로에 소리를 연결. 씬 이벤트로 UI 클릭·타워 생성/합성·레벨업·시너지·웨이브·승패 처리. 전투 수식은 변경하지 않음.
+- 전체/BGM/전투/UI 볼륨 분리·저장, 효과음 동시 12개와 연타 제한. 피치용 난수는 전투 난수와 분리. 시뮬레이션 음소거. Tools > SquareTD > 사운드 설정·미리듣기에서 개별 청음·볼륨 조절·기본값 복원 가능. Denied 음원은 준비만 했고 실패 판정마다 연결하지는 않음.
+- WAV 113개 파형·채널·피크·무음·루프 경계 검사 통과. Unity PlayMode 26항목 통과(메뉴 BGM 실제 재생, 전환, 14문양 공격/명중, 4역할 스킬, 시너지, 보스 전환, 음소거, 난수 독립 등). 새 사운드 오류 0. 기존 TowerFactory persistent parent 오류 10건 별도 기록.
+- 사람의 직접 청음·전체 클리어·배포 빌드는 미실행. Unity 화면 캡처는 도구 시간 초과로 확보하지 못했으며 플레이 결과는 Unity API 측정. 최종 청음은 사용자가 집에서 진행 예정.
+- 기존 코드 2개와 메타 2개 백업: ArtBackups/Audio_20261118. 기존 메타 유지, 씬·프리팹 변경 없음. 사용법·생성 소스·파일 해시·검증: ArtPreviews/Audio_20261118. 커밋하지 않음.
+[씬] 단일 LoadingScene 통합 (2026-11-18, 사용자 요청 — Codex)
+- LoadingScene1.unity를 LoadingScene.unity로 Unity AssetDatabase.MoveAsset을 통해 이름 변경. GUID 8dd0b7d97dc806e478c9bb59a5990239 및 .meta 바이트 유지. LoadingScene2.unity와 .meta는 AssetDatabase.DeleteAsset으로 삭제.
+- SceneFlow.Load/LoadStage/Reload의 목적지별 로딩 씬 분기를 공용 LoadingScene 하나로 통합. 기존 Start 버튼·스테이지 선택·옵션·승패 메뉴 복귀는 SceneFlow를 통해 그대로 연결. 로딩 씬 직접 실행 기본 목적지는 Menu.
+- EditorBuildSettings를 Unity API로 수정. 공용 로딩 씬 한 개만 활성 등록하고 Start/Menu/Stage1~10 기존 순서를 유지. 적용/검증 도구와 메뉴 UI 검증의 씬 이름도 변경하여 삭제한 씬을 다시 생성하거나 기다리지 않도록 정리.
+- Unity 파일/화면 검증: 56종 소개·Full·텍스트 넘침, 공용 로딩 컨트롤러 1개·Missing Script 없음. PlayMode 15항목 통과: 메뉴 이동·스테이지 진입·재시작·메뉴 복귀에 같은 로딩 씬 사용, 진행률·100%·문양 전달·중복 요청·일시정지 대응. 새 로딩 오류 0. 기존 TowerFactory persistent parent 오류 12건 별도 기록, 배포 빌드는 미실행.
+- 통합 직전 코드·두 씬·메타·빌드 목록 백업: ArtBackups/LoadingUnified_20261118. 결과·검증·해시: ArtPreviews/LoadingUnified_20261118. 검증 후 사용자가 열어 두었던 로딩 씬(새 이름 LoadingScene)으로 복귀. 커밋하지 않음.
+[UI] 승리·패배 공용 전투 결과 패널 (2026-11-18, 사용자 요청 — Codex)
+- UICanvas.prefab의 GameOverPanel·GameClearPanel 루트/기존 스크립트 GUID를 유지하고 내부를 Unity 프리팹 API로 구성. 네이비·금색 공용 결과 화면, 승리/패배 제목·강조색·버튼 분리, DOTween 페이드·작은 이동. 같은 프리팹을 쓰는 스테이지에도 공유.
+- 종료 순간의 전장·대기석·시너지 기물을 개별 행으로 표시: Face, 이름, 역할·위치, 티어, 누적 피해, 비중과 그래프. 피해 순으로 정렬·스크롤. 보유 기물 수·보유 기물 피해 합계·최고 피해 기물 요약. 팔거나 파괴한 기물은 제외.
+- BattleResults가 EnemyController의 실제 피해(남은 체력 상한)와 처형을 공격자별로 기록. 기본·스킬·지속 피해 포함, 합성 재료의 기록과 늦은 피해는 생성된 기물로 계승. GameSession 종료 시 스냅샷 고정. 버프/디버프 간접 기여는 피해로 환산하지 않음. 기존 피해 계산식·밸런스 수치는 유지. 시뮬레이션에서는 기록/UI 스냅샷 생성 생략.
+- 패배: 다시하기·스테이지 선택. 승리: 다음 스테이지·스테이지 선택. 다시하기/다음은 덱·난이도 유지, 기물과 기록은 초기화. 다음 스테이지는 StageDefinition과 씬 함께 변경. 다음 씬 없으면 비활성, 중복 클릭 방지. 공용 LoadingScene 경유.
+- Unity PlayMode 동작 27항목·텍스트 영역 204개(총 231항목) 통과. 실제 체력·과잉 피해 제외·처형·자동 합성·종료 고정·Face/티어·피해 0/기물 0·재시작·Stage2 진입·메뉴 복귀 확인. 1920×1080 승리/패배와 1728×1080 패배 캡처를 직접 확인. 새 결과 패널 오류 0, 기존 TowerFactory persistent parent 오류 19건 별도 기록.
+- 마지막 시뮬레이션 UI 생략 조건 추가 후 컴파일 확인. 배포 빌드·자연 전체 클리어·장시간 플레이는 미실행. 결과/미리보기/검증/해시: ArtPreviews/ResultPanels_20261118.
+- 실제 변경 기존 7파일 + 메타 7개 유지, 원본 백업: ArtBackups/ResultPanels_20261118. Stage1 백업은 사용자가 저장하기 전 디스크 참고본이므로 원복 시 덮어쓰지 않음. 사용자가 저장한 씬은 되돌리지 않았고 이 작업에서 씬을 직접 수정/저장하지 않음. 검증 후 원래 Stage1으로 복귀. 커밋하지 않음.
+[UI] 출전 문양 선택 수 노말 4·하드 6 (2026-11-18, 사용자 요청 — Codex)
+- EmblemSelectPanel의 공통 상수를 NormalCount=4, HardCount=6으로 변경. 메뉴의 선택 제한·카운트·남은 개수·입장 활성화·모드 변경 시 잘라내기·StartSettings 전달은 같은 기준 사용. SimulationSettings의 코드 기본값도 해당 상수에서 가져오며, 기존 시뮬레이션 설정 파일은 변경하지 않음.
+- 메뉴 씬을 Unity API로 수정: 여분 선택 칸 2개 제거, 슬롯/버튼/이름 배열 6개, 초기 노말 칸 4개와 0/4 안내 저장. 메뉴 재생성 도구의 하드코딩된 6/8도 공통 상수로 변경. 기존 배치·문양 그림·예상 시너지 규칙 유지. Stage1 등 스테이지 씬의 직접 실행용 덱은 수정하지 않음.
+- PlayMode 41항목 통과: 실제 클릭, 노말 4/하드 6 칸·개수·초과 방지, 모드 복귀 시 4개 유지, 해제·재열기, 선택 문양 전달·실제 시너지 일치, 공용 로딩 이동. 새 메뉴 오류·텍스트 넘침 0. 기존 TowerFactory persistent parent 오류 6건 별도 기록.
+- 메뉴 미리보기에서 노말 4/4와 하드 6/6 확인. 20·21번 현재 난이도 설명도 수정. 배포 빌드는 미실행. 변경 전 백업: ArtBackups/DeckCounts_20261118, 검증·미리보기·해시: ArtPreviews/DeckCounts_20261118. 기존 메타 유지. 사용자 저장 완료 후 검증했고 원래 Stage1으로 복귀. 커밋하지 않음.
+[UI] 생성·EXP 투자 버튼과 상단 플레이어 정보 HUD (2026-11-18, 사용자 요청 — Codex)
+- 공용 UICanvas의 GameInfoPanel과 PlayerTurnPanel을 네이비·금색 구성으로 개편. 상단에 스테이지 표시 이름/WAVE, 적 수·한도, 골드, 플레이어 레벨·EXP 숫자/바. 적 수가 한도 80%면 주황·도달 시 붉은색. 기존 보스 남은 턴 연결. 젬 그룹과 옛 색상별 강화·젬 비용 UI 제거, 재화 코드는 이미 골드 전용이므로 수치 변경 없음.
+- 하단 왼쪽 타워 생성(실제 250골드), 오른쪽 경험치 투자(현재 100골드당 1 EXP). 기존 ColorUpgradeState와 TryBuyXp를 사용하고 구매량·비용·요구 EXP는 코드 값을 표시. 골드 부족/최대 레벨 비활성화. 레벨 숫자와 EXP 바 DOTween 연출. 적 턴에도 플레이어 레벨/EXP는 상단에 유지하고 행동 버튼만 숨김.
+- 설정/턴 종료 유지. 미연결이던 배속 버튼은 개발용 배속과 같은 ×1→×2→×3 순환으로 연결하고 실제 배속 표시. 16:10에서 행동 버튼을 자동 축소해 대기석 칸과 간격 확보. 기존 타워 생성 아이콘 재사용, 새 PNG 생성 없음.
+- 프리팹은 Unity API로 수정. Stage1의 변경 대상 HUD RectTransform 옛 좌표 오버라이드 3개만 해제하고 Unity API로 저장. Stage2~10도 같은 항목을 검사했으며 변경 0. 판/대기석/시너지 타일과 게임 수식·밸런스 값은 수정하지 않음.
+- 최종 PlayMode 44항목 통과: 실제 포인터 클릭, 소환·골드 차감, EXP 구매/레벨업/모든 컬러 강화, 골드/EXP 표시, 부족·최대 레벨, 설정/배속, 실제 적 턴 정보 유지. 1920×1080과 1728×1080의 텍스트/화면 내부/대기석 칸 중심 비가림 검사와 캡처 직접 확인. 새 HUD 오류 0·기존 TowerFactory persistent parent 오류 7건 별도 기록. DLL 파일 잠금 컴파일 상태를 캐시 재컴파일로 해제한 뒤 최종 재검증함.
+- 전체 클리어·장시간 플레이·배포 빌드는 미실행. 16:10에서 기존 월드 시너지 영역 일부가 잘리는 현상은 HUD 변경 범위 밖으로 유지.
+- 백업: ArtBackups/GameHud_20261118. 사용법/미리보기/검증/변경·유지 파일 해시: ArtPreviews/GameHud_20261118. 기존 코드·프리팹·씬 메타 유지, 검증 후 원래 Stage1으로 복귀. 커밋하지 않음.
+[버그] 합성 중인 타워를 드래그하면 클릭이 전부 먹통 (2026-11-18)
+- 원인: 합성 재료를 누른 채 끌면 DragTowerMode로 들어가고, 재료가 합성으로 지워진 뒤 ReturnToSlot에서 MissingReferenceException이 나서 IdleMode로 돌아가지 못함. DragTowerMode는 누르기를 무시하므로 이후 클릭이 전부 막힘.
+- InputModes.cs: IdleMode는 합성 중인 타워면 드래그를 시작하지 않음. DragTowerMode는 끄는 도중 타워가 지워지거나 합성에 들어가면 제자리로 돌리고 IdleMode로 돌아감. 선택(사거리 표시)은 그대로 허용.

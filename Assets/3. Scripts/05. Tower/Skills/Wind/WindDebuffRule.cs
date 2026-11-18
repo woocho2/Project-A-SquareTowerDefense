@@ -2,22 +2,24 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 바람 디버프 — 윈드 시어 · 터뷸런스 (다음 이동 최소·최대 +5, 이동한 칸 × 값 피해, 모든 아군에게 가속,
+    // 바람 디버프 — 윈드 시어 · 터뷸런스 (다음 이동 최소·최대 +5, 이동한 칸마다 최대 체력의 브론즈 2% 피해, 모든 아군에게 가속,
     //                                    터뷸런스 최대 Action +3, 바람 타워가 치면 그 타워의 스킬 카운트 +2)
     public class WindDebuffRule : DebuffRule
     {
+        public const float BronzeStepDamage = 0.02f;
+        public const float BronzeAcceleration = 5f;
         public const int GustSpeed = 5;
         public const int TurbulenceAction = 3;
         public const float WindSkillCount = 2f;
 
         public override void OnApply(SupportCast cast, EnemyController enemy)
         {
-            if (!cast.IsSkill2) Acceleration.AddToAll(cast.Amount);
+            if (!cast.IsSkill2) Acceleration.AddToAll(cast.Bronze(BronzeAcceleration));
         }
 
-        public override void OnSkill2(SupportCast cast) => Acceleration.AddToAll(cast.Amount);
+        public override void OnSkill2(SupportCast cast) => Acceleration.AddToAll(cast.Bronze(BronzeAcceleration));
 
-        public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy) => new WindDebuffEffect(cast, Resist(enemy, cast.Amount));
+        public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy) => new WindDebuffEffect(cast, Resist(enemy, cast.Bronze(BronzeStepDamage)));
     }
 
     public class WindDebuffEffect : EmblemDebuffEffect
@@ -26,7 +28,7 @@ namespace SquareTD
         private bool m_pending = true;
 
         public WindDebuffEffect(SupportCast cast, float damagePerStep)
-            : base(cast, $"다음 이동 최소·최대 +{WindDebuffRule.GustSpeed}, 이동한 칸 × {damagePerStep:0.##} 피해" + (cast.IsSkill2 ? $", 최대 Action +{WindDebuffRule.TurbulenceAction}" : ""),
+            : base(cast, $"다음 이동 최소·최대 +{WindDebuffRule.GustSpeed}, 이동한 칸마다 최대 체력의 {damagePerStep * 100f:0.##}% 피해" + (cast.IsSkill2 ? $", 최대 Action +{WindDebuffRule.TurbulenceAction}" : ""),
                    cast.IsSkill2 ? new[] { StatModifier.Flat(KeyOf(TowerEmblem.Wind), StatType.MaxAction, WindDebuffRule.TurbulenceAction) } : new StatModifier[0])
         {
             m_damagePerStep = damagePerStep;
@@ -48,7 +50,7 @@ namespace SquareTD
                 Attacker = Cast.Owner,
                 Source = DamageSource.Dot,
                 Emblem = TowerEmblem.Wind,
-                BaseDamage = Mathf.Abs(steps) * m_damagePerStep,
+                BaseDamage = Mathf.Abs(steps) * m_damagePerStep * enemy.MaxHp,
                 ForceFixed = true,
             });
         }

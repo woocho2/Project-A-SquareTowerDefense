@@ -13,10 +13,10 @@ namespace SquareTD
         public LightTargetSkill(BoardGrid grid, PathOccupancy occupancy)
             : base(grid, occupancy) { }
 
-        protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
+        protected override bool CastInstead(TowerController owner, ITarget mainTarget)
         {
             TowerFinalStats stats = owner.Stats;
-            float damage = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * stats.FinalDamageMultiplier;
+            float damage = SkillFormula.AttackSkill(stats.Power, stats.SkillAbility) * stats.FinalDamageMultiplier;
             int turns = SkillFormula.EffectTurns;
 
             if (EmblemSharedState.Current.IsTranscendWave)

@@ -106,8 +106,14 @@ namespace SquareTD
         public static bool SuppressCosmetics { get; private set; }
         public const int SupportOff = 1;
         public const int AttackOnly = 2;
+        public const int GlobalSupport = 3;
+        public const int AuraSupport = 4;
+        public const int AuraRange = 2;
         public static int SupportVariant { get; private set; }
         public static bool SupportsDisabled => IsOn && SupportVariant == SupportOff;
+        public static bool SupportsGlobal => IsOn && SupportVariant == GlobalSupport;
+        public static bool SupportsAura => IsOn && SupportVariant == AuraSupport;
+        public static bool NoSupportZones => SupportsDisabled || SupportsGlobal || SupportsAura;
         public static bool AttackOnlyBuilds => IsOn && SupportVariant == AttackOnly;
 
         private SimulationSettings m_settings;

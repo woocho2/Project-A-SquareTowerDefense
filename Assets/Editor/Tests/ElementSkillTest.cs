@@ -169,22 +169,22 @@ namespace SquareTD.Tests
         {
             OccupyingFakeTarget target = MakeTarget(0);
             TowerController tower = MakeTower(1110);
-            Acceleration.Add(tower, 100f);
+            Acceleration.Add(tower, 15f);
 
             new WindSplashSkill(m_grid, m_occupancy).Fire(tower, target);
 
-            Assert.AreEqual(SkillDamage(tower) * (2f + 1f), target.Hits[0].BaseDamage, Eps);
+            Assert.AreEqual(SkillDamage(tower) * (2f + 0.15f), target.Hits[0].BaseDamage, Eps);
         }
 
         [Test]
         public void 템페스트는_가속_상태면_확률에_가속을_더하고_AttackCount_4()
         {
-            TowerController tower = MakeTower(1210);
-            Acceleration.Add(tower, 100f);
+            TowerController tower = MakeTower(1210, power: 50f);
+            Acceleration.Add(tower, 20f);
 
             new WindTargetSkill(m_grid, m_occupancy).Fire(tower, null);
 
-            Assert.AreEqual(5, tower.Stats.AttackCount, "확률 20% + 가속 100% → 반드시 발동");
+            Assert.AreEqual(5, tower.Stats.AttackCount, "확률 50 × 2 = 100% → 반드시 발동, 가속 버프 중이라 AttackCount +4");
             Assert.AreEqual(2, TimedTowerBuff.GetRemaining(tower.State, WindTargetSkill.Source));
         }
 
@@ -224,7 +224,7 @@ namespace SquareTD.Tests
         // ── 전기 ──
 
         [Test]
-        public void 라이트닝_볼텍스는_맞은_적에게_전하_티어_곱하기_레벨_곱하기_최대_차지()
+        public void 라이트닝_볼텍스는_맞은_적에게_전하_티어_곱하기_레벨_곱하기_10()
         {
             EnemyController enemy = MakeEnemy(0, hp: 1000f);
             TowerController tower = MakeTower(1112);
@@ -232,7 +232,7 @@ namespace SquareTD.Tests
             new ElectricSplashSkill(m_grid, m_occupancy).Fire(tower, enemy);
 
             Assert.AreEqual(SkillDamage(tower), Lost(enemy), Eps);
-            Assert.AreEqual(1f * 1f * 60f, ChargeEffect.Get(enemy), Eps);
+            Assert.AreEqual(1f * 1f * 10f, ChargeEffect.Get(enemy), Eps);
         }
 
         [Test]

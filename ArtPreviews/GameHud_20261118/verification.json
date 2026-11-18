@@ -1,0 +1,120 @@
+{
+    "Date":  "2026-11-18T16:29:17.1893278+09:00",
+    "Verified":  true,
+    "PlayModeCheckCount":  44,
+    "NewHudErrors":  0,
+    "ExistingParentErrors":  7,
+    "BuildPerformed":  false,
+    "Screens":  [
+                    "1920x1080",
+                    "1728x1080"
+                ],
+    "LatestPlayModeReport":  "2026-11-18T16:26:59.4652774+09:00",
+    "ChangedOriginals":  [
+                             {
+                                 "Path":  "Assets/1. Scenes/3. Stage1.unity",
+                                 "Changed":  true,
+                                 "BeforeSha256":  "6F6BE7B8BBB87415E56B84F4AFC7675BB48070E997FAFE826322208863BF7AC3",
+                                 "AfterSha256":  "EBAE8DC036BA237626B626C6ABDD2EE04FE5B9A504D858E84B32CA28BC6B4331",
+                                 "MetaPreserved":  true
+                             },
+                             {
+                                 "Path":  "Assets/2. Prefab/UICanvas.prefab",
+                                 "Changed":  true,
+                                 "BeforeSha256":  "D2449E3F962A73482508C1741FF60A26D9B4F2ABFB81315BA8A1994E99F83554",
+                                 "AfterSha256":  "EA217D4719920C0D0DE5D31F32D9AF830F6D45D2B5232C1D1AD2C4CB25DCC34C",
+                                 "MetaPreserved":  true
+                             },
+                             {
+                                 "Path":  "Assets/3. Scripts/11. UI/GameInfoPanel.cs",
+                                 "Changed":  true,
+                                 "BeforeSha256":  "961810C6F8809F9F546ACE61CD538A1B839C41C0183C165E08FED4D22D715D23",
+                                 "AfterSha256":  "4368A08A7AA8E1AD9255A6FFA5A48ED4959A1BD6A7467CC65109BC61B3E403C1",
+                                 "MetaPreserved":  true
+                             },
+                             {
+                                 "Path":  "Assets/3. Scripts/11. UI/PlayerTurnPanel.cs",
+                                 "Changed":  true,
+                                 "BeforeSha256":  "E9907B6008DDD9D10F23BBAA4DBFB7EC5CE54152C5F6F6CBB59E165056DE1DE0",
+                                 "AfterSha256":  "7D2C7ADBD040CCB18AA5B767902E9FC1D46CE3B426CEF1BF4380906FA069A7B4",
+                                 "MetaPreserved":  true
+                             }
+                         ],
+    "InspectedUnchangedOriginals":  [
+                                        {
+                                            "Path":  "Assets/1. Scenes/10. Stage8.unity",
+                                            "Changed":  false,
+                                            "BeforeSha256":  "A92D6E0B7423B83D79C30281F986B7A0D141971242F0C8A1DE4D654E4819563E",
+                                            "AfterSha256":  "A92D6E0B7423B83D79C30281F986B7A0D141971242F0C8A1DE4D654E4819563E",
+                                            "MetaPreserved":  true
+                                        },
+                                        {
+                                            "Path":  "Assets/1. Scenes/11. Stage9.unity",
+                                            "Changed":  false,
+                                            "BeforeSha256":  "7DD3F75D5C9EEE1047ADB1CFC9E4C12BA8197924B08B5AAA9A408B5C90C27047",
+                                            "AfterSha256":  "7DD3F75D5C9EEE1047ADB1CFC9E4C12BA8197924B08B5AAA9A408B5C90C27047",
+                                            "MetaPreserved":  true
+                                        },
+                                        {
+                                            "Path":  "Assets/1. Scenes/12. Stage10.unity",
+                                            "Changed":  false,
+                                            "BeforeSha256":  "DE44BFB167E5A2608D42DB006661D04EE4DA4A41EBCB7BFBC4F4D0DAA6DC643C",
+                                            "AfterSha256":  "DE44BFB167E5A2608D42DB006661D04EE4DA4A41EBCB7BFBC4F4D0DAA6DC643C",
+                                            "MetaPreserved":  true
+                                        },
+                                        {
+                                            "Path":  "Assets/1. Scenes/4. Stage2.unity",
+                                            "Changed":  false,
+                                            "BeforeSha256":  "BB3211EAFDD766BAB1D111F6AD12424BA82C09A385F7732ACF948F4B17F1FCEE",
+                                            "AfterSha256":  "BB3211EAFDD766BAB1D111F6AD12424BA82C09A385F7732ACF948F4B17F1FCEE",
+                                            "MetaPreserved":  true
+                                        },
+                                        {
+                                            "Path":  "Assets/1. Scenes/5. Stage3.unity",
+                                            "Changed":  false,
+                                            "BeforeSha256":  "3673D23C9D08A09859F1DA351E0678B602B2BAE3F4A7CFA820AE78A74C01A9DD",
+                                            "AfterSha256":  "3673D23C9D08A09859F1DA351E0678B602B2BAE3F4A7CFA820AE78A74C01A9DD",
+                                            "MetaPreserved":  true
+                                        },
+                                        {
+                                            "Path":  "Assets/1. Scenes/6. Stage4.unity",
+                                            "Changed":  false,
+                                            "BeforeSha256":  "A3FCDA6044ABB86372CA90AC5898BA7FB56685F7422CBBCBAF4EE47FDD664725",
+                                            "AfterSha256":  "A3FCDA6044ABB86372CA90AC5898BA7FB56685F7422CBBCBAF4EE47FDD664725",
+                                            "MetaPreserved":  true
+                                        },
+                                        {
+                                            "Path":  "Assets/1. Scenes/7. Stage5.unity",
+                                            "Changed":  false,
+                                            "BeforeSha256":  "79A5D1FFB33EB1432BB4B0A05C2B7E9B5E1A4134056AE68E37A9C08DAC3EB29E",
+                                            "AfterSha256":  "79A5D1FFB33EB1432BB4B0A05C2B7E9B5E1A4134056AE68E37A9C08DAC3EB29E",
+                                            "MetaPreserved":  true
+                                        },
+                                        {
+                                            "Path":  "Assets/1. Scenes/8. Stage6.unity",
+                                            "Changed":  false,
+                                            "BeforeSha256":  "45DE1DFD7FC365D1951070659704FB098553467FBFED88E166897B6035CFAA10",
+                                            "AfterSha256":  "45DE1DFD7FC365D1951070659704FB098553467FBFED88E166897B6035CFAA10",
+                                            "MetaPreserved":  true
+                                        },
+                                        {
+                                            "Path":  "Assets/1. Scenes/9. Stage7.unity",
+                                            "Changed":  false,
+                                            "BeforeSha256":  "0B5221D7BD2391DC1AD9F374F0A0B740362B88DA6B4C3AB2291E81C1418A18E2",
+                                            "AfterSha256":  "0B5221D7BD2391DC1AD9F374F0A0B740362B88DA6B4C3AB2291E81C1418A18E2",
+                                            "MetaPreserved":  true
+                                        }
+                                    ],
+    "Added":  [
+                  {
+                      "Path":  "Assets/Editor/GameHudSetup.cs",
+                      "Sha256":  "2F7D39C484555F82F48484934158A04658F8F73968F93164A1A5E57AE7943515",
+                      "MetaSha256":  "86EC42C99B431C22544BFAEEEB476B35B9BD46FDCA83B36FD3EDB3C31C3A6C54"
+                  },
+                  {
+                      "Path":  "Assets/Editor/GameHudVerification.cs",
+                      "Sha256":  "4E9D7767EC2D40534B08F8AC40C97A601DF2B61ECBCB07BB5AD16F9227151CE5",
+                      "MetaSha256":  "415AF4CDBF50F776689747965263517A5FD9F1C9B38C3E32D7E5A9EA77A8BCD3"
+                  }
+              ]
+}

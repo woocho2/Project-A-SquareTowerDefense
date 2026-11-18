@@ -14,16 +14,16 @@ namespace SquareTD
 
         public override bool NeedsLivingTarget => false;
 
-        public static float GetChance(TowerController owner, bool useStack)
+        public static float GetChance(TowerController owner)
         {
             TowerFinalStats stats = owner.Stats;
-            float percent = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) + Acceleration.Get(owner);
+            float percent = SkillFormula.AttackSkill(stats.Power, stats.SkillAbility) + Acceleration.Get(owner);
             return percent * SkillFormula.PercentRate;
         }
 
-        protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
+        protected override bool CastInstead(TowerController owner, ITarget mainTarget)
         {
-            if (!Chance.Roll(GetChance(owner, useStack))) return true;
+            if (!Chance.Roll(GetChance(owner))) return true;
             int bonus = Acceleration.IsAccelerated(owner) ? AcceleratedBonus : AttackCountBonus;
             TimedTowerBuff.Apply(owner.State, Source, SkillFormula.EffectActions, StatModifier.Flat(Source, StatType.AttackCount, bonus));
             SkillEffectTable.PlayTempest(owner);

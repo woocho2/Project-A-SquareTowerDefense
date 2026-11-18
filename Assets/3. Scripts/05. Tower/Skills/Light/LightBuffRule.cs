@@ -6,12 +6,14 @@ namespace SquareTD
     //                            초월 웨이브에 어센션을 쓰면 다음 웨이브도 초월, 빛 타워가 공격하면 이 버프 타워의 스킬 카운트 +1)
     public class LightBuffRule : BuffRule
     {
+        public const float BronzeBonusDamage = 0.05f;
+        public const float BronzeTranscendChance = 0.05f;
         public const float AscensionCount = 1f;
         public const float LightSkillCount = 1f;
 
         public override List<StatModifier> GetModifiers(SupportCast cast, TowerController receiver, string source)
         {
-            return new List<StatModifier> { StatModifier.Flat(source, StatType.BonusDamage, cast.Rate) };
+            return new List<StatModifier> { StatModifier.Flat(source, StatType.BonusDamage, cast.Bronze(BronzeBonusDamage)) };
         }
 
         public override void OnGiveSkill1(SupportCast cast, TowerController receiver) => RollCount(cast, receiver);
@@ -40,7 +42,7 @@ namespace SquareTD
 
         private static void RollCount(SupportCast cast, TowerController receiver)
         {
-            if (Chance.Roll(cast.Rate)) EmblemSharedState.Current.AddTranscend(receiver.Definition.Tier);
+            if (Chance.Roll(cast.Bronze(BronzeTranscendChance))) EmblemSharedState.Current.AddTranscend(receiver.Definition.Tier);
         }
     }
 }

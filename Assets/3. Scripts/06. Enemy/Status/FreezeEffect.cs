@@ -1,6 +1,6 @@
 namespace SquareTD
 {
-    // 빙결 — 다음 행동 한 번 행동 불가, 그동안 받은 피해의 30%를 풀릴 때 한 번에
+    // 빙결 — 다음 행동 한 번 행동 불가, 그동안 받은 피해의 30%를 풀릴 때 한 번에, 풀리면 한기 스택 전부 사라짐
     public class FreezeEffect : ImmobilizeEffect
     {
         public const float ThawRate = 0.3f;
@@ -18,6 +18,12 @@ namespace SquareTD
         public override void OnDamageTaken(EnemyController enemy, DamageInfo info, float damage)
         {
             if (damage > 0f) DamageWhileFrozen += damage;
+        }
+
+        public override void OnRemoved(EnemyController enemy)
+        {
+            base.OnRemoved(enemy);
+            ChillEffect.Clear(enemy);
         }
 
         public override void OnExpire(EnemyController enemy)

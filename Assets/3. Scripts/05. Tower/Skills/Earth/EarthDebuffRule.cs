@@ -6,6 +6,8 @@ namespace SquareTD
     //                                              라이프 하베스트 적응형 능력치 -1, 대지 타워가 치면 그 타워의 성장만큼 추가 피해)
     public class EarthDebuffRule : DebuffRule
     {
+        public const float BronzeCut = 0.025f;
+        public const float NourishRate = 0.1f;
         public const int AdaptiveCut = 1;
 
         public override void OnApply(SupportCast cast, EnemyController enemy)
@@ -19,12 +21,12 @@ namespace SquareTD
 
         private static void Nourish(SupportCast cast)
         {
-            if (BoardManager.Instance != null) Growth.AddToOthers(BoardManager.Instance.Slots, cast.Owner, cast.Amount);
+            if (BoardManager.Instance != null) Growth.AddToOthers(BoardManager.Instance.Slots, cast.Owner, cast.Bronze(BronzeCut * 100f) * NourishRate);
         }
 
         public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy)
         {
-            float cut = Mathf.Min(Resist(enemy, cast.Rate * Growth.Get(cast.Owner)), 0.95f);
+            float cut = Mathf.Min(Resist(enemy, cast.Bronze(BronzeCut) * Growth.Get(cast.Owner)), 0.95f);
             return new EarthDebuffEffect(cast, cut);
         }
 

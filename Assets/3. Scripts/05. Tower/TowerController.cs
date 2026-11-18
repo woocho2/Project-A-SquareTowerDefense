@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 타워 하나: 스탯, 행동, 차지, 스킬 카운트, 스킬 2 발동
+    // 타워 하나: 스탯, 행동, 스킬 카운트, 스킬 2 발동
     [RequireComponent(typeof(TowerVisual))]
     public class TowerController : MonoBehaviour
     {
@@ -46,7 +46,6 @@ namespace SquareTD
             State = new TowerState(definition);
             Stats = CalculateStats();
             State.RemainingAction = Stats.Action;
-            State.Stack.SetMax(Stats.Stack);
             State.Modifiers.Changed += RecalculateStats;
             State.BossEffects.Changed += RecalculateStats;
             name = $"{definition.Id} {EmblemNames.GetConceptName(definition.Id)}";
@@ -61,7 +60,6 @@ namespace SquareTD
 
             int diff = Stats.Action - oldAction;
             if (!State.BossEffects.IsFrozen) State.RemainingAction = Mathf.Max(0, State.RemainingAction + diff);
-            State.Stack.SetMax(Stats.Stack);
         }
 
         private TowerFinalStats CalculateStats()
@@ -83,6 +81,7 @@ namespace SquareTD
             if (m_action != null && !m_action.CanAct(this, Stats)) return false;
 
             State.RemainingAction = Stats.Action;
+            Acceleration.Consume(this);
             return true;
         }
 
@@ -90,11 +89,7 @@ namespace SquareTD
         {
             if (m_action == null) yield break;
 
-            if (IsAttackTower)
-            {
-                State.Stack.Add(1f + Stats.Get(StatType.StackGainRate));
-                SupportBuffs.ForEachActive(this, (rule, cast) => rule.OnReceiverActed(cast, this));
-            }
+            if (IsAttackTower) SupportBuffs.ForEachActive(this, (rule, cast) => rule.OnReceiverActed(cast, this));
             yield return m_action.Act(this, Stats, handle);
 
             TimedTowerBuff.CountDown(State);
@@ -114,7 +109,7 @@ namespace SquareTD
             if (amount <= 0f) return 0;
 
             float threshold = Mathf.Max(0.01f, Stats.SkillCount);
-            State.SkillCount += amount;
+            State.SkillCount += amount * (1f + Stats.Get(StatType.SkillCountGainRate));
 
             int fires = 0;
             while (State.SkillCount >= threshold - 0.0001f)

@@ -27,7 +27,7 @@ namespace SquareTD.Tests
         {
             m_go = new GameObject("TestTower");
             var tower = m_go.AddComponent<TowerController>();
-            var definition = new TowerDefinition(id, 10f, 2, action, 1, 0f, 0f, 1, 60, 5, 2f, 5f, TargetPriority.Closest);
+            var definition = new TowerDefinition(id, 10f, 2, action, 1, 0f, 0f, 1, 5, 2f, 5f, TargetPriority.Closest);
             tower.Init(definition, 0, towerAction);
             return tower;
         }
@@ -161,7 +161,7 @@ namespace SquareTD.Tests
         }
 
         private static TowerDefinition Def(int id, int action = 3) =>
-            new TowerDefinition(id, 10f, 2, action, 1, 0f, 0f, 1, 60, 5, 2f, 5f, TargetPriority.Closest);
+            new TowerDefinition(id, 10f, 2, action, 1, 0f, 0f, 1, 5, 2f, 5f, TargetPriority.Closest);
 
         [Test]
         public void 처음_남은_행동력은_CSV가_아니라_계산된_Action()

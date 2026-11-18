@@ -52,10 +52,9 @@ namespace SquareTD
         public float CriticalRate => Get(StatType.CritRate);
         public float CriticalDamage => Get(StatType.CritDamage);
         public int Mastery => (int)Get(StatType.Mastery);
-        public int Stack => (int)Get(StatType.MaxStack);
         public float SkillCount => Get(StatType.Duration);
         public float AbilityValue => Get(StatType.AbilityValue);
-        public float StackValue => Get(StatType.StackValue);
+        public float SkillAbility => AbilityValue * (1f + Get(StatType.SkillDamageBonus));
         public float FinalDamageMultiplier => 1f + Get(StatType.FinalDamage) + Get(StatType.BonusDamage);
         public float ArmorPenetration => Get(StatType.ArmorPenetration);
         public bool ForcesFixedDamage => Get(StatType.ForceFixedDamage) > 0f;

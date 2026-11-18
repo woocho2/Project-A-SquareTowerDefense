@@ -69,6 +69,7 @@ namespace SquareTD
         public static void Play(TowerController owner, Vector3? mainPosition, IReadOnlyList<Vector3> hitPositions)
         {
             if (!CanPlay(owner) || hitPositions == null || hitPositions.Count == 0) return;
+            if (SoundManager.Instance != null) SoundManager.Instance.Skill(owner);
             EnsureHolder();
             float cell = EffectSpace.CellWorldSize();
             Vector3 from = owner.transform.position;
@@ -88,6 +89,7 @@ namespace SquareTD
         public static void PlaySupportSkill(TowerController owner, IReadOnlyList<TowerController> receivers, bool preview = false)
         {
             if (!CanPlay(owner)) return;
+            if (SoundManager.Instance != null) SoundManager.Instance.Skill(owner);
             EnsureHolder();
             var points = new List<Vector3>();
             if (receivers != null) foreach (var receiver in receivers)
@@ -100,12 +102,14 @@ namespace SquareTD
         public static void PlayDebuffSkill(TowerController owner, IReadOnlyList<Vector3> targets)
         {
             if (!CanPlay(owner)) return;
+            if (SoundManager.Instance != null) SoundManager.Instance.Skill(owner);
             EnsureHolder();
             s_full.PlayDebuff(owner, targets);
         }
         public static void PlaySupportContact(TowerController owner, Vector3 point, bool debuff)
         {
             if (!CanPlay(owner)) return;
+            if (SoundManager.Instance != null) SoundManager.Instance.Contact(debuff);
             EnsureHolder();
             s_full.SupportContact(owner.Definition.Emblem, point, debuff);
         }
@@ -114,6 +118,7 @@ namespace SquareTD
         public static void PlayCast(TowerController owner)
         {
             if (!CanPlay(owner)) return;
+            if (SoundManager.Instance != null) SoundManager.Instance.Skill(owner);
             EnsureHolder();
             switch ((owner.Definition.Emblem, owner.Definition.Color))
             {
@@ -172,6 +177,7 @@ namespace SquareTD
         public static void PlayPreview(TowerController owner, IReadOnlyList<Vector3> hits)
         {
             if (!CanPlay(owner)) return;
+            if (SoundManager.Instance != null) SoundManager.Instance.Skill(owner);
             EnsureHolder();
             float cell = EffectSpace.CellWorldSize();
             var points = new List<Vector3>();

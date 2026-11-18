@@ -31,9 +31,11 @@ namespace SquareTD
             }
 
             FlyingCount++;
+            if (SoundManager.Instance != null) SoundManager.Instance.Attack((TowerEmblem)(lookId % 100));
             shot.FireShot(from, to, speed, hold, effectScale * EffectSpace.CellWorldSize(), () =>
             {
                 FlyingCount--;
+                if (SoundManager.Instance != null) SoundManager.Instance.Hit((TowerEmblem)(lookId % 100));
                 onArrived?.Invoke();
             });
         }

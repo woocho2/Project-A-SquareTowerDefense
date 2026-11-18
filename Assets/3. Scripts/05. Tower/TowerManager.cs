@@ -22,6 +22,7 @@ namespace SquareTD
         public ColorUpgradeState ColorLevels { get; private set; }
         public int BuildCost => FixedBuildCost;
         public int BuildCount { get; private set; }
+        public IReadOnlyList<TowerEmblem> SelectedEmblems => m_selectedEmblems;
         public TowerController Selected { get; private set; }
 
         public static int GetSellGold(int tier) => tier >= 1 && tier <= TowerId.MaxTier ? s_sellGold[tier] : 0;
@@ -265,6 +266,7 @@ namespace SquareTD
 
             TowerController created = m_factory.Replace(keep, next, true);
             if (created == null) return;
+            if (GameSession.Instance != null) GameSession.Instance.Results.Merge(keep, materials, created);
 
             Debug.Log($"[TowerManager] 자동 합성 → {created.name} ({created.SlotIndex}번 칸)");
             TowerReplaced?.Invoke(keep, created);

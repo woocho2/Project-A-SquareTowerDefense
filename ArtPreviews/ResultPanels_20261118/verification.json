@@ -1,0 +1,83 @@
+{
+    "Date":  "2026-11-18T15:39:29.2817383+09:00",
+    "Verified":  true,
+    "PlayModeChecks":  27,
+    "TextAreaChecks":  204,
+    "NewErrors":  0,
+    "ExistingParentErrors":  19,
+    "BuildPerformed":  false,
+    "ScenesModifiedByThisTask":  false,
+    "Stage1BackupIsBeforeUserSavedEdits":  true,
+    "SharedPrefab":  "Assets/2. Prefab/UICanvas.prefab",
+    "ChangedOriginals":  [
+                             {
+                                 "Path":  "Assets/3. Scripts/06. Enemy/EnemyController.cs",
+                                 "BackupSha256":  "D54D11DBE8B7AE57DA2D61D360D412C092C535048E66F791F973B518A03213F5",
+                                 "CurrentSha256":  "9A9D41DDC2522C5E1DD2EF72358D3CD67EF289DA7F92C93AF6ABFC60FDBA1D38",
+                                 "MetaPreserved":  true
+                             },
+                             {
+                                 "Path":  "Assets/3. Scripts/02. Flow/GameSession.cs",
+                                 "BackupSha256":  "87802794314D817C7DADBCDFCDAC1EDCF31F516DF46CB5AFBB925FBCF9A724CE",
+                                 "CurrentSha256":  "87ED1BF2ABC7C9584324346BC51B383B21799B5E72BF2ECBD034A239037F260A",
+                                 "MetaPreserved":  true
+                             },
+                             {
+                                 "Path":  "Assets/3. Scripts/05. Tower/TowerManager.cs",
+                                 "BackupSha256":  "E50B55A4743AC6B64071110BB1285A1C85FE2A7D5CBF0B403818EACC569FC346",
+                                 "CurrentSha256":  "02E782BFE3B760B7C0E2AD8C48F77B3C17E572B2F19A45254DFB9400D475B8FC",
+                                 "MetaPreserved":  true
+                             },
+                             {
+                                 "Path":  "Assets/3. Scripts/11. UI/GameOverPanel.cs",
+                                 "BackupSha256":  "064A1AE43179FE9C80E895C6E0F7D43698856801D93DC4ED11905B92F9A64710",
+                                 "CurrentSha256":  "C2008AEF0FAD71C0CB1368673A662A13B86518903DCC9023ED911B9A0B59CFDC",
+                                 "MetaPreserved":  true
+                             },
+                             {
+                                 "Path":  "Assets/3. Scripts/11. UI/GameClearPanel.cs",
+                                 "BackupSha256":  "44910FBDF6C50FFE5EC862F2D0921D4C622D600455696A1FC52A3F3312C48E85",
+                                 "CurrentSha256":  "C505C7DE3C60873D08B014C40F021CA2D89EE5A99EFF3D802597971D90D8CC93",
+                                 "MetaPreserved":  true
+                             },
+                             {
+                                 "Path":  "Assets/3. Scripts/11. UI/UIManager.cs",
+                                 "BackupSha256":  "B78B0C8B6E27D9B39B4A1CADC331EE38E048489ADD23C0FCE270FD31CAEDB81C",
+                                 "CurrentSha256":  "EB9D70836AE48DC06879EE53DF84749F95C5AA1EE8D334986F2DBF9526567C5B",
+                                 "MetaPreserved":  true
+                             },
+                             {
+                                 "Path":  "Assets/2. Prefab/UICanvas.prefab",
+                                 "BackupSha256":  "A2D0440BC6CF771515F5370A783A45538DCFDF38E45FF23EFD6B7B67E1B2B010",
+                                 "CurrentSha256":  "D2449E3F962A73482508C1741FF60A26D9B4F2ABFB81315BA8A1994E99F83554",
+                                 "MetaPreserved":  true
+                             }
+                         ],
+    "Added":  [
+                  {
+                      "Path":  "Assets/3. Scripts/02. Flow/BattleResults.cs",
+                      "Sha256":  "644EC91B3FB595B65E1095577C90716D520CA9E68F72680E62358CC492CDE368",
+                      "MetaSha256":  "0B606C2037932A0686661547CDEA4B5803398560F0FD98305248D3F27182DC84"
+                  },
+                  {
+                      "Path":  "Assets/3. Scripts/11. UI/BattleResultPanel.cs",
+                      "Sha256":  "150C66F6E2EC105869E94E679F0B5B7DE1DCAF3B4A610305F0FE5E4160B53789",
+                      "MetaSha256":  "C9D3A085094E111FADF923DC29D9C3705148DAE27DD5DE262D4ABB3A035A6AA9"
+                  },
+                  {
+                      "Path":  "Assets/3. Scripts/11. UI/BattleResultRow.cs",
+                      "Sha256":  "1E1544872B03758A8ADA5C7570020802D55907E3C259ACA0DC2BFB6246BD601C",
+                      "MetaSha256":  "2986EA5222540AF7EACBE5D94A31459BEDF1E81654FE4299BAC2B088FE96ED3B"
+                  },
+                  {
+                      "Path":  "Assets/Editor/ResultPanelSetup.cs",
+                      "Sha256":  "1268564F481ABB074C066589988248EF5ACC3B1ED9F8401D238442E2B2B1ECB9",
+                      "MetaSha256":  "C2487C89252791A5AC4EF2DF6E8E5A0B9D778782CEC81689908EB19C53B543BB"
+                  },
+                  {
+                      "Path":  "Assets/Editor/ResultPanelVerification.cs",
+                      "Sha256":  "B470607F46733A2BF48C964FA1CFE2FA538A770CAA1F993E12C1B5B3D6B80D40",
+                      "MetaSha256":  "40AFBE2FBA4046C5B5BEE7604552D68A8D2ED3810248FE6DF22A1BDD67A6569A"
+                  }
+              ]
+}

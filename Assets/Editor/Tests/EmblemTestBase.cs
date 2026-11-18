@@ -34,13 +34,18 @@ namespace SquareTD.Tests
             m_assets.Clear();
         }
 
-        protected TowerController MakeTower(int id, float power = 10f, int range = 2, int slot = 0, AttackSkill skill = null,
+        // 버프·디버프 타워는 브론즈 기준 (Power 4, AV 0.1) → 스킬 1 배율 1, 스킬 2 배율 1.1
+        public const float SupportAbilityValue = 0.1f;
+
+        protected TowerController MakeTower(int id, float power = -1f, int range = 2, int slot = 0, AttackSkill skill = null,
                                             float critRate = 0f, int mastery = 1)
         {
             var go = new GameObject($"Tower {id}");
             go.transform.SetParent(m_root.transform);
             var tower = go.AddComponent<TowerController>();
-            var definition = new TowerDefinition(id, power, range, 3, 1, critRate, 0f, mastery, 60, 5, 2f, 5f, TargetPriority.Closest);
+            bool support = BalanceTables.IsSupport(TowerId.GetColor(id));
+            if (power < 0f) power = support ? SkillFormula.SupportBasePower : 10f;
+            var definition = new TowerDefinition(id, power, range, 3, 1, critRate, 0f, mastery, 5, support ? SupportAbilityValue : 2f, 5f, TargetPriority.Closest);
             tower.Init(definition, slot, null, null, null, skill);
             return tower;
         }
@@ -78,6 +83,10 @@ namespace SquareTD.Tests
         protected static void MoveEnemyTo(EnemyController enemy, int pathIndex) =>
             SetPrivate(typeof(EnemyMovement), enemy.Movement, "PathIndex", pathIndex);
 
+        // 이번 적 턴에 움직인 것으로 (화상은 움직인 턴에만 터짐)
+        protected static void MarkActed(EnemyController enemy) =>
+            SetPrivate(typeof(EnemyMovement), enemy.Movement, "ActedThisTurn", true);
+
         private static void SetPrivate(System.Type type, object target, string property, object value) =>
             type.GetProperty(property, BindingFlags.Public | BindingFlags.Instance).GetSetMethod(true).Invoke(target, new[] { value });
 
@@ -93,12 +102,12 @@ namespace SquareTD.Tests
 
         // 스킬 2를 받음 (버프 타워의 스킬 카운트가 찼을 때와 같음)
         protected static void ReceiveSkill2(TowerController owner, TowerController receiver) =>
-            SupportBuffs.GiveSkill2(SupportCast.Skill2(owner, false), receiver);
+            SupportBuffs.GiveSkill2(SupportCast.Skill2(owner), receiver);
 
         // 디버프존을 밟은 것과 같음 (스킬 1). skill2면 스킬 2가 걸린 것과 같음
         protected static void Debuff(TowerController owner, EnemyController enemy, bool skill2 = false) =>
             DebuffZoneAction.Apply(SkillRegistry.GetDebuffRule(owner.Definition.Emblem),
-                                   skill2 ? SupportCast.Skill2(owner, false) : SupportCast.Skill1(owner), enemy, skill2 ? -1 : 0);
+                                   skill2 ? SupportCast.Skill2(owner) : SupportCast.Skill1(owner), enemy, skill2 ? -1 : 0);
 
         protected static float Sum(List<StatModifier> modifiers, StatType stat)
         {

@@ -11,6 +11,7 @@ namespace SquareTD
     {
         [Header("수집형 정보 카드")]
         [SerializeField] private TowerInfoCardView cardView;
+        [SerializeField] private SkillDescriptionView descriptionView;
         [Header("타워 정보")]
         [SerializeField] TextMeshProUGUI txt_level;
         [SerializeField] TextMeshProUGUI txt_name;
@@ -90,7 +91,6 @@ namespace SquareTD
             Subscribe();
 
             if (UIManager.Instance != null) m_selectedTower = UIManager.Instance.SelectedTower;
-            WatchStack(m_selectedTower);
             UpdateTowerInfo();
         }
 
@@ -128,12 +128,15 @@ namespace SquareTD
         private void FlipCard()
         {
             if (m_front == null || m_back == null) return;
+            if (descriptionView != null) descriptionView.HideValue();
             bool toBack = m_front.activeSelf;
+            if (toBack && descriptionView != null) descriptionView.PreparePage();
             CardFlip.ChangePage(transform, toBack ? m_front : m_back, toBack ? m_back : m_front);
         }
 
         private void ShowFront()
         {
+            if (descriptionView != null) descriptionView.HideValue();
             DG.Tweening.DOTween.Kill(transform, true);
             transform.localRotation = Quaternion.identity;
             if (m_front != null) m_front.SetActive(true);
@@ -166,7 +169,6 @@ namespace SquareTD
 
         private void Unsubscribe()
         {
-            WatchStack(null);
             if (!m_subscribed) return;
 
             if (UIManager.Instance != null) UIManager.Instance.SelectedTowerChanged -= HandleTowerSelected;
@@ -192,10 +194,10 @@ namespace SquareTD
 
         private void HandleTowerSelected(TowerController tower)
         {
+            if (m_selectedTower != tower && descriptionView != null) descriptionView.HideValue();
             if (m_selectedTower != tower && cardView != null) cardView.ResetToFront();
             if (m_selectedTower != tower) ShowFront();
             m_selectedTower = tower;
-            WatchStack(tower);
             UpdateTowerInfo();
         }
 
@@ -340,7 +342,7 @@ namespace SquareTD
             SetText(txt_abilityValue, $"x{stats.AbilityValue:0.##}");
             SetText(txt_duration, GetDurationText(definition.Color, stats, m_selectedTower.State));
             SetText(txt_mastery, GetMasteryText(definition.Color, stats));
-            SetText(txt_stack, GetStackText(isSupport, stats));
+            SetText(txt_stack, UnusedStatText);
         }
 
         private static string GetBonusText(TowerFinalStats stats, StatType stat, float scale, string unit)
@@ -407,42 +409,15 @@ namespace SquareTD
             }
         }
 
-        private string GetStackText(bool isSupport, TowerFinalStats stats)
-        {
-            TowerStack stack = m_selectedTower.State.Stack;
-            return $"{stack.Current:0.#} / {stack.Max}";
-        }
-
         private void UpdateDescriptionText(TowerDefinition definition, TowerFinalStats stats)
         {
-            switch (definition.Color)
-            {
-                case TowerColor.Red:
-                    int side = Mathf.Max(1, stats.Mastery) * 2 - 1;
-                    SetText(txt_default, $"사거리 {stats.Range}칸 안의 적을 노려\n{side}x{side} 범위에 {stats.Power:0.##} 피해 × {stats.AttackCount}발");
-                    break;
-                case TowerColor.Blue:
-                    int shots = stats.AttackCount * TargetAction.GetShotsPerAttack(stats.Mastery);
-                    SetText(txt_default, $"사거리 {stats.Range}칸 안의 적 하나에게\n{stats.Power:0.##} 피해 × {shots}발");
-                    break;
-                case TowerColor.Yellow:
-                    SetText(txt_default, $"존 {stats.Mastery}개 위의 타워에게 스킬 1\n행동마다 스킬 카운트 +{stats.AttackCount}, 차면 아군 전체에게 스킬 2");
-                    break;
-                case TowerColor.Purple:
-                    SetText(txt_default, $"존 {stats.Mastery}개를 밟은 적에게 스킬 1\n행동마다 스킬 카운트 +{stats.AttackCount}, 차면 적 전체에게 스킬 2");
-                    break;
-                default:
-                    SetText(txt_default, "매 적 턴, 재료 문양 타워의 티어 합만큼 시너지 스택을 얻습니다. 스택이 차면 타워 아래의 스킬 버튼으로 사용합니다.");
-                    break;
-            }
-
-            string buffs = m_selectedTower.IsAttackTower ? GetReceivedBuffText(stats) : "";
-            if (buffs.Length > 0 && txt_default != null) txt_default.text += $"\n\n받는 버프\n{buffs}";
-
-            SetText(txt_skill, SkillDescriptions.GetDescription(definition, stats));
-            foreach (TextMeshProUGUI title in txt_skillTitles) SetText(title, SkillDescriptions.GetTitle(definition));
+            TowerDescription document = TowerDescriptionBuilder.Build(definition, stats, m_selectedTower.State);
+            SetText(txt_default, document.Basic);
+            SetText(txt_skill, document.Skill);
+            foreach (TextMeshProUGUI title in txt_skillTitles) SetText(title, document.SkillTitle);
+            if (descriptionView == null) descriptionView = GetComponent<SkillDescriptionView>();
+            if (descriptionView != null) descriptionView.SetDocument(document);
         }
-
         private void UpdateButtons()
         {
             if (btn_sellTower != null) btn_sellTower.interactable = CanPlayerAct && !TowerId.IsSynergy(m_selectedTower.Definition.Id)
@@ -469,15 +444,6 @@ namespace SquareTD
         {
             if (m_selectedTower == null) return;
             if (TowerManager.Instance.TrySell(m_selectedTower)) CloseAfterTowerRemoved();
-        }
-
-        private TowerStack m_watchedStack;
-
-        private void WatchStack(TowerController tower)
-        {
-            if (m_watchedStack != null) m_watchedStack.Full -= UpdateTowerInfo;
-            m_watchedStack = tower != null ? tower.State.Stack : null;
-            if (m_watchedStack != null) m_watchedStack.Full += UpdateTowerInfo;
         }
 
         private void HandlePickAttackCellClick()

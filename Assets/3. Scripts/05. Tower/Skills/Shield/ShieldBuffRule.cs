@@ -6,6 +6,7 @@ namespace SquareTD
     // 방패 버프 — 프로텍트 · 이지스 (한도 비례 최종 피해, 이지스 동안 한도 +50%, 타격 공격력 +(한도 × 0.2)%)
     public class ShieldBuffRule : BuffRule
     {
+        public const float BronzeFinalDamagePerLimit = 0.005f;
         public const float AegisLimitRate = 0.5f;
         public const float BluntPowerPerLimit = 0.002f;
 
@@ -19,7 +20,7 @@ namespace SquareTD
         public override List<StatModifier> GetModifiers(SupportCast cast, TowerController receiver, string source)
         {
             int limit = m_currentLimit();
-            var modifiers = new List<StatModifier> { StatModifier.Flat(source, StatType.FinalDamage, cast.Rate * limit) };
+            var modifiers = new List<StatModifier> { StatModifier.Flat(source, StatType.FinalDamage, cast.Bronze(BronzeFinalDamagePerLimit) * limit) };
             if (IsSynergy(cast, receiver)) modifiers.Add(StatModifier.Percent(source, StatType.Power, BluntPowerPerLimit * limit));
             return modifiers;
         }

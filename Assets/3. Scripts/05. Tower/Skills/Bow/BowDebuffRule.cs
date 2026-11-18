@@ -3,12 +3,13 @@ namespace SquareTD
     // 활 디버프 — 락 온 · 핀 포인트 (받는 최종 피해, 핀 포인트 받는 치명타 확률 +10%, 찌르기 피해의 20% 추가타)
     public class BowDebuffRule : DebuffRule
     {
+        public const float BronzeDamageTaken = 0.1f;
         public const float PinPointCritRate = 0.1f;
         public const float PierceFollowUp = 0.2f;
 
         public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy)
         {
-            float damageTaken = Resist(enemy, cast.Rate);
+            float damageTaken = Resist(enemy, cast.Bronze(BronzeDamageTaken));
             float critRate = cast.IsSkill2 ? Resist(enemy, PinPointCritRate) : 0f;
             return new BowDebuffEffect(cast, damageTaken, critRate);
         }

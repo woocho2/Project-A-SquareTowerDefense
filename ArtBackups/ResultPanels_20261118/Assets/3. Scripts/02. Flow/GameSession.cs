@@ -1,0 +1,204 @@
+using System;
+using System.Collections.Generic;
+using DG.Tweening;
+using UnityEngine;
+
+namespace SquareTD
+{
+    // 한 판의 진행: 적 수 한도(기본 + 보정), 게임 오버·클리어
+    public static class StartSettings
+    {
+        public static bool IsSet { get; private set; }
+        public static GameMode Mode { get; private set; }
+        public static StageDefinition Stage { get; private set; }
+        public static IReadOnlyList<TowerEmblem> Emblems { get; private set; } = new List<TowerEmblem>();
+
+        public static void Set(GameMode mode, StageDefinition stage, IEnumerable<TowerEmblem> emblems)
+        {
+            Mode = mode;
+            Stage = stage;
+            Emblems = new List<TowerEmblem>(emblems);
+            IsSet = true;
+        }
+    }
+
+    public class GameSession : Singleton<GameSession>
+    {
+        [SerializeField] private GameMode m_mode = GameMode.Normal;
+        [SerializeField] private StageDefinition m_stage;
+        [SerializeField, Min(1)] private int m_helNormalDeathTarget = 70;
+        [SerializeField, Min(1)] private int m_helHardDeathTarget = 50;
+
+        public GameMode Mode => m_mode;
+        public StageDefinition Stage => m_stage;
+        public static GameMode CurrentMode => Instance != null ? Instance.m_mode : GameMode.Normal;
+        public int BaseLimit { get; private set; }
+        public int AdaptiveValue { get; private set; }
+        public int CurrentLimit => BaseLimit + SumLimitModifiers();
+        public bool IsOver { get; private set; }
+        public EmblemSharedState Shared { get; } = new EmblemSharedState();
+        public BossMechanicService BossMechanics { get; } = new BossMechanicService();
+        public int HelDeathTarget => Mathf.Max(1, m_mode == GameMode.Hard ? m_helHardDeathTarget : m_helNormalDeathTarget);
+
+        public event Action<int> LimitChanged;
+
+        private readonly Dictionary<string, int> m_limitModifiers = new Dictionary<string, int>();
+        private readonly HashSet<string> m_towerLimitSources = new HashSet<string>();
+        public IReadOnlyDictionary<string, int> LimitModifiers => m_limitModifiers;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            if (Instance != this) return;
+
+            DOTween.SetTweensCapacity(500, 200);
+
+            if (StartSettings.IsSet)
+            {
+                m_stage = StartSettings.Stage;
+                m_mode = StartSettings.Mode;
+            }
+            Debug.Log($"[GameSession] {(m_stage != null ? m_stage.DisplayName : "스테이지 없음")} · {m_mode}");
+        }
+
+        private void Start()
+        {
+            WaveManager.Instance.WaveChanged += OnWaveChanged;
+            TowerManager.Instance.TowerAdded += OnTowerChanged;
+            TowerManager.Instance.TowerRemoved += OnTowerChanged;
+            TowerManager.Instance.TowerReplaced += OnTowerReplaced;
+            BoardManager.Instance.Zones.ZoneChanged += OnZoneChanged;
+            EnemyManager.Instance.EnemyDied += OnEnemyDied;
+        }
+
+        private void OnEnemyDied(KillInfo kill) => Shared.AddDarkness(EmblemSharedState.GetKillCount(kill));
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            if (WaveManager.Instance != null) WaveManager.Instance.WaveChanged -= OnWaveChanged;
+            if (TowerManager.Instance != null)
+            {
+                TowerManager.Instance.TowerAdded -= OnTowerChanged;
+                TowerManager.Instance.TowerRemoved -= OnTowerChanged;
+                TowerManager.Instance.TowerReplaced -= OnTowerReplaced;
+            }
+            if (BoardManager.Instance != null) BoardManager.Instance.Zones.ZoneChanged -= OnZoneChanged;
+            if (EnemyManager.Instance != null) EnemyManager.Instance.EnemyDied -= OnEnemyDied;
+        }
+
+        public int RollAdaptive()
+        {
+            AdaptiveValue = UnityEngine.Random.Range(WaveTable.GetAdaptiveMin(m_mode), WaveTable.GetAdaptiveMax(m_mode) + 1);
+            Debug.Log($"[GameSession] 웨이브 {WaveManager.Instance.CurrentWave} 적응형 능력치 {AdaptiveValue}");
+            if (EnemyManager.Instance != null)
+                foreach (EnemyController enemy in EnemyManager.Instance.Registry.Alive) enemy.Movement.RefreshFace();
+            return AdaptiveValue;
+        }
+
+        private void OnWaveChanged(int wave)
+        {
+            Shared.OnWaveStarted();
+            LightSplashSkill.RefreshTranscendAll();
+
+            int limit = WaveTable.GetEnemyLimit(m_mode, WaveTable.GetCycle(wave));
+            if (limit == BaseLimit) return;
+
+            ChangeLimit(() => BaseLimit = limit);
+            RefreshTowerLimits();
+        }
+
+        private void OnTowerChanged(TowerController tower) => RefreshTowerLimits();
+        private void OnTowerReplaced(TowerController old, TowerController created) => RefreshTowerLimits();
+        private void OnZoneChanged(Zone zone) => RefreshTowerLimits();
+
+        public void SetLimitModifier(string source, int amount) => ChangeLimit(() => m_limitModifiers[source] = amount);
+        public void RemoveLimitModifier(string source) => ChangeLimit(() => m_limitModifiers.Remove(source));
+
+        private int SumLimitModifiers()
+        {
+            int sum = 0;
+            foreach (int amount in m_limitModifiers.Values) sum += amount;
+            return sum;
+        }
+
+        private void ChangeLimit(Action change)
+        {
+            int before = CurrentLimit;
+            change();
+            if (CurrentLimit == before) return;
+
+            Debug.Log($"[GameSession] 한도 {CurrentLimit} (기본 {BaseLimit}{(m_limitModifiers.Count > 0 ? $", 보정 {SumLimitModifiers():+0;-0}" : "")})");
+            LimitChanged?.Invoke(CurrentLimit);
+
+            if (CurrentLimit < before && EnemyManager.Instance != null && EnemyManager.Instance.Registry.Count > CurrentLimit)
+                LimitGameOver($"한도가 {CurrentLimit}로 돌아옴, 남은 적 {EnemyManager.Instance.Registry.Count}");
+        }
+
+        public void RefreshTowerLimits()
+        {
+            if (BoardManager.Instance == null) return;
+
+            var best = new Dictionary<TowerEmblem, int>();
+            TowerSlots slots = BoardManager.Instance.Slots;
+            for (int i = 0; i < slots.Count; i++)
+            {
+                TowerController tower = slots.Get(i);
+                if (tower == null || !tower.IsAttackTower) continue;
+
+                foreach (TowerEmblem emblem in tower.State.SupportBuffs.Keys)
+                {
+                    if (!BuffRule.HasSkill2(tower, emblem) || best.ContainsKey(emblem)) continue;
+                    best[emblem] = SkillRegistry.GetBuffRule(emblem).GetLimitModifier(BaseLimit);
+                }
+            }
+
+            ChangeLimit(() =>
+            {
+                foreach (string source in m_towerLimitSources) m_limitModifiers.Remove(source);
+                m_towerLimitSources.Clear();
+
+                foreach (KeyValuePair<TowerEmblem, int> pair in best)
+                {
+                    if (pair.Value == 0) continue;
+                    string source = $"{EmblemNames.GetEmblemName(pair.Key)} 버프 타워";
+                    m_limitModifiers[source] = pair.Value;
+                    m_towerLimitSources.Add(source);
+                }
+            });
+        }
+
+        public bool CheckBeforeSpawn(int aliveCount)
+        {
+            if (aliveCount > CurrentLimit) return !LimitGameOver($"남은 적 {aliveCount} > 한도 {CurrentLimit}");
+            return true;
+        }
+
+        private bool LimitGameOver(string reason)
+        {
+            if (Shared.TryUseLimitShield())
+            {
+                Debug.Log($"[GameSession] 브륀힐드가 게임 오버를 막음: {reason}");
+                return false;
+            }
+            GameOver(reason);
+            return true;
+        }
+
+        public void GameOver(string reason)
+        {
+            if (IsOver) return;
+            IsOver = true;
+            Debug.Log($"[GameSession] 게임 오버: {reason}");
+            TurnManager.Instance.EndGame(new GameOverState());
+        }
+
+        public void GameClear()
+        {
+            if (IsOver) return;
+            IsOver = true;
+            Debug.Log($"[GameSession] 게임 클리어");
+            TurnManager.Instance.EndGame(new GameClearState());
+        }
+    }
+}

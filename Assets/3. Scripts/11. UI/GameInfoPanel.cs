@@ -1,4 +1,5 @@
 using TMPro;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -13,8 +14,12 @@ namespace SquareTD
         [SerializeField] TextMeshProUGUI txt_currentWave;
         [SerializeField] TextMeshProUGUI txt_currentLimit;
         [SerializeField] Image img_life;
-        [SerializeField] Image img_shield;
         [SerializeField] TextMeshProUGUI txt_currentGold;
+        [SerializeField] TextMeshProUGUI txt_playerLevel, txt_playerXp;
+        [SerializeField] Image img_playerXpFill;
+        private Tween m_xpTween;
+        private int m_shownLevel;
+        private float m_shownSpeed = -1;
         [SerializeField] TextMeshProUGUI txt_currentGameSpeed;
         [SerializeField] TextMeshProUGUI txt_bossTurns;
 
@@ -23,13 +28,14 @@ namespace SquareTD
 
         private void Start()
         {
-            if (txt_stage != null) txt_stage.text = SceneManager.GetActiveScene().name;
+            if (txt_stage != null) txt_stage.text = GameSession.Instance.Stage != null ? GameSession.Instance.Stage.DisplayName : SceneManager.GetActiveScene().name;
 
             WaveManager.Instance.WaveChanged += UpdateWaveText;
             GameSession.Instance.LimitChanged += HandleLimitChanged;
             EnemyManager.Instance.CountChanged += HandleCountChanged;
             CurrencyManager.Instance.Changed += UpdateCurrencyText;
             TurnManager.Instance.EnemyTurnEnded += HandleEnemyTurnEnded;
+            TowerManager.Instance.ColorLevels.XpChanged += UpdatePlayerLevel;
 
             if (btn_option != null) btn_option.onClick.AddListener(HandleOptionClick);
             if (btn_gameSpeed != null) btn_gameSpeed.onClick.AddListener(HandleGameSpeedClick);
@@ -37,9 +43,9 @@ namespace SquareTD
             UpdateWaveText(WaveManager.Instance.CurrentWave);
             UpdateLimitText();
             UpdateCurrencyText(CurrencyManager.Instance.Gold);
-            UpdateGameSpeedText(1f);
+            UpdateGameSpeedText(Time.timeScale);
             UpdateBossTurnsText();
-            if (img_shield != null) img_shield.enabled = false;
+            UpdatePlayerLevel();
         }
 
         private void OnDestroy()
@@ -49,6 +55,9 @@ namespace SquareTD
             if (EnemyManager.Instance != null) EnemyManager.Instance.CountChanged -= HandleCountChanged;
             if (CurrencyManager.Instance != null) CurrencyManager.Instance.Changed -= UpdateCurrencyText;
             if (TurnManager.Instance != null) TurnManager.Instance.EnemyTurnEnded -= HandleEnemyTurnEnded;
+            if (TowerManager.Instance != null) TowerManager.Instance.ColorLevels.XpChanged -= UpdatePlayerLevel;
+            m_xpTween?.Kill();
+            if (txt_playerLevel != null) txt_playerLevel.rectTransform.DOKill();
 
             if (btn_option != null) btn_option.onClick.RemoveListener(HandleOptionClick);
             if (btn_gameSpeed != null) btn_gameSpeed.onClick.RemoveListener(HandleGameSpeedClick);
@@ -56,7 +65,8 @@ namespace SquareTD
 
         private void UpdateWaveText(int wave)
         {
-            if (txt_currentWave != null) txt_currentWave.text = $"Wave {wave}";
+            if (txt_currentWave != null) txt_currentWave.text = $"WAVE {wave}";
+            UpdateBossTurnsText();
         }
 
         private void HandleLimitChanged(int limit)
@@ -78,17 +88,50 @@ namespace SquareTD
         private void UpdateLimitText()
         {
             if (txt_currentLimit == null) return;
-            txt_currentLimit.text = $"{EnemyManager.Instance.Registry.Count}/{GameSession.Instance.CurrentLimit}";
+            int count = EnemyManager.Instance.Registry.Count, limit = GameSession.Instance.CurrentLimit;
+            txt_currentLimit.text = $"{count} / {limit}";
+            Color color = count >= limit ? new Color32(246, 123, 119, 255) : count >= limit * .8f ? new Color32(246, 190, 106, 255) : new Color32(237, 241, 249, 255);
+            txt_currentLimit.color = color;
+            if (img_life != null) { img_life.fillAmount = limit > 0 ? Mathf.Clamp01((float)count / limit) : 0; img_life.color = color; }
         }
 
         private void UpdateCurrencyText(int gold)
         {
-            if (txt_currentGold != null) txt_currentGold.text = $"{gold}";
+            if (txt_currentGold != null) txt_currentGold.text = gold.ToString("N0");
         }
 
         private void UpdateGameSpeedText(float speed)
         {
-            if (txt_currentGameSpeed != null) txt_currentGameSpeed.text = $"{speed}";
+            if (txt_currentGameSpeed != null) txt_currentGameSpeed.text = $"×{speed:0.#}";
+        }
+
+        private void Update()
+        {
+            if (Time.timeScale <= 0 || Mathf.Approximately(m_shownSpeed, Time.timeScale)) return;
+            m_shownSpeed = Time.timeScale; UpdateGameSpeedText(m_shownSpeed);
+        }
+
+        private void UpdatePlayerLevel()
+        {
+            ColorUpgradeState level = TowerManager.Instance.ColorLevels;
+            if (txt_playerLevel != null)
+            {
+                txt_playerLevel.text = $"Lv. {level.Level}";
+                if (m_shownLevel > 0 && m_shownLevel != level.Level)
+                {
+                    txt_playerLevel.rectTransform.DOKill(true); txt_playerLevel.rectTransform.localScale = Vector3.one;
+                    txt_playerLevel.rectTransform.DOPunchScale(Vector3.one * .10f, .3f, 3, .5f).SetUpdate(true);
+                }
+            }
+            if (txt_playerXp != null) txt_playerXp.text = level.IsMax ? "최대 레벨" : $"{level.Xp} / {level.XpToNext} EXP";
+            if (img_playerXpFill != null)
+            {
+                float target = level.IsMax ? 1 : (float)level.Xp / Mathf.Max(1, level.XpToNext);
+                m_xpTween?.Kill();
+                if (m_shownLevel == 0) img_playerXpFill.fillAmount = target;
+                else m_xpTween = img_playerXpFill.DOFillAmount(target, .25f).SetUpdate(true);
+            }
+            m_shownLevel = level.Level;
         }
 
         private void UpdateBossTurnsText()
@@ -121,7 +164,9 @@ namespace SquareTD
 
         private void HandleGameSpeedClick()
         {
-            Debug.Log("[GameInfoPanel] 게임 속도는 수업 43에서 연결");
+            if (Time.timeScale <= 0 || (UIManager.Instance != null && UIManager.Instance.IsPaused)) return;
+            Time.timeScale = Time.timeScale < 1.5f ? 2f : Time.timeScale < 2.5f ? 3f : 1f;
+            UpdateGameSpeedText(Time.timeScale);
         }
     }
 }

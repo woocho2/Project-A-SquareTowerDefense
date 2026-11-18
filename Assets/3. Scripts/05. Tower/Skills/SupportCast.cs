@@ -14,6 +14,9 @@ namespace SquareTD
         public readonly float AbilityValue;
 
         public float Rate => Amount * SkillFormula.PercentRate;
+        public float Scale => Amount / SkillFormula.SupportBasePower;
+        public float Bronze(float bronzeValue) => bronzeValue * Scale;
+        public float Penalty(float bronzePenalty) => bronzePenalty * (2f - Scale);
         public int Duration => SkillFormula.EffectActions;
 
         public SupportCast(TowerController owner, bool isSkill2, float abilityValue)
@@ -31,12 +34,7 @@ namespace SquareTD
 
         public static SupportCast Skill1(TowerController owner) => new SupportCast(owner, false, owner.Stats.AbilityValue);
 
-        public static SupportCast Skill2(TowerController owner, bool useCharge)
-        {
-            TowerFinalStats stats = owner.Stats;
-            float abilityValue = useCharge ? SkillFormula.ChargedAbility(stats.AbilityValue, stats.Stack, stats.StackValue) : stats.AbilityValue;
-            return new SupportCast(owner, true, abilityValue);
-        }
+        public static SupportCast Skill2(TowerController owner) => new SupportCast(owner, true, owner.Stats.AbilityValue);
 
         public string SkillName => IsSkill2 ? "스킬 2" : "스킬 1";
     }

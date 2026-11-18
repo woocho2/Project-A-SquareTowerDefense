@@ -87,17 +87,23 @@ namespace SquareTD
 
             if (HasAllFaces)
             {
-                for (int face = 0; face < FaceCount; face++)
-                {
-                    int assetIndex = Random.Range(0, m_faceAssetPool.Length);
-                    m_faceAssetIndices[face] = assetIndex;
-                    m_faceMaterials[face] = ResolveMaterial(assetIndex);
-                }
+                ShuffleFaceAssets(m_faceAssetIndices);
+                for (int face = 0; face < FaceCount; face++) m_faceMaterials[face] = ResolveMaterial(m_faceAssetIndices[face]);
                 m_renderer.sharedMaterials = m_faceMaterials;
                 ApplyAppearance();
             }
 
             ShowFace((EnemyCubeFace)Random.Range(0, FaceCount));
+        }
+
+        public static void ShuffleFaceAssets(int[] indices)
+        {
+            for (int i = 0; i < indices.Length; i++) indices[i] = i;
+            for (int i = indices.Length - 1; i > 0; i--)
+            {
+                int pick = Random.Range(0, i + 1);
+                (indices[i], indices[pick]) = (indices[pick], indices[i]);
+            }
         }
 
         public int GetFaceAssetIndex(int faceIndex) => m_faceAssetIndices[faceIndex];

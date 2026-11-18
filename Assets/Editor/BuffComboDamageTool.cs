@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 
 namespace SquareTD
 {
-    // 다이아 공격 타워 28종 × 버프 3개 조합 364가지 × 차지 16가지의 한 발·스킬 피해를 게임 코드로 계산해 Balance 폴더에 남김
+    // 다이아 공격 타워 28종 × 버프 3개 조합 364가지의 한 발·스킬 피해를 게임 코드로 계산해 Balance 폴더에 남김
     public static class BuffComboDamageTool
     {
         private const float DummyHp = 10000000000f;
@@ -74,7 +74,7 @@ namespace SquareTD
                                 cancelled = true;
                                 break;
                             }
-                            for (int mask = 0; mask < 16; mask++)
+                            for (int mask = 0; mask < 1; mask++)
                                 rows.Add(Measure(database, dummy, grid, root.transform, color, attackEmblem, combo, mask));
                             done++;
                         }
@@ -114,7 +114,7 @@ namespace SquareTD
                 for (int i = 0; i < 3; i++)
                 {
                     TowerController buff = MakeTower(database, TowerId.Make(Tier, TowerColor.Yellow, combo[i]), i + 1, root, created, null);
-                    SupportBuffs.GiveSkill2(SupportCast.Skill2(buff, (mask & (2 << i)) != 0), attack);
+                    SupportBuffs.GiveSkill2(SupportCast.Skill2(buff), attack);
                 }
 
                 int distance = Mathf.Clamp(attack.Stats.Range, 1, PathLength - 1);
@@ -130,7 +130,6 @@ namespace SquareTD
 
                 try
                 {
-                    if ((mask & 1) != 0) attack.State.Stack.Add(attack.State.Stack.Max);
                     skill.Fire(attack, enemy);
                     for (int turn = 0; turn < DotTurns; turn++)
                     {

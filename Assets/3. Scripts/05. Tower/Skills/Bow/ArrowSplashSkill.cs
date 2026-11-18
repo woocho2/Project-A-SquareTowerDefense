@@ -13,10 +13,10 @@ namespace SquareTD
             m_grounds = grounds;
         }
 
-        protected override bool CastInstead(TowerController owner, ITarget mainTarget, bool useStack)
+        protected override bool CastInstead(TowerController owner, ITarget mainTarget)
         {
             TowerFinalStats stats = owner.Stats;
-            float damage = SkillFormula.AttackSkill(stats.Power, ChargedAbility(stats, useStack)) * ArrowRainGround.TurnRatio * stats.FinalDamageMultiplier;
+            float damage = SkillFormula.AttackSkill(stats.Power, stats.SkillAbility) * ArrowRainGround.TurnRatio * stats.FinalDamageMultiplier;
 
             m_grounds?.Add(new ArrowRainGround(owner, m_grid, m_occupancy, damage, SkillFormula.EffectTurns));
             return true;

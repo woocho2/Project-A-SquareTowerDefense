@@ -6,6 +6,14 @@ namespace SquareTD
     // 씬 이동
     public static class SceneFlow
     {
+        public const string LoadingSceneName = "LoadingScene";
+        public static string PendingScene { get; private set; }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void Reset() => PendingScene = null;
+
+        public static void FinishLoading() => PendingScene = null;
+
         public static void Reload(string sceneName)
         {
             Load(string.IsNullOrEmpty(sceneName) ? SceneManager.GetActiveScene().name : sceneName);
@@ -13,6 +21,7 @@ namespace SquareTD
 
         public static void Load(string sceneName)
         {
+            if (PendingScene != null) return;
             if (string.IsNullOrEmpty(sceneName))
             {
                 Debug.LogError("[SceneFlow] 불러올 씬 이름이 비어 있음 (패널의 씬 이름 칸을 확인)");
@@ -20,7 +29,18 @@ namespace SquareTD
             }
 
             Time.timeScale = 1f;
-            SceneManager.LoadScene(sceneName);
+            if (!Application.CanStreamedLevelBeLoaded(sceneName))
+            {
+                Debug.LogError($"[SceneFlow] '{sceneName}' 씬이 Build Settings 목록에 없습니다.");
+                return;
+            }
+            bool loadingScene = sceneName == LoadingSceneName;
+            string loading = LoadingSceneName;
+            if (loadingScene) { SceneTransitionOverlay.Begin(sceneName); return; }
+            if (!Application.CanStreamedLevelBeLoaded(loading)) { SceneManager.LoadScene(sceneName); return; }
+            PendingScene = sceneName;
+            try { SceneTransitionOverlay.Begin(loading); }
+            catch { PendingScene = null; throw; }
         }
 
         public static bool LoadStage(StageDefinition stage, string fallbackScene = null)

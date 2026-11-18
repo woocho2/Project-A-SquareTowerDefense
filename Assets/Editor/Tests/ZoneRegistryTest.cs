@@ -25,7 +25,7 @@ namespace SquareTD.Tests
             var go = new GameObject($"{color} {emblem}");
             go.transform.SetParent(m_root.transform);
             var tower = go.AddComponent<TowerController>();
-            var definition = new TowerDefinition(TowerId.Make(1, color, emblem), 10f, 2, 3, 1, 0f, 0f, 1, 60, 5, 2f, 5f, TargetPriority.Closest);
+            var definition = new TowerDefinition(TowerId.Make(1, color, emblem), 10f, 2, 3, 1, 0f, 0f, 1, 5, 2f, 5f, TargetPriority.Closest);
             tower.Init(definition, 0, null);
             return tower;
         }

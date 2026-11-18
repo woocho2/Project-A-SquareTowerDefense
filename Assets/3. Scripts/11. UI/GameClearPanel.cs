@@ -1,39 +1,11 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace SquareTD
 {
-    // 게임 클리어 패널
+    // 승리 상태에서 공용 전투 결과 화면 열기
     public class GameClearPanel : MonoBehaviour
     {
-        [SerializeField] Button btn_home;
-        [SerializeField] Button btn_menu;
-        [SerializeField] Button btn_nextStage;
-
-        [Header("씬 이름")]
-        [SerializeField] string m_sceneName_Menu;
-
-        private void Start()
-        {
-            if (btn_home != null) btn_home.onClick.AddListener(HandleHomeClick);
-            if (btn_menu != null) btn_menu.onClick.AddListener(HandleMenuClick);
-            if (btn_nextStage != null) btn_nextStage.onClick.AddListener(HandleNextStageClick);
-        }
-
-        private void OnDestroy()
-        {
-            if (btn_home != null) btn_home.onClick.RemoveListener(HandleHomeClick);
-            if (btn_menu != null) btn_menu.onClick.RemoveListener(HandleMenuClick);
-            if (btn_nextStage != null) btn_nextStage.onClick.RemoveListener(HandleNextStageClick);
-        }
-
-        private void HandleHomeClick() => SceneFlow.Quit();
-
-        private void HandleMenuClick() => SceneFlow.Load(m_sceneName_Menu);
-
-        private void HandleNextStageClick()
-        {
-            SceneFlow.Load(m_sceneName_Menu);
-        }
+        [SerializeField] private BattleResultPanel m_result;
+        private void OnEnable() { if (m_result != null) m_result.Open(true); }
     }
 }

@@ -3,12 +3,13 @@ namespace SquareTD
     // 방패 디버프 — 서프레스 · 락다운 (저항력 감소, 락다운 최대 이동력 -2, 타격에 맞으면 받는 최종 피해 +5%)
     public class ShieldDebuffRule : DebuffRule
     {
+        public const float BronzeResistanceCut = 5f;
         public const int LockdownSpeedCut = 2;
         public const float BluntDamageTaken = 0.05f;
 
         public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy)
         {
-            float cut = Resist(enemy, cast.Amount);
+            float cut = Resist(enemy, cast.Bronze(BronzeResistanceCut));
             float bluntTaken = cast.IsSkill2 ? Resist(enemy, BluntDamageTaken) : 0f;
             return new ShieldDebuffEffect(cast, cut, bluntTaken);
         }

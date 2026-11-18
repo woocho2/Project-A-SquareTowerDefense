@@ -395,6 +395,6 @@ namespace SquareTD.Tests
         }
 
         private static TowerDefinition Def(int id) =>
-            new TowerDefinition(id, 10f, 2, 3, 1, 0f, 0f, 1, 60, 5, 1f, 5f, TargetPriority.Closest);
+            new TowerDefinition(id, 10f, 2, 3, 1, 0f, 0f, 1, 5, 1f, 5f, TargetPriority.Closest);
     }
 }
