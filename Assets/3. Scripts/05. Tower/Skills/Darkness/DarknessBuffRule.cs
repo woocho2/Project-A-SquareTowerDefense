@@ -54,7 +54,7 @@ namespace SquareTD
 
             float chance = receiver.Definition.Emblem == TowerEmblem.Darkness ? DarkExecuteChance : ExecuteChance;
             if (!Chance.Roll(chance)) return;
-            enemy.Execute(new DamageInfo { Attacker = receiver, Source = DamageSource.Skill, Emblem = TowerEmblem.Darkness });
+            if (!enemy.TryExecute(new DamageInfo { Attacker = receiver, Source = DamageSource.Skill, Emblem = TowerEmblem.Darkness })) return;
             EmblemSharedState.Current.AddDarkness(ExecuteCount);
         }
     }

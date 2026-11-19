@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,9 +11,12 @@ namespace SquareTD
         private const float DummyHp = 50000000f;
 
         private bool m_autoEndTurn;
+        private System.Func<bool> m_inputCapture;
 
         private void Start()
         {
+            m_inputCapture = () => isActiveAndEnabled && m_typingId;
+            GameplayShortcuts.InputCaptured = m_inputCapture;
             SynergyBoard.TestAutoUse = m_testMode;
             EnemyManager.Instance.CountChanged += OnEnemyCountChanged;
             CurrencyManager.Instance.Changed += OnCurrencyChanged;
@@ -22,13 +24,13 @@ namespace SquareTD
 
         private void OnDestroy()
         {
+            if (GameplayShortcuts.InputCaptured == m_inputCapture) GameplayShortcuts.InputCaptured = null;
             if (EnemyManager.Instance != null) EnemyManager.Instance.CountChanged -= OnEnemyCountChanged;
             if (CurrencyManager.Instance != null) CurrencyManager.Instance.Changed -= OnCurrencyChanged;
             if (m_speedIndex != 0) Time.timeScale = 1f;
             TowerStatCalculator.ShowcaseOverride = false;
         }
 
-        // ── 테스트 모드 (T로 켜고 끔) ──
         private const int TestGold = 100000;
         private const float SkillCountGap = 2f;
         private bool m_testMode;
@@ -52,6 +54,8 @@ namespace SquareTD
             if (keyboard.f4Key.wasPressedThisFrame) ToggleShowcase();
             if (keyboard.f5Key.wasPressedThisFrame) FillSkillCounts();
             if (keyboard.f6Key.wasPressedThisFrame) FillSynergyStacks();
+            if (keyboard.f7Key.wasPressedThisFrame) GameSession.Instance.GameClear();
+            if (keyboard.f8Key.wasPressedThisFrame) GameSession.Instance.GameOver("F8 강제 패배");
         }
 
         private static void FillSynergyStacks()
@@ -219,11 +223,6 @@ namespace SquareTD
                 if (m_typingId) return;
             }
 
-            if (keyboard.spaceKey.wasPressedThisFrame)
-            {
-                TurnManager.Instance.OnClickEndTurn();
-            }
-
             if (keyboard.aKey.wasPressedThisFrame)
             {
                 m_autoEndTurn = !m_autoEndTurn;
@@ -238,16 +237,6 @@ namespace SquareTD
             if (keyboard.rKey.wasPressedThisFrame)
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-            }
-
-            if (keyboard.bKey.wasPressedThisFrame)
-            {
-                TowerManager.Instance.TryBuild();
-            }
-
-            if (keyboard.xKey.wasPressedThisFrame)
-            {
-                TowerManager.Instance.TrySell(TowerManager.Instance.Selected);
             }
 
             if (keyboard.cKey.wasPressedThisFrame)
@@ -270,12 +259,12 @@ namespace SquareTD
         private static readonly string[] s_keyLines =
         {
             "F12 키 목록 숨기기   T 테스트 모드 켜고 끄기",
-            "Space 턴 종료   A 자동 진행   R 다시 시작",
+            "Space 스킵   A 자동 진행   R 다시 시작",
             "5 배속 1 → 2 → 3 → 1",
-            "B 생성",
+            "D 생성   F 경험치 투자",
             "1 체력 5천만 허수아비 소환 (피해 확인용)",
             "── 고른 타워 ──",
-            "X 판매   C 공격 칸 고르기   P 우선순위 다음",
+            "E 판매   C 공격 칸 고르기   P 우선순위 다음",
             "Z 존 자리 고르기 (버프·디버프 타워)",
             "── 타워 세우기 ──",
             "8 무기 1티어 24종   9 원소 1티어 32종   0 전부 판매",
@@ -294,7 +283,7 @@ namespace SquareTD
             }
 
             const float lineHeight = 18f;
-            float y = 8f;
+            float y = 280f * Screen.height / 1080f;
             if (m_showKeys)
             {
                 var area = new Rect(8f, y, 330f, lineHeight * s_keyLines.Length + 10f);
@@ -312,6 +301,7 @@ $"F2 골드 +{TestGold:N0}   F3 플레이어 레벨 +1",
                     $"F4 공격 연출: 행동 {TowerStatCalculator.ShowcaseAction} · 사거리 {TowerStatCalculator.ShowcaseRange} [{(TowerStatCalculator.ShowcaseOverride ? "켬" : "끔")}]",
                     $"F5 모든 타워 스킬 카운트 → 최대 −{SkillCountGap:0}",
                     "F6 시너지 스택 가득 (테스트 모드에서는 시너지 스킬 자동 사용)",
+                    "F7 승리 화면   F8 패배 화면 (한 판에 한 번, R로 다시 시작)",
                 };
                 DrawLines(new Rect(8f, y, 330f, lineHeight * lines.Length + 10f), lines, lineHeight);
             }

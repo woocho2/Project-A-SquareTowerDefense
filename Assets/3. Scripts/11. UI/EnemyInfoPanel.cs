@@ -636,8 +636,7 @@ namespace SquareTD
             if (m_imgPortrait != null)
             {
                 m_imgPortrait.type = Image.Type.Simple;
-                m_imgPortrait.sprite = definition != null && definition.Appearance != null
-                    ? definition.Appearance.FullSprite : null;
+                m_imgPortrait.sprite = body != null && body.Appearance != null ? body.Appearance.FullSprite : null;
                 m_imgPortrait.preserveAspect = true;
                 m_imgPortrait.enabled = m_imgPortrait.sprite != null;
             }

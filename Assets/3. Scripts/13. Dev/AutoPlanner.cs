@@ -3,15 +3,92 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 자동 진행의 판단 — 생성(판 → 대기석), 대기석 타워 올리기, 경험치 사기, 칸이 다 차면 쓸모없는 1티어를 팔고 다시 뽑기, 존과 타워 자리 고르기
+    // 자동 진행의 판단 — 상점 카드 사기(집중 문양 우선), 자리가 없으면 집중 밖 1티어 팔기, 대기석 타워 올리기, 경험치·리롤, 존과 타워 자리 고르기
     public static class AutoPlanner
     {
+        public const int DefaultFocusCount = 3;
+        public static int FocusCount { get; set; } = DefaultFocusCount;
+        private static readonly HashSet<TowerEmblem> s_focus = new HashSet<TowerEmblem>();
+        private static readonly Dictionary<TowerEmblem, int> s_upgraded = new Dictionary<TowerEmblem, int>();
+        private static readonly Dictionary<TowerEmblem, int> s_basic = new Dictionary<TowerEmblem, int>();
+        private static readonly Dictionary<TowerEmblem, int> s_firstUpgradeWave = new Dictionary<TowerEmblem, int>();
+        private static readonly List<TowerEmblem> s_focusOrder = new List<TowerEmblem>();
+
+        public static IReadOnlyCollection<TowerEmblem> Focus => s_focus;
+
+        public static void ResetFocus() => s_firstUpgradeWave.Clear();
+
+        private static void UpdateFocus(BoardManager board)
+        {
+            s_focus.Clear();
+            if (FocusCount <= 0) return;
+            s_upgraded.Clear();
+            s_basic.Clear();
+            s_focusOrder.Clear();
+            int wave = WaveManager.Instance != null ? WaveManager.Instance.CurrentWave : 0;
+            foreach (TowerController tower in board.GetBoardAndBenchTowers())
+            {
+                if (TowerId.IsSynergy(tower.Definition.Id)) continue;
+                TowerEmblem emblem = tower.Definition.Emblem;
+                if (!s_upgraded.ContainsKey(emblem)) { s_upgraded[emblem] = 0; s_basic[emblem] = 0; s_focusOrder.Add(emblem); }
+                if (tower.Definition.Tier >= 2)
+                {
+                    s_upgraded[emblem] += tower.Definition.Tier - 1;
+                    if (!s_firstUpgradeWave.ContainsKey(emblem)) s_firstUpgradeWave[emblem] = wave;
+                }
+                else s_basic[emblem]++;
+            }
+            if (s_firstUpgradeWave.Count == 0 || s_focusOrder.Count <= FocusCount) return;
+
+            s_focusOrder.Sort(CompareFocus);
+            int lead = Mathf.Min(FocusCount - 1, 2);
+            for (int i = 0; i < lead; i++) s_focus.Add(s_focusOrder[i]);
+            while (s_focus.Count < FocusCount)
+            {
+                TowerEmblem best = TowerEmblem.None;
+                int bestSynergy = -1;
+                foreach (TowerEmblem emblem in s_focusOrder)
+                {
+                    if (s_focus.Contains(emblem)) continue;
+                    int synergy = SynergyMatches(emblem);
+                    if (synergy > bestSynergy) { best = emblem; bestSynergy = synergy; }
+                }
+                if (best == TowerEmblem.None) break;
+                s_focus.Add(best);
+            }
+        }
+
+        private static int CompareFocus(TowerEmblem a, TowerEmblem b)
+        {
+            int upgraded = s_upgraded[b].CompareTo(s_upgraded[a]);
+            if (upgraded != 0) return upgraded;
+            int first = FirstUpgrade(a).CompareTo(FirstUpgrade(b));
+            return first != 0 ? first : s_basic[b].CompareTo(s_basic[a]);
+        }
+
+        private static int FirstUpgrade(TowerEmblem emblem) => s_firstUpgradeWave.TryGetValue(emblem, out int wave) ? wave : int.MaxValue;
+
+        private static int SynergyMatches(TowerEmblem candidate)
+        {
+            SynergyBoard synergy = TowerManager.Instance != null ? TowerManager.Instance.Synergy : null;
+            if (synergy == null) return 0;
+            int matches = 0;
+            foreach (SynergyBoard.Entry entry in synergy.Entries)
+            {
+                if (System.Array.IndexOf(entry.Recipe.Emblems, candidate) < 0) continue;
+                foreach (TowerEmblem emblem in entry.Recipe.Emblems)
+                    if (s_focus.Contains(emblem)) matches++;
+            }
+            return matches;
+        }
+
+        private static bool IsOffFocus(TowerController tower) =>
+            s_focus.Count > 0 && !TowerId.IsSynergy(tower.Definition.Id) && !s_focus.Contains(tower.Definition.Emblem);
+
         private const float SupportWeight = 0.7f;
-        private const float BreakPairPenalty = 0.5f;
 
         private const float StayBonus = 1.05f;
         private const float BuffZoneValue = 0.5f;
-        private const float BuffZoneSkill2Value = 0.8f;
         private const float DebuffCellBonus = 0.5f;
         private const int DefaultRange = 2;
 
@@ -88,7 +165,7 @@ namespace SquareTD
             if (!tower.IsAttackTower)
                 return RoleWeight(tower) * stats.Power * stats.AbilityValue * stats.AttackCount / period *
                     Mathf.Max(1, board.Zones.GetByOwner(tower).Count);
-            List<int> paths = board.Grid.GetPathIndicesInSquare(board.Grid.GetSpawnCell(slot), stats.Range);
+            IReadOnlyList<int> paths = board.Grid.GetPathIndicesInSquare(board.Grid.GetSpawnCell(slot), stats.Range);
             if (paths.Count == 0) return 0f;
             float distance = 0f;
             foreach (int cell in paths)
@@ -111,7 +188,7 @@ namespace SquareTD
 
         private static float DebuffCoverage(BoardManager board, TowerController tower, int slot, int range)
         {
-            List<int> paths = board.Grid.GetPathIndicesInSquare(board.Grid.GetSpawnCell(slot), range);
+            IReadOnlyList<int> paths = board.Grid.GetPathIndicesInSquare(board.Grid.GetSpawnCell(slot), range);
             if (paths.Count == 0) return 0f;
             float value = 0f;
             foreach (int path in paths)
@@ -273,21 +350,149 @@ namespace SquareTD
             if (towers == null || towers.IsMerging) return false;
 
             BoardManager board = BoardManager.Instance;
-            while (CurrencyManager.Instance.Gold >= towers.BuildCost
-                   && board.Slots.TryGetFirstEmpty(out _)
-                   && towers.TryBuild()) { }
-            if (towers.IsMerging) return false;
+            UpdateFocus(board);
+            if (TryBuyCard(towers, board)) return false;
             if (PromoteFromBench(board, towers)) return false;
+            if (TrySellForSpace(towers, board)) return false;
             if (TryBuyXp(towers)) return false;
-            if (CurrencyManager.Instance.Gold >= towers.BuildCost && board.Bench != null && board.Bench.TryGetFirstEmpty(out _)
-                && towers.TryBuild()) return false;
-            if (TryReroll(towers)) return false;
+            if (TryShopReroll(towers, board)) return false;
 
             PlanTurn();
             return !towers.IsMerging;
         }
 
-        private static float BenchValue(TowerController tower) => TierWeight(tower.Definition.Tier) * RoleWeight(tower);
+        public const int XpGoldReserve = 800;
+        public const int RerollGoldReserve = 600;
+        public const int MaxShopRerollsPerTurn = 4;
+        public const int MaxSellsPerTurn = 4;
+
+        private static float CardScore(BoardManager board, TowerShop.Card card)
+        {
+            int tier = TowerId.GetTier(card.TowerId);
+            TowerEmblem emblem = TowerId.GetEmblem(card.TowerId);
+            bool boardOpen = board.Slots.TryGetFirstEmpty(out _);
+            bool focused = s_focus.Count == 0 || s_focus.Contains(emblem);
+            int owned = CountOthers(board, card.TowerId, null);
+            if (!focused && !boardOpen) return 0f;
+            if (!boardOpen && owned == 0 && tier == 1 && s_focus.Count == 0) return 0f;
+
+            float score = 1f + (boardOpen ? 0f : owned) + (tier - 1) * 1.5f + (focused ? 1f : 0f);
+            if (BalanceTables.IsSupport(TowerId.GetColor(card.TowerId)))
+            {
+                CountRoles(board, out int attack, out int support);
+                score *= attack < MinAttackBeforeSupport ? 0f : (float)support / (attack + support) < TargetSupportShare ? 1.1f : 0.7f;
+            }
+            return score;
+        }
+
+        public const int MinAttackBeforeSupport = 2;
+        public const float TargetSupportShare = 0.35f;
+
+        private static void CountRoles(BoardManager board, out int attack, out int support)
+        {
+            attack = 0;
+            support = 0;
+            foreach (TowerController tower in board.GetBoardAndBenchTowers())
+            {
+                if (TowerId.IsSynergy(tower.Definition.Id)) continue;
+                if (tower.IsAttackTower) attack++;
+                else support++;
+            }
+        }
+
+        private static bool NeedsAttackCard(TowerManager towers, BoardManager board)
+        {
+            CountRoles(board, out int attack, out _);
+            if (attack >= MinAttackBeforeSupport) return false;
+            foreach (TowerShop.Card card in towers.Shop.Cards)
+                if (card.IsAvailable && !BalanceTables.IsSupport(TowerId.GetColor(card.TowerId))) return false;
+            return true;
+        }
+
+        private static int BestCard(TowerManager towers, BoardManager board, bool affordableOnly)
+        {
+            int best = -1;
+            float bestScore = 0f;
+            for (int i = 0; i < towers.Shop.Cards.Count; i++)
+            {
+                TowerShop.Card card = towers.Shop.Cards[i];
+                if (!card.IsAvailable || affordableOnly && card.Price > CurrencyManager.Instance.Gold) continue;
+                float score = CardScore(board, card);
+                if (score > bestScore) { best = i; bestScore = score; }
+            }
+            return best;
+        }
+
+        private static bool TryBuyCard(TowerManager towers, BoardManager board)
+        {
+            if (!TowerManager.TryGetBuildSlot(board, out _, out _)) return false;
+            int best = BestCard(towers, board, true);
+            return best >= 0 && towers.TryBuyCard(best);
+        }
+
+        private static int s_turnWave = -1;
+        private static int s_rerollsThisTurn;
+        private static int s_sellsThisTurn;
+
+        private static void CountTurn()
+        {
+            int wave = WaveManager.Instance != null ? WaveManager.Instance.CurrentWave : 0;
+            if (s_turnWave == wave) return;
+            s_turnWave = wave;
+            s_rerollsThisTurn = 0;
+            s_sellsThisTurn = 0;
+        }
+
+        private static bool TryShopReroll(TowerManager towers, BoardManager board)
+        {
+            CountTurn();
+            bool cheap = CurrencyManager.Instance.Gold >= BalanceTables.ShopRerollCost + BalanceTables.GetShopPrice(1);
+            bool fill = cheap && (NeedsAttackCard(towers, board) || board.Slots.TryGetFirstEmpty(out _) && BestCard(towers, board, true) < 0);
+            if (s_rerollsThisTurn >= MaxShopRerollsPerTurn || !fill && CurrencyManager.Instance.Gold < RerollGoldReserve) return false;
+            if (!TowerManager.TryGetBuildSlot(board, out _, out _) && !HasSellable(towers, board)) return false;
+            if (!towers.TryRerollShop()) return false;
+            s_rerollsThisTurn++;
+            BalanceRecorder.NoteReroll();
+            return true;
+        }
+
+        private static bool HasSellable(TowerManager towers, BoardManager board) => WorstSellable(towers, board) != null;
+
+        private static TowerController WorstSellable(TowerManager towers, BoardManager board)
+        {
+            List<TowerController> pool = board.GetTowers(TowerPlace.Bench);
+            pool.AddRange(board.GetTowers(TowerPlace.Board));
+            TowerController worst = null;
+            float worstValue = float.MaxValue;
+            foreach (TowerController tower in pool)
+            {
+                if (tower.Definition.Tier != 1 || towers.IsMergingTower(tower) || TowerId.IsSynergy(tower.Definition.Id)) continue;
+                if (CountOthers(board, tower.Definition.Id, tower) > 0) continue;
+                if (s_focus.Count > 0 && !IsOffFocus(tower)) continue;
+
+                float value = RoleWeight(tower) + (tower.Place == TowerPlace.Bench ? 0f : 0.5f);
+                if (value < worstValue || value == worstValue && worst != null && tower.BuildOrder > worst.BuildOrder)
+                {
+                    worst = tower;
+                    worstValue = value;
+                }
+            }
+            return worst;
+        }
+
+        private static bool TrySellForSpace(TowerManager towers, BoardManager board)
+        {
+            CountTurn();
+            if (s_sellsThisTurn >= MaxSellsPerTurn || TowerManager.TryGetBuildSlot(board, out _, out _)) return false;
+            int wanted = BestCard(towers, board, false);
+            if (wanted < 0 || towers.Shop.Cards[wanted].Price > CurrencyManager.Instance.Gold + 200) return false;
+            TowerController worst = WorstSellable(towers, board);
+            if (worst == null || !towers.TrySell(worst)) return false;
+            s_sellsThisTurn++;
+            return true;
+        }
+
+        private static float BenchValue(TowerController tower) => TierWeight(tower.Definition.Tier) * RoleWeight(tower) * (IsOffFocus(tower) ? 0.8f : 1f);
 
         public static bool PromoteFromBench(BoardManager board, TowerManager towers)
         {
@@ -309,56 +514,10 @@ namespace SquareTD
             return towers.TryMoveTo(best, TowerPlace.Board, worst.SlotIndex);
         }
 
-        public const int MaxRerollsPerWave = 3;
-        private static int s_rerollWave = -1;
-        private static int s_rerollsThisWave;
-
-        public static bool TryReroll(TowerManager towers)
-        {
-            BoardManager board = BoardManager.Instance;
-            if (CurrencyManager.Instance.Gold < towers.BuildCost || TowerManager.TryGetBuildSlot(board, out _, out _)) return false;
-
-            int wave = WaveManager.Instance != null ? WaveManager.Instance.CurrentWave : 0;
-            if (s_rerollWave != wave)
-            {
-                s_rerollWave = wave;
-                s_rerollsThisWave = 0;
-            }
-            if (s_rerollsThisWave >= MaxRerollsPerWave) return false;
-
-            List<TowerController> pool = board.GetTowers(TowerPlace.Bench);
-            if (pool.Count == 0) pool = board.GetTowers(TowerPlace.Board);
-
-            TowerController worst = null;
-            float worstValue = float.MaxValue;
-            foreach (TowerController tower in pool)
-            {
-                if (tower.Definition.Tier != 1 || towers.IsMergingTower(tower)) continue;
-                if (CountOthers(board, tower.Definition.Id, tower) > 0) continue;
-
-                float value = RoleWeight(tower);
-                if (!tower.IsAttackTower)
-                {
-                    if (tower.State.SkillCount >= tower.Stats.SkillCount * 0.5f) value += 1f - SupportWeight;
-                }
-                if (value < worstValue || value == worstValue && worst != null && tower.BuildOrder > worst.BuildOrder)
-                {
-                    worst = tower;
-                    worstValue = value;
-                }
-            }
-            if (worst == null || !towers.TrySell(worst)) return false;
-
-            s_rerollsThisWave++;
-            BalanceRecorder.NoteReroll();
-            towers.TryBuild();
-            return true;
-        }
-
         public static bool TryBuyXp(TowerManager towers)
         {
-            if (towers.ColorLevels.IsMax || BoardManager.Instance.Slots.TryGetFirstEmpty(out _)) return false;
-            if (CurrencyManager.Instance.Gold < towers.BuildCost + BalanceTables.XpPurchaseCost) return false;
+            if (towers.ColorLevels.IsMax) return false;
+            if (CurrencyManager.Instance.Gold < XpGoldReserve + BalanceTables.XpPurchaseCost) return false;
             if (!towers.TryBuyXp()) return false;
             BalanceRecorder.NoteXpPurchase(BalanceTables.XpPurchaseCost);
             BalanceRecorder.NoteSearchAction("buy_xp", towers.ColorLevels.Level, BalanceTables.XpPurchaseCost);

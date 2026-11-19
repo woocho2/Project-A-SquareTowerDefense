@@ -85,14 +85,5 @@ namespace SquareTD
             if (PowerReduction > 0f) list.Add(StatModifier.Percent(SurtrSource, StatType.Power, -PowerReduction));
             if (AttackCountPenalty > 0) list.Add(StatModifier.Flat(SurtrSource, StatType.AttackCount, -AttackCountPenalty));
         }
-
-        public void CopyDebuffsFrom(TowerBossEffects old)
-        {
-            m_fenrir.Clear();
-            m_surtr.Clear();
-            foreach (Entry entry in old.m_fenrir) m_fenrir.Add(new Entry { Until = entry.Until, Value = entry.Value });
-            foreach (Entry entry in old.m_surtr) m_surtr.Add(new Entry { Until = entry.Until, Value = entry.Value });
-            Changed?.Invoke();
-        }
     }
 }

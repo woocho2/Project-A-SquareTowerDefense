@@ -175,24 +175,10 @@ namespace SquareTD
             SetInfoPanel(InfoPanel.Enemy);
         }
 
-        public void ShowZoneInfoPanel(int pathIndex, int spawnIndex)
-        {
-            SelectedPathIndex = pathIndex;
-            SelectedSpawnIndex = spawnIndex;
-
-            if (m_zoneInfoPanelUI != null) m_zoneInfoPanelUI.OpenForTile(pathIndex, spawnIndex);
-            SetInfoPanel(InfoPanel.Zone);
-        }
-
         public void CloseTowerInfoPanel()
         {
             SelectedTower = null;
             if (m_towerInfoPanel != null && m_towerInfoPanel.activeSelf) SetInfoPanel(InfoPanel.None);
-        }
-
-        public void HideEnemyInfoPanel()
-        {
-            if (m_enemyInfoPanelUI != null && m_enemyInfoPanelUI.gameObject.activeSelf) SetInfoPanel(InfoPanel.None);
         }
 
         public void HideInfoPanels()
@@ -203,11 +189,6 @@ namespace SquareTD
 
         public bool IsTowerSelected(TowerController tower) =>
             tower != null && SelectedTower == tower && m_towerInfoPanel != null && m_towerInfoPanel.activeSelf;
-
-        public bool IsTowerInfoPanelElement(GameObject element)
-        {
-            return element != null && m_towerInfoPanel != null && element.transform.IsChildOf(m_towerInfoPanel.transform);
-        }
 
         private void SetInfoPanel(InfoPanel panel)
         {

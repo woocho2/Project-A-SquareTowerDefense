@@ -94,10 +94,6 @@ namespace SquareTD
         private static TowerSlots CurrentSlots() => BoardManager.Instance != null ? BoardManager.Instance.Slots : null;
         private static int CurrentLimit() => GameSession.Instance != null ? GameSession.Instance.CurrentLimit : 20;
         private static int CurrentGold() => CurrencyManager.Instance != null ? CurrencyManager.Instance.Gold : 0;
-        private static int CurrentCycle() => WaveManager.Instance != null && WaveManager.Instance.CurrentWave > 0 ? WaveManager.Instance.Cycle : 1;
-        private static PathOccupancy CurrentOccupancy() => BoardManager.Instance != null ? BoardManager.Instance.Occupancy : null;
-        private static UnityEngine.Vector3 PathCellPosition(int pathIndex) =>
-            BoardManager.Instance != null ? BoardManager.Instance.GetWorldPosition(BoardManager.Instance.Grid.GetPathCell(pathIndex)) : UnityEngine.Vector3.zero;
         private static float CurrentDarkness() => EmblemSharedState.Current.DarknessCount;
 
         public static AttackSkill CreateAttackSkill(TowerColor color, TowerEmblem emblem,

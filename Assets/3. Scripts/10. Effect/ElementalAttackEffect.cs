@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    /// <summary>Elemental basic attacks only. Damage and additional attacks remain owned by the caller.</summary>
+    // 원소 타워의 기본 공격 연출 (피해는 부르는 쪽이 줌)
     [DisallowMultipleComponent]
     public sealed class ElementalAttackEffect : MonoBehaviour, IShotEffect
     {
@@ -63,7 +63,6 @@ namespace SquareTD
             float angle = Angle(to - from);
             float charge = Mathf.Max(0f, hold, m_attack == Attack.LaserBeam ? .18f : .10f);
             float flight = Mathf.Max(.12f, Vector3.Distance(from, to) / Mathf.Max(.01f, speed));
-            // A beam reaches its target at the end of its draw; ground eruption needs no travelling orb.
             if (m_attack == Attack.LaserBeam) flight = .07f;
             if (m_attack == Attack.RockBlast) flight = .12f;
             int seed = ++m_serial;
@@ -115,7 +114,7 @@ namespace SquareTD
                     q.SetFloat(EffectQuad.AlphaId, Mathf.Min(1, t * 16 + .2f));
                 }
                 if (m_attack == Attack.LaserBeam)
-                    return; // a separate beam quad is animated below, with no projectile body
+                    return;
                 if (m_attack == Attack.RockBlast) return;
                 float time = t * flight;
                 if (time - lastTrail >= .045f)
@@ -191,7 +190,7 @@ namespace SquareTD
                 Puff(position, Vector3.up * cell * .23f, cell * .32f, .26f, new Color(.22f, .12f, .08f, .45f));
                 Fleck(position, drift, cell * .09f, .22f, Core, m_spark, seed * 31);
             }
-            else // water droplets peel off the water cannon / compact water shot
+            else
                 Shape(m_shape, position, Vector2.one * cell * .16f, 0, 0, seed, .23f, (q, t) =>
                 {
                     q.Transform.position = position + drift * t + Vector3.down * cell * t * t * .2f;
@@ -508,10 +507,8 @@ namespace SquareTD
         private void OnDisable()
         {
             m_stopping = true;
-            // Snapshot: OnKill removes itself from the live list.
             foreach (Tween tween in m_active.ToArray()) tween.Kill();
             m_active.Clear();
-            // Also release leases whose tween was killed before DOTween completed startup.
             foreach (var quad in new List<EffectQuad>(m_leased.Keys)) Release(quad);
         }
         private void OnDestroy()

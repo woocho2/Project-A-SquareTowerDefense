@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace SquareTD
@@ -9,7 +10,6 @@ namespace SquareTD
         private WaveManager m_wave;
         private TowerManager m_towers;
         private TurnManager m_turn;
-        private float m_nextScan;
         private int m_mergeFrame = -1;
         private void Start()
         {
@@ -24,10 +24,9 @@ namespace SquareTD
             if (m_turn != null) m_turn.StateChanged += State;
             Scan();
         }
-        private void Update() { if (Time.unscaledTime >= m_nextScan) Scan(); }
+        private void Update() { if (Pointer.current != null && Pointer.current.press.wasPressedThisFrame) Scan(); }
         private void Scan()
         {
-            m_nextScan = Time.unscaledTime + .4f;
             foreach (Button button in Object.FindObjectsByType<Button>()) if (button.GetComponent<AudioButtonFeedback>() == null) button.gameObject.AddComponent<AudioButtonFeedback>();
             foreach (Toggle toggle in Object.FindObjectsByType<Toggle>()) if (toggle.GetComponent<AudioButtonFeedback>() == null) toggle.gameObject.AddComponent<AudioButtonFeedback>();
         }

@@ -10,7 +10,11 @@ namespace SquareTD
         public static string PendingScene { get; private set; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void Reset() => PendingScene = null;
+        private static void Reset()
+        {
+            PendingScene = null;
+            if (!Debug.isDebugBuild) Debug.unityLogger.filterLogType = LogType.Warning;
+        }
 
         public static void FinishLoading() => PendingScene = null;
 

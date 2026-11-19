@@ -14,7 +14,6 @@ namespace SquareTD
         public Sprite FullSprite => m_fullSprite;
         public Texture2D CharacterTexture => m_faceSprite != null ? m_faceSprite.texture : m_characterTexture;
 
-        // Read the current sprite rectangle so later Sprite Editor adjustments are used automatically.
         public Rect CharacterUvRect
         {
             get

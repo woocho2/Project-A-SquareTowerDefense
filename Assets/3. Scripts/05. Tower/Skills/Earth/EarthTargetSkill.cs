@@ -31,8 +31,7 @@ namespace SquareTD
                 default:
                     owner.State.AddCounter(AttackCountKey, growth);
                     string source = GrowthSource + " AttackCount";
-                    owner.State.Modifiers.RemoveBySource(source);
-                    owner.State.Modifiers.Add(StatModifier.Flat(source, StatType.AttackCount, Mathf.Floor(owner.State.GetCounter(AttackCountKey) + 0.0001f)));
+                    owner.State.Modifiers.SetSource(source, new[] { StatModifier.Flat(source, StatType.AttackCount, Mathf.Floor(owner.State.GetCounter(AttackCountKey) + 0.0001f)) });
                     owner.State.PersistentSources.Add(source);
                     break;
             }
@@ -45,8 +44,7 @@ namespace SquareTD
             {
                 if (modifier.Source == source && modifier.Stat == stat) total += modifier.Value;
             }
-            owner.State.Modifiers.RemoveBySource(source);
-            owner.State.Modifiers.Add(StatModifier.Flat(source, stat, total));
+            owner.State.Modifiers.SetSource(source, new[] { StatModifier.Flat(source, stat, total) });
             owner.State.PersistentSources.Add(source);
         }
     }

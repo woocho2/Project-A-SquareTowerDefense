@@ -86,7 +86,7 @@ namespace SquareTD
             }
         }
 
-        public static void PlaySupportSkill(TowerController owner, IReadOnlyList<TowerController> receivers, bool preview = false)
+        public static void PlaySupportSkill(TowerController owner, IReadOnlyList<TowerController> receivers)
         {
             if (!CanPlay(owner)) return;
             if (SoundManager.Instance != null) SoundManager.Instance.Skill(owner);
@@ -95,7 +95,7 @@ namespace SquareTD
             if (receivers != null) foreach (var receiver in receivers)
                 if (receiver != null) points.Add(receiver.transform.position);
             if (owner.Definition.Color == TowerColor.Yellow && owner.Definition.Emblem == TowerEmblem.Sword)
-                s_swordBuff.Play(Camera.main, owner.transform.position, points, EffectSpace.CellWorldSize(), preview);
+                s_swordBuff.Play(Camera.main, owner.transform.position, points, EffectSpace.CellWorldSize());
             else if (owner.Definition.Color == TowerColor.Yellow) s_full.PlayBuff(owner, points);
         }
 
@@ -114,7 +114,6 @@ namespace SquareTD
             s_full.SupportContact(owner.Definition.Emblem, point, debuff);
         }
 
-        // CastInstead skills have no ordinary hit list. Their target-specific visuals are called at the real application/tick.
         public static void PlayCast(TowerController owner)
         {
             if (!CanPlay(owner)) return;
@@ -173,58 +172,6 @@ namespace SquareTD
             EnsureHolder(); s_bowSplash.PlayRain(Camera.main, hitPositions, EffectSpace.CellWorldSize());
         }
 
-        // Developer preview dispatches visuals only. No skill is fired, no status or ground effect is created.
-        public static void PlayPreview(TowerController owner, IReadOnlyList<Vector3> hits)
-        {
-            if (!CanPlay(owner)) return;
-            if (SoundManager.Instance != null) SoundManager.Instance.Skill(owner);
-            EnsureHolder();
-            float cell = EffectSpace.CellWorldSize();
-            var points = new List<Vector3>();
-            if (hits != null) foreach (Vector3 hit in hits) points.Add(hit);
-            if (points.Count == 0) points.Add(owner.transform.position + Vector3.right * cell * 2);
-            if (owner.Definition.Color == TowerColor.Yellow) { PlaySupportSkill(owner, Allies(), true); return; }
-            if (owner.Definition.Color == TowerColor.Purple) { PlayDebuffSkill(owner, points); return; }
-            switch ((owner.Definition.Emblem, owner.Definition.Color))
-            {
-                case (TowerEmblem.Axe, TowerColor.Blue): s_full.Rage(owner, true); return;
-                case (TowerEmblem.Spear, TowerColor.Red): s_full.Rally(owner, Allies(owner)); return;
-                case (TowerEmblem.Light, TowerColor.Red): s_full.Prism(owner, Allies()); return;
-                case (TowerEmblem.Spear, TowerColor.Blue):
-                case (TowerEmblem.Shield, TowerColor.Blue):
-                    var route = new List<Vector3> { points[0] };
-                    int count = Mathf.Max(1, SkillFormula.LevelTierCount(owner));
-                    for (int i = 0; i < count; i++) route.Add(points[(i + 1) % points.Count]);
-                    if (owner.Definition.Emblem == TowerEmblem.Spear) s_full.Headhunt(owner, route);
-                    else s_full.Rebound(owner, route);
-                    return;
-                case (TowerEmblem.Fire, TowerColor.Blue): s_full.Breath(owner, points[0]); return;
-                case (TowerEmblem.Wind, TowerColor.Blue): s_full.Tempest(owner, true); return;
-                case (TowerEmblem.Water, TowerColor.Blue):
-                case (TowerEmblem.Light, TowerColor.Blue):
-                case (TowerEmblem.Darkness, TowerColor.Red): s_full.PreviewDelayed(owner, points[0]); return;
-                case (TowerEmblem.Bow, TowerColor.Red):
-                    s_bowSplash.PlayVolley(Camera.main, owner.transform.position, cell);
-                    s_bowSplash.PlayRain(Camera.main, points, cell);
-                    return;
-                default: Play(owner, points[0], points); return;
-            }
-        }
-        private static List<TowerController> Allies(TowerController rangedOwner = null)
-        {
-            var result = new List<TowerController>();
-            var board = BoardManager.Instance;
-            if (board == null || board.Slots == null) { if (rangedOwner != null) result.Add(rangedOwner); return result; }
-            for (int i = 0; i < board.Slots.Count; i++)
-            {
-                var tower = board.Slots.Get(i);
-                if (tower == null || !tower.IsAttackTower) continue;
-                if (rangedOwner != null && BoardGrid.GetTileDistance(board.Grid.GetSpawnCell(rangedOwner.SlotIndex),
-                    board.Grid.GetSpawnCell(i)) > rangedOwner.Stats.Range) continue;
-                result.Add(tower);
-            }
-            return result;
-        }
         private static void EnsureHolder()
         {
             if (s_holder != null) return;

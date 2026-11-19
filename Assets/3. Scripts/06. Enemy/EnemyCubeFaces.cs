@@ -41,12 +41,7 @@ namespace SquareTD
 
         public static void Apply(EnemyStats stats, EnemyCubeFaceAsset face, int adaptive, EnemyKind kind = EnemyKind.Normal)
         {
-            stats.Modifiers.RemoveBySource(Source);
-
-            foreach(StatModifier modifier in GetModifiers(face, adaptive, kind))
-            {
-                stats.Modifiers.Add(modifier);
-            }
+            stats.Modifiers.SetSource(Source, GetModifiers(face, adaptive, kind));
         }
     }
 }

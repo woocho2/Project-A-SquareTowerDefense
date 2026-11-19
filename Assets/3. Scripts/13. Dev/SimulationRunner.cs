@@ -57,6 +57,7 @@ namespace SquareTD
         public int SearchTrial;
         public bool IsControlled => IsPlacementStudy || SearchStrategies;
         public int PlacementProfile = AutoPlanner.DefaultPlacementProfile;
+        public int FocusEmblems = AutoPlanner.DefaultFocusCount;
         public float FixedGameStep = 1f / 30f;
         public int[] PlacementProfiles = new int[0];
         public int[] FixedDeck = { 3, 4, 11, 7 };
@@ -229,6 +230,8 @@ namespace SquareTD
             if (TowerManager.Instance == null) return "";
             TowerManager.Instance.ConfigureMergeCount(m_settings.GetMergeCount(m_run));
             AutoPlanner.ConfigurePlacement(m_settings.GetPlacementProfile(m_run));
+            AutoPlanner.FocusCount = m_settings.FocusEmblems;
+            AutoPlanner.ResetFocus();
 
             List<TowerEmblem> selected = GetField<List<TowerEmblem>>(TowerManager.Instance, "m_selectedEmblems");
             if (selected == null) return "";

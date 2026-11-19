@@ -17,6 +17,7 @@ namespace SquareTD
 
         private void Start()
         {
+            if (GetComponent<GameplayShortcuts>() == null) gameObject.AddComponent<GameplayShortcuts>();
             if (m_camera == null) m_camera = Camera.main;
             ChangeMode(new IdleMode(this));
             TurnManager.Instance.StateChanged += HandleStateChanged;
@@ -40,6 +41,10 @@ namespace SquareTD
         {
             Mouse mouse = Mouse.current;
             if (mouse == null) return;
+            if (Keyboard.current?.escapeKey.wasPressedThisFrame == true || mouse.rightButton.wasPressedThisFrame)
+            {
+                m_pressing = false; Current.OnCancel(); return;
+            }
 
             Vector3 world = ScreenToWorld(mouse.position.ReadValue());
 

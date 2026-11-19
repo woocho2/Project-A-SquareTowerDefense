@@ -32,7 +32,7 @@ namespace SquareTD
 
         public static int AdaptiveFor(EnemyController enemy, int adaptive)
         {
-            if (enemy == null || !EmblemDebuffEffect.HasSkill2(enemy, TowerEmblem.Earth)) return adaptive;
+            if (!(EmblemDebuffEffect.On(enemy, TowerEmblem.Earth) is EarthDebuffEffect earth) || !earth.HardApplied) return adaptive;
             return Mathf.Max(1, adaptive - AdaptiveCut);
         }
     }
@@ -47,6 +47,8 @@ namespace SquareTD
         {
             m_cut = cut;
         }
+
+        protected override bool HasHardPart => IsSkill2;
 
         public override void OnAdded(EnemyController enemy)
         {

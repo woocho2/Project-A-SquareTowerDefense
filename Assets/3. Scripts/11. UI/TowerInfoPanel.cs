@@ -251,15 +251,10 @@ namespace SquareTD
             if (txt_tier != null) txt_tier.text = isSynergy ? "시너지" : GetTierName(tier);
             if (txt_color != null) txt_color.text = isSynergy ? "시너지" : EmblemNames.GetColorName(definition.Color);
             if (txt_emblem != null) txt_emblem.text = isSynergy ? "-" : EmblemNames.GetEmblemName(definition.Emblem);
-            if (txt_sellTowerValue != null) txt_sellTowerValue.text = isSynergy || tier < 1 ? "-" : GetSellText(tier);
+            if (txt_sellTowerValue != null) txt_sellTowerValue.text = isSynergy || tier < 1 ? "-" : $"{TowerManager.GetSellGold(m_selectedTower)}G";
         }
 
         private static string GetTierName(int tier) => tier >= 1 && tier <= TowerId.MaxTier ? EmblemNames.GetTierName(tier) : "-";
-
-        private static string GetSellText(int tier)
-        {
-            return $"{TowerManager.GetSellGold(tier)}G";
-        }
 
         private void UpdateIdentityImage(TowerDefinition definition)
         {
@@ -350,37 +345,6 @@ namespace SquareTD
             float bonus = (stats.Get(stat) - stats.GetBase(stat)) * scale;
             return Mathf.Abs(bonus) < 0.005f ? "" : $" ({bonus:+0.##;-0.##}{unit})";
         }
-
-        private static string GetReceivedBuffText(TowerFinalStats stats)
-        {
-            var bySource = new Dictionary<string, List<string>>();
-            var order = new List<string>();
-            foreach (StatSource source in stats.Sources)
-            {
-                if (!bySource.TryGetValue(source.Source, out List<string> parts))
-                {
-                    bySource[source.Source] = parts = new List<string>();
-                    order.Add(source.Source);
-                }
-                parts.Add(FormatSource(source));
-            }
-
-            var lines = new List<string>();
-            foreach (string name in order) lines.Add($"{name}: {string.Join(", ", bySource[name])}");
-            return string.Join("\n", lines);
-        }
-
-        private static string FormatSource(StatSource source) => source.Stat switch
-        {
-            StatType.Power => $"공격력 {source.Amount:+0.##;-0.##}",
-            StatType.CritRate => $"치명 확률 {source.Amount * 100f:+0.##;-0.##}%",
-            StatType.CritDamage => $"치명 피해 {source.Amount * 100f:+0.##;-0.##}%",
-            StatType.FinalDamage => $"최종 피해 {source.Amount * 100f:+0.##;-0.##}%",
-            StatType.AttackCount => $"공격 횟수 {source.Amount:+0;-0}",
-            StatType.Mastery => $"Mastery {source.Amount:+0;-0}",
-            StatType.ActionGainPerTurn => $"행동 카운트 {source.Amount:+0;-0}",
-            _ => $"{source.Stat} {source.Amount:+0.##;-0.##}",
-        };
 
         private static void SetText(TextMeshProUGUI text, string value)
         {

@@ -2317,3 +2317,104 @@
 [버그] 합성 중인 타워를 드래그하면 클릭이 전부 먹통 (2026-11-18)
 - 원인: 합성 재료를 누른 채 끌면 DragTowerMode로 들어가고, 재료가 합성으로 지워진 뒤 ReturnToSlot에서 MissingReferenceException이 나서 IdleMode로 돌아가지 못함. DragTowerMode는 누르기를 무시하므로 이후 클릭이 전부 막힘.
 - InputModes.cs: IdleMode는 합성 중인 타워면 드래그를 시작하지 않음. DragTowerMode는 끄는 도중 타워가 지워지거나 합성에 들어가면 제자리로 돌리고 IdleMode로 돌아감. 선택(사거리 표시)은 그대로 허용.
+
+[UI·버그] 스테이지별 적 초상화·사거리·행동 실패 안내·미배치 존 표시 (2026-11-19, 사용자 요청 — Codex)
+- 적 큐브에 실제 적용된 EnemyCubeAppearance를 EnemyController까지 노출하고 EnemyListItemUI의 Face와 EnemyInfoPanel의 Full을 같은 외형에서 조회. 공용 EnemyDefinition의 알프헤임 외형을 읽던 문제 수정. 스테이지별 이름·풀 재사용·라그나로크 사이클에 대응하며 적 데이터·이미지·연결 자산은 교체하지 않음.
+- TowerSelectionVisual의 공격 사거리를 BoardOverlay 셰이더의 은은한 청록색 면·격자·테두리로 변경. 기존 Chebyshev 정사각 판정과 실제 칸 수·월드 크기 유지, 메인 판 밖은 잘라 표시. 지원 타워·대기석에는 공격 사거리를 표시하지 않음.
+- GameNotice 공용 안내 추가: 골드 부족(필요/보유), 최대 레벨, 빈 자리 없음, 합성 중 판매/턴 종료, 시너지 판매, 잘못된 공격 칸·존 배치. 비활성 생성/EXP 버튼도 클릭하면 이유 표시. 안내는 일시정지 중에도 페이드하며 중복 연타 제한·기존 Denied 사운드 연결.
+- 미배치 존이 있는 전장 타워에는 붉은 테두리·느낌표와 느린 맥동 셰이더 표시. 해당 타워의 존을 전부 배치하면 해제, 추가 존 생성·전장 복귀 시 재표시, 대기석에서는 숨김. 배치 가능한 칸이 없는 존은 기존 턴 종료 규칙과 동일하게 제외.
+- 타워 선택/턴 종료 안내의 ‘존 배치’ 버튼으로 해당 타워와 배치 모드 선택. 배치 위치·남은 개수/실패 이유/완료 안내, ESC·오른쪽 클릭 취소. 기존 존 배치 제약·드래그·합성 방어 코드 유지. DOTween으로 선택/안내를 일시정지와 독립적으로 표시.
+- 최종 Unity PlayMode 161항목 통과: Stage1의 실제 소환 경로에 10개 스테이지/라그나로크 4사이클 데이터를 전달해 일반·중간·최종 39가지 Face/Full/이름 확인. 실제 보드 입력·목록 클릭, 비활성 구매 버튼 포인터 클릭, 미배치 턴 종료 차단·안내 버튼·잘못된 배치·완료/추가/이동 경고, 사거리 칸 수·크기 확인. 각 스테이지 씬을 전부 전환해 플레이한 검증은 아님.
+- 1920×1080 및 1728×1080 캡처 직접 확인. 실제 렌더 픽셀에서 두 타워의 붉은 경고 확인, 안내 텍스트 넘침/턴 종료 버튼 겹침 없음. 새 런타임 오류 0, 기존 TowerFactory persistent parent 오류 5건 별도 기록. 전체 클리어·배포 빌드는 미실행.
+- 기존 .meta 바이트 유지, 씬·프리팹·밸런스·이미지 변경 없음. 백업 ArtBackups/GameplayFeedback_20261119, 검증/화면/파일 해시 ArtPreviews/GameplayFeedback_20261119. 검증 후 원래 Stage1 편집 상태로 복귀. 커밋하지 않음.
+[UI·입력] 정식 플레이 단축키와 왼쪽 상단 전장 효과 (2026-11-19, 사용자 요청 — Codex)
+- GameplayShortcuts를 BoardInputController 시작 시 1개 연결: D 생성, F 경험치 투자, E 선택한 타워 판매, Space 다음 플레이어 턴까지 스킵. 기존 TryBuild/TryBuyXp/TrySell/SkipToNextPlayerTurn을 사용해 비용·제약·스킵 배속을 유지. 옵션/일시정지·게임 종료·글자 입력·타워 드래그·개발자 ID 입력 중 차단, 선택 없는 판매는 안내.
+- 정식 입력을 DebugCheat의 Space/B/X 처리에서 분리해 중복 실행 방지. DebugCheat는 정식 입력 코드에 ID 입력 여부만 등록하며, 정식 입력은 개발자 타입에 의존하지 않음. F1~F8·F12·테스트 모드·자동 진행·재시작·기타 개발 기능 유지. 키 안내를 D/F/E/Space로 갱신하고 전장 효과와 겹치지 않게 아래로 이동.
+- 공용 UICanvas를 Unity API로 수정: 생성/경험치 버튼에 [D]/[F], 선택 타워의 판매 버튼에 [E], 스킵 버튼에 SPACE 표시. 기존 GameHudSetup 재생성에도 같은 UI 스타일 적용. 스테이지 공유 프리팹 의존 관계 확인, 씬 파일 직접 수정 없음.
+- GameInfoPanel에 GlobalEffectsPanel 연결. 왼쪽 상단에 초월(누적/목표·예약/발동), 어둠의 침식 카운트(사용자가 말한 포식 계열 공용값의 현재 코드 명칭), 프레이야 골드 2배·브륀힐드 한도 보호·뇨르드 멈춤 칸·한도 보정 표시. 초월/침식은 기본 표시, 나머지는 활성 중에 표시.
+- 펜리르 행동 중첩·수르트 공격력/횟수 감소·적 정령 가호·헬 죽음 카운트도 현재 전장에 실제 남은 값을 집계. 타워별 차이가 있는 보스 효과는 영향받는 수와 범위/최대치를 표시. 개별 타워의 성장/가속처럼 전장 공용값이 아닌 스택은 기존 개별 패널 범위로 유지.
+- 효과가 많으면 제한 높이 안에서 스크롤, 각 항목 클릭 시 안내. 만료·타워/적 제거·재시작 시 갱신. 새 이미지 없이 기존 엠블럼 재사용, 규칙 수식·밸런스·캐릭터 에셋·개발자 도구 삭제 없음. EmblemSharedState에는 다음 초월 예약 상태의 읽기 전용 프로퍼티만 추가.
+- 최종 Unity PlayMode 183항목 통과: 개발자 도구를 끈 상태에서 실제 New Input System 키 이벤트로 D/F/E/Space 검증, 중복 생성/구매 없음, 판매 환급/패널 닫힘, 옵션/입력창/ID 입력 차단, 미배치 존 스킵 차단, 스킵 종료·배속 복귀, 공유값·활성 효과·만료·재시작 확인. 검증용 InputSettings는 복제본을 사용하고 원본·오디오·백그라운드·씬을 복원.
+- 1920×1080과 1728×1080 캡처·텍스트 넘침 검사·화면 직접 확인. 새 오류 0, 기존 TowerFactory persistent parent 오류 7건 별도 기록. 전체 클리어·배포 빌드는 미실행.
+- 변경 전 코드·공용 프리팹·메타 백업 ArtBackups/ControlsEffects_20261119. 검증·화면·해시 ArtPreviews/ControlsEffects_20261119. 기존 메타 유지, 검증 후 원래 Stage1 편집 상태로 복귀. 커밋하지 않음.
+[저항력] 강한 CC기 범위 넓힘, 막으면 저항력 −기본 (2026-11-19, 사용자 — Claude)
+- 강한 CC기 = 행동 불가(기절·빙결·어스퀘이크·아쿠아 프리즌 가두기) + 즉사 + 정수형 이동력·행동력 디버프. 지금 저항력% 확률로 무효화, 걸리면 +기본(최대 100), 막으면 −기본(기본 아래로는 안 내려감). 행동마다 기본의 1/2씩 내려가던 것은 지움 (같은 날 사용자: 강한 CC기를 판정할 때만 바뀜).
+- EnemyResistance.TryStrongCC: 막으면 m_current − m_base. EnemyController.TryExecute(저항 판정 뒤 즉사): 도끼 데스 센텐스·엑스큐션(기준은 더 이상 저항으로 줄지 않음), 어둠 글러트니 0.5% 즉사, 빛 배니시 초월 즉사.
+- EmblemDebuffEffect: 수정자 중 정수형(이동력·행동 카운트 감소, 최대 Action 증가)만 OnResist(EnemyStatusEffects.Add가 부름)에서 판정, 막으면 그 수정자만 빠짐(HardResisted). 헤머리지·락다운·터뷸런스. 대지 라이프 하베스트의 적응형 −1도 같은 판정(HasHardPart).
+- 젖음 10·한기 25·실명 10: 문턱 이상에서 쌓일 때마다 판정, 막으면 스택은 남고 다음에 다시. 한기 50 빙결도 문턱을 넘을 때만이 아니라 쌓일 때마다 다시 시도 (전에는 빙결을 막으면 한기가 50 이상에 머문 채 다시 걸리지 않았음).
+- 아쿠아 프리즌 가두기: (1 − 기본 저항력) 확률 → 강한 CC기. 밀어내기(쓰나미·저지먼트)는 그대로 (1 − 기본 저항력) 확률.
+- 버그: 바람 버프 시너지가 적의 행동력 카운트를 −1이 아니라 +1 해서 적이 빨리 움직였음 → AddActionProgress(−1), 강한 CC기 판정. 밀기 ±1칸에도 (1 − 기본 저항력) 확률을 붙임.
+- 시너지 권능은 저항력 무시 (코드는 원래 그대로). 20번 3장 [저항력], 4-1장, 4-4장, 4-6장, 4-10장 고침. 20번 12장의 끝난 항목(판매 버튼·타워별 조작·카드 초상·시너지 효과·출처 표시)을 지움.
+- 테스트: EnemyResistanceTest(걸림 → 걸림 → 막음 → 걸림 예), EmblemRuleTest(도끼 즉사 저항, 헤머리지 이동력 저항) 더함. dotnet 컴파일 오류 0. Unity 에디터가 열려 있어 EditMode 실행은 못 함.
+[버그] TIER UP! 글자가 일부 타워에만 보이던 것 (2026-11-19 — Claude)
+- TowerMergeEffect의 글자가 Default 정렬 레이어(맨 아래)라 보드 타일·타워 뒤에 가려지고 빈 배경 위에서만 보였음 → Projectile 레이어 100.
+[버그] TowerFactory persistent parent 오류 (2026-11-19 — Claude)
+- Stage1 ~ 10 씬의 TowerManager.m_towerParent가 Tower 프리팹 에셋을 가리켜 타워를 만들 때마다 오류. TowerManager.Start에서 씬 오브젝트가 아니면 "Towers" 오브젝트를 만들어 씀 (씬 파일은 그대로).
+[개발] DebugCheat F7 승리·F8 패배 (2026-11-19 — Claude): 테스트 모드에서 GameSession.GameClear / GameOver. 한 판에 한 번.
+[정리] 21번 수업 41 ~ 48 칸을 지움 (2026-11-19, 사용자: 41 ~ 47은 끝남, 48은 폐기, UI 다듬기 끝남).
+[저항력·젖음] 저항력은 판정할 때만 바뀜, 젖음 문턱 10 → 50 (2026-11-19, 사용자 — Claude)
+- EnemyResistance.OnActed(행동마다 기본의 1/2씩 내려감)와 EnemyMovement의 호출을 지움. EnemyResistanceTest의 해당 테스트 2개 지움.
+- WetEffect.SlowAt 10 → 50, TowerDescription 문구도 상수로. EmblemRuleTest 미스트 테스트를 5번 밟아 50으로.
+- 20번 12장의 창 헤머리지 추가 효과·추가 모드 항목을 지움 (사용자: 계획에 없음). 4-10장 젖음 설명(옛 스택 × 0.1 식)을 지금 규칙으로.
+[젖음] 50에 닿으면 다음 행동까지 받는 피해의 30%가 고정 피해 (2026-11-19, 사용자 — Claude)
+- WetEffect: 최대 이동력 −1 대신 StatType.FixedDamageRatio +0.3 × (1 − 기본 저항력) (약한 CC기라 강한 CC기 판정 없음). 그 적의 행동이 끝나면 스택 전부 사라짐은 그대로. SlowAt → TriggerAt, FixedRatio 0.3.
+- DamageCalculator: 고정 피해 비율을 0 ~ 1로 묶음 (검 디버프·젖음이 겹쳐 1을 넘을 때).
+- TowerDescription 물 디버프 문구, EmblemRuleTest(미스트 50 → 방어 100에서 100 피해가 65, 저항 50%면 비율 15%) 고침. dotnet 컴파일 오류 0, EditMode는 Unity가 열려 있어 못 돌림.
+[최적화] 성능 (2026-11-19, 사용자 요청 — Claude. Codex 연출 코드 포함)
+- StatModifierList: BeginBatch/EndBatch/SetSource. 수정자를 여러 개 바꿀 때 Changed(타워는 RecalculateStats 전체 다시 계산)를 한 번만 부름. 전에는 버프 하나에 3 ~ 5번 다시 계산.
+  SupportBuffs.Rebuild, TimedTowerBuff.Apply, AttackSkill.Grow, EarthTargetSkill, EnemyCubeFaces.Apply, TowerState.CopyInheritedFrom, EnemyStatusEffects.RebuildModifiers. RemoveBySource는 람다 없이.
+- EnemyStatusEffects: 훅마다 람다(클로저)를 만들던 ForEach를 할당 없는 반복문으로 (명중·이동·턴마다).
+- BoardGrid.GetPathIndicesInSquare: (중심, 반경)별 결과 캐시, IReadOnlyList<int>로. 공격 한 발마다 길 전체를 훑던 것. TowerAction.HasTargetsInRange(리스트 없이 CanAct).
+- 문자열 캐시: EmblemDebuffEffect.KeyOf, SupportBuffs.SourceOf (명중마다 만들던 것), 시너지 버튼 % 글자, GameInfoPanel 스킵 글자(매 프레임 만들던 것).
+- SceneSoundEvents: 0.4초마다 씬 전체 Button·Toggle 검색 → 누를 때만 검색.
+- 출시 빌드(Debug.isDebugBuild 아님)에서는 Debug.Log를 끔 (경고·오류만). 에디터·시뮬레이션은 그대로 (SceneFlow).
+[정리] 코드 정리 (2026-11-19, 사용자 요청 — Claude)
+- 클래스 위 한 줄 설명 말고 남아 있던 주석(대부분 Codex 연출의 영어 주석)을 지우고, 영어 헤더 3개를 한국어 한 줄로.
+- 안 쓰는 using 8개, 안 쓰는 private 멤버(SkillRegistry 3, TowerInfoPanel 2, AutoPlanner 2, 테스트 2), 호출하는 곳 없는 public 메서드(SkillArea.Chain, SkillDescriptions.IsPassive·GetTitle·GetDescription,
+  UIManager.ShowZoneInfoPanel·HideEnemyInfoPanel·IsTowerInfoPanelElement, ZoneRegistry.NotifyChanged, SupportBuffs.RebuildAll, AxeImpact.PlayGround·PlayDustRing, EnemyCubeMeshVisual.GetFaceAssetIndex,
+  SkillEffectTable.PlayPreview와 미리보기 플래그) 삭제. 연결 안 된 기능 EnemyCubeMeshVisual.PlaySpawn(소환 낙하)·TowerBossEffects.CopyDebuffsFrom(보스 디버프 계승)은 남김.
+- 에디터 검증 도구의 폐기 예정 API(FindObjectsSortMode) 경고 14개 고침. dotnet 컴파일 경고 0 · 오류 0. EditMode·실제 플레이는 Unity를 닫은 뒤 밸런스 테스트와 함께 확인.
+[테스트·시뮬] 최적화·저항력·젖음 뒤 확인 (2026-11-19 — Claude)
+- Unity EditMode 배치 실행 694개 전부 통과.
+- 시뮬레이션 40판(시드 1 ~ 40): 노말 20웨이브 Stage1 덱 36/40(90%, 전 32), 무작위 덱 30/40(75%, 전 31). 하드 10웨이브 Stage1 덱 21/40(52.5%, 전 14), 무작위 덱 12/40(30%, 전 11).
+  패배 이유는 대부분 보스 제한 턴. 하드는 판당 경험치 구매 0회, 2티어 합성 판당 0.1 ~ 0.2, 남은 골드 800 ~ 1100. 결과 파일 Balance/batch_20261119_112929_666 ~ 113935_218.
+[기획] 출전 문양 노말 5·하드 7 (2026-11-18 사용자가 EmblemSelectPanel에서 바꿈, 2026-11-19 문서 반영 — Claude). 20번 3곳·21번을 고치고, 덱 비교 시뮬레이션(BalanceSimulationWindow)도 EmblemSelectPanel 상수를 쓰게 함.
+[시뮬] 문양 집중 AI·보스·하드 배율 실험 (2026-11-19, 사용자: 경제는 모드 공통, 합성은 문양 3개 집중이 정론, 보스는 알아서 — Claude)
+- AutoPlanner: 집중 문양(판·대기석 타워가 많은 문양 3개, -simFocus로 바꿈). 판이 다 차면 집중 밖 1티어(짝 없는 것)를 팔고 다시 뽑음(웨이브당 6번), 대기석 올릴 때 집중 밖은 ×0.8.
+  10웨이브까지는 판이 다 차지 않아(타워 7 ~ 11기) 다시 뽑기 0회 — 후반에만 작동.
+- 모두 10웨이브 통과율. 판 수 80, 시드 1 ~ 80 (40판은 같은 조건에서도 ±7%p 흔들림).
+  중간 보스 체력  115: 노말 Stage1 88.8 / 무작위 83.8, 하드 38.8 / 36.3
+                  100: 87.5 / 85.0, 33.8 / 31.3
+                   85: 91.3 / 87.5, 32.5 / 26.3   → 노말만 오름. 하드에서 진 판은 보스 체력과 상관없이 보스에게 준 피해가 약 60으로 같음.
+  하드 전용       적응형 주사위 4 ~ 7: 하드 47.5 / 40.0.  하드 체력·방어 배율 1.2: 55.0 / 55.0.  중간 보스 85 + 배율 1.2: 62.5 / 58.8.
+- 적용: 중간 보스 MaxHP 115 → 85 (4. MiddleData.asset, 20번 3장 표). 하드 배율·주사위는 사용자 결정을 기다림.
+- 문양별(노말 무작위 160판, 82.5%): 창 91, 활 88, 바람·검·전기 86, 도끼·대지 84, 빛 82, 물·불 81, 얼음 80, 해머 76, 방패·어둠 75. 40판에서 낮던 대지(58%)는 표본 탓이었음.
+  결과 파일 Balance/batch_20261119_115332_222 ~ 130548_024.
+[밸런스] 노말 적응형 주사위 1 ~ 3, 하드 배율 1.25 (2026-11-19, 사용자 — Claude)
+- WaveTable: 노말 적응형 주사위 3 ~ 6 → 1 ~ 3, 하드 체력·방어 배율 1.375 → 1.25 (하드 주사위 5 ~ 8은 그대로). 중간 보스 85와 함께.
+- 10웨이브 통과율 80판: 노말 Stage1 93.8%, 무작위 90.0% / 하드 Stage1 50.0%, 무작위 48.8% → 목표(노말 90, 하드 50)에 맞음.
+- WaveTableTest 기대값 고침, EditMode 694개 전부 통과. 20번 3장·9장 표 고침. 결과 파일 Balance/batch_20261119_131532_103 ~ 132523_723.
+[시뮬] 40웨이브 연구: 집중 전략·합성 수·버프·디버프 영향 (2026-11-19, 사용자 요청 — Claude)
+- AutoPlanner 집중 규칙을 사용자 기준으로: 2티어 이상이 가장 많고 먼저 나온 문양 → 그다음 → 셋째는 판의 시너지 조합에 맞는 문양. 2티어가 나오기 전엔 집중 안 함.
+- 노말 40웨이브 끝까지, 무작위 덱 5문양, 시드 1 ~ 80 (조건마다 80판).
+  A 집중 3·합성 3기: 클리어 79%, 도달 35.5웨이브, 3티어 나온 판 59/80 (첫 27.8웨이브), 4티어 0, 남은 골드 70,429, 경험치 구매 263회
+  D 집중 3·합성 2기: 클리어 81%, 3티어 69/80 (첫 13.1웨이브), 4티어 68/80 (첫 22.5웨이브, 판당 10.2기), 남은 골드 62,097
+  B 집중 안 함·합성 3기: 클리어 89%, 도달 36.6웨이브, 3티어 57/80 (첫 31.4웨이브), 4티어 0
+  C 집중 3·버프·디버프 효과 끔: 클리어 41%, 도달 32.1웨이브
+- 같은 ID 3기 합성에서는 다이아가 한 번도 안 나옴 (다이아 1기 = 같은 브론즈 27기, 1티어 20종 중 1/20 → 평균 약 540번 뽑기). 문양 집중은 같은 ID가 나오는 속도를 바꾸지 않아 오히려 집중 안 함보다 낮음.
+- 버프·디버프를 끄면 클리어 79% → 41%. 화력(적 턴당 피해): 광역이 단일보다 2 ~ 5배, 상위는 소서러·노움·바이킹·플레임위자드·레인저·소드 마스터, 하위는 실드메이든·운디네·실프·브레이커·드루이드·블레이드 댄서.
+- 판 끝에 남은 골드 6 ~ 8만: 후반에 골드를 쓸 곳이 없음. 결과 Balance/batch_20261119_134001_842(A·B) · 141315_112 · 143312_913.
+[상점] 무작위 생성 → 롤체식 상점, 플레이어 레벨 10단계, 판매 = 산 값의 80% (2026-11-19, 사용자 — Claude)
+- TowerShop(05. Tower, 새): 카드 5장. 문양은 덱에서, 역할은 네 가지 중 무작위, 티어는 레벨 확률(BalanceTables.RollTier). 플레이어 턴마다 무료 새로고침, 잠그면 그대로 유지.
+- TowerManager: TryBuyCard(카드 번호)·TryRerollShop(50골드, 잠금 풀림)·ToggleShopLock. 가격 250 / 600 / 1,500 / 4,000. TryBuild는 "살 수 있는 가장 싼 카드 사기"(개발 도구용)로.
+  첫 생성 광역·단일 보장(GetGuaranteedColor)과 무작위 1티어 뽑기를 지움. TowerState.PaidGold: 산 값, 합성하면 재료 3기의 합. 판매 = PaidGold × 0.8 (GetSellGold(타워)).
+- BalanceTables: MaxColorLevel 5 → 10. 경험치 4 / 8 / 15 / 20 / 25 / 55 / 75 / 110 / 140 (초안, 합 452), AV ×1 ~ ×4 · Mastery 5레벨 +1, 10레벨 +2 (초안), 레벨별 티어 확률표(사용자).
+- UI: TowerShopPanel(11. UI, 새, 코드로 만드는 기본 화면) — PlayerTurnPanel 아래 가운데 카드 5장(그림·역할/문양·티어·가격) + 잠금. 생성 버튼은 리롤(50)로, 단축키 D도 리롤.
+  모양·위치 다듬기는 Codex에게. Unity 실제 화면은 아직 안 봄.
+- AutoPlanner: 공격 2기를 산 뒤 지원(목표 35%), 판에 빈칸이 있으면 같은 카드를 일부러 모으지 않음(초반 합성은 손해), 남은 골드로 리롤, 자리가 없으면 집중 밖 1티어 팔기, 골드 900 이상이면 경험치.
+  처음엔 빈 판에서 지원 비율 0% → 지원 카드부터 사는 실수가 있어 노말 무작위 36%까지 떨어졌음 (고침).
+- 테스트: TowerManagerTest(가격·판매·확률·상점·잠금), BalanceTablesTest·ColorUpgradeStateTest·TowerStatCalculatorTest·TowerControllerTest를 10레벨로. EditMode 709개 통과.
+- 시뮬(80판): 10웨이브 노말 Stage1 92.5% · 무작위 81.3%, 하드 Stage1 53.8% · 무작위 28.8% (상점 전 93.8 / 90.0 / 50.0 / 48.8).
+  노말 40웨이브 무작위: 클리어 81% (상점 전 89%), 3티어 첫 21.6웨이브, 다이아 나온 판 5/80 (첫 29.3웨이브), 끝 레벨 10이 65/80, 남은 골드 57,934. 진 판 15판 중 14판이 1 ~ 10웨이브.
+  다이아가 적은 것은 AI가 판·대기석이 2 ~ 3티어로 차면 팔지 못해 카드를 못 사는 탓 (실제 플레이어는 팔고 삼).
+- 남은 것: 21번 맨 위. 결과 Balance/batch_20261119_153340_253 ~ 161959_843.

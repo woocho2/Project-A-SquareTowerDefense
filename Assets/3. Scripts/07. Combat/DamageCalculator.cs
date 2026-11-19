@@ -32,7 +32,7 @@ namespace SquareTD
 
         public static float Calculate(DamageInfo info, float defense, float damageTakenMultiplier, float fixedRatio)
         {
-            float ratio = info.ForceFixed ? 1f : fixedRatio;
+            float ratio = info.ForceFixed ? 1f : Mathf.Clamp01(fixedRatio);
             float fixedDamage = info.BaseDamage * ratio;
             float defenseAfter = ApplyPenetration(defense, info.ArmorPenetration);
             float defended = (info.BaseDamage - fixedDamage) * GetDefenseCoefficient(defenseAfter) * damageTakenMultiplier;

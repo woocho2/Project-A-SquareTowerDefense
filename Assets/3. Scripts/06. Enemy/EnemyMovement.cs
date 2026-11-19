@@ -10,6 +10,7 @@ namespace SquareTD
         [SerializeField] private float m_stepDuration = 0.7f;
         [SerializeField] private float m_landDuration = 0.1f;
         [SerializeField] private EnemyCubeMeshVisual m_cube;
+        public EnemyCubeAppearance Appearance => m_cube != null ? m_cube.Appearance : null;
         public int PathIndex { get; private set; }
         public bool IsMoving { get; private set; }
         public bool ActedThisTurn { get; private set; }
@@ -85,7 +86,6 @@ namespace SquareTD
             OnMoved(steps);
 
             m_controller.Status.OnActed();
-            m_controller.Resistance.OnActed();
         }
 
         private MoveRange DecideMove(MoveRange range)

@@ -4,8 +4,14 @@
 흐름: 20번 기획 → 21번 계획(이 문서, 남은 것만) → 22번 리팩토링 내역서(끝낸 것). 끝난 수업은 22번으로 옮기고 여기서 지움.
       수업 중·수업 뒤의 질문과 답은 23번 수업 질문 노트에 수업별로 그때그때 더함 (Claude가 따로 부탁받지 않아도).
 
->>> 먼저 할 것: 스킬을 새 기획으로 — 2단계 남은 것 (스킬 코드·문양별 테스트·옛 코드 정리는 2026-11-11에 끝남, 22번)
-    3. 저항력을 어디까지 적용할지 사용자와 한 번에 상의 (저지먼트 날려 보내기 확률, 아머 크러시의 방어력 0 등 AI가 해석한 곳)
+>>> 상점 다음 할 것 (2026-11-19 상점 도입, 22번)
+    1. 상점 UI를 Unity에서 보고 다듬기 (Codex): 카드 5장·잠금 위치, 리롤 버튼 이름("타워 생성" → "리롤"을 코드로 바꿔 둠), 문양 선택·로딩 화면 문구.
+    2. 레벨 10에서 "Tier × 레벨"로 정하는 개수(창·튕김·연쇄 수, 화상·전하 양, 유지 시간 등)가 전보다 최대 2배가 됨 → 그대로 둘지, 레벨을 반으로 나눠 쓸지 정하기.
+    3. 경험치 표·AV 10단계는 초안. 하드 무작위 덱 28.8%(목표 50%), 노말 40웨이브 1 ~ 10웨이브 패배가 많음 → 수치 맞추기.
+    4. 시뮬레이션 AI: 판·대기석이 2 ~ 3티어로 차면 팔고 높은 티어 카드를 사는 판단이 없음 (다이아 5/80판).
+    5. 초반 합성은 손해 (실버 Power ×1.5인데 브론즈 3기 값) → 의도대로인지 정하기.
+
+>>> 먼저 할 것: 스킬을 새 기획으로 — 2단계 남은 것 (스킬 코드·문양별 테스트·옛 코드 정리는 2026-11-11에 끝남, 저항력 규칙은 2026-11-19에 끝남, 22번)
     7. 게임에서 문양마다 보기
 
 >>> 현재 범위 변경 (2026-11-16 사용자 결정)
@@ -13,10 +19,9 @@
     스토리 모드와 이에 따른 스테이지·문양·시너지 해금, 진행 저장(ProgressSave)은 현재 개발 계획에서 제외.
     향후 재개 가능성이 있어 아래 관련 설계는 보류안으로만 남김. 현재 남은 필수 작업으로 안내하거나 자동으로 구현하지 않음.
 
->>> 진행할 작업 추가·현재 순서 (2026-11-16 사용자 결정)
-    UI 다듬기를 남은 작업에 추가함. 구체적인 수정 범위는 진행할 때 사용자와 정함.
+>>> 남은 확인 (UI 다듬기는 2026-11-19에 끝남)
     최종 보스 9종의 기믹 연결과 EditMode 검증은 2026-11-16에 끝남 (20번 3장, 22번). 전체 658개 통과, 그중 보스 전용 39개.
-    남은 확인: 실제 게임 화면에서 각 기믹의 표시·체감·지속 시간 확인. 자동 EditMode 검증과 구분함.
+    남은 확인: 실제 게임 화면에서 각 기믹의 표시·체감·지속 시간 확인 (사용자가 플레이하며). 자동 EditMode 검증과 구분함.
 
 >>> 내일 이어서 (2026-11-17 정리, 대기석·시너지 연결은 끝남 — 22번)
     1. 버프·디버프 실험 마저: 무작위 덱 그대로 / 효과 끔 / 공격만 세 묶음 (scratchpad support_experiment.ps1, -simSupport 0/1/2, 40판·20웨이브).
@@ -45,34 +50,19 @@
          → 기본 AV 0.1, 버프·디버프 티어 AV 배율 ×1 / 2.5 / 5 / 10. 컬러 레벨 배율은 따로 맞출 예정
        스택 규칙 (2026-11-18 사용자. 버프 스택은 타워 행동 때 소모, 디버프 스택은 유지하다가 터뜨릴 때):
          화상 그 적이 움직인 턴의 디버프 처리(⑤)에 최대 체력의 스택 × 0.1% 피해 → 스택 절반 (소수 버림, 1이면 0)
-         젖음 10에 닿으면 다음 행동의 최대 이동력 −1 → 스택 전부 사라짐 (넘친 것도)
+         젖음 50에 닿으면 (2026-11-19 10에서 늘리고 효과도 바꿈) 다음 행동이 끝날 때까지 받는 피해의 30%가 고정 피해 → 스택 전부 사라짐 (넘친 것도)
          한기 25 이상이면 최소·최대 이동력 −1 → 50에서 빙결 → 빙결이 풀리면 스택 전부 사라짐 (넘친 것도)
          실명 10에 닿으면 다음 행동은 이동력 × −1 → 스택 사라짐 (넘친 것도). 빛의 "실명 중"은 스택 1 이상이거나 뒤로 걸을 차례가 남은 동안으로 봄
          침식 그대로 / 성장 그대로 (영구)
          가속 20에 닿으면 그 타워의 다음 행동 −1 (넘친 것은 없앰). 가속 버프가 걸려 있는 동안 들어오는 가속은 0 → 그 행동을 쓰면 다시 0부터
        참고: 불·바람·전기는 오프셋(50, 5, 100)이 Power 4 기준과 안 맞아 손해, 방패(×한도)·해머(×골드)는 단위가 달라 너무 셈.
     2. 경제 방향 (2026-11-18 사용자): 1사이클은 제한된 골드로 최대한 버티기, 후반에 합성하는 재미 (적도 더 강해져야 함). 수치는 아직.
-    3. 하드 (2026-11-18, 자가치유 2.5%·판매 200 기준, 40판 10웨이브): Stage1 덱 57.5%, 무작위 덱 35% (목표 50%). 버프·디버프 수치를 고친 뒤 다시 잼.
-    4. 게임에서 확인: 대기석 끌어 놓기·교환·합성, 시너지 스킬 버튼(Codex, 사용자가 나중에 테스트). 씬: TowerManager.m_towerParent가 Tower 프리팹을 가리킴 → 씬 오브젝트로.
+    3. 10웨이브 목표는 2026-11-19에 맞춤 (노말 주사위 1 ~ 3, 하드 배율 1.25, 중간 보스 85 → 노말 90 ~ 94%, 하드 49 ~ 50%, 22번). 11웨이브 이후(사이클 2 ~ 4)는 아직.
+    4. 게임에서 확인: 대기석 끌어 놓기·교환·합성, 시너지 스킬 버튼(Codex, 사용자가 나중에 테스트).
 
->>> 다음 수업: 41 — 시너지 타워
-    합성은 2026-10-29에 "같은 타워 3기 자동 합성"으로 바뀜 (20번 8장 [합성], 22번). 게임에서 연출 확인은 아직
-    수업 28 ~ 40(도끼 ~ 어둠)은 2026-10-29에 끝남 (22번). 빈칸을 다 채우고 Run All 통과. 게임에서 문양마다 보기는 아직 (T + 4자리)
-    수업 방식 (2026-10-26부터): AI가 코드 대부분을 채우고 아주 쉬운 한 줄 빈칸만 "// [A]"로 남김. 개발용 도구는 AI가 다 씀 (24번 10장)
-    수업 26은 2026-10-26에 끝남 (22번). 틀(수업 24 ~ 26) 완성 — 이제 문양. ZoneTestRules는 2026-10-27에 TestBuffRule·TestDebuffRule로 바뀜 (수업 40에서 지움).
-    수업 25는 2026-10-26에 끝남 (22번). DebugCheat J(임시 기절)는 수업 32에서 지움.
-    수업 24는 2026-10-26에 끝남 (22번).
-    옛 코드는 2026-10-26에 지움, 정리 도구와 옛 구현 계획서·내역서는 2026-10-28에 지움 (22번, git 기록에 있음). 같은 날 문서 번호를 20 ~ 24로 다시 매김.
-    수업 27(규칙의 틀과 검)은 2026-10-28에 끝남 (22번). 게임에서 검 버프·디버프 확인은 아직 (타워·적 카드로 볼 수 있음).
-    문양 순서 (2026-10-28 사용자): 엠블럼 순서대로 — 검 27, 도끼 28, 활 29, 창 30, 방패 31, 해머 32, 불 33, 물 34, 대지 35, 바람 36, 얼음 37, 전기 38, 빛 39, 어둠 40.
-    수업 23은 2026-10-26에 끝남 (22번).
-    수업 22는 2026-10-26에 끝남 (22번). UI 확인(타일 정보 패널 글자)은 아직 — 같은 날 연결한 UI와 함께 볼 것.
-    수업 21은 2026-10-26에 끝남 (22번). DebugCheat의 N·P 임시 키는 수업 22에서 지움.
-    수업 20은 2026-10-23에 끝남 (22번). 같은 날 UI 일부를 먼저 연결함 (6부 수업 44 칸).
-    수업 19는 2026-10-23에 끝남 (22번).
-    수업 18은 2026-10-23에 끝남 (22번).
-    수업 17은 2026-10-23에 끝남 (22번). 2부 끝 시나리오(S1 · S2 · S3 · S5 · S7 · S8)는 아직 안 함 (2부 끝 칸).
-    수업 16은 2026-10-23에 끝남 (22번). 명중 때의 체력 로그(ProjectileHitResolver의 "[Hit] …", 임시)는 대미지 숫자가 생길 때 지움 (6부)
+>>> 수업은 40에서 끝남
+    41 ~ 47(시너지·모드·스테이지·게임 속도·UI)은 수업 대신 AI·Codex가 만들어 끝남 (22번). 48 정리는 폐기 (2026-11-19 사용자: 출시 전 마무리는 사용자가 직접).
+    게임에서 문양마다 보기는 아직 (T + F1 + 4자리)
     수업 1에서 남긴 손질 (선택): TowerIdTest를 namespace SquareTD.Tests로 감싸면 SquareTD.TowerEmblem 대신 TowerEmblem만 써도 됨,
     함수 이름 GetEmblem_5305는_05 → _Shield, bool은 Assert.IsTrue / IsFalse
 
@@ -84,7 +74,7 @@
   4. 전체 틀 — 미리 정해 두는 약속 (단계, 이벤트, 공용 자료형, 훅, 문양 56종이 들어가는 자리)
   5. 스크립트 전체 목록 — 179개, 스크립트마다 기능과 만드는 수업
   (4장에 [4-7] 옛 코드에서 고친 버그를 다시 만들지 않기, [4-8] 여러 기능이 함께 동작하는지 보는 확인)
-  6. 수업 목록 — 48수업 (UI는 맨 마지막 6부)
+  6. 수업 목록 — 1 ~ 40 (모두 끝남, 22번)
 
 ======================================================================
 0. 수업의 목적과 방식
@@ -698,7 +688,7 @@ GroundEffect (장판)
 162  GameOverPanel.cs    [MB 옮김] (수업 44)
 163  GameClearPanel.cs   [MB 옮김] (수업 44)
 164  ZoneInfoPanel.cs    [MB 새]   (수업 46) 존을 누르면 스택과 단계
-165  EmblemSelectPanel.cs [MB 새]  (수업 47) 스테이지 선택 씬의 문양 선택(노말 4, 하드 6), 모드 선택. 스토리는 보류.
+165  EmblemSelectPanel.cs [MB 새]  (수업 47) 스테이지 선택 씬의 문양 선택(노말 5, 하드 7), 모드 선택. 스토리는 보류.
 166  StatusTextFormatter.cs [static] (수업 25) 상태 효과·버프의 설명 문구 (Click Debug 창과 로그가 먼저 쓰고, UI가 나중에 씀)
 
 ----------------------------------------------------------------------
@@ -736,8 +726,8 @@ GroundEffect (장판)
 2부  타워의 기본       수업 11 ~ 17  타워가 적을 잡고 골드가 들어옴. 한 판을 끝까지 해 볼 수 있음
 3부  성장              수업 18 ~ 24  조작, 합성·강화, 스탯 완성, 특수 타일, 스택과 스킬 2의 틀, 개발용 도구 정리
 4부  존과 문양         수업 25 ~ 40  상태 효과, 존, 규칙의 틀, 문양 14종
-5부  마무리            수업 41 ~ 43  시너지, 모드·스테이지·해금, 게임 속도와 설정
-6부  UI와 정리         수업 44 ~ 48  지금 UI를 새 로직에 연결, 없는 칸·버튼·패널 더하기, 옛 것 삭제
+5부  마무리            수업 41 ~ 43  시너지, 모드·스테이지, 게임 속도 — 수업 대신 AI·Codex가 만들어 끝남 (22번)
+6부  UI와 정리         수업 44 ~ 48  UI는 AI·Codex가 끝냄 (22번), 48 정리는 폐기 (2026-11-19 사용자: 출시 전 마무리는 사용자가 직접)
 
 각 수업의 "만들 것"은 5장의 번호(#). 기능의 목록은 5장, 여기서는 짜는 순서·함정·확인.
 
@@ -767,151 +757,3 @@ GroundEffect (장판)
 
 >>> 4부 끝 (수업 25 ~ 40 모두 22번으로, 2026-10-29). 게임에서 문양마다 확인과 연출(Codex)은 아직.
 
-######################################################################
-5부. 마무리
-######################################################################
-
-----------------------------------------------------------------------
-수업 41. 시너지 타워 — #35 SynergyService
-----------------------------------------------------------------------
-기획: 20번 9장 [조합의 규칙], [조합표]
-설계
-  조합표 14종 (재료 문양 셋)
-  TowerAdded / TowerRemoved 구독 → 판 위 4티어 이상 타워의 문양 집합 → 조건이 맞으면 빈 칸에 시너지 타워(빈 칸이 없으면 칸이 날 때까지 대기),
-  깨지면 제거. 시너지 타워는 판매·이동·교환·합성 재료 불가. 다른 시너지의 재료가 아님
-  효과는 미정 (4장 4-6) → SkillRegistry의 타워 ID 칸이 비어 있음. 생성과 표시만 (SynergyCharacterCatalog 그림)
-확인: 검·방패·전기를 미스릴로 → 브륀힐드가 생김, 그중 하나를 팔면 사라짐.
-참고(옛 코드, git 기록): TowerManager.s_synergyDefinitions / EvaluateSynergyTowers
-
-----------------------------------------------------------------------
-수업 42. 모드·스테이지 — #8 StageDefinition, GameSession·WaveManager 보강 (스토리·해금·ProgressSave는 보류)
-----------------------------------------------------------------------
-2026-11-16: 스토리 모드는 현재 계획에서 철회. 아래 스토리·해금·ProgressSave 설계와 확인 항목은 향후 재개 검토용이며 현재 구현 대상 아님.
-배울 것: 씬을 건너 값 넘기기(static 또는 작은 보관 객체), 저장(JsonUtility + 파일 또는 PlayerPrefs).
-기획: 20번 9장 [스테이지의 적과 해금], 모드 셋, 8장 [타워 생성](고른 문양만)
-설계
-  StageDefinition 10개 에셋 (적 정의 셋, 여는 문양·시너지, 라그나로크는 사이클별 적 넷)
-  (수업 9에서 넘어옴) 적 프리팹은 하나로 돌려 쓰고 정의만 셋(일반·중간 보스·최종 보스). 그림도 데이터로:
-    EnemyDefinition에 Appearance(EnemyCubeAppearance) 칸 → EnemySpawner.SpawnOne에서 SetAppearance(definition.Appearance).
-    지금 EnemyManager의 세 Entry는 같은 EnemyPool을 써도 됨. 보스 외형이 큐브가 아니게 정해지면(20번 3장) 보스 프리팹·풀만 그 칸에
-  ProgressSave: 깬 스테이지, 열린 문양·시너지, 저장·읽기
-  StartSettings (씬을 건너는 보관 객체, GameSession 파일 안): 모드, 스테이지, 고른 문양. 지금은 GameSession 인스펙터 값으로 채움
-    (고르는 화면 EmblemSelectPanel은 6부 수업 47)
-  GameSession: 시작할 때 StartSettings를 받음. TowerManager의 생성·합성 결과가 고른 문양만
-  WaveManager: 스테이지의 일반·중간·최종 보스를 소환 목록에 (라그나로크는 사이클마다 다른 스테이지의 적)
-  최종 보스 기믹: 2026-11-16에 StageDefinition·BossMechanicService로 연결함 (22번). 자물쇠 면을 대체하며 중간 보스에는 별도 기믹 없음. 남은 것은 실제 게임 화면 검수.
-확인: 하드 한도 15 · 체력 ×1.5.
-보류안의 확인 (스토리 재개 시): 아스가르드는 검·창·방패·전기만 나옴, 클리어 → 알프헤임이 열린 채로 저장됨.
-2026-11-13 노말·하드 먼저 (스토리·ProgressSave는 아직):
-  StageDefinition(01. Data): 적 정의 셋 대신 "이름 + 그림"(StageEnemyLook) 셋. 능력치는 지금의 NormalData·MiddleData·FinalData를 같이 씀
-    (스테이지마다 능력치를 따로 두지 않아 밸런스는 한 곳에서). 라그나로크는 RagnarokCycles(미드가르드·니플헤임·헬·무스펠헤임)에서 사이클마다 가져옴.
-    에셋 10개: Assets/2. Prefab/6. Stage. StoryEmblems는 20번 9장의 여는 문양 (스토리 모드에서 씀)
-  StartSettings(GameSession.cs 안의 static): 모드·스테이지·고른 문양. 메뉴 씬에서 Set → 게임 씬 GameSession·TowerManager가 Awake에서 읽음.
-    없으면(Stage1을 바로 열면) 인스펙터 값을 씀
-  하드 ×1.5: EnemyController.Setup에서 WaveTable.GetModeStatMultiplier → 체력과 EnemyStats의 방어력에 곱함
-  적 이름은 EnemyController.DisplayName (스테이지 이름이 있으면 그것, 없으면 정의의 이름)
-  빈칸: GameSession [A] m_mode, TowerManager [B] AddRange
-(2026-10-30 사용자: "42부터 하자, Start씬부터 바꿔보려") Start 씬부터 시작. 타이틀·배경·버튼 그림은 Codex (25번 9장 순서로 시안 → 사용자 선택).
-  지금 Start 씬: Main Camera, Canvas(Panel·Button·Text), EventSystem, UIManager_Start(옛 스크립트가 지워져 Missing). 옛 그림 BG_Image_Title(제목 글자가 그림에 박힘)·BG_Image_Menu
-
-----------------------------------------------------------------------
-수업 43. 게임 속도 — #14 GameSpeedController
-----------------------------------------------------------------------
-설계
-  GameSpeedController: 배속·일시정지 (Time.timeScale), DebugCheat 키
-  (차지는 무조건 자동 소모라 스택 자동/수동 설정은 없음. 20번 4-1장 [Charge])
-확인: 배속이 바뀜.
-
-######################################################################
-6부. UI와 정리 — 지금 UI를 그대로 두고 스크립트만 (1장 5)
-######################################################################
-2026-10-23 사용자: "UI는 수업 안 들어도 될 정도로 마스터해서 너가 해주면 됨" → 수업 44 ~ 47은 수업으로 하지 않고 AI가 함.
-  스크립트는 2026-10-23에 AI가 미리 써 둠: 10. UI의 UIManager, GameInfoPanel, PlayerTurnPanel, TowerInfoPanel, TileinfoPanel,
-    EnemyInfoPanel, EnemyListItemUI, OptionPanel, GameOverPanel, GameClearPanel, ZoneInfoPanel, EmblemSelectPanel,
-    TowerInfoCardView·TowerTierBadgeGraphic(옛 것의 복사본, 카드 뒤집기는 DOTween으로), SceneFlow(씬 이동 static, 옛 SceneLoader는 지움)
-  아직 없는 시스템을 부르는 곳은 "// 수업 N: …" 주석으로 남김. 그 수업에서 시스템을 만들 때 AI가 10. UI에서 "// 수업 N:"을 찾아 풀어 연결함.
-    수업 17 우선순위 표시 · 18 입력·선택·판매·공격 칸 · 19 합성·티어 강화 · 20 컬러 레벨·강화 · 21 적 스탯 · 22 특수 타일 · 23 스택·적중 수
-    · 25 상태 효과·저항 · 26 존 · 27 ~ 40 스킬 2 이름·설명 · 31 · 32 방어막 · 42 문양 선택 넘기기 · 43 게임 속도
-  대미지 숫자 (수업 16에서 뺌, 2026-10-23 사용자. 연출이라 UI와 함께 AI가): 명중해서 피해가 들어가면 적 위에 숫자 (DOTween, 풀).
-    EnemyController.TakeDamage가 계산한 최종 피해를 띄움. 새로 씀 (옛 DamageText·DamageTextPool은 지움, git 기록에 있음).
-    생기면 ProjectileHitResolver의 임시 체력 로그("[Hit] …")를 지움. 적 머리 위 HP 바는 없음 (체력은 적 정보 패널)
-  남은 일 (AI): 새 칸 만들어 붙이기(GameInfoPanel의 txt_bossTurns, TowerInfoPanel의 btn_pickAttackCell·판매 버튼, UIManager의 m_zoneInfoPanelUI,
-    ZoneInfoPanel·EmblemSelectPanel 오브젝트), 카드 뒤집기(TowerInfoCardView). 패널 Script 갈아 끼우기는 2026-10-26에 끝남 (옛 UI 스크립트는 지움)
-공통: 지금 UI에 없는 칸·버튼·패널은 지금 UI와 같은 모양으로 만들어 붙임.
-      버튼은 DebugCheat의 키가 부르던 TowerManager·TurnManager의 함수를 그대로 부름 (로직은 고치지 않음).
-
-----------------------------------------------------------------------
-수업 44. 상단 정보와 턴 — #154 UIManager, #155 GameInfoPanel, #156 PlayerTurnPanel, #162 GameOverPanel, #163 GameClearPanel
-----------------------------------------------------------------------
-  UIManager: TurnManager.StateChanged를 구독해 패널을 켜고 끔 (옛 코드는 상태 클래스가 UIManager를 직접 부름)
-  (2026-10-28 사용자가 정함, 25번 11장) 캔버스 기준: 1920 × 1080, 세로에 맞춤. 지금 UICanvas의 Canvas Scaler는 Constant Pixel Size
-    (기준 해상도 800 × 600은 쓰이지 않는 기본값) → Scale With Screen Size · 1920 × 1080 · Match 1(세로)로 바꾸고 패널 위치·크기를 다시 맞춤.
-    한 번에 UI 전체 크기가 바뀌므로 새 UI 그림이 들어올 때 같이 함
-  GameInfoPanel: GameSession.LimitChanged, EnemyManager.CountChanged, WaveManager.WaveChanged, CurrencyManager.Changed 구독. 새로: 보스 남은 턴
-  PlayerTurnPanel: 생성(TryBuild, BuildCostChanged), 컬러 강화·티어 강화, 턴 종료(OnClickEndTurn)
-    (2026-10-23 사용자 요청으로 먼저 함) Canvas.prefab에서 GameInfoPanel · PlayerTurnPanel의 Script를 새 것으로 바꿈 (프리팹 YAML의 guid,
-      PlayerTurnPanel은 m_colorUpgrades 4칸까지 연결). PlayerTurnPanel의 선택은 UIManager 대신 TowerManager.SelectionChanged를 들음.
-      아직: 생성 비용 글자(txt_createTowerValue)는 씬의 UICanvas 덮어쓰기가 비워 둠 → 연결할 것은 Group_CreateTower/…/Txt_A_TargetUpValue(이름이 잘못 붙음),
-      GameInfoPanel의 txt_bossTurns는 칸(글자 오브젝트)이 없음
-    (같은 날, 사용자: "옛날거 붙어있으면 그거 떼도 됨") Canvas.prefab의 GameOver·GameClear·Option·Tileinfo·TowerInfo 패널도 새 Script로 바꿈.
-      EnemyInfoPanel 오브젝트에 잘못 붙어 있던 빈 옛 TowerInfoPanel은 뗌. 이제 Canvas.prefab에 옛 UI 스크립트는 없음.
-      남은 것: 씬의 TileInfoPanel 오브젝트(UICanvas 밖, 씬에만 있는 것)에 붙은 빈 옛 TowerInfoPanel → 사용자가 Remove Component,
-        새 UIManager를 씬에 두고 패널 연결 (없으면 TowerInfo·TileInfo 패널은 아무것도 안 함, 에러는 없음),
-        TowerInfoPanel은 옛 것도 txt_name·합성 버튼·판매 젬만 연결돼 있었음 → 나머지 칸 연결, EnemyInfoPanel 오브젝트에 새 EnemyInfoPanel 붙이기
-    (2026-10-26, 사용자: "옛 패널에 지금 스크립트를 연동좀 해줘") AI가 Canvas.prefab·씬 YAML을 직접 고침 (백업은 그날 scratchpad):
-      - Canvas 루트에 새 UIManager (패널 7개, 패널 바꾸기 버튼 4개, EnemyInfoPanel 연결) → 이제 씬에 새 UIManager가 있음
-      - EnemyInfoPanel 오브젝트에 새 EnemyInfoPanel: 사용자가 만든 Enemy_Multi(목록)·Enemy_Single(상세)에 연결, 값 칸(…Value)에는 값만 쓰는
-        m_compactValues, 체력 막대(m_hpSlider), 적 종류, 받는 피해(Txt_A_WeakValue), 아직 시스템이 없는 칸(치유량·가중치·스킬)은 "-"
-        스크립트: 인스펙터에 연결한 화면이 있으면 스스로 만들지 않게 고침
-      - TowerInfoPanel: 레벨·티어·컬러·문양 글자와 그림, 우선순위 글자·버튼(Btn_Target = 다음), 스탯 6칸, 뒷면 설명 2칸 연결
-        (스킬 계수·Duration·Mastery·스택 칸은 카드에 자리가 없어 빈 채로, 카드 뒤집기 TowerInfoCardView는 아직 안 붙임)
-      - PlayerTurnPanel 생성 비용 글자 = Group_CreateTower/…/Txt_A_TargetUpValue, 씬에서 이 칸을 비우던 덮어쓰기를 지움
-      - 씬에만 있던 TileInfoPanel 오브젝트의 빈 옛 TowerInfoPanel 컴포넌트를 뗌
-      (같은 날, 사용자 밥 먹는 동안) 적 상세 뒤집기: m_detailFront = 앞 Group_Stats, m_detailBack = Back. 버튼이 비어 있으면 가운데 줄 빈자리
-        (0, 0.5)에 46 × 35 버튼 "버프 / 스탯"을 코드로 만듦 (DOTween으로 가로 접기). 적을 새로 고르면 앞면부터.
-        목록 항목·버프 항목의 너비를 330 고정에서 목록 칸 너비에 맞춤 (250짜리 목록에서 잘리던 것)
-        Unity 없이 컴파일 확인하는 방법: scratchpad의 make-check.ps1 / check-all.ps1 (csproj를 복사해 dotnet build) — 런타임·테스트 둘 다 에러 0
-      남은 것: 판매 버튼(카드에 없음), GameInfoPanel의 txt_bossTurns 칸
-    컬러 강화는 컬러마다 버튼 하나 (2026-10-23 사용자: 지금 UI가 그렇게 생김). 스크립트는 m_colorUpgrades 칸 4개(컬러, 버튼, 레벨 글자, 비용 글자)로 고쳐 둠.
-    옛 btn_colorUpgrade · txt_colorUpgradeValue 칸은 없앰 → 씬에서 Script를 갈아 끼운 뒤 4칸을 직접 연결:
-      Red  ← Btn_SplashUp, Txt_B_SplashUpLv, Txt_A_SplashUpValue    Blue   ← Btn_TargetUp, Txt_B_TargetUpLv, Txt_A_TargetUpValue
-      Yellow ← Btn_BuffUp, Txt_B_BuffUpLv, Txt_A_BuffUpValue        Purple ← Btn_DebuffUp, Txt_B_DebuffUpLv, Txt_A_DebuffUpValue   (Canvas.prefab의 이름)
-  GameOverPanel, GameClearPanel
-확인: 지금 화면 그대로 값이 실시간으로 바뀜, 버튼이 키와 같은 일을 함, 갈아 끼운 패널의 인스펙터에 빈 칸이 없음.
-
-----------------------------------------------------------------------
-수업 45. 타워 카드와 타일 정보 — #157 TowerInfoPanel, #158 TileinfoPanel
-----------------------------------------------------------------------
-  TowerInfoPanel: SelectionChanged를 구독, TowerFinalStats와 출처로 12칸 (TowerInfoCardView는 그대로). 버프·디버프 타워의 안 쓰는 칸은 "-"
-    머리줄 "Lv n | 컨셉 이름"(EmblemNames), 키워드 아이콘, 판매 가격, 칸 누름 → 설명과 출처 (Click Debug 창과 같은 내용)
-    버튼: 판매, 우선순위(지금 있음) / 새로: 10번 칸(스택), 스택 소모, 공격 칸 고르기. 합성은 자동이라 버튼 없음 (2026-10-29)
-  TileinfoPanel: 특수 타일 설명
-확인: 카드의 값이 Click Debug 창과 같음.
-
-----------------------------------------------------------------------
-수업 46. 적 정보와 존 정보 — #159 EnemyInfoPanel, #160 EnemyListItemUI, #164 ZoneInfoPanel
-----------------------------------------------------------------------
-  EnemyInfoPanel: 칸별 대상 목록, 기본·지금 저항력, 걸린 효과, 새로: 적중 수. 목록 항목은 ObjectPool로
-  EnemyListItemUI: EnemyHealthController → ITarget
-  ZoneInfoPanel (새): 존을 누르면 스택과 단계, 존 고르기 버튼(PlaceZoneMode)
-확인: 적 정보 패널을 여러 번 열어도 하이어라키의 항목 수가 늘지 않음, 존을 누르면 Click Debug 창과 같은 값.
-
-----------------------------------------------------------------------
-수업 47. 옵션과 시작 화면 — #161 OptionPanel, #165 EmblemSelectPanel
-----------------------------------------------------------------------
-  OptionPanel: 계속·재시작·메뉴(지금 있음) / 새로: 스택 전체 자동/수동, 타워 종류별 예외 목록, 게임 속도
-  EmblemSelectPanel (새, 스테이지 선택 씬): 모드, 노말 4·하드 6개 문양 고르기 → StartSettings. 스토리는 보류.
-  2026-11-13: 2. Menu 씬에 둠 (씬 꾸미기는 사용자). StageSelectPanel(새): 스테이지 버튼 10개 → EmblemSelectPanel.Open(스테이지).
-    EmblemSelectPanel은 노말·하드만 (라그나로크는 모드가 아니라 스테이지). 다 고르면 나머지 토글이 잠김. 뒤로 → 스테이지 목록
-확인: 메뉴 → 스테이지 선택 → 문양 고르기 → 게임에서 고른 문양만 나옴, 옵션에서 바꾼 스택 설정이 바로 적용됨.
-
-----------------------------------------------------------------------
-수업 48. 정리
-----------------------------------------------------------------------
-  - 옛 스크립트는 2026-10-26에 지움.
-  - 연출을 전부 셰이더로 (2026-10-27 사용자 목표). 문양마다 연출을 만들 때 10. Effect/EffectTables.cs의 표에 한 줄씩 옮기고,
-    56종이 다 옮겨지면 한 번에 지움: Projectile.prefab · Projectile.cs · ProjectileVfx.cs · HitEffect.cs, ProjectileCatalog(.cs·.asset),
-    4. Asset/6. Effect의 명중 프리팹 28개와 그 그림·애니메이션. ProjectileManager는 "번호 → 연출" 표만 찾는 일로 줄임
-  - 재시작·재시도·메뉴 버튼과 씬 이동 — 옛 SceneLoader·LoadingManager를 지웠으므로 새로 쓰고 Start·Menu·Loading 씬을 다시 연결
-  - 테스트 T1 ~ T8 전부 통과, 시나리오 S1 ~ S8 전부 (S7은 옵션의 재시작 버튼과 메뉴 → 다시 시작으로), 한 판을 40웨이브까지
-  - InvariantChecker 오브젝트는 개발용 씬 오브젝트로 남기되 빌드에서는 끔

@@ -56,9 +56,8 @@ namespace SquareTD
             if (m_icon != null)
             {
                 m_icon.type = Image.Type.Simple;
-                EnemyDefinition definition = m_target.Body != null ? m_target.Body.Definition : null;
-                m_icon.sprite = definition != null && definition.Appearance != null
-                    ? definition.Appearance.FaceSprite : null;
+                EnemyCubeAppearance appearance = m_target.Body != null ? m_target.Body.Appearance : null;
+                m_icon.sprite = appearance != null ? appearance.FaceSprite : null;
                 m_icon.preserveAspect = true;
                 m_icon.enabled = m_icon.sprite != null;
             }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SquareTD
 {
-    // 타워의 바뀌는 상태 (남은 행동, 우선순위, 수정자, 스킬 카운트, 받은 버프, 시간 버프)
+    // 타워의 바뀌는 상태 (남은 행동, 우선순위, 수정자, 스킬 카운트, 산 값, 받은 버프, 시간 버프)
     public class TowerState
     {
         public int RemainingAction { get; set; }
@@ -11,6 +11,7 @@ namespace SquareTD
         public StatModifierList Modifiers { get; } = new StatModifierList();
         public TowerBossEffects BossEffects { get; } = new TowerBossEffects();
         public float SkillCount { get; set; }
+        public int PaidGold { get; set; }
 
         public Dictionary<TowerEmblem, SupportBuffEntry> SupportBuffs { get; } = new Dictionary<TowerEmblem, SupportBuffEntry>();
 
@@ -37,6 +38,7 @@ namespace SquareTD
 
             foreach (var pair in old.Counters) Counters[pair.Key] = pair.Value;
 
+            Modifiers.BeginBatch();
             foreach (var pair in old.SupportBuffs)
             {
                 SupportBuffs[pair.Key] = pair.Value.Clone();
@@ -52,6 +54,7 @@ namespace SquareTD
                 PersistentSources.Add(source);
                 CopyModifiers(old, source);
             }
+            Modifiers.EndBatch();
         }
 
         private void CopyModifiers(TowerState old, string source)

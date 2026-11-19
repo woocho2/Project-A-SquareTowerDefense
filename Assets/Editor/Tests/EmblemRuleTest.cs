@@ -132,6 +132,15 @@ namespace SquareTD.Tests
             Assert.IsTrue(byPierce.IsAlive, "12% > 5.5%");
         }
 
+        [Test]
+        public void 도끼_디버프의_즉사는_저항력_100이면_막힘()
+        {
+            EnemyController enemy = MakeEnemy(hp: 100f, resistance: 100f);
+            enemy.TakeDamage(Hit(97f));
+            Debuff(MakeTower(1402), enemy);
+            Assert.IsTrue(enemy.IsAlive, "기준은 줄지 않지만 즉사를 저항함");
+        }
+
         // ── 활 ──
 
         [Test]
@@ -234,6 +243,17 @@ namespace SquareTD.Tests
             enemy.TakeDamage(Hit(100f, AttackAttribute.Pierce));
             enemy.Status.OnTurn();
             Assert.AreEqual(111f, Lost(enemy), Eps, "100 + 100 × 5.5% × 2");
+        }
+
+        [Test]
+        public void 창_디버프_헤머리지의_이동력_감소는_저항력_100이면_막힘()
+        {
+            EnemyController enemy = MakeEnemy(hp: 1000f, resistance: 100f);
+            Debuff(MakeTower(1404), enemy, skill2: true);
+
+            Assert.AreEqual(2f, enemy.Stats.Get(StatType.SpeedMin), Eps);
+            Assert.AreEqual(4f, enemy.Stats.Get(StatType.SpeedMax), Eps);
+            Assert.IsTrue(((EmblemDebuffEffect)enemy.Status.Find(EmblemDebuffEffect.KeyOf(TowerEmblem.Spear))).HardResisted);
         }
 
         // ── 방패 ──
@@ -378,16 +398,29 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 물_디버프_미스트는_젖음_10이면_다음_행동_최대_이동력_1_줄이고_사라짐()
+        public void 물_디버프_미스트는_젖음_50이면_다음_행동까지_피해의_30퍼센트가_고정_피해이고_사라짐()
         {
-            EnemyController enemy = MakeEnemy();
-            Debuff(MakeTower(1408), enemy);
-            Assert.AreEqual(10f, WetEffect.Get(enemy), Eps);
-            Assert.AreEqual(3f, enemy.Stats.Get(StatType.SpeedMax), Eps);
+            EnemyController enemy = MakeEnemy(hp: 1000f, defense: 100f);
+            TowerController tower = MakeTower(1408);
+            for (int i = 0; i < 4; i++) Debuff(tower, enemy);
+            Assert.AreEqual(40f, WetEffect.Get(enemy), Eps);
+            Assert.AreEqual(50f, enemy.PreviewDamage(Hit(100f)), Eps, "젖음 40은 아직 효과 없음 (방어 100 → 절반)");
+
+            Debuff(tower, enemy);
+            Assert.AreEqual(50f, WetEffect.Get(enemy), Eps);
+            Assert.AreEqual(70f * 0.5f + 30f, enemy.PreviewDamage(Hit(100f)), Eps, "30은 고정, 70은 방어 적용");
 
             enemy.Status.OnMoved(2);
             Assert.AreEqual(0f, WetEffect.Get(enemy), Eps, "행동 뒤 젖음 전부 사라짐");
-            Assert.AreEqual(4f, enemy.Stats.Get(StatType.SpeedMax), Eps);
+            Assert.AreEqual(50f, enemy.PreviewDamage(Hit(100f)), Eps);
+        }
+
+        [Test]
+        public void 젖음의_고정_피해_비율은_기본_저항력만큼_줄어듦()
+        {
+            EnemyController enemy = MakeEnemy(resistance: 50f);
+            WetEffect.Add(enemy, 50f);
+            Assert.AreEqual(0.15f, enemy.Stats.Get(StatType.FixedDamageRatio), Eps, "30% × (1 − 50%)");
         }
 
         [Test]

@@ -15,7 +15,7 @@ namespace SquareTD
 
             TowerFinalStats stats = owner.Stats;
             float damage = SkillFormula.AttackSkill(stats.Power, stats.SkillAbility) * stats.FinalDamageMultiplier;
-            bool locked = Chance.Roll(enemy.Resistance.ResistWeak(1f));
+            bool locked = enemy.Resistance.TryStrongCC();
             if (!locked) damage = enemy.Resistance.ResistWeak(damage);
             enemy.Status.Add(new AquaPrisonEffect(owner, SkillFormula.EffectTurns, damage, locked));
             SkillEffectTable.PlayPrison(owner, enemy, locked, true);

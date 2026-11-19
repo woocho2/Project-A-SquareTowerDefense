@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // 적의 저항력 (약한 CC 감소, 강한 CC 확률). 방패 디버프가 깎는 만큼(Cut)은 기본 저항력에서 뺌
+    // 적의 저항력 (약한 CC는 기본 저항력만큼 감소, 강한 CC는 지금 저항력 확률로 막음. 걸리면 +기본, 막으면 −기본). 방패 디버프가 깎는 만큼(Cut)은 뺌
     public class EnemyResistance
     {
         public const float Max = 100f;
@@ -25,15 +25,13 @@ namespace SquareTD
 
         public bool TryStrongCC(float roll)
         {
-            if (roll < Mathf.Max(0f, Current - Cut)) return false;
+            if (roll < Mathf.Max(0f, Current - Cut))
+            {
+                m_current = Mathf.Max(m_base, m_current - m_base);
+                return false;
+            }
             m_current = Mathf.Min(m_current + m_base, Max);
-
             return true;
-        }
-
-        public void OnActed()
-        {
-            m_current = Mathf.Max(m_base, m_current - m_base * 0.5f);
         }
 
         public float ResistWeak(float value) => SkillFormula.Resist(value, Effective);

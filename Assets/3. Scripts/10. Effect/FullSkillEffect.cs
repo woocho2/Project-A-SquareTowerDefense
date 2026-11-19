@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    // Shared renderer for the named skill compositions. Visuals never deal damage or roll gameplay randomness.
+    // 이름 붙은 스킬 연출을 함께 그리는 곳 (피해·전투 난수는 쓰지 않음)
     [DisallowMultipleComponent]
     public sealed partial class FullSkillEffect : MonoBehaviour
     {
@@ -280,7 +280,6 @@ namespace SquareTD
             q.SetFloat(EffectQuad.ShapeId,shape);q.SetFloat(EmblemId,(int)emblem);q.SetFloat(EffectQuad.ProgressId,1);
             q.Transform.position=target.position+offset;q.Transform.localScale=scale;
             q.SetFloat(EffectQuad.AlphaId,.25f);
-            // A turn-based status must remain visible without blocking the turn's "wait until VFX idle".
             EffectActivity.QuadOff(q.GameObject);
             m_passives[id]=new Passive{Target=target,Active=active,Quad=q,Scale=scale,Offset=offset};
         }

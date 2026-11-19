@@ -32,7 +32,6 @@ namespace SquareTD
         private static readonly Dictionary<string, Texture2D> s_proceduralCache = new Dictionary<string, Texture2D>();
         private static readonly HashSet<string> s_warned = new HashSet<string>();
 
-        // 임시 그림 없이 실제 PNG가 Resources/Effects에 있는지 확인
         public static bool Has(string name)
         {
             if (string.IsNullOrEmpty(name)) return false;
@@ -58,7 +57,6 @@ namespace SquareTD
             return texture;
         }
 
-        // PNG 에셋을 읽지 않고 기존 수식으로 기본 도형을 만듭니다. 그림 캐시와 분리합니다.
         public static Texture2D GetProcedural(string name)
         {
             if (string.IsNullOrEmpty(name)) return Texture2D.whiteTexture;

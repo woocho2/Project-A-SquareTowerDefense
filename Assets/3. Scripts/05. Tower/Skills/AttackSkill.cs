@@ -96,8 +96,7 @@ namespace SquareTD
             {
                 if (modifier.Source == source && modifier.Stat == stat) total += modifier.Value;
             }
-            owner.State.Modifiers.RemoveBySource(source);
-            owner.State.Modifiers.Add(StatModifier.Percent(source, stat, total));
+            owner.State.Modifiers.SetSource(source, new[] { StatModifier.Percent(source, stat, total) });
             owner.State.PersistentSources.Add(source);
         }
 

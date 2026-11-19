@@ -79,12 +79,14 @@ namespace SquareTD
             if (TowerManager.Instance != null && TowerManager.Instance.IsMerging)
             {
                 Debug.Log("[TurnManager] 자동 합성이 끝난 뒤에 턴을 넘길 수 있음");
+                GameNotice.Warn("타워 합성이 끝난 뒤 턴을 종료해 주세요.");
                 return;
             }
 
             if (BoardManager.Instance.Zones.HasUnplaced())
             {
                 Debug.Log("[TurnManager] 자리를 고르지 않은 존이 있어 턴을 넘길 수 없음 (Z 키)");
+                GameNotice.ZoneRequired(BoardManager.Instance.Zones.FirstUnplacedOwner());
                 return;
             }
 

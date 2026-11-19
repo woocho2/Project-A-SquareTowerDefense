@@ -6,6 +6,7 @@ namespace SquareTD
     public class EnemyController : MonoBehaviour, ITarget
     {
         public EnemyDefinition Definition { get; private set; }
+        public EnemyCubeAppearance Appearance => Movement != null && Movement.Appearance != null ? Movement.Appearance : Definition != null ? Definition.Appearance : null;
         private EnemyMovement m_movement;
         public EnemyMovement Movement
         {
@@ -110,6 +111,13 @@ namespace SquareTD
             if (chance <= 0f) return;
             if (chance < 1f && Random.value >= chance) return;
             Status.Add(new ImmobilizeEffect("기절"));
+        }
+
+        public bool TryExecute(DamageInfo info)
+        {
+            if (!IsAlive || !Resistance.TryStrongCC()) return false;
+            Execute(info);
+            return true;
         }
 
         public void Execute(DamageInfo info)

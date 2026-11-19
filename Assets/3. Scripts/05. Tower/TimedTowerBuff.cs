@@ -5,8 +5,7 @@ namespace SquareTD
     {
         public static void Apply(TowerState state, string source, int actions, params StatModifier[] modifiers)
         {
-            Remove(state, source);
-            foreach (StatModifier modifier in modifiers) state.Modifiers.Add(modifier);
+            state.Modifiers.SetSource(source, modifiers);
             state.TimedBuffs[source] = actions;
         }
 

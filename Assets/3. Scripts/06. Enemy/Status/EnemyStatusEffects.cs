@@ -53,6 +53,7 @@ namespace SquareTD
                 m_effects.Remove(existing);
                 existing.OnRemoved(m_owner);
             }
+            if (!effect.IsStrongCC && m_resistance != null) effect.OnResist(m_resistance);
             m_effects.Add(effect);
             effect.OnAdded(m_owner);
             RebuildModifiers();
@@ -108,35 +109,30 @@ namespace SquareTD
 
         private void RebuildModifiers()
         {
-            foreach (string source in m_appliedSources) m_modifiers?.RemoveBySource(source);
-            m_appliedSources.Clear();
-
-            foreach (StatusEffect effect in m_effects)
+            if (m_modifiers != null)
             {
-                foreach (StatModifier modifier in effect.GetModifiers())
+                m_modifiers.BeginBatch();
+                foreach (string source in m_appliedSources) m_modifiers.RemoveBySource(source);
+                m_appliedSources.Clear();
+
+                foreach (StatusEffect effect in m_effects)
                 {
-                    m_modifiers?.Add(modifier);
-                    m_appliedSources.Add(modifier.Source);
+                    foreach (StatModifier modifier in effect.GetModifiers())
+                    {
+                        m_modifiers.Add(modifier);
+                        m_appliedSources.Add(modifier.Source);
+                    }
                 }
+                m_modifiers.EndBatch();
             }
             Changed?.Invoke();
         }
 
-        private void ForEach(Action<StatusEffect> call, bool stopWhenDead = true)
+        private bool Continues(int index, bool stopWhenDead) => index < m_effects.Count && (!stopWhenDead || m_owner.IsAlive);
+
+        private void EndIteration()
         {
-            m_iterating++;
-            try
-            {
-                foreach (StatusEffect effect in m_effects)
-                {
-                    if (stopWhenDead && !m_owner.IsAlive) break;
-                    call(effect);
-                }
-            }
-            finally
-            {
-                m_iterating--;
-            }
+            m_iterating--;
             if (m_iterating == 0) FlushPending();
         }
 
@@ -148,10 +144,33 @@ namespace SquareTD
             foreach (Action action in pending) action();
         }
 
-        public void OnMoved(int steps) => ForEach(effect => effect.OnMoved(m_owner, steps));
-        public void OnTurn() => ForEach(effect => effect.OnTurn(m_owner));
-        public void OnDamageTaken(DamageInfo info, float damage) => ForEach(effect => effect.OnDamageTaken(m_owner, info, damage), stopWhenDead: false);
-        public void OnDeath(KillInfo kill) => ForEach(effect => effect.OnDeath(m_owner, kill), stopWhenDead: false);
+        public void OnMoved(int steps)
+        {
+            m_iterating++;
+            try { for (int i = 0; Continues(i, true); i++) m_effects[i].OnMoved(m_owner, steps); }
+            finally { EndIteration(); }
+        }
+
+        public void OnTurn()
+        {
+            m_iterating++;
+            try { for (int i = 0; Continues(i, true); i++) m_effects[i].OnTurn(m_owner); }
+            finally { EndIteration(); }
+        }
+
+        public void OnDamageTaken(DamageInfo info, float damage)
+        {
+            m_iterating++;
+            try { for (int i = 0; Continues(i, false); i++) m_effects[i].OnDamageTaken(m_owner, info, damage); }
+            finally { EndIteration(); }
+        }
+
+        public void OnDeath(KillInfo kill)
+        {
+            m_iterating++;
+            try { for (int i = 0; Continues(i, false); i++) m_effects[i].OnDeath(m_owner, kill); }
+            finally { EndIteration(); }
+        }
 
         public float GetCritRateBonus(TowerController attacker)
         {
@@ -170,7 +189,9 @@ namespace SquareTD
         public MoveRange DecideMove(MoveRange range)
         {
             MoveRange result = range;
-            ForEach(effect => result = effect.OnDecideMove(m_owner, result));
+            m_iterating++;
+            try { for (int i = 0; Continues(i, true); i++) result = m_effects[i].OnDecideMove(m_owner, result); }
+            finally { EndIteration(); }
             return result;
         }
 
@@ -184,13 +205,17 @@ namespace SquareTD
         public float ModifyIncomingDamage(DamageInfo info, float damage)
         {
             float result = damage;
-            ForEach(effect => result = effect.ModifyIncomingDamage(m_owner, info, result), stopWhenDead: false);
+            m_iterating++;
+            try { for (int i = 0; Continues(i, false); i++) result = m_effects[i].ModifyIncomingDamage(m_owner, info, result); }
+            finally { EndIteration(); }
             return result;
         }
 
         public void OnActed()
         {
-            ForEach(effect => effect.CountDown(m_owner));
+            m_iterating++;
+            try { for (int i = 0; Continues(i, true); i++) m_effects[i].CountDown(m_owner); }
+            finally { EndIteration(); }
 
             var expired = m_effects.FindAll(effect => effect.IsExpired);
             if (expired.Count == 0) return;

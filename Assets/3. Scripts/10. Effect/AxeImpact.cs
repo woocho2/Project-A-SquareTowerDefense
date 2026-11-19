@@ -9,72 +9,14 @@ namespace SquareTD
         public static readonly Color Ember = new Color(1f, 0.45f, 0.2f);
         public static readonly Color Hot = new Color(1f, 0.75f, 0.45f);
         private static readonly Color s_scorch = new Color(0.12f, 0.06f, 0.04f);
-        private static readonly Color s_crack = new Color(0.13f, 0.08f, 0.06f);
         private static readonly Color s_rock = new Color(0.58f, 0.44f, 0.34f);
         private static readonly Color s_dust = new Color(0.78f, 0.66f, 0.54f);
-
-        public static void PlayGround(EffectQuadPool shapePool, EffectQuadPool slashPool, System.Random random,
-            Vector3 center, float size, int cracks, float delay, float weight)
-        {
-            size = Mathf.Max(0.5f, size);
-            weight = Mathf.Clamp01(weight);
-
-            PlayScorch(shapePool, center, size, delay);
-            float startAngle = Range(random, 0f, 360f);
-            for (int i = 0; i < cracks; i++)
-            {
-                float angle = startAngle + i * (360f / cracks) + Range(random, -20f, 20f);
-                PlayCrack(slashPool, random, center, angle, size * Range(random, 0.5f, 0.75f), size * 0.12f, delay);
-            }
-            PlayDust(shapePool, center, size, delay);
-
-            int chunks = Mathf.RoundToInt(4f + 10f * weight);
-            for (int i = 0; i < chunks; i++) PlayChunk(shapePool, random, center, size, delay);
-
-            DOVirtual.DelayedCall(delay, () => ScreenShake.Play(0.05f + 0.15f * weight, 0.12f + 0.15f * weight), false);
-        }
-
-        public static void PlayDustRing(EffectQuadPool shapePool, Vector3 center, float size, float delay)
-        {
-            EffectQuad ring = shapePool.Get();
-            ring.Transform.position = center;
-            ring.Transform.localScale = Vector3.zero;
-            ring.SetColor(s_dust);
-            ring.SetFloat(EffectQuad.ShapeId, 6f);
-            ring.SetFloat(EffectQuad.AlphaId, 0.8f);
-            ring.SetSortingOffset(-10);
-
-            float alpha = 0.8f;
-            Sequence sequence = DOTween.Sequence().SetLink(ring.GameObject, LinkBehaviour.KillOnDisable);
-            sequence.AppendInterval(delay);
-            sequence.Append(ring.Transform.DOScale(new Vector3(size * 2.2f, size * 1.7f, 1f), 0.5f).SetEase(Ease.OutCubic));
-            sequence.Join(DOTween.To(() => alpha, value => { alpha = value; ring.SetFloat(EffectQuad.AlphaId, value); },
-                0f, 0.5f).SetEase(Ease.InQuad));
-            sequence.OnKill(() => shapePool.Release(ring));
-        }
 
         public static void PlaySmall(EffectQuadPool shapePool, System.Random random, Vector3 center, float size, float delay)
         {
             size = Mathf.Max(0.3f, size);
             PlayFlash(shapePool, center, size * 0.6f, delay);
             for (int i = 0; i < 3; i++) PlayChunk(shapePool, random, center, size * 0.6f, delay);
-        }
-
-        private static void PlayCrack(EffectQuadPool slashPool, System.Random random, Vector3 center, float angle,
-            float length, float thickness, float delay)
-        {
-            Vector3 point = center;
-            float direction = angle;
-            for (int segment = 0; segment < 3; segment++)
-            {
-                direction += Range(random, -28f, 28f);
-                float segmentLength = length / 3f * Range(random, 0.8f, 1.2f);
-                float radians = direction * Mathf.Deg2Rad;
-                Vector3 step = new Vector3(Mathf.Cos(radians), Mathf.Sin(radians), 0f) * segmentLength;
-                SlashStroke.Play(slashPool, point + step * 0.5f, direction, segmentLength * 1.15f, thickness * (1f - segment * 0.25f),
-                    0.3f, s_crack, delay + segment * 0.03f, 0.04f, 0.45f, 0.4f, 0f);
-                point += step;
-            }
         }
 
         public static void Play(EffectQuadPool shapePool, EffectQuadPool slashPool, System.Random random,

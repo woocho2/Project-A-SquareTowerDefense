@@ -15,26 +15,26 @@ namespace SquareTD
             Glow(p,cell*1.5f,color,.14f,.65f,.45f);
             switch(e)
             {
-                case TowerEmblem.Axe: // Welcome to Valhalla: crossed axes and successive battle-call waves.
+                case TowerEmblem.Axe:
                     for(int i=0;i<2;i++)
                         Model(m_form,5,p+Vector3.up*cell*.35f,Vector3.one*cell*1.25f,i==0?-38:38,color,Gold,.12f,.9f);
                     for(int i=0;i<4;i++)Ring(p,cell*(1.3f+i*.55f),Gold,.16f+i*.13f,.55f);
                     for(int i=0;i<3;i++)Beam(p+Vector3.right*cell*(i-1)*.45f,p+Vector3.right*cell*(i-1)*.45f+Vector3.up*cell*1.6f,
                         cell*.28f,e,color,.17f+i*.05f,.7f);
                     break;
-                case TowerEmblem.Bow: // Spirit bow: spectral bow crest, leaf wings, outward range rays.
+                case TowerEmblem.Bow:
                     Motif(7,e,p+Vector3.up*cell*.25f,Vector3.one*cell*2.4f,0,color,.08f,.95f);
                     Seal(p+Vector3.up*cell*.55f,cell*1.5f,e,Gold,.12f,.9f,false);
                     for(int i=0;i<5;i++)Weapon(8,p,p+Direction(25+i*32)*cell*1.1f,cell*.7f,.25f+i*.04f,.55f,color);
                     Petals(p,cell*1.4f,e,color,.20f,10);
                     break;
-                case TowerEmblem.Spear: // One strike: three streams converge into one aligned spear.
+                case TowerEmblem.Spear:
                     for(int i=0;i<3;i++)Ray(p+Direction(90+i*120)*cell*1.2f,p,cell*.13f,color,.06f+i*.04f,.45f);
                     Model(m_form,9,p+Vector3.up*cell*.50f,SpearFx.Scale(cell*1.9f),90,White,Gold,.30f,.75f,
                         (q,t)=>q.Transform.localScale=SpearFx.Scale(cell*(1.3f+Out(t)*.6f)));
                     Flash(p,cell*.9f,Gold,.35f,.2f);
                     break;
-                case TowerEmblem.Shield: // Aegis: four orbiting plates enclosing a protective dome.
+                case TowerEmblem.Shield:
                     Motif(2,e,p,Vector3.one*cell*2.3f,0,color,.12f,1.0f,
                         (q,t)=>q.SetFloat(EffectQuad.AlphaId,Envelope(t)*.45f));
                     for(int i=0;i<4;i++)
@@ -47,7 +47,7 @@ namespace SquareTD
                     }
                     Ring(p,cell*2.4f,Gold,.24f,.65f);
                     break;
-                case TowerEmblem.Hammer: // Golden touch: stamped coins rise and turn edge-on.
+                case TowerEmblem.Hammer:
                     for(int i=0;i<10;i++)
                     {
                         Vector3 start=p+new Vector3((Hash(i)-.5f)*cell*1.8f,-cell*.35f,0);
@@ -59,7 +59,7 @@ namespace SquareTD
                     }
                     Flash(p,cell*1.0f,Gold,.3f);
                     break;
-                case TowerEmblem.Fire: // Rising phoenix: paired flame wings and ascending feathers.
+                case TowerEmblem.Fire:
                     Motif(7,e,p+Vector3.up*cell*.15f,Vector3.one*cell*2.8f,0,color,.08f,1.1f,(q,t)=>{
                         q.Transform.position=p+Vector3.up*cell*t*.65f;
                         q.Transform.localScale=Vector3.one*cell*(2.1f+.7f*Out(t));
@@ -67,7 +67,7 @@ namespace SquareTD
                     Beam(p-Vector3.up*cell*.3f,p+Vector3.up*cell*1.6f,cell*.6f,e,Gold,.20f,.8f,true);
                     Petals(p,cell*1.3f,e,Gold,.24f,12);
                     break;
-                case TowerEmblem.Water: // Overflow: fountain jets, rising bubbles and expanding water rings.
+                case TowerEmblem.Water:
                     for(int i=0;i<3;i++)
                     {
                         Vector3 start=p+Vector3.right*cell*(i-1)*.28f;
@@ -81,7 +81,7 @@ namespace SquareTD
                     }
                     Ring(p,cell*2.0f,White,.3f,.55f);
                     break;
-                case TowerEmblem.Earth: // Blossom: roots rise, buds unfurl, petals disperse.
+                case TowerEmblem.Earth:
                     Motif(8,e,p,Vector3.one*cell*2.1f,0,color,.04f,1.1f,
                         (q,t)=>q.SetFloat(EffectQuad.ProgressId,Mathf.Min(1,t*2)));
                     for(int i=0;i<5;i++)
@@ -92,13 +92,13 @@ namespace SquareTD
                     }
                     Petals(p,cell*1.5f,e,color,.45f,10);
                     break;
-                case TowerEmblem.Wind: // Gale force: five flowing ribbons and lifted feather-like leaves.
+                case TowerEmblem.Wind:
                     for(int i=0;i<5;i++)Arc(p,cell*(1.2f+i*.3f),i*72,color,.08f+i*.06f,.8f,150);
                     Motif(3,e,p,Vector3.one*cell*2,0,color,.12f,.90f,
                         (q,t)=>q.SetFloat(EffectQuad.AlphaId,Envelope(t)*.35f));
                     Petals(p,cell*1.4f,e,White,.25f,10);
                     break;
-                case TowerEmblem.Ice: // Absolute zero: hexagonal snow seal and orbiting armour crystals.
+                case TowerEmblem.Ice:
                     Sprite(m_flake,p,color,.08f,1.05f,(q,t)=>{
                         q.Transform.localScale=Vector3.one*cell*(1.7f+.6f*Out(t));
                         q.Transform.rotation=Quaternion.Euler(0,0,t*20);
@@ -115,7 +115,7 @@ namespace SquareTD
                     }
                     Ring(p,cell*2.2f,color,.26f,.65f);
                     break;
-                case TowerEmblem.Electricity: // Hyper pulse: successive circuit pulses and forked connections.
+                case TowerEmblem.Electricity:
                     for(int i=0;i<4;i++)
                     {
                         float at=.10f+i*.14f;
@@ -124,13 +124,13 @@ namespace SquareTD
                     }
                     Motes(p,cell*1.3f,Gold,14,.25f,.65f,true);
                     break;
-                case TowerEmblem.Light: // Ascension: full wings, rising light and a halo above the caster.
+                case TowerEmblem.Light:
                     Motif(7,e,p+Vector3.up*cell*.3f,Vector3.one*cell*3,0,Gold,.10f,1.1f);
                     Beam(p-Vector3.up*cell*.4f,p+Vector3.up*cell*2.1f,cell*.9f,e,White,.15f,.9f);
                     Ring(p+Vector3.up*cell*.95f,cell*1.2f,Gold,.20f,.90f,.35f);
                     Petals(p,cell*1.5f,e,White,.35f,12);
                     break;
-                case TowerEmblem.Darkness: // Gluttony: a maw-like book gathers essence, then seals the blessing.
+                case TowerEmblem.Darkness:
                     Motif(14,e,p+Vector3.up*cell*.3f,Vector3.one*cell*1.8f,0,color,.08f,1.1f);
                     for(int i=0;i<4;i++)Arc(p,cell*(1.3f+i*.2f),i*90,color,.05f+i*.06f,.85f,-130);
                     Motes(p,cell*1.7f,Core(e),18,.10f,.65f,true);
@@ -231,36 +231,36 @@ namespace SquareTD
             Seal(point,cell*1.1f,e,color,at,.75f);
             switch(e)
             {
-                case TowerEmblem.Sword: // Doom requiem: a spectral sword descends through a broken curse cross.
+                case TowerEmblem.Sword:
                     Ray(point+Vector3.up*cell*.75f,point-Vector3.up*cell*.25f,cell*.10f,color,at,.45f);
                     Arc(point,cell*1.05f,-40,color,at+.10f,.45f,-70);
                     Arc(point,cell*.85f,140,White,at+.18f,.35f,-70);
                     break;
-                case TowerEmblem.Axe: // Execution: crimson blade mark, crossing cleaves and a falling axe silhouette.
+                case TowerEmblem.Axe:
                     Weapon(5,point+Vector3.up*cell*.95f,point+Vector3.up*cell*.1f,cell*.85f,at,.55f,color,150);
                     Ray(point-Direction(45)*cell*.45f,point+Direction(45)*cell*.45f,cell*.10f,color,at+.18f,.40f);
                     Ray(point-Direction(135)*cell*.45f,point+Direction(135)*cell*.45f,cell*.10f,color,at+.22f,.40f);
                     break;
-                case TowerEmblem.Bow: // Pin point: four brackets close, then an optical line focuses on the crosshair.
+                case TowerEmblem.Bow:
                     Motif(13,e,point,Vector3.one*cell*1.25f,0,color,at,.85f,(q,t)=>{
                         q.Transform.localScale=Vector3.one*cell*(1.45f-.50f*Out(Mathf.Min(1,t*3)));
                     });
                     Ray(owner,point,cell*.055f,Gold,at+.15f,.4f);
                     Flash(point,cell*.35f,Gold,at+.32f,.12f);
                     break;
-                case TowerEmblem.Spear: // Hemorrhage: barbed, red tendrils and inward puncture marks.
+                case TowerEmblem.Spear:
                     Motif(8,e,point,Vector3.one*cell*1.25f,0,Crimson,at,.85f,
                         (q,t)=>q.SetFloat(EffectQuad.ProgressId,Mathf.Min(1,t*3)));
                     for(int i=0;i<2;i++)
                         Weapon(9,point+Direction(i*180+20)*cell*.8f,point,cell*.65f,at+i*.08f,.45f,Crimson);
                     break;
-                case TowerEmblem.Shield: // Lockdown: chains close from four corners, seal tightens around the target.
+                case TowerEmblem.Shield:
                     Motif(10,e,point,Vector3.one*cell*1.35f,0,color,at,.85f,(q,t)=>{
                         q.Transform.localScale=Vector3.one*cell*(1.65f-.45f*Out(Mathf.Min(1,t*3)));
                     });
                     for(int i=0;i<4;i++)Ray(point+Direction(45+i*90)*cell*.9f,point,cell*.10f,White,at+i*.025f,.45f);
                     break;
-                case TowerEmblem.Hammer: // Jackpot: fractured armour motif and gold-bearing fragments.
+                case TowerEmblem.Hammer:
                     Motif(5,e,point,Vector3.one*cell*1.2f,0,Gold,at,.65f,(q,t)=>q.SetFloat(EffectQuad.ProgressId,Mathf.Min(1,t*4)));
                     for(int i=0;i<4;i++)
                     {
@@ -269,7 +269,7 @@ namespace SquareTD
                             (q,t)=>q.Transform.position=point+drift*Out(t));
                     }
                     break;
-                case TowerEmblem.Fire: // Inferno: four rising flame tongues and an expanding ember ring.
+                case TowerEmblem.Fire:
                     for(int i=0;i<4;i++)
                     {
                         Vector3 start=point+Vector3.right*cell*(i-1.5f)*.22f-Vector3.up*cell*.3f;
@@ -278,22 +278,22 @@ namespace SquareTD
                     Ring(point,cell*1.25f,Gold,at+.2f,.45f);
                     Motes(point,cell*.70f,Gold,5,at+.20f,.45f);
                     break;
-                case TowerEmblem.Water: // Siren song: mist and overlapping resonant ripples.
+                case TowerEmblem.Water:
                     for(int i=0;i<3;i++)Ring(point,cell*(.65f+i*.27f),i%2==0?color:new Color(.78f,.53f,1),at+i*.12f,.55f);
                     Puff(point,Vector3.up*cell*.25f,cell*.85f,new Color(.20f,.60f,.8f,.25f),at,.8f);
                     break;
-                case TowerEmblem.Earth: // Life harvest: enclosing roots draw a mote back to the caster.
+                case TowerEmblem.Earth:
                     Motif(8,e,point,Vector3.one*cell*1.35f,0,color,at,.8f,(q,t)=>q.SetFloat(EffectQuad.ProgressId,Mathf.Min(1,t*3)));
                     Arc(point,cell*1.1f,15,color,at+.15f,.45f,-100);
                     Motif(6,e,point,Vector3.one*cell*.18f,0,Gold,at+.3f,.65f,(q,t)=>{
                         q.Transform.position=Vector3.Lerp(point,owner,Out(t))+Vector3.up*cell*.25f*Mathf.Sin(t*Mathf.PI);
                     });
                     break;
-                case TowerEmblem.Wind: // Turbulence: tilted funnel with sweeping cross-currents.
+                case TowerEmblem.Wind:
                     Motif(3,e,point,Vector3.one*cell*1.4f,-15,color,at,.8f);
                     for(int i=0;i<3;i++)Arc(point,cell*(.9f+i*.2f),i*120,color,at+i*.06f,.55f,170);
                     break;
-                case TowerEmblem.Ice: // Deep freeze: frost seal and four ice growths, leaving the enemy readable.
+                case TowerEmblem.Ice:
                     Sprite(m_flake,point,color,at,.75f,(q,t)=>q.Transform.localScale=Vector3.one*cell*(.8f+.4f*Out(t)));
                     for(int i=0;i<4;i++)
                     {
@@ -304,7 +304,7 @@ namespace SquareTD
                         });
                     }
                     break;
-                case TowerEmblem.Electricity: // Static storm: top-down forks, after-discharge, circuit rings.
+                case TowerEmblem.Electricity:
                     for(int i=0;i<3;i++)
                     {
                         float time=at+i*.13f;
@@ -313,12 +313,12 @@ namespace SquareTD
                     }
                     Ring(point,cell*1.2f,color,at+.12f,.65f);
                     break;
-                case TowerEmblem.Light: // Banish: closing celestial focus, a white pillar, and dissolving light petals.
+                case TowerEmblem.Light:
                     Motif(13,e,point,Vector3.one*cell*1.25f,0,Gold,at,.65f);
                     Beam(point+Vector3.up*cell*1.8f,point-Vector3.up*cell*.3f,cell*.70f,e,Gold,at+.17f,.55f);
                     Petals(point,cell*.75f,e,White,at+.3f,5);
                     break;
-                case TowerEmblem.Darkness: // Dark gospel: written pages around an abyssal eye.
+                case TowerEmblem.Darkness:
                     Motif(14,e,point+Vector3.up*cell*.25f,Vector3.one*cell*1.0f,0,color,at,.85f);
                     for(int i=0;i<2;i++)Arc(point,cell*(.9f+i*.2f),i*180,Core(e),at+i*.1f,.6f,-100);
                     Motes(point,cell*.7f,Core(e),5,at,.60f,true);

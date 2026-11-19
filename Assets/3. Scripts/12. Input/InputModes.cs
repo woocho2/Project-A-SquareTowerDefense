@@ -104,6 +104,7 @@ namespace SquareTD
             if (!m_tower.IsOnBoard || !point.IsPath || !IsInRange(point.PathIndex))
             {
                 Debug.Log("[Input] 사거리 안의 길 칸만 고를 수 있음");
+                GameNotice.Warn("타워 사거리 안의 길 칸을 선택해 주세요.");
                 m_input.ChangeMode(new IdleMode(m_input));
                 return;
             }
@@ -142,6 +143,7 @@ namespace SquareTD
             if (NextUnplaced() == null)
             {
                 Debug.Log($"[Input] {m_tower.name}: 고를 존이 없음");
+                GameNotice.Info("배치할 수 있는 미배치 존이 없습니다.");
                 m_input.ChangeMode(new IdleMode(m_input));
                 return;
             }
@@ -167,13 +169,14 @@ namespace SquareTD
             if (cell < 0 || !m_zones.CanPlace(zone, cell, out reason))
             {
                 Debug.Log($"[Input] 여기에는 놓을 수 없음: {reason}");
+                GameNotice.Warn("여기에는 존을 배치할 수 없습니다. " + reason);
                 return;
             }
 
             m_zones.TryPlace(zone, cell);
             Debug.Log($"[Input] {m_tower.name} 존 → {(zone.IsBuff ? "스폰" : "길")} {cell}번 칸 (확정)");
 
-            if (NextUnplaced() == null) m_input.ChangeMode(new IdleMode(m_input));
+            if (NextUnplaced() == null) { m_input.ChangeMode(new IdleMode(m_input)); GameNotice.Info("이 타워의 존 배치를 완료했습니다."); }
             else LogRemaining();
         }
 
@@ -184,6 +187,7 @@ namespace SquareTD
         {
             int left = m_zones.GetByOwner(m_tower).FindAll(zone => !zone.IsPlaced).Count;
             bool isBuff = m_tower.Definition.Color == TowerColor.Yellow;
+            GameNotice.Info($"{(isBuff ? "타워 칸" : "길 칸")}을 선택해 존을 배치해 주세요. 남은 존 {left}개 · ESC 취소");
             Debug.Log($"[Input] {m_tower.name}의 존 자리를 고르세요 ({(isBuff ? "타워 스폰 칸" : "길 칸, 비프로스트 빼고")}), 남은 존 {left}개");
         }
     }

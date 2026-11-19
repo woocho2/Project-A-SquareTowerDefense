@@ -49,6 +49,7 @@ namespace SquareTD.EditorTools
                 Image oldSymbol = actions.GetComponentsInChildren<Image>(true).FirstOrDefault(image => image.name == "Img_CreateTower_Symbol" || image.name == "TowerIcon");
                 Sprite castle = oldSymbol != null ? oldSymbol.sprite : null;
                 BuildInfo(info); BuildActions(actions, castle);
+                ControlsEffectsSetup.Style(root);
                 PrefabUtility.SaveAsPrefabAsset(root, Prefab);
             }
             finally { PrefabUtility.UnloadPrefabContents(root); }

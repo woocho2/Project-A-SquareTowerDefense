@@ -5,30 +5,30 @@ namespace SquareTD.Tests
     public class ColorUpgradeStateTest
     {
         [Test]
-        public void 처음은_레벨1_경험치_0_다음까지_20()
+        public void 처음은_레벨1_경험치_0_다음까지_4()
         {
             var state = new ColorUpgradeState();
 
             Assert.AreEqual(1, state.Level);
             Assert.AreEqual(0, state.Xp);
-            Assert.AreEqual(20, state.XpToNext);
+            Assert.AreEqual(4, state.XpToNext);
         }
 
         [Test]
         public void 레벨은_네_컬러가_함께_씀()
         {
             var state = new ColorUpgradeState();
-            state.AddXp(20);
+            state.AddXp(4);
 
             Assert.AreEqual(2, state.GetLevel(TowerColor.Red));
             Assert.AreEqual(2, state.GetLevel(TowerColor.Purple));
         }
 
         [Test]
-        public void 경험치_20_40_80_160을_채우면_레벨_5()
+        public void 경험치를_다_채우면_레벨_10()
         {
             var state = new ColorUpgradeState();
-            int[] needs = { 20, 40, 80, 160 };
+            int[] needs = { 4, 8, 15, 20, 25, 55, 75, 110, 140 };
 
             for (int i = 0; i < needs.Length; i++)
             {
@@ -45,11 +45,11 @@ namespace SquareTD.Tests
         {
             var state = new ColorUpgradeState();
 
-            int levels = state.AddXp(25);
+            int levels = state.AddXp(6);
 
             Assert.AreEqual(1, levels);
             Assert.AreEqual(2, state.Level);
-            Assert.AreEqual(5, state.Xp);
+            Assert.AreEqual(2, state.Xp);
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace SquareTD.Tests
         {
             var state = new ColorUpgradeState();
 
-            Assert.AreEqual(2, state.AddXp(60));
+            Assert.AreEqual(2, state.AddXp(12));
             Assert.AreEqual(3, state.Level);
             Assert.AreEqual(0, state.Xp);
         }
@@ -80,7 +80,7 @@ namespace SquareTD.Tests
             int count = 0, last = 0;
             state.LevelChanged += level => { count++; last = level; };
 
-            state.AddXp(19);
+            state.AddXp(3);
             Assert.AreEqual(0, count);
             state.AddXp(1);
             Assert.AreEqual(1, count);

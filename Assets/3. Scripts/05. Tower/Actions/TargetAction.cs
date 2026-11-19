@@ -15,7 +15,7 @@ namespace SquareTD
 
         public override bool CanAct(TowerController tower, TowerFinalStats stats)
         {
-            return CollectTargetsInRange(tower, stats.Range).Count > 0;
+            return HasTargetsInRange(tower, stats.Range);
         }
 
         public override IEnumerator Act(TowerController tower, TowerFinalStats stats, AttackHandle handle)

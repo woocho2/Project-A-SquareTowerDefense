@@ -1,4 +1,0 @@
-System.InvalidOperationException: 실제 클릭 위치: BuyExperience
-  at SquareTD.EditorTools.GameHudVerification.Check (System.Boolean valid, System.String label) [0x00015] in D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\Assets\Editor\GameHudVerification.cs:42 
-  at SquareTD.EditorTools.GameHudVerification.Click (UnityEngine.UI.Button button) [0x000c0] in D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\Assets\Editor\GameHudVerification.cs:55 
-  at SquareTD.EditorTools.GameHudVerification.Tick () [0x00328] in D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\Assets\Editor\GameHudVerification.cs:87 

@@ -121,7 +121,8 @@ namespace SquareTD
             text.color = s_text;
             text.outlineWidth = 0.25f;
             text.outlineColor = new Color32(70, 40, 0, 255);
-            text.sortingOrder = 60;
+            text.sortingLayerID = SortingLayer.NameToID("Projectile");
+            text.sortingOrder = 100;
             text.rectTransform.sizeDelta = new Vector2(cell * 4f, cell);
 
             float alpha = 1f;

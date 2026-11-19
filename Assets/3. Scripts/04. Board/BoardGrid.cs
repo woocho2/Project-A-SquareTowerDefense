@@ -71,10 +71,13 @@ namespace SquareTD
             return Mathf.Max(dx, dy);
         }
 
-        public List<int> GetPathIndicesInSquare(Vector3Int center, int radius)
-        {
-            var result = new List<int>();
+        private readonly Dictionary<(Vector3Int, int), List<int>> m_squareCache = new Dictionary<(Vector3Int, int), List<int>>();
 
+        public IReadOnlyList<int> GetPathIndicesInSquare(Vector3Int center, int radius)
+        {
+            if (m_squareCache.TryGetValue((center, radius), out List<int> cached)) return cached;
+
+            var result = new List<int>();
             for (int i = 0; i < PathCount; i++)
             {
                 if (GetTileDistance(m_pathCells[i], center) <= radius)
@@ -82,6 +85,7 @@ namespace SquareTD
                     result.Add(i);
                 }
             }
+            m_squareCache[(center, radius)] = result;
             return result;
         }
 

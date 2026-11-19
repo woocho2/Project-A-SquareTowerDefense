@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SquareTD
 {
-    /// <summary>Named weapon basic attacks. Only the impact callback deals damage through the existing caller.</summary>
+    // 무기 타워의 기본 공격 연출 (피해는 명중 콜백에서 부르는 쪽이 줌)
     [DisallowMultipleComponent]
     public sealed class WeaponAttackEffect : MonoBehaviour, IShotEffect
     {
@@ -104,7 +104,6 @@ namespace SquareTD
                 spear ? SpearFx.Scale(size) : bash ? new Vector3(size * .8f, size, 1) : new Vector3(size, size, 1);
             float baseAngle = arrow || spear ? angle : bash ? -side * 9 : 0;
             Vector3 launch = from - forward * cell * .16f;
-            // Arrow/spear impact is aligned to the visible tip, rather than the centre of the quad.
             Vector3 contact = spear ? SpearFx.CenterForTip(to, forward, size, .035f) :
                 arrow ? to - forward * (size * .475f) : to;
             weapon.Transform.position = launch;

@@ -110,6 +110,20 @@ namespace SquareTD
             return false;
         }
 
-        public void NotifyChanged(Zone zone) => ZoneChanged?.Invoke(zone);
+        public bool NeedsPlacement(TowerController tower)
+        {
+            if (tower == null || !tower.IsOnBoard) return false;
+            foreach (Zone zone in m_zones)
+                if (zone.Owner == tower && !zone.IsPlaced && HasPlaceableCell(zone)) return true;
+            return false;
+        }
+
+        public TowerController FirstUnplacedOwner()
+        {
+            foreach (Zone zone in m_zones)
+                if (zone.Owner != null && zone.Owner.IsOnBoard && !zone.IsPlaced && HasPlaceableCell(zone)) return zone.Owner;
+            return null;
+        }
+
     }
 }

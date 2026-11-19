@@ -197,7 +197,7 @@ namespace SquareTD.Tests
         [Test]
         public void hard모드이면1점375배율()
         {
-            Assert.AreEqual(1.375, WaveTable.GetModeStatMultiplier(GameMode.Hard));
+            Assert.AreEqual(1.25, WaveTable.GetModeStatMultiplier(GameMode.Hard));
         }
 
         [Test]
@@ -223,8 +223,8 @@ namespace SquareTD.Tests
         {
             Assert.AreEqual(1, WaveTable.GetAdaptiveMin(GameMode.Story));
             Assert.AreEqual(4, WaveTable.GetAdaptiveMax(GameMode.Story));
-            Assert.AreEqual(3, WaveTable.GetAdaptiveMin(GameMode.Normal));
-            Assert.AreEqual(6, WaveTable.GetAdaptiveMax(GameMode.Normal));
+            Assert.AreEqual(1, WaveTable.GetAdaptiveMin(GameMode.Normal));
+            Assert.AreEqual(3, WaveTable.GetAdaptiveMax(GameMode.Normal));
             Assert.AreEqual(5, WaveTable.GetAdaptiveMin(GameMode.Hard));
             Assert.AreEqual(8, WaveTable.GetAdaptiveMax(GameMode.Hard));
         }

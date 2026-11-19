@@ -6,9 +6,6 @@ namespace SquareTD.Tests
 {
     public class TowerProgressionTest
     {
-        private const string Header =
-            "ID,Name,Power,Range,Action,AttackCount,CriticalRate,CriticalDamage,Mastery,Duration,AbilityValue,ProjectileSpeed,TargetPriority";
-
         private readonly List<GameObject> m_created = new List<GameObject>();
         private TowerSlots m_slots;
 
@@ -36,15 +33,6 @@ namespace SquareTD.Tests
             tower.Init(Def(id), slot, null);
             m_slots.TryPlace(tower, slot);
             return tower;
-        }
-
-        private static TowerDatabase Database(params int[] ids)
-        {
-            var lines = new List<string> { Header };
-            foreach (int id in ids) lines.Add($"{id},t,10,2,3,1,0,0,1,5,2,5,Closest");
-            var database = new TowerDatabase();
-            database.Load(string.Join("\n", lines));
-            return database;
         }
 
         [Test]

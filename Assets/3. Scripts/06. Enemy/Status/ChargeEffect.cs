@@ -116,51 +116,66 @@ namespace SquareTD
         public override string Describe() => $"화상 {(int)Stacks}: 받는 치유 −20%, 움직인 턴에 최대 체력의 {TurnRatePerStack * 100f * Stacks * TurnMultiplier:0.##}% 피해 뒤 절반";
     }
 
-    // 물 — 젖음: 10에 닿으면 다음 행동의 최대 이동력 -1, 그 행동이 끝나면 스택 전부 사라짐
+    // 물 — 젖음: 50에 닿으면 다음 행동이 끝날 때까지 받는 피해의 30%가 고정 피해 (기본 저항력만큼 줄어듦), 그 뒤 스택 전부 사라짐
     public class WetEffect : EnemyStackEffect
     {
         public const string WetKey = "젖음";
-        public const float SlowAt = 10f;
+        public const float TriggerAt = 50f;
+        public const float FixedRatio = 0.3f;
 
         private WetEffect(float stacks) : base(stacks) { }
 
         public override string Key => WetKey;
-        public bool IsReady => Stacks >= SlowAt;
-        public int SpeedCut => IsReady ? 1 : 0;
+        public bool IsReady => FixedDamageRatio > 0f;
+        public float FixedDamageRatio { get; private set; }
 
-        public override IReadOnlyList<StatModifier> GetModifiers() => SpeedCut > 0
-            ? new[] { StatModifier.Flat(WetKey, StatType.SpeedMax, -SpeedCut) }
+        public override IReadOnlyList<StatModifier> GetModifiers() => IsReady
+            ? new[] { StatModifier.Flat(WetKey, StatType.FixedDamageRatio, FixedDamageRatio) }
             : System.Array.Empty<StatModifier>();
 
         public static void Add(EnemyController enemy, float amount)
         {
             if (enemy == null || !enemy.IsAlive || amount <= 0f) return;
             if (Find<WetEffect>(enemy) is WetEffect existing) existing.Change(enemy, amount);
-            else enemy.Status.Add(new WetEffect(amount));
+            else
+            {
+                var created = new WetEffect(0f);
+                enemy.Status.Add(created);
+                created.Change(enemy, amount);
+            }
         }
 
         public static float Get(ITarget target) => Get<WetEffect>(target);
+
+        protected override void OnStacksChanged(EnemyController enemy, float before)
+        {
+            if (Stacks < TriggerAt) FixedDamageRatio = 0f;
+            else if (!IsReady) FixedDamageRatio = enemy.Resistance.ResistWeak(FixedRatio);
+        }
 
         public override void OnMoved(EnemyController enemy, int steps)
         {
             if (IsReady) Set(enemy, 0f);
         }
 
-        public override string Describe() => IsReady ? $"젖음 {(int)Stacks}: 다음 행동 최대 이동력 −1" : $"젖음 {(int)Stacks} / {SlowAt:0}";
+        public override string Describe() => IsReady ? $"젖음 {(int)Stacks}: 다음 행동이 끝날 때까지 받는 피해의 {FixedDamageRatio * 100f:0.#}%가 고정 피해"
+            : $"젖음 {(int)Stacks} / {TriggerAt:0}";
     }
 
-    // 얼음 — 한기: 25 이상이면 최소·최대 이동력 -1, 50에 닿으면 빙결, 빙결이 풀리면 스택 전부 사라짐
+    // 얼음 — 한기: 25 이상이면 최소·최대 이동력 -1, 50 이상이면 빙결 (둘 다 쌓일 때마다 저항 판정), 빙결이 풀리면 스택 전부 사라짐
     public class ChillEffect : EnemyStackEffect
     {
         public const string ChillKey = "한기";
         public const float SlowAt = 25f;
         public const float FreezeAt = 50f;
 
+        private bool m_slowed;
+
         private ChillEffect(float stacks) : base(stacks) { }
 
         public override string Key => ChillKey;
 
-        public override IReadOnlyList<StatModifier> GetModifiers() => Stacks >= SlowAt
+        public override IReadOnlyList<StatModifier> GetModifiers() => m_slowed && Stacks >= SlowAt
             ? new[] { StatModifier.Flat(ChillKey, StatType.SpeedMin, -1f), StatModifier.Flat(ChillKey, StatType.SpeedMax, -1f) }
             : System.Array.Empty<StatModifier>();
 
@@ -186,10 +201,13 @@ namespace SquareTD
 
         protected override void OnStacksChanged(EnemyController enemy, float before)
         {
-            if (before < FreezeAt && Stacks >= FreezeAt && !FreezeEffect.IsFrozen(enemy)) enemy.Status.Add(new FreezeEffect());
+            if (Stacks < SlowAt) m_slowed = false;
+            else if (!m_slowed && Stacks > before) m_slowed = enemy.Resistance.TryStrongCC();
+            if (Stacks > before && Stacks >= FreezeAt && !FreezeEffect.IsFrozen(enemy)) enemy.Status.Add(new FreezeEffect());
         }
 
-        public override string Describe() => $"한기 {(int)Stacks}: " + (Stacks >= SlowAt ? "최소·최대 이동력 −1, " : "") + $"{FreezeAt:0}에 빙결";
+        public override string Describe() => $"한기 {(int)Stacks}: "
+            + (m_slowed && Stacks >= SlowAt ? "최소·최대 이동력 −1, " : Stacks >= SlowAt ? "이동력 감소 저항함, " : "") + $"{FreezeAt:0}에 빙결";
     }
 
     // 어둠 — 침식: 따로 걸리는 디버프 없음. 죽으면 침식 스택만큼 판 공용 침식 카운트 +
@@ -215,7 +233,7 @@ namespace SquareTD
         public override string Describe() => $"침식 {(int)Stacks}: 죽으면 침식 카운트 +{(int)Stacks}";
     }
 
-    // 빛 — 실명: 10에 닿으면 다음 행동은 최소·최대 이동력 × -1 (뒤로 걸음), 그 행동이 끝나면 스택 전부 사라짐
+    // 빛 — 실명: 10 이상에서 쌓일 때마다 저항 판정, 통하면 다음 행동은 최소·최대 이동력 × -1 (뒤로 걸음), 그 행동이 끝나면 스택 전부 사라짐
     public class BlindEffect : EnemyStackEffect
     {
         public const string BlindKey = "실명";
@@ -226,16 +244,27 @@ namespace SquareTD
         private BlindEffect(float stacks) : base(stacks) { }
 
         public override string Key => BlindKey;
-        public bool IsReady => Stacks >= TriggerAt;
+        public bool IsReady { get; private set; }
 
         public static void Add(EnemyController enemy, float amount)
         {
             if (enemy == null || !enemy.IsAlive || amount <= 0f) return;
             if (Find<BlindEffect>(enemy) is BlindEffect existing) existing.Change(enemy, amount);
-            else enemy.Status.Add(new BlindEffect(amount));
+            else
+            {
+                var created = new BlindEffect(0f);
+                enemy.Status.Add(created);
+                created.Change(enemy, amount);
+            }
         }
 
         public static bool IsBlind(ITarget target) => Get<BlindEffect>(target) > 0f;
+
+        protected override void OnStacksChanged(EnemyController enemy, float before)
+        {
+            if (Stacks < TriggerAt) IsReady = false;
+            else if (!IsReady && Stacks > before) IsReady = enemy.Resistance.TryStrongCC();
+        }
 
         public override MoveRange OnDecideMove(EnemyController enemy, MoveRange range)
         {
@@ -250,6 +279,7 @@ namespace SquareTD
             Set(enemy, 0f);
         }
 
-        public override string Describe() => IsReady ? $"실명 {(int)Stacks}: 다음 행동은 뒤로 걸음" : $"실명 {(int)Stacks} / {TriggerAt:0}";
+        public override string Describe() => IsReady ? $"실명 {(int)Stacks}: 다음 행동은 뒤로 걸음"
+            : Stacks >= TriggerAt ? $"실명 {(int)Stacks}: 저항함 (더 쌓이면 다시 판정)" : $"실명 {(int)Stacks} / {TriggerAt:0}";
     }
 }

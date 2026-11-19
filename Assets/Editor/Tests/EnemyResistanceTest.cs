@@ -28,7 +28,7 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 막히면_오르지_않음()
+        public void 막히면_기본만큼_내려가고_기본_아래로는_안_내려감()
         {
             var resistance = new EnemyResistance(10f);
             Assert.IsFalse(resistance.TryStrongCC(5f), "주사위 5 < 저항 10 → 막힘");
@@ -36,25 +36,17 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 행동할_때마다_기본의_절반씩_내려감()
+        public void 걸리면_오르고_막으면_내려감()
         {
-            // 기획 예: 40%에서 행동 두 번 → 30% (5%씩)
+            // 기획 예: 기본 10% → 걸림 20% → 걸림 30% → 막음 20% → 걸림 30%
             var resistance = new EnemyResistance(10f);
-            for (int i = 0; i < 3; i++) resistance.TryStrongCC(Pass);
-
-            resistance.OnActed();
-            Assert.AreEqual(35f, resistance.Current, Eps);
-            resistance.OnActed();
+            Assert.IsTrue(resistance.TryStrongCC(Pass));
+            Assert.IsTrue(resistance.TryStrongCC(Pass));
             Assert.AreEqual(30f, resistance.Current, Eps);
-        }
-
-        [Test]
-        public void 기본_아래로는_안_내려감()
-        {
-            var resistance = new EnemyResistance(10f);
-            resistance.TryStrongCC(Pass);           // 20
-            for (int i = 0; i < 5; i++) resistance.OnActed();
-            Assert.AreEqual(10f, resistance.Current, Eps);
+            Assert.IsFalse(resistance.TryStrongCC(25f), "주사위 25 < 저항 30 → 막힘");
+            Assert.AreEqual(20f, resistance.Current, Eps);
+            Assert.IsTrue(resistance.TryStrongCC(Pass));
+            Assert.AreEqual(30f, resistance.Current, Eps);
         }
 
         [Test]

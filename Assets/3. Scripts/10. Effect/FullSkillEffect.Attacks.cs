@@ -245,7 +245,7 @@ namespace SquareTD
             Ring(point,cell*1.8f,dark,1.08f,.4f);
         }
 
-        public void Rage(TowerController owner,bool preview=false)
+        public void Rage(TowerController owner)
         {
             if(owner==null||!Ready)return;
             float cell=EffectSpace.CellWorldSize();Vector3 p=owner.transform.position;
@@ -257,7 +257,7 @@ namespace SquareTD
                 });
             for(int i=0;i<3;i++)Ring(p,cell*(1.3f+i*.25f),color,.18f+i*.16f,.4f);
             Motes(p,cell*1.2f,Gold,14,.2f,.55f,true);
-            if(!preview)PassiveMark(owner.transform,202,0,TowerEmblem.Axe,new Vector3(cell*1.15f,cell*.70f,1),color,
+            PassiveMark(owner.transform,202,0,TowerEmblem.Axe,new Vector3(cell*1.15f,cell*.70f,1),color,
                 ()=>owner!=null&&owner.State!=null&&TimedTowerBuff.GetRemaining(owner.State,AxeTargetSkill.Source)>0);
         }
         public void Rally(TowerController owner,IReadOnlyList<TowerController> allies)
@@ -312,7 +312,7 @@ namespace SquareTD
             for(int i=1;i<route.Count-1;i++)
             {
                 Vector3 target=route[i];float at=i*step;
-                if(i==1)continue; // The first point is the original contact where the rebound starts.
+                if(i==1)continue;
                 Ray(route[i-1],target,cell*.12f,Gold,at-step,.20f);
                 Flash(target,cell*.65f,White,at,.12f);
                 Motes(target,cell*.48f,Gold,5,at,.28f);
@@ -382,7 +382,7 @@ namespace SquareTD
             Impact(p,cell*(1+power*.14f),TowerEmblem.Light,Gold,.24f);
             Motes(p,cell*.85f,White,9,.24f,.4f);
         }
-        public void Tempest(TowerController owner,bool preview=false)
+        public void Tempest(TowerController owner)
         {
             if(owner==null||!Ready)return;
             float cell=EffectSpace.CellWorldSize();Vector3 p=owner.transform.position;Color wind=Tint(TowerEmblem.Wind);
@@ -391,7 +391,7 @@ namespace SquareTD
             Motif(3,TowerEmblem.Wind,p,Vector3.one*cell*1.55f,0,wind,.12f,.95f,
                 (q,t)=>q.SetFloat(EffectQuad.AlphaId,Envelope(t)*.45f));
             Petals(p,cell*1.1f,TowerEmblem.Wind,White,.15f,9);
-            if(!preview)PassiveMark(owner.transform,210,3,TowerEmblem.Wind,Vector3.one*cell*1.15f,wind,
+            PassiveMark(owner.transform,210,3,TowerEmblem.Wind,Vector3.one*cell*1.15f,wind,
                 ()=>owner!=null&&owner.State!=null&&TimedTowerBuff.GetRemaining(owner.State,WindTargetSkill.Source)>0);
         }
         public void Prism(TowerController owner,IReadOnlyList<TowerController> receivers)
@@ -426,44 +426,6 @@ namespace SquareTD
             Seal(p,cell*1.2f,e,Tint(e),0,.6f);
             Motes(p,cell*.65f,Core(e),8,0,.4f,true);
         }
-        public void PreviewDelayed(TowerController owner,Vector3 point)
-        {
-            if(owner==null||!Ready)return;
-            float cell=EffectSpace.CellWorldSize();
-            TowerEmblem e=owner.Definition.Emblem;
-            if(e==TowerEmblem.Water)
-            {
-                Seal(point,cell*1.45f,e,Tint(e),0,1.05f);
-                Motif(2,e,point,Vector3.one*cell*1.55f,0,Tint(e),.12f,1.15f);
-                for(int i=0;i<3;i++)Ring(point,cell*(.8f+i*.25f),Tint(e),.12f+i*.13f,.5f);
-            }
-            else if(e==TowerEmblem.Light)
-            {
-                Vector3 lens=point+Vector3.up*cell*2.4f;
-                Seal(lens,cell*1.1f,e,Gold,0,1.10f,false);
-                Seal(point,cell*1.3f,e,Gold,0,1.2f);
-                Beam(lens,point,cell*1.2f,e,Gold,.30f,.7f);
-                Impact(point,cell*1.3f,e,Gold,.5f);
-            }
-            else
-            {
-                Color color=Tint(TowerEmblem.Darkness);
-                Seal(point,cell*2.1f,e,color,0,1.3f);
-                if(m_warp.IsReady)
-                {
-                    EffectQuad q=Model(m_warp,0,point,Vector3.one*cell*2.4f,0,Color.black,color,.10f,1.5f,(quad,t)=>{
-                        float size=cell*2.4f*Mathf.Sin(t*Mathf.PI);
-                        quad.Transform.localScale=Vector3.one*size;
-                        quad.SetFloat(HorizonId,.26f);quad.SetFloat(StrengthId,.9f);quad.SetFloat(SwirlId,3.5f);
-                    });
-                    q.SetColorById(RimId,Core(e));
-                }
-                for(int i=0;i<5;i++)Arc(point,cell*(1.2f+i*.2f),i*72,color,.12f+i*.07f,.95f,-160);
-                Motes(point,cell*1.5f,Core(e),16,.20f,.85f,true);
-                Ring(point,cell*2.1f,color,1.35f,.4f);
-            }
-        }
-
         private void JudgementTrails(Vector3 center,List<Vector3> points,float cell,float delay)
         {
             BoardManager board=BoardManager.Instance;

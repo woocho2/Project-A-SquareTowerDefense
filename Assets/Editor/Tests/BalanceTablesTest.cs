@@ -61,11 +61,13 @@ namespace SquareTD.Tests
         // ── 컬러 강화 ──
 
         [TestCase(1, 1f, 0)]
-        [TestCase(2, 1.25f, 0)]
-        [TestCase(3, 1.5f, 0)]
-        [TestCase(4, 2f, 0)]
-        [TestCase(5, 3f, 1)]
-        public void 컬러_표는_네_컬러_공통(int level, float abilityValue, int mastery)
+        [TestCase(2, 1.1f, 0)]
+        [TestCase(4, 1.35f, 0)]
+        [TestCase(5, 1.5f, 1)]
+        [TestCase(7, 2f, 1)]
+        [TestCase(9, 3f, 1)]
+        [TestCase(10, 4f, 2)]
+        public void 레벨_표는_네_컬러_공통(int level, float abilityValue, int mastery)
         {
             foreach (TowerColor color in new[] { TowerColor.Red, TowerColor.Blue, TowerColor.Yellow, TowerColor.Purple })
             {
@@ -79,15 +81,15 @@ namespace SquareTD.Tests
         public void 레벨_밖은_가까운_끝으로()
         {
             Assert.AreEqual(1f, BalanceTables.GetColorLevelRow(0, TowerColor.Red).AbilityValue);
-            Assert.AreEqual(3f, BalanceTables.GetColorLevelRow(9, TowerColor.Red).AbilityValue, 0.0001f);
+            Assert.AreEqual(4f, BalanceTables.GetColorLevelRow(11, TowerColor.Red).AbilityValue, 0.0001f);
         }
 
         [Test]
-        public void 다이아_5레벨_스킬은_브론즈_1레벨의_115배()
+        public void 다이아_10레벨_스킬은_브론즈_1레벨의_154배()
         {
             float bronze = BalanceTables.GetTierRow(1).Power * BalanceTables.GetTierRow(1).AbilityValue * BalanceTables.GetColorLevelRow(1, TowerColor.Red).AbilityValue;
-            float diamond = BalanceTables.GetTierRow(4).Power * BalanceTables.GetTierRow(4).AbilityValue * BalanceTables.GetColorLevelRow(5, TowerColor.Red).AbilityValue;
-            Assert.AreEqual(115.3125f, diamond / bronze, 0.01f, "6.15 × 6.25 × 3");
+            float diamond = BalanceTables.GetTierRow(4).Power * BalanceTables.GetTierRow(4).AbilityValue * BalanceTables.GetColorLevelRow(10, TowerColor.Red).AbilityValue;
+            Assert.AreEqual(153.75f, diamond / bronze, 0.01f, "6.15 × 6.25 × 4");
         }
 
         [TestCase(1, 1.2f)]
@@ -100,19 +102,17 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 레벨업_경험치는_20_40_80_160()
+        public void 레벨업_경험치_합은_452()
         {
-            Assert.AreEqual(20, BalanceTables.GetXpToNext(1));
-            Assert.AreEqual(40, BalanceTables.GetXpToNext(2));
-            Assert.AreEqual(80, BalanceTables.GetXpToNext(3));
-            Assert.AreEqual(160, BalanceTables.GetXpToNext(4));
+            int[] needs = { 4, 8, 15, 20, 25, 55, 75, 110, 140 };
+            for (int level = 1; level <= needs.Length; level++) Assert.AreEqual(needs[level - 1], BalanceTables.GetXpToNext(level), $"레벨 {level}");
         }
 
         [Test]
-        public void 레벨5_이상은_경험치_0()
+        public void 레벨10_이상은_경험치_0()
         {
-            Assert.AreEqual(0, BalanceTables.GetXpToNext(5));
-            Assert.AreEqual(0, BalanceTables.GetXpToNext(6));
+            Assert.AreEqual(0, BalanceTables.GetXpToNext(10));
+            Assert.AreEqual(0, BalanceTables.GetXpToNext(11));
             Assert.AreEqual(0, BalanceTables.GetXpToNext(0));
         }
     }

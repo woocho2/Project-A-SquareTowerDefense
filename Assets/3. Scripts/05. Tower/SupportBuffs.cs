@@ -17,7 +17,13 @@ namespace SquareTD
 
     public static class SupportBuffs
     {
-        public static string SourceOf(TowerEmblem emblem) => $"{EmblemNames.GetEmblemName(emblem)} 버프";
+        private static readonly Dictionary<TowerEmblem, string> s_sources = new Dictionary<TowerEmblem, string>();
+
+        public static string SourceOf(TowerEmblem emblem)
+        {
+            if (!s_sources.TryGetValue(emblem, out string source)) s_sources[emblem] = source = $"{EmblemNames.GetEmblemName(emblem)} 버프";
+            return source;
+        }
 
         public static SupportCast? GetActive(TowerController tower, TowerEmblem emblem)
         {
@@ -69,23 +75,16 @@ namespace SquareTD
         public static void Rebuild(TowerController receiver, TowerEmblem emblem)
         {
             string source = SourceOf(emblem);
-            receiver.State.Modifiers.RemoveBySource(source);
-
             SupportCast? active = GetActive(receiver, emblem);
             if (active == null)
             {
+                receiver.State.Modifiers.RemoveBySource(source);
                 if (receiver.State.SupportBuffs.TryGetValue(emblem, out SupportBuffEntry entry) && entry.IsEmpty)
                     receiver.State.SupportBuffs.Remove(emblem);
                 return;
             }
 
-            foreach (StatModifier modifier in SkillRegistry.GetBuffRule(emblem).GetModifiers(active.Value, receiver, source))
-                receiver.State.Modifiers.Add(modifier);
-        }
-
-        public static void RebuildAll(TowerController receiver)
-        {
-            foreach (TowerEmblem emblem in new List<TowerEmblem>(receiver.State.SupportBuffs.Keys)) Rebuild(receiver, emblem);
+            receiver.State.Modifiers.SetSource(source, SkillRegistry.GetBuffRule(emblem).GetModifiers(active.Value, receiver, source));
         }
 
         public static void ForEachActive(TowerController receiver, Action<BuffRule, SupportCast> call)

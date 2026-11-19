@@ -56,6 +56,7 @@ namespace SquareTD
 
         private bool m_transcendNext;
         private bool m_extendNext;
+        public bool IsTranscendQueued => m_transcendNext || m_extendNext;
 
         public event Action<float> DarknessChanged;
         public event Action<float> TranscendChanged;

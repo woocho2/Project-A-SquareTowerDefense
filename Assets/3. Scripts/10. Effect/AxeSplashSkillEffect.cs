@@ -26,13 +26,12 @@ namespace SquareTD
         private static readonly int FrameId = Shader.PropertyToID("_Frame");
         private static readonly int Color3Id = Shader.PropertyToID("_Color3");
 
-        // 손그림 플립북 (Resources/Effects, 4x4 · 16프레임). 없으면 절차적 궤적·타격으로 대신함
         private const string SlashAtlas = "FX_WhirlwindSlash_Atlas";
         private const string HitAtlas = "FX_WhirlwindHit_Atlas";
         private const string BurstAtlas = "FX_WhirlwindBurst_Atlas";
         private const float FlipbookLast = 15f;
-        private const float SlashSpinFrames = 11f;   // 0~11: 회전 중, 12~15: 흩어짐
-        private const float SlashArcRadius = .8f;     // 궤적 중심선 반지름 / 칸 반폭
+        private const float SlashSpinFrames = 11f;
+        private const float SlashArcRadius = .8f;
         private static readonly Color BurstDeep = new Color(.32f, .06f, .05f);
         private static readonly Color BurstMid = new Color(.86f, .36f, .22f);
         private static readonly AnimationCurve SwingCurve = new AnimationCurve(
@@ -63,7 +62,7 @@ namespace SquareTD
         [SerializeField, Min(.05f)] private float m_burstDuration = .45f;
         [SerializeField, Min(.1f)] private float m_hitSize = 1.6f;
         [SerializeField, Min(.1f)] private float m_burstReach = 2.1f;
-        [SerializeField, Range(-90f, 90f)] private float m_slashAngleOffset = 0f; // 궤적이 날보다 앞서 보이면 +, 뒤처지면 −
+        [SerializeField, Range(-90f, 90f)] private float m_slashAngleOffset = 0f;
 
         private EffectQuadPool m_axePool, m_ghostPool, m_trailPool, m_edgePool;
         private EffectQuadPool m_backTrailPool, m_backEdgePool, m_cutPool, m_flarePool, m_ringPool;
@@ -165,7 +164,6 @@ namespace SquareTD
                 foreach (Vector3 point in hitPoints)
                 {
                     Vector3 delta = point - origin;
-                    // 화면에 투영되기 전 각도로 접촉 시점을 계산한다.
                     float angle = Mathf.Atan2(delta.y / flatten, delta.x) * Mathf.Rad2Deg;
                     hits.Add(new Hit {
                         Point = point, Direction = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg,
@@ -235,7 +233,6 @@ namespace SquareTD
                 }
                 if (painted)
                 {
-                    // 회전 중엔 날을 따라 돌며 0~11프레임, 멈춘 뒤 12~15프레임으로 흩어짐
                     float after = Mathf.Clamp01((time - spinEnd) / slashDissipate);
                     float frame = time <= spinEnd ? progress * SlashSpinFrames
                         : Mathf.Lerp(SlashSpinFrames, FlipbookLast, after);
@@ -246,7 +243,6 @@ namespace SquareTD
                     slashFront.SetFloat(EffectQuad.AlphaId, slashAlpha); slashRear.SetFloat(EffectQuad.AlphaId, slashAlpha);
                 }
 
-                // 각도 간격의 날 잔상은 고속 구간에만 남겨 손잡이가 겹쳐 보이지 않게 한다.
                 while (nextGhost <= progress)
                 {
                     if (!painted && speed > .9f && time <= spinEnd)
@@ -417,7 +413,6 @@ namespace SquareTD
         {
             Vector3 tip = TipPosition(origin, angle, length, flatten);
             Accent(m_flarePool, tip, cell * .56f, Edge, .11f, 1.35f);
-            // 엔딩은 도끼 정지와 짧은 압력파만 남기고 판 전체의 빛 번짐을 피한다.
             if (m_burstFx != null)
             {
                 float reach = length * m_burstReach;
@@ -443,7 +438,6 @@ namespace SquareTD
             return quad;
         }
 
-        // 16프레임을 한 번 재생하고 반환
         private void PlayFlipbook(EffectQuadPool pool, Vector3 position, float angle, Vector3 scale, float flatten, float pivotY,
             float duration, Color deep, Color mid, Color hot, float intensity)
         {

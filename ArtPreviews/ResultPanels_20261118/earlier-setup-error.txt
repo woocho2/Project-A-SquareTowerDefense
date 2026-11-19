@@ -1,8 +1,0 @@
-UnityEngine.MissingComponentException: There is no 'CanvasGroup' attached to the "GameOverPanel" game object, but a script is trying to access it.
-You probably need to add a CanvasGroup to the game object "GameOverPanel". Or your script needs to check if the component is attached before using it.
-  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x000b4] in <eef04556956e4cb98ff60ea01f3f73dc>:0 
-  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x0000a] in <eef04556956e4cb98ff60ea01f3f73dc>:0 
-  at UnityEngine.CanvasGroup.set_alpha (System.Single value) [0x00006] in <58deee5c26014f6eb322ae9f92395339>:0 
-  at SquareTD.EditorTools.ResultPanelSetup.Build (UnityEngine.GameObject root, System.Boolean won) [0x000a2] in D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\Assets\Editor\ResultPanelSetup.cs:61 
-  at SquareTD.EditorTools.ResultPanelSetup.Apply () [0x00080] in D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\Assets\Editor\ResultPanelSetup.cs:47 
-  at SquareTD.EditorTools.ResultPanelSetup.Poll () [0x00064] in D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\Assets\Editor\ResultPanelSetup.cs:31 

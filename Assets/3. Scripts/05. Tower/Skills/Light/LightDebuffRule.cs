@@ -24,7 +24,7 @@ namespace SquareTD
         {
             if (!EmblemSharedState.Current.IsTranscendWave || EnemyManager.Instance == null) return;
             foreach (EnemyController enemy in new List<EnemyController>(EnemyManager.Instance.Registry.Alive))
-                enemy.Execute(new DamageInfo { Attacker = cast.Owner, Source = DamageSource.Skill, Emblem = TowerEmblem.Light });
+                enemy.TryExecute(new DamageInfo { Attacker = cast.Owner, Source = DamageSource.Skill, Emblem = TowerEmblem.Light });
         }
 
         public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy) =>

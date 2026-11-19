@@ -29,8 +29,6 @@ namespace SquareTD
         [SerializeField] private Color m_ambientFilter = new Color(1f, 0.95f, 0.84f);
         [SerializeField] private float m_ambientFade = 0.6f;
         [SerializeField] private float m_moteInterval = 0.12f;
-        [Tooltip("2번 키로 미리 볼 때 빛이 남아 있는 시간")]
-        [SerializeField] private float m_previewAmbient = 4f;
 
         private EffectQuadPool m_swordPool;
         private EffectQuadPool m_streakPool;
@@ -45,7 +43,6 @@ namespace SquareTD
         private Sequence m_sequence;
         private float m_weight;
         private float m_holdOffUntil;
-        private float m_forcedUntil;
         private float m_nextMote;
 
         private void Awake()
@@ -74,7 +71,7 @@ namespace SquareTD
             if (m_profile != null) Destroy(m_profile);
         }
 
-        public void Play(Camera camera, Vector3 origin, IReadOnlyList<Vector3> targets, float cellWorldSize, bool preview)
+        public void Play(Camera camera, Vector3 origin, IReadOnlyList<Vector3> targets, float cellWorldSize)
         {
             if (m_sequence != null && m_sequence.IsActive()) return;
             float cell = Mathf.Max(0.5f, cellWorldSize);
@@ -85,7 +82,6 @@ namespace SquareTD
             float lastLand = dropAt + Mathf.Max(0, sorted.Count - 1) * m_dropInterval + m_dropDuration;
             EffectActivity.HoldFor(lastLand + m_stuckHold + m_vanishDuration + 0.1f);
             m_holdOffUntil = Time.time + dropAt + m_dropDuration;
-            if (preview) m_forcedUntil = m_holdOffUntil + m_previewAmbient;
 
             Sequence s = DOTween.Sequence().SetLink(gameObject, LinkBehaviour.KillOnDisable);
             m_sequence = s;
@@ -157,7 +153,7 @@ namespace SquareTD
 
         private void Update()
         {
-            bool on = Time.time >= m_holdOffUntil && (Time.time < m_forcedUntil || AnyGlorySword());
+            bool on = Time.time >= m_holdOffUntil && AnyGlorySword();
             float step = Time.deltaTime / Mathf.Max(0.01f, m_ambientFade);
             m_weight = Mathf.MoveTowards(m_weight, on ? 1f : 0f, step);
             if (m_volume != null) m_volume.weight = m_weight;

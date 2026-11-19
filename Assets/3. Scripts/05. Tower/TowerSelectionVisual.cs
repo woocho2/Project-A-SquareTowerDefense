@@ -4,13 +4,15 @@ using UnityEngine.Rendering;
 
 namespace SquareTD
 {
-    // 정보창에 띄운 타워의 선택 표시(HightLight, 셰이더 빛 테두리)와 사거리(Range, 사거리만큼 키운 칸)를 켜고 끔
+    // 선택 타워의 사거리 격자와 존을 배치해야 하는 타워의 붉은 경고 표시
     [DisallowMultipleComponent]
     public sealed class TowerSelectionVisual : MonoBehaviour
     {
         private static readonly int s_halfSizeId = Shader.PropertyToID("_HalfSize");
         private static readonly int s_edgeId = Shader.PropertyToID("_Edge");
         private static Material s_glowMaterial;
+        private static readonly int s_cellsId = Shader.PropertyToID("_Cells");
+        private static readonly int s_boardBoundsId = Shader.PropertyToID("_BoardBounds");
 
         [SerializeField] private SpriteRenderer m_highlight;
         [SerializeField] private SpriteRenderer m_range;
@@ -30,11 +32,15 @@ namespace SquareTD
         private bool m_shown;
         private int m_shownRange = -1;
         private float m_rangeAlpha;
+        private SpriteRenderer m_placementWarning;
+        private float m_nextPlacementCheck;
+        private Vector4 m_boardBounds;
 
         private void Awake()
         {
             m_tower = GetComponent<TowerController>();
             m_block = new MaterialPropertyBlock();
+            m_boardBounds = GetBoardBounds();
 
             if (m_highlight != null)
             {
@@ -50,6 +56,15 @@ namespace SquareTD
 
             if (m_range != null)
             {
+                Material material = BoardOverlayStyle.Material(false);
+                if (material != null)
+                {
+                    m_range.sprite = BoardOverlayStyle.Quad;
+                    m_range.sharedMaterial = material;
+                    m_range.transform.localPosition = Vector3.zero;
+                    m_range.transform.localRotation = Quaternion.identity;
+                    m_range.color = new Color(.18f, .65f, .82f, .9f);
+                }
                 m_rangeAlpha = m_range.color.a;
                 SortOnGround(m_range, m_rangeOrder);
                 m_range.gameObject.SetActive(false);
@@ -65,24 +80,35 @@ namespace SquareTD
             group.sortingOrder = order;
         }
 
-        private void OnDisable() => m_sequence?.Kill();
+        private void OnDisable()
+        {
+            Hide();
+            if (m_placementWarning != null) m_placementWarning.gameObject.SetActive(false);
+            m_nextPlacementCheck = 0;
+        }
 
         private void LateUpdate()
         {
-            bool selected = UIManager.Instance != null && UIManager.Instance.IsTowerSelected(m_tower);
+            bool suppressed = SimulationRunner.SuppressCosmetics;
+            bool selected = !suppressed && UIManager.Instance != null && UIManager.Instance.IsTowerSelected(m_tower);
             if (selected != m_shown)
             {
                 if (selected) Show();
                 else Hide();
             }
             if (m_shown) FitRange(false);
+            if (Time.unscaledTime >= m_nextPlacementCheck)
+            {
+                m_nextPlacementCheck = Time.unscaledTime + .2f;
+                RefreshPlacementWarning(suppressed);
+            }
         }
 
         private void Show()
         {
             m_shown = true;
             m_sequence?.Kill();
-            m_sequence = DOTween.Sequence().SetLink(gameObject, LinkBehaviour.KillOnDisable);
+            m_sequence = DOTween.Sequence().SetUpdate(true).SetLink(gameObject, LinkBehaviour.KillOnDisable);
 
             if (m_highlight != null)
             {
@@ -94,7 +120,6 @@ namespace SquareTD
 
             if (m_range != null)
             {
-                m_range.gameObject.SetActive(true);
                 FitRange(true);
                 SetRangeAlpha(0f);
                 m_sequence.Join(DOTween.To(() => 0f, SetRangeAlpha, m_rangeAlpha, m_rangeFade));
@@ -128,13 +153,53 @@ namespace SquareTD
             if (m_range == null || m_range.sprite == null || m_tower == null || m_tower.Stats == null) return;
 
             int range = m_tower.Stats.Range;
+            bool visible = m_tower.IsOnBoard && m_tower.IsAttackTower;
+            m_range.gameObject.SetActive(visible);
+            if (!visible) return;
             if (!force && range == m_shownRange) return;
             m_shownRange = range;
 
             float side = (range * 2 + 1) * EffectSpace.CellWorldSize();
-            float spriteSize = m_range.sprite.bounds.size.x * Mathf.Abs(transform.lossyScale.x);
-            float scale = side / Mathf.Max(0.0001f, spriteSize);
-            m_range.transform.localScale = new Vector3(scale, scale, 1f);
+            Vector3 parentScale = m_range.transform.parent.lossyScale;
+            Vector3 size = m_range.sprite.bounds.size;
+            m_range.transform.localScale = new Vector3(side / Mathf.Max(.0001f, size.x * Mathf.Abs(parentScale.x)), side / Mathf.Max(.0001f, size.y * Mathf.Abs(parentScale.y)), 1);
+            m_range.GetPropertyBlock(m_block); m_block.SetFloat(s_cellsId, range * 2 + 1); m_block.SetVector(s_boardBoundsId, m_boardBounds); m_range.SetPropertyBlock(m_block);
+        }
+
+        private void RefreshPlacementWarning(bool suppressed)
+        {
+            bool pending = !suppressed && BoardManager.Instance != null && BoardManager.Instance.Zones.NeedsPlacement(m_tower);
+            if (pending && m_placementWarning == null)
+            {
+                Material material = BoardOverlayStyle.Material(true);
+                if (material == null) return;
+                var marker = new GameObject("ZonePlacementRequired", typeof(SpriteRenderer)); marker.transform.SetParent(transform, false);
+                marker.layer = gameObject.layer;
+                m_placementWarning = marker.GetComponent<SpriteRenderer>(); m_placementWarning.sprite = BoardOverlayStyle.Quad;
+                m_placementWarning.sharedMaterial = material; m_placementWarning.color = new Color(1, .19f, .15f, 1);
+                m_placementWarning.sortingLayerName = "Tower";
+                m_placementWarning.sortingOrder = 10;
+            }
+            if (m_placementWarning == null) return;
+            m_placementWarning.gameObject.SetActive(pending);
+            if (!pending) return;
+            float side = EffectSpace.CellWorldSize() * 1.43f;
+            Vector3 parentScale = transform.lossyScale;
+            m_placementWarning.transform.localScale = new Vector3(side / Mathf.Max(.0001f, Mathf.Abs(parentScale.x)), side / Mathf.Max(.0001f, Mathf.Abs(parentScale.y)), 1);
+        }
+
+        private static Vector4 GetBoardBounds()
+        {
+            BoardManager board = BoardManager.Instance;
+            if (board == null || board.Grid == null) return new Vector4(-10000, -10000, 10000, 10000);
+            Vector2 min = Vector2.one * float.MaxValue, max = Vector2.one * float.MinValue;
+            for (int i = 0; i < board.Grid.PathCount + board.Grid.SpawnCount; i++)
+            {
+                Vector3Int cell = i < board.Grid.PathCount ? board.Grid.GetPathCell(i) : board.Grid.GetSpawnCell(i - board.Grid.PathCount);
+                Vector2 point = board.GetWorldPosition(cell); min = Vector2.Min(min, point); max = Vector2.Max(max, point);
+            }
+            float half = EffectSpace.CellWorldSize() * .5f;
+            return new Vector4(min.x - half, min.y - half, max.x + half, max.y + half);
         }
 
         private void SetRangeAlpha(float alpha)

@@ -37,8 +37,9 @@ namespace SquareTD
             if (enemy == null || !enemy.IsAlive || enemy.Movement == null) return;
 
             receiver.State.Counters[PushReadyKey] = 0f;
-            if (BoardManager.Instance != null) enemy.Movement.TeleportTo(enemy.PathIndex + (Random.value < 0.5f ? 1 : -1));
-            enemy.Movement.AddActionProgress(1);
+            if (BoardManager.Instance != null && Chance.Roll(enemy.Resistance.ResistWeak(1f)))
+                enemy.Movement.TeleportTo(enemy.PathIndex + (Random.value < 0.5f ? 1 : -1));
+            if (enemy.Resistance.TryStrongCC()) enemy.Movement.AddActionProgress(-1);
         }
     }
 

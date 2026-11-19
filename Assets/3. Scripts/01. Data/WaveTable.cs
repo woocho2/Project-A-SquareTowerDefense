@@ -119,7 +119,7 @@ namespace SquareTD
                     return 1;
 
                 case GameMode.Hard:
-                    return 1.375f;
+                    return 1.25f;
 
                 default:
                     return 0;
@@ -155,7 +155,7 @@ namespace SquareTD
                     return 1;
 
                 case GameMode.Normal:
-                    return 3;
+                    return 1;
 
                 case GameMode.Hard:
                     return 5;
@@ -173,7 +173,7 @@ namespace SquareTD
                     return 4;
 
                 case GameMode.Normal:
-                    return 6;
+                    return 3;
 
                 case GameMode.Hard:
                     return 8;

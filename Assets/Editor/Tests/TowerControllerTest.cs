@@ -176,12 +176,12 @@ namespace SquareTD.Tests
         public void 강화_상태의_레벨로_계산함()
         {
             var colorLevels = new ColorUpgradeState();
-            colorLevels.AddXp(20 + 40 + 80 + 160);
+            colorLevels.AddXp(4 + 8 + 15 + 20);
 
             TowerController tower = MakeTower(Def(1101), null, colorLevels);
 
             Assert.AreEqual(5, tower.Stats.ColorLevel);
-            Assert.AreEqual(6f, tower.Stats.AbilityValue, 0.0001f, "2 × 3");
+            Assert.AreEqual(3f, tower.Stats.AbilityValue, 0.0001f, "2 × 1.5");
         }
 
         [Test]

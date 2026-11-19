@@ -12,6 +12,7 @@ namespace SquareTD
         public const int FaceCount = 6;
 
         [SerializeField] private EnemyCubeAppearance m_appearance;
+        public EnemyCubeAppearance Appearance => m_appearance;
         [SerializeField] private Material[] m_faceAssetPool;
         [SerializeField] private Material m_bossMechanicMaterial;
         [SerializeField] private float m_spawnHeight = 5f;
@@ -106,7 +107,6 @@ namespace SquareTD
             }
         }
 
-        public int GetFaceAssetIndex(int faceIndex) => m_faceAssetIndices[faceIndex];
 
         public EnemyCubeFaceAsset GetFaceAsset(EnemyCubeFace face) => (EnemyCubeFaceAsset)m_faceAssetIndices[(int)face];
 

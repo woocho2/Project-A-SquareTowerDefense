@@ -30,18 +30,6 @@ namespace SquareTD
             return s_names[emblem, color];
         }
 
-        public static bool IsPassive(TowerDefinition definition) =>
-            definition.Color == TowerColor.Yellow || definition.Color == TowerColor.Purple;
-
-        public static string GetTitle(TowerDefinition definition)
-        {
-            string[] names = GetName(definition).Split('→');
-            string kind = definition.Color == TowerColor.Yellow ? "스킬 버프" : definition.Color == TowerColor.Purple ? "스킬 디버프" : "스킬";
-            return names[names.Length - 1].Trim() + " / " + kind;
-        }
-
-        public static string GetDescription(TowerDefinition definition, TowerFinalStats stats) =>
-            TowerDescription.Plain(TowerDescriptionBuilder.Build(definition, stats).Skill);
         internal static string GetSynergyDescription(int id) => id switch
         {
             SynergyEffects.OdinId => $"체력이 {OdinSkill.HpRate * 100:0}% 이하인 적을 처형합니다. 보스는 {OdinSkill.BossHpRate * 100:0}% 이하일 때 처형합니다.",

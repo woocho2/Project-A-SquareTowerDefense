@@ -63,10 +63,18 @@ namespace SquareTD
             bool canActivate = CanActivate(m_entry.Skill, turn, Time.timeScale <= 0f || UIManager.Instance != null && UIManager.Instance.IsPaused);
             bool picking = m_targeting != null && m_targeting.IsActive;
             string label = picking ? (m_targeting.FirstPathIndex < 0 ? "길 선택" : "다음 칸") :
-                m_entry.Skill.IsReady ? "스킬 사용" : $"{Mathf.Min(99, Mathf.FloorToInt(m_entry.Skill.Stack.Ratio * 100f))}%";
+                m_entry.Skill.IsReady ? "스킬 사용" : PercentLabel(m_entry.Skill.Stack.Ratio);
             if (!picking && m_entry.Skill is BaldrSkill baldr && baldr.Charges > 0) label = $"스킬 {baldr.Charges}회";
             if (!picking && m_entry.Skill.IsReady && NeedsPathSelection(m_entry.Skill.Id) && turn is EnemyTurnState) label = "내 턴에 사용";
             m_view.Render(m_entry.Skill.Stack.Ratio, m_entry.Skill.IsReady, canActivate, picking, label);
+        }
+
+        private static readonly string[] s_percents = new string[100];
+
+        private static string PercentLabel(float ratio)
+        {
+            int percent = Mathf.Clamp(Mathf.FloorToInt(ratio * 100f), 0, 99);
+            return s_percents[percent] ??= $"{percent}%";
         }
 
         private void HandleClick()

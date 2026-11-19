@@ -1,6 +1,6 @@
 namespace SquareTD
 {
-    // 도끼 디버프 — 데스 센텐스 · 엑스큐션 (즉사 기준, 엑스큐션 받는 피해 +10%, 베기에 맞으면 기준 +10%)
+    // 도끼 디버프 — 데스 센텐스 · 엑스큐션 (기준 밑이면 저항 판정 뒤 즉사, 엑스큐션 받는 피해 +10%, 베기에 맞으면 기준 +10%)
     public class AxeDebuffRule : DebuffRule
     {
         public const float BronzeThreshold = 0.05f;
@@ -10,15 +10,14 @@ namespace SquareTD
         public override void OnApply(SupportCast cast, EnemyController enemy)
         {
             if (cast.IsSkill2) return;
-            float threshold = Resist(enemy, cast.Bronze(BronzeThreshold));
-            if (enemy.CurrentHp < enemy.MaxHp * threshold)
-                enemy.Execute(new DamageInfo { Attacker = cast.Owner, Source = DamageSource.Dot, Emblem = TowerEmblem.Axe });
+            if (enemy.CurrentHp < enemy.MaxHp * cast.Bronze(BronzeThreshold))
+                enemy.TryExecute(new DamageInfo { Attacker = cast.Owner, Source = DamageSource.Dot, Emblem = TowerEmblem.Axe });
         }
 
         public override StatusEffect CreateEffect(SupportCast cast, EnemyController enemy)
         {
             if (!cast.IsSkill2) return null;
-            return new AxeDebuffEffect(cast, Resist(enemy, cast.Bronze(BronzeThreshold)), Resist(enemy, SlashBonus), Resist(enemy, ExecutionDamageTaken));
+            return new AxeDebuffEffect(cast, cast.Bronze(BronzeThreshold), SlashBonus, Resist(enemy, ExecutionDamageTaken));
         }
     }
 
@@ -40,7 +39,7 @@ namespace SquareTD
             if (!enemy.IsAlive) return;
             float threshold = m_threshold;
             if (info.Attribute == AttackAttribute.Slash) threshold += m_slashBonus;
-            if (enemy.CurrentHp < enemy.MaxHp * threshold) enemy.Execute(info);
+            if (enemy.CurrentHp < enemy.MaxHp * threshold) enemy.TryExecute(info);
         }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
-    // 플레이어 턴의 버튼들 (생성, 경험치 구매, 턴 종료)
+    // 플레이어 턴의 버튼들 (상점 리롤, 경험치 구매, 턴 종료)과 상점 카드
     public class PlayerTurnPanel : MonoBehaviour
     {
         [SerializeField] Button btn_createTower;
@@ -19,6 +19,10 @@ namespace SquareTD
 
         private void Start()
         {
+            UnavailableButtonNotice.Bind(btn_createTower, false);
+            UnavailableButtonNotice.Bind(btn_buyXp, true);
+            RenameRerollButton();
+            TowerShopPanel.Create(transform);
             RefreshLayout();
             CurrencyManager.Instance.Changed += HandleCurrencyChanged;
             TowerManager.Instance.ColorLevels.XpChanged += Refresh;
@@ -59,9 +63,9 @@ namespace SquareTD
 
         private void Refresh()
         {
-            int buildCost = TowerManager.Instance.BuildCost;
-            if (txt_createTowerValue != null) txt_createTowerValue.text = $"{buildCost}";
-            if (btn_createTower != null) btn_createTower.interactable = CurrencyManager.Instance.Gold >= buildCost;
+            int rerollCost = BalanceTables.ShopRerollCost;
+            if (txt_createTowerValue != null) txt_createTowerValue.text = $"{rerollCost}";
+            if (btn_createTower != null) btn_createTower.interactable = CurrencyManager.Instance.Gold >= rerollCost;
 
             ColorUpgradeState level = TowerManager.Instance.ColorLevels;
             int cost = level.IsMax ? 0 : BalanceTables.XpPurchaseCost;
@@ -74,9 +78,16 @@ namespace SquareTD
             if (btn_buyXp != null) btn_buyXp.interactable = cost > 0 && CurrencyManager.Instance.Gold >= cost;
         }
 
+        private void RenameRerollButton()
+        {
+            if (btn_createTower == null) return;
+            foreach (TextMeshProUGUI text in btn_createTower.GetComponentsInChildren<TextMeshProUGUI>(true))
+                if (text != txt_createTowerValue && text.text.Contains("생성")) text.text = "리롤";
+        }
+
         private void HandleCreateTowerClick()
         {
-            TowerManager.Instance.TryBuild();
+            TowerManager.Instance.TryRerollShop();
         }
 
         private void HandleBuyXpClick()

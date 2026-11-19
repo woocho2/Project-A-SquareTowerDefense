@@ -29,6 +29,7 @@ namespace SquareTD
         protected virtual bool ShouldCountDown(EnemyController enemy) => true;
 
         public virtual IReadOnlyList<StatModifier> GetModifiers() => Array.Empty<StatModifier>();
+        public virtual void OnResist(EnemyResistance resistance) { }
         public virtual void OnAdded(EnemyController enemy) { }
         public virtual void OnRemoved(EnemyController enemy) { }
         public virtual MoveRange OnDecideMove(EnemyController enemy, MoveRange range) => range;

@@ -1,3 +1,0 @@
-System.InvalidOperationException: 기본·지속 피해 실제 체력 기준 누적
-  at SquareTD.EditorTools.ResultPanelVerification.Check (System.Boolean valid, System.String label) [0x00015] in D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\Assets\Editor\ResultPanelVerification.cs:44 
-  at SquareTD.EditorTools.ResultPanelVerification.Tick () [0x0017e] in D:\MyGitHub\ProjectA\Project-A-SquareTowerDefense\Assets\Editor\ResultPanelVerification.cs:73 

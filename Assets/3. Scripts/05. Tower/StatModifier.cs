@@ -26,21 +26,52 @@ namespace SquareTD
     public class StatModifierList
     {
         private readonly List<StatModifier> m_modifiers = new List<StatModifier>();
+        private int m_batch;
+        private bool m_dirty;
 
         public IReadOnlyList<StatModifier> All => m_modifiers;
         public event Action Changed;
 
+        public void BeginBatch() => m_batch++;
+
+        public void EndBatch()
+        {
+            if (--m_batch > 0 || !m_dirty) return;
+            m_dirty = false;
+            Changed?.Invoke();
+        }
+
+        private void Notify()
+        {
+            if (m_batch > 0) m_dirty = true;
+            else Changed?.Invoke();
+        }
+
         public void Add(StatModifier modifier)
         {
             m_modifiers.Add(modifier);
-            Changed?.Invoke();
+            Notify();
         }
 
         public int RemoveBySource(string source)
         {
-            int removed = m_modifiers.RemoveAll(m => m.Source == source);
-            if (removed > 0) Changed?.Invoke();
+            int removed = 0;
+            for (int i = m_modifiers.Count - 1; i >= 0; i--)
+            {
+                if (m_modifiers[i].Source != source) continue;
+                m_modifiers.RemoveAt(i);
+                removed++;
+            }
+            if (removed > 0) Notify();
             return removed;
+        }
+
+        public void SetSource(string source, IEnumerable<StatModifier> modifiers)
+        {
+            BeginBatch();
+            RemoveBySource(source);
+            if (modifiers != null) foreach (StatModifier modifier in modifiers) Add(modifier);
+            EndBatch();
         }
 
         public (float percent, float flat) Sum(StatType stat)

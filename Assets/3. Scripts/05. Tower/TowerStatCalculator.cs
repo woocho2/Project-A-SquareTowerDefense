@@ -112,7 +112,6 @@ namespace SquareTD
             values[(int)StatType.AttackCount] = 1f;
         }
 
-        // 테스트 모드 F4: 공격 연출 확인용으로 모든 타워의 MaxAction 1 · Range 5 고정
         public static bool ShowcaseOverride { get; set; }
         public const int ShowcaseAction = 1;
         public const int ShowcaseRange = 5;

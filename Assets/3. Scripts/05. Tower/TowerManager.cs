@@ -6,11 +6,10 @@ using Random = UnityEngine.Random;
 
 namespace SquareTD
 {
-    // 타워 생성·판매·합성·경험치·이동을 맡는 매니저
+    // 타워 상점·판매·합성·경험치·이동을 맡는 매니저
     public class TowerManager : Singleton<TowerManager>
     {
         public const int FixedBuildCost = 250;
-        private static readonly int[] s_sellGold = { 0, 200, 600, 1800, 5400 };
 
         [SerializeField] private TextAsset m_towerCsv;
         [SerializeField] private TowerController m_towerPrefab;
@@ -24,11 +23,14 @@ namespace SquareTD
         public int BuildCount { get; private set; }
         public IReadOnlyList<TowerEmblem> SelectedEmblems => m_selectedEmblems;
         public TowerController Selected { get; private set; }
+        public TowerShop Shop { get; private set; }
 
-        public static int GetSellGold(int tier) => tier >= 1 && tier <= TowerId.MaxTier ? s_sellGold[tier] : 0;
+        public static int GetSellGold(int tier) => BalanceTables.GetSellGold(BalanceTables.GetShopPrice(tier));
+
+        public static int GetSellGold(TowerController tower) =>
+            tower == null || tower.State == null || TowerId.IsSynergy(tower.Definition.Id) ? 0 : BalanceTables.GetSellGold(tower.State.PaidGold);
 
         public event Action<TowerController> TowerAdded;
-        public event Action<int> BuildCostChanged;
         public event Action<TowerController> SelectionChanged;
         public event Action<TowerController> TowerRemoved;
         public event Action<TowerController, TowerController> TowerReplaced;
@@ -65,10 +67,12 @@ namespace SquareTD
             }
 
             ColorLevels.LevelChanged += HandleColorLevelChanged;
+            Shop = new TowerShop(Database, () => ColorLevels.Level, () => m_selectedEmblems);
         }
 
         private void Start()
         {
+            if (m_towerParent == null || !m_towerParent.gameObject.scene.IsValid()) m_towerParent = new GameObject("Towers").transform;
             m_factory = new TowerFactory(m_towerPrefab, m_towerParent, BoardManager.Instance, Database, ColorLevels);
             m_mergeEffect = EffectSpace.Make<TowerMergeEffect>(transform, "Tower Merge Effect");
 
@@ -80,6 +84,7 @@ namespace SquareTD
                 TurnManager.Instance.StateChanged += HandleTurnStateChanged;
             }
             if (GameSession.Instance != null) GameSession.Instance.BossMechanics.Blocker = Synergy.TryBlockMechanic;
+            if (Shop.IsEmpty) Shop.Roll();
         }
 
         protected override void OnDestroy()
@@ -96,7 +101,9 @@ namespace SquareTD
 
         private void HandleTurnStateChanged(ITurnState state)
         {
-            if (state is PlayerTurnState) Synergy?.OnPlayerTurnStarted();
+            if (!(state is PlayerTurnState)) return;
+            Synergy?.OnPlayerTurnStarted();
+            Shop.OnPlayerTurnStarted();
         }
 
         public static bool TryGetBuildSlot(BoardManager board, out TowerPlace place, out int index)
@@ -107,39 +114,72 @@ namespace SquareTD
             return board.Bench != null && board.Bench.TryGetFirstEmpty(out index);
         }
 
-        public bool TryBuild()
+        public bool TryBuyCard(int index)
         {
             if (!TurnManager.Instance.Current.CanPlayerAct)
             {
-                Debug.Log("[TowerManager] 플레이어 턴이 아니라 만들 수 없음");
+                GameNotice.Warn("타워는 플레이어 턴에 살 수 있습니다.");
                 return false;
             }
+            if (index < 0 || index >= Shop.Cards.Count || !Shop.Cards[index].IsAvailable) return false;
+            TowerShop.Card card = Shop.Cards[index];
             if (!TryGetBuildSlot(BoardManager.Instance, out TowerPlace place, out int slotIndex))
             {
-                Debug.Log("[TowerManager] 판과 대기석에 빈 칸이 없음");
+                GameNotice.Warn("전장과 대기석에 빈 칸이 없습니다.");
                 return false;
             }
-            if (CurrencyManager.Instance.Gold < BuildCost)
+            if (CurrencyManager.Instance.Gold < card.Price)
             {
-                Debug.Log($"[TowerManager] 골드가 모자람 ({CurrencyManager.Instance.Gold} / {BuildCost})");
+                GameNotice.Warn($"골드가 부족합니다. 필요 {card.Price:N0} / 보유 {CurrencyManager.Instance.Gold:N0}");
                 return false;
             }
-            if (!TryPickRandomTier1(out TowerDefinition definition))
+            if (!Database.TryGet(card.TowerId, out TowerDefinition definition))
             {
-                Debug.LogError("[TowerManager] 1티어 타워를 고르지 못함 (고른 문양이 비었거나 CSV에 없는 ID)");
+                Debug.LogError($"[TowerManager] 상점 카드의 {card.TowerId}번 타워가 CSV에 없음");
                 return false;
             }
 
             TowerController tower = m_factory.Create(definition, slotIndex, place);
             if (tower == null) return false;
 
-            CurrencyManager.Instance.TrySpendGold(BuildCost);
+            CurrencyManager.Instance.TrySpendGold(card.Price);
+            tower.State.PaidGold = card.Price;
             BuildCount++;
-            Debug.Log($"[TowerManager] {tower.name} → {(place == TowerPlace.Bench ? "대기석 " : "")}{slotIndex}번 칸, 골드 −{BuildCost}");
+            Shop.MarkSold(index);
+            Debug.Log($"[TowerManager] {tower.name} 구매 → {(place == TowerPlace.Bench ? "대기석 " : "")}{slotIndex}번 칸, 골드 −{card.Price}");
             TowerAdded?.Invoke(tower);
-            BuildCostChanged?.Invoke(BuildCost);
             RequestAutoMerge();
             return true;
+        }
+
+        public bool TryRerollShop()
+        {
+            if (!TurnManager.Instance.Current.CanPlayerAct)
+            {
+                GameNotice.Warn("상점은 플레이어 턴에 새로고칠 수 있습니다.");
+                return false;
+            }
+            if (!CurrencyManager.Instance.TrySpendGold(BalanceTables.ShopRerollCost))
+            {
+                GameNotice.Warn($"골드가 부족합니다. 필요 {BalanceTables.ShopRerollCost:N0} / 보유 {CurrencyManager.Instance.Gold:N0}");
+                return false;
+            }
+            Shop.SetLocked(false);
+            Shop.Roll();
+            return true;
+        }
+
+        public void ToggleShopLock() => Shop.SetLocked(!Shop.Locked);
+
+        public bool TryBuild()
+        {
+            int best = -1;
+            for (int i = 0; i < Shop.Cards.Count; i++)
+            {
+                TowerShop.Card card = Shop.Cards[i];
+                if (card.IsAvailable && card.Price <= CurrencyManager.Instance.Gold && (best < 0 || card.Price < Shop.Cards[best].Price)) best = i;
+            }
+            return best >= 0 && TryBuyCard(best);
         }
 
         public TowerController SpawnForDebug(TowerDefinition definition)
@@ -153,35 +193,11 @@ namespace SquareTD
             TowerController tower = m_factory.Create(definition, slotIndex, place);
             if (tower != null)
             {
+                tower.State.PaidGold = BalanceTables.GetShopPrice(definition.Tier);
                 TowerAdded?.Invoke(tower);
                 RequestAutoMerge();
             }
             return tower;
-        }
-
-        public static TowerColor GetGuaranteedColor(int buildIndex)
-        {
-            switch (buildIndex)
-            {
-                case 0: return TowerColor.Red;
-                case 1: return TowerColor.Blue;
-                default: return TowerColor.None;
-            }
-        }
-
-        private bool TryPickRandomTier1(out TowerDefinition definition)
-        {
-            definition = null;
-            if (m_selectedEmblems.Count == 0) return false;
-
-            TowerEmblem emblem = m_selectedEmblems[Random.Range(0, m_selectedEmblems.Count)];
-            TowerColor color = GetGuaranteedColor(BuildCount);
-            if (color == TowerColor.None)
-            {
-                TowerColor last = SimulationRunner.AttackOnlyBuilds ? TowerColor.Blue : TowerColor.Purple;
-                color = (TowerColor)Random.Range((int)TowerColor.Red, (int)last + 1);
-            }
-            return Database.TryGet(TowerId.Make(1, color, emblem), out definition);
         }
 
         public void Select(TowerController tower)
@@ -189,6 +205,7 @@ namespace SquareTD
             if (Selected == tower) return;
             Selected = tower;
             SelectionChanged?.Invoke(tower);
+            if (BoardManager.Instance != null && BoardManager.Instance.Zones.NeedsPlacement(tower)) GameNotice.ZoneRequired(tower);
         }
 
         public bool TrySell(TowerController tower)
@@ -202,15 +219,17 @@ namespace SquareTD
             if (IsMergingTower(tower))
             {
                 Debug.Log("[TowerManager] 합성 중인 타워는 팔 수 없음");
+                GameNotice.Warn("합성 중인 타워는 판매할 수 없습니다.");
                 return false;
             }
             if (TowerId.IsSynergy(tower.Definition.Id))
             {
                 Debug.Log("[TowerManager] 시너지 타워는 팔 수 없음");
+                GameNotice.Warn("시너지 타워는 판매할 수 없습니다.");
                 return false;
             }
 
-            int gold = GetSellGold(tower.Definition.Tier);
+            int gold = GetSellGold(tower);
             Debug.Log($"[TowerManager] {tower.name} 판매, 골드 +{gold}");
             RemoveTower(tower);
             CurrencyManager.Instance.AddGold(gold);
@@ -262,10 +281,13 @@ namespace SquareTD
         private void MergeInto(TowerController keep, List<TowerController> materials, TowerDefinition next)
         {
             bool wasSelected = Selected == keep || materials.Contains(Selected);
+            int paid = keep.State.PaidGold;
+            foreach (TowerController material in materials) paid += material.State.PaidGold;
             foreach (TowerController material in materials) RemoveTower(material);
 
             TowerController created = m_factory.Replace(keep, next, true);
             if (created == null) return;
+            created.State.PaidGold = paid;
             if (GameSession.Instance != null) GameSession.Instance.Results.Merge(keep, materials, created);
 
             Debug.Log($"[TowerManager] 자동 합성 → {created.name} ({created.SlotIndex}번 칸)");
@@ -281,6 +303,7 @@ namespace SquareTD
             if (ColorLevels.IsMax)
             {
                 Debug.Log("[TowerManager] 이미 최대 레벨");
+                GameNotice.Warn("이미 최대 플레이어 레벨입니다.");
                 return false;
             }
 
@@ -288,6 +311,7 @@ namespace SquareTD
             if (!CurrencyManager.Instance.TrySpendGold(cost))
             {
                 Debug.Log($"[TowerManager] 골드가 모자람 ({CurrencyManager.Instance.Gold} / {cost})");
+                GameNotice.Warn($"골드가 부족합니다. 필요 {cost:N0} / 보유 {CurrencyManager.Instance.Gold:N0}");
                 return false;
             }
 

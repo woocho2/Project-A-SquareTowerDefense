@@ -62,13 +62,13 @@ namespace SquareTD.Tests
 
 
         [Test]
-        public void 레벨5는_AbilityValue_x3()
+        public void 레벨10은_AbilityValue_x4_Mastery_2()
         {
-            TowerFinalStats stats = Calc(Def(1101), null, 5);
+            TowerFinalStats stats = Calc(Def(1101), null, 10);
 
-            Assert.AreEqual(6f, stats.AbilityValue, 0.0001f, "2 × 3");
-            Assert.AreEqual(1, stats.AttackCount, "컬러 강화는 AttackCount를 올리지 않음");
-            Assert.AreEqual(2, stats.Mastery, "레벨 5는 Mastery +1");
+            Assert.AreEqual(8f, stats.AbilityValue, 0.0001f, "2 × 4");
+            Assert.AreEqual(1, stats.AttackCount, "레벨은 AttackCount를 올리지 않음");
+            Assert.AreEqual(3, stats.Mastery, "레벨 10은 Mastery +2");
             Assert.AreEqual(5f, stats.SkillCount, 0.0001f, "공격 타워의 Duration은 컬러 강화로 안 바뀜");
         }
 
@@ -86,7 +86,7 @@ namespace SquareTD.Tests
             TowerFinalStats stats = Calc(Def(1101), null, 5);
 
             Assert.AreEqual(5, stats.ColorLevel);
-            Assert.AreEqual(6f, stats.AbilityValue, 0.0001f, "2 × 3");
+            Assert.AreEqual(3f, stats.AbilityValue, 0.0001f, "2 × 1.5");
         }
 
         [Test]

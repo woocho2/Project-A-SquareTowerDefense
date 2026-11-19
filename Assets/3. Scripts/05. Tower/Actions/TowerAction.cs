@@ -28,13 +28,19 @@ namespace SquareTD
             return CollectTargetsInSquare(m_grid.GetSpawnCell(tower.SlotIndex), range);
         }
 
+        protected bool HasTargetsInRange(TowerController tower, int range)
+        {
+            IReadOnlyList<int> indices = m_grid.GetPathIndicesInSquare(m_grid.GetSpawnCell(tower.SlotIndex), range);
+            for (int i = 0; i < indices.Count; i++)
+                if (m_occupancy.GetAt(indices[i]).Count > 0) return true;
+            return false;
+        }
+
         protected List<ITarget> CollectTargetsInSquare(Vector3Int center, int radius)
         {
             var targets = new List<ITarget>();
-            foreach (int index in m_grid.GetPathIndicesInSquare(center, radius))
-            {
-                targets.AddRange(m_occupancy.GetAt(index));
-            }
+            IReadOnlyList<int> indices = m_grid.GetPathIndicesInSquare(center, radius);
+            for (int i = 0; i < indices.Count; i++) targets.AddRange(m_occupancy.GetAt(indices[i]));
             return targets;
         }
 
