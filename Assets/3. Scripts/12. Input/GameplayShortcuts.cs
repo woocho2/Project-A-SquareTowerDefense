@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
-    // 개발자 도구와 독립적인 생성·경험치·판매·스킵 단축키
+    // 개발자 도구와 독립적인 리롤·경험치·판매·턴 종료·스킵 단축키
     [DisallowMultipleComponent]
     public sealed class GameplayShortcuts : MonoBehaviour
     {
@@ -20,13 +20,15 @@ namespace SquareTD
             else if (keys.fKey.wasPressedThisFrame) TryHandle(Key.F);
             else if (keys.eKey.wasPressedThisFrame) TryHandle(Key.E);
             else if (keys.spaceKey.wasPressedThisFrame) TryHandle(Key.Space);
+            else if (keys.rKey.wasPressedThisFrame) TryHandle(Key.R);
         }
         public bool TryHandle(Key key)
         {
             if (!CanReceiveInput()) return false;
             TurnManager turns = TurnManager.Instance;
-            if (key == Key.Space) return turns.SkipToNextPlayerTurn();
+            if (key == Key.R) return turns.SkipToNextPlayerTurn();
             if (!turns.Current.CanPlayerAct) return false;
+            if (key == Key.Space) { turns.OnClickEndTurn(); return !turns.Current.CanPlayerAct; }
             TowerManager towers = TowerManager.Instance;
             if (key == Key.D) return towers.TryRerollShop();
             if (key == Key.F) return towers.TryBuyXp();

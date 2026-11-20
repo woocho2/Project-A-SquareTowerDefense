@@ -3,7 +3,7 @@ namespace SquareTD
     // 타워 ID(티어·컬러·문양 네 자리)를 읽고 만드는 도구
     public static class TowerId
     {
-        public const int MaxTier = 4;
+        public const int MaxTier = 5;
         public const int SynergyTier = 6;
 
         public static int GetTier(int id)

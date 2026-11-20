@@ -14,17 +14,19 @@ namespace SquareTD.Tests
             Assert.AreEqual(0, row.AttackCount);
         }
 
-        [TestCase(2, 0, 1.5f, 0, 0, 0.95f, 1.25f)]
-        [TestCase(3, 0, 2.45f, 1, 0, 0.9f, 2.5f)]
-        [TestCase(4, -1, 6.15f, 1, 1, 0.8f, 6.25f)]
+        [TestCase(2, 0, 1.5f, 0, 0, 0.95f, 1f)]
+        [TestCase(3, -2, 4f, 1, 0, 0.9f, 1f)]
+        [TestCase(4, -3, 8f, 1, 0, 0.8f, 1.5f)]
+        [TestCase(5, -4, 16f, 2, 1, 0.5f, 3f)]
         public void 공격_티어_표(int tier, int action, float power, int attackCount, int mastery, float skillCount, float abilityValue)
         {
             AssertTierRow(BalanceTables.GetTierRow(tier, TowerColor.Red), action, power, attackCount, mastery, skillCount, abilityValue);
         }
 
-        [TestCase(2, 0, 1.5f, 0, 0, 0.95f, 2.5f)]
-        [TestCase(3, 0, 2f, 1, 0, 0.9f, 5f)]
-        [TestCase(4, -1, 4f, 1, 1, 0.8f, 10f)]
+        [TestCase(2, -1, 1.5f, 0, 0, 0.95f, 1f)]
+        [TestCase(3, -2, 2f, 1, 0, 0.9f, 1f)]
+        [TestCase(4, -3, 3f, 1, 0, 0.8f, 1.5f)]
+        [TestCase(5, -4, 4.5f, 2, 1, 0.5f, 3f)]
         public void 지원_티어_표(int tier, int action, float power, int attackCount, int mastery, float skillCount, float abilityValue)
         {
             AssertTierRow(BalanceTables.GetTierRow(tier, TowerColor.Yellow), action, power, attackCount, mastery, skillCount, abilityValue);
@@ -85,18 +87,19 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 다이아_10레벨_스킬은_브론즈_1레벨의_154배()
+        public void 다이아_10레벨_스킬은_브론즈_1레벨의_192배()
         {
             float bronze = BalanceTables.GetTierRow(1).Power * BalanceTables.GetTierRow(1).AbilityValue * BalanceTables.GetColorLevelRow(1, TowerColor.Red).AbilityValue;
-            float diamond = BalanceTables.GetTierRow(4).Power * BalanceTables.GetTierRow(4).AbilityValue * BalanceTables.GetColorLevelRow(10, TowerColor.Red).AbilityValue;
-            Assert.AreEqual(153.75f, diamond / bronze, 0.01f, "6.15 × 6.25 × 4");
+            float diamond = BalanceTables.GetTierRow(5).Power * BalanceTables.GetTierRow(5).AbilityValue * BalanceTables.GetColorLevelRow(10, TowerColor.Red).AbilityValue;
+            Assert.AreEqual(192f, diamond / bronze, 0.01f, "16 × 3 × 4");
         }
 
         [TestCase(1, 1.2f)]
-        [TestCase(2, 1.5f)]
-        [TestCase(3, 3f)]
-        [TestCase(4, 7.5f)]
-        public void 공격_타워_스킬은_그_티어_기본_공격의_1점2_1점5_3_7점5배(int tier, float ratio)
+        [TestCase(2, 1.2f)]
+        [TestCase(3, 1.2f)]
+        [TestCase(4, 1.8f)]
+        [TestCase(5, 3.6f)]
+        public void 공격_타워_스킬은_그_티어_기본_공격의_티어_AV_배율을_따름(int tier, float ratio)
         {
             Assert.AreEqual(ratio, 1.2f * BalanceTables.GetTierRow(tier, TowerColor.Red).AbilityValue, 0.0001f, "브론즈 CSV AbilityValue 1.2 × 티어 배율");
         }

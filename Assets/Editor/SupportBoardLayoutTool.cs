@@ -17,57 +17,6 @@ namespace SquareTD.EditorTools
         private const string Output = "ArtPreviews/SupportBoards_20261117";
         private const string Tiles = "Assets/4. Asset/1. BackGround/Tiles/BoardFrame/";
 
-        [MenuItem("Tools/SquareTD/패스 칸 아래 보드 바탕 검정색 적용")]
-        public static void SetPathBackgroundBlack()
-        {
-            if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Change path colors in Edit mode.");
-            Scene scene = SceneManager.GetActiveScene();
-            if (scene.path != "Assets/1. Scenes/3. Stage1.unity") throw new InvalidOperationException("Open 3. Stage1 before applying this layout.");
-            BoardManager board = scene.GetRootGameObjects().SelectMany(root => root.GetComponentsInChildren<BoardManager>(true)).Single();
-            GameSession session = scene.GetRootGameObjects().SelectMany(root => root.GetComponentsInChildren<GameSession>(true)).Single();
-            Tilemap path = board.PathTilemap;
-            Tilemap surface = Find(scene, "BoardTile");
-            StageDefinition stage = session.Stage;
-            if (path == null || stage == null) throw new InvalidOperationException("Path tilemap or stage is missing.");
-            string backup = "ArtBackups/PathBackground_" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            string stagePath = AssetDatabase.GetAssetPath(stage);
-            foreach (string assetPath in new[] { scene.path })
-            {
-                string copy = Path.Combine(backup, assetPath);
-                Directory.CreateDirectory(Path.GetDirectoryName(copy));
-                File.Copy(assetPath, copy);
-                File.Copy(assetPath + ".meta", copy + ".meta");
-            }
-            string pathTiles = Fingerprint(path);
-            string boardTiles = Fingerprint(surface);
-            var previousColors = Cells(surface).ToDictionary(cell => cell, surface.GetColor);
-            var painted = new HashSet<Vector3Int>();
-            Undo.RecordObject(surface, "Paint board background below path cells");
-            foreach (Vector3Int pathCell in Cells(path))
-            {
-                Vector3Int cell = surface.WorldToCell(path.GetCellCenterWorld(pathCell));
-                if (!surface.HasTile(cell)) throw new InvalidOperationException("No board surface below path cell " + pathCell);
-                surface.SetTileFlags(cell, surface.GetTileFlags(cell) & ~TileFlags.LockColor);
-                surface.SetColor(cell, Color.black);
-                painted.Add(cell);
-            }
-            if (painted.Any(cell => surface.GetColor(cell) != Color.black) ||
-                previousColors.Any(pair => !painted.Contains(pair.Key) && surface.GetColor(pair.Key) != pair.Value))
-                throw new InvalidOperationException("Board cell colors did not match the requested path mask.");
-            EditorUtility.SetDirty(surface);
-            EditorSceneManager.MarkSceneDirty(scene);
-            if (!EditorSceneManager.SaveScene(scene)) throw new InvalidOperationException("Scene save failed.");
-            if (pathTiles != Fingerprint(path) || boardTiles != Fingerprint(surface)) throw new InvalidOperationException("Board or path layout changed.");
-            Capture(scene, "path-background.png");
-            Write("path-background.json", JsonUtility.ToJson(new PathColorStatus
-            {
-                scene = scene.path, stage = stagePath, backup = backup, color = Color.black, tileArtworkColor = path.color,
-                pathCells = painted.Count, layoutUnchanged = true, sceneSaved = true, otherBoardColorsUnchanged = true
-            }, true));
-            SceneView.RepaintAll();
-            Debug.Log("[SupportBoards] Board surface below path cells is black. Path artwork restored; other board cells unchanged.");
-        }
-
         private static Tilemap Find(Scene scene, string name) => scene.GetRootGameObjects()
             .SelectMany(root => root.GetComponentsInChildren<Tilemap>(true)).Single(map => map.name == name);
 
@@ -249,13 +198,6 @@ namespace SquareTD.EditorTools
         }
 
         [Serializable] private class MapInfo { public string name; public int cells; public Vector3 position; }
-        [Serializable] private class PathColorStatus
-        {
-            public string scene, stage, backup;
-            public Color color, tileArtworkColor;
-            public int pathCells;
-            public bool layoutUnchanged, sceneSaved, otherBoardColorsUnchanged;
-        }
         [Serializable] private class Status
         {
             public string state, scene, backup;

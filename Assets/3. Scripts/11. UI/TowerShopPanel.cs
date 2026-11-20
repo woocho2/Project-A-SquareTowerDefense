@@ -1,172 +1,167 @@
+using System;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace SquareTD
 {
-    // 대기석 아래의 상점 카드 5장과 잠금 버튼 (카드를 누르면 구매)
+    // 프리팹에 배치된 상점 카드와 잠금 버튼을 게임 상태에 연결
     public sealed class TowerShopPanel : MonoBehaviour
     {
-        private const float CardWidth = 136f, CardHeight = 172f, Gap = 10f;
-        private static readonly Color s_cardColor = new Color32(23, 34, 58, 240);
-        private static readonly Color s_text = new Color32(237, 241, 249, 255);
-        private static readonly Color s_gold = new Color32(246, 205, 98, 255);
-        private static readonly Color s_short = new Color32(246, 123, 119, 255);
-        private static readonly Color[] s_tierColors =
-        {
-            Color.white, new Color32(205, 140, 82, 255), new Color32(200, 208, 220, 255), new Color32(246, 205, 98, 255), new Color32(132, 220, 255, 255),
-        };
-
+        [Serializable]
         private sealed class CardView
         {
             public Button Button;
-            public CanvasGroup Group;
-            public Image Band;
-            public Image Portrait;
-            public TextMeshProUGUI Role;
-            public TextMeshProUGUI Name;
-            public TextMeshProUGUI Price;
+            public Image Background, Band, PortraitFrame, Portrait, Emblem;
+            public TextMeshProUGUI Tier, Role, Name, Price, Footer, EmptyStatus;
         }
 
-        private readonly CardView[] m_cards = new CardView[BalanceTables.ShopSize];
-        private TMP_FontAsset m_font;
+        [SerializeField] private CardView[] m_cards = new CardView[BalanceTables.ShopSize];
+        [SerializeField] private Button m_lockButton;
+        [SerializeField] private TextMeshProUGUI[] m_tierChanceLabels = new TextMeshProUGUI[TowerId.MaxTier];
+
+        [Header("상점 상태 색")]
+        [SerializeField] private Color m_cardColor = new Color32(34, 46, 68, 255);
+        [SerializeField] private Color m_unavailableColor = new Color32(24, 33, 50, 255);
+        [SerializeField] private Color m_textColor = new Color32(247, 246, 235, 255);
+        [SerializeField] private Color m_mutedColor = new Color32(167, 184, 208, 255);
+        [SerializeField] private Color m_goldColor = new Color32(246, 210, 117, 255);
+        [SerializeField] private Color m_shortColor = new Color32(255, 156, 152, 255);
+        [SerializeField] private Color m_fullColor = new Color32(199, 183, 251, 255);
+        [SerializeField] private Color m_lockOffColor = new Color32(128, 128, 128, 255);
+        [SerializeField] private Color[] m_tierColors =
+        {
+            Color.clear, new Color32(215, 157, 110, 255), new Color32(203, 216, 234, 255),
+            new Color32(248, 207, 98, 255), new Color32(105, 228, 202, 255), new Color32(132, 220, 255, 255),
+        };
+
         private TowerCharacterCatalog m_catalog;
         private TowerShop m_shop;
-        private Button m_lock;
-        private TextMeshProUGUI m_lockText;
-
-        public static TowerShopPanel Create(Transform parent)
-        {
-            if (parent == null) return null;
-            TowerShopPanel existing = parent.GetComponentInChildren<TowerShopPanel>(true);
-            if (existing != null) return existing;
-            var root = new GameObject("TowerShopPanel", typeof(RectTransform));
-            root.layer = 5;
-            root.transform.SetParent(parent, false);
-            return root.AddComponent<TowerShopPanel>();
-        }
+        private CurrencyManager m_currency;
+        private ColorUpgradeState m_playerLevel;
+        private Image m_lockIcon;
+        private bool? m_shownLocked;
+        private bool m_hasSpace;
 
         private void Start()
         {
-            m_font = Resources.Load<TMP_FontAsset>("Fonts & Materials/NotoSansKR-Black SDF");
-            if (m_font == null) m_font = TMP_Settings.defaultFontAsset;
             m_catalog = Resources.Load<TowerCharacterCatalog>("TowerCharacterCatalog");
-            Build();
+            TowerManager towers = TowerManager.Instance;
+            m_currency = CurrencyManager.Instance;
+            m_shop = towers.Shop;
+            m_playerLevel = towers.ColorLevels;
 
-            m_shop = TowerManager.Instance != null ? TowerManager.Instance.Shop : null;
-            if (m_shop != null) m_shop.Changed += Refresh;
-            if (CurrencyManager.Instance != null) CurrencyManager.Instance.Changed += HandleGoldChanged;
+            for (int i = 0; i < m_cards.Length; i++)
+            {
+                int index = i;
+                m_cards[i].Button.onClick.AddListener(() => towers.TryBuyCard(index));
+            }
+            if (m_lockButton != null)
+            {
+                m_lockButton.onClick.AddListener(towers.ToggleShopLock);
+                foreach (Image image in m_lockButton.GetComponentsInChildren<Image>(true))
+                    if (image.gameObject != m_lockButton.gameObject) { m_lockIcon = image; break; }
+            }
+            else Debug.LogError("[TowerShopPanel] 잠금 버튼이 연결되지 않음 (UICanvas 프리팹의 m_lockButton)", this);
+
+            m_shop.Changed += Refresh;
+            m_currency.Changed += HandleGoldChanged;
+            m_playerLevel.LevelChanged += RefreshTierChances;
+            RefreshTierChances(m_playerLevel.Level);
             Refresh();
+        }
+
+        private void OnEnable()
+        {
+            if (m_shop != null) Refresh();
+        }
+
+        private void LateUpdate()
+        {
+            if (HasSpace() != m_hasSpace) Refresh();
         }
 
         private void OnDestroy()
         {
             if (m_shop != null) m_shop.Changed -= Refresh;
-            if (CurrencyManager.Instance != null) CurrencyManager.Instance.Changed -= HandleGoldChanged;
+            if (m_currency != null) m_currency.Changed -= HandleGoldChanged;
+            if (m_playerLevel != null) m_playerLevel.LevelChanged -= RefreshTierChances;
+            if (m_lockIcon != null) m_lockIcon.DOKill();
         }
 
         private void HandleGoldChanged(int gold) => Refresh();
 
-        private void Build()
+        private void RefreshTierChances(int level)
         {
-            var rect = (RectTransform)transform;
-            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0f);
-            float width = BalanceTables.ShopSize * CardWidth + (BalanceTables.ShopSize - 1) * Gap + Gap + 72f;
-            rect.sizeDelta = new Vector2(width, CardHeight);
-            rect.anchoredPosition = new Vector2(0f, 12f);
-
-            for (int i = 0; i < m_cards.Length; i++)
-            {
-                int index = i;
-                RectTransform card = Rect(rect, "Card_" + i, i * (CardWidth + Gap), 0f, CardWidth, CardHeight);
-                Image background = card.gameObject.AddComponent<Image>();
-                background.color = s_cardColor;
-                var view = new CardView
-                {
-                    Button = card.gameObject.AddComponent<Button>(),
-                    Group = card.gameObject.AddComponent<CanvasGroup>(),
-                };
-                view.Button.targetGraphic = background;
-                view.Button.onClick.AddListener(() => TowerManager.Instance?.TryBuyCard(index));
-                view.Band = Rect(card, "Tier", 0f, CardHeight - 6f, CardWidth, 6f).gameObject.AddComponent<Image>();
-                view.Band.raycastTarget = false;
-                view.Portrait = Rect(card, "Portrait", 8f, 54f, CardWidth - 16f, CardHeight - 66f).gameObject.AddComponent<Image>();
-                view.Portrait.preserveAspect = true;
-                view.Portrait.raycastTarget = false;
-                view.Role = Text(card, "Role", 6f, 30f, CardWidth - 12f, 22f, 16);
-                view.Name = Text(card, "Name", 6f, 52f, CardWidth - 12f, 18f, 11);
-                view.Name.color = new Color32(168, 187, 209, 255);
-                view.Price = Text(card, "Price", 6f, 4f, CardWidth - 12f, 24f, 18);
-                m_cards[i] = view;
-            }
-
-            RectTransform lockRect = Rect(rect, "Lock", BalanceTables.ShopSize * (CardWidth + Gap), 0f, 72f, CardHeight);
-            Image lockBackground = lockRect.gameObject.AddComponent<Image>();
-            lockBackground.color = s_cardColor;
-            m_lock = lockRect.gameObject.AddComponent<Button>();
-            m_lock.targetGraphic = lockBackground;
-            m_lock.onClick.AddListener(() => TowerManager.Instance?.ToggleShopLock());
-            m_lockText = Text(lockRect, "Label", 4f, 0f, 64f, CardHeight, 15);
+            for (int i = 0; i < m_tierChanceLabels.Length; i++)
+                if (m_tierChanceLabels[i] != null)
+                    m_tierChanceLabels[i].text = BalanceTables.GetTierChance(level, i + 1).ToString("0.#%");
         }
+
+        private static bool HasSpace() =>
+            BoardManager.Instance != null && TowerManager.TryGetBuildSlot(BoardManager.Instance, out _, out _);
 
         private void Refresh()
         {
-            if (m_shop == null || m_cards[0] == null) return;
-            int gold = CurrencyManager.Instance != null ? CurrencyManager.Instance.Gold : 0;
+            m_hasSpace = HasSpace();
+            int gold = m_currency.Gold;
+            TowerIcons icons = TowerIcons.Instance;
+
             for (int i = 0; i < m_cards.Length; i++)
             {
                 CardView view = m_cards[i];
-                TowerShop.Card card = i < m_shop.Cards.Count ? m_shop.Cards[i] : default;
+                TowerShop.Card card = m_shop.Cards[i];
                 bool available = card.IsAvailable;
-                view.Group.alpha = available ? 1f : 0.2f;
                 view.Button.interactable = available;
-                view.Portrait.enabled = available;
+                view.Tier.enabled = view.Price.enabled = view.Name.enabled = view.Role.enabled = available;
+                view.PortraitFrame.enabled = view.Footer.enabled = available;
+                view.EmptyStatus.enabled = !available;
+
                 if (!available)
                 {
-                    view.Role.text = view.Name.text = view.Price.text = "";
+                    view.Background.color = m_unavailableColor;
                     view.Band.color = Color.clear;
+                    view.Portrait.enabled = view.Emblem.enabled = false;
+                    view.EmptyStatus.text = card.Sold ? "구매 완료" : "빈 상품";
+                    view.EmptyStatus.color = m_mutedColor;
                     continue;
                 }
 
                 int tier = TowerId.GetTier(card.TowerId);
                 TowerColor color = TowerId.GetColor(card.TowerId);
                 TowerEmblem emblem = TowerId.GetEmblem(card.TowerId);
-                view.Band.color = s_tierColors[Mathf.Clamp(tier, 0, s_tierColors.Length - 1)];
+                bool affordable = gold >= card.Price;
+                view.Background.color = m_hasSpace && affordable ? m_cardColor : m_unavailableColor;
+                view.Band.color = view.Tier.color = m_tierColors[tier];
+                view.Tier.text = EmblemNames.GetTierName(tier);
+                view.Price.text = $"{card.Price:N0} G";
+                view.Price.color = affordable ? m_goldColor : m_shortColor;
+                view.Name.text = EmblemNames.GetEmblemName(emblem);
+                view.Role.text = EmblemNames.GetColorName(color);
+                view.Role.color = color == TowerColor.Purple ? m_fullColor : Color.Lerp(icons.GetColor(color), m_textColor, .35f);
+                view.Emblem.sprite = icons.GetEmblem(emblem);
+                view.Emblem.enabled = view.Emblem.sprite != null;
                 view.Portrait.sprite = m_catalog != null ? m_catalog.GetTowerCharacter((int)emblem, (int)color) : null;
                 view.Portrait.enabled = view.Portrait.sprite != null;
-                view.Role.text = $"{EmblemNames.GetColorName(color)} / {EmblemNames.GetEmblemName(emblem)}";
-                view.Name.text = $"{EmblemNames.GetTierName(tier)} {EmblemNames.GetConceptName(card.TowerId)}";
-                view.Price.text = $"{card.Price:N0}G";
-                view.Price.color = gold >= card.Price ? s_gold : s_short;
+                view.Portrait.color = affordable && m_hasSpace ? Color.white : new Color(1, 1, 1, .52f);
+                view.Footer.text = !m_hasSpace ? "배치할 자리 없음" : !affordable ? "골드 부족" : EmblemNames.GetConceptName(card.TowerId);
+                view.Footer.color = !m_hasSpace ? m_fullColor : !affordable ? m_shortColor : m_mutedColor;
             }
-            m_lockText.text = m_shop.Locked ? "잠김\n\n다음 턴에도\n유지" : "잠금";
-            m_lockText.color = m_shop.Locked ? s_gold : s_text;
+
+            RefreshLock();
         }
 
-        private static RectTransform Rect(Transform parent, string name, float x, float y, float width, float height)
+        private void RefreshLock()
         {
-            var go = new GameObject(name, typeof(RectTransform));
-            go.layer = 5;
-            go.transform.SetParent(parent, false);
-            var rect = (RectTransform)go.transform;
-            rect.anchorMin = rect.anchorMax = rect.pivot = Vector2.zero;
-            rect.anchoredPosition = new Vector2(x, y);
-            rect.sizeDelta = new Vector2(width, height);
-            return rect;
-        }
+            bool locked = m_shop.Locked;
+            if (m_lockIcon == null || m_shownLocked == locked) return;
 
-        private TextMeshProUGUI Text(Transform parent, string name, float x, float y, float width, float height, int size)
-        {
-            TextMeshProUGUI text = Rect(parent, name, x, y, width, height).gameObject.AddComponent<TextMeshProUGUI>();
-            text.font = m_font;
-            text.fontSize = size;
-            text.enableAutoSizing = true;
-            text.fontSizeMin = size - 4;
-            text.fontSizeMax = size;
-            text.alignment = TextAlignmentOptions.Center;
-            text.color = s_text;
-            text.raycastTarget = false;
-            return text;
+            Color color = locked ? m_goldColor : m_lockOffColor;
+            m_lockIcon.DOKill();
+            if (m_shownLocked == null) m_lockIcon.color = color;
+            else m_lockIcon.DOColor(color, .14f).SetUpdate(true);
+            m_shownLocked = locked;
         }
     }
 }

@@ -111,7 +111,7 @@ namespace SquareTD
         private void Build()
         {
             m_font = Resources.Load<TMP_FontAsset>("Fonts & Materials/NotoSansKR-Black SDF"); if (m_font == null) m_font = TMP_Settings.defaultFontAsset;
-            m_root = Rect(transform, "GlobalEffects", 16, -14, 232, 128);
+            m_root = Rect(transform, "GlobalEffects", 16, -133, 232, 128);
             Image background = m_root.gameObject.AddComponent<Image>(); background.color = new Color32(19, 29, 49, 242); background.raycastTarget = false;
             Text(m_root, "Title", 10, -4, 112, 24, 14).text = "전장 효과";
             TextMeshProUGUI help = Text(m_root, "Help", 124, -6, 96, 20, 10); help.text = "휠 / 클릭으로 확인"; help.color = new Color32(157, 177, 203, 255); help.alignment = TextAlignmentOptions.MidlineRight;

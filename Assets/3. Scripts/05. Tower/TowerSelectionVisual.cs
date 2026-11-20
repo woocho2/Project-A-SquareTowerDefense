@@ -12,7 +12,6 @@ namespace SquareTD
         private static readonly int s_edgeId = Shader.PropertyToID("_Edge");
         private static Material s_glowMaterial;
         private static readonly int s_cellsId = Shader.PropertyToID("_Cells");
-        private static readonly int s_boardBoundsId = Shader.PropertyToID("_BoardBounds");
 
         [SerializeField] private SpriteRenderer m_highlight;
         [SerializeField] private SpriteRenderer m_range;
@@ -34,13 +33,11 @@ namespace SquareTD
         private float m_rangeAlpha;
         private SpriteRenderer m_placementWarning;
         private float m_nextPlacementCheck;
-        private Vector4 m_boardBounds;
 
         private void Awake()
         {
             m_tower = GetComponent<TowerController>();
             m_block = new MaterialPropertyBlock();
-            m_boardBounds = GetBoardBounds();
 
             if (m_highlight != null)
             {
@@ -163,7 +160,7 @@ namespace SquareTD
             Vector3 parentScale = m_range.transform.parent.lossyScale;
             Vector3 size = m_range.sprite.bounds.size;
             m_range.transform.localScale = new Vector3(side / Mathf.Max(.0001f, size.x * Mathf.Abs(parentScale.x)), side / Mathf.Max(.0001f, size.y * Mathf.Abs(parentScale.y)), 1);
-            m_range.GetPropertyBlock(m_block); m_block.SetFloat(s_cellsId, range * 2 + 1); m_block.SetVector(s_boardBoundsId, m_boardBounds); m_range.SetPropertyBlock(m_block);
+            m_range.GetPropertyBlock(m_block); m_block.SetFloat(s_cellsId, range * 2 + 1); m_range.SetPropertyBlock(m_block);
         }
 
         private void RefreshPlacementWarning(bool suppressed)
@@ -186,20 +183,6 @@ namespace SquareTD
             float side = EffectSpace.CellWorldSize() * 1.43f;
             Vector3 parentScale = transform.lossyScale;
             m_placementWarning.transform.localScale = new Vector3(side / Mathf.Max(.0001f, Mathf.Abs(parentScale.x)), side / Mathf.Max(.0001f, Mathf.Abs(parentScale.y)), 1);
-        }
-
-        private static Vector4 GetBoardBounds()
-        {
-            BoardManager board = BoardManager.Instance;
-            if (board == null || board.Grid == null) return new Vector4(-10000, -10000, 10000, 10000);
-            Vector2 min = Vector2.one * float.MaxValue, max = Vector2.one * float.MinValue;
-            for (int i = 0; i < board.Grid.PathCount + board.Grid.SpawnCount; i++)
-            {
-                Vector3Int cell = i < board.Grid.PathCount ? board.Grid.GetPathCell(i) : board.Grid.GetSpawnCell(i - board.Grid.PathCount);
-                Vector2 point = board.GetWorldPosition(cell); min = Vector2.Min(min, point); max = Vector2.Max(max, point);
-            }
-            float half = EffectSpace.CellWorldSize() * .5f;
-            return new Vector4(min.x - half, min.y - half, max.x + half, max.y + half);
         }
 
         private void SetRangeAlpha(float alpha)

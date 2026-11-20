@@ -8,12 +8,22 @@ namespace SquareTD
     {
         public const string LoadingSceneName = "LoadingScene";
         public static string PendingScene { get; private set; }
+        private static Object s_keptCatalog;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Reset()
         {
             PendingScene = null;
+            s_keptCatalog = null;
             if (!Debug.isDebugBuild) Debug.unityLogger.filterLogType = LogType.Warning;
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void KeepLoadingScreenAssets()
+        {
+            if (Application.isBatchMode) return;
+            ResourceRequest request = Resources.LoadAsync<TowerCharacterCatalog>("TowerCharacterCatalog");
+            request.completed += _ => s_keptCatalog = request.asset;
         }
 
         public static void FinishLoading() => PendingScene = null;

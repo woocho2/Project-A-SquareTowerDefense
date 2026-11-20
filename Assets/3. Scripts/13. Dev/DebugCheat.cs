@@ -170,42 +170,6 @@ namespace SquareTD
                 Debug.Log($"[DebugCheat] {tower.name} ({EmblemNames.GetTierName(definition.Tier)}) → {tower.SlotIndex}번 칸");
         }
 
-        private TowerEmblem m_spawnGroupFirst;
-        private int m_spawnNext;
-
-        private void SpawnAllTier1(TowerEmblem first, TowerEmblem last)
-        {
-            if (m_spawnGroupFirst != first)
-            {
-                m_spawnGroupFirst = first;
-                m_spawnNext = 0;
-            }
-
-            int total = (last - first + 1) * 4;
-            int start = m_spawnNext;
-            for (; m_spawnNext < total; m_spawnNext++)
-            {
-                TowerEmblem emblem = first + m_spawnNext / 4;
-                TowerColor color = TowerColor.Red + m_spawnNext % 4;
-                if (!TowerManager.Instance.Database.TryGet(TowerId.Make(1, color, emblem), out TowerDefinition definition)) continue;
-                if (TowerManager.Instance.SpawnForDebug(definition) == null)
-                {
-                    Debug.LogWarning($"[DebugCheat] 1티어 {first} ~ {last}: {start + 1} ~ {m_spawnNext}번째 세움 / {total}종 — 빈 칸이 모자람. 0으로 판 뒤 다시 누르면 이어서");
-                    return;
-                }
-            }
-            Debug.Log($"[DebugCheat] 1티어 {first} ~ {last}: {start + 1} ~ {total}번째 세움 / {total}종 — 끝. 다시 누르면 처음부터");
-            m_spawnNext = 0;
-        }
-
-        private static void SellAll()
-        {
-            int sold = 0;
-            foreach (TowerController tower in BoardManager.Instance.GetBoardAndBenchTowers())
-                if (TowerManager.Instance.TrySell(tower)) sold++;
-            Debug.Log($"[DebugCheat] 타워 {sold}개 판매");
-        }
-
         private void Update()
         {
             Keyboard keyboard = Keyboard.current;
@@ -234,7 +198,7 @@ namespace SquareTD
                 TurnManager.Instance.OnClickEndTurn();
             }
 
-            if (keyboard.rKey.wasPressedThisFrame)
+            if (keyboard.f9Key.wasPressedThisFrame)
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
@@ -249,9 +213,6 @@ namespace SquareTD
             if (keyboard.digit1Key.wasPressedThisFrame || keyboard.numpad1Key.wasPressedThisFrame) SpawnDummy();
             if (keyboard.zKey.wasPressedThisFrame) StartPlaceZone();
             if (keyboard.digit5Key.wasPressedThisFrame || keyboard.numpad5Key.wasPressedThisFrame) NextGameSpeed();
-            if (keyboard.digit8Key.wasPressedThisFrame) SpawnAllTier1(TowerEmblem.Sword, TowerEmblem.Hammer);
-            if (keyboard.digit9Key.wasPressedThisFrame) SpawnAllTier1(TowerEmblem.Fire, TowerEmblem.Darkness);
-            if (keyboard.digit0Key.wasPressedThisFrame) SellAll();
         }
 
         private bool m_showKeys = true;
@@ -259,16 +220,13 @@ namespace SquareTD
         private static readonly string[] s_keyLines =
         {
             "F12 키 목록 숨기기   T 테스트 모드 켜고 끄기",
-            "Space 스킵   A 자동 진행   R 다시 시작",
+            "Space 턴 종료   R 스킵   A 자동 진행   F9 다시 시작",
             "5 배속 1 → 2 → 3 → 1",
-            "D 생성   F 경험치 투자",
+            "D 리롤   F 경험치 구매",
             "1 체력 5천만 허수아비 소환 (피해 확인용)",
             "── 고른 타워 ──",
             "E 판매   C 공격 칸 고르기   P 우선순위 다음",
             "Z 존 자리 고르기 (버프·디버프 타워)",
-            "── 타워 세우기 ──",
-            "8 무기 1티어 24종   9 원소 1티어 32종   0 전부 판매",
-            "  (칸이 모자라면 0으로 판 뒤 같은 키 → 이어서)",
             "Tools > Click Debug 창",
         };
 
@@ -301,7 +259,7 @@ $"F2 골드 +{TestGold:N0}   F3 플레이어 레벨 +1",
                     $"F4 공격 연출: 행동 {TowerStatCalculator.ShowcaseAction} · 사거리 {TowerStatCalculator.ShowcaseRange} [{(TowerStatCalculator.ShowcaseOverride ? "켬" : "끔")}]",
                     $"F5 모든 타워 스킬 카운트 → 최대 −{SkillCountGap:0}",
                     "F6 시너지 스택 가득 (테스트 모드에서는 시너지 스킬 자동 사용)",
-                    "F7 승리 화면   F8 패배 화면 (한 판에 한 번, R로 다시 시작)",
+                    "F7 승리 화면   F8 패배 화면 (한 판에 한 번, F9로 다시 시작)",
                 };
                 DrawLines(new Rect(8f, y, 330f, lineHeight * lines.Length + 10f), lines, lineHeight);
             }

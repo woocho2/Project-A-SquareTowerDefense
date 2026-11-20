@@ -1,0 +1,64 @@
+레벨 1의 카드 5장 모두 브론즈
+shop-1920.png 상점과 btn_createTower 비겹침
+shop-1920.png 상점과 btn_buyXp 비겹침
+shop-1920.png 상점과 btn_turnEnd 비겹침
+shop-1920.png 대기석(170) 아래에 상점(150)
+shop-1920.png 화면 안에 카드 5장·잠금과 문구
+shop-1728.png 상점과 btn_createTower 비겹침
+shop-1728.png 상점과 btn_buyXp 비겹침
+shop-1728.png 상점과 btn_turnEnd 비겹침
+shop-1728.png 대기석(170) 아래에 상점(150)
+shop-1728.png 화면 안에 카드 5장·잠금과 문구
+포인터 클릭: Card_0
+판의 첫 칸에 배치하고 산 자리를 구매 완료로 표시
+포인터 클릭: Card_1
+두 번째 구매 후 나머지 카드에 골드 부족 표시
+포인터 클릭: Card_2
+골드 부족 카드 클릭은 구매 없이 경고
+shop-sold-and-gold.png 상점과 btn_createTower 비겹침
+shop-sold-and-gold.png 상점과 btn_buyXp 비겹침
+shop-sold-and-gold.png 상점과 btn_turnEnd 비겹침
+shop-sold-and-gold.png 경고와 턴 종료 비겹침
+shop-sold-and-gold.png 대기석(170) 아래에 상점(150)
+shop-sold-and-gold.png 화면 안에 카드 5장·잠금과 문구
+포인터 클릭: Lock
+잠금 ON 표시
+리롤 단축키 D와 실제 골드 비용 표시
+포인터 클릭: ShopReroll
+리롤 시 비용 차감·새 카드·잠금 해제
+D 단축키가 리롤로 연결됨
+포인터 클릭: Lock
+shop-locked.png 상점과 btn_createTower 비겹침
+shop-locked.png 상점과 btn_buyXp 비겹침
+shop-locked.png 상점과 btn_turnEnd 비겹침
+shop-locked.png 경고와 턴 종료 비겹침
+shop-locked.png 대기석(170) 아래에 상점(150)
+shop-locked.png 화면 안에 카드 5장·잠금과 문구
+포인터 클릭: Group_TurnEnd
+턴 종료 후 다음 플레이어 턴에도 잠긴 카드 유지
+포인터 클릭: Lock
+포인터 클릭: BuyExperience
+포인터 클릭: BuyExperience
+포인터 클릭: BuyExperience
+실제 EXP 버튼으로 4레벨로 상승
+포인터 클릭: ShopReroll
+레벨 4 리롤에서 실버 이상 등장
+shop-level4.png 상점과 btn_createTower 비겹침
+shop-level4.png 상점과 btn_buyXp 비겹침
+shop-level4.png 상점과 btn_turnEnd 비겹침
+shop-level4.png 대기석(170) 아래에 상점(150)
+shop-level4.png 화면 안에 카드 5장·잠금과 문구
+구매 전 판이 가득 차고 대기석이 비어 있음
+포인터 클릭: Card_0
+판이 차면 대기석 첫 칸에 실제 구매 배치
+판과 대기석이 모두 차면 자리 없음 표시
+포인터 클릭: Card_1
+자리 없는 카드 클릭은 구매 없이 경고
+shop-full.png 상점과 btn_createTower 비겹침
+shop-full.png 상점과 btn_buyXp 비겹침
+shop-full.png 상점과 btn_turnEnd 비겹침
+shop-full.png 경고와 턴 종료 비겹침
+shop-full.png 대기석(170) 아래에 상점(150)
+shop-full.png 화면 안에 카드 5장·잠금과 문구
+판매로 자리가 생기면 카드 즉시 갱신
+Errors=0

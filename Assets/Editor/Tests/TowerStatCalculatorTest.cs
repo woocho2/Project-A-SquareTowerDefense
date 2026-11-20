@@ -33,15 +33,15 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 다이아는_Power_x6_15_Action_마이너스1_Mastery_2()
+        public void 다이아는_Power_x16_Action_최소1_Mastery_2()
         {
-            TowerFinalStats stats = Calc(Def(4101), Def(1101), 1);
+            TowerFinalStats stats = Calc(Def(5101), Def(1101), 1);
 
-            Assert.AreEqual(61.5f, stats.Power, 0.0001f);
-            Assert.AreEqual(2, stats.Action, "3 − 1");
+            Assert.AreEqual(160f, stats.Power, 0.0001f);
+            Assert.AreEqual(1, stats.Action, "3 − 4, 최소 1");
             Assert.AreEqual(2, stats.Mastery);
-            Assert.AreEqual(2, stats.AttackCount);
-            Assert.AreEqual(4f, stats.SkillCount, 0.0001f, "5 × 0.8 = 4. SkillCount는 소수로 둠 (20번 10장)");
+            Assert.AreEqual(3, stats.AttackCount);
+            Assert.AreEqual(2.5f, stats.SkillCount, 0.0001f, "5 × 0.5 (20번 10장)");
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace SquareTD.Tests
         {
             TowerFinalStats stats = Calc(Def(4101, power: 999f), Def(1101), 1);
 
-            Assert.AreEqual(61.5f, stats.Power, 0.0001f, "4티어(다이아) CSV의 Power가 아니라 1티어 10 × 6.15");
+            Assert.AreEqual(80f, stats.Power, 0.0001f, "브론즈 10 × 미스릴 배율 8");
         }
 
         [Test]
@@ -104,7 +104,7 @@ namespace SquareTD.Tests
         {
             TowerFinalStats stats = Calc(Def(4101), Def(1101), 1, StatModifier.Percent("버프", StatType.Power, 0.5f));
 
-            Assert.AreEqual(92.25f, stats.Power, 0.0001f, "61.5 × 1.5");
+            Assert.AreEqual(120f, stats.Power, 0.0001f, "80 × 1.5");
         }
 
         [Test]
@@ -150,12 +150,12 @@ namespace SquareTD.Tests
         {
             TowerFinalStats stats = Calc(Def(4101), Def(1101), 1, StatModifier.Percent("블레싱", StatType.Power, 0.5f));
 
-            Assert.AreEqual(61.5f, stats.GetBase(StatType.Power), 0.0001f);
-            Assert.AreEqual(92.25f, stats.Power, 0.0001f);
+            Assert.AreEqual(80f, stats.GetBase(StatType.Power), 0.0001f);
+            Assert.AreEqual(120f, stats.Power, 0.0001f);
             Assert.AreEqual(1, stats.Sources.Count);
             Assert.AreEqual("블레싱", stats.Sources[0].Source);
             Assert.AreEqual(StatType.Power, stats.Sources[0].Stat);
-            Assert.AreEqual(30.75f, stats.Sources[0].Amount, 0.0001f, "위력 92.25 = 기본 61.5 + 블레싱 30.75");
+            Assert.AreEqual(40f, stats.Sources[0].Amount, 0.0001f, "위력 120 = 기본 80 + 블레싱 40");
         }
 
         [Test]

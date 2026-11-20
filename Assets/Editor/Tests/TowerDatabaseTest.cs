@@ -28,19 +28,19 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 일티어_한_줄로_2에서_4티어가_생김()
+        public void 일티어_한_줄로_2에서_5티어가_생김()
         {
             TowerDatabase database = Load(Header, "1101,히어로,1.4,1,3,1,0.05,0.7,1,5,1.5,5,Boss");
-            Assert.AreEqual(4, database.Count);
+            Assert.AreEqual(5, database.Count);
 
-            TowerDefinition diamond = database.Get(4101);
-            Assert.AreEqual(4, diamond.Tier);
+            TowerDefinition diamond = database.Get(5101);
+            Assert.AreEqual(5, diamond.Tier);
             Assert.AreEqual(TowerColor.Red, diamond.Color);
             Assert.AreEqual(TowerEmblem.Sword, diamond.Emblem);
             Assert.AreEqual(1.4f, diamond.Power, 0.0001f);
             Assert.AreEqual(3, diamond.Action);
             Assert.AreEqual(TargetPriority.Boss, diamond.TargetPriority);
-            Assert.IsFalse(database.TryGet(5101, out _));
+            Assert.IsFalse(database.TryGet(6101, out _));
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace SquareTD.Tests
             TowerDatabase database = Load(Header,
                 "1101,히어로,1.4,1,3,1,0.05,0.7,1,5,1.5,5,Closest",
                 "3101,히어로,9.9,1,3,1,0.05,0.7,1,5,1.5,5,Closest");
-            Assert.AreEqual(4, database.Count);
+            Assert.AreEqual(5, database.Count);
             Assert.AreEqual(9.9f, database.Get(3101).Power, 0.0001f);
             Assert.AreEqual(1.4f, database.Get(4101).Power, 0.0001f);
         }
@@ -119,7 +119,7 @@ namespace SquareTD.Tests
                 "1101,히어로,1.4,1,3,1,0.05,0.7,1,5,1.5,5,Closest",
                 "1102,바이킹,abc,1,5,1,0.03,1.05,1,5,1.5,5,Closest",
                 "1103,레인저,0.98,4,3,1,0.055,0.49,1,5,1.5,5,Closest");
-            Assert.AreEqual(8, database.Count, "읽은 1티어 2줄 × 티어 4개");
+            Assert.AreEqual(2 * TowerId.MaxTier, database.Count, "읽은 1티어 2줄을 확장");
             Assert.IsFalse(database.TryGet(1102, out _));
             Assert.IsFalse(database.TryGet(2102, out _));
         }
@@ -147,7 +147,7 @@ namespace SquareTD.Tests
             TowerDatabase database = Load(Header,
                 "1101,히어로,1.4,1,3,1,0.05,0.7,1,5,1.5,5,Closest",
                 "1101,히어로,9.9,1,3,1,0.05,0.7,1,5,1.5,5,Closest");
-            Assert.AreEqual(4, database.Count, "1티어 1줄 × 티어 4개");
+            Assert.AreEqual(TowerId.MaxTier, database.Count, "처음 읽은 1티어 1줄만 확장");
             Assert.AreEqual(1.4f, database.Get(1101).Power, 0.0001f);
         }
 
@@ -170,7 +170,7 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 진짜_TowerData_csv_224종()
+        public void 진짜_TowerData_csv_280종()
         {
             var csv = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/Resources/TowerData.csv");
             Assert.IsNotNull(csv, "Assets/Resources/TowerData.csv가 없음");
@@ -178,11 +178,11 @@ namespace SquareTD.Tests
             var database = new TowerDatabase();
             database.Load(csv.text);
 
-            Assert.AreEqual(224, database.Count);
+            Assert.AreEqual(280, database.Count);
             Assert.AreEqual(TowerEmblem.Fire, database.Get(2107).Emblem);
             Assert.AreEqual(35.7f, database.Get(1101).Power, 0.0001f);
             Assert.AreEqual(35.7f, database.Get(4101).Power, 0.0001f);
-            for (int tier = 1; tier <= 4; tier++)
+            for (int tier = 1; tier <= TowerId.MaxTier; tier++)
             {
                 for (int color = 1; color <= 4; color++)
                 {
@@ -216,9 +216,10 @@ namespace SquareTD.Tests
 
         [TestCase(1204, 1, 3, 3, 30f)]
         [TestCase(2201, 1, 4, 3, 21.375f)]
-        [TestCase(3102, 1, 6, 2, 4.5f)]
-        [TestCase(3102, 4, 6, 2, 4.5f)]
-        [TestCase(4204, 5, 2, 4, 24f)]
+        [TestCase(3102, 1, 4, 2, 4.5f)]
+        [TestCase(3102, 4, 4, 2, 4.5f)]
+        [TestCase(4204, 5, 1, 4, 24f)]
+        [TestCase(5204, 5, 1, 5, 15f)]
         public void 공격타워_실제계산은_기본값에_성장을_한번_적용(int id, int level, int action, int count, float duration)
         {
             var database = new TowerDatabase();

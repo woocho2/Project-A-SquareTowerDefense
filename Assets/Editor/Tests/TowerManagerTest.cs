@@ -9,7 +9,8 @@ namespace SquareTD.Tests
         [TestCase(2, 600)]
         [TestCase(3, 1500)]
         [TestCase(4, 4000)]
-        public void 상점_가격은_티어마다_250_600_1500_4000(int tier, int price)
+        [TestCase(5, 10000)]
+        public void 상점_가격은_티어마다_다름(int tier, int price)
         {
             Assert.AreEqual(price, BalanceTables.GetShopPrice(tier));
         }
@@ -27,7 +28,7 @@ namespace SquareTD.Tests
         public void 표_밖의_티어는_0()
         {
             Assert.AreEqual(0, TowerManager.GetSellGold(0));
-            Assert.AreEqual(0, TowerManager.GetSellGold(5));
+            Assert.AreEqual(0, TowerManager.GetSellGold(6));
         }
 
         [Test]
@@ -43,18 +44,20 @@ namespace SquareTD.Tests
             for (int level = 1; level <= BalanceTables.MaxColorLevel; level++)
             {
                 float sum = 0f;
-                for (int tier = 1; tier <= 4; tier++) sum += BalanceTables.GetTierChance(level, tier);
+                for (int tier = 1; tier <= TowerId.MaxTier; tier++) sum += BalanceTables.GetTierChance(level, tier);
                 Assert.AreEqual(1f, sum, 0.0001f, $"레벨 {level}");
             }
         }
 
         [TestCase(1, 0.99f, 1)]
-        [TestCase(2, 0.94f, 1)]
-        [TestCase(2, 0.96f, 2)]
-        [TestCase(6, 0.9999f, 4)]
-        [TestCase(10, 0.1f, 2)]
-        [TestCase(10, 0.5f, 3)]
+        [TestCase(2, 0.79f, 1)]
+        [TestCase(2, 0.81f, 2)]
+        [TestCase(6, 0.98f, 4)]
+        [TestCase(8, 0.994f, 4)]
+        [TestCase(8, 0.996f, 5)]
+        [TestCase(10, 0.1f, 3)]
         [TestCase(10, 0.7f, 4)]
+        [TestCase(10, 0.95f, 5)]
         public void 레벨_확률로_티어를_고름(int level, float roll, int tier)
         {
             Assert.AreEqual(tier, BalanceTables.RollTier(level, roll));

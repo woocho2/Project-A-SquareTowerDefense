@@ -179,6 +179,9 @@ namespace SquareTD
                 ProbeEnemyAction = BatchInt(args, "-simEnemyAction", 0),
                 ProbeSplashMastery = BatchInt(args, "-simSplashMastery", 0),
                 ProbeRange = BatchInt(args, "-simRange", 0),
+                ProbeIds = BatchIds(args, "-simProbeIds"),
+                ProbeOverkill = Array.IndexOf(args, "-simOverkill") >= 0,
+                ProbeDummy = Array.IndexOf(args, "-simDummy") >= 0,
                 SearchStrategies = search,
                 SearchSmoke = searchSmoke,
                 SearchCandidates = BatchInt(args, "-simCandidates", searchSmoke ? 2 : 500),
@@ -224,6 +227,21 @@ namespace SquareTD
                 ? $"[Simulation] 덱 화력 테스트: 노말4/하드6, 각 {settings.Runs}판. 결과: {SimulationSettings.Folder}"
                 : $"[Simulation] 배치 시작: A {settings.MergeCountA}기 / B {settings.MergeCountB}기, 각 {settings.Runs}판. 결과: {SimulationSettings.Folder}");
             EditorApplication.isPlaying = true;
+        }
+
+        private static int[] BatchIds(string[] args, string option)
+        {
+            int index = Array.IndexOf(args, option);
+            if (index < 0) return new int[0];
+            if (index + 1 >= args.Length) throw new ArgumentException(option + " 뒤에 타워 ID 목록(쉼표) 또는 attack을 입력해 주세요.");
+            if (args[index + 1] == "attack")
+            {
+                var all = new System.Collections.Generic.List<int>();
+                foreach (TowerColor color in new[] { TowerColor.Red, TowerColor.Blue })
+                    for (int emblem = (int)TowerEmblem.Sword; emblem <= (int)TowerEmblem.Darkness; emblem++) all.Add(TowerId.Make(1, color, (TowerEmblem)emblem));
+                return all.ToArray();
+            }
+            return Array.ConvertAll(args[index + 1].Split(','), part => int.Parse(part.Trim(), CultureInfo.InvariantCulture));
         }
 
         private static int BatchInt(string[] args, string option, int fallback)

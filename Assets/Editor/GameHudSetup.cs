@@ -46,9 +46,7 @@ namespace SquareTD.EditorTools
             {
                 GameInfoPanel info = root.GetComponentInChildren<GameInfoPanel>(true);
                 PlayerTurnPanel actions = root.GetComponentInChildren<PlayerTurnPanel>(true);
-                Image oldSymbol = actions.GetComponentsInChildren<Image>(true).FirstOrDefault(image => image.name == "Img_CreateTower_Symbol" || image.name == "TowerIcon");
-                Sprite castle = oldSymbol != null ? oldSymbol.sprite : null;
-                BuildInfo(info); BuildActions(actions, castle);
+                BuildInfo(info); BuildActions(actions);
                 ControlsEffectsSetup.Style(root);
                 PrefabUtility.SaveAsPrefabAsset(root, Prefab);
             }
@@ -136,7 +134,7 @@ namespace SquareTD.EditorTools
             Set(so, "txt_playerLevel", level); Set(so, "txt_playerXp", xp); Set(so, "img_playerXpFill", xpFill); Set(so, "txt_bossTurns", boss); Set(so, "txt_currentGameSpeed", speedText);
             so.ApplyModifiedPropertiesWithoutUndo();
         }
-        private static void BuildActions(PlayerTurnPanel actions, Sprite castle)
+        private static void BuildActions(PlayerTurnPanel actions)
         {
             var so = new SerializedObject(actions);
             Button create = (Button)so.FindProperty("btn_createTower").objectReferenceValue, end = (Button)so.FindProperty("btn_turnEnd").objectReferenceValue;
@@ -144,15 +142,15 @@ namespace SquareTD.EditorTools
             if (endLabel != null) { endLabel.text = "턴 종료"; endLabel.fontSize = 24; }
             Transform keep = actions.transform.Cast<Transform>().First(child => end.transform == child || end.transform.IsChildOf(child));
             create.transform.SetParent(actions.transform, false);
-            foreach (Transform child in actions.transform.Cast<Transform>().ToArray()) if (child != keep && child != create.transform) Object.DestroyImmediate(child.gameObject);
+            foreach (Transform child in actions.transform.Cast<Transform>().ToArray())
+                if (child != keep && child != create.transform && child.GetComponent<TowerShopPanel>() == null)
+                    Object.DestroyImmediate(child.gameObject);
             Stretch((RectTransform)actions.transform); actions.GetComponent<Image>().raycastTarget = false;
             StyleButton(create, 220, 124); Bottom((RectTransform)create.transform, false);
-            Image symbol = Box(create.transform, "TowerIcon", Gold, 16, 16, 36, 36); symbol.sprite = castle; symbol.type = Image.Type.Simple; symbol.preserveAspect = true;
-            if (castle == null) { symbol.enabled = false; Text(create.transform, "Plus", "+", 31, Gold, 16, 14, 36, 40).alignment = TextAlignmentOptions.Center; }
-            Text(create.transform, "Label", "타워 생성", 23, Paper, 64, 17, 140, 36);
+            Text(create.transform, "Label", "리롤", 23, Paper, 64, 17, 140, 36);
             Text(create.transform, "GoldLabel", "골드", 15, Muted, 16, 63, 42, 29);
-            TextMeshProUGUI buildCost = Text(create.transform, "Cost", TowerManager.FixedBuildCost.ToString(), 26, Gold, 64, 58, 140, 36);
-            Text(create.transform, "Hint", "새로운 기물을 소환합니다", 13, Muted, 16, 99, 188, 20);
+            TextMeshProUGUI buildCost = Text(create.transform, "Cost", BalanceTables.ShopRerollCost.ToString(), 26, Gold, 64, 58, 140, 36);
+            Text(create.transform, "Hint", $"새 카드 {BalanceTables.ShopSize}장", 13, Muted, 16, 99, 188, 20);
             var buyRoot = new GameObject("BuyExperience", typeof(RectTransform), typeof(Image), typeof(Button)); buyRoot.layer = 5; buyRoot.transform.SetParent(actions.transform, false);
             Button buy = buyRoot.GetComponent<Button>(); StyleButton(buy, 220, 124); Bottom((RectTransform)buy.transform, true);
             Text(buy.transform, "Label", "경험치 투자", 20, Paper, 16, 17, 136, 34);

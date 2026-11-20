@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55ee8ee1c6084bc7ad21b4234ff3226c, type: 3}
+  m_Name: TowerIcons
+  m_EditorClassIdentifier: Assembly-CSharp::SquareTD.TowerIcons
+  m_emblems:
+  - {fileID: 1001, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1005, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1002, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1004, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1003, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1006, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1007, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1014, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1011, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1010, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1008, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1009, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1012, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  - {fileID: 1013, guid: 7e3f1605aca04ab5b6e525a542b6b7b3, type: 3}
+  m_tiers:
+  - {fileID: 21300001, guid: 60fdae6670a86c8b4a9d4e44e2fe3af6, type: 3}
+  - {fileID: 21300002, guid: 60fdae6670a86c8b4a9d4e44e2fe3af6, type: 3}
+  - {fileID: 21300003, guid: 60fdae6670a86c8b4a9d4e44e2fe3af6, type: 3}
+  - {fileID: 21300005, guid: 60fdae6670a86c8b4a9d4e44e2fe3af6, type: 3}
+  m_splashColor: {r: 0.8862745, g: 0.3647059, b: 0.38431373, a: 1}
+  m_targetColor: {r: 0.3254902, g: 0.5411765, b: 0.8039216, a: 1}
+  m_buffColor: {r: 0.8352941, g: 0.6784314, b: 0.15686275, a: 1}
+  m_debuffColor: {r: 0.1254902, g: 0.1254902, b: 0.15294118, a: 1}

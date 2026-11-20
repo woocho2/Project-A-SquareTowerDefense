@@ -241,7 +241,7 @@ namespace SquareTD.EditorTools
             slider.fillRect = fill.rectTransform; slider.handleRect = null; slider.targetGraphic = track;
             slider.direction = Slider.Direction.LeftToRight; slider.minValue = 0; slider.maxValue = 1; slider.value = 0; slider.interactable = false;
             slider.transition = Selectable.Transition.None; slider.navigation = new Navigation { mode = Navigation.Mode.None };
-            Text(footer, "Baseline", "타워 정보 · 브론즈 / 컬러 Lv.1 기준", 17, Muted, 0, 99, 740, 32);
+            Text(footer, "Baseline", "타워 정보 · 브론즈 / 플레이어 Lv.1 기준", 17, Muted, 0, 99, 740, 32);
             TextMeshProUGUI status = Text(footer, "Status", "다음 화면을 준비하고 있습니다", 17, Muted, 740, 99, 660, 32); status.alignment = TextAlignmentOptions.MidlineRight;
             LoadingSceneController controller = root.GetComponent<LoadingSceneController>();
             var so = new SerializedObject(controller);

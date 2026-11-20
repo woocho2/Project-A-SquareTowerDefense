@@ -21,15 +21,12 @@ namespace SquareTD
         private int m_shownLevel;
         private float m_shownSpeed = -1;
         private int m_shownSkipping = -1;
-        private const string SkipLabel = "스킵\n<size=11>SPACE</size>";
-        private const string SkippingLabel = "스킵 중\n<size=11>SPACE</size>";
         [SerializeField] TextMeshProUGUI txt_currentGameSpeed;
         [SerializeField] TextMeshProUGUI txt_bossTurns;
 
         [SerializeField] Button btn_option;
         [SerializeField] Button btn_gameSpeed;
         [SerializeField] Button btn_skip;
-        [SerializeField] TextMeshProUGUI txt_skip;
 
         private void Start()
         {
@@ -117,10 +114,9 @@ namespace SquareTD
             TurnManager turns = TurnManager.Instance;
             if (btn_skip != null) btn_skip.interactable = turns != null && turns.CanSkip && Time.timeScale > 0f;
             int skipping = turns != null && turns.IsSkipping ? 1 : 0;
-            if (txt_skip != null && skipping != m_shownSkipping)
+            if (skipping != m_shownSkipping)
             {
                 m_shownSkipping = skipping;
-                txt_skip.text = skipping == 1 ? SkippingLabel : SkipLabel;
             }
             if (btn_gameSpeed != null) btn_gameSpeed.interactable = !TurnManager.Skipping
                 && Time.timeScale > 0f && (UIManager.Instance == null || !UIManager.Instance.IsPaused);

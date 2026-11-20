@@ -304,3 +304,5 @@
 - 뼈대의 빈칸은 "// [A] …", "// [B] …"처럼 대괄호 알파벳으로만 표시. TODO, 동그라미 번호(①②), 함수 안 순서 번호(// 1. …)는 쓰지 않음
   (2026-10-26 수업 23 4a 사용자: "todo랑 3. ~ 4.~ 5.~ 이렇게 되있어서 헷갈리잖아", "TODO 하고 동그라미 번호로 하지 마셈 잘 안보여 차라리 ABCDE로").
   대화에서도 빈칸을 A·B·C로 부름. 채운 뒤 남은 빈칸 주석은 AI가 정리.
+- 컴파일 확인용 dotnet build는 -nodeReuse:false -p:UseSharedCompilation=false로 돌리고 끝나면 dotnet build-server shutdown.
+  남은 MSBuild·VBCSCompiler가 Library/ScriptAssemblies DLL을 잠가 Unity 컴파일이 실패함 (2026-11-20, Copying the file failed).

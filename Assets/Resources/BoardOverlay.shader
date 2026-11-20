@@ -20,7 +20,6 @@ Shader "SquareTD/BoardOverlay"
             #pragma target 3.0
             #include "UnityCG.cginc"
             float _Cells, _Warning;
-            float4 _BoardBounds;
             struct appdata { float4 vertex : POSITION; float4 color : COLOR; float2 uv : TEXCOORD0; };
             struct v2f { float4 vertex : SV_POSITION; float4 color : COLOR; float2 local : TEXCOORD0; float2 world : TEXCOORD1; };
             v2f vert(appdata v)
@@ -57,7 +56,6 @@ Shader "SquareTD/BoardOverlay"
                     return float4(color, saturate(amount) * i.color.a);
                 }
                 float cells = max(1, _Cells);
-                clip(min(min(i.world.x - _BoardBounds.x, i.world.y - _BoardBounds.y), min(_BoardBounds.z - i.world.x, _BoardBounds.w - i.world.y)));
                 float d = box(p, float2(.99, .99), .018);
                 float inside = 1 - smoothstep(-aa, aa, d);
                 float rim = stroke(d, max(.002, .009 / cells), aa);

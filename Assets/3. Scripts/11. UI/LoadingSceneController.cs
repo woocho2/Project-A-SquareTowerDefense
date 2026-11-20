@@ -22,7 +22,7 @@ namespace SquareTD
         [SerializeField] private TextMeshProUGUI m_basicTitle, m_basic, m_skillTitle, m_skill;
         [SerializeField] private Image m_portrait;
         [SerializeField] private RectTransform[] m_letters = Array.Empty<RectTransform>();
-        [SerializeField, Min(0f)] private float m_minimumDisplayTime = 1.6f;
+        [SerializeField, Min(0f)] private float m_minimumDisplayTime = 4f;
         [SerializeField] private bool m_previewOnly;
         [SerializeField] private int m_previewTowerId = 1101;
         private readonly List<Tween> m_animations = new List<Tween>();

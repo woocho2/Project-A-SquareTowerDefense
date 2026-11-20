@@ -90,9 +90,9 @@ namespace SquareTD
         public void TakeDamage(DamageInfo info)
         {
             float damage = PreviewDamage(info);
-            BalanceRecorder.OnDamage(info, Mathf.Min(damage, CurrentHp));
+            BalanceRecorder.OnDamage(info, BalanceRecorder.CountOverkill ? damage : Mathf.Min(damage, CurrentHp));
             if (IsAlive && GameSession.Instance != null) GameSession.Instance.Results.Record(info, Mathf.Min(damage, CurrentHp));
-            bool died = Health.TakeDamage(damage);
+            bool died = !BalanceRecorder.DummyEnemies && Health.TakeDamage(damage);
             Status.OnDamageTaken(info, damage);
 
             if (!died)
@@ -122,7 +122,7 @@ namespace SquareTD
 
         public void Execute(DamageInfo info)
         {
-            if (!IsAlive) return;
+            if (!IsAlive || BalanceRecorder.DummyEnemies) return;
             if (GameSession.Instance != null) GameSession.Instance.Results.Record(info, Health.Current);
             Health.TakeDamage(Health.Current);
             Die(info);

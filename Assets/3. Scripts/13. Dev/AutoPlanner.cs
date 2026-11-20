@@ -524,9 +524,7 @@ namespace SquareTD
             return true;
         }
 
-        private static readonly float[] s_tierWeights = { 1f, 1f, 1.5f, 3.75f, 18.75f };
-
-        private static float TierWeight(int tier) => s_tierWeights[Mathf.Clamp(tier, 1, TowerId.MaxTier)];
+        private static float TierWeight(int tier) => BalanceTables.GetTierRow(Mathf.Clamp(tier, 1, TowerId.MaxTier)).Power;
         private static float RoleWeight(TowerController tower)
         {
             StrategyPolicy policy = StrategySearch.ActivePolicy;

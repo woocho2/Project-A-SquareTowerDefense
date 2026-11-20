@@ -21,11 +21,11 @@ namespace SquareTD
         [Header("프레임 안 캐릭터 (마스크)")]
         [Tooltip("프리팹에서 맞춘 크기·위치를 게임에서도 그대로 씀. 캐릭터 그림이 바뀌어도 프리팹의 그림과 같은 크기로 맞춤")]
         [SerializeField] private SpriteMask m_characterMask;
-        [Header("티어 색상 (장식 테두리, 1 브론즈 ~ 4 다이아)")]
+        [Header("티어 색상 (장식 테두리, 1 브론즈 ~ 5 다이아)")]
         [SerializeField] private Color[] m_tierColors =
         {
             new Color(0.78f, 0.46f, 0.24f), new Color(0.77f, 0.85f, 0.92f), new Color(1f, 0.78f, 0.27f),
-            new Color(0.32f, 0.80f, 1f)
+            new Color(0.24f, 0.85f, 0.76f), new Color(0.32f, 0.80f, 1f)
         };
         [Header("테두리 반짝임·후광 (FrameShine, SelectionGlow 셰이더)")]
         [SerializeField, Min(1f)] private float m_haloScale = 1.5f;

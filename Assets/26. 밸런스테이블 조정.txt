@@ -1,4 +1,4 @@
-﻿26. 밸런스테이블 조정 — 빠른 시뮬레이션으로 수치를 맞추는 방법
+﻿﻿﻿26. 밸런스테이블 조정 — 빠른 시뮬레이션으로 수치를 맞추는 방법
 작성일: 2026-10-29
 상태: 배치 합성 A/B·노말4/하드6 덱 비교·타워별 턴당 화력 집계 완료 (22번). 남은 조정·검증과 실행 방법을 둠.
 바탕: 20. 통합 기획서, 지금 게임(자동 진행 + AutoPlanner)
@@ -44,7 +44,7 @@
 AI에게 맡길 때: "Balance의 마지막 summary 봐 줘" — AI는 summary만 읽음.
 [덱별 실전 화력 비교]
 - Unity 에디터를 닫고 프로젝트 루트 PowerShell에서 실행:
-& "C:\Program Files\Unity\Hub\Editor\6000.3.9f1\Editor\Unity.exe" -batchmode -nographics -projectPath "$PWD" -executeMethod SquareTD.BalanceSimulationWindow.RunBatch -simDeckRanking -simRuns 100 -simSeed 1 -logFile "$PWD\Balance\deck_200_unity.log"
+& "C:\Program Files\Unity\Hub\Editor\6000.6.8f1\Editor\Unity.exe" -batchmode -nographics -projectPath "$PWD" -executeMethod SquareTD.BalanceSimulationWindow.RunBatch -simDeckRanking -simRuns 100 -simSeed 1 -logFile "$PWD\Balance\deck_200_unity.log"
 - 시드별 노말 4문양 → 하드 6문양을 반복. 모드당 100판이면 총 200판. 일반 플레이의 문양 수 규칙은 변경하지 않음.
 - 문양은 시드별로 무작위 선택. 합성은 현재 기본 3기, 자동 소환·판매·합성·젬 강화·배치는 기존 AutoPlanner.
 - 화력은 초당 피해가 아니라 타워 1기당 적 턴당 피해(DPT): 피해 합계 / 배치된 타워 기수×적 턴.
@@ -59,7 +59,7 @@ AI에게 맡길 때: "Balance의 마지막 summary 봐 줘" — AI는 summary만
 [백그라운드 A/B 실행 — 에디터 창 없이]
   1) Unity에서 저장하고 에디터를 종료. 같은 프로젝트를 열어 둔 에디터와 배치 프로세스는 함께 실행할 수 없음.
   2) VS Code에서 프로젝트 루트 폴더를 열고 PowerShell 터미널에 아래를 입력.
-& "C:\Program Files\Unity\Hub\Editor\6000.3.9f1\Editor\Unity.exe" -batchmode -nographics -projectPath "$PWD" -executeMethod SquareTD.BalanceSimulationWindow.RunBatch -simRuns 20 -simSeed 1 -simMergeA 3 -simMergeB 2 -logFile "$PWD\Balance\batch_unity.log"
+& "C:\Program Files\Unity\Hub\Editor\6000.6.8f1\Editor\Unity.exe" -batchmode -nographics -projectPath "$PWD" -executeMethod SquareTD.BalanceSimulationWindow.RunBatch -simRuns 20 -simSeed 1 -simMergeA 3 -simMergeB 2 -logFile "$PWD\Balance\batch_unity.log"
   3) A=3기, B=2기, 시드 1부터 조건당 20판(총 40판). -simRuns를 바꾸면 조건당 판 수를 변경.
      난이도·문양 무작위·배속·한 판 제한은 툴의 마지막 저장 설정을 사용.
   4) Balance/batch_*_comparison.txt와 조건별 CSV에 결과 저장 후 자동 종료. 로그는 Balance/batch_unity.log.
@@ -68,6 +68,14 @@ AI에게 맡길 때: "Balance의 마지막 summary 봐 줘" — AI는 summary만
   - RunBatch 진입·인자 검증·장면 열기·결과 저장 후 종료 연결은 컴파일 확인. 실제 배치 완주·속도 검증은 아직.
 
 
+
+[타워 종류별 화력 맞추기 — 허수아비 측정] (2026-11-20)
+- Unity 에디터를 닫고 프로젝트 루트에서:
+& "C:\Program Files\Unity\Hub\Editor\6000.6.8f1\Editor\Unity.exe" -batchmode -nographics -projectPath "$PWD" -executeMethod SquareTD.BalanceSimulationWindow.RunBatch -simWaveProbe -simProbeIds attack -simProbeTowers 1 -simProbeWaves 4 -simRuns 1680 -simSeed 1 -simMode 2 -simDummy -logFile "$PWD\Balance\towerprobe_unity.log"
+- -simProbeIds: attack(광역·단일 28종) 또는 1101,1203 같은 목록. 판마다 차례로 1종. -simRuns는 전체 판 수 (28종 × 60판 = 1680, 약 30분).
+- -simDummy: 적이 죽지 않고 피해만 기록 → 모든 타워가 같은 적 수를 상대. -simOverkill: 남은 체력을 넘는 피해까지 기록(적은 죽음).
+- 결과 Balance/probe_*_towers.csv의 (basic+skill+ground+other) ÷ tower_turns = DPT. 컬러 평균 대비 비율로 Power를 곱해 보정.
+- 중간에 멈추면 Balance/simulation_settings.json의 Active를 false로 (안 그러면 에디터 플레이 때 시뮬레이션이 이어서 켜짐).
 
 ======================================================================
 2. 남은 것 — 속도 (연출 없는 모드)
@@ -164,7 +172,7 @@ AI에게 맡길 때: "Balance의 마지막 summary 봐 줘" — AI는 summary만
   지원 타워 이동만으로 마스터리 존 수가 즉시 갱신되지 않는 현재 구현을 고려해 가상 추가 존을 점수에 넣지 않음.
 - 본실험: placement_20261029_223156_899, 700/700판 완료. 1위 맵→버프→디버프47.4턴, 기존43.3턴(+9.47%). 전 정책 클리어0/100. 상세: Balance/PlacementStudy_20261029/Results.ko.md. 결과 _placement_summary.md / _placement_ranking.csv / _placement_pairs.csv.
 - 재실행(프로젝트 루트 PowerShell):
-  & "C:\Program Files\Unity\Hub\Editor\6000.3.9f1\Editor\Unity.exe" -batchmode -nographics -projectPath "$PWD" -executeMethod SquareTD.BalanceSimulationWindow.RunBatch -simPlacementRanking -simRuns 100 -simSeed 1 -logFile "$PWD\Balance\PlacementStudy_20261029\main30_unity.log"
+  & "C:\Program Files\Unity\Hub\Editor\6000.6.8f1\Editor\Unity.exe" -batchmode -nographics -projectPath "$PWD" -executeMethod SquareTD.BalanceSimulationWindow.RunBatch -simPlacementRanking -simRuns 100 -simSeed 1 -logFile "$PWD\Balance\PlacementStudy_20261029\main30_unity.log"
 
 
 [배치 비교 후 기본값 적용]
@@ -190,7 +198,7 @@ AI에게 맡길 때: "Balance의 마지막 summary 봐 줘" — AI는 summary만
 - 사전 검증: EditMode9개 및 동일전략20판 기록 일치. 고정 초기 조건, 전투 시드·피해 변동 확인.
 - 본 실행: strategy_20261029_234533_420, 현재 진행 중. 진행/1위는 _strategy_search.json 및 _strategy_summary.md.
 - CLI:
-  & "C:\Program Files\Unity\Hub\Editor\6000.3.9f1\Editor\Unity.exe" -batchmode -nographics -projectPath "$PWD" -executeMethod SquareTD.BalanceSimulationWindow.RunBatch -simStrategySearch -simSeed 1 -simCandidates 500 -simRepeats 10 -simMinRepeats 5 -logFile "$PWD\Balance\StrategySearch_20261029\search_unity.log"
+  & "C:\Program Files\Unity\Hub\Editor\6000.6.8f1\Editor\Unity.exe" -batchmode -nographics -projectPath "$PWD" -executeMethod SquareTD.BalanceSimulationWindow.RunBatch -simStrategySearch -simSeed 1 -simCandidates 500 -simRepeats 10 -simMinRepeats 5 -logFile "$PWD\Balance\StrategySearch_20261029\search_unity.log"
 - -simStrategySmoke는 동일한 기본 전략2개로 난수 분리와 반복 재현성을 확인한다.
 
 

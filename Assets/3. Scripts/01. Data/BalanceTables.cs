@@ -47,18 +47,20 @@ namespace SquareTD
         {
             TierRow.Identity,
             new TierRow(0, 1f, 0, 0, 1f, 1f),
-            new TierRow(0, 1.5f, 0, 0, 0.95f, 1.25f),
-            new TierRow(0, 2.45f, 1, 0, 0.9f, 5f / 2f),
-            new TierRow(-1, 6.15f, 1, 1, 0.8f, 25f / 4f),
+            new TierRow(0, 1.5f, 0, 0, 0.95f, 1f),
+            new TierRow(-2, 4f, 1, 0, 0.9f, 1f),
+            new TierRow(-3, 8f, 1, 0, 0.8f, 1.5f),
+            new TierRow(-4, 16f, 2, 1, 0.5f, 3f),
         };
 
         private static readonly TierRow[] s_supportTierRows =
         {
             TierRow.Identity,
             new TierRow(0, 1f, 0, 0, 1f, 1f),
-            new TierRow(0, 1.5f, 0, 0, 0.95f, 2.5f),
-            new TierRow(0, 2f, 1, 0, 0.9f, 5f),
-            new TierRow(-1, 4f, 1, 1, 0.8f, 10f),
+            new TierRow(-1, 1.5f, 0, 0, 0.95f, 1f),
+            new TierRow(-2, 2f, 1, 0, 0.9f, 1f),
+            new TierRow(-3, 3f, 1, 0, 0.8f, 1.5f),
+            new TierRow(-4, 4.5f, 2, 1, 0.5f, 3f),
         };
 
         private static readonly ColorLevelRow[] s_colorLevelRows =
@@ -86,21 +88,21 @@ namespace SquareTD
         public const int ShopRerollCost = 50;
         public const float SellRatio = 0.8f;
 
-        private static readonly int[] s_shopPrices = { 0, 250, 600, 1500, 4000 };
+        private static readonly int[] s_shopPrices = { 0, 250, 600, 1500, 4000, 10000 };
 
         private static readonly float[][] s_tierChances =
         {
-            new[] { 1f, 0f, 0f, 0f },
-            new[] { 1f, 0f, 0f, 0f },
-            new[] { 0.95f, 0.05f, 0f, 0f },
-            new[] { 0.85f, 0.15f, 0f, 0f },
-            new[] { 0.75f, 0.22f, 0.03f, 0f },
-            new[] { 0.6f, 0.35f, 0.05f, 0f },
-            new[] { 0.45f, 0.45f, 0.095f, 0.005f },
-            new[] { 0.3f, 0.55f, 0.14f, 0.01f },
-            new[] { 0.2f, 0.5f, 0.25f, 0.05f },
-            new[] { 0.1f, 0.35f, 0.45f, 0.1f },
-            new[] { 0f, 0.2f, 0.4f, 0.4f },
+            new[] { 1f, 0f, 0f, 0f, 0f },
+            new[] { 1f, 0f, 0f, 0f, 0f },
+            new[] { 0.8f, 0.2f, 0f, 0f, 0f },
+            new[] { 0.6f, 0.4f, 0f, 0f, 0f },
+            new[] { 0.5f, 0.45f, 0.05f, 0f, 0f },
+            new[] { 0.4f, 0.5f, 0.1f, 0f, 0f },
+            new[] { 0.35f, 0.45f, 0.175f, 0.025f, 0f },
+            new[] { 0.25f, 0.4f, 0.3f, 0.05f, 0f },
+            new[] { 0.1f, 0.3f, 0.45f, 0.145f, 0.005f },
+            new[] { 0f, 0.25f, 0.4f, 0.3f, 0.05f },
+            new[] { 0f, 0f, 0.4f, 0.5f, 0.1f },
         };
 
         public static int GetShopPrice(int tier) => tier >= 1 && tier < s_shopPrices.Length ? s_shopPrices[tier] : 0;
@@ -109,7 +111,7 @@ namespace SquareTD
 
         public static float GetTierChance(int level, int tier)
         {
-            if (tier < 1 || tier > 4) return 0f;
+            if (tier < 1 || tier > TowerId.MaxTier) return 0f;
             return s_tierChances[Mathf.Clamp(level, 1, MaxColorLevel)][tier - 1];
         }
 

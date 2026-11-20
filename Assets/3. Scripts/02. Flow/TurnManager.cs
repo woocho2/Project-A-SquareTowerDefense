@@ -12,6 +12,7 @@ namespace SquareTD
         public const int LastWaveEnemyTurns = 20;
 
         public ITurnState Current { get; private set; } = new IdleState();
+        public int CurrentEnemyTurn { get; private set; }
 
         public event Action<ITurnState> StateChanged;
         public event Action<int> EnemyTurnEnded;
@@ -103,6 +104,7 @@ namespace SquareTD
             if (!(next is EnemyTurnState)) CancelSkip();
             Current.Exit();
             Current = next;
+            CurrentEnemyTurn = next is EnemyTurnState ? 1 : 0;
             next.Enter();
             Debug.Log($"[TurnManager] {Current.Name}");
             StateChanged?.Invoke(Current);
@@ -145,6 +147,7 @@ namespace SquareTD
 
         private IEnumerator EnemyTurn(int turn)
         {
+            CurrentEnemyTurn = turn;
             Debug.Log($"[TurnManager] 적 턴 {turn}");
             EnemyTurnStart();
             yield return EffectActivity.WaitUntilIdle();

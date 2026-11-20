@@ -36,11 +36,12 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 일_삼_티어만_합성_가능()
+        public void 일_사_티어만_합성_가능()
         {
             Assert.IsTrue(TowerProgression.CanMergeFrom(Def(1101)));
             Assert.IsTrue(TowerProgression.CanMergeFrom(Def(3214)));
-            Assert.IsFalse(TowerProgression.CanMergeFrom(Def(4101)));
+            Assert.IsTrue(TowerProgression.CanMergeFrom(Def(4101)));
+            Assert.IsFalse(TowerProgression.CanMergeFrom(Def(5101)));
             Assert.IsFalse(TowerProgression.CanMergeFrom(Def(6001)));
         }
 
@@ -92,9 +93,9 @@ namespace SquareTD.Tests
         [Test]
         public void 다이아와_시너지는_합성하지_않음()
         {
-            Place(4101, 0);
-            Place(4101, 1);
-            Place(4101, 2);
+            Place(5101, 0);
+            Place(5101, 1);
+            Place(5101, 2);
             Place(6001, 3);
             Place(6001, 4);
             Place(6001, 5);
@@ -295,8 +296,9 @@ namespace SquareTD.Tests
             Assert.Contains("t6", columns, "시너지");
             Assert.Contains("merge_to4", columns);
             Assert.Contains("first_t6", columns);
-            Assert.IsFalse(columns.Contains("t5"), "미스릴은 없음");
-            Assert.IsFalse(columns.Contains("merge_to5"));
+            Assert.Contains("t5", columns, "다이아");
+            Assert.Contains("merge_to5", columns);
+            Assert.Contains("first_t5", columns);
             Assert.AreEqual(columns.Count, new System.Collections.Generic.HashSet<string>(columns).Count, "같은 이름의 칸이 없음");
         }
 

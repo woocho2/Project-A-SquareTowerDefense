@@ -61,6 +61,8 @@ namespace SquareTD
         private static string s_variant;
         private static int s_mergeCount;
         private static int s_combatSeed;
+        public static bool CountOverkill { get; set; }
+        public static bool DummyEnemies { get; set; }
         public static int EnemyTurns => s_enemyTurns;
         public static int Kills => s_kills;
 

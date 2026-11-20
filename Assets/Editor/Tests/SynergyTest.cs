@@ -52,8 +52,8 @@ namespace SquareTD.Tests
         public void 티어_합의_최대는_48()
         {
             SynergyRecipes.TryGet(SynergyEffects.OdinId, out SynergyRecipes.Recipe odin);
-            Assert.AreEqual(48, SynergyRecipes.MaxTierSum);
-            Assert.AreEqual(48, SynergyRecipes.TierSum(odin, (color, emblem) => TowerId.MaxTier));
+            Assert.AreEqual(60, SynergyRecipes.MaxTierSum);
+            Assert.AreEqual(60, SynergyRecipes.TierSum(odin, (color, emblem) => TowerId.MaxTier));
         }
 
         [Test]

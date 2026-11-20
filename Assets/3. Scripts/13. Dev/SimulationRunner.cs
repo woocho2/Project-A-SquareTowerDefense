@@ -44,6 +44,9 @@ namespace SquareTD
         public int ProbeEnemyAction;
         public int ProbeSplashMastery;
         public int ProbeRange;
+        public int[] ProbeIds = new int[0];
+        public bool ProbeOverkill;
+        public bool ProbeDummy;
 
         public bool SearchStrategies;
         public bool SearchSmoke;
@@ -156,6 +159,8 @@ namespace SquareTD
             IsOn = true;
             SuppressCosmetics = settings.IsControlled;
             SupportVariant = settings.SupportVariant;
+            BalanceRecorder.CountOverkill = settings.ProbeOverkill || settings.ProbeDummy;
+            BalanceRecorder.DummyEnemies = settings.ProbeDummy;
 
             m_originalLog = Debug.unityLogger.logHandler;
             m_log = new QuietLogHandler(m_originalLog);
@@ -183,6 +188,8 @@ namespace SquareTD
             IsOn = false;
             SuppressCosmetics = false;
             SupportVariant = 0;
+            BalanceRecorder.CountOverkill = false;
+            BalanceRecorder.DummyEnemies = false;
             AutoPlanner.ResetPlacement();
             StrategySearch.Reset();
             Time.captureDeltaTime = m_originalCaptureDelta;
@@ -374,12 +381,16 @@ namespace SquareTD
             var ids = new List<int>();
             BoardManager board = BoardManager.Instance;
             TowerManager towers = TowerManager.Instance;
+            bool fixedId = m_settings.ProbeIds != null && m_settings.ProbeIds.Length > 0;
+            if (fixedId && GameSession.Instance != null) GameSession.Instance.SetLimitModifier("시뮬레이션 보정", 10000);
 
             for (int i = 0; i < m_settings.ProbeTowers; i++)
             {
                 TowerColor color = random.Next(2) == 0 ? TowerColor.Red : TowerColor.Blue;
                 var emblem = (TowerEmblem)random.Next((int)TowerEmblem.Sword, (int)TowerEmblem.Darkness + 1);
-                if (!towers.Database.TryGet(TowerId.Make(1, color, emblem), out TowerDefinition definition)) continue;
+                int id = fixedId ? m_settings.ProbeIds[m_run % m_settings.ProbeIds.Length] : TowerId.Make(1, color, emblem);
+                color = TowerId.GetColor(id);
+                if (!towers.Database.TryGet(id, out TowerDefinition definition)) continue;
 
                 TowerController tower = towers.SpawnForDebug(definition);
                 if (tower == null) continue;

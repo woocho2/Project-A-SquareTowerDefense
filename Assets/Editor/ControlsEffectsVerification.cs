@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -99,7 +99,7 @@ namespace SquareTD.EditorTools
                 {
                     PlayerTurnPanel actions = Object.FindAnyObjectByType<PlayerTurnPanel>(); GameInfoPanel info = Object.FindAnyObjectByType<GameInfoPanel>();
                     Check(Field<Button>(actions, "btn_createTower").transform.Find("Hint").GetComponent<TextMeshProUGUI>().text.Contains("[D]") && Field<Button>(actions, "btn_buyXp").transform.Find("Hint").GetComponent<TextMeshProUGUI>().text.Contains("[F]"), "생성·EXP UI에 D/F 표시");
-                    Check(Field<TextMeshProUGUI>(info, "txt_skip").text.Contains("SPACE"), "스킵 UI Space 표시");
+                    Check(Field<TextMeshProUGUI>(info, "txt_skip").text.Contains("R"), "스킵 UI R 표시");
                     TowerInfoPanel towerPanel = Object.FindAnyObjectByType<TowerInfoPanel>(); Check(Field<Button>(towerPanel, "btn_sellTower").GetComponentsInChildren<TextMeshProUGUI>().Any(text => text.text.Contains("[E]")), "선택 타워 판매 UI E 표시");
                     Capture("shortcuts-and-counters.png", 1920, 1080); Next(40); return;
                 }
@@ -156,17 +156,17 @@ namespace SquareTD.EditorTools
                     EmblemSharedState shared = GameSession.Instance.Shared; for (int i = 0; i < 4; i++) { shared.CountDownGoldDouble(); shared.CountDownStopTiles(); } shared.TryUseLimitShield(); GameSession.Instance.RemoveLimitModifier("UI verification");
                     s_tower.State.BossEffects.EndTurn(100); s_enemy.Status.Remove(BossSpiritBlessing.Source); Remove(s_enemy); Remove(s_hel); TowerManager.Instance.TrySell(s_tower);
                     s_effects.Refresh(); Check(!s_effects.StateText.Contains("골드 2배") && !s_effects.StateText.Contains("펜리르") && !s_effects.StateText.Contains("수르트") && !s_effects.StateText.Contains("한도 보호") && !s_effects.StateText.Contains("죽음 카운트"), "효과 만료·보스 제거 시 행 숨김");
-                    TowerManager.Instance.Database.TryGet(4301, out TowerDefinition support); s_support = TowerManager.Instance.SpawnForDebug(support); Press(Key.Space, 14); return;
+                    TowerManager.Instance.Database.TryGet(4301, out TowerDefinition support); s_support = TowerManager.Instance.SpawnForDebug(support); Press(Key.R, 14); return;
                 }
                 if (step == 14)
                 {
-                    Release(); Check(TurnManager.Instance.Current is PlayerTurnState && !TurnManager.Skipping && GameNotice.CurrentMessage.Contains("존"), "Space도 미배치 존을 무시하지 않고 안내"); TowerManager.Instance.TrySell(s_support);
+                    Release(); Check(TurnManager.Instance.Current is PlayerTurnState && !TurnManager.Skipping && GameNotice.CurrentMessage.Contains("존"), "R 스킵도 미배치 존을 무시하지 않고 안내"); TowerManager.Instance.TrySell(s_support);
                     s_build = TowerManager.Instance.BuildCount; EventSystem.current.SetSelectedGameObject(Field<Button>(Object.FindAnyObjectByType<PlayerTurnPanel>(), "btn_createTower").gameObject);
-                    Press(Key.Space, 15); return;
+                    Press(Key.R, 15); return;
                 }
                 if (step == 15)
                 {
-                    Release(); Check(TurnManager.Skipping && Time.timeScale == 30 && !(TurnManager.Instance.Current is PlayerTurnState), "Space 실제 입력으로 적 턴 스킵 시작"); Check(TowerManager.Instance.BuildCount == s_build, "생성 버튼이 선택된 상태의 Space도 추가 생성 없이 스킵"); Next(16); return;
+                    Release(); Check(TurnManager.Skipping && Time.timeScale == 30 && !(TurnManager.Instance.Current is PlayerTurnState), "R 실제 입력으로 적 턴 스킵 시작"); Check(TowerManager.Instance.BuildCount == s_build, "리롤 버튼이 선택된 상태의 R도 리롤 없이 스킵"); Next(16); return;
                 }
                 if (step == 16)
                 {

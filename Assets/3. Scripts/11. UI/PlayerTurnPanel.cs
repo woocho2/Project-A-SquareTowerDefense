@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace SquareTD
 {
-    // 플레이어 턴의 버튼들 (상점 리롤, 경험치 구매, 턴 종료)과 상점 카드
+    // 플레이어 턴의 버튼들 (상점 리롤, 경험치 구매, 턴 종료)
     public class PlayerTurnPanel : MonoBehaviour
     {
         [SerializeField] Button btn_createTower;
@@ -21,13 +21,11 @@ namespace SquareTD
         {
             UnavailableButtonNotice.Bind(btn_createTower, false);
             UnavailableButtonNotice.Bind(btn_buyXp, true);
-            RenameRerollButton();
-            TowerShopPanel.Create(transform);
             RefreshLayout();
             CurrencyManager.Instance.Changed += HandleCurrencyChanged;
             TowerManager.Instance.ColorLevels.XpChanged += Refresh;
 
-            if (btn_createTower != null) btn_createTower.onClick.AddListener(HandleCreateTowerClick);
+            if (btn_createTower != null) btn_createTower.onClick.AddListener(HandleRerollClick);
             if (btn_buyXp != null) btn_buyXp.onClick.AddListener(HandleBuyXpClick);
             if (btn_turnEnd != null) btn_turnEnd.onClick.AddListener(HandleTurnEndClick);
 
@@ -45,7 +43,7 @@ namespace SquareTD
             if (TowerManager.Instance != null) TowerManager.Instance.ColorLevels.XpChanged -= Refresh;
             if (CurrencyManager.Instance != null) CurrencyManager.Instance.Changed -= HandleCurrencyChanged;
 
-            if (btn_createTower != null) btn_createTower.onClick.RemoveListener(HandleCreateTowerClick);
+            if (btn_createTower != null) btn_createTower.onClick.RemoveListener(HandleRerollClick);
             if (btn_buyXp != null) btn_buyXp.onClick.RemoveListener(HandleBuyXpClick);
             if (btn_turnEnd != null) btn_turnEnd.onClick.RemoveListener(HandleTurnEndClick);
         }
@@ -56,7 +54,7 @@ namespace SquareTD
         private void RefreshLayout()
         {
             float width = ((RectTransform)transform).rect.width;
-            float scale = Mathf.Clamp((width - 1440f) / 440f, .65f, 1f);
+            float scale = Mathf.Lerp(.65f, 1f, Mathf.InverseLerp(1500f, 1700f, width));
             if (btn_createTower != null) btn_createTower.transform.localScale = Vector3.one * scale;
             if (btn_buyXp != null) btn_buyXp.transform.localScale = Vector3.one * scale;
         }
@@ -64,7 +62,7 @@ namespace SquareTD
         private void Refresh()
         {
             int rerollCost = BalanceTables.ShopRerollCost;
-            if (txt_createTowerValue != null) txt_createTowerValue.text = $"{rerollCost}";
+            if (txt_createTowerValue != null) txt_createTowerValue.text = $"{rerollCost:N0}";
             if (btn_createTower != null) btn_createTower.interactable = CurrencyManager.Instance.Gold >= rerollCost;
 
             ColorUpgradeState level = TowerManager.Instance.ColorLevels;
@@ -78,14 +76,7 @@ namespace SquareTD
             if (btn_buyXp != null) btn_buyXp.interactable = cost > 0 && CurrencyManager.Instance.Gold >= cost;
         }
 
-        private void RenameRerollButton()
-        {
-            if (btn_createTower == null) return;
-            foreach (TextMeshProUGUI text in btn_createTower.GetComponentsInChildren<TextMeshProUGUI>(true))
-                if (text != txt_createTowerValue && text.text.Contains("생성")) text.text = "리롤";
-        }
-
-        private void HandleCreateTowerClick()
+        private void HandleRerollClick()
         {
             TowerManager.Instance.TryRerollShop();
         }

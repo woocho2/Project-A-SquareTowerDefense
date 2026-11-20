@@ -47,9 +47,9 @@ namespace SquareTD
             view.m_actionButton.gameObject.SetActive(action != null);
             view.m_text.rectTransform.sizeDelta = new Vector2(action != null ? 552 : 672, 44);
             view.m_group.interactable = view.m_group.blocksRaycasts = action != null;
-            view.m_motion?.Kill(); view.m_group.alpha = 0; view.m_panel.anchoredPosition = new Vector2(0, 210);
+            view.m_motion?.Kill(); view.m_group.alpha = 0; view.m_panel.anchoredPosition = new Vector2(0, 310);
             view.m_motion = DOTween.Sequence().SetUpdate(true).Append(view.m_group.DOFade(1, .15f))
-                .Join(view.m_panel.DOAnchorPosY(218, .18f).SetEase(Ease.OutCubic)).AppendInterval(action != null ? 4 : 2.4f).Append(view.m_group.DOFade(0, .2f))
+                .Join(view.m_panel.DOAnchorPosY(318, .18f).SetEase(Ease.OutCubic)).AppendInterval(action != null ? 4 : 2.4f).Append(view.m_group.DOFade(0, .2f))
                 .OnComplete(() => { view.m_group.blocksRaycasts = false; view.m_action = null; });
             if (warning && SoundManager.Instance != null) SoundManager.Instance.Cue(SoundCue.Denied);
         }
@@ -57,7 +57,7 @@ namespace SquareTD
         {
             var root = new GameObject("GameNotice", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(GameNotice));
             root.layer = 5;
-            Canvas canvas = root.GetComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 30000;
+            Canvas canvas = root.GetComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingLayerName = "UI"; canvas.sortingOrder = 30000;
             CanvasScaler scaler = root.GetComponent<CanvasScaler>(); scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize; scaler.referenceResolution = new Vector2(1920, 1080); scaler.matchWidthOrHeight = 1;
             s_current = root.GetComponent<GameNotice>();
             var panel = new GameObject("Message", typeof(RectTransform), typeof(Image), typeof(CanvasGroup)); panel.transform.SetParent(root.transform, false);

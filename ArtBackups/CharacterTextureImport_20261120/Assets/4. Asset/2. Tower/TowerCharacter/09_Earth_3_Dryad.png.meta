@@ -1,0 +1,250 @@
+fileFormatVersion: 2
+guid: 2e1b2c3eeccaa0f4eade9ddc3ca67244
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -9189280828441606545
+    second: 09_Earth_3_Dryad_0
+  - first:
+      213: -9094902141636288056
+    second: 09_Earth_3_Dryad_1
+  - first:
+      213: -7814989520450452891
+    second: 09_Earth_3_Dryad_2
+  - first:
+      213: -3738260240458514177
+    second: 09_Earth_3_Dryad_3
+  - first:
+      213: -7785939700044049801
+    second: 09_Earth_3_Dryad_4
+  - first:
+      213: 6828743361480303765
+    second: 09_Earth_3_Dryad_5
+  - first:
+      213: -3977639398311249506
+    second: 09_Earth_3_Dryad_6
+  - first:
+      213: 2774412618555264491
+    second: 09_Earth_3_Dryad_7
+  - first:
+      213: -5592226048449200380
+    second: 09_Earth_3_Dryad_8
+  - first:
+      213: -2719497523589015565
+    second: 09_Earth_3_Dryad_9
+  - first:
+      213: -610252894775046126
+    second: 09_Earth_3_Dryad_10
+  - first:
+      213: -2691497077467734380
+    second: 09_Earth_3_Dryad_11
+  - first:
+      213: -6013608292789974518
+    second: 09_Earth_3_Dryad_12
+  - first:
+      213: 3665941097081543939
+    second: 09_Earth_3_Dryad_13
+  - first:
+      213: -4188981709578122562
+    second: 09_Earth_3_Dryad_14
+  - first:
+      213: -636429035664138039
+    second: 09_Earth_3_Dryad_15
+  - first:
+      213: 5957811855899113933
+    second: 09_Earth_3_Dryad_16
+  - first:
+      213: 5823133772152605588
+    second: 09_Earth_3_Dryad_17
+  - first:
+      213: -1699601151454877161
+    second: 09_Earth_3_Dryad_18
+  - first:
+      213: -5555897531225663076
+    second: 09_Earth_3_Dryad_19
+  - first:
+      213: -4472269616363451870
+    second: 09_Earth_3_Dryad_20
+  - first:
+      213: 4242719460356354005
+    second: 09_Earth_3_Dryad_21
+  - first:
+      213: 3302407322989695959
+    second: 09_Earth_3_Dryad_22
+  - first:
+      213: 4075402462542667684
+    second: 09_Earth_3_Dryad_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 2048
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationMethod: 0
+  spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: 09_Earth_3_Dryad_Full
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 2048
+        height: 2048
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f976cb98bb0de104da2b54a7d8b53929
+      internalID: 593207148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 09_Earth_3_Dryad_Face
+      rect:
+        serializedVersion: 2
+        x: 923
+        y: 1716
+        width: 300
+        height: 300
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4ce70a7884fbb141b1cde8a00f795cf
+      internalID: 315594859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 475874870826d7c48aad12ef7964467f
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      09_Earth_3_Dryad_Face: 315594859
+      09_Earth_3_Dryad_Full: 593207148
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

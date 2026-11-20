@@ -2418,3 +2418,49 @@
   노말 40웨이브 무작위: 클리어 81% (상점 전 89%), 3티어 첫 21.6웨이브, 다이아 나온 판 5/80 (첫 29.3웨이브), 끝 레벨 10이 65/80, 남은 골드 57,934. 진 판 15판 중 14판이 1 ~ 10웨이브.
   다이아가 적은 것은 AI가 판·대기석이 2 ~ 3티어로 차면 팔지 못해 카드를 못 사는 탓 (실제 플레이어는 팔고 삼).
 - 남은 것: 21번 맨 위. 결과 Balance/batch_20261119_153340_253 ~ 161959_843.
+
+[상점 UI] 대기석 아래 카드 5장·잠금, 리롤·로딩 문구 정리 (2026-11-20, 사용자 — Codex)
+- TowerShopPanel은 런타임에서 카드 5장과 잠금을 배치한다. 카드에 초상·역할·문양·티어 이름과 띠·가격을 표시하고, 골드 부족·배치할 자리 없음·구매 완료를 각각 표시한다. 판과 대기석 중 빈 자리가 생기면 카드 표시도 갱신한다.
+- 공용 UICanvas 프리팹의 리롤 버튼에 새 아이콘과 D 안내를 넣었다. 비용과 카드 수는 BalanceTables를 읽는다. 게임 규칙과 밸런스, 기존 상점 구매·리롤·잠금 및 Changed 연결은 유지했다.
+- Stage1~10 카메라와 배경 구도를 맞춰 상점 자리를 확보했다. 턴 종료는 전장과 대기석 사이에 놓고, 구매 경고가 버튼에 가리지 않도록 위치를 조정했다. 로딩 도감의 기준 표기는 플레이어 Lv.1로 수정했다.
+- 파일 확인: 현재 씬·프리팹의 이스케이프 한글까지 검사했다. 프리팹 2개 및 씬 10개의 원본과 .meta는 ArtBackups/Shop_20261120에 보관했고 .meta 해시를 대조했다.
+- PlayMode: Stage1에서 판 우선/대기석 구매, 골드 부족, 만석과 판매 후 갱신, 리롤의 잠금 해제, 다음 웨이브까지 잠금 유지, EXP 구매로 4레벨 도달 후 실버 이상 등장 확인. 메뉴의 노말 5칸·하드 7칸과 0 / 5·0 / 7 표시를 확인했다.
+- Stage1 1920×1080·1728×1080 캡처를 직접 확인했다. 카드·잠금·대기석·하단 행동 버튼과 턴 종료가 겹치지 않고 상점 문구가 영역 안에 표시됐다. PlayMode 오류 0건. 검증 후 이전에 열려 있던 Stage1으로 복원했다. 캡처와 결과는 ArtPreviews/Shop_20261120에 보관했다.
+
+[상점 확률 및 미스릴 복구] (2026-11-20, 사용자 — Codex)
+- UICanvas의 상점 확률 다섯 칸을 카드 추첨과 같은 BalanceTables 확률표에 연결했다. 플레이어 레벨 변경 시 즉시 갱신하며, 10레벨의 확률은 골드 40%, 미스릴 50%, 다이아 10%다.
+- 일반 타워 4티어 미스릴과 5티어 다이아, 기존 5티어 스탯표와 합성 상한을 복구했다. 미스릴은 기존 배지 스프라이트를 연결하고 청록색 테두리를 적용했다. 가격은 미스릴 4,000골드, 다이아 10,000골드로 임시 적용했다.
+- 파일 확인: 수정한 프리팹과 에셋의 원본 및 .meta를 ArtBackups/ShopMithril_20261120_110524에 보관했고 GUID 및 기존 오브젝트 ID를 확인했다.
+- Unity 확인: EditMode 716개 통과. Stage1 PlayMode에서 레벨 1~10의 확률 표시, 리롤, 미스릴·다이아 구매와 기존 배지 참조를 확인했다.
+[버그] 상점 카드 화면과 실제로 사지는 타워가 다름 (2026-11-20)
+- 원인: UICanvas 프리팹 TowerShopPanel의 잠금 연결(m_lockButton 등)이 비어 Start에서 NullReferenceException → 상점 갱신 등록과 첫 Refresh가 실행되지 않아 프리팹 견본 카드가 그대로 보임. 구매는 실제 상점 카드.
+- TowerShopPanel.cs: 잠금 관련 칸이 비어도 카드 갱신은 계속, 잠금 버튼이 없으면 에러 로그. 프리팹: Lock(Button·Image)·Img_Lock을 m_lockButton·m_lockBackground·m_lockAccent에 연결. m_lockText·m_lockHint는 글자가 없어 비워 둠.
+- 이어서 (사용자): 잠금은 버튼 하나만 연결. 배경·악센트·글자·힌트 칸 삭제. 버튼 아래 아이콘(Img_Lock)이 잠금 켜짐이면 금색, 꺼짐이면 회색(DOTween 0.14초).
+[버그] 타이틀 캐릭터가 해상도에 따라 상대 크기가 바뀜 (2026-11-20)
+- 원인: 캐릭터(Character)가 TitlePetals(UIParticle) 아래에 있고, UIParticle Auto Scaling Mode가 Transform이라 월드 배율을 1로 고정 → Canvas Scaler 배율이 취소되어 QHD에서 작게 보임.
+- TitlePetals.prefab: Auto Scaling Mode None, 루트 스케일 1. Start 씬의 TitlePetals 스케일 오버라이드 0 → 1. 꽃잎도 이제 해상도에 맞춰 같이 커짐(FHD 모양은 같음). 사거리 표시는 판 경계에서 자르지 않음(BoardOverlay.shader·TowerSelectionVisual).
+[씬] 스테이지 2 ~ 10 씬을 Stage1에서 다시 만듦 (2026-11-20, 사용자 요청)
+- 3. Stage1.unity를 복사해 4. Stage2 ~ 12. Stage10을 만듦. 빌드 목록에 남아 있던 옛 씬 GUID를 그대로 써서 EditorBuildSettings는 손대지 않음.
+- 씬마다 GameSession의 스테이지 에셋, 배경(월드별 *_Backdrop_TopDown_1920x1080), 타일맵 색(길·타워 칸·대기석·시너지·Direction·Frame = 스테이지 에셋의 월드 색)을 바꿈.
+- 판 모양: 길 32칸 한 줄 고리(순서가 아닌 길 칸끼리 상하좌우로 붙지 않음), 타워 칸 28칸. Path·Direction·TowerSpawn 타일과 BoardManager.m_pathCells를 새로 씀. 판 크기·BoardTile·Frame 격자는 그대로.
+- 스테이지 에셋 2 ~ 10에 판 미리보기(BoardMin·BoardSize·PathCells·SpawnCells)를 씀. 20번 2장에 모양 표.
+- 파일상 검증만 함: 길 32·타워 칸 28·겹침 없음·길 순서가 한 칸씩 이어진 고리·판 밖 칸 없음·배경과 스테이지 에셋 연결. Unity에서 열어 보거나 플레이하지 않음.
+[입력] 턴 종료 Space, 스킵 R (2026-11-20, 사용자 요청)
+- GameplayShortcuts: Space = 턴 종료(플레이어 턴에만), R = 적 턴 스킵. 개발용 다시 시작은 R → F9(DebugCheat, 키 목록 글자도).
+- UICanvas 프리팹 키 표시: 스킵 [SPACE] → [R], 턴 종료 [F] → [SPACE]. ControlsEffectsSetup·Verification 글자와 입력 키도 맞춤.
+- Stage1이 13:34에 다시 저장되어 스테이지 2 ~ 10을 같은 스크립트로 다시 만듦(판 모양·배경·색 동일, Stage1의 최신 수정 반영).
+[UI] 전장 효과 패널을 상단 정보 바 아래로 (y −14 → −133, GlobalEffectsPanel).
+[성능] 로딩 씬이 늦게 뜨는 문제 (2026-11-20, 사용자 요청)
+- 원인: LoadingScreen이 TowerCharacterCatalog 전체를 참조 → 캐릭터 이미지 56장(2048², 기본 플랫폼 압축 없음, 장당 16MB, 약 900MB)을 로딩 씬마다 읽음.
+- 이미지 56장 .meta의 기본 플랫폼: 최대 크기 2048 → 1024, 압축 None → High Quality. 그림·GUID·스프라이트 칸은 그대로. 원본 .meta 백업: ArtBackups/CharacterTextureImport_20261120.
+- SceneFlow: 게임 시작 때 카탈로그를 비동기로 한 번 읽어 static으로 들고 있음(배치 모드 제외) → 로딩 씬을 열 때 다시 읽지 않음.
+- 로딩 씬 최소 표시 1.6초 → 4초 (LoadingSceneController 기본값, LoadingScreen 프리팹).
+- 파일상 수정·빌드만 확인. Unity 재임포트 뒤 화질과 실제 로딩 시간은 아직 확인하지 않음.
+[밸런스] 공격 타워 Power를 실측 화력으로 맞추기 — 진행 중 (2026-11-20, 사용자 요청)
+- 목표: 브론즈 1레벨 같은 컬러끼리 DPT ±1 ~ 2%. Power만 바꿈 (다른 스탯은 20번 10장 등급과 같음을 확인).
+- 시뮬레이션 추가: -simProbeIds (타워 ID 목록 또는 attack = 광역·단일 28종, 판마다 돌아가며 1종을 최적 자리에, 적 한도 +10000),
+  -simOverkill (남은 체력을 넘는 피해도 기록), -simDummy (적이 죽지 않고 피해만 기록, 처형 무시). 게임 계산은 그대로, 기록·시뮬레이션에서만.
+  SimulationSettings.ProbeIds·ProbeOverkill·ProbeDummy, BalanceRecorder.CountOverkill·DummyEnemies, EnemyController.TakeDamage·Execute.
+- 1·2차(체력 상한 기준): 오버킬 때문에 한 방형 타워의 피해가 Power에 비례하지 않아 수렴 안 됨. 3·4차(오버킬 포함): 단일 ±2.4% 안, 광역 대부분 ±4% 안.
+  바이킹은 휠윈드(맵 전체)가 쌓인 적 수에 비례해 역전 → 5차부터 허수아비 기준. 5차는 498판에서 퇴근으로 멈춤 (simulation_settings Active 끔).
+- TowerData.csv 광역·단일 28행 Power를 3차 보정값으로 바꿈. 단계별 CSV 백업: Balance/PowerTuning_20261120. TowerDatabaseTest 1101 기대값은 아직.

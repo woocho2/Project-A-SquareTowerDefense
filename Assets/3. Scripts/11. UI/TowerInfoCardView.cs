@@ -168,7 +168,7 @@ namespace SquareTD
                 fallbackTierBadge.color = tierIndex switch
                 {
                     2 => new Color(.77f, .85f, .92f), 3 => new Color(1f, .78f, .27f),
-                    4 => new Color(.32f, .80f, 1f),
+                    4 => new Color(.24f, .85f, .76f), 5 => new Color(.32f, .80f, 1f),
                     TowerId.SynergyTier => new Color(.74f, .54f, .92f), _ => new Color(.78f, .46f, .24f)
                 };
             }
