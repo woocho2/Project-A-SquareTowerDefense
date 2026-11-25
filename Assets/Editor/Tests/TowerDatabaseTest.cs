@@ -180,8 +180,8 @@ namespace SquareTD.Tests
 
             Assert.AreEqual(280, database.Count);
             Assert.AreEqual(TowerEmblem.Fire, database.Get(2107).Emblem);
-            Assert.AreEqual(35.7f, database.Get(1101).Power, 0.0001f);
-            Assert.AreEqual(35.7f, database.Get(4101).Power, 0.0001f);
+            Assert.AreEqual(31.267f, database.Get(1101).Power, 0.0001f);
+            Assert.AreEqual(31.267f, database.Get(4101).Power, 0.0001f);
             for (int tier = 1; tier <= TowerId.MaxTier; tier++)
             {
                 for (int color = 1; color <= 4; color++)

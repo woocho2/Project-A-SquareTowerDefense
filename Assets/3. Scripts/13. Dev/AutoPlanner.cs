@@ -93,7 +93,14 @@ namespace SquareTD
         private const int DefaultRange = 2;
 
 
-        public const int DefaultPlacementProfile = 1;
+        internal const int MapBuffDebuffProfile = 1;
+        public const int EmblemPlacementProfile = 7;
+        public const int CarryPlacementProfile = 8;
+        public const int DefaultPlacementProfile = EmblemPlacementProfile;
+        private const float PreferredReceiverBonus = 10000f;
+        private static bool GroupByEmblem => s_placementProfile == EmblemPlacementProfile;
+        private static bool FocusCarry => s_placementProfile == CarryPlacementProfile;
+        private static int PriorityProfile => GroupByEmblem || FocusCarry ? MapBuffDebuffProfile : s_placementProfile;
         private static int s_placementProfile = DefaultPlacementProfile;
         public static int PlacementProfile => s_placementProfile;
 
@@ -106,7 +113,7 @@ namespace SquareTD
 
         public static void ConfigurePlacement(int profile)
         {
-            if (profile < 0 || profile > 6) throw new System.ArgumentOutOfRangeException(nameof(profile));
+            if (profile < 0 || profile > CarryPlacementProfile) throw new System.ArgumentOutOfRangeException(nameof(profile));
             s_placementProfile = profile;
         }
 
@@ -114,13 +121,13 @@ namespace SquareTD
         {
             StrategyPolicy policy = StrategySearch.ActivePolicy;
             if (policy != null && !policy.Baseline) return policy.Weights[component];
-            int[] order = s_priorityOrders[s_placementProfile];
+            int[] order = s_priorityOrders[PriorityProfile];
             return component == order[0] ? 4f : component == order[1] ? 2f : 1f;
         }
 
         private static void PlanPriority(BoardManager board)
         {
-            int[] order = s_priorityOrders[s_placementProfile];
+            int[] order = s_priorityOrders[PriorityProfile];
             StrategyPolicy policy = StrategySearch.ActivePolicy;
             if (policy != null && !policy.Baseline)
             {
@@ -220,14 +227,52 @@ namespace SquareTD
                 if (board.Slots.Get(slot) != null) towers.Add(board.Slots.Get(slot));
             if (towers.Count == 0) return;
             towers.Sort((a, b) => a.BuildOrder.CompareTo(b.BuildOrder));
+            TowerController carry = FocusCarry ? StrongestAttack(board) : null;
             var values = new float[towers.Count, board.Slots.Count];
             for (int row = 0; row < towers.Count; row++)
                 for (int slot = 0; slot < board.Slots.Count; slot++)
-                    values[row, slot] = PlacementValue(board, towers[row], slot);
+                {
+                    TowerController tower = towers[row];
+                    float value = PlacementValue(board, tower, slot);
+                    if ((GroupByEmblem || FocusCarry) && value >= 0f && tower.IsAttackTower)
+                    {
+                        List<Zone> buffs = board.Zones.GetAtSpawn(slot);
+                        if (GroupByEmblem && buffs.Exists(zone => zone.Emblem == tower.Definition.Emblem))
+                            value += PreferredReceiverBonus;
+                        else if (tower == carry)
+                            value += PreferredReceiverBonus * buffs.Count;
+                    }
+                    values[row, slot] = value;
+                }
             int[] assignment = FindAssignment(values);
             for (int row = 0; row < towers.Count; row++)
                 if (towers[row].SlotIndex != assignment[row])
                     TowerManager.Instance.TryMoveOrSwap(towers[row], assignment[row]);
+        }
+
+        private static float UnbuffedWorth(BoardManager board, TowerController tower)
+        {
+            int slot = tower.SlotIndex;
+            return Worth(board, tower, Forecast(board, tower, slot, false), slot);
+        }
+
+        private static TowerController StrongestAttack(BoardManager board, TowerEmblem emblem = TowerEmblem.None)
+        {
+            TowerController selected = null;
+            float highest = 0f;
+            for (int i = 0; i < board.Slots.Count; i++)
+            {
+                TowerController tower = board.Slots.Get(i);
+                if (tower == null || !tower.IsAttackTower ||
+                    (emblem != TowerEmblem.None && tower.Definition.Emblem != emblem)) continue;
+                float worth = UnbuffedWorth(board, tower);
+                if (worth > highest)
+                {
+                    selected = tower;
+                    highest = worth;
+                }
+            }
+            return selected;
         }
 
         private static void PlacePriorityBuffs(BoardManager board)
@@ -235,6 +280,9 @@ namespace SquareTD
             foreach (Zone zone in new List<Zone>(board.Zones.All))
             {
                 if (!zone.IsBuff || zone.IsPlaced) continue;
+                TowerController receiver = GroupByEmblem ? StrongestAttack(board, zone.Emblem)
+                    : FocusCarry ? StrongestAttack(board) : null;
+                if (receiver != null && board.Zones.TryPlace(zone, receiver.SlotIndex)) continue;
                 int best = -1;
                 float highest = float.NegativeInfinity;
                 for (int slot = 0; slot < board.Grid.SpawnCount; slot++)
@@ -292,7 +340,11 @@ namespace SquareTD
                         TowerController tower = board.Slots.Get(i);
                         if (tower == null || !tower.IsAttackTower) continue;
                         if (BoardGrid.GetTileDistance(board.Grid.GetSpawnCell(i), board.Grid.GetPathCell(cell)) <= tower.Stats.Range)
-                            fire += Affinity(zone, tower) * tower.Stats.Power * tower.Stats.AttackCount;
+                        {
+                            float affinity = GroupByEmblem && tower.Definition.Emblem == zone.Emblem
+                                ? 8f : Affinity(zone, tower);
+                            fire += affinity * tower.Stats.Power * tower.Stats.AttackCount;
+                        }
                     }
                     float score = pressure * (0.2f + fire) / (1f + 0.1f * board.Zones.GetAtPath(cell).Count);
                     StrategyPolicy policy = StrategySearch.ActivePolicy;

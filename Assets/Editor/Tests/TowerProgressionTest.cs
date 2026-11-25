@@ -370,15 +370,15 @@ namespace SquareTD.Tests
         }
 
         [Test]
-        public void 배치_기본정책은_맵버프디버프이며_실험종료후_복원한다()
+        public void 배치_기본정책은_문양별이며_실험종료후_복원한다()
         {
-            Assert.AreEqual(1, AutoPlanner.DefaultPlacementProfile);
+            Assert.AreEqual(AutoPlanner.EmblemPlacementProfile, AutoPlanner.DefaultPlacementProfile);
             var settings = new SimulationSettings();
-            Assert.AreEqual(1, settings.GetPlacementProfile(0));
+            Assert.AreEqual(AutoPlanner.EmblemPlacementProfile, settings.GetPlacementProfile(0));
             settings.CompareMergeCounts = true;
-            Assert.AreEqual(1, settings.GetPlacementProfile(1));
+            Assert.AreEqual(AutoPlanner.EmblemPlacementProfile, settings.GetPlacementProfile(1));
             settings.CompareDeckModes = true;
-            Assert.AreEqual(1, settings.GetPlacementProfile(1));
+            Assert.AreEqual(AutoPlanner.EmblemPlacementProfile, settings.GetPlacementProfile(1));
             settings.PlacementProfiles = new[] { 0, 1 };
             Assert.AreEqual(0, settings.GetPlacementProfile(0));
             Assert.AreEqual(1, settings.GetPlacementProfile(1));
@@ -389,7 +389,7 @@ namespace SquareTD.Tests
             {
                 AutoPlanner.ConfigurePlacement(6);
                 AutoPlanner.ResetPlacement();
-                Assert.AreEqual(1, AutoPlanner.PlacementProfile);
+                Assert.AreEqual(AutoPlanner.EmblemPlacementProfile, AutoPlanner.PlacementProfile);
             }
             finally { AutoPlanner.ResetPlacement(); }
         }

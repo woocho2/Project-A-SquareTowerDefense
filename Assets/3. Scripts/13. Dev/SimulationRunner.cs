@@ -64,11 +64,12 @@ namespace SquareTD
         public float FixedGameStep = 1f / 30f;
         public int[] PlacementProfiles = new int[0];
         public int[] FixedDeck = { 3, 4, 11, 7 };
+        public bool CompareBuffPlacement;
         public bool IsPlacementStudy => PlacementProfiles != null && PlacementProfiles.Length > 0;
         public int ScenarioCount => IsPlacementStudy ? PlacementProfiles.Length : CompareMergeCounts || CompareDeckModes ? 2 : 1;
         public int TotalRuns => SearchStrategies ? SearchCandidates * SearchRepeats : Runs * ScenarioCount;
-        public int GetPlacementProfile(int run) => SearchStrategies ? AutoPlanner.DefaultPlacementProfile : IsPlacementStudy ? PlacementProfiles[run % ScenarioCount] : PlacementProfile;
-        public static string PlacementLabel(int profile) => new[] { "Baseline", "MapBuffDebuff", "MapDebuffBuff", "BuffMapDebuff", "BuffDebuffMap", "DebuffMapBuff", "DebuffBuffMap" }[profile];
+        public int GetPlacementProfile(int run) => SearchStrategies ? AutoPlanner.MapBuffDebuffProfile : IsPlacementStudy ? PlacementProfiles[run % ScenarioCount] : PlacementProfile;
+        public static string PlacementLabel(int profile) => new[] { "Baseline", "MapBuffDebuff", "MapDebuffBuff", "BuffMapDebuff", "BuffDebuffMap", "DebuffMapBuff", "DebuffBuffMap", "EmblemGroups", "CarryBuffs" }[profile];
         public int GetPairIndex(int run) => SearchStrategies ? SearchTrial : run / ScenarioCount;
         public int GetSeed(int run) => SearchStrategies ? FirstSeed : unchecked(FirstSeed + GetPairIndex(run));
         public string GetVariant(int run) => SearchStrategies ? $"Strategy{SearchCandidate:D4}" : IsPlacementStudy
@@ -79,8 +80,8 @@ namespace SquareTD
         public int GetMergeCount(int run) => CompareMergeCounts && !CompareDeckModes && !IsPlacementStudy && !SearchStrategies
             ? Mathf.Clamp(run % 2 == 0 ? MergeCountA : MergeCountB, 2, 5)
             : TowerProgression.MergeCount;
-        public int GetMode(int run) => IsControlled ? (int)GameMode.Normal : CompareDeckModes ? (int)(run % 2 == 0 ? GameMode.Normal : GameMode.Hard) : Mode;
-        public int GetDeckCount(int run) => IsControlled ? FixedDeck.Length : CompareDeckModes ? (run % 2 == 0 ? NormalDeckCount : HardDeckCount) : 0;
+        public int GetMode(int run) => IsControlled && !CompareBuffPlacement ? (int)GameMode.Normal : CompareDeckModes ? (int)(run % 2 == 0 ? GameMode.Normal : GameMode.Hard) : Mode;
+        public int GetDeckCount(int run) => IsControlled && !CompareBuffPlacement ? FixedDeck.Length : CompareDeckModes ? (run % 2 == 0 ? NormalDeckCount : HardDeckCount) : 0;
         public string GetResultName(int run) => ResultName + (ScenarioCount > 1 || IsControlled ? "_" + GetVariant(run) : "");
 
         public static string Folder => Path.GetFullPath(Path.Combine(Application.dataPath, "..", "Balance"));
@@ -243,7 +244,7 @@ namespace SquareTD
             List<TowerEmblem> selected = GetField<List<TowerEmblem>>(TowerManager.Instance, "m_selectedEmblems");
             if (selected == null) return "";
 
-            if (m_settings.IsControlled)
+            if (m_settings.IsControlled && !m_settings.CompareBuffPlacement)
             {
                 selected.Clear();
                 foreach (int emblem in m_settings.FixedDeck) selected.Add((TowerEmblem)emblem);

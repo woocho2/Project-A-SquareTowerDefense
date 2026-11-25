@@ -155,7 +155,8 @@ namespace SquareTD
             bool searchSmoke = Array.IndexOf(args, "-simStrategySmoke") >= 0;
             bool search = searchSmoke || Array.IndexOf(args, "-simStrategySearch") >= 0;
             bool compareDecks = Array.IndexOf(args, "-simDeckRanking") >= 0;
-            bool placement = Array.IndexOf(args, "-simPlacementRanking") >= 0;
+            bool buffPlacement = Array.IndexOf(args, "-simBuffPlacement") >= 0;
+            bool placement = buffPlacement || Array.IndexOf(args, "-simPlacementRanking") >= 0;
             bool smoke = Array.IndexOf(args, "-simPlacementSmoke") >= 0;
             bool probe = Array.IndexOf(args, "-simWaveProbe") >= 0;
             if (probe && (search || placement || smoke || compareDecks)) throw new ArgumentException("1웨이브 섬멸률은 다른 비교 모드와 따로 실행해 주세요.");
@@ -188,7 +189,8 @@ namespace SquareTD
                 SearchRepeats = BatchInt(args, "-simRepeats", 10),
                 SearchMinRepeats = BatchInt(args, "-simMinRepeats", 5),
                 CompareDeckModes = compareDecks,
-                PlacementProfiles = smoke ? new[] { 0, 0, 1, 1 } : placement ? new[] { 0, 1, 2, 3, 4, 5, 6 } : new int[0],
+                CompareBuffPlacement = buffPlacement,
+                PlacementProfiles = buffPlacement ? new[] { AutoPlanner.EmblemPlacementProfile, AutoPlanner.CarryPlacementProfile } : smoke ? new[] { 0, 0, 1, 1 } : placement ? new[] { 0, 1, 2, 3, 4, 5, 6 } : new int[0],
                 PlacementProfile = BatchInt(args, "-simPlacementProfile", AutoPlanner.DefaultPlacementProfile),
                 FocusEmblems = BatchInt(args, "-simFocus", AutoPlanner.DefaultFocusCount),
                 NormalDeckCount = EmblemSelectPanel.NormalCount,
@@ -196,7 +198,7 @@ namespace SquareTD
                 MergeCountA = BatchInt(args, "-simMergeA", 3),
                 MergeCountB = BatchInt(args, "-simMergeB", 2),
                 Mode = probe || Array.IndexOf(args, "-simMode") >= 0 ? BatchInt(args, "-simMode", (int)GameMode.Normal) : s_modeValues[Mathf.Clamp(EditorPrefs.GetInt("SquareTD.Sim.Mode", 0), 0, s_modeValues.Length - 1)],
-                RandomEmblems = compareDecks || Array.IndexOf(args, "-simSceneDeck") < 0 && EditorPrefs.GetBool("SquareTD.Sim.RandomEmblems", false),
+                RandomEmblems = buffPlacement || compareDecks || Array.IndexOf(args, "-simSceneDeck") < 0 && EditorPrefs.GetBool("SquareTD.Sim.RandomEmblems", false),
                 TimeScale = Mathf.Clamp(EditorPrefs.GetFloat("SquareTD.Sim.TimeScale", 100f), 1f, 100f),
                 GameTimeoutSeconds = Mathf.Max(30f, EditorPrefs.GetFloat("SquareTD.Sim.Timeout", 900f)),
                 ResultName = (probe ? "probe_" : searchSmoke ? "strategy_smoke_" : search ? "strategy_" : placement ? "placement_" : smoke ? "placement_smoke_" : compareDecks ? "deck_" : "batch_") + DateTime.Now.ToString("yyyyMMdd_HHmmss_fff"),
@@ -204,8 +206,8 @@ namespace SquareTD
             if (settings.SearchCandidates < 1 || settings.SearchCandidates > 10000 || settings.SearchRepeats < 1 ||
                 settings.SearchRepeats > 100 || settings.SearchMinRepeats < 1 || settings.SearchMinRepeats > settings.SearchRepeats)
                 throw new ArgumentOutOfRangeException("전략 탐색", "후보1~10000개, 반복1~100회, 최소 반복은 최대 반복 이하로 입력해 주세요.");
-            if (settings.PlacementProfile < 0 || settings.PlacementProfile > 6)
-                throw new ArgumentOutOfRangeException("-simPlacementProfile", "배치 정책은 0~6이어야 합니다.");
+            if (settings.PlacementProfile < 0 || settings.PlacementProfile > AutoPlanner.CarryPlacementProfile)
+                throw new ArgumentOutOfRangeException("-simPlacementProfile", $"배치 정책은 0~{AutoPlanner.CarryPlacementProfile}이어야 합니다.");
             if (settings.Runs < 1 || settings.Runs > 10000)
                 throw new ArgumentOutOfRangeException("-simRuns", "조건당 판 수는 1~10000이어야 합니다.");
             if (settings.MergeCountA < 2 || settings.MergeCountA > 5 ||
@@ -665,9 +667,12 @@ namespace SquareTD
             {
                 int seed = unchecked(settings.FirstSeed + run);
                 bool valid = true;
+                string mode = ((GameMode)settings.GetMode(0)).ToString();
+                string expectedDeck = settings.CompareBuffPlacement && games[0].TryGetValue(seed, out var first)
+                    ? Cell(first, "emblems") : deck;
                 for (int profile = 0; profile < count; profile++)
                     if (!games[profile].TryGetValue(seed, out Dictionary<string, string> row) ||
-                        !Completed(row) || Cell(row, "mode") != "Normal" || Cell(row, "emblems") != deck ||
+                        !Completed(row) || Cell(row, "mode") != mode || Cell(row, "emblems") != expectedDeck ||
                         Int(Cell(row, "merge_count")) != TowerProgression.MergeCount)
                         valid = false;
                 if (valid) seeds.Add(seed);
@@ -705,9 +710,9 @@ namespace SquareTD
                 return a.CompareTo(b);
             });
             var text = new StringBuilder();
-            text.AppendLine("# 활·창·얼음·불 배치 우선순위 비교");
+            text.AppendLine(settings.CompareBuffPlacement ? "# 문양별 배치와 주력 버프 비교" : "# 활·창·얼음·불 배치 우선순위 비교");
             text.AppendLine();
-            text.AppendLine($"노말 / 합성 {TowerProgression.MergeCount}기 / 전략당 요청 {settings.Runs}판 / 공통 완료 시드 {seeds.Count}개");
+            text.AppendLine($"{(GameMode)settings.GetMode(0)} / 합성 {TowerProgression.MergeCount}기 / 전략당 요청 {settings.Runs}판 / 공통 완료 시드 {seeds.Count}개");
             text.AppendLine("정렬: 평균 생존 적 턴 → 평균 도달 웨이브 → 평균 처치 수. 1·2·3순위 가중치 4:2:1.");
             text.AppendLine("스탯·재화·합성·강화·판매 정책은 고정. 맵 시드·시간 간격·장식 난수 통제는 이번 배치 실험에만 적용.");
             text.AppendLine("맵별 휴리스틱 배치 전략 비교이며 전체 가능한 배치의 전역 최적해를 뜻하지 않음.");
